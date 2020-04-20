@@ -2,10 +2,12 @@ import React from 'react'
 
 import { AuthProvider, TabProvider } from './context'
 
+import App from './App'
+
 const Settings = () => (
    <AuthProvider>
       <TabProvider>
-         <h1>Settings App</h1>
+         <App />
       </TabProvider>
    </AuthProvider>
 )
