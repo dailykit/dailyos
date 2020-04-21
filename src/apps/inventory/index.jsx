@@ -1,12 +1,12 @@
 import React from 'react'
 
-import { AuthProvider, TabProvider } from './context'
+import { AuthProvider } from './context'
+
+import App from './App'
 
 const Inventory = () => (
    <AuthProvider>
-      <TabProvider>
-         <h1>Inventory App</h1>
-      </TabProvider>
+      <App />
    </AuthProvider>
 )
 
