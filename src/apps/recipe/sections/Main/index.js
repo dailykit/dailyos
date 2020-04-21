@@ -3,7 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 // State
-import { Context } from '../../store/tabs'
+import { Context } from '../../context/tabs'
 
 // Views
 import {
@@ -11,7 +11,7 @@ import {
    RecipesListing,
    RecipeForm,
    IngredientsListing,
-   IngredientForm
+   IngredientForm,
 } from '../../views'
 
 const renderComponent = (type, view) => {

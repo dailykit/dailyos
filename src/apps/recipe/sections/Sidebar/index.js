@@ -1,7 +1,7 @@
 import React from 'react'
 
 // State
-import { Context } from '../../store/tabs'
+import { Context } from '../../context/tabs'
 
 // Styled
 import {
@@ -24,7 +24,9 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             <StyledListItem onClick={() => addTab('Recipes', 'recipes')}>
                Recipes
             </StyledListItem>
-            <StyledListItem onClick={() => addTab('Ingredients', 'ingredients')}>
+            <StyledListItem
+               onClick={() => addTab('Ingredients', 'ingredients')}
+            >
                Ingredients
             </StyledListItem>
          </StyledList>

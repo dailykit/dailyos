@@ -1,0 +1,109 @@
+import React from 'react'
+
+export const CollectionContext = React.createContext()
+
+export const state = {
+   current: {
+      category: ''
+   },
+   id: '',
+   title: '',
+   categories: [],
+   availability: '',
+   stage: 1
+}
+
+export const reducer = (state, { type, payload }) => {
+   switch (type) {
+      case 'ID': {
+         return {
+            ...state,
+            id: payload.id
+         }
+      }
+      case 'TITLE': {
+         return {
+            ...state,
+            title: payload.value
+         }
+      }
+      case 'CATEGORY_TITLE': {
+         const updated_categories = state.categories
+         updated_categories[state.current.category].title = payload.title
+         return {
+            ...state,
+            categories: updated_categories
+         }
+      }
+      case 'CREATE_CATEGORY': {
+         const new_category = {
+            id: Math.floor(Math.random() * 1000),
+            title: payload.title,
+            products: []
+         }
+         return {
+            ...state,
+            categories: [...state.categories, new_category]
+         }
+      }
+      case 'DELETE_CATEGORY': {
+         const updated_categories = state.categories.filter(
+            category => category.title !== payload.title
+         )
+         return {
+            ...state,
+            categories: updated_categories
+         }
+      }
+      case 'CURRENT_CATEGORY': {
+         const index = state.categories.findIndex(
+            category => category.title === payload.category.title
+         )
+         return {
+            ...state,
+            current: {
+               ...state.current,
+               category: index
+            }
+         }
+      }
+      case 'ADD_PRODUCTS': {
+         const updated_categories = state.categories
+         updated_categories[state.current.category].products.push(
+            ...payload.products
+         )
+         return {
+            ...state,
+            categories: updated_categories
+         }
+      }
+      case 'DELETE_PRODUCT': {
+         const index = state.categories.findIndex(
+            category => category.title === payload.category.title
+         )
+         const updated_categories = state.categories
+         const updated_products = updated_categories[index].products.filter(
+            product => product.title !== payload.product.title
+         )
+         updated_categories[index].products = updated_products
+         return {
+            ...state,
+            categories: updated_categories
+         }
+      }
+      case 'AVAILABILITY': {
+         return {
+            ...state,
+            availability: payload
+         }
+      }
+      case 'NEXT_STAGE': {
+         return {
+            ...state,
+            stage: state.stage + 1
+         }
+      }
+      default:
+         return state
+   }
+}

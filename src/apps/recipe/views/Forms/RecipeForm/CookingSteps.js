@@ -2,23 +2,23 @@ import { IconButton, Text, Input, ButtonTile } from '@dailykit/ui'
 import React, { useContext } from 'react'
 
 import AddIcon from '../../../assets/icons/Add'
-import { Context as RecipeContext } from '../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../context/recipe/index'
 import { IngredientsSection, Stats, DeleteButton } from './styled'
 import DeleteIcon from '../../../assets/icons/Delete'
 
 export default function CookingSteps() {
    const {
       recipeState: { procedures },
-      recipeDispatch
+      recipeDispatch,
    } = useContext(RecipeContext)
 
    return (
       <>
          <IngredientsSection>
             <Stats>
-               <Text as='subtitle'>Cooking Process</Text>
+               <Text as="subtitle">Cooking Process</Text>
                <IconButton
-                  type='ghost'
+                  type="ghost"
                   onClick={() => {
                      recipeDispatch({ type: 'CREATE_STEP' })
                   }}
@@ -50,9 +50,9 @@ export default function CookingSteps() {
                      <React.Fragment key={stepIndex}>
                         <Stats>
                            <Input
-                              type='text'
-                              placeholder='Title'
-                              name='title'
+                              type="text"
+                              placeholder="Title"
+                              name="title"
                               value={step.title}
                               onChange={e => {
                                  recipeDispatch({
@@ -61,8 +61,8 @@ export default function CookingSteps() {
                                        index: stepIndex,
                                        sectionIndex: index,
                                        currentName: e.target.name,
-                                       value: e.target.value
-                                    }
+                                       value: e.target.value,
+                                    },
                                  })
                               }}
                            />
@@ -71,20 +71,20 @@ export default function CookingSteps() {
                                  onClick={() => {
                                     recipeDispatch({
                                        type: 'REMOVE_PROCEDURE',
-                                       payload: { index }
+                                       payload: { index },
                                     })
                                  }}
                               >
-                                 <DeleteIcon color='rgb(255,90,82)' />
+                                 <DeleteIcon color="rgb(255,90,82)" />
                               </DeleteButton>
                            )}
                         </Stats>
                         <br />
                         <Input
-                           type='textarea'
-                           placeholder='Description'
-                           name='description'
-                           rows='3'
+                           type="textarea"
+                           placeholder="Description"
+                           name="description"
+                           rows="3"
                            value={step.description}
                            onChange={e => {
                               recipeDispatch({
@@ -93,16 +93,16 @@ export default function CookingSteps() {
                                     index: stepIndex,
                                     sectionIndex: index,
                                     currentName: e.target.name,
-                                    value: e.target.value
-                                 }
+                                    value: e.target.value,
+                                 },
                               })
                            }}
                         />
                         <ButtonTile
-                           type='primary'
-                           size='sm'
-                           text='Select Photos for this Step'
-                           helper='upto 1mb | only JPGs and PNGs are allowed.'
+                           type="primary"
+                           size="sm"
+                           text="Select Photos for this Step"
+                           helper="upto 1mb | only JPGs and PNGs are allowed."
                            onClick={() => {}}
                            style={{ margin: '20px 0' }}
                         />{' '}

@@ -7,18 +7,18 @@ import {
    ButtonTile,
    Tunnel,
    Tunnels,
-   useTunnel
+   useTunnel,
 } from '@dailykit/ui'
 
 // Global State
-import { Context } from '../../../store/tabs'
+import { Context } from '../../../context/tabs'
 
 // Icons
 import {
    CodeIcon,
    CloseIcon,
    EditIcon,
-   DeleteIcon
+   DeleteIcon,
 } from '../../../assets/icons'
 
 // Styled
@@ -33,7 +33,7 @@ import {
    StyledStatsContainer,
    StyledStat,
    PhotoTileWrapper,
-   ImageContainer
+   ImageContainer,
 } from './styled'
 import { Processings } from '../../../components'
 
@@ -44,35 +44,35 @@ const IngredientForm = () => {
    const [ingredient, setIngredient] = React.useState({
       id: '',
       name: '',
-      image: ''
+      image: '',
    })
    const {} = useQuery(INGREDIENT, {
       variables: { ID: state.current.ID },
       onCompleted: data => {
          setIngredient(data.ingredient)
-      }
+      },
    })
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
       onCompleted: data => {
          if (data.updateIngredient.success) {
             setIngredient({
                ...ingredient,
-               ...data.updateIngredient.ingredient
+               ...data.updateIngredient.ingredient,
             })
             if (state.current.title !== data.updateIngredient.ingredient.name) {
                dispatch({
                   type: 'SET_TITLE',
                   payload: {
                      title: data.updateIngredient.ingredient.name,
-                     oldTitle: state.current.title
-                  }
+                     oldTitle: state.current.title,
+                  },
                })
             }
          } else {
             // Fire toast
             console.log(data)
          }
-      }
+      },
    })
 
    const updateIngredientHandler = () => {
@@ -80,8 +80,8 @@ const IngredientForm = () => {
          variables: {
             ingredientId: ingredient.id,
             name: ingredient.name,
-            image: ingredient.image
-         }
+            image: ingredient.image,
+         },
       })
    }
 
@@ -92,8 +92,8 @@ const IngredientForm = () => {
          variables: {
             ingredientId: ingredient.id,
             name: ingredient.name,
-            image
-         }
+            image,
+         },
       })
       closePhotoTunnel(1)
    }
@@ -104,10 +104,10 @@ const IngredientForm = () => {
             <StyledHeader>
                <InputWrapper>
                   <Input
-                     type='text'
-                     label='Ingredient Name'
-                     placeholder='Untitled Ingredient'
-                     name='ingredient'
+                     type="text"
+                     label="Ingredient Name"
+                     placeholder="Untitled Ingredient"
+                     name="ingredient"
                      value={ingredient.name}
                      onChange={e =>
                         setIngredient({ ...ingredient, name: e.target.value })
@@ -116,10 +116,10 @@ const IngredientForm = () => {
                   />
                </InputWrapper>
                <ActionsWrapper>
-                  <ComboButton type='ghost'>
+                  <ComboButton type="ghost">
                      <CodeIcon /> Open in editor
                   </ComboButton>
-                  <TextButton type='solid'>Publish</TextButton>
+                  <TextButton type="solid">Publish</TextButton>
                </ActionsWrapper>
             </StyledHeader>
          </StyledWrapper>
@@ -146,15 +146,15 @@ const IngredientForm = () => {
                               <DeleteIcon />
                            </span>
                         </div>
-                        <img src={ingredient.image} alt='Ingredient' />
+                        <img src={ingredient.image} alt="Ingredient" />
                      </ImageContainer>
                   ) : (
                      <PhotoTileWrapper>
                         <ButtonTile
-                           type='primary'
-                           size='sm'
-                           text='Add photo to your ingredient'
-                           helper='upto 1MB - only JPG, PNG, PDF allowed'
+                           type="primary"
+                           size="sm"
+                           text="Add photo to your ingredient"
+                           helper="upto 1MB - only JPG, PNG, PDF allowed"
                            onClick={() => openPhotoTunnel(1)}
                         />
                      </PhotoTileWrapper>
@@ -164,8 +164,8 @@ const IngredientForm = () => {
                         <StyledTunnelHeader>
                            <div>
                               <CloseIcon
-                                 size='20px'
-                                 color='#888D9D'
+                                 size="20px"
+                                 color="#888D9D"
                                  onClick={() => closePhotoTunnel(1)}
                               />
                               <h1>
@@ -175,7 +175,7 @@ const IngredientForm = () => {
                         </StyledTunnelHeader>
                         <StyledTunnelMain>
                            <TextButton
-                              type='solid'
+                              type="solid"
                               onClick={() =>
                                  addPhotoHandler(
                                     'https://source.unsplash.com/800x600/?food'

@@ -12,16 +12,16 @@ import {
    TableBody,
    TableRow,
    TableCell,
-   IconButton
+   IconButton,
 } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../context/recipe/index'
 
 import {
    IngredientsSection,
    Stats,
    IngredientTable,
-   SelectButton
+   SelectButton,
 } from './styled'
 
 import AddServings from './Tunnels/AddServings'
@@ -39,7 +39,7 @@ import CookingSteps from './CookingSteps'
 import {
    INGREDIENTS,
    PROCESSINGS_OF_INGREDIENT,
-   SACHETS_OF_PROCESSING
+   SACHETS_OF_PROCESSING,
 } from '../../../graphql'
 
 export default function AddIngredients() {
@@ -50,7 +50,7 @@ export default function AddIngredients() {
    const [sachets, setSachets] = React.useState([])
    const [selected, setSelected] = React.useState({
       ingredientId: undefined,
-      processingId: undefined
+      processingId: undefined,
    })
 
    //Query
@@ -60,11 +60,11 @@ export default function AddIngredients() {
          let updatedIngs = await ings.map(ing => {
             return {
                ...ing,
-               title: ing.name
+               title: ing.name,
             }
          })
          setIngredients(updatedIngs)
-      }
+      },
    })
    const [fetchProcessings, {}] = useLazyQuery(PROCESSINGS_OF_INGREDIENT, {
       fetchPolicy: 'no-cache',
@@ -73,12 +73,12 @@ export default function AddIngredients() {
          let updatedProcs = await procs.map(proc => {
             return {
                ...proc,
-               title: proc.name.title
+               title: proc.name.title,
             }
          })
          setProcessings(updatedProcs)
          openTunnel(4)
-      }
+      },
    })
    const [fetchSachets, {}] = useLazyQuery(SACHETS_OF_PROCESSING, {
       fetchPolicy: 'no-cache',
@@ -87,28 +87,28 @@ export default function AddIngredients() {
          let updatedSachets = await sachets.map(sachet => {
             return {
                ...sachet,
-               title: sachet.quantity.value + sachet.quantity.unit.title + ''
+               title: sachet.quantity.value + sachet.quantity.unit.title + '',
             }
          })
          setSachets(updatedSachets)
          closeTunnel(4)
          openTunnel(5)
-      }
+      },
    })
 
    React.useEffect(() => {
       fetchProcessings({
          variables: {
-            ingredientId: selected.ingredientId
-         }
+            ingredientId: selected.ingredientId,
+         },
       })
    }, [selected.ingredientId])
 
    React.useEffect(() => {
       fetchSachets({
          variables: {
-            processingId: selected.processingId
-         }
+            processingId: selected.processingId,
+         },
       })
    }, [selected.processingId])
 
@@ -125,7 +125,7 @@ export default function AddIngredients() {
                   ings={ingredients}
                />
             </Tunnel>
-            <Tunnel layer={3} size='lg'>
+            <Tunnel layer={3} size="lg">
                <AddSachets close={closeTunnel} openTunnel={openTunnel} />
             </Tunnel>
             {/* tunnel 4 -> select processing */}
@@ -145,7 +145,7 @@ export default function AddIngredients() {
          <Servings open={openTunnel} />
          <IngredientsSection>
             <Stats>
-               <Text as='subtitle'>
+               <Text as="subtitle">
                   Ingredients (
                   {(recipeState &&
                      recipeState.ingredients &&
@@ -154,7 +154,7 @@ export default function AddIngredients() {
                   )
                </Text>
                {recipeState.ingredients.length > 0 && (
-                  <IconButton type='ghost' onClick={() => openTunnel(2)}>
+                  <IconButton type="ghost" onClick={() => openTunnel(2)}>
                      <AddIcon />
                   </IconButton>
                )}
@@ -167,7 +167,7 @@ export default function AddIngredients() {
                         <TableRow>
                            <TableCell></TableCell>
                            <TableCell>Ingredient Name</TableCell>
-                           <TableCell align='center'>Processing</TableCell>
+                           <TableCell align="center">Processing</TableCell>
                            {recipeState.servings.map(serving => (
                               <TableCell key={serving.id}>
                                  <UserIcon />
@@ -176,7 +176,7 @@ export default function AddIngredients() {
                                  </span>
                               </TableCell>
                            ))}
-                           <TableCell align='right'></TableCell>
+                           <TableCell align="right"></TableCell>
                         </TableRow>
                      </TableHead>
                      <TableBody>
@@ -186,7 +186,7 @@ export default function AddIngredients() {
                               onClick={() =>
                                  setSelected({
                                     ingredientId: ingredient.id,
-                                    processingId: ingredient?.processing?.id
+                                    processingId: ingredient?.processing?.id,
                                  })
                               }
                            >
@@ -195,16 +195,16 @@ export default function AddIngredients() {
                               <TableCell>
                                  {ingredient?.processing?.title || (
                                     <IconButton
-                                       type='outline'
+                                       type="outline"
                                        onClick={() => {
                                           recipeDispatch({
                                              type: 'SET_VIEW',
-                                             payload: ingredient
+                                             payload: ingredient,
                                           })
                                           // openTunnel(4)
                                        }}
                                     >
-                                       <AddIcon color='#00a7e1' />
+                                       <AddIcon color="#00a7e1" />
                                     </IconButton>
                                  )}
                               </TableCell>
@@ -217,14 +217,14 @@ export default function AddIngredients() {
                                     />
                                  </TableCell>
                               ))}
-                              <TableCell align='right'>
+                              <TableCell align="right">
                                  <span
                                     style={{
-                                       display: 'flex'
+                                       display: 'flex',
                                     }}
                                  >
                                     <IconButton
-                                       type='solid'
+                                       type="solid"
                                        onClick={() => {
                                           openTunnel(3)
                                        }}
@@ -235,11 +235,11 @@ export default function AddIngredients() {
                                        onClick={() => {
                                           recipeDispatch({
                                              type: 'DELETE_INGREDIENT',
-                                             payload: ingredient
+                                             payload: ingredient,
                                           })
                                        }}
                                     >
-                                       <DeleteIcon color='rgb(255,90,82)' />
+                                       <DeleteIcon color="rgb(255,90,82)" />
                                     </IconButton>
                                  </span>
                               </TableCell>
@@ -252,9 +252,9 @@ export default function AddIngredients() {
 
             {recipeState.ingredients.length === 0 && (
                <ButtonTile
-                  as='button'
-                  type='secondary'
-                  text='Select Ingredients'
+                  as="button"
+                  type="secondary"
+                  text="Select Ingredients"
                   onClick={() => openTunnel(2)}
                />
             )}
@@ -280,11 +280,11 @@ function Sachet({ serving, openTunnel, ingredient }) {
                onClick={() => {
                   recipeDispatch({
                      type: 'SET_ACTIVE_SERVING',
-                     payload: serving
+                     payload: serving,
                   })
                   recipeDispatch({
                      type: 'SET_VIEW',
-                     payload: ingredient
+                     payload: ingredient,
                   })
                   // openTunnel(5)
                }}

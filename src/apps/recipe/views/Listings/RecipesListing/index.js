@@ -6,7 +6,7 @@ import {
    TableHead,
    TableRow,
    TableCell,
-   TableBody
+   TableBody,
 } from '@dailykit/ui'
 
 import { generateRandomString } from '../../../utils'
@@ -15,7 +15,7 @@ import { generateRandomString } from '../../../utils'
 import { AddIcon } from '../../../assets/icons'
 
 // State
-import { Context } from '../../../store/tabs'
+import { Context } from '../../../context/tabs'
 
 // Styled
 import {
@@ -23,7 +23,7 @@ import {
    StyledTableHeader,
    StyledTableActions,
    StyledHeader,
-   StyledContent
+   StyledContent,
 } from '../styled'
 
 import { RECIPES, CREATE_RECIPE } from '../../../graphql'
@@ -33,7 +33,7 @@ const RecipesListing = () => {
    const addTab = (title, view, ID) => {
       dispatch({
          type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, ID }
+         payload: { type: 'forms', title, view, ID },
       })
    }
 
@@ -51,7 +51,7 @@ const RecipesListing = () => {
             // Fire toast
             console.log(data)
          }
-      }
+      },
    })
 
    const createRecipeHandler = () => {
@@ -68,8 +68,8 @@ const RecipesListing = () => {
          <StyledTableHeader>
             <p>filters</p>
             <StyledTableActions>
-               <IconButton type='solid' onClick={createRecipeHandler}>
-                  <AddIcon color='#fff' size={24} />
+               <IconButton type="solid" onClick={createRecipeHandler}>
+                  <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledTableActions>
          </StyledTableHeader>

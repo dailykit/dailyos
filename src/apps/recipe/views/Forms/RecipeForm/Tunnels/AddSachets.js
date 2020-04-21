@@ -2,14 +2,14 @@ import React, { useContext } from 'react'
 
 import { Text, ButtonTile, IconButton } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../../context/recipe/index'
 
 import {
    TunnelContainer,
    Content,
    FlexWidth,
    ManageIngredient,
-   CustomButton
+   CustomButton,
 } from '../styled'
 import EditIcon from '../../../../assets/icons/Edit'
 
@@ -34,11 +34,11 @@ export default function AddSachets({ close, openTunnel }) {
                onClick={() => {
                   recipeDispatch({
                      type: 'SET_ACTIVE_SERVING',
-                     payload: serving
+                     payload: serving,
                   })
                   openTunnel(5)
                }}
-               type='secondary'
+               type="secondary"
                text={availableSachet.title}
             />
          )
@@ -48,12 +48,12 @@ export default function AddSachets({ close, openTunnel }) {
                onClick={() => {
                   recipeDispatch({
                      type: 'SET_ACTIVE_SERVING',
-                     payload: serving
+                     payload: serving,
                   })
                   openTunnel(5)
                }}
-               type='secondary'
-               text='Select Sachet'
+               type="secondary"
+               text="Select Sachet"
             />
          )
       }
@@ -63,29 +63,29 @@ export default function AddSachets({ close, openTunnel }) {
       <>
          <TunnelContainer>
             <TunnelHeader
-               title='Add Ingredients'
+               title="Add Ingredients"
                close={() => {
                   close(3)
                   recipeDispatch({
                      type: 'SET_VIEW',
-                     payload: {}
+                     payload: {},
                   })
                }}
                next={() => {
                   close(3)
                   recipeDispatch({
                      type: 'SET_VIEW',
-                     payload: {}
+                     payload: {},
                   })
                }}
-               nextAcion='Done'
+               nextAcion="Done"
             />
 
             <Spacer />
             <Content>
-               <FlexWidth width='1'>
+               <FlexWidth width="1">
                   {/* TODO: add buttons for adding more ingredients when doing functionality part */}
-                  <Text as='subtitle'>
+                  <Text as="subtitle">
                      Ingredients ({recipeState.ingredients.length})
                   </Text>
 
@@ -98,7 +98,7 @@ export default function AddSachets({ close, openTunnel }) {
                            onClick={() => {
                               recipeDispatch({
                                  type: 'SET_VIEW',
-                                 payload: ingredient
+                                 payload: ingredient,
                               })
                            }}
                         >
@@ -107,14 +107,14 @@ export default function AddSachets({ close, openTunnel }) {
                      </div>
                   ))}
                </FlexWidth>
-               <FlexWidth width='3'>
+               <FlexWidth width="3">
                   {/* TODO: add preference for sachets and processing for the ingredient */}
                   <ManageIngredient>
                      {recipeState.view.title ? (
                         <>
                            <Content>
-                              <FlexWidth width='1'>
-                                 <Text as='h2'>
+                              <FlexWidth width="1">
+                                 <Text as="h2">
                                     {recipeState.view.title}
                                     {recipeState.view.processing &&
                                        ` | ${recipeState.view.processing.title}`}
@@ -122,11 +122,11 @@ export default function AddSachets({ close, openTunnel }) {
                                        <span
                                           style={{
                                              display: 'inline-block',
-                                             marginLeft: '10px'
+                                             marginLeft: '10px',
                                           }}
                                        >
                                           <IconButton
-                                             type='outline'
+                                             type="outline"
                                              onClick={() => openTunnel(4)}
                                           >
                                              <EditIcon />
@@ -137,20 +137,20 @@ export default function AddSachets({ close, openTunnel }) {
                               </FlexWidth>
                               {recipeState.view.processing &&
                               recipeState.view.processing.title ? null : (
-                                 <FlexWidth width='3'>
+                                 <FlexWidth width="3">
                                     <ButtonTile
                                        onClick={() => {
                                           openTunnel(4)
                                        }}
-                                       type='secondary'
-                                       text='Select Processing'
+                                       type="secondary"
+                                       text="Select Processing"
                                     />
                                  </FlexWidth>
                               )}
                            </Content>
                            <Content>
-                              <FlexWidth width='1'>
-                                 <Text as='subtitle'>For serving</Text>
+                              <FlexWidth width="1">
+                                 <Text as="subtitle">For serving</Text>
                               </FlexWidth>
                            </Content>
                            <br />
@@ -158,15 +158,15 @@ export default function AddSachets({ close, openTunnel }) {
                               recipeState.servings.map(serving => (
                                  <React.Fragment key={serving.id}>
                                     <Content>
-                                       <FlexWidth width='1'>
+                                       <FlexWidth width="1">
                                           <Text
-                                             as='h2'
+                                             as="h2"
                                              style={{ textAlign: 'center' }}
                                           >
                                              {serving.value} People.
                                           </Text>
                                        </FlexWidth>
-                                       <FlexWidth width='3'>
+                                       <FlexWidth width="3">
                                           {renderSachets(serving)}
                                        </FlexWidth>
                                     </Content>
@@ -175,13 +175,13 @@ export default function AddSachets({ close, openTunnel }) {
                               ))}
                            {recipeState.servings[0].value <= 0 && (
                               <Content>
-                                 <Text as='h2'>No servings available</Text>
+                                 <Text as="h2">No servings available</Text>
                               </Content>
                            )}
                         </>
                      ) : (
                         <Content>
-                           <Text as='h2'>Select and ingredient</Text>
+                           <Text as="h2">Select and ingredient</Text>
                         </Content>
                      )}
                   </ManageIngredient>

@@ -6,10 +6,10 @@ import {
    ListItem,
    useMultiList,
    TagGroup,
-   Tag
+   Tag,
 } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../../context/recipe/index'
 
 import { TunnelContainer } from '../styled'
 
@@ -30,24 +30,24 @@ export default function SelectIngredients({ close, next, ings }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title='Add Ingredients'
+            title="Add Ingredients"
             close={() => close(2)}
             next={() => {
                recipeDispatch({ type: 'ADD_INGREDIENTS', payload: selected })
                recipeDispatch({
                   type: 'ADD_INGREDIENTS_FOR_PUSHABLE',
-                  payload: selected
+                  payload: selected,
                })
                next(2)
             }}
-            nextAction='Done'
+            nextAction="Done"
          />
          <Spacer />
 
          <List>
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder='type what you’re looking for...'
+               placeholder="type what you’re looking for..."
             />
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>
@@ -67,7 +67,7 @@ export default function SelectIngredients({ close, next, ings }) {
                   .filter(option => option.title.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
-                        type='MSL1'
+                        type="MSL1"
                         key={option.id}
                         title={option.title}
                         onClick={() => {

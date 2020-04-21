@@ -1,15 +1,15 @@
 import React, { useContext } from 'react'
 import { IconButton } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../context/recipe/index'
 import { StyledMeta, StyledMetaText, Content } from './styled'
 import { EditIcon } from '../../../assets/icons'
 
 export default function MetaView({ open }) {
    const {
       recipeState: {
-         pushableState: { description, cookingTime, utensils }
-      }
+         pushableState: { description, cookingTime, utensils },
+      },
    } = useContext(RecipeContext)
    return (
       <StyledMeta>
@@ -19,7 +19,7 @@ export default function MetaView({ open }) {
                   {description}
                </StyledMetaText>
                <span style={{ width: '20px' }} />
-               <IconButton type='outline' onClick={() => open(1)}>
+               <IconButton type="outline" onClick={() => open(1)}>
                   <EditIcon />
                </IconButton>
             </Content>

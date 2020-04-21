@@ -2,7 +2,7 @@ import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 
 // State
-import { Context } from '../../store/tabs'
+import { Context } from '../../context/tabs'
 
 import { StyledHome, StyledCardList } from './styled'
 
@@ -16,15 +16,15 @@ const Home = () => {
          <h1>Recipe App</h1>
          <StyledCardList>
             <DashboardTile
-               title='Recipes'
-               count='29'
-               conf='All available'
+               title="Recipes"
+               count="29"
+               conf="All available"
                onClick={() => addTab('Recipes', 'recipes')}
             />
             <DashboardTile
-               title='Ingredients'
-               count='29'
-               conf='All available'
+               title="Ingredients"
+               count="29"
+               conf="All available"
                onClick={() => addTab('Ingredients', 'ingredients')}
             />
          </StyledCardList>

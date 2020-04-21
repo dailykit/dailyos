@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 import { Text, TagGroup, Tag, ButtonTile, IconButton } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../context/recipe/index'
 
 import { IngredientsSection, Stats, CustomCrossButton } from './styled'
 import AddIcon from '../../../assets/icons/Add'
@@ -20,7 +20,7 @@ export default function Servings({ open }) {
       <>
          <IngredientsSection>
             <Stats>
-               <Text as='subtitle'>
+               <Text as="subtitle">
                   Servings (
                   {recipeState.servings[0]?.value !== 0
                      ? recipeState.servings.length
@@ -29,7 +29,7 @@ export default function Servings({ open }) {
                </Text>
                {recipeState.servings[0].value !== 0 &&
                   recipeState.servings.length > 0 && (
-                     <IconButton type='ghost' onClick={() => open(1)}>
+                     <IconButton type="ghost" onClick={() => open(1)}>
                         <AddIcon />
                      </IconButton>
                   )}
@@ -51,9 +51,9 @@ export default function Servings({ open }) {
                   ) : (
                      <ButtonTile
                         key={serving.id}
-                        as='button'
-                        type='secondary'
-                        text='Add Serving'
+                        as="button"
+                        type="secondary"
+                        text="Add Serving"
                         onClick={() => open(1)}
                      />
                   )

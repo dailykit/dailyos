@@ -9,7 +9,7 @@ import {
    TableRow,
    TableCell,
    Checkbox,
-   SearchBox
+   SearchBox,
 } from '@dailykit/ui'
 
 import { generateRandomString } from '../../../utils'
@@ -18,11 +18,11 @@ import { generateRandomString } from '../../../utils'
 import {
    AddIcon,
    ChevronLeftIcon,
-   ChevronRightIcon
+   ChevronRightIcon,
 } from '../../../assets/icons'
 
 // State
-import { Context } from '../../../store/tabs'
+import { Context } from '../../../context/tabs'
 
 // Styled
 import {
@@ -31,7 +31,7 @@ import {
    StyledTableActions,
    StyledHeader,
    StyledContent,
-   StyledPagination
+   StyledPagination,
 } from '../styled'
 import { CREATE_INGREDIENT, INGREDIENTS, INGREDIENT } from '../../../graphql'
 
@@ -60,18 +60,18 @@ const IngredientsListing = () => {
          cache,
          {
             data: {
-               createIngredient: { ingredient }
-            }
+               createIngredient: { ingredient },
+            },
          }
       ) => {
          const { ingredients } = cache.readQuery({ query: INGREDIENTS })
          cache.writeQuery({
             query: INGREDIENTS,
             data: {
-               ingredients: ingredients.concat([ingredient])
-            }
+               ingredients: ingredients.concat([ingredient]),
+            },
          })
-      }
+      },
    })
 
    const createIngredientHandler = async () => {
@@ -97,12 +97,12 @@ const IngredientsListing = () => {
             <p>filters</p>
             <StyledTableActions>
                <SearchBox
-                  placeholder='Search'
+                  placeholder="Search"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                />
-               <IconButton type='solid' onClick={createIngredientHandler}>
-                  <AddIcon color='#fff' size={24} />
+               <IconButton type="solid" onClick={createIngredientHandler}>
+                  <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledTableActions>
          </StyledTableHeader>

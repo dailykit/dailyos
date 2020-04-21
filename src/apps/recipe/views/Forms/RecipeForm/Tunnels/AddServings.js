@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Text, Input, ButtonTile, HelperText, IconButton } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../../store/recipe'
+import { Context as RecipeContext } from '../../../../context/recipe'
 
 import { TunnelContainer, ServingsInput } from '../styled'
 
@@ -21,7 +21,7 @@ export default function AddServings({ close, next }) {
    const changeServingsHandler = ({ id }, e) => {
       recipeDispatch({
          type: 'CHANGE_SERVINGS',
-         payload: { id, value: e.target.value }
+         payload: { id, value: e.target.value },
       })
       recipeDispatch({ type: 'ADD_SERVINGS_FOR_PUSHABLE' })
    }
@@ -29,7 +29,7 @@ export default function AddServings({ close, next }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title='Add Servings'
+            title="Add Servings"
             close={() => {
                recipeDispatch({ type: 'REFINE_SERVINGS' })
                recipeDispatch({ type: 'ADD_SERVINGS_FOR_PUSHABLE' })
@@ -40,10 +40,10 @@ export default function AddServings({ close, next }) {
                recipeDispatch({ type: 'ADD_SERVINGS_FOR_PUSHABLE' })
                next(1)
             }}
-            nextAction='Add'
+            nextAction="Add"
          />
          <Spacer />
-         <Text as='subtitle'>Enter Servings:</Text>
+         <Text as="subtitle">Enter Servings:</Text>
          <br />
          <ol>
             {recipeState.servings.map(serving => (
@@ -52,18 +52,18 @@ export default function AddServings({ close, next }) {
                      <ServingsInput>
                         <Input
                            onChange={e => changeServingsHandler(serving, e)}
-                           type='text'
-                           placeholder='enter'
+                           type="text"
+                           placeholder="enter"
                            name={serving.id}
                            value={serving.value || ''}
                         />
                         {serving.value > 0 && (
                            <IconButton
-                              type='outline'
+                              type="outline"
                               onClick={() => {
                                  recipeDispatch({
                                     type: 'REMOVE_SERVING',
-                                    payload: serving
+                                    payload: serving,
                                  })
                               }}
                            >
@@ -75,8 +75,8 @@ export default function AddServings({ close, next }) {
 
                   {serving.value <= 0 ? (
                      <HelperText
-                        type='hint'
-                        message='fill this first to continue adding new servings!'
+                        type="hint"
+                        message="fill this first to continue adding new servings!"
                      />
                   ) : null}
                </React.Fragment>
@@ -84,9 +84,9 @@ export default function AddServings({ close, next }) {
          </ol>
          <br />
          <ButtonTile
-            as='button'
-            type='secondary'
-            text='Add more servings'
+            as="button"
+            type="secondary"
+            text="Add more servings"
             onClick={addServingsHandler}
          />
       </TunnelContainer>

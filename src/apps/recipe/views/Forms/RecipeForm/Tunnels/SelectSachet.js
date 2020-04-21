@@ -5,10 +5,10 @@ import {
    ListSearch,
    ListOptions,
    ListItem,
-   useSingleList
+   useSingleList,
 } from '@dailykit/ui'
 
-import { Context as RecipeContext } from '../../../../store/recipe/index'
+import { Context as RecipeContext } from '../../../../context/recipe/index'
 
 import { TunnelContainer } from '../styled'
 
@@ -22,17 +22,17 @@ export default function SelectSachet({ next, sachets }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title='Select Sachet'
+            title="Select Sachet"
             close={() => next(5)}
             next={() => {
                recipeDispatch({
                   type: 'ADD_SACHET',
-                  payload: { sachet: current }
+                  payload: { sachet: current },
                })
 
                recipeDispatch({
                   type: 'ADD_SACHET_FOR_PUSHABLE',
-                  payload: current
+                  payload: current,
                })
                next(4)
                next(5)
@@ -42,11 +42,11 @@ export default function SelectSachet({ next, sachets }) {
 
          <List>
             {Object.keys(current).length > 0 ? (
-               <ListItem type='SSL1' title={current.title} />
+               <ListItem type="SSL1" title={current.title} />
             ) : (
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder='type what you’re looking for...'
+                  placeholder="type what you’re looking for..."
                />
             )}
             <ListOptions>
@@ -54,7 +54,7 @@ export default function SelectSachet({ next, sachets }) {
                   .filter(option => option.title.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
-                        type='SSL1'
+                        type="SSL1"
                         key={option.id}
                         title={option.title}
                         isActive={option.id === current.id}
