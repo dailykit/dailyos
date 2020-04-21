@@ -2,6 +2,7 @@ import Tabs from './Tabs'
 import TunnelHeader from './Form/TunnelHeader'
 import Spacer from './Form/Spacer'
 import { TunnelContainer } from './Form/styled'
+import ItemCard from './WorkOrder/ItemCard'
 import { ContactCard, AddressCard } from './Card'
 import FormHeading from './FormHeading/index'
 
@@ -12,5 +13,6 @@ export {
    TunnelContainer,
    ContactCard,
    FormHeading,
-   AddressCard
+   AddressCard,
+   ItemCard,
 }

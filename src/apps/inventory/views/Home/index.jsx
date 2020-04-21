@@ -28,6 +28,12 @@ const Home = () => {
                conf="All available"
                onClick={() => addTab('Supplier Items', 'items')}
             />
+            <DashboardTile
+               title="Work Orders"
+               count="29"
+               conf="All available"
+               onClick={() => addTab('Work Orders', 'orders')}
+            />
          </StyledTileContainer>
       </StyledHome>
    )
