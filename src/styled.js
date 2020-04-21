@@ -14,3 +14,10 @@ export const StyledLoader = styled.div`
       width: 48px;
    }
 `
+
+export const StyledWrapper = styled.div`
+   display: grid;
+   height: 100vh;
+   grid-template-columns: 1fr;
+   grid-template-rows: 40px 1fr;
+`
