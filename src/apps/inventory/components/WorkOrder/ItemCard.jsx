@@ -8,17 +8,19 @@ export default function ItemCard({
    shippedProcessing,
    onHand,
    shelfLife,
-   edit
+   edit,
+   available,
+   par,
 }) {
    return (
       <StyledCard>
          <div>
-            <Text as='title'>{title}</Text>
+            <Text as="title">{title}</Text>
 
             <div style={{ display: 'flex' }}>
                {shippedProcessing && (
                   <>
-                     <Text as='subtitle'>
+                     <Text as="subtitle">
                         Processing as Shipped: {shippedProcessing.join(', ')}
                      </Text>
                      <span style={{ width: '20px' }} />
@@ -26,18 +28,27 @@ export default function ItemCard({
                )}
                {onHand && (
                   <>
-                     <Text as='subtitle'>On Hand: {onHand} </Text>
+                     <Text as="subtitle">On Hand: {onHand} </Text>
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {shelfLife && (
-                  <Text as='subtitle'>Shelf Life: {shelfLife} </Text>
+                  <Text as="subtitle">Shelf Life: {shelfLife} </Text>
+               )}
+
+               {available && <Text as="subtitle">Available: {available} </Text>}
+
+               {par && (
+                  <>
+                     <span style={{ width: '20px' }} />
+                     <Text as="subtitle">Par: {par}</Text>
+                  </>
                )}
             </div>
          </div>
 
          <div>
-            <IconButton type='ghost' onClick={() => edit()}>
+            <IconButton type="ghost" onClick={() => edit()}>
                <EditIcon />
             </IconButton>
          </div>
