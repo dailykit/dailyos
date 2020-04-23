@@ -5,6 +5,11 @@ export const RECIPES = gql`
       simpleRecipes {
          id
          name
+         simpleRecipeYields {
+            yield
+            mealKit
+            readyToEat
+         }
       }
    }
 `

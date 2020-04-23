@@ -16,6 +16,7 @@ import {
 } from '../../../../context/product/simpleProduct'
 
 import { RecipeTunnel } from './tunnels'
+import { Recipe } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import { RECIPES } from '../../../../graphql'
@@ -85,12 +86,7 @@ export default function SimpleRecipeProduct() {
                   <div>stats</div>
                </StyledMeta>
                <StyledRule />
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text="Add Recipe"
-                  onClick={() => openTunnel(2)}
-               />
+               <Recipe openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </SimpleProductContext.Provider>
