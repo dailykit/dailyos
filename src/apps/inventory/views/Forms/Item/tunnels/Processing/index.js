@@ -28,11 +28,12 @@ export default function ProcessingTunnel({ close, next, processings }) {
          type: 'META',
          payload: { name: 'shipped', value: true },
       })
+      close()
       next()
    }
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={close}>
@@ -68,6 +69,6 @@ export default function ProcessingTunnel({ close, next, processings }) {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

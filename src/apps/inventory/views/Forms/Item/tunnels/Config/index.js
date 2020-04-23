@@ -4,7 +4,7 @@ import { TextButton, Input, ButtonTile, Tag, TagGroup } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
-import { ItemContext, state } from '../../../../../context/item'
+import { ItemContext } from '../../../../../context/item'
 
 import {
    TunnelHeader,
@@ -21,7 +21,7 @@ export default function ConfigTunnel({ close, open }) {
    const { state, dispatch } = React.useContext(ItemContext)
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={() => close(4)}>
@@ -30,7 +30,14 @@ export default function ConfigTunnel({ close, open }) {
                <span>Configure Processing: {state.processing.name.title}</span>
             </div>
             <div>
-               <TextButton type="solid">Save</TextButton>
+               <TextButton
+                  onClick={() => {
+                     close(4)
+                  }}
+                  type="solid"
+               >
+                  Save
+               </TextButton>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -239,7 +246,7 @@ export default function ConfigTunnel({ close, open }) {
                )}
             </StyledRow>
             {!state.form_meta.shipped && (
-               <React.Fragment>
+               <>
                   <StyledRow>
                      <StyledLabel>
                         Operating procedure for processing
@@ -253,9 +260,9 @@ export default function ConfigTunnel({ close, open }) {
                      <StyledLabel>Equipments needed</StyledLabel>
                      <Highlight></Highlight>
                   </StyledRow>
-               </React.Fragment>
+               </>
             )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
