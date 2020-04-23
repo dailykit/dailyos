@@ -2,24 +2,18 @@ import gql from 'graphql-tag'
 
 export const RECIPES = gql`
    {
-      recipes {
+      simpleRecipes {
          id
          name
-         servings {
-            size
-         }
       }
    }
 `
 
 export const PRODUCTS = gql`
    {
-      products {
+      simpleRecipeProducts {
          id
-         title
-         items {
-            label
-         }
+         name
       }
    }
 `
