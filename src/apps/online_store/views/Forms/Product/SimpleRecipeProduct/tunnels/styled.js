@@ -11,3 +11,7 @@ export const TunnelHeader = styled.div`
 export const TunnelBody = styled.div`
    padding: 32px;
 `
+
+export const StyledRow = styled.div`
+   margin-bottom: 32px;
+`

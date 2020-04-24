@@ -15,8 +15,8 @@ import {
    reducers,
 } from '../../../../context/product/simpleProduct'
 
-import { RecipeTunnel } from './tunnels'
-import { Recipe } from './components'
+import { RecipeTunnel, DescriptionTunnel } from './tunnels'
+import { Recipe, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import { RECIPES } from '../../../../graphql'
@@ -41,7 +41,9 @@ export default function SimpleRecipeProduct() {
    return (
       <SimpleProductContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>Desc</Tunnel>
+            <Tunnel layer={1}>
+               <DescriptionTunnel close={closeTunnel} />
+            </Tunnel>
             <Tunnel layer={2}>
                <RecipeTunnel close={closeTunnel} recipes={recipes} />
             </Tunnel>
@@ -76,12 +78,7 @@ export default function SimpleRecipeProduct() {
             <StyledBody>
                <StyledMeta>
                   <div>
-                     <ButtonTile
-                        type="primary"
-                        size="sm"
-                        text="Add Product description"
-                        onClick={e => console.log('Tile clicked')}
-                     />
+                     <Description openTunnel={openTunnel} />
                   </div>
                   <div>stats</div>
                </StyledMeta>

@@ -4,9 +4,10 @@ export const SimpleProductContext = React.createContext()
 
 export const state = {
    title: '',
-   tags: '',
+   tags: [],
    description: '',
    recipe: '',
+   options: [],
 }
 
 // *** Hasura schema ***
@@ -24,7 +25,7 @@ export const reducers = (state, { type, payload }) => {
             title: payload.value,
          }
       }
-      case 'DESC': {
+      case 'DESCRIPTION': {
          return {
             ...state,
             description: payload.value,
@@ -40,6 +41,12 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             recipe: payload.value,
+         }
+      }
+      case 'OPTIONS': {
+         return {
+            ...state,
+            options: payload.value,
          }
       }
       default:

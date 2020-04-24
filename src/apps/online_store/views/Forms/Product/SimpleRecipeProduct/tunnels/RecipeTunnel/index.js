@@ -25,6 +25,10 @@ export default function RecipeTunnel({ close, recipes }) {
          type: 'RECIPE',
          payload: { value: recipe },
       })
+      dispatch({
+         type: 'OPTIONS',
+         payload: { value: recipe.simpleRecipeYields },
+      })
       close(2)
    }
 
@@ -32,8 +36,8 @@ export default function RecipeTunnel({ close, recipes }) {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(1)}>
-                  <CloseIcon />
+               <span onClick={() => close(2)}>
+                  <CloseIcon color="#888D9D" />
                </span>
                <span>Select a Recipe</span>
             </div>
