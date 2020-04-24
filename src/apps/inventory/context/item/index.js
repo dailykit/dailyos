@@ -54,6 +54,7 @@ export const state = {
    activeProcessing: {},
    derivedProcessings: [],
    configurable: {},
+   activeSachet: {},
 }
 
 export const reducer = (state, { type, payload }) => {
@@ -61,10 +62,7 @@ export const reducer = (state, { type, payload }) => {
       case 'META': {
          return {
             ...state,
-            form_meta: {
-               ...state.form_meta,
-               [payload.name]: payload.value,
-            },
+            processing: { ...state.processing, shipped: true },
          }
       }
       case 'SUPPLIER': {
@@ -136,6 +134,7 @@ export const reducer = (state, { type, payload }) => {
             processing: {
                ...state.processing,
                name: payload.value,
+               sachets: [],
             },
          }
       }
@@ -263,6 +262,7 @@ export const reducer = (state, { type, payload }) => {
             yield: yieldPercentage,
             shelf_life: { unit: shelfLifeUnit, value: shelfLife },
             bulk_density: bulkDensity,
+            sachets: [],
          })
          return { ...state, derivedProcessings: configuredDerivedProcessings }
 
@@ -271,6 +271,73 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             configurable: { ...state.configurable, allergens: payload },
          }
+
+      case 'CONFIGURE_NEW_SACHET':
+         if (state.activeProcessing.shipped) {
+            const sachets = [...state.processing.sachets]
+            const index = sachets.findIndex(
+               sachet => sachet.quantity === payload.quantity
+            )
+            if (index >= 0) {
+               sachets.splice(index, 1, {
+                  id: index + 1,
+                  quantity: payload.quantity,
+                  parLevel: payload.par,
+                  maxInventoryLevel: payload.maxInventoryLevel,
+               })
+            } else {
+               sachets.push({
+                  id: sachets.length,
+                  quantity: payload.quantity,
+                  parLevel: payload.par,
+                  maxInventoryLevel: payload.maxInventoryLevel,
+               })
+            }
+            return {
+               ...state,
+               processing: { ...state.processing, sachets },
+               activeProcessing: { ...state.processing, sachets },
+            }
+         }
+         const derivedProcessings = [...state.derivedProcessings]
+         const indexOfActiveProcessing = derivedProcessings.findIndex(
+            proc => proc.id === state.activeProcessing.id
+         )
+
+         const newSachetsList = [
+            ...derivedProcessings[indexOfActiveProcessing].sachets,
+         ]
+
+         const sachetIndex = newSachetsList.findIndex(
+            sachet => sachet.quantity === payload.quantity
+         )
+         if (sachetIndex >= 0) {
+            newSachetsList.splice(sachetIndex, 1, {
+               id: sachetIndex + 1,
+               quantity: payload.quantity,
+               parLevel: payload.par,
+               maxInventoryLevel: payload.maxInventoryLevel,
+            })
+         } else {
+            newSachetsList.push({
+               id: newSachetsList.length,
+               quantity: payload.quantity,
+               parLevel: payload.par,
+               maxInventoryLevel: payload.maxInventoryLevel,
+            })
+         }
+
+         derivedProcessings[indexOfActiveProcessing].sachets = newSachetsList
+
+         return {
+            ...state,
+            derivedProcessings,
+            activeProcessing: derivedProcessings[indexOfActiveProcessing],
+         }
+
+      case 'SET_ACTIVE_SACHET':
+         return { ...state, activeSachet: payload }
+
       default:
          return state
    }

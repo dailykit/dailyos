@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import {
    Input,
@@ -21,6 +21,7 @@ import {
    SelectDerivedProcessingTunnel,
    ConfigureDerivedProcessingTunnel,
    AllergensTunnelForDerivedProcessing,
+   ConfigureSachetTunnel,
 } from './tunnels'
 
 // Styled
@@ -97,7 +98,7 @@ export default function ItemForm() {
          title: 'ALG 3',
       },
    ])
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(8)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(9)
 
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
@@ -149,6 +150,9 @@ export default function ItemForm() {
                   open={openTunnel}
                   close={closeTunnel}
                />
+            </Tunnel>
+            <Tunnel layer={9}>
+               <ConfigureSachetTunnel open={openTunnel} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -334,7 +338,7 @@ export default function ItemForm() {
                            }}
                         >
                            {state.activeProcessing?.name?.title ? (
-                              <ProcessingView />
+                              <ProcessingView open={openTunnel} />
                            ) : (
                               <Text as="title">
                                  Select any Processing from left menu to get
@@ -353,7 +357,7 @@ export default function ItemForm() {
    )
 }
 
-function ProcessingView() {
+function ProcessingView({ open }) {
    const [activeView, setActiveView] = React.useState('realtime') // realtime | plannedLot
    return (
       <>
@@ -372,16 +376,22 @@ function ProcessingView() {
             </ItemTab>
          </TabContainer>
 
-         <FlexContainer>
-            <Flexible width="4">
-               {activeView === 'realtime' ? (
-                  <RealTimeView />
-               ) : (
-                  <PlannedLotView />
-               )}
-            </Flexible>
-            <Flexible width="1">{/* TODO: add card here */}</Flexible>
-         </FlexContainer>
+         {activeView === 'realtime' && (
+            <>
+               <FlexContainer>
+                  <Flexible width="4">
+                     <RealTimeView />
+                  </Flexible>
+                  <Flexible width="1"></Flexible>
+               </FlexContainer>
+            </>
+         )}
+
+         {activeView === 'plannedLot' && (
+            <>
+               <PlannedLotView open={open} />
+            </>
+         )}
       </>
    )
 }
@@ -429,6 +439,67 @@ function RealTimeView() {
    )
 }
 
-function PlannedLotView() {
-   return <Text as="title">Planned Lot view</Text>
+function PlannedLotView({ open }) {
+   const {
+      state: { activeProcessing },
+      state,
+      dispatch,
+   } = useContext(ItemContext)
+
+   return (
+      <>
+         <FlexContainer>
+            <Flexible width="1">
+               <Text as="h2">Sachets</Text>
+
+               {activeProcessing.sachets.map(sachet => (
+                  <ProcessingButton
+                     active={sachet.id === state.activeSachet.id}
+                     onClick={() =>
+                        dispatch({ type: 'SET_ACTIVE_SACHET', payload: sachet })
+                     }
+                  >
+                     <h3>
+                        {sachet.quantity} {state.unit_quantity.unit}
+                     </h3>
+
+                     <Text as="subtitle">
+                        Par: {sachet.parLevel} {state.unit_quantity.unit}
+                     </Text>
+                  </ProcessingButton>
+               ))}
+
+               <div style={{ width: '90%', marginTop: '10px' }}>
+                  <ButtonTile
+                     type="primary"
+                     size="lg"
+                     text="Add Sachets"
+                     onClick={e => open(9)}
+                  />
+               </div>
+            </Flexible>
+            <Flexible width="4">
+               {state.activeSachet?.quantity && (
+                  <FlexContainer style={{ flexWrap: 'wrap' }}>
+                     <DataCard
+                        title="Awaiting"
+                        quantity="0gm"
+                        actionText="1 active purchase order"
+                     />
+                     <DataCard
+                        title="Commited"
+                        quantity="0gm"
+                        actionText="1 active purchase order"
+                     />
+                     <DataCard
+                        title="Consumed"
+                        quantity="0gm"
+                        actionText="1 active purchase order"
+                     />
+                  </FlexContainer>
+               )}
+            </Flexible>
+         </FlexContainer>
+      </>
+   )
 }
