@@ -11,7 +11,7 @@ export const state = {
    tags: [],
    description: '',
    recipe: '',
-   options: [],
+   options: {},
    accompaniments: [],
 }
 

@@ -67,80 +67,47 @@ export default function Recipe({ openTunnel }) {
                               </tr>
                            </thead>
                            <tbody>
-                              {state.options.map((el, i) => (
-                                 <tr key={i}>
-                                    <td>
-                                       {i === 0 ? (
-                                          <React.Fragment>
-                                             <Checkbox
-                                                checked={el.mealKit}
-                                                onChange={val =>
-                                                   console.log(val)
-                                                }
-                                             />
-                                             <span>Meal Kit</span>
-                                          </React.Fragment>
-                                       ) : (
-                                          ''
-                                       )}
-                                    </td>
-                                    <td>
-                                       {i === 0 ? (
-                                          <Toggle
-                                             checked={true}
-                                             setChecked={val =>
-                                                console.log(val)
-                                             }
-                                          />
-                                       ) : (
-                                          ''
-                                       )}
-                                    </td>
-                                    <td>{el.yield.serving} </td>
-                                    <td>{el.yield.serving} </td>
-                                    <td>{el.yield.serving} </td>
-                                 </tr>
-                              ))}
-                              <tr>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                              </tr>
-                              {state.options.map((el, i) => (
-                                 <tr key={i}>
-                                    <td>
-                                       {i === 0 ? (
-                                          <React.Fragment>
-                                             <Checkbox
-                                                checked={el.readyToEat}
-                                                onChange={val =>
-                                                   console.log(val)
-                                                }
-                                             />
-                                             <span>Ready to Eat</span>
-                                          </React.Fragment>
-                                       ) : (
-                                          ''
-                                       )}
-                                    </td>
-                                    <td>
-                                       {i === 0 ? (
-                                          <Toggle
-                                             checked={true}
-                                             setChecked={val =>
-                                                console.log(val)
-                                             }
-                                          />
-                                       ) : (
-                                          ''
-                                       )}
-                                    </td>
-                                    <td>{el.yield.serving} </td>
-                                    <td>{el.yield.serving} </td>
-                                    <td>{el.yield.serving} </td>
-                                 </tr>
-                              ))}
+                              {Object.entries(state.options).map(
+                                 ([type, value]) =>
+                                    value.options.map((el, i) => (
+                                       <tr key={i}>
+                                          <td>
+                                             {i === 0 ? (
+                                                <React.Fragment>
+                                                   <Checkbox
+                                                      checked={value.isActive}
+                                                      onChange={val =>
+                                                         console.log(val)
+                                                      }
+                                                   />
+                                                   <span>
+                                                      {type === 'mealKit'
+                                                         ? 'Meal Kit'
+                                                         : 'Ready to Eat'}
+                                                   </span>
+                                                </React.Fragment>
+                                             ) : (
+                                                ''
+                                             )}
+                                          </td>
+                                          <td>
+                                             {i === 0 ? (
+                                                <Toggle
+                                                   checked={value.isDefault}
+                                                   setChecked={val =>
+                                                      console.log(val)
+                                                   }
+                                                />
+                                             ) : (
+                                                ''
+                                             )}
+                                          </td>
+                                          <td>{el.yield.serving} </td>
+                                          <td>{el.price.value} </td>
+                                          <td>{el.discountedPrice.value} </td>
+                                       </tr>
+                                    ))
+                              )}
                            </tbody>
                         </StyledTable>
                      ) : (

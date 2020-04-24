@@ -25,9 +25,34 @@ export default function RecipeTunnel({ close, recipes }) {
          type: 'RECIPE',
          payload: { value: recipe },
       })
+      const yields = recipe.simpleRecipeYields.map(el => {
+         return {
+            ...el,
+            isActive: true,
+            price: {
+               value: '',
+            },
+            discountedPrice: {
+               value: '',
+            },
+         }
+      })
+      const options = {
+         mealKit: {
+            isActive: false,
+            isDefault: true,
+            options: yields,
+         },
+         readyToEat: {
+            isActive: false,
+            isDefault: false,
+            options: yields,
+         },
+      }
+      console.log(options)
       dispatch({
          type: 'OPTIONS',
-         payload: { value: recipe.simpleRecipeYields },
+         payload: { value: options },
       })
       close(2)
    }

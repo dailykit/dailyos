@@ -20,12 +20,13 @@ import {
    DescriptionTunnel,
    ProductsTypeTunnel,
    ProductsTunnel,
+   AccompanimentTypeTunnel,
+   PriceConfigurationTunnel,
 } from './tunnels'
 import { Recipe, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import { RECIPES, ACCOMPANIMENT_TYPES } from '../../../../graphql'
-import AccompanimentTypeTunnel from './tunnels/AccompanimentTypeTunnel'
 
 export default function SimpleRecipeProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
@@ -92,6 +93,9 @@ export default function SimpleRecipeProduct() {
                   close={closeTunnel}
                   products={products[state.meta.productsType]}
                />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <PriceConfigurationTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
