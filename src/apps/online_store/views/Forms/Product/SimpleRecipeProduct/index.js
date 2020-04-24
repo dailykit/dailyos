@@ -15,7 +15,12 @@ import {
    reducers,
 } from '../../../../context/product/simpleProduct'
 
-import { RecipeTunnel, DescriptionTunnel } from './tunnels'
+import {
+   RecipeTunnel,
+   DescriptionTunnel,
+   ProductsTypeTunnel,
+   ProductsTunnel,
+} from './tunnels'
 import { Recipe, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
@@ -31,6 +36,16 @@ export default function SimpleRecipeProduct() {
       { id: 2, title: 'Salads' },
       { id: 3, title: 'Sweets' },
    ])
+   const [products, setProducts] = React.useState({
+      inventory: [
+         { id: 1, title: 'INV 1' },
+         { id: 2, title: 'INV 2' },
+      ],
+      simple: [
+         { id: 1, title: 'SIM 1' },
+         { id: 2, title: 'SIM 2' },
+      ],
+   })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    useQuery(RECIPES, {
@@ -67,6 +82,15 @@ export default function SimpleRecipeProduct() {
                <AccompanimentTypeTunnel
                   close={closeTunnel}
                   accompanimentTypes={accompanimentTypes}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ProductsTypeTunnel open={openTunnel} close={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ProductsTunnel
+                  close={closeTunnel}
+                  products={products[state.meta.productsType]}
                />
             </Tunnel>
          </Tunnels>

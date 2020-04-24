@@ -3,6 +3,10 @@ import React from 'react'
 export const SimpleProductContext = React.createContext()
 
 export const state = {
+   meta: {
+      accompanimentType: 'Beverages',
+      productTypes: 'inventory',
+   },
    title: '',
    tags: [],
    description: '',
@@ -54,11 +58,53 @@ export const reducers = (state, { type, payload }) => {
          const accompaniments = payload.value.map(el => {
             return {
                type: el.title,
+               products: [],
             }
          })
          return {
             ...state,
             accompaniments,
+            meta: {
+               ...state.meta,
+               accompanimentType: accompaniments[0].type,
+            },
+         }
+      }
+      case 'ADD_ACCOMPANIMENTS': {
+         const index = state.accompaniments.findIndex(
+            el => el.type === state.meta.accompanimentType
+         )
+         const updatedAccompaniments = state.accompaniments
+         updatedAccompaniments[index].products = payload.value
+         return {
+            ...state,
+            accompaniments: updatedAccompaniments,
+         }
+      }
+      case 'ACCOMPANIMENT_DISCOUNT': {
+         const index = state.accompaniments.findIndex(
+            el => el.type === state.meta.accompanimentType
+         )
+         const updatedAccompaniments = state.accompaniments
+         const updatedAccompaniment = updatedAccompaniments[index]
+         const productIndex = updatedAccompaniment.products.findIndex(
+            el => el.id === payload.id
+         )
+         updatedAccompaniment.products[productIndex].discount.value =
+            payload.value
+         updatedAccompaniments[index] = updatedAccompaniment
+         return {
+            ...state,
+            accompaniments: updatedAccompaniments,
+         }
+      }
+      case 'META': {
+         return {
+            ...state,
+            meta: {
+               ...state.meta,
+               [payload.name]: payload.value,
+            },
          }
       }
       default:
