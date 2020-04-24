@@ -20,6 +20,7 @@ import {
    AllergensTunnel,
    SelectDerivedProcessingTunnel,
    ConfigureDerivedProcessingTunnel,
+   AllergensTunnelForDerivedProcessing,
 } from './tunnels'
 
 // Styled
@@ -96,7 +97,7 @@ export default function ItemForm() {
          title: 'ALG 3',
       },
    ])
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(6)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(8)
 
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
@@ -138,7 +139,14 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
                <ConfigureDerivedProcessingTunnel
-                  next={openTunnel}
+                  open={openTunnel}
+                  close={closeTunnel}
+               />
+            </Tunnel>
+
+            <Tunnel layer={8}>
+               <AllergensTunnelForDerivedProcessing
+                  open={openTunnel}
                   close={closeTunnel}
                />
             </Tunnel>
@@ -308,10 +316,10 @@ export default function ItemForm() {
                                  >
                                     <h3>{procs.name.title}</h3>
                                     <Text as="subtitle">on hand: 0gm</Text>
-                                    {/* <Text as="subtitle">
-                                    shelf life:{' '}
-                                    
-                                 </Text> */}
+                                    <Text as="subtitle">
+                                       shelf life:{' '}
+                                       {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
+                                    </Text>
                                  </ProcessingButton>
                               ))}
                            </>

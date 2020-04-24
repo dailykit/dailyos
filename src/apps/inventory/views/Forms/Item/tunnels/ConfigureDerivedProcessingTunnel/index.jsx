@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Input, ButtonTile } from '@dailykit/ui'
+import { Input, ButtonTile, TagGroup, Tag } from '@dailykit/ui'
 
 import { ItemContext } from '../../../../../context/item'
 
@@ -18,17 +18,43 @@ import {
    StyledLabel,
 } from '../styled'
 
-export default function ConfigureDerivedProcessingTunnel({ close, next }) {
+export default function ConfigureDerivedProcessingTunnel({ close, open }) {
    const {
       state: { configurable },
       dispatch,
    } = useContext(ItemContext)
 
+   const [par, setPar] = useState('')
+   const [parUnit, setParUnit] = useState('gms')
+   const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
+   const [maxInventoryUnit, setMaxInventoryUnit] = useState('gms')
+   const [laborTime, setLaborTime] = useState('')
+   const [laborUnit, setLaborUnit] = useState('hours')
+   const [yieldPercentage, setYieldPercentage] = useState('')
+   const [shelfLife, setShelfLife] = useState('')
+   const [shelfLifeUnit, setShelfLifeUnit] = useState('hours')
+   const [bulkDensity, setBulkDensity] = useState('')
+
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Processing"
+            title="Configure Processing"
             next={() => {
+               dispatch({
+                  type: 'CONFIGURE_DERIVED_PROCESSING',
+                  payload: {
+                     par,
+                     parUnit,
+                     maxInventoryLevel,
+                     maxInventoryUnit,
+                     laborTime,
+                     laborUnit,
+                     yieldPercentage,
+                     shelfLife,
+                     shelfLifeUnit,
+                     bulkDensity,
+                  },
+               })
                close(7)
             }}
             close={() => close(7)}
@@ -44,13 +70,17 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                      type="text"
                      label="Set par level"
                      name="par_level"
-                     value={''}
-                     onChange={e => {}}
+                     value={par}
+                     onChange={e => {
+                        const value = parseInt(e.target.value)
+                        if (e.target.value.length === 0) setPar('')
+                        if (value) setPar(value)
+                     }}
                   />
                   <StyledSelect
                      name="unit"
-                     defaultValue={''}
-                     onChange={e => {}}
+                     defaultValue={parUnit}
+                     onChange={e => setParUnit(e.target.value)}
                   >
                      <option value="gms">gms</option>
                      <option value="kgs">kgs</option>
@@ -61,13 +91,18 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                      type="text"
                      label="Max inventory level"
                      name="max_inventory_level"
-                     value={''}
-                     onChange={e => {}}
+                     value={maxInventoryLevel}
+                     onChange={e => {
+                        const value = parseInt(e.target.value)
+                        if (e.target.value.length === 0)
+                           setMaxInventoryLevel('')
+                        if (value) setMaxInventoryLevel(value)
+                     }}
                   />
                   <StyledSelect
                      name="unit"
-                     defaultValue={''}
-                     onChange={e => {}}
+                     defaultValue={maxInventoryUnit}
+                     onChange={e => setMaxInventoryUnit(e.target.value)}
                   >
                      <option value="gms">gms</option>
                      <option value="kgs">kgs</option>
@@ -94,13 +129,17 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                      type="text"
                      label="Labor time per 100gm"
                      name="labor_time"
-                     value={''}
-                     onChange={e => {}}
+                     value={laborTime}
+                     onChange={e => {
+                        const value = parseInt(e.target.value)
+                        if (e.target.value.length === 0) setLaborTime('')
+                        if (value) setLaborTime(value)
+                     }}
                   />
                   <StyledSelect
                      name="unit"
-                     defaultValue={''}
-                     onChange={e => {}}
+                     defaultValue={laborUnit}
+                     onChange={e => setLaborUnit(e.target.value)}
                   >
                      <option value="hours">hours</option>
                      <option value="minutes">minutes</option>
@@ -112,8 +151,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                      type="text"
                      label="Percentage of yield"
                      name="yield"
-                     value={''}
-                     onChange={e => {}}
+                     value={yieldPercentage}
+                     onChange={e => {
+                        const value = parseInt(e.target.value)
+                        if (e.target.value.length === 0) setYieldPercentage('')
+                        if (value) setYieldPercentage(value)
+                     }}
                   />
                   <span>%</span>
                </InputWrapper>
@@ -126,13 +169,17 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                      type="text"
                      label="Shelf life"
                      name="shelf_life"
-                     value={''}
-                     onChange={e => {}}
+                     value={shelfLife}
+                     onChange={e => {
+                        const value = parseInt(e.target.value)
+                        if (e.target.value.length === 0) setShelfLife('')
+                        if (value) setShelfLife(value)
+                     }}
                   />
                   <StyledSelect
                      name="unit"
-                     defaultValue={''}
-                     onChange={e => {}}
+                     defaultValue={shelfLifeUnit}
+                     onChange={e => setShelfLifeUnit(e.target.value)}
                   >
                      <option value="hours">hours</option>
                      <option value="days">days</option>
@@ -143,8 +190,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                      type="text"
                      label="Bulk density"
                      name="bulk_density"
-                     value={''}
-                     onChange={e => {}}
+                     value={bulkDensity}
+                     onChange={e => {
+                        const value = parseInt(e.target.value)
+                        if (e.target.value.length === 0) setBulkDensity('')
+                        if (value) setBulkDensity(value)
+                     }}
                   />
                </InputWrapper>
             </StyledInputGroup>
@@ -157,12 +208,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                onClick={e => console.log('Tile clicked')}
             />
          </StyledRow>
-         {/* <StyledRow>
+         <StyledRow>
             <StyledLabel>Allergens</StyledLabel>
-            {state.processing.allergens.length ? (
-               <Highlight pointer onClick={() => open(5)}>
+            {configurable.allergens?.length ? (
+               <Highlight pointer onClick={() => open(8)}>
                   <TagGroup>
-                     {state.processing.allergens.map(el => (
+                     {configurable.allergens.map(el => (
                         <Tag key={el.id}> {el.title} </Tag>
                      ))}
                   </TagGroup>
@@ -171,10 +222,10 @@ export default function ConfigureDerivedProcessingTunnel({ close, next }) {
                <ButtonTile
                   type="secondary"
                   text="Add Allergens"
-                  onClick={() => open(5)}
+                  onClick={() => open(8)}
                />
             )}
-         </StyledRow> */}
+         </StyledRow>
       </TunnelContainer>
    )
 }

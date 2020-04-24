@@ -234,6 +234,43 @@ export const reducer = (state, { type, payload }) => {
 
       case 'ADD_CONFIGURABLE_PROCESSING':
          return { ...state, configurable: payload }
+
+      case 'CONFIGURE_DERIVED_PROCESSING':
+         const {
+            par,
+            parUnit,
+            maxInventoryLevel,
+            maxInventoryUnit,
+            laborTime,
+            laborUnit,
+            yieldPercentage,
+            shelfLife,
+            shelfLifeUnit,
+            bulkDensity,
+         } = payload
+         const configuredDerivedProcessings = [...state.derivedProcessings]
+         const activeConfigurable = configuredDerivedProcessings.findIndex(
+            config => config.id === state.configurable.id
+         )
+         configuredDerivedProcessings.splice(activeConfigurable, 1, {
+            ...state.configurable,
+            par_level: { unit: parUnit, value: par },
+            max_inventory_level: {
+               unit: maxInventoryUnit,
+               value: maxInventoryLevel,
+            },
+            labor_time: { unit: laborUnit, value: laborTime },
+            yield: yieldPercentage,
+            shelf_life: { unit: shelfLifeUnit, value: shelfLife },
+            bulk_density: bulkDensity,
+         })
+         return { ...state, derivedProcessings: configuredDerivedProcessings }
+
+      case 'ADD_ALLERGENS_FOR_DERIVED_PROCESSING':
+         return {
+            ...state,
+            configurable: { ...state.configurable, allergens: payload },
+         }
       default:
          return state
    }

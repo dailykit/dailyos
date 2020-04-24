@@ -5,6 +5,7 @@ import ConfigTunnel from './Config'
 import AllergensTunnel from './Allergens'
 import SelectDerivedProcessingTunnel from './SelectDerivedProcessingTunnel'
 import ConfigureDerivedProcessingTunnel from './ConfigureDerivedProcessingTunnel'
+import AllergensTunnelForDerivedProcessing from './AllergensTunnel'
 
 export {
    SuppliersTunnel,
@@ -14,4 +15,5 @@ export {
    AllergensTunnel,
    SelectDerivedProcessingTunnel,
    ConfigureDerivedProcessingTunnel,
+   AllergensTunnelForDerivedProcessing,
 }
