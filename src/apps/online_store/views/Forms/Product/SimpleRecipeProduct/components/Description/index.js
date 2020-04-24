@@ -26,7 +26,7 @@ const Description = ({ openTunnel }) => {
             <ButtonTile
                type="primary"
                size="sm"
-               text="Add an App"
+               text="Add Description"
                onClick={() => openTunnel(1)}
             />
          )}

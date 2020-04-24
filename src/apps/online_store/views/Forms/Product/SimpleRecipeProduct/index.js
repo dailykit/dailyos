@@ -19,12 +19,18 @@ import { RecipeTunnel, DescriptionTunnel } from './tunnels'
 import { Recipe, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
-import { RECIPES } from '../../../../graphql'
+import { RECIPES, ACCOMPANIMENT_TYPES } from '../../../../graphql'
+import AccompanimentTypeTunnel from './tunnels/AccompanimentTypeTunnel'
 
 export default function SimpleRecipeProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
    const [recipes, setRecipes] = React.useState([])
+   const [accompanimentTypes, setAccompanimentTypes] = React.useState([
+      { id: 1, title: 'Beverages' },
+      { id: 2, title: 'Salads' },
+      { id: 3, title: 'Sweets' },
+   ])
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    useQuery(RECIPES, {
@@ -37,6 +43,16 @@ export default function SimpleRecipeProduct() {
          setRecipes(updatedRecipes)
       },
    })
+   // useQuery(ACCOMPANIMENT_TYPES, {
+   //    onCompleted: data => {
+   //       const { accompanimentTypes } = data
+   //       const updatedAccompanimentTypes = accompanimentTypes.map(item => {
+   //          item.title = item.name
+   //          return item
+   //       })
+   //       setAccompanimentTypes(updatedAccompanimentTypes)
+   //    },
+   // })
 
    return (
       <SimpleProductContext.Provider value={{ state, dispatch }}>
@@ -46,6 +62,12 @@ export default function SimpleRecipeProduct() {
             </Tunnel>
             <Tunnel layer={2}>
                <RecipeTunnel close={closeTunnel} recipes={recipes} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <AccompanimentTypeTunnel
+                  close={closeTunnel}
+                  accompanimentTypes={accompanimentTypes}
+               />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>

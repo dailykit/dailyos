@@ -8,6 +8,7 @@ export const state = {
    description: '',
    recipe: '',
    options: [],
+   accompaniments: [],
 }
 
 // *** Hasura schema ***
@@ -47,6 +48,17 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             options: payload.value,
+         }
+      }
+      case 'ACCOMPANIMENT_TYPES': {
+         const accompaniments = payload.value.map(el => {
+            return {
+               type: el.title,
+            }
+         })
+         return {
+            ...state,
+            accompaniments,
          }
       }
       default:

@@ -16,12 +16,13 @@ import {
    StyledTable,
 } from './styled'
 
+import { Accompaniments } from '../'
+
 export default function Recipe({ openTunnel }) {
    const { state, dispatch } = React.useContext(SimpleProductContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
-      deepView: 'salads',
    })
 
    return (
@@ -53,26 +54,6 @@ export default function Recipe({ openTunnel }) {
                         Accompaniments
                      </StyledTab>
                   </StyledTabs>
-                  {_state.view === 'accompaniments' && (
-                     <StyledTabs>
-                        <StyledTab
-                           onClick={() =>
-                              _setState({ ..._state, deepView: 'salads' })
-                           }
-                           active={_state.deepView === 'salads'}
-                        >
-                           Salads
-                        </StyledTab>
-                        <StyledTab
-                           onClick={() =>
-                              _setState({ ..._state, deepView: 'beverages' })
-                           }
-                           active={_state.deepView === 'beverages'}
-                        >
-                           Beverages
-                        </StyledTab>
-                     </StyledTabs>
-                  )}
                   <StyledTabView>
                      {_state.view === 'pricing' ? (
                         <StyledTable>
@@ -86,7 +67,7 @@ export default function Recipe({ openTunnel }) {
                               </tr>
                            </thead>
                            <tbody>
-                              {state.recipe.simpleRecipeYields.map((el, i) => (
+                              {state.options.map((el, i) => (
                                  <tr key={i}>
                                     <td>
                                        {i === 0 ? (
@@ -126,7 +107,7 @@ export default function Recipe({ openTunnel }) {
                                  <td></td>
                                  <td></td>
                               </tr>
-                              {state.recipe.simpleRecipeYields.map((el, i) => (
+                              {state.options.map((el, i) => (
                                  <tr key={i}>
                                     <td>
                                        {i === 0 ? (
@@ -163,7 +144,7 @@ export default function Recipe({ openTunnel }) {
                            </tbody>
                         </StyledTable>
                      ) : (
-                        <h1>Accomapniments</h1>
+                        <Accompaniments openTunnel={openTunnel} />
                      )}
                   </StyledTabView>
                </StyledPanel>
