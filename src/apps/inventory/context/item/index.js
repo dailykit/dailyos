@@ -55,6 +55,7 @@ export const state = {
    derivedProcessings: [],
    configurable: {},
    activeSachet: {},
+   nutriTarget: '',
 }
 
 export const reducer = (state, { type, payload }) => {
@@ -338,6 +339,44 @@ export const reducer = (state, { type, payload }) => {
       case 'SET_ACTIVE_SACHET':
          return { ...state, activeSachet: payload }
 
+      case 'ADD_PROCESSING_NUTRIENT':
+         const nutrientKeys = Object.keys(payload).filter(key => {
+            if (payload[key] === 0) return false
+            return true
+         })
+
+         const nutrientsForProcessing = {}
+
+         nutrientKeys.forEach(key => {
+            nutrientsForProcessing[key] = payload[key]
+         })
+         return {
+            ...state,
+            processing: {
+               ...state.processing,
+               nutrients: nutrientsForProcessing,
+            },
+         }
+
+      case 'SET_NUTRI_TARGET':
+         return { ...state, nutriTarget: payload }
+
+      case 'ADD_DERIVED_PROCESSING_NUTRIENT':
+         const keys = Object.keys(payload).filter(key => {
+            if (payload[key] === 0) return false
+            return true
+         })
+
+         const nutrients = {}
+
+         keys.forEach(key => {
+            nutrients[key] = payload[key]
+         })
+
+         return {
+            ...state,
+            configurable: { ...state.configurable, nutrients },
+         }
       default:
          return state
    }

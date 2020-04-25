@@ -22,6 +22,7 @@ import {
    ConfigureDerivedProcessingTunnel,
    AllergensTunnelForDerivedProcessing,
    ConfigureSachetTunnel,
+   NutritionTunnel,
 } from './tunnels'
 
 // Styled
@@ -98,7 +99,7 @@ export default function ItemForm() {
          title: 'ALG 3',
       },
    ])
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(9)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
@@ -153,6 +154,9 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel layer={9}>
                <ConfigureSachetTunnel open={openTunnel} close={closeTunnel} />
+            </Tunnel>
+            <Tunnel style={{ overflowY: 'auto' }} layer={10}>
+               <NutritionTunnel open={openTunnel} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>

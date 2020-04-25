@@ -1,8 +1,17 @@
 import React from 'react'
 
-import { TextButton, Input, ButtonTile, Tag, TagGroup } from '@dailykit/ui'
+import {
+   TextButton,
+   Input,
+   ButtonTile,
+   Tag,
+   TagGroup,
+   Text,
+   IconButton,
+} from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
+import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 
 import { ItemContext } from '../../../../../context/item'
 
@@ -220,12 +229,62 @@ export default function ConfigTunnel({ close, open }) {
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
-               <StyledLabel>Nutritions per 100gm</StyledLabel>
-               <ButtonTile
-                  type="secondary"
-                  text="Add Nutritions"
-                  onClick={e => console.log('Tile clicked')}
-               />
+               <StyledLabel
+                  style={{
+                     width: '100%',
+                     display: 'flex',
+                     justifyContent: 'space-between',
+                  }}
+               >
+                  <div>Nutritions per 100gm</div>
+                  <IconButton
+                     onClick={() => {
+                        dispatch({
+                           type: 'SET_NUTRI_TARGET',
+                           payload: 'processing',
+                        })
+                        open(10)
+                     }}
+                     type="ghost"
+                  >
+                     <EditIcon />
+                  </IconButton>
+               </StyledLabel>
+               {state.processing.nutrients?.fat ||
+               state.processing.nutrients?.cal ? (
+                  <>
+                     <div
+                        style={{
+                           width: '70%',
+                           minHeight: '100px',
+                           backgroundColor: '#F3F3F3',
+                           padding: '20px',
+                        }}
+                     >
+                        <Text as="title">
+                           <strong>calories: </strong>
+                           {state.processing.nutrients?.cal}
+                        </Text>
+
+                        <Text as="title">
+                           <strong>Total Fat: </strong>
+                           {state.processing.nutrients?.fat}
+                        </Text>
+                     </div>
+                  </>
+               ) : (
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Nutritions"
+                     onClick={e => {
+                        dispatch({
+                           type: 'SET_NUTRI_TARGET',
+                           payload: 'processing',
+                        })
+                        open(10)
+                     }}
+                  />
+               )}
             </StyledRow>
             <StyledRow>
                <StyledLabel>Allergens</StyledLabel>
