@@ -61,9 +61,18 @@ export const StyledTab = styled.div`
 
 export const StyledTabView = styled.div`
    padding: 16px;
+   position: relative;
+`
+
+export const StyledAction = styled.div`
+   position: absolute;
+   right: 16px;
+   top: 16px;
 `
 
 export const StyledTable = styled.table`
+   width: ${props => (props.full ? '100%' : 'auto')};
+
    thead {
       font-weight: 500;
       font-size: 12px;

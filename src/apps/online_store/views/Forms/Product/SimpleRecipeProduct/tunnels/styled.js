@@ -30,3 +30,7 @@ export const SolidTile = styled.button`
       cursor: pointer;
    }
 `
+
+export const StyledInputWrapper = styled.div`
+   width: ${props => props.width}px;
+`

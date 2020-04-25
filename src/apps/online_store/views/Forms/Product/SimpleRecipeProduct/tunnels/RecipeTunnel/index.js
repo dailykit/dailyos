@@ -30,10 +30,10 @@ export default function RecipeTunnel({ close, recipes }) {
             ...el,
             isActive: true,
             price: {
-               value: '',
+               value: 0,
             },
             discountedPrice: {
-               value: '',
+               value: 0,
             },
          }
       })

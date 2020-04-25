@@ -8,8 +8,6 @@ export const RECIPES = gql`
          simpleRecipeYields {
             id
             yield
-            mealKit
-            readyToEat
          }
       }
    }
