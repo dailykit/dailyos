@@ -130,7 +130,7 @@ export default function SimpleRecipeProduct() {
                   <div>
                      <Description openTunnel={openTunnel} />
                   </div>
-                  <div>stats</div>
+                  <div></div>
                </StyledMeta>
                <StyledRule />
                <Recipe openTunnel={openTunnel} />

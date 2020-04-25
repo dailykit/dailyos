@@ -1,8 +1,9 @@
 import React from 'react'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-import { TagGroup, ButtonTile, Tag } from '@dailykit/ui'
+import { TagGroup, ButtonTile, Tag, IconButton } from '@dailykit/ui'
 
-import { StyledRow, StyledContainer } from './styled'
+import { StyledRow, StyledContainer, StyledAction } from './styled'
+import { EditIcon } from '../../../../../../assets/icons'
 
 const Description = ({ openTunnel }) => {
    const { state, dispatch } = React.useContext(SimpleProductContext)
@@ -10,7 +11,12 @@ const Description = ({ openTunnel }) => {
    return (
       <React.Fragment>
          {state.description || state.tags.length ? (
-            <StyledContainer onClick={() => openTunnel(1)}>
+            <StyledContainer>
+               <StyledAction>
+                  <IconButton type="outline" onClick={() => openTunnel(1)}>
+                     <EditIcon />
+                  </IconButton>
+               </StyledAction>
                <StyledRow>
                   <TagGroup>
                      {state.tags.map(tag => (

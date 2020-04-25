@@ -89,8 +89,15 @@ export default function Recipe({ openTunnel }) {
                                                          checked={
                                                             value.isActive
                                                          }
-                                                         onChange={val =>
-                                                            console.log(val)
+                                                         onChange={value =>
+                                                            dispatch({
+                                                               type:
+                                                                  'TOGGLE_OPTION',
+                                                               payload: {
+                                                                  type,
+                                                                  value,
+                                                               },
+                                                            })
                                                          }
                                                       />
                                                       <span>
@@ -107,8 +114,15 @@ export default function Recipe({ openTunnel }) {
                                                 {i === 0 ? (
                                                    <Toggle
                                                       checked={value.isDefault}
-                                                      setChecked={val =>
-                                                         console.log(val)
+                                                      setChecked={value =>
+                                                         dispatch({
+                                                            type:
+                                                               'DEFAULT_OPTION',
+                                                            payload: {
+                                                               type,
+                                                               value,
+                                                            },
+                                                         })
                                                       }
                                                    />
                                                 ) : (

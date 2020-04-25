@@ -54,6 +54,29 @@ export const reducers = (state, { type, payload }) => {
             options: payload.value,
          }
       }
+      case 'TOGGLE_OPTION': {
+         const updatedOption = state.options[payload.type]
+         updatedOption.isActive = payload.value
+         return {
+            ...state,
+            options: {
+               ...state.options,
+               [payload.type]: updatedOption,
+            },
+         }
+      }
+      case 'DEFAULT_OPTION': {
+         const updatedOptions = state.options
+         Object.keys(updatedOptions).map(type => {
+            if (type === payload.type)
+               updatedOptions[type].isDefault = payload.value
+            else updatedOptions[type].isDefault = !payload.value
+         })
+         return {
+            ...state,
+            options: updatedOptions,
+         }
+      }
       case 'ACCOMPANIMENT_TYPES': {
          const accompaniments = payload.value.map(el => {
             return {

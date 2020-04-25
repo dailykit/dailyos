@@ -49,7 +49,15 @@ const PriceConfigurationTunnel = ({ close }) => {
 
    const [_state, _dispatch] = React.useReducer(reducer, state.options)
 
-   const save = () => {}
+   const save = () => {
+      dispatch({
+         type: 'OPTIONS',
+         payload: {
+            value: _state,
+         },
+      })
+      close(6)
+   }
 
    return (
       <React.Fragment>
