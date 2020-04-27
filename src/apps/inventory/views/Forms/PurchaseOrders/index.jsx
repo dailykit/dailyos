@@ -98,8 +98,8 @@ export default function PurchaseOrderForm() {
                      <ButtonTile
                         noIcon
                         type="secondary"
-                        text="Select Sub Title"
-                        onClick={e => openTunnel(1)}
+                        text="Select Supplier Item"
+                        onClick={() => openTunnel(1)}
                         style={{ margin: '20px 0' }}
                      />
                   )}

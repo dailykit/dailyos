@@ -1,4 +1,5 @@
 import React, { useContext, useState, useReducer } from 'react'
+import { useMutation } from '@apollo/react-hooks'
 
 import {
    Input,
@@ -18,6 +19,8 @@ import {
    reducers,
 } from '../../../context/supplier'
 
+import { CREATE_SUPPLIER } from '../../../graphql'
+
 import { FormHeading, ContactCard, AddressCard } from '../../../components'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import PersonContactTunnel from './Tunnels/PersonContactTunnel'
@@ -34,6 +37,23 @@ export default function SupplierForm() {
    const [supplierState, supplierDispatch] = useReducer(reducers, initialState)
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+
+   const [createSupplier] = useMutation(CREATE_SUPPLIER)
+
+   const handleSave = async () => {
+      const data = {
+         name: supplierState.name,
+         paymentTerms: supplierState.terms.paymentTerms,
+         shippingTerms: supplierState.terms.shippingTerms,
+         contactPerson: supplierState.contact,
+         address: supplierState.address,
+         available: false,
+      }
+
+      const res = await createSupplier({ variables: { object: data } })
+
+      console.log(res)
+   }
 
    const handleTabNameChange = async title => {
       supplierDispatch({ type: 'SET_NAME', payload: title })
@@ -79,7 +99,7 @@ export default function SupplierForm() {
 
                   <FormActions>
                      <TextButton
-                        onClick={() => {}}
+                        onClick={() => handleSave()}
                         type="ghost"
                         style={{ margin: '0px 10px' }}
                      >
