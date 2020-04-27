@@ -28,8 +28,6 @@ const ProductsListing = () => {
 
    const { loading, error, data } = useQuery(PRODUCTS)
 
-   console.log(data)
-
    if (loading) return <h1>loading</h1>
    if (error) return <h1>Start the data-hub server</h1>
 

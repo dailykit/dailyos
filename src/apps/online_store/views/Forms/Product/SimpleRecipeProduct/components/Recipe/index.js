@@ -21,7 +21,7 @@ import {
 import { Accompaniments } from '../'
 
 export default function Recipe({ openTunnel }) {
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+   const { state } = React.useContext(SimpleProductContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',

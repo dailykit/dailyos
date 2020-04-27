@@ -11,6 +11,30 @@ export const CREATE_PRODUCT = gql`
    }
 `
 
+export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
+   mutation CreateSimpleRecipeProduct(
+      $objects: [onlineStore_simpleRecipeProduct_insert_input!]!
+   ) {
+      createSimpleRecipeProduct(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
+   mutation CreateSimpleRecipeProductOption(
+      $objects: [onlineStore_simpleRecipeProductOption_insert_input!]!
+   ) {
+      createSimpleRecipeProductOption(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_COLLECTION = gql`
    mutation CreateCollection($title: String) {
       createMenuCollection(title: $title) {

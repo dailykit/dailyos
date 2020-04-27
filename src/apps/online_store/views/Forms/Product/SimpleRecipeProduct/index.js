@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
    Input,
    TextButton,
@@ -26,7 +26,13 @@ import {
 import { Recipe, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
-import { RECIPES, ACCOMPANIMENT_TYPES } from '../../../../graphql'
+import {
+   RECIPES,
+   ACCOMPANIMENT_TYPES,
+   PRODUCTS,
+   CREATE_SIMPLE_RECIPE_PRODUCT,
+   CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+} from '../../../../graphql'
 
 export default function SimpleRecipeProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
@@ -42,10 +48,7 @@ export default function SimpleRecipeProduct() {
          { id: 1, title: 'INV 1' },
          { id: 2, title: 'INV 2' },
       ],
-      simple: [
-         { id: 1, title: 'SIM 1' },
-         { id: 2, title: 'SIM 2' },
-      ],
+      simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
@@ -59,6 +62,20 @@ export default function SimpleRecipeProduct() {
          setRecipes(updatedRecipes)
       },
    })
+   useQuery(PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
+      },
+   })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
    //       const { accompanimentTypes } = data
@@ -69,6 +86,63 @@ export default function SimpleRecipeProduct() {
    //       setAccompanimentTypes(updatedAccompanimentTypes)
    //    },
    // })
+   const [createSimpleRecipeProductOptions] = useMutation(
+      CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+      {
+         onCompleted: data => {
+            console.log('Saved!')
+            console.log(data.createSimpleRecipeProductOptions)
+         },
+      }
+   )
+   const [createSimpleRecipeProduct] = useMutation(
+      CREATE_SIMPLE_RECIPE_PRODUCT,
+      {
+         onCompleted: data => {
+            const productId = data.createSimpleRecipeProduct.returning[0].id
+            saveOptions(productId)
+         },
+      }
+   )
+
+   const saveOptions = productId => {
+      const objects = Object.entries(state.options).map(([type, options]) => {
+         return options.map(value => {
+            return {
+               isActive: value.isActive,
+               price: [value.price],
+               simpleRecipeYieldId: value.id,
+               simpleRecipeProductId: productId,
+               type,
+            }
+         })
+      })
+      createSimpleRecipeProductOptions({
+         variables: {
+            objects: objects.flat(),
+         },
+      })
+   }
+
+   const save = () => {
+      console.log(state)
+      const object = {
+         accompaniments: state.accompaniments,
+         default: {
+            type: state.default.type,
+            id: state.default.value.id,
+         },
+         description: state.description,
+         name: state.title,
+         simpleRecipeId: state.recipe.id,
+         tags: state.tags,
+      }
+      createSimpleRecipeProduct({
+         variables: {
+            objects: [object],
+         },
+      })
+   }
 
    return (
       <SimpleProductContext.Provider value={{ state, dispatch }}>
@@ -116,7 +190,11 @@ export default function SimpleRecipeProduct() {
                   />
                </div>
                <div>
-                  <TextButton type="ghost" style={{ margin: '0px 10px' }}>
+                  <TextButton
+                     type="ghost"
+                     style={{ margin: '0px 10px' }}
+                     onClick={save}
+                  >
                      Save
                   </TextButton>
 
