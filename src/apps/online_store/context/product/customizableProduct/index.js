@@ -3,9 +3,16 @@ import React from 'react'
 export const CustomizableProductContext = React.createContext()
 
 export const state = {
+   meta: {
+      itemType: 'inventory',
+   },
    title: '',
    tags: [],
    description: '',
+   items: {
+      recipe: [],
+      inventory: [],
+   },
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -26,6 +33,24 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             tags: payload.value,
+         }
+      }
+      case 'ITEMS': {
+         return {
+            ...state,
+            items: {
+               ...state.items,
+               [payload.name]: payload.value,
+            },
+         }
+      }
+      case 'META': {
+         return {
+            ...state,
+            meta: {
+               ...state.meta,
+               [payload.name]: payload.value,
+            },
          }
       }
       default: {
