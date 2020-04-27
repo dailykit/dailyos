@@ -53,11 +53,15 @@ export default function SelectProductTunnel({ close }) {
             </Text>
          </SolidTile>
          <br />
-         <SolidTile onClick={() => addTab('Advanced Product', 'product')}>
-            <Text as="h1">Advanced Product</Text>
+         <SolidTile
+            onClick={() =>
+               addTab('Customizable Product', 'customizableProduct')
+            }
+         >
+            <Text as="h1">Customizable Product</Text>
             <Text as="subtitle">
-               Advanced product is an item with your recipes, sold as Meal Kits
-               as well as Ready to Eat
+               Customizable product has recipe options with one recipe as
+               default
             </Text>
          </SolidTile>
       </TunnelContainer>

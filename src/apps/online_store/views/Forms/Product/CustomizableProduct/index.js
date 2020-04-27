@@ -9,28 +9,30 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 
+// context
 import {
    state as initialState,
-   SimpleProductContext,
+   CustomizableProductContext,
    reducers,
-} from '../../../../context/product/simpleProduct'
+} from '../../../../context/product/customizableProduct'
 
-import {
-   RecipeTunnel,
-   DescriptionTunnel,
-   ProductsTypeTunnel,
-   ProductsTunnel,
-   AccompanimentTypeTunnel,
-   PriceConfigurationTunnel,
-} from './tunnels'
-import { Recipe, Description } from './components'
+// styles
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
+
+// graphql
 import { RECIPES, ACCOMPANIMENT_TYPES } from '../../../../graphql'
 
-export default function SimpleRecipeProduct() {
+// components
+import { Description } from './components'
+
+// tunnels
+import { DescriptionTunnel } from './tunnels'
+
+export default function CustomizableProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
+
    const [recipes, setRecipes] = React.useState([])
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
       { id: 1, title: 'Beverages' },
@@ -71,31 +73,10 @@ export default function SimpleRecipeProduct() {
    // })
 
    return (
-      <SimpleProductContext.Provider value={{ state, dispatch }}>
+      <CustomizableProductContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <DescriptionTunnel close={closeTunnel} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <RecipeTunnel close={closeTunnel} recipes={recipes} />
-            </Tunnel>
-            <Tunnel layer={3}>
-               <AccompanimentTypeTunnel
-                  close={closeTunnel}
-                  accompanimentTypes={accompanimentTypes}
-               />
-            </Tunnel>
-            <Tunnel layer={4}>
-               <ProductsTypeTunnel open={openTunnel} close={closeTunnel} />
-            </Tunnel>
-            <Tunnel layer={5}>
-               <ProductsTunnel
-                  close={closeTunnel}
-                  products={products[state.meta.productsType]}
-               />
-            </Tunnel>
-            <Tunnel layer={6}>
-               <PriceConfigurationTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -133,9 +114,8 @@ export default function SimpleRecipeProduct() {
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               <Recipe openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
-      </SimpleProductContext.Provider>
+      </CustomizableProductContext.Provider>
    )
 }

@@ -6,6 +6,7 @@ import {
    CollectionForm,
    InventoryProductForm,
    SimpleRecipeProductForm,
+   CustomizableProductForm,
 } from './Forms'
 
 export {
@@ -16,4 +17,5 @@ export {
    SimpleRecipeProductForm,
    InventoryProductForm,
    CollectionsListing,
+   CustomizableProductForm,
 }
