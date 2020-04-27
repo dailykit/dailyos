@@ -17,7 +17,7 @@ import {
 
 import FormHeading from '../../../components/FormHeading'
 import { FormActions, StyledWrapper, StyledForm } from '../styled'
-import { Spacer, ItemCard, ContactCard } from '../../../components/'
+import { Spacer, ItemCard } from '../../../components'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
@@ -28,10 +28,6 @@ export default function BulkWorkOrderForm() {
    const [bulkOrderState, bulkOrderDispatch] = useReducer(
       reducers,
       initialState
-   )
-
-   const [yieldPercentage, setYieldPercentage] = useState(
-      bulkOrderState.outputItemProcessing.yield || ''
    )
 
    return (
