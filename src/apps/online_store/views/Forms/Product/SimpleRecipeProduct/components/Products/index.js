@@ -18,16 +18,22 @@ const Products = ({ openTunnel, view }) => {
    })
 
    React.useEffect(() => {
-      if (state.meta.accompanimentType) {
-         const index = state.accompaniments.findIndex(
+      const index = state.accompaniments.findIndex(
+         el => el.type === state.meta.accompanimentType
+      )
+      console.log('Products: ', state.accompaniments[index].products)
+      _setState({
+         ..._state,
+         products: state.accompaniments[index].products,
+      })
+   }, [
+      state.meta.accompanimentType,
+      state.accompaniments[
+         state.accompaniments.findIndex(
             el => el.type === state.meta.accompanimentType
          )
-         _setState({
-            ..._state,
-            products: state.accompaniments[index].products,
-         })
-      }
-   }, [state.meta.accompanimentType])
+      ].products,
+   ])
 
    React.useEffect(() => {
       if (_state.products.length) {

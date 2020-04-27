@@ -4,7 +4,7 @@ export const SimpleProductContext = React.createContext()
 
 export const state = {
    meta: {
-      accompanimentType: 'Beverages',
+      accompanimentType: '',
       productTypes: 'inventory',
    },
    title: '',
@@ -12,7 +12,7 @@ export const state = {
    description: '',
    recipe: '',
    options: {},
-   defualt: {},
+   default: {},
    accompaniments: [],
 }
 
