@@ -12,30 +12,49 @@ const reducer = (state, { type, payload }) => {
    console.log('Reducer called...')
    switch (type) {
       case 'ACTIVE': {
-         const updatedType = state[payload.type]
-         const index = updatedType.options.findIndex(el => el.id === payload.id)
-         updatedType.options[index].isActive = payload.value
+         const updatedType = state.options[payload.type]
+         const index = updatedType.findIndex(el => el.id === payload.id)
+         updatedType[index].isActive = payload.value
          return {
             ...state,
-            [payload.type]: updatedType,
+            options: {
+               ...state.options,
+               [payload.type]: updatedType,
+            },
+         }
+      }
+      case 'DEFAULT': {
+         console.log(payload)
+         return {
+            ...state,
+            default: {
+               type: payload.type,
+               value: payload.value,
+            },
          }
       }
       case 'PRICE': {
-         const updatedType = state[payload.type]
-         const index = updatedType.options.findIndex(el => el.id === payload.id)
-         updatedType.options[index].price.value = +payload.value
+         const updatedType = state.options[payload.type]
+         const index = updatedType.findIndex(el => el.id === payload.id)
+         updatedType[index].price.value = payload.value
          return {
             ...state,
-            [payload.type]: updatedType,
+            options: {
+               ...state.options,
+               [payload.type]: updatedType,
+            },
          }
       }
       case 'DISCOUNT': {
-         const updatedType = state[payload.type]
-         const index = updatedType.options.findIndex(el => el.id === payload.id)
-         updatedType.options[index].discountedPrice.value = +payload.value
+         const updatedType = state.options[payload.type]
+         const index = updatedType.findIndex(el => el.id === payload.id)
+         updatedType[index].price.discount = payload.value
          return {
             ...state,
-            [payload.type]: updatedType,
+            options: {
+               ...state.options,
+               [payload.type]: updatedType,
+            },
          }
       }
       default: {
@@ -47,14 +66,21 @@ const reducer = (state, { type, payload }) => {
 const PriceConfigurationTunnel = ({ close }) => {
    const { state, dispatch } = React.useContext(SimpleProductContext)
 
-   const [_state, _dispatch] = React.useReducer(reducer, state.options)
+   const [_state, _dispatch] = React.useReducer(reducer, {
+      options: state.options,
+      default: state.default,
+   })
 
    const save = () => {
       dispatch({
          type: 'OPTIONS',
          payload: {
-            value: _state,
+            value: _state.options,
          },
+      })
+      dispatch({
+         type: 'DEFAULT',
+         payload: { ..._state.default },
       })
       close(6)
    }
@@ -80,14 +106,15 @@ const PriceConfigurationTunnel = ({ close }) => {
                   <tr>
                      <th>Type</th>
                      <th>Active</th>
+                     <th>Default</th>
                      <th>Serving</th>
                      <th>Price</th>
                      <th>Discounted Price</th>
                   </tr>
                </thead>
                <tbody>
-                  {Object.entries(_state).map(([type, value]) =>
-                     value.options.map((el, i) => (
+                  {Object.entries(_state.options).map(([type, value]) =>
+                     value.map((el, i) => (
                         <tr key={type + i}>
                            <td>
                               {i === 0
@@ -111,18 +138,38 @@ const PriceConfigurationTunnel = ({ close }) => {
                                  }
                               />
                            </td>
+                           <td>
+                              <input
+                                 type="radio"
+                                 checked={
+                                    el.id === _state.default.value.id &&
+                                    type === _state.default.type
+                                 }
+                                 onClick={() =>
+                                    _dispatch({
+                                       type: 'DEFAULT',
+                                       payload: {
+                                          type,
+                                          value: el,
+                                       },
+                                    })
+                                 }
+                              />
+                           </td>
                            <td>{el.yield.serving}</td>
                            <td>
                               <StyledInputWrapper width="60">
+                                 $
                                  <Input
                                     type="text"
-                                    value={'$' + el.price.value}
+                                    name={`${type}-price-input`}
+                                    value={el.price.value}
                                     onChange={e =>
                                        _dispatch({
                                           type: 'PRICE',
                                           payload: {
                                              type,
-                                             value: e.target.value.substr(1),
+                                             value: e.target.value,
                                              id: el.id,
                                           },
                                        })
@@ -134,18 +181,19 @@ const PriceConfigurationTunnel = ({ close }) => {
                               <StyledInputWrapper width="60">
                                  <Input
                                     type="text"
-                                    value={'$' + el.discountedPrice.value}
+                                    value={el.price.discount}
                                     onChange={e =>
                                        _dispatch({
                                           type: 'DISCOUNT',
                                           payload: {
                                              type,
-                                             value: e.target.value.substr(1),
+                                             value: e.target.value,
                                              id: el.id,
                                           },
                                        })
                                     }
-                                 />
+                                 />{' '}
+                                 %
                               </StyledInputWrapper>
                            </td>
                         </tr>

@@ -12,6 +12,7 @@ export const state = {
    description: '',
    recipe: '',
    options: {},
+   defualt: {},
    accompaniments: [],
 }
 
@@ -54,27 +55,13 @@ export const reducers = (state, { type, payload }) => {
             options: payload.value,
          }
       }
-      case 'TOGGLE_OPTION': {
-         const updatedOption = state.options[payload.type]
-         updatedOption.isActive = payload.value
+      case 'DEFAULT': {
          return {
             ...state,
-            options: {
-               ...state.options,
-               [payload.type]: updatedOption,
+            default: {
+               type: payload.type,
+               value: payload.value,
             },
-         }
-      }
-      case 'DEFAULT_OPTION': {
-         const updatedOptions = state.options
-         Object.keys(updatedOptions).map(type => {
-            if (type === payload.type)
-               updatedOptions[type].isDefault = payload.value
-            else updatedOptions[type].isDefault = !payload.value
-         })
-         return {
-            ...state,
-            options: updatedOptions,
          }
       }
       case 'ACCOMPANIMENT_TYPES': {

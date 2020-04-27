@@ -33,4 +33,6 @@ export const SolidTile = styled.button`
 
 export const StyledInputWrapper = styled.div`
    width: ${props => props.width}px;
+   display: flex;
+   align-items: center;
 `

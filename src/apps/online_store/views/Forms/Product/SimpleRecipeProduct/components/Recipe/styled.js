@@ -113,3 +113,12 @@ export const StyledTable = styled.table`
       }
    }
 `
+
+export const StyledDefault = styled.span`
+   padding: 2px;
+   background: linear-gradient(180deg, #28c1f7 -4.17%, #00a7e1 100%);
+   color: #fff;
+   text-transform: uppercase;
+   font-size: 12px;
+   font-weight: normal;
+`

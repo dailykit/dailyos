@@ -15,6 +15,7 @@ import {
    StyledTabView,
    StyledTable,
    StyledAction,
+   StyledDefault,
 } from './styled'
 
 import { Accompaniments } from '../'
@@ -56,7 +57,7 @@ export default function Recipe({ openTunnel }) {
                      </StyledTab>
                   </StyledTabs>
                   <StyledTabView>
-                     <StyledAction>
+                     <StyledAction hidden={_state.view !== 'pricing'}>
                         <TextButton
                            type="outline"
                            onClick={() => openTunnel(6)}
@@ -69,7 +70,6 @@ export default function Recipe({ openTunnel }) {
                            <thead>
                               <tr>
                                  <th></th>
-                                 <th>Make default</th>
                                  <th>Servings</th>
                                  <th>Price</th>
                                  <th>Discounted Price</th>
@@ -78,62 +78,39 @@ export default function Recipe({ openTunnel }) {
                            <tbody>
                               {Object.entries(state.options).map(
                                  ([type, value]) =>
-                                    value.options
+                                    value
                                        .filter(el => el.isActive)
                                        .map((el, i) => (
                                           <tr key={i}>
                                              <td>
                                                 {i === 0 ? (
-                                                   <React.Fragment>
-                                                      <Checkbox
-                                                         checked={
-                                                            value.isActive
-                                                         }
-                                                         onChange={value =>
-                                                            dispatch({
-                                                               type:
-                                                                  'TOGGLE_OPTION',
-                                                               payload: {
-                                                                  type,
-                                                                  value,
-                                                               },
-                                                            })
-                                                         }
-                                                      />
-                                                      <span>
-                                                         {type === 'mealKit'
-                                                            ? 'Meal Kit'
-                                                            : 'Ready to Eat'}
-                                                      </span>
-                                                   </React.Fragment>
+                                                   <span>
+                                                      {type === 'mealKit'
+                                                         ? 'Meal Kit'
+                                                         : 'Ready to Eat'}
+                                                   </span>
                                                 ) : (
                                                    ''
                                                 )}
                                              </td>
                                              <td>
-                                                {i === 0 ? (
-                                                   <Toggle
-                                                      checked={value.isDefault}
-                                                      setChecked={value =>
-                                                         dispatch({
-                                                            type:
-                                                               'DEFAULT_OPTION',
-                                                            payload: {
-                                                               type,
-                                                               value,
-                                                            },
-                                                         })
-                                                      }
-                                                   />
-                                                ) : (
-                                                   ''
-                                                )}
+                                                {el.yield.serving}{' '}
+                                                <StyledDefault
+                                                   hidden={
+                                                      !(
+                                                         el.id ===
+                                                            state.default.value
+                                                               .id &&
+                                                         type ===
+                                                            state.default.type
+                                                      )
+                                                   }
+                                                >
+                                                   Default
+                                                </StyledDefault>
                                              </td>
-                                             <td>{el.yield.serving} </td>
                                              <td>${el.price.value} </td>
-                                             <td>
-                                                ${el.discountedPrice.value}{' '}
-                                             </td>
+                                             <td>{el.price.discount} %</td>
                                           </tr>
                                        ))
                               )}

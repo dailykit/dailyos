@@ -27,6 +27,13 @@ export default function Items({ openTunnel }) {
       currentItem: state.items[state.meta.itemType][0] || {},
    })
 
+   React.useEffect(() => {
+      _setState({
+         ..._state,
+         currentItem: state.items[state.meta.itemType][0] || {},
+      })
+   }, [state.items])
+
    return (
       <StyledWrapper>
          {state.items[state.meta.itemType].length ? (
@@ -72,7 +79,10 @@ export default function Items({ openTunnel }) {
                            Configure Pricing
                         </TextButton>
                      </StyledAction>
-                     ) : (<React.Fragment>Accompaniments</React.Fragment>
+                     {_state.view === 'pricing' ? (
+                        'Pricing'
+                     ) : (
+                        <Accompaniments openTunnel={openTunnel} />
                      )}
                   </StyledTabView>
                </StyledPanel>
