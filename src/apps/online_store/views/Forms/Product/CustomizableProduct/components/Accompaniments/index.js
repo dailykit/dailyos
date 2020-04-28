@@ -8,7 +8,7 @@ import { StyledTab, StyledTabs, StyledTabView } from './styled'
 
 import { Products } from '../'
 
-const Accompaniments = ({ openTunnel }) => {
+const Accompaniments = ({ openTunnel, accompaniments }) => {
    const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const [_state, _setState] = React.useState({
@@ -29,10 +29,10 @@ const Accompaniments = ({ openTunnel }) => {
 
    return (
       <React.Fragment>
-         {state.accompaniments.length ? (
+         {state.meta.currentItem.accompaniments.length ? (
             <React.Fragment>
                <StyledTabs>
-                  {state.accompaniments.map(el => (
+                  {state.meta.currentItem.accompaniments.map(el => (
                      <StyledTab
                         key={el.type}
                         onClick={() => _setState({ ..._state, view: el.type })}
@@ -50,7 +50,7 @@ const Accompaniments = ({ openTunnel }) => {
             <ButtonTile
                type="secondary"
                text="Add Accompaniment Types"
-               onClick={() => openTunnel(3)}
+               onClick={() => openTunnel(4)}
             />
          )}
       </React.Fragment>

@@ -12,10 +12,10 @@ import {
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 
 const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+   const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(accompanimentTypes)
@@ -27,14 +27,14 @@ const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
             value: selected,
          },
       })
-      close(3)
+      close(4)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(3)}>
+               <span onClick={() => close(4)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <span>Select Accompaniment Type</span>

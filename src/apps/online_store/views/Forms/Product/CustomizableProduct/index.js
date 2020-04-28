@@ -31,7 +31,14 @@ import {
 import { Description, Items } from './components'
 
 // tunnels
-import { DescriptionTunnel, ItemTypeTunnel, ItemsTunnel } from './tunnels'
+import {
+   DescriptionTunnel,
+   ItemTypeTunnel,
+   ItemsTunnel,
+   AccompanimentTypeTunnel,
+   ProductsTypeTunnel,
+   ProductsTunnel,
+} from './tunnels'
 
 export default function CustomizableProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
@@ -89,6 +96,21 @@ export default function CustomizableProduct() {
                <ItemsTunnel
                   close={closeTunnel}
                   items={products[state.meta.itemType]}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <AccompanimentTypeTunnel
+                  close={closeTunnel}
+                  accompanimentTypes={accompanimentTypes}
+               />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ProductsTypeTunnel close={closeTunnel} open={openTunnel} />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <ProductsTunnel
+                  close={closeTunnel}
+                  products={products[state.meta.productsType]}
                />
             </Tunnel>
          </Tunnels>

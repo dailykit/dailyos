@@ -12,10 +12,10 @@ import {
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 
 const ProductsTunnel = ({ close, products }) => {
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+   const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(products)
@@ -35,15 +35,15 @@ const ProductsTunnel = ({ close, products }) => {
             value: products,
          },
       })
+      close(6)
       close(5)
-      close(4)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(5)}>
+               <span onClick={() => close(6)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <span>Select Products to Add</span>

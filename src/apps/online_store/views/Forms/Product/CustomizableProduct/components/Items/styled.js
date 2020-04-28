@@ -14,6 +14,7 @@ export const StyledLayout = styled.div`
 export const StyledPanel = styled.div`
    background: #fff;
    padding: 24px;
+   position: relative;
 
    h2 {
       font-weight: 500;
@@ -34,11 +35,14 @@ export const StyledListingTile = styled.div`
    padding: 8px;
    margin-bottom: 12px;
    color: ${props => (props.active ? '#fff' : '#555B6E')};
+   cursor: pointer;
+   height: 100px;
 
    h3 {
       font-weight: 500;
       font-size: 16px;
       line-height: 14px;
+      margin-bottom: 8px;
    }
 `
 

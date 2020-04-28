@@ -4,21 +4,21 @@ import { Text } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody, SolidTile } from '../styled'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 
 const ProductsTypeTunnel = ({ close, open }) => {
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+   const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const select = value => {
       dispatch({ type: 'META', payload: { name: 'productsType', value } })
-      open(5)
+      open(6)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(4)}>
+               <span onClick={() => close(5)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <span>Select a Product Type</span>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
    StyledListing,
    StyledLayout,
@@ -9,7 +9,7 @@ import {
 import { ButtonTile, Input } from '@dailykit/ui'
 
 const Products = ({ openTunnel, view }) => {
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+   const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const [_state, _setState] = React.useState({
       products: [],
@@ -19,12 +19,12 @@ const Products = ({ openTunnel, view }) => {
 
    React.useEffect(() => {
       if (state.meta.accompanimentType) {
-         const index = state.accompaniments.findIndex(
+         const index = state.meta.currentItem.accompaniments.findIndex(
             el => el.type === state.meta.accompanimentType
          )
          _setState({
             ..._state,
-            products: state.accompaniments[index].products,
+            products: state.meta.currentItem.accompaniments[index].products,
          })
       }
    }, [state.meta.accompanimentType])
@@ -90,7 +90,7 @@ const Products = ({ openTunnel, view }) => {
             <ButtonTile
                type="secondary"
                text="Add Products"
-               onClick={() => openTunnel(4)}
+               onClick={() => openTunnel(5)}
             />
          )}
       </React.Fragment>

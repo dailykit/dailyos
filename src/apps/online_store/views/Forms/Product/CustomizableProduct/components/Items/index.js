@@ -18,6 +18,7 @@ import {
 } from './styled'
 
 import { Accompaniments } from '../'
+import { StyledDefault } from '../../../SimpleRecipeProduct/components/Recipe/styled'
 
 export default function Items({ openTunnel }) {
    const { state, dispatch } = React.useContext(CustomizableProductContext)
@@ -36,7 +37,15 @@ export default function Items({ openTunnel }) {
       })
    }, [state.items])
 
-   console.log(_state)
+   React.useEffect(() => {
+      dispatch({
+         type: 'META',
+         payload: {
+            name: 'currentItem',
+            value: _state.currentItem,
+         },
+      })
+   }, [_state.currentItem])
 
    return (
       <StyledWrapper>
@@ -51,11 +60,34 @@ export default function Items({ openTunnel }) {
                         }
                      >
                         <h3>{item.title}</h3>
+                        <StyledDefault hidden={state.default.id !== item.id}>
+                           Default
+                        </StyledDefault>
                      </StyledListingTile>
                   ))}
                </StyledListing>
                <StyledPanel>
                   <h2>{_state.currentItem.title}</h2>
+                  <StyledAction
+                     hidden={state.default.id === _state.currentItem.id}
+                  >
+                     <TextButton
+                        type="outline"
+                        onClick={() => {
+                           dispatch({
+                              type: 'DEFAULT',
+                              payload: {
+                                 value: {
+                                    type: _state.currentItem.type,
+                                    id: _state.currentItem.id,
+                                 },
+                              },
+                           })
+                        }}
+                     >
+                        Make Default
+                     </TextButton>
+                  </StyledAction>
                   <StyledTabs>
                      <StyledTab
                         onClick={() =>
@@ -129,7 +161,10 @@ export default function Items({ openTunnel }) {
                            </tbody>
                         </StyledTable>
                      ) : (
-                        <Accompaniments openTunnel={openTunnel} />
+                        <Accompaniments
+                           openTunnel={openTunnel}
+                           accompaniments={_state.currentItem.accompaniments}
+                        />
                      )}
                   </StyledTabView>
                </StyledPanel>

@@ -27,6 +27,7 @@ const ItemsTunnel = ({ close, items }) => {
          return {
             ...el,
             type: state.meta.itemType,
+            accompaniments: [],
          }
       })
       dispatch({
@@ -35,6 +36,17 @@ const ItemsTunnel = ({ close, items }) => {
             value: updatedItems,
          },
       })
+      if (!Object.keys(state.default).length) {
+         dispatch({
+            type: 'DEFAULT',
+            payload: {
+               value: {
+                  type: state.meta.itemType,
+                  id: updatedItems[0].id,
+               },
+            },
+         })
+      }
       close(3)
       close(2)
    }
