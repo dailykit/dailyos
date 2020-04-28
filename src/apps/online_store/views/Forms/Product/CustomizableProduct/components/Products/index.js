@@ -27,7 +27,14 @@ const Products = ({ openTunnel, view }) => {
             products: state.meta.currentItem.accompaniments[index].products,
          })
       }
-   }, [state.meta.accompanimentType])
+   }, [
+      state.meta.accompanimentType,
+      state.meta.currentItem.accompaniments[
+         state.meta.currentItem.accompaniments.findIndex(
+            el => el.type === state.meta.accompanimentType
+         )
+      ].products,
+   ])
 
    React.useEffect(() => {
       if (_state.products.length) {
