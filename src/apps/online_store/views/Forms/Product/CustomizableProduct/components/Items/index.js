@@ -65,6 +65,12 @@ export default function Items({ openTunnel }) {
                         </StyledDefault>
                      </StyledListingTile>
                   ))}
+                  <ButtonTile
+                     type="primary"
+                     size="sm"
+                     text="Add Products"
+                     onClick={() => openTunnel(2)}
+                  />
                </StyledListing>
                <StyledPanel>
                   <h2>{_state.currentItem.title}</h2>

@@ -70,6 +70,11 @@ const Products = ({ openTunnel, view }) => {
                         {product.title}
                      </StyledListingTile>
                   ))}
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Products"
+                     onClick={() => openTunnel(5)}
+                  />
                </StyledListing>
                <StyledPanel>
                   <h2>{_state.currentProduct.title}</h2>

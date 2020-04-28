@@ -85,7 +85,10 @@ export const reducers = (state, { type, payload }) => {
             el => el.type === state.meta.accompanimentType
          )
          const updatedAccompaniments = state.accompaniments
-         updatedAccompaniments[index].products = payload.value
+         updatedAccompaniments[index].products = [
+            ...updatedAccompaniments[index].products,
+            ...payload.value,
+         ]
          return {
             ...state,
             accompaniments: updatedAccompaniments,
