@@ -21,7 +21,11 @@ import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 
 // graphql
-import { RECIPES, ACCOMPANIMENT_TYPES } from '../../../../graphql'
+import {
+   RECIPES,
+   ACCOMPANIMENT_TYPES,
+   SIMPLE_RECIPE_PRODUCTS,
+} from '../../../../graphql'
 
 // components
 import { Description, Items } from './components'
@@ -33,19 +37,6 @@ export default function CustomizableProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
 
-   const [items, setItems] = React.useState({
-      recipe: [],
-      inventory: [
-         {
-            id: 1,
-            title: 'INV 1',
-         },
-         {
-            id: 2,
-            title: 'INV 2',
-         },
-      ],
-   })
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
       { id: 1, title: 'Beverages' },
       { id: 2, title: 'Salads' },
@@ -56,21 +47,22 @@ export default function CustomizableProduct() {
          { id: 1, title: 'INV 1' },
          { id: 2, title: 'INV 2' },
       ],
-      simple: [
-         { id: 1, title: 'SIM 1' },
-         { id: 2, title: 'SIM 2' },
-      ],
+      simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   useQuery(RECIPES, {
+   useQuery(SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: data => {
-         const { simpleRecipes } = data
-         const updatedRecipes = simpleRecipes.map(item => {
-            item.title = item.name
-            return item
+         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
          })
-         setItems({ ...items, recipe: updatedRecipes })
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
       },
    })
    // useQuery(ACCOMPANIMENT_TYPES, {
@@ -96,7 +88,7 @@ export default function CustomizableProduct() {
             <Tunnel layer={3}>
                <ItemsTunnel
                   close={closeTunnel}
-                  items={items[state.meta.itemType]}
+                  items={products[state.meta.itemType]}
                />
             </Tunnel>
          </Tunnels>

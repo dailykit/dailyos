@@ -24,22 +24,26 @@ export default function Items({ openTunnel }) {
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
-      currentItem: state.items[state.meta.itemType][0] || {},
+      items: [],
+      currentItem: {},
    })
 
    React.useEffect(() => {
       _setState({
          ..._state,
-         currentItem: state.items[state.meta.itemType][0] || {},
+         items: [...state.items],
+         currentItem: state.items[0] || {},
       })
    }, [state.items])
 
+   console.log(_state)
+
    return (
       <StyledWrapper>
-         {state.items[state.meta.itemType].length ? (
+         {_state.items.length ? (
             <StyledLayout>
                <StyledListing>
-                  {state.items[state.meta.itemType].map(item => (
+                  {_state.items.map(item => (
                      <StyledListingTile
                         active={_state.currentItem.id === item.id}
                         onClick={() =>
@@ -71,16 +75,59 @@ export default function Items({ openTunnel }) {
                      </StyledTab>
                   </StyledTabs>
                   <StyledTabView>
-                     <StyledAction>
-                        <TextButton
-                           type="outline"
-                           onClick={() => openTunnel(6)}
-                        >
-                           Configure Pricing
-                        </TextButton>
-                     </StyledAction>
                      {_state.view === 'pricing' ? (
-                        'Pricing'
+                        <StyledTable>
+                           <thead>
+                              <tr>
+                                 <th></th>
+                                 <th>Servings</th>
+                                 <th>Price</th>
+                                 <th>Discounted Price</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              {_state.currentItem?.simpleRecipeProductOptions
+                                 .filter(option => option.type === 'mealKit')
+                                 .filter(option => option.isActive)
+                                 .map((option, i) => (
+                                    <tr key={i}>
+                                       <td>
+                                          {i === 0 ? <span>Meal Kit</span> : ''}
+                                       </td>
+                                       <td>
+                                          {
+                                             option.simpleRecipeYield.yield
+                                                .serving
+                                          }
+                                       </td>
+                                       <td>${option.price[0].value} </td>
+                                       <td>{option.price[0].discount} %</td>
+                                    </tr>
+                                 ))}
+                              {_state.currentItem?.simpleRecipeProductOptions
+                                 .filter(option => option.type === 'readyToEat')
+                                 .filter(option => option.isActive)
+                                 .map((option, i) => (
+                                    <tr key={i}>
+                                       <td>
+                                          {i === 0 ? (
+                                             <span>Ready To Eat</span>
+                                          ) : (
+                                             ''
+                                          )}
+                                       </td>
+                                       <td>
+                                          {
+                                             option.simpleRecipeYield.yield
+                                                .serving
+                                          }
+                                       </td>
+                                       <td>${option.price[0].value} </td>
+                                       <td>{option.price[0].discount} %</td>
+                                    </tr>
+                                 ))}
+                           </tbody>
+                        </StyledTable>
                      ) : (
                         <Accompaniments openTunnel={openTunnel} />
                      )}
@@ -91,7 +138,7 @@ export default function Items({ openTunnel }) {
             <ButtonTile
                type="primary"
                size="lg"
-               text="Add Items"
+               text="Add Products"
                onClick={() => openTunnel(2)}
             />
          )}

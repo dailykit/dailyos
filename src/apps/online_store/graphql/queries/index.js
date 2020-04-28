@@ -21,6 +21,25 @@ export const PRODUCTS = gql`
       }
    }
 `
+
+export const SIMPLE_RECIPE_PRODUCTS = gql`
+   {
+      simpleRecipeProducts {
+         id
+         name
+         simpleRecipeProductOptions {
+            type
+            isActive
+            price
+            simpleRecipeYield {
+               id
+               yield
+            }
+         }
+      }
+   }
+`
+
 export const ACCOMPANIMENT_TYPES = gql`
    {
       accompanimentTypes {

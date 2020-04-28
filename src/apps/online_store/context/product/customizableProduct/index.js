@@ -9,10 +9,7 @@ export const state = {
    title: '',
    tags: [],
    description: '',
-   items: {
-      recipe: [],
-      inventory: [],
-   },
+   items: [],
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -38,10 +35,7 @@ export const reducers = (state, { type, payload }) => {
       case 'ITEMS': {
          return {
             ...state,
-            items: {
-               ...state.items,
-               [payload.name]: payload.value,
-            },
+            items: [...state.items, ...payload.value],
          }
       }
       case 'META': {

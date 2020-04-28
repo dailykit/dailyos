@@ -28,7 +28,7 @@ const ItemTypeTunnel = ({ close, open }) => {
                <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select Item Type</span>
+               <span>Select Product Type</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -39,11 +39,11 @@ const ItemTypeTunnel = ({ close, open }) => {
                </Text>
             </SolidTile>
             <br />
-            <SolidTile onClick={() => select('recipe')}>
-               <Text as="h1">Simple Recipe</Text>
+            <SolidTile onClick={() => select('simple')}>
+               <Text as="h1">Simple Recipe Product</Text>
                <Text as="subtitle">
-                  Simple Recipe is only one recipe, sold as Meal Kits as well as
-                  Ready to Eat
+                  Simple Recipe Product is only one recipe, sold as Meal Kits as
+                  well as Ready to Eat
                </Text>
             </SolidTile>
          </TunnelBody>

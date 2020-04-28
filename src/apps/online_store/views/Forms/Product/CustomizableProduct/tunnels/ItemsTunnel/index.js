@@ -23,11 +23,16 @@ const ItemsTunnel = ({ close, items }) => {
    const [list, selected, selectOption] = useMultiList(items)
 
    const save = () => {
+      const updatedItems = selected.map(el => {
+         return {
+            ...el,
+            type: state.meta.itemType,
+         }
+      })
       dispatch({
          type: 'ITEMS',
          payload: {
-            name: state.meta.itemType,
-            value: selected,
+            value: updatedItems,
          },
       })
       close(3)
