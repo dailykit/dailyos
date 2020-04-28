@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
    Input,
    TextButton,
@@ -25,6 +25,8 @@ import {
    RECIPES,
    ACCOMPANIMENT_TYPES,
    SIMPLE_RECIPE_PRODUCTS,
+   CREATE_CUSTOMIZABLE_PRODUCT,
+   CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
 } from '../../../../graphql'
 
 // components
@@ -83,6 +85,56 @@ export default function CustomizableProduct() {
    //    },
    // })
 
+   const [createCustomizableProduct] = useMutation(
+      CREATE_CUSTOMIZABLE_PRODUCT,
+      {
+         onCompleted: data => {
+            const productId = data.createCustomizableProduct.returning[0].id
+            saveOptions(productId)
+         },
+      }
+   )
+
+   const [createCustomizableProductOptions] = useMutation(
+      CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+      {
+         onCompleted: data => {
+            console.log('Saved!')
+            console.log(data)
+         },
+      }
+   )
+
+   const save = () => {
+      const objects = {
+         name: state.title,
+         tags: state.tags,
+         description: state.description,
+         default: state.default,
+      }
+      createCustomizableProduct({
+         variables: {
+            objects: [objects],
+         },
+      })
+   }
+
+   const saveOptions = productId => {
+      const objects = state.items.map(item => {
+         return {
+            customizableProductId: productId,
+            accompaniments: item.accompaniments,
+            inventoryProductId: item.type === 'inventory' ? item.id : null,
+            simpleRecipeProductId: item.type === 'simple' ? item.id : null,
+         }
+      })
+      createCustomizableProductOptions({
+         variables: {
+            objects,
+         },
+      })
+   }
+
    return (
       <CustomizableProductContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
@@ -132,7 +184,11 @@ export default function CustomizableProduct() {
                   />
                </div>
                <div>
-                  <TextButton type="ghost" style={{ margin: '0px 10px' }}>
+                  <TextButton
+                     type="ghost"
+                     style={{ margin: '0px 10px' }}
+                     onClick={save}
+                  >
                      Save
                   </TextButton>
 

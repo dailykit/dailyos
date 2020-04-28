@@ -34,6 +34,32 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
       }
    }
 `
+//{description: "", tags: "", name: "", default: ""}
+
+export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
+   mutation CreateCustomizableProduct(
+      $objects: [onlineStore_customizableProduct_insert_input!]!
+   ) {
+      createCustomizableProduct(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+//{accompanients: "", customizableProductId: 10, inventoryProductId: 10, simpleRecipeProductId: 10}
+
+export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
+   mutation CreateCustomizableProductOption(
+      $objects: [onlineStore_customizableProductOption_insert_input!]!
+   ) {
+      createCustomizableProductOption(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
 
 export const CREATE_COLLECTION = gql`
    mutation CreateCollection($title: String) {
