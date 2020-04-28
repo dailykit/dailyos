@@ -1,5 +1,5 @@
-import React, { useContext, useState, useReducer } from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import React, { useContext, useState, useReducer, useEffect } from 'react'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 
 import {
    Input,
@@ -19,7 +19,7 @@ import {
    reducers,
 } from '../../../context/supplier'
 
-import { CREATE_SUPPLIER } from '../../../graphql'
+import { CREATE_SUPPLIER, UPDATE_SUPPLIER } from '../../../graphql'
 
 import { FormHeading, ContactCard, AddressCard } from '../../../components'
 import AddressTunnel from './Tunnels/AddressTunnel'
@@ -39,6 +39,13 @@ export default function SupplierForm() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
 
    const [createSupplier] = useMutation(CREATE_SUPPLIER)
+   const [updateSupplier] = useMutation(UPDATE_SUPPLIER)
+
+   useEffect(() => {
+      if (state.supplierId) {
+         supplierDispatch({ type: 'SET_ID', payload: state.supplierId })
+      }
+   }, [])
 
    const handleSave = async () => {
       const data = {
@@ -50,9 +57,31 @@ export default function SupplierForm() {
          available: false,
       }
 
-      const res = await createSupplier({ variables: { object: data } })
+      if (supplierState.id) {
+         const res = await updateSupplier({
+            variables: { id: supplierState.id, object: data },
+         })
+         const {
+            data: {
+               updateSupplier: { returning: result },
+            },
+         } = res
 
-      console.log(res)
+         if (result[0]?.id) {
+            console.log('updated')
+            supplierDispatch({ type: 'SET_ID', payload: result[0]?.id })
+         }
+      } else {
+         const res = await createSupplier({ variables: { object: data } })
+         const {
+            data: {
+               createSupplier: { returning: result },
+            },
+         } = res
+
+         if (result[0]?.id)
+            supplierDispatch({ type: 'SET_ID', payload: result[0]?.id })
+      }
    }
 
    const handleTabNameChange = async title => {
@@ -103,7 +132,7 @@ export default function SupplierForm() {
                         type="ghost"
                         style={{ margin: '0px 10px' }}
                      >
-                        save
+                        {supplierState?.id ? 'Update' : 'Save'}
                      </TextButton>
 
                      <TextButton
@@ -135,23 +164,23 @@ export default function SupplierForm() {
                            marginLeft: '5px',
                         }}
                      />
-                     {supplierState.address.location ||
-                     supplierState.address.address1 ? (
+                     {supplierState.address?.location ||
+                     supplierState.address?.address1 ? (
                         <IconButton onClick={() => openTunnel(1)} type="ghost">
                            <EditIcon />
                         </IconButton>
                      ) : null}
                   </FlexContainer>
 
-                  {supplierState.address.location ||
-                  supplierState.address.city ? (
+                  {supplierState.address?.location ||
+                  supplierState.address?.city ? (
                      <AddressCard
                         address={
-                           supplierState.address.location ||
-                           `${supplierState.address.address1}, ${supplierState.address.address2}`
+                           supplierState.address?.location ||
+                           `${supplierState.address?.address1}, ${supplierState.address?.address2}`
                         }
-                        zip={supplierState.address.zip}
-                        city={supplierState.address.city}
+                        zip={supplierState.address?.zip}
+                        city={supplierState.address?.city}
                         image="https://via.placeholder.com/80x50"
                      />
                   ) : (

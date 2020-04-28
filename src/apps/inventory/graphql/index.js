@@ -1,3 +1,10 @@
-import { CREATE_SUPPLIER } from './mutations'
+import { CREATE_SUPPLIER, UPDATE_SUPPLIER, DELETE_SUPPLIER } from './mutations'
+import { SUPPLIERS, SUPPLIER } from './queries'
 
-export { CREATE_SUPPLIER }
+export {
+   CREATE_SUPPLIER,
+   UPDATE_SUPPLIER,
+   DELETE_SUPPLIER,
+   SUPPLIERS,
+   SUPPLIER,
+}
