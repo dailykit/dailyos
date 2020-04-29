@@ -1,10 +1,19 @@
 import React from 'react'
 
-import { TextButton, Input, ButtonTile, Tag, TagGroup } from '@dailykit/ui'
+import {
+   TextButton,
+   Input,
+   ButtonTile,
+   Tag,
+   TagGroup,
+   Text,
+   IconButton,
+} from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
+import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 
-import { ItemContext, state } from '../../../../../context/item'
+import { ItemContext } from '../../../../../context/item'
 
 import {
    TunnelHeader,
@@ -21,7 +30,7 @@ export default function ConfigTunnel({ close, open }) {
    const { state, dispatch } = React.useContext(ItemContext)
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={() => close(4)}>
@@ -30,7 +39,14 @@ export default function ConfigTunnel({ close, open }) {
                <span>Configure Processing: {state.processing.name.title}</span>
             </div>
             <div>
-               <TextButton type="solid">Save</TextButton>
+               <TextButton
+                  onClick={() => {
+                     close(4)
+                  }}
+                  type="solid"
+               >
+                  Save
+               </TextButton>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -213,12 +229,62 @@ export default function ConfigTunnel({ close, open }) {
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
-               <StyledLabel>Nutritions per 100gm</StyledLabel>
-               <ButtonTile
-                  type="secondary"
-                  text="Add Nutritions"
-                  onClick={e => console.log('Tile clicked')}
-               />
+               <StyledLabel
+                  style={{
+                     width: '100%',
+                     display: 'flex',
+                     justifyContent: 'space-between',
+                  }}
+               >
+                  <div>Nutritions per 100gm</div>
+                  <IconButton
+                     onClick={() => {
+                        dispatch({
+                           type: 'SET_NUTRI_TARGET',
+                           payload: 'processing',
+                        })
+                        open(10)
+                     }}
+                     type="ghost"
+                  >
+                     <EditIcon />
+                  </IconButton>
+               </StyledLabel>
+               {state.processing.nutrients?.fat ||
+               state.processing.nutrients?.cal ? (
+                  <>
+                     <div
+                        style={{
+                           width: '70%',
+                           minHeight: '100px',
+                           backgroundColor: '#F3F3F3',
+                           padding: '20px',
+                        }}
+                     >
+                        <Text as="title">
+                           <strong>calories: </strong>
+                           {state.processing.nutrients?.cal}
+                        </Text>
+
+                        <Text as="title">
+                           <strong>Total Fat: </strong>
+                           {state.processing.nutrients?.fat}
+                        </Text>
+                     </div>
+                  </>
+               ) : (
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Nutritions"
+                     onClick={e => {
+                        dispatch({
+                           type: 'SET_NUTRI_TARGET',
+                           payload: 'processing',
+                        })
+                        open(10)
+                     }}
+                  />
+               )}
             </StyledRow>
             <StyledRow>
                <StyledLabel>Allergens</StyledLabel>
@@ -239,7 +305,7 @@ export default function ConfigTunnel({ close, open }) {
                )}
             </StyledRow>
             {!state.form_meta.shipped && (
-               <React.Fragment>
+               <>
                   <StyledRow>
                      <StyledLabel>
                         Operating procedure for processing
@@ -253,9 +319,9 @@ export default function ConfigTunnel({ close, open }) {
                      <StyledLabel>Equipments needed</StyledLabel>
                      <Highlight></Highlight>
                   </StyledRow>
-               </React.Fragment>
+               </>
             )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

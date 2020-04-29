@@ -115,8 +115,9 @@ export const StyledSupplier = styled.div`
 `
 
 export const StyledGrid = styled.div`
+   width: 100%;
    display: grid;
-   grid-template-columns: repeat(5, 1fr);
+   grid-template-columns: repeat(4, 1fr);
    height: 96px;
    border-bottom: 1px solid #dddddd;
    border-top: 1px solid #dddddd;
@@ -160,4 +161,35 @@ export const StyledGrid = styled.div`
          }
       }
    }
+`
+export const ProcessingButton = styled.button`
+   margin-top: 10px;
+   border: 0;
+   outline: 0;
+   width: 90%;
+   display: flex;
+   flex-direction: column;
+   padding: 10px;
+
+   align-items: flex-start;
+   background-color: ${props => (props.active ? '#555b6e' : '#e5e5e5')};
+   color: ${props => (props.active ? '#fff' : '#555b6e')};
+
+   &:hover {
+      cursor: pointer;
+   }
+`
+
+export const TabContainer = styled.div`
+   display: flex;
+   border-bottom: 1px solid rgba(136, 141, 157, 0.3);
+   margin: 10px 0;
+`
+
+export const ItemTab = styled.div`
+   border-bottom: ${({ active }) => (active ? `3px solid #00a7e1` : 0)};
+   margin: 0px 15px;
+   min-width: 58px;
+   text-align: center;
+   cursor: pointer;
 `
