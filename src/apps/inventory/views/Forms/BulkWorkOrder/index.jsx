@@ -22,7 +22,7 @@ import {
    StyledForm,
    FlexContainer,
 } from '../styled'
-import { Spacer, ItemCard } from '../../../components/'
+import { Spacer, ItemCard } from '../../../components'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
