@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const InventoryProductContext = React.createContext()
+export const SimpleProductContext = React.createContext()
 
 export const state = {
    meta: {
@@ -8,13 +8,20 @@ export const state = {
       productTypes: 'inventory',
    },
    title: '',
-   description: '',
    tags: [],
-   item: '',
-   options: [],
+   description: '',
+   recipe: '',
+   options: {},
    default: {},
    accompaniments: [],
 }
+
+// *** Hasura schema ***
+// id
+// name
+// simpleRecipeId
+// accompaniments
+// default
 
 export const reducers = (state, { type, payload }) => {
    switch (type) {
@@ -36,10 +43,10 @@ export const reducers = (state, { type, payload }) => {
             tags: payload.value,
          }
       }
-      case 'ITEM': {
+      case 'RECIPE': {
          return {
             ...state,
-            item: payload.value,
+            recipe: payload.value,
          }
       }
       case 'OPTIONS': {
