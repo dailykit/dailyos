@@ -46,3 +46,34 @@ export const CustomCrossButton = styled.button`
       cursor: pointer;
    }
 `
+
+export const StyledHeader = styled.div`
+   height: 100px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0 32px;
+`
+
+export const StyledBody = styled.div`
+   background: #e5e5e5;
+   height: calc(100vh - 140px);
+`
+
+export const StyledRule = styled.hr`
+   color: #dddddd;
+`
+
+export const StyledMeta = styled.div`
+   display: flex;
+   padding: 16px;
+
+   > div {
+      &:nth-child(1) {
+         flex: 2;
+      }
+      &:nth-child(2) {
+         flex: 1;
+      }
+   }
+`

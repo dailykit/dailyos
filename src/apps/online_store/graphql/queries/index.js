@@ -2,11 +2,12 @@ import gql from 'graphql-tag'
 
 export const RECIPES = gql`
    {
-      recipes {
+      simpleRecipes {
          id
          name
-         servings {
-            size
+         simpleRecipeYields {
+            id
+            yield
          }
       }
    }
@@ -14,15 +15,46 @@ export const RECIPES = gql`
 
 export const PRODUCTS = gql`
    {
-      products {
+      simpleRecipeProducts {
          id
-         title
-         items {
-            label
+         name
+      }
+   }
+`
+
+export const SIMPLE_RECIPE_PRODUCTS = gql`
+   {
+      simpleRecipeProducts {
+         id
+         name
+         simpleRecipeProductOptions {
+            type
+            isActive
+            price
+            simpleRecipeYield {
+               id
+               yield
+            }
          }
       }
    }
 `
+
+export const INVENTORY_PRODUCTS = gql`
+   {
+      inventoryProducts {
+         id
+         name
+         inventoryProductOptions {
+            id
+            label
+            price
+            quantity
+         }
+      }
+   }
+`
+
 export const ACCOMPANIMENT_TYPES = gql`
    {
       accompanimentTypes {

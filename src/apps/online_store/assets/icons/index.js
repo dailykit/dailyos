@@ -3,6 +3,7 @@ import CloseIcon from './Close'
 import EditIcon from './Edit'
 import DeleteIcon from './Delete'
 import AddIcon from './Add'
+import MinusIcon from './Minus'
 import ChevronRight from './ChevronRight'
 import Down from './Down'
 
@@ -12,6 +13,7 @@ export {
    EditIcon,
    DeleteIcon,
    AddIcon,
+   MinusIcon,
    ChevronRight,
-   Down
+   Down,
 }
