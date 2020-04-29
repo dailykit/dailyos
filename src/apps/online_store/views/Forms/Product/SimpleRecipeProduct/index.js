@@ -140,10 +140,10 @@ export default function SimpleRecipeProduct() {
       console.log(state)
       const object = {
          accompaniments: state.accompaniments,
-         default: {
-            type: state.default.type,
-            id: state.default.value.id,
-         },
+         // default: {
+         //    type: state.default.type,
+         //    id: state.default.value.id,
+         // },
          description: state.description,
          name: state.title,
          simpleRecipeId: state.recipe.id,

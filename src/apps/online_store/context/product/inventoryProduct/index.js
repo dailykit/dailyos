@@ -68,6 +68,9 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             options: updatedOptions,
+            default: Object.keys(state.default).length
+               ? state.default
+               : { id: updatedOptions[0].id },
          }
       }
       case 'UPDATE_OPTION': {
@@ -88,8 +91,7 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             default: {
-               type: payload.type,
-               value: payload.value,
+               id: payload.id,
             },
          }
       }

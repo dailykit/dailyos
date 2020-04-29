@@ -72,7 +72,7 @@ export default function Recipe({ openTunnel }) {
                                  <th></th>
                                  <th>Servings</th>
                                  <th>Price</th>
-                                 <th>Discounted Price</th>
+                                 <th>Discount</th>
                               </tr>
                            </thead>
                            <tbody>
@@ -95,7 +95,7 @@ export default function Recipe({ openTunnel }) {
                                              </td>
                                              <td>
                                                 {el.yield.serving}{' '}
-                                                <StyledDefault
+                                                {/* <StyledDefault
                                                    hidden={
                                                       !(
                                                          el.id ===
@@ -107,7 +107,7 @@ export default function Recipe({ openTunnel }) {
                                                    }
                                                 >
                                                    Default
-                                                </StyledDefault>
+                                                </StyledDefault> */}
                                              </td>
                                              <td>${el.price.value} </td>
                                              <td>{el.price.discount} %</td>

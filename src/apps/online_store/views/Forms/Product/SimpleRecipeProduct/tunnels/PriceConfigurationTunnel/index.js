@@ -106,7 +106,7 @@ const PriceConfigurationTunnel = ({ close }) => {
                   <tr>
                      <th>Type</th>
                      <th>Active</th>
-                     <th>Default</th>
+                     {/* <th>Default</th> */}
                      <th>Serving</th>
                      <th>Price</th>
                      <th>Discounted Price</th>
@@ -138,7 +138,7 @@ const PriceConfigurationTunnel = ({ close }) => {
                                  }
                               />
                            </td>
-                           <td>
+                           {/* <td>
                               <input
                                  type="radio"
                                  checked={
@@ -155,7 +155,7 @@ const PriceConfigurationTunnel = ({ close }) => {
                                     })
                                  }
                               />
-                           </td>
+                           </td> */}
                            <td>{el.yield.serving}</td>
                            <td>
                               <StyledInputWrapper width="60">

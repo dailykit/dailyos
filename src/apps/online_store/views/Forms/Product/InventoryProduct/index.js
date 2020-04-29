@@ -132,6 +132,7 @@ export default function InventoryProduct() {
          name: state.title,
          tags: state.tags,
          description: state.description,
+         //  default: state.default,
          // Static id to changed later, as it throws fkey error rn
          supplierItemId: state.meta.itemType === 'inventory' ? 3 : null,
          sachetItemId: state.meta.itemType === 'sachet' ? state.item.id : null,
