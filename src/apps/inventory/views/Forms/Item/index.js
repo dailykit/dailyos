@@ -112,8 +112,10 @@ export default function ItemForm() {
                         <span> {state.sku} </span>
                      </StyledInfo>
                      <StyledSupplier>
-                        <span>{state.supplier.title} </span>
-                        <span>{state.supplier.description} </span>
+                        <span>{state.supplier.name} </span>
+                        <span>
+                           {`${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})`}
+                        </span>
                      </StyledSupplier>
                   </>
                )}
