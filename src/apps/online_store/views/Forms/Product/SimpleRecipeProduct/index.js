@@ -29,7 +29,8 @@ import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import {
    RECIPES,
    ACCOMPANIMENT_TYPES,
-   PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
+   INVENTORY_PRODUCTS,
    CREATE_SIMPLE_RECIPE_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
 } from '../../../../graphql'
@@ -44,10 +45,7 @@ export default function SimpleRecipeProduct() {
       { id: 3, title: 'Sweets' },
    ])
    const [products, setProducts] = React.useState({
-      inventory: [
-         { id: 1, title: 'INV 1' },
-         { id: 2, title: 'INV 2' },
-      ],
+      inventory: [],
       simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -62,7 +60,7 @@ export default function SimpleRecipeProduct() {
          setRecipes(updatedRecipes)
       },
    })
-   useQuery(PRODUCTS, {
+   useQuery(SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: data => {
          const updatedProducts = data.simpleRecipeProducts.map(pdct => {
             return {
@@ -73,6 +71,20 @@ export default function SimpleRecipeProduct() {
          setProducts({
             ...products,
             simple: updatedProducts,
+         })
+      },
+   })
+   useQuery(INVENTORY_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.inventoryProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
          })
       },
    })

@@ -25,6 +25,7 @@ import {
    RECIPES,
    ACCOMPANIMENT_TYPES,
    SIMPLE_RECIPE_PRODUCTS,
+   INVENTORY_PRODUCTS,
    CREATE_CUSTOMIZABLE_PRODUCT,
    CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
 } from '../../../../graphql'
@@ -52,10 +53,7 @@ export default function CustomizableProduct() {
       { id: 3, title: 'Sweets' },
    ])
    const [products, setProducts] = React.useState({
-      inventory: [
-         { id: 1, title: 'INV 1' },
-         { id: 2, title: 'INV 2' },
-      ],
+      inventory: [],
       simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -71,6 +69,20 @@ export default function CustomizableProduct() {
          setProducts({
             ...products,
             simple: updatedProducts,
+         })
+      },
+   })
+   useQuery(INVENTORY_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.inventoryProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
          })
       },
    })

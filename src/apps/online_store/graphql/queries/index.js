@@ -40,6 +40,21 @@ export const SIMPLE_RECIPE_PRODUCTS = gql`
    }
 `
 
+export const INVENTORY_PRODUCTS = gql`
+   {
+      inventoryProducts {
+         id
+         name
+         inventoryProductOptions {
+            id
+            label
+            price
+            quantity
+         }
+      }
+   }
+`
+
 export const ACCOMPANIMENT_TYPES = gql`
    {
       accompanimentTypes {

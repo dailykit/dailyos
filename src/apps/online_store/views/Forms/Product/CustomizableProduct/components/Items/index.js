@@ -117,53 +117,95 @@ export default function Items({ openTunnel }) {
                         <StyledTable>
                            <thead>
                               <tr>
-                                 <th></th>
-                                 <th>Servings</th>
+                                 <th>
+                                    {_state.currentItem
+                                       ?.simpleRecipeProductOptions
+                                       ? ''
+                                       : 'Labels'}
+                                 </th>
+                                 <th>
+                                    {_state.currentItem
+                                       ?.simpleRecipeProductOptions
+                                       ? 'Servings'
+                                       : 'Options'}
+                                 </th>
                                  <th>Price</th>
-                                 <th>Discounted Price</th>
+                                 <th>Discount</th>
                               </tr>
                            </thead>
                            <tbody>
-                              {_state.currentItem?.simpleRecipeProductOptions
-                                 .filter(option => option.type === 'mealKit')
-                                 .filter(option => option.isActive)
-                                 .map((option, i) => (
-                                    <tr key={i}>
-                                       <td>
-                                          {i === 0 ? <span>Meal Kit</span> : ''}
-                                       </td>
-                                       <td>
-                                          {
-                                             option.simpleRecipeYield.yield
-                                                .serving
-                                          }
-                                       </td>
-                                       <td>${option.price[0].value} </td>
-                                       <td>{option.price[0].discount} %</td>
-                                    </tr>
-                                 ))}
-                              {_state.currentItem?.simpleRecipeProductOptions
-                                 .filter(option => option.type === 'readyToEat')
-                                 .filter(option => option.isActive)
-                                 .map((option, i) => (
-                                    <tr key={i}>
-                                       <td>
-                                          {i === 0 ? (
-                                             <span>Ready To Eat</span>
-                                          ) : (
-                                             ''
-                                          )}
-                                       </td>
-                                       <td>
-                                          {
-                                             option.simpleRecipeYield.yield
-                                                .serving
-                                          }
-                                       </td>
-                                       <td>${option.price[0].value} </td>
-                                       <td>{option.price[0].discount} %</td>
-                                    </tr>
-                                 ))}
+                              {_state.currentItem
+                                 ?.simpleRecipeProductOptions ? (
+                                 <React.Fragment>
+                                    {_state.currentItem?.simpleRecipeProductOptions
+                                       .filter(
+                                          option => option.type === 'mealKit'
+                                       )
+                                       .filter(option => option.isActive)
+                                       .map((option, i) => (
+                                          <tr key={i}>
+                                             <td>
+                                                {i === 0 ? (
+                                                   <span>Meal Kit</span>
+                                                ) : (
+                                                   ''
+                                                )}
+                                             </td>
+                                             <td>
+                                                {
+                                                   option.simpleRecipeYield
+                                                      .yield.serving
+                                                }
+                                             </td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>
+                                                {option.price[0].discount} %
+                                             </td>
+                                          </tr>
+                                       ))}
+                                    {_state.currentItem?.simpleRecipeProductOptions
+                                       .filter(
+                                          option => option.type === 'readyToEat'
+                                       )
+                                       .filter(option => option.isActive)
+                                       .map((option, i) => (
+                                          <tr key={i}>
+                                             <td>
+                                                {i === 0 ? (
+                                                   <span>Ready To Eat</span>
+                                                ) : (
+                                                   ''
+                                                )}
+                                             </td>
+                                             <td>
+                                                {
+                                                   option.simpleRecipeYield
+                                                      .yield.serving
+                                                }
+                                             </td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>
+                                                {option.price[0].discount} %
+                                             </td>
+                                          </tr>
+                                       ))}
+                                 </React.Fragment>
+                              ) : (
+                                 <React.Fragment>
+                                    {_state.currentItem?.inventoryProductOptions.map(
+                                       option => (
+                                          <tr key={option.id}>
+                                             <td>{option.label}</td>
+                                             <td>{option.quantity}</td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>
+                                                {option.price[0].discount} %
+                                             </td>
+                                          </tr>
+                                       )
+                                    )}
+                                 </React.Fragment>
+                              )}
                            </tbody>
                         </StyledTable>
                      ) : (

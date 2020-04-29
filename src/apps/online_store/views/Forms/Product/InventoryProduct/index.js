@@ -29,12 +29,13 @@ import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import {
    RECIPES,
    ACCOMPANIMENT_TYPES,
-   PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
    CREATE_INVENTORY_PRODUCT,
    CREATE_INVENTORY_PRODUCT_OPTIONS,
+   INVENTORY_PRODUCTS,
 } from '../../../../graphql'
 
-export default function SimpleRecipeProduct() {
+export default function InventoryProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
    const [items, setItems] = React.useState({
@@ -42,11 +43,21 @@ export default function SimpleRecipeProduct() {
          { id: 1, title: 'ITEM 1', unitSize: '1 pc' },
          { id: 2, title: 'ITEM 2', unitSize: '1 pc' },
          { id: 3, title: 'ITEM 3', unitSize: '1 pc' },
+         { id: 4, title: 'ITEM 4', unitSize: '1 pc' },
+         { id: 5, title: 'ITEM 5', unitSize: '1 pc' },
+         { id: 6, title: 'ITEM 6', unitSize: '1 pc' },
+         { id: 7, title: 'ITEM 7', unitSize: '1 pc' },
       ],
       sachet: [
          { id: 1, title: 'SACHET 1', unitSize: '100 gms' },
          { id: 2, title: 'SACHET 2', unitSize: '100 gms' },
          { id: 3, title: 'SACHET 3', unitSize: '100 gms' },
+         { id: 4, title: 'SACHET 4', unitSize: '100 gms' },
+         { id: 5, title: 'SACHET 5', unitSize: '100 gms' },
+         { id: 6, title: 'SACHET 6', unitSize: '100 gms' },
+         { id: 7, title: 'SACHET 7', unitSize: '100 gms' },
+         { id: 8, title: 'SACHET 8', unitSize: '100 gms' },
+         { id: 9, title: 'SACHET 9', unitSize: '100 gms' },
       ],
    })
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
@@ -55,15 +66,12 @@ export default function SimpleRecipeProduct() {
       { id: 3, title: 'Sweets' },
    ])
    const [products, setProducts] = React.useState({
-      inventory: [
-         { id: 1, title: 'INV 1' },
-         { id: 2, title: 'INV 2' },
-      ],
+      inventory: [],
       simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   useQuery(PRODUCTS, {
+   useQuery(SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: data => {
          const updatedProducts = data.simpleRecipeProducts.map(pdct => {
             return {
@@ -74,6 +82,21 @@ export default function SimpleRecipeProduct() {
          setProducts({
             ...products,
             simple: updatedProducts,
+         })
+      },
+   })
+   useQuery(INVENTORY_PRODUCTS, {
+      onCompleted: data => {
+         console.log('Inve -> data', data)
+         const updatedProducts = data.inventoryProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
          })
       },
    })
@@ -109,8 +132,8 @@ export default function SimpleRecipeProduct() {
          name: state.title,
          tags: state.tags,
          description: state.description,
-         supplierItemId:
-            state.meta.itemType === 'inventory' ? state.item.id : null,
+         // Static id to changed later, as it throws fkey error rn
+         supplierItemId: state.meta.itemType === 'inventory' ? 3 : null,
          sachetItemId: state.meta.itemType === 'sachet' ? state.item.id : null,
       }
       createInventoryProduct({
