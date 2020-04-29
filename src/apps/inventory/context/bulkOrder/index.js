@@ -5,8 +5,10 @@ const BulkOrderContext = React.createContext()
 const state = {
    supplierItem: {},
    outputItemProcessing: {},
+   inputItemProcessing: {},
    selectedStation: {},
-   assignedUser: {}
+   assignedUser: {},
+   assignedDate: '',
 }
 
 const reducers = (state, { type, payload }) => {
@@ -22,8 +24,8 @@ const reducers = (state, { type, payload }) => {
             ...state,
             outputItemProcessing: {
                ...state.outputItemProcessing,
-               yield: payload
-            }
+               yield: payload,
+            },
          }
 
       case 'SET_OUTPUT_QUANTITY':
@@ -31,8 +33,8 @@ const reducers = (state, { type, payload }) => {
             ...state,
             outputItemProcessing: {
                ...state.outputItemProcessing,
-               outputQuantity: payload
-            }
+               outputQuantity: payload,
+            },
          }
 
       case 'SELECT_USER':
@@ -40,6 +42,13 @@ const reducers = (state, { type, payload }) => {
 
       case 'ADD_STATION':
          return { ...state, selectedStation: payload }
+
+      case 'SET_ASSIGNED_DATE':
+         return { ...state, assignedDate: payload }
+
+      case 'ADD_INPUT_ITEM':
+         return { ...state, inputItemProcessing: payload }
+
       default:
          return state
    }
