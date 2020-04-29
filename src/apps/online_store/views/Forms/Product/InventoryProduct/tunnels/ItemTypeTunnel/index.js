@@ -10,34 +10,29 @@ const ProductsTypeTunnel = ({ close, open }) => {
    const { state, dispatch } = React.useContext(InventoryProductContext)
 
    const select = value => {
-      dispatch({ type: 'META', payload: { name: 'productsType', value } })
-      open(6)
+      dispatch({ type: 'META', payload: { name: 'itemType', value } })
+      open(3)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(5)}>
+               <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select a Product Type</span>
+               <span>Select an Item Type</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>
-               <Text as="h1">Inventory Product</Text>
-               <Text as="subtitle">
-                  Inventory product is just an item, supplied or bought
-               </Text>
+               <Text as="h1">Inventory Item</Text>
+               <Text as="subtitle">Bleh Bleh Bleh</Text>
             </SolidTile>
             <br />
-            <SolidTile onClick={() => select('simple')}>
-               <Text as="h1">Simple Recipe Product</Text>
-               <Text as="subtitle">
-                  Simple Recipe product is only one recipes, sold as Meal Kits
-                  as well as Ready to Eat
-               </Text>
+            <SolidTile onClick={() => select('sachet')}>
+               <Text as="h1">sachet Item</Text>
+               <Text as="subtitle">Blah Blah Blah</Text>
             </SolidTile>
          </TunnelBody>
       </React.Fragment>

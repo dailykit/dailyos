@@ -27,14 +27,14 @@ const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
             value: selected,
          },
       })
-      close(3)
+      close(4)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(3)}>
+               <span onClick={() => close(4)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <span>Select Accompaniment Type</span>

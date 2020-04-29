@@ -25,6 +25,7 @@ export default function ItemTunnel({ close, items }) {
          type: 'ITEM',
          payload: { value: item },
       })
+      close(3)
       close(2)
    }
 
@@ -32,7 +33,7 @@ export default function ItemTunnel({ close, items }) {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(2)}>
+               <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <span>Select an Item</span>

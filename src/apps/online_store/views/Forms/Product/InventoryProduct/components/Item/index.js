@@ -33,11 +33,11 @@ export default function Item({ openTunnel }) {
             <StyledLayout>
                <StyledListing>
                   <StyledListingTile active>
-                     <h3>{state.recipe.name}</h3>
+                     <h3>{state.item.title}</h3>
                   </StyledListingTile>
                </StyledListing>
                <StyledPanel>
-                  <h2>{state.recipe.name}</h2>
+                  <h2>{state.item.title}</h2>
                   <StyledTabs>
                      <StyledTab
                         onClick={() =>

@@ -16,14 +16,14 @@ import {
 } from '../../../../context/product/inventoryProduct'
 
 import {
-   RecipeTunnel,
+   ItemTunnel,
    DescriptionTunnel,
    ProductsTypeTunnel,
    ProductsTunnel,
    AccompanimentTypeTunnel,
-   PriceConfigurationTunnel,
+   ItemTypeTunnel,
 } from './tunnels'
-import { Recipe, Description } from './components'
+import { Item, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import {
@@ -37,11 +37,18 @@ import {
 export default function SimpleRecipeProduct() {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
-   const [items, setItems] = React.useState([
-      { id: 1, title: 'ITEM 1' },
-      { id: 2, title: 'ITEM 2' },
-      { id: 3, title: 'ITEM 3' },
-   ])
+   const [items, setItems] = React.useState({
+      inventory: [
+         { id: 1, title: 'ITEM 1' },
+         { id: 2, title: 'ITEM 2' },
+         { id: 3, title: 'ITEM 3' },
+      ],
+      sachet: [
+         { id: 1, title: 'SACHET 1' },
+         { id: 2, title: 'SACHET 2' },
+         { id: 3, title: 'SACHET 3' },
+      ],
+   })
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
       { id: 1, title: 'Beverages' },
       { id: 2, title: 'Salads' },
@@ -81,6 +88,10 @@ export default function SimpleRecipeProduct() {
    //    },
    // })
 
+   const save = () => {
+      console.log(state)
+   }
+
    return (
       <InventoryProductContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
@@ -88,18 +99,24 @@ export default function SimpleRecipeProduct() {
                <DescriptionTunnel close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <ItemTunnel close={closeTunnel} items={items} />
+               <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
+               <ItemTunnel
+                  close={closeTunnel}
+                  items={items[state.meta.itemType]}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
                <AccompanimentTypeTunnel
                   close={closeTunnel}
                   accompanimentTypes={accompanimentTypes}
                />
             </Tunnel>
-            <Tunnel layer={4}>
+            <Tunnel layer={5}>
                <ProductsTypeTunnel open={openTunnel} close={closeTunnel} />
             </Tunnel>
-            <Tunnel layer={5}>
+            <Tunnel layer={6}>
                <ProductsTunnel
                   close={closeTunnel}
                   products={products[state.meta.productsType]}

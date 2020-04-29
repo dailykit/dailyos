@@ -72,7 +72,7 @@ const Products = ({ openTunnel, view }) => {
                   <ButtonTile
                      type="secondary"
                      text="Add Products"
-                     onClick={() => openTunnel(4)}
+                     onClick={() => openTunnel(5)}
                   />
                </StyledListing>
                <StyledPanel>
@@ -101,7 +101,7 @@ const Products = ({ openTunnel, view }) => {
             <ButtonTile
                type="secondary"
                text="Add Products"
-               onClick={() => openTunnel(4)}
+               onClick={() => openTunnel(5)}
             />
          )}
       </React.Fragment>

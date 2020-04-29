@@ -42,7 +42,7 @@ const Accompaniments = ({ openTunnel }) => {
             <ButtonTile
                type="secondary"
                text="Add Accompaniment Types"
-               onClick={() => openTunnel(3)}
+               onClick={() => openTunnel(4)}
             />
          )}
       </React.Fragment>

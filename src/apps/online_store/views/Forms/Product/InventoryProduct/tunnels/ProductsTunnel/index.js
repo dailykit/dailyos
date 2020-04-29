@@ -35,15 +35,15 @@ const ProductsTunnel = ({ close, products }) => {
             value: products,
          },
       })
+      close(6)
       close(5)
-      close(4)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(5)}>
+               <span onClick={() => close(6)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <span>Select Products to Add</span>

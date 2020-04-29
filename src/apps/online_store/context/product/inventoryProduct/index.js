@@ -6,6 +6,7 @@ export const state = {
    meta: {
       accompanimentType: '',
       productTypes: 'inventory',
+      itemType: 'inventory',
    },
    title: '',
    description: '',
