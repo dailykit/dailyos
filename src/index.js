@@ -3,6 +3,10 @@ import { render } from 'react-dom'
 import Loadable from 'react-loadable'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
+// Toasts
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 // Apollo Client Imports
 import { ApolloProvider } from '@apollo/react-hooks'
 import { ApolloClient } from 'apollo-client'
@@ -46,6 +50,17 @@ const client = new ApolloClient({
 
 render(
    <ApolloProvider client={client}>
+      <ToastContainer
+         position="top-right"
+         autoClose={3000}
+         hideProgressBar={false}
+         newestOnTop={false}
+         closeOnClick
+         rtl={false}
+         pauseOnFocusLoss
+         draggable
+         pauseOnHover
+      />
       <Router>
          <Switch>
             <Route path="/" exact>

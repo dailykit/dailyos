@@ -61,8 +61,8 @@ const ItemsTunnel = ({ close, items }) => {
                <span>
                   Select{' '}
                   {state.meta.itemType === 'inventory'
-                     ? 'Inventory Items'
-                     : 'Recipes'}{' '}
+                     ? 'Inventory Products'
+                     : 'Simple Recipe Products'}{' '}
                   to Add
                </span>
             </div>

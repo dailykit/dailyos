@@ -1,5 +1,6 @@
 import React from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    Input,
    TextButton,
@@ -84,6 +85,7 @@ export default function InventoryProduct() {
             simple: updatedProducts,
          })
       },
+      fetchPolicy: 'cache-and-network',
    })
    useQuery(INVENTORY_PRODUCTS, {
       onCompleted: data => {
@@ -99,6 +101,7 @@ export default function InventoryProduct() {
             inventory: updatedProducts,
          })
       },
+      fetchPolicy: 'cache-and-network',
    })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
@@ -122,6 +125,7 @@ export default function InventoryProduct() {
       {
          onCompleted: data => {
             console.log('Saved!')
+            toast.success('Product saved!')
          },
       }
    )
