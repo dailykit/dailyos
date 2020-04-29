@@ -39,14 +39,14 @@ export default function SimpleRecipeProduct() {
    const [title, setTitle] = React.useState('')
    const [items, setItems] = React.useState({
       inventory: [
-         { id: 1, title: 'ITEM 1' },
-         { id: 2, title: 'ITEM 2' },
-         { id: 3, title: 'ITEM 3' },
+         { id: 1, title: 'ITEM 1', unitSize: '1 pc' },
+         { id: 2, title: 'ITEM 2', unitSize: '1 pc' },
+         { id: 3, title: 'ITEM 3', unitSize: '1 pc' },
       ],
       sachet: [
-         { id: 1, title: 'SACHET 1' },
-         { id: 2, title: 'SACHET 2' },
-         { id: 3, title: 'SACHET 3' },
+         { id: 1, title: 'SACHET 1', unitSize: '100 gms' },
+         { id: 2, title: 'SACHET 2', unitSize: '100 gms' },
+         { id: 3, title: 'SACHET 3', unitSize: '100 gms' },
       ],
    })
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([

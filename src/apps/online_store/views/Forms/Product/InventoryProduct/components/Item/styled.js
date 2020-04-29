@@ -20,6 +20,14 @@ export const StyledPanel = styled.div`
       font-size: 24px;
       line-height: 28px;
       color: #555b6e;
+      margin-bottom: 8px;
+   }
+
+   h5 {
+      color: #555b6e;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 14px;
       margin-bottom: 16px;
    }
 `
@@ -68,6 +76,7 @@ export const StyledAction = styled.div`
    position: absolute;
    right: 16px;
    top: 16px;
+   text-align: center;
 `
 
 export const StyledTable = styled.table`
@@ -75,7 +84,7 @@ export const StyledTable = styled.table`
 
    thead {
       font-weight: 500;
-      font-size: 12px;
+      font-size: 14px;
       line-height: 14px;
       color: #888d9d;
 
@@ -91,24 +100,12 @@ export const StyledTable = styled.table`
 
       tr {
          td {
-            min-width: 100px;
+            min-width: 60px;
             font-weight: 500;
             font-size: 14px;
             line-height: 14px;
             color: #555b6e;
             padding: 8px;
-
-            &:first-child {
-               font-weight: 500;
-               font-size: 16px;
-               line-height: 14px;
-               color: #555b6e;
-               display: flex;
-
-               span {
-                  margin-left: 8px;
-               }
-            }
          }
       }
    }
@@ -121,4 +118,15 @@ export const StyledDefault = styled.span`
    text-transform: uppercase;
    font-size: 12px;
    font-weight: normal;
+`
+
+export const StyledInputWrapper = styled.div`
+   width: ${props => props.width}px;
+   display: flex;
+   align-items: center;
+   text-align: center;
+
+   span {
+      cursor: pointer;
+   }
 `

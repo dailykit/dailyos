@@ -49,6 +49,41 @@ export const reducers = (state, { type, payload }) => {
             options: payload.value,
          }
       }
+      case 'ADD_OPTION': {
+         const updatedOptions = [
+            ...state.options,
+            {
+               id: Math.floor(Math.random() * 100),
+               title: '',
+               quantity: 1,
+               price: [
+                  {
+                     value: 0,
+                     discount: 0,
+                     rule: '',
+                  },
+               ],
+            },
+         ]
+         return {
+            ...state,
+            options: updatedOptions,
+         }
+      }
+      case 'UPDATE_OPTION': {
+         const updatedOptions = state.options
+         const index = updatedOptions.findIndex(op => op.id === payload.id)
+         const option = updatedOptions[index]
+         const updatedOption = {
+            ...option,
+            [payload.name]: payload.value,
+         }
+         updatedOptions[index] = updatedOption
+         return {
+            ...state,
+            options: updatedOptions,
+         }
+      }
       case 'DEFAULT': {
          return {
             ...state,
