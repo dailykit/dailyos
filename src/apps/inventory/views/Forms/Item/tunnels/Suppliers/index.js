@@ -1,48 +1,57 @@
-import React from 'react'
-
+import React, { useContext } from 'react'
 import {
-   useSingleList,
    List,
    ListItem,
-   ListSearch,
    ListOptions,
+   ListSearch,
+   useSingleList,
 } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
 
 import { ItemContext } from '../../../../../context/item'
 
-import { TunnelHeader, TunnelBody } from '../styled'
+import {
+   TunnelContainer,
+   TunnelHeader,
+   Spacer,
+} from '../../../../../components'
 
-export default function SuppliersTunnel({ close, next, suppliers }) {
+export default function SupplierTunnel({
+   close,
+   suppliers,
+   open,
+   rawSuppliers,
+}) {
+   const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
-   const { state, dispatch } = React.useContext(ItemContext)
+
    const [list, current, selectOption] = useSingleList(suppliers)
 
-   const selectSupplier = supplier => {
-      dispatch({ type: 'SUPPLIER', payload: { supplier } })
-      close()
-      next()
-   }
-
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>Select Supplier</span>
-            </div>
-         </TunnelHeader>
-         <TunnelBody>
+      <>
+         <TunnelContainer>
+            <TunnelHeader
+               title="Select Supplier"
+               next={() => {
+                  const payload = rawSuppliers.find(
+                     supplier => supplier.id === current.id
+                  )
+                  dispatch({ type: 'SUPPLIER', payload })
+                  close(1)
+                  open(2)
+               }}
+               close={() => close(1)}
+               nextAction="Next"
+            />
+
+            <Spacer />
+
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem
-                     type="SSL22"
+                     type="SSL2"
                      content={{
-                        supplier: current.supplier,
-                        contact: current.contact,
+                        title: current.title,
+                        description: current.description,
                      }}
                   />
                ) : (
@@ -54,23 +63,23 @@ export default function SuppliersTunnel({ close, next, suppliers }) {
                <ListOptions>
                   {list
                      .filter(option =>
-                        option.supplier.title.toLowerCase().includes(search)
+                        option.title.toLowerCase().includes(search)
                      )
                      .map(option => (
                         <ListItem
-                           type="SSL22"
+                           type="SSL2"
                            key={option.id}
                            isActive={option.id === current.id}
-                           onClick={() => selectSupplier(option)}
+                           onClick={() => selectOption('id', option.id)}
                            content={{
-                              supplier: option.supplier,
-                              contact: option.contact,
+                              title: option.title,
+                              description: option.description,
                            }}
                         />
                      ))}
                </ListOptions>
             </List>
-         </TunnelBody>
-      </React.Fragment>
+         </TunnelContainer>
+      </>
    )
 }

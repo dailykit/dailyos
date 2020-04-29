@@ -1,13 +1,9 @@
 import React from 'react'
+import { useQuery } from '@apollo/react-hooks'
 
-import {
-   Input,
-   TextButton,
-   ButtonTile,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-} from '@dailykit/ui'
+import { ButtonTile, Tunnels, Tunnel, useTunnel, Loader } from '@dailykit/ui'
+
+import { AVAILABLE_SUPPLIERS, MASTER_PROCESSINGS } from '../../../graphql'
 
 // Tunnels
 import {
@@ -37,42 +33,7 @@ import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
 
 export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
-   const [suppliers, setSuppliers] = React.useState([
-      {
-         id: 1,
-         supplier: { title: 'Swiggy', img: '' },
-         contact: { title: 'Ajay Singh', img: '' },
-      },
-      {
-         id: 2,
-         supplier: { title: 'Zomato', img: '' },
-         contact: { title: 'Praveen Bisht', img: '' },
-      },
-      {
-         id: 3,
-         supplier: { title: 'Food Panda', img: '' },
-         contact: { title: 'Sanjay Sharma', img: '' },
-      },
-      {
-         id: 4,
-         supplier: { title: 'Uber Eats', img: '' },
-         contact: { title: 'Arjun Negi', img: '' },
-      },
-   ])
-   const [processings, setProcessings] = React.useState([
-      {
-         id: 1,
-         title: 'Chopped',
-      },
-      {
-         id: 2,
-         title: 'Mashed',
-      },
-      {
-         id: 3,
-         title: 'Raw',
-      },
-   ])
+
    const [allergens, setAllergens] = React.useState([
       {
          id: 1,
@@ -89,14 +50,28 @@ export default function ItemForm() {
    ])
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
 
+   const { loading: supplierLoading, data: supplierData } = useQuery(
+      AVAILABLE_SUPPLIERS
+   )
+
+   const { loading: processingsLoading, data: processingData } = useQuery(
+      MASTER_PROCESSINGS
+   )
+
+   if (supplierLoading || processingsLoading) return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <SuppliersTunnel
-                  close={() => closeTunnel(1)}
-                  next={() => openTunnel(2)}
-                  suppliers={suppliers}
+                  close={closeTunnel}
+                  open={openTunnel}
+                  suppliers={supplierData?.suppliers?.map(supplier => ({
+                     id: supplier.id,
+                     title: supplier.name,
+                     description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
+                  }))}
+                  rawSuppliers={supplierData.suppliers}
                />
             </Tunnel>
             <Tunnel layer={2}>
@@ -107,9 +82,15 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel layer={3}>
                <ProcessingTunnel
-                  close={() => closeTunnel(3)}
-                  next={() => openTunnel(4)}
-                  processings={processings}
+                  close={closeTunnel}
+                  open={openTunnel}
+                  processings={processingData?.masterProcessings?.map(
+                     processing => ({
+                        id: processing.id,
+                        title: processing.name,
+                     })
+                  )}
+                  rawProcessings={processingData?.masterProcessings}
                />
             </Tunnel>
             <Tunnel layer={4} size="lg">
@@ -125,16 +106,16 @@ export default function ItemForm() {
          <StyledWrapper>
             <StyledHeader>
                {state.title && (
-                  <React.Fragment>
+                  <>
                      <StyledInfo>
                         <h1> {state.title} </h1>
                         <span> {state.sku} </span>
                      </StyledInfo>
                      <StyledSupplier>
-                        <span>{state.supplier.supplier.title} </span>
-                        <span>{state.supplier.contact.title} </span>
+                        <span>{state.supplier.title} </span>
+                        <span>{state.supplier.description} </span>
                      </StyledSupplier>
-                  </React.Fragment>
+                  </>
                )}
             </StyledHeader>
          </StyledWrapper>
@@ -149,7 +130,7 @@ export default function ItemForm() {
                   />
                </StyledWrapper>
             ) : (
-               <React.Fragment>
+               <>
                   <StyledGrid>
                      <div>
                         <div>
@@ -211,7 +192,7 @@ export default function ItemForm() {
                      </div>
                      <div></div>
                   </StyledGrid>
-               </React.Fragment>
+               </>
             )}
          </StyledMain>
       </ItemContext.Provider>

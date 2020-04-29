@@ -4,53 +4,53 @@ export const ItemContext = React.createContext()
 
 export const state = {
    form_meta: {
-      shipped: false
+      shipped: false,
    },
    supplier: '',
    title: '',
    sku: '',
    unit_quantity: {
       value: '',
-      unit: ''
+      unit: '',
    },
    unit_price: {
       unit: '$',
-      value: ''
+      value: '',
    },
    case_quantity: {
       unit: '',
-      value: ''
+      value: '',
    },
    min_order_value: {
       unit: '',
-      value: ''
+      value: '',
    },
    lead_time: {
       unit: '',
-      value: ''
+      value: '',
    },
    processing: {
       name: '',
       par_level: {
          value: '',
-         unit: ''
+         unit: '',
       },
       max_inventory_level: {
          value: '',
-         unit: ''
+         unit: '',
       },
       labor_time: {
          value: '',
-         unit: ''
+         unit: '',
       },
       yield: '',
       shelf_life: {
          value: '',
-         unit: ''
+         unit: '',
       },
       bulk_density: '',
-      allergens: []
-   }
+      allergens: [],
+   },
 }
 
 export const reducer = (state, { type, payload }) => {
@@ -60,26 +60,26 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             form_meta: {
                ...state.form_meta,
-               [payload.name]: payload.value
-            }
+               [payload.name]: payload.value,
+            },
          }
       }
       case 'SUPPLIER': {
          return {
             ...state,
-            supplier: payload.supplier
+            supplier: payload,
          }
       }
       case 'TITLE': {
          return {
             ...state,
-            title: payload.title
+            title: payload.title,
          }
       }
       case 'SKU': {
          return {
             ...state,
-            sku: payload.sku
+            sku: payload.sku,
          }
       }
       case 'QUANTITY': {
@@ -87,8 +87,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             unit_quantity: {
                ...state.unit_quantity,
-               [payload.name]: payload.value
-            }
+               [payload.name]: payload.value,
+            },
          }
       }
       case 'PRICE': {
@@ -96,8 +96,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             unit_price: {
                ...state.unit_price,
-               [payload.name]: payload.value
-            }
+               [payload.name]: payload.value,
+            },
          }
       }
       case 'CASE': {
@@ -105,8 +105,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             case_quantity: {
                ...state.case_quantity,
-               [payload.name]: payload.value
-            }
+               [payload.name]: payload.value,
+            },
          }
       }
       case 'MIN_ORDER': {
@@ -114,8 +114,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             min_order_value: {
                ...state.min_order_value,
-               [payload.name]: payload.value
-            }
+               [payload.name]: payload.value,
+            },
          }
       }
       case 'LEAD_TIME': {
@@ -123,8 +123,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             lead_time: {
                ...state.lead_time,
-               [payload.name]: payload.value
-            }
+               [payload.name]: payload.value,
+            },
          }
       }
       case 'PROCESSING': {
@@ -132,8 +132,9 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               name: payload.value
-            }
+               name: payload.name,
+               processingId: payload.id,
+            },
          }
       }
       case 'PAR_LEVEL': {
@@ -143,9 +144,9 @@ export const reducer = (state, { type, payload }) => {
                ...state.processing,
                par_level: {
                   ...state.processing.par_level,
-                  [payload.name]: payload.value
-               }
-            }
+                  [payload.name]: payload.value,
+               },
+            },
          }
       }
       case 'MAX_INVENTORY_LEVEL': {
@@ -155,9 +156,9 @@ export const reducer = (state, { type, payload }) => {
                ...state.processing,
                max_inventory_level: {
                   ...state.processing.max_inventory_level,
-                  [payload.name]: payload.value
-               }
-            }
+                  [payload.name]: payload.value,
+               },
+            },
          }
       }
       case 'LABOR_TIME': {
@@ -167,9 +168,9 @@ export const reducer = (state, { type, payload }) => {
                ...state.processing,
                labor_time: {
                   ...state.processing.labor_time,
-                  [payload.name]: payload.value
-               }
-            }
+                  [payload.name]: payload.value,
+               },
+            },
          }
       }
       case 'YIELD': {
@@ -177,8 +178,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               yield: payload.value
-            }
+               yield: payload.value,
+            },
          }
       }
       case 'SHELF_LIFE': {
@@ -188,9 +189,9 @@ export const reducer = (state, { type, payload }) => {
                ...state.processing,
                shelf_life: {
                   ...state.processing.shelf_life,
-                  [payload.name]: payload.value
-               }
-            }
+                  [payload.name]: payload.value,
+               },
+            },
          }
       }
       case 'BULK_DENSITY': {
@@ -198,8 +199,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               bulk_density: payload.value
-            }
+               bulk_density: payload.value,
+            },
          }
       }
       case 'ALLERGENS': {
@@ -207,8 +208,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               allergens: payload.value
-            }
+               allergens: payload.value,
+            },
          }
       }
       default:
