@@ -51,6 +51,11 @@ export const state = {
       bulk_density: '',
       allergens: [],
    },
+   activeProcessing: {},
+   derivedProcessings: [],
+   configurable: {},
+   activeSachet: {},
+   nutriTarget: '',
 }
 
 export const reducer = (state, { type, payload }) => {
@@ -62,6 +67,7 @@ export const reducer = (state, { type, payload }) => {
                ...state.form_meta,
                [payload.name]: payload.value,
             },
+            processing: { ...state.processing, shipped: true },
          }
       }
       case 'SUPPLIER': {
@@ -134,6 +140,7 @@ export const reducer = (state, { type, payload }) => {
                ...state.processing,
                name: payload.name,
                processingId: payload.id,
+               sachets: [],
             },
          }
       }
@@ -212,6 +219,169 @@ export const reducer = (state, { type, payload }) => {
             },
          }
       }
+
+      case 'SET_ACTIVE_PROCESSING':
+         return { ...state, activeProcessing: payload }
+
+      case 'ADD_DERIVED_PROCESSING':
+         const newDerivedProcessings = [...state.derivedProcessings]
+         const index = newDerivedProcessings.findIndex(
+            proc => proc.id === payload.id
+         )
+
+         if (index >= 0) {
+            newDerivedProcessings.splice(index, 1, payload)
+         } else {
+            newDerivedProcessings.push(payload)
+         }
+
+         return { ...state, derivedProcessings: newDerivedProcessings }
+
+      case 'ADD_CONFIGURABLE_PROCESSING':
+         return { ...state, configurable: payload }
+
+      case 'CONFIGURE_DERIVED_PROCESSING':
+         const {
+            par,
+            parUnit,
+            maxInventoryLevel,
+            maxInventoryUnit,
+            laborTime,
+            laborUnit,
+            yieldPercentage,
+            shelfLife,
+            shelfLifeUnit,
+            bulkDensity,
+         } = payload
+         const configuredDerivedProcessings = [...state.derivedProcessings]
+         const activeConfigurable = configuredDerivedProcessings.findIndex(
+            config => config.id === state.configurable.id
+         )
+         configuredDerivedProcessings.splice(activeConfigurable, 1, {
+            ...state.configurable,
+            par_level: { unit: parUnit, value: par },
+            max_inventory_level: {
+               unit: maxInventoryUnit,
+               value: maxInventoryLevel,
+            },
+            labor_time: { unit: laborUnit, value: laborTime },
+            yield: yieldPercentage,
+            shelf_life: { unit: shelfLifeUnit, value: shelfLife },
+            bulk_density: bulkDensity,
+            sachets: [],
+         })
+         return { ...state, derivedProcessings: configuredDerivedProcessings }
+
+      case 'ADD_ALLERGENS_FOR_DERIVED_PROCESSING':
+         return {
+            ...state,
+            configurable: { ...state.configurable, allergens: payload },
+         }
+
+      case 'CONFIGURE_NEW_SACHET':
+         if (state.activeProcessing.shipped) {
+            const sachets = [...state.processing.sachets]
+            const index = sachets.findIndex(
+               sachet => sachet.quantity === payload.quantity
+            )
+            if (index >= 0) {
+               sachets.splice(index, 1, {
+                  id: index + 1,
+                  quantity: payload.quantity,
+                  parLevel: payload.par,
+                  maxInventoryLevel: payload.maxInventoryLevel,
+               })
+            } else {
+               sachets.push({
+                  id: sachets.length,
+                  quantity: payload.quantity,
+                  parLevel: payload.par,
+                  maxInventoryLevel: payload.maxInventoryLevel,
+               })
+            }
+            return {
+               ...state,
+               processing: { ...state.processing, sachets },
+               activeProcessing: { ...state.processing, sachets },
+            }
+         }
+         const derivedProcessings = [...state.derivedProcessings]
+         const indexOfActiveProcessing = derivedProcessings.findIndex(
+            proc => proc.id === state.activeProcessing.id
+         )
+
+         const newSachetsList = [
+            ...derivedProcessings[indexOfActiveProcessing].sachets,
+         ]
+
+         const sachetIndex = newSachetsList.findIndex(
+            sachet => sachet.quantity === payload.quantity
+         )
+         if (sachetIndex >= 0) {
+            newSachetsList.splice(sachetIndex, 1, {
+               id: sachetIndex + 1,
+               quantity: payload.quantity,
+               parLevel: payload.par,
+               maxInventoryLevel: payload.maxInventoryLevel,
+            })
+         } else {
+            newSachetsList.push({
+               id: newSachetsList.length,
+               quantity: payload.quantity,
+               parLevel: payload.par,
+               maxInventoryLevel: payload.maxInventoryLevel,
+            })
+         }
+
+         derivedProcessings[indexOfActiveProcessing].sachets = newSachetsList
+
+         return {
+            ...state,
+            derivedProcessings,
+            activeProcessing: derivedProcessings[indexOfActiveProcessing],
+         }
+
+      case 'SET_ACTIVE_SACHET':
+         return { ...state, activeSachet: payload }
+
+      case 'ADD_PROCESSING_NUTRIENT':
+         const nutrientKeys = Object.keys(payload).filter(key => {
+            if (payload[key] === 0) return false
+            return true
+         })
+
+         const nutrientsForProcessing = {}
+
+         nutrientKeys.forEach(key => {
+            nutrientsForProcessing[key] = payload[key]
+         })
+         return {
+            ...state,
+            processing: {
+               ...state.processing,
+               nutrients: nutrientsForProcessing,
+            },
+         }
+
+      case 'SET_NUTRI_TARGET':
+         return { ...state, nutriTarget: payload }
+
+      case 'ADD_DERIVED_PROCESSING_NUTRIENT':
+         const keys = Object.keys(payload).filter(key => {
+            if (payload[key] === 0) return false
+            return true
+         })
+
+         const nutrients = {}
+
+         keys.forEach(key => {
+            nutrients[key] = payload[key]
+         })
+
+         return {
+            ...state,
+            configurable: { ...state.configurable, nutrients },
+         }
       default:
          return state
    }

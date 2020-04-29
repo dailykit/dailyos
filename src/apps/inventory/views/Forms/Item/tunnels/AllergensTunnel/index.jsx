@@ -17,19 +17,30 @@ import { ItemContext } from '../../../../../context/item'
 
 import { TunnelHeader, TunnelBody } from '../styled'
 
-export default function AllergensTunnel({ close, allergens }) {
+export default function AllergensTunnelForDerivedProcessing({ close }) {
    const [search, setSearch] = React.useState('')
    const { state, dispatch } = React.useContext(ItemContext)
-   const [list, selected, selectOption] = useMultiList(allergens)
+   const [list, selected, selectOption] = useMultiList([
+      {
+         id: 1,
+         title: 'ALG 1',
+      },
+      {
+         id: 2,
+         title: 'ALG 2',
+      },
+      {
+         id: 3,
+         title: 'ALG 3',
+      },
+   ])
 
    const save = () => {
       dispatch({
-         type: 'ALLERGENS',
-         payload: {
-            value: selected,
-         },
+         type: 'ADD_ALLERGENS_FOR_DERIVED_PROCESSING',
+         payload: selected,
       })
-      close()
+      close(8)
    }
 
    return (
