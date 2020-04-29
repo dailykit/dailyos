@@ -30,8 +30,8 @@ import {
    RECIPES,
    ACCOMPANIMENT_TYPES,
    PRODUCTS,
-   CREATE_SIMPLE_RECIPE_PRODUCT,
-   CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   CREATE_INVENTORY_PRODUCT,
+   CREATE_INVENTORY_PRODUCT_OPTIONS,
 } from '../../../../graphql'
 
 export default function SimpleRecipeProduct() {
@@ -88,8 +88,52 @@ export default function SimpleRecipeProduct() {
    //    },
    // })
 
+   const [createInventoryProduct] = useMutation(CREATE_INVENTORY_PRODUCT, {
+      onCompleted: data => {
+         saveOptions(data.createInventoryProduct.returning[0].id)
+      },
+   })
+
+   const [createInventoryProductOptions] = useMutation(
+      CREATE_INVENTORY_PRODUCT_OPTIONS,
+      {
+         onCompleted: data => {
+            console.log('Saved!')
+         },
+      }
+   )
+
    const save = () => {
-      console.log(state)
+      const objects = {
+         accompaniments: state.accompaniments,
+         name: state.title,
+         tags: state.tags,
+         description: state.description,
+         supplierItemId:
+            state.meta.itemType === 'inventory' ? state.item.id : null,
+         sachetItemId: state.meta.itemType === 'sachet' ? state.item.id : null,
+      }
+      createInventoryProduct({
+         variables: {
+            objects: [objects],
+         },
+      })
+   }
+
+   const saveOptions = productId => {
+      const objects = state.options.map(option => {
+         return {
+            inventoryProductId: productId,
+            label: option.title,
+            price: option.price,
+            quantity: option.quantity,
+         }
+      })
+      createInventoryProductOptions({
+         variables: {
+            objects,
+         },
+      })
    }
 
    return (

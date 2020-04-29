@@ -11,6 +11,30 @@ export const CREATE_PRODUCT = gql`
    }
 `
 
+export const CREATE_INVENTORY_PRODUCT = gql`
+   mutation CreateInventoryProduct(
+      $objects: [onlineStore_inventoryProduct_insert_input!]!
+   ) {
+      createInventoryProduct(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const CREATE_INVENTORY_PRODUCT_OPTIONS = gql`
+   mutation CreateInventoryProductOptions(
+      $objects: [onlineStore_inventoryProductOption_insert_input!]!
+   ) {
+      createInventoryProductOption(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
    mutation CreateSimpleRecipeProduct(
       $objects: [onlineStore_simpleRecipeProduct_insert_input!]!
@@ -34,7 +58,6 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
       }
    }
 `
-//{description: "", tags: "", name: "", default: ""}
 
 export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
    mutation CreateCustomizableProduct(
@@ -47,7 +70,6 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
       }
    }
 `
-//{accompanients: "", customizableProductId: 10, inventoryProductId: 10, simpleRecipeProductId: 10}
 
 export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
    mutation CreateCustomizableProductOption(
