@@ -13,7 +13,11 @@ import {
    Loader,
 } from '@dailykit/ui'
 
-import { AVAILABLE_SUPPLIERS, MASTER_PROCESSINGS } from '../../../graphql'
+import {
+   AVAILABLE_SUPPLIERS,
+   MASTER_PROCESSINGS,
+   MASTER_ALLERGENS,
+} from '../../../graphql'
 
 // Tunnels
 import {
@@ -54,20 +58,6 @@ export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
 
-   const [allergens, setAllergens] = React.useState([
-      {
-         id: 1,
-         title: 'ALG 1',
-      },
-      {
-         id: 2,
-         title: 'ALG 2',
-      },
-      {
-         id: 3,
-         title: 'ALG 3',
-      },
-   ])
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
    const { loading: supplierLoading, data: supplierData } = useQuery(
@@ -78,7 +68,12 @@ export default function ItemForm() {
       MASTER_PROCESSINGS
    )
 
-   if (supplierLoading || processingsLoading) return <Loader />
+   const { loading: allergensLoading, data: allergensData } = useQuery(
+      MASTER_ALLERGENS
+   )
+
+   if (supplierLoading || processingsLoading || allergensLoading)
+      return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
@@ -119,7 +114,10 @@ export default function ItemForm() {
             <Tunnel layer={5}>
                <AllergensTunnel
                   close={() => closeTunnel(5)}
-                  allergens={allergens}
+                  allergens={allergensData?.masterAllergens?.map(allergen => ({
+                     id: allergen.id,
+                     title: allergen.name,
+                  }))}
                />
             </Tunnel>
             <Tunnel layer={6}>
@@ -257,7 +255,7 @@ export default function ItemForm() {
                               alignItems: 'center',
                            }}
                         >
-                           <Text as="title">Prcoessings</Text>
+                           <Text as="title">Processings</Text>
                            <IconButton
                               onClick={() => openTunnel(6)}
                               type="ghost"
@@ -266,7 +264,7 @@ export default function ItemForm() {
                            </IconButton>
                         </FlexContainer>
 
-                        {state.processing?.name?.title && (
+                        {state.processing?.name && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -283,7 +281,7 @@ export default function ItemForm() {
                                     })
                                  }}
                               >
-                                 <h3>{state.processing.name.title}</h3>
+                                 <h3>{state.processing.name}</h3>
                                  <Text as="subtitle">on hand: 0gm</Text>
                                  <Text as="subtitle">
                                     shelf life:{' '}
@@ -332,7 +330,7 @@ export default function ItemForm() {
                               minHeight: '500px',
                            }}
                         >
-                           {state.activeProcessing?.name?.title ? (
+                           {state.activeProcessing?.name ? (
                               <ProcessingView open={openTunnel} />
                            ) : (
                               <Text as="title">

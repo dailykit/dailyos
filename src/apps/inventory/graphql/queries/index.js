@@ -19,3 +19,12 @@ export const MASTER_PROCESSINGS = gql`
       }
    }
 `
+export const MASTER_ALLERGENS = gql`
+   query {
+      masterAllergens {
+         id
+         name
+         description
+      }
+   }
+`
