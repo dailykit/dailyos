@@ -7,13 +7,14 @@ import {
    useTunnel,
    ButtonTile,
    Input,
+   IconButton,
 } from '@dailykit/ui/'
 
 import {
-   BulkOrderContext,
+   SachetOrderContext,
    state as initialState,
    reducers,
-} from '../../../context/bulkOrder'
+} from '../../../context/sachetOrder'
 
 import FormHeading from '../../../components/FormHeading'
 import {
@@ -24,26 +25,31 @@ import {
 } from '../styled'
 import { Spacer, ItemCard } from '../../../components'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
-import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
+import SelectOutputSachetItemTunnel from './Tunnels/SelectOutputSachetItemTunnel'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 import SelectStationTunnel from './Tunnels/SelectStationTunnel'
+import SelectPackagingTunnel from './Tunnels/SelectPackagingTunnel'
+import SelectLabelTemplateTunnel from './Tunnels/SelectLabelTemplateTunnel'
+import AddIcon from '../../../../../shared/assets/icons/Add'
 
-export default function BulkWorkOrderForm() {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
-   const [bulkOrderState, bulkOrderDispatch] = useReducer(
+export default function SachetWorkOrder() {
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
+   const [sachetOrderState, sachetOrderDispatch] = useReducer(
       reducers,
       initialState
    )
 
    return (
-      <BulkOrderContext.Provider value={{ bulkOrderState, bulkOrderDispatch }}>
+      <SachetOrderContext.Provider
+         value={{ sachetOrderState, sachetOrderDispatch }}
+      >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <SelectSupplierItemTunnel close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <SelectOutputBulkItemTunnel close={closeTunnel} />
+               <SelectOutputSachetItemTunnel close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
                <SelectUserTunnel close={closeTunnel} />
@@ -53,6 +59,13 @@ export default function BulkWorkOrderForm() {
             </Tunnel>
             <Tunnel layer={5}>
                <SelectInputBulkItemTunnel close={closeTunnel} />
+            </Tunnel>
+
+            <Tunnel layer={6}>
+               <SelectPackagingTunnel close={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={7}>
+               <SelectLabelTemplateTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -65,8 +78,8 @@ export default function BulkWorkOrderForm() {
                   {/* TODO: add text here for input item */}
                   <Text as="h1">
                      Work Order{' '}
-                     {bulkOrderState.supplierItem?.title &&
-                        `- ${bulkOrderState.supplierItem.title}`}
+                     {sachetOrderState.supplierItem?.title &&
+                        `- ${sachetOrderState.supplierItem.title}`}
                   </Text>
                </div>
 
@@ -79,9 +92,9 @@ export default function BulkWorkOrderForm() {
 
             <StyledForm style={{ padding: '0px 60px' }}>
                <Text as="title">Select supplier item</Text>
-               {bulkOrderState.supplierItem?.title ? (
+               {sachetOrderState.supplierItem?.title ? (
                   <ItemCard
-                     title={bulkOrderState.supplierItem.title}
+                     title={sachetOrderState.supplierItem.title}
                      edit={() => openTunnel(1)}
                   />
                ) : (
@@ -95,17 +108,17 @@ export default function BulkWorkOrderForm() {
 
                <br />
 
-               {bulkOrderState.supplierItem?.title && (
+               {sachetOrderState.supplierItem?.title && (
                   <>
                      <Text as="title">Input Bulk item</Text>
-                     {bulkOrderState.inputItemProcessing?.title ? (
+                     {sachetOrderState.inputItemProcessing?.title ? (
                         <ItemCard
-                           title={bulkOrderState.inputItemProcessing.title}
-                           onHand={bulkOrderState.inputItemProcessing.onHand}
+                           title={sachetOrderState.inputItemProcessing.title}
+                           onHand={sachetOrderState.inputItemProcessing.onHand}
                            shelfLife={
-                              bulkOrderState.inputItemProcessing.shelfLife
+                              sachetOrderState.inputItemProcessing.shelfLife
                            }
-                           edit={() => openTunnel(2)}
+                           edit={() => openTunnel(5)}
                         />
                      ) : (
                         <ButtonTile
@@ -120,122 +133,87 @@ export default function BulkWorkOrderForm() {
 
                <Spacer />
 
-               {bulkOrderState.supplierItem?.title && (
+               {sachetOrderState.inputItemProcessing?.title && (
                   <>
-                     <Text as="title">Output Bulk item</Text>
-                     {bulkOrderState.outputItemProcessing?.title ? (
+                     <Text as="title">Output Sachet item</Text>
+                     {sachetOrderState.outputSachet?.title ? (
                         <ItemCard
-                           title={bulkOrderState.outputItemProcessing.title}
-                           onHand={bulkOrderState.outputItemProcessing.onHand}
-                           shelfLife={
-                              bulkOrderState.outputItemProcessing.shelfLife
-                           }
+                           title={sachetOrderState.outputSachet.title}
+                           par={sachetOrderState.outputSachet.par}
+                           available={`${sachetOrderState.outputSachet.available} / ${sachetOrderState.outputSachet.total}`}
                            edit={() => openTunnel(2)}
                         />
                      ) : (
                         <ButtonTile
                            noIcon
                            type="secondary"
-                           text="Select Output Bulk Item"
+                           text="Select Output Sachet Item"
                            onClick={e => openTunnel(2)}
                         />
                      )}
                   </>
                )}
 
-               {bulkOrderState.outputItemProcessing?.title && (
+               {sachetOrderState.outputSachet?.title && (
                   <Configurator open={openTunnel} />
                )}
             </StyledForm>
          </StyledWrapper>
-      </BulkOrderContext.Provider>
+      </SachetOrderContext.Provider>
    )
 }
 
 function Configurator({ open }) {
-   const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
-   const [yieldPercentage, setYieldPercentage] = useState(
-      bulkOrderState.outputItemProcessing.yield || ''
+   const { sachetOrderState, sachetOrderDispatch } = useContext(
+      SachetOrderContext
    )
-   const [outputQuantity, setOutputQuantity] = useState('')
+
    const [assignedDate, setAssignedDate] = useState('')
 
    return (
       <>
          <Spacer />
 
-         <div
-            style={{
-               width: '20%',
-               display: 'flex',
-               alignItems: 'flex-end',
-            }}
-         >
-            <Input
-               type="text"
-               placeholder="Yield Percentage"
-               name="yield"
-               value={yieldPercentage}
-               onChange={e => {
-                  const value = parseInt(e.target.value)
-                  if (e.target.value.length === 0) setYieldPercentage('')
-                  if (value) {
-                     setYieldPercentage(e.target.value)
-                  }
-               }}
-               onBlur={e => {
-                  if (e.target.value.length === 0) {
-                     setYieldPercentage(
-                        bulkOrderState.outputItemProcessing.yield || ''
-                     )
-                     return
-                  }
-
-                  bulkOrderDispatch({
-                     type: 'SET_NEW_YIELD_PERCENT',
-                     payload: parseInt(e.target.value),
-                  })
-               }}
-            />
-            %
-         </div>
+         <Text as="title">Enter Number of Sachets</Text>
          <br />
          <FlexContainer
             style={{ width: '50%', justifyContent: 'space-between' }}
          >
-            <div style={{ width: '45%' }}>
-               <Input
-                  type="text"
-                  placeholder="Enter Output Quantity"
-                  name="output"
-                  value={outputQuantity}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (e.target.value.length === 0) setOutputQuantity('')
-                     if (value) {
-                        setOutputQuantity(e.target.value)
-                     }
+            <FlexContainer style={{ width: '35%', alignItems: 'center' }}>
+               <IconButton
+                  disabled={sachetOrderState.sachetQuantity === 1}
+                  onClick={() => {
+                     sachetOrderDispatch({ type: 'REMOVE_SACHET_QUANTITY' })
                   }}
-                  onBlur={e => {
-                     if (e.target.value.length === 0) {
-                        setOutputQuantity('')
-                        return
-                     }
+                  type="ghost"
+               >
+                  <span style={{ color: '#00a7e1', fontWeight: '400' }}>-</span>
+               </IconButton>
+               <span style={{ width: '10px' }} />
+               <Text as="title">{sachetOrderState.sachetQuantity}</Text>
+               <span style={{ width: '10px' }} />
 
-                     bulkOrderDispatch({
-                        type: 'SET_OUTPUT_QUANTITY',
-                        payload: parseInt(e.target.value),
+               <IconButton
+                  onClick={() => {
+                     sachetOrderDispatch({
+                        type: 'ADD_SACHET_QUANTITY',
                      })
                   }}
-               />
-            </div>
+                  type="ghost"
+               >
+                  <AddIcon />
+               </IconButton>
+            </FlexContainer>
 
             <div>
-               {bulkOrderState.outputItemProcessing.outputQuantity && (
+               {sachetOrderState.sachetQuantity && (
                   <>
                      <Text as="subtitle">Suggested committed quantity</Text>
                      <Text as="title">
-                        {Math.round((outputQuantity * 100) / yieldPercentage)}
+                        {Math.round(
+                           sachetOrderState.sachetQuantity *
+                              +sachetOrderState.outputSachet.quantity
+                        )}
                      </Text>
                   </>
                )}
@@ -244,10 +222,54 @@ function Configurator({ open }) {
 
          <br />
 
+         <Text as="title">Packaging</Text>
+
          <>
-            {bulkOrderState.assignedUser?.title ? (
+            {sachetOrderState.packaging?.title ? (
                <ItemCard
-                  title={bulkOrderState.assignedUser.title}
+                  title={sachetOrderState.packaging.title}
+                  edit={() => open(6)}
+               />
+            ) : (
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text="Select packaging"
+                  onClick={e => open(6)}
+               />
+            )}
+         </>
+
+         <br />
+
+         <Text as="title">Label Template</Text>
+
+         <>
+            {sachetOrderState.labelTemplates[0]?.title ? (
+               <ItemCard
+                  title={sachetOrderState.labelTemplates
+                     .map(temp => `${temp.title}`)
+                     .join(', ')}
+                  edit={() => open(7)}
+               />
+            ) : (
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text="Select Label Template"
+                  onClick={e => open(7)}
+               />
+            )}
+         </>
+
+         <br />
+
+         <Text as="title">User Assigned</Text>
+
+         <>
+            {sachetOrderState.assignedUser?.title ? (
+               <ItemCard
+                  title={sachetOrderState.assignedUser.title}
                   edit={() => open(3)}
                />
             ) : (
@@ -280,7 +302,7 @@ function Configurator({ open }) {
             type="datetime-local"
             placeholder="Date (mm/dd/yyyy)"
             onBlur={() => {
-               bulkOrderDispatch({
+               sachetOrderDispatch({
                   type: 'SET_ASSIGNED_DATE',
                   payload: assignedDate,
                })
@@ -292,9 +314,9 @@ function Configurator({ open }) {
          <>
             <Text as="title">Station Assigned</Text>
 
-            {bulkOrderState.selectedStation?.title ? (
+            {sachetOrderState.selectedStation?.title ? (
                <ItemCard
-                  title={bulkOrderState.selectedStation.title}
+                  title={sachetOrderState.selectedStation.title}
                   edit={() => open(4)}
                />
             ) : (

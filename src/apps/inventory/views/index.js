@@ -11,6 +11,7 @@ import {
    ItemForm,
    BulkOrderForm,
    PurchaseOrderForm,
+   SachetOrderForm,
 } from './Forms'
 
 export {
@@ -23,4 +24,5 @@ export {
    BulkOrderForm,
    PurchaseOrdersListing,
    PurchaseOrderForm,
+   SachetOrderForm,
 }

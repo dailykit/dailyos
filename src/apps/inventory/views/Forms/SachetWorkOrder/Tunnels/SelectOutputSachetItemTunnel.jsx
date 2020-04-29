@@ -2,52 +2,36 @@ import React, { useState, useContext } from 'react'
 import {
    List,
    ListItem,
-   ListOptions,
    ListSearch,
+   ListOptions,
    useSingleList,
 } from '@dailykit/ui'
 
-import { BulkOrderContext } from '../../../../context/bulkOrder'
+import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
-export default function SelectSupplierTunnel({ close }) {
-   const { bulkOrderDispatch } = useContext(BulkOrderContext)
-
+export default function SelectOutputSachetItemTunnel({ close }) {
+   const { sachetOrderState, sachetOrderDispatch } = useContext(
+      SachetOrderContext
+   )
    const [search, setSearch] = useState('')
 
-   const [list, current, selectOption] = useSingleList([
-      {
-         id: 1,
-         title: 'Potato-001',
-         shippedProcessing: [
-            { id: 1, title: 'raw', shelfLife: 20, onHand: 2000, yield: 85 },
-            { id: 2, title: 'sliced', shelfLife: 20, onHand: 2000, yield: 82 },
-         ],
-      },
-
-      {
-         id: 3,
-         title: 'Lettuce-001',
-         shippedProcessing: [
-            { id: 3, title: 'raw', shelfLife: 20, onHand: 2000, yield: 92 },
-            { id: 4, title: 'Boiled', shelfLife: 20, onHand: 2000, yield: 88 },
-         ],
-      },
-   ])
-
+   const [list, current, selectOption] = useSingleList(
+      sachetOrderState.inputItemProcessing.sachets
+   )
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Supplier Item"
+            title="Select Output Bulk Sachet"
             next={() => {
-               bulkOrderDispatch({
-                  type: 'ADD_SUPPLIER_ITEM',
+               sachetOrderDispatch({
+                  type: 'ADD_OUTPUT_SACHET',
                   payload: current,
                })
-               close(1)
+               close(2)
             }}
-            close={() => close(1)}
+            close={() => close(2)}
             nextAction="Save"
          />
 
@@ -59,9 +43,7 @@ export default function SelectSupplierTunnel({ close }) {
                   type="SSL2"
                   content={{
                      title: current.title,
-                     description: `Processings as shipped: ${current.shippedProcessing
-                        .map(proc => proc.title)
-                        .join(', ')}`,
+                     description: `Available: ${current.available} / ${current.total}  |  Par: ${current.onHand}`,
                   }}
                />
             ) : (
@@ -81,9 +63,7 @@ export default function SelectSupplierTunnel({ close }) {
                         onClick={() => selectOption('id', option.id)}
                         content={{
                            title: option.title,
-                           description: `Processings as shipped: ${option.shippedProcessing
-                              .map(proc => proc.title)
-                              .join(', ')}`,
+                           description: `Available: ${option.available} / ${option.total}  |  Par: ${option.onHand}`,
                         }}
                      />
                   ))}

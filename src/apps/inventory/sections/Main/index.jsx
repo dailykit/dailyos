@@ -14,6 +14,7 @@ import {
    BulkOrderForm,
    PurchaseOrdersListing,
    PurchaseOrderForm,
+   SachetOrderForm,
 } from '../../views'
 
 const renderComponent = (type, view) => {
@@ -29,6 +30,7 @@ const renderComponent = (type, view) => {
    if (type === 'forms' && view === 'bulkOrder') return <BulkOrderForm />
    if (type === 'forms' && view === 'purchaseOrder')
       return <PurchaseOrderForm />
+   if (type === 'forms' && view === 'sachetOrder') return <SachetOrderForm />
 }
 
 const Main = () => {

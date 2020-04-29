@@ -2,31 +2,36 @@ import React, { useState, useContext } from 'react'
 import {
    List,
    ListItem,
-   ListSearch,
    ListOptions,
+   ListSearch,
    useSingleList,
 } from '@dailykit/ui'
 
-import { BulkOrderContext } from '../../../../context/bulkOrder'
+import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
-export default function SelectOutputBulkItem({ close }) {
-   const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
-   const [search, setSearch] = useState('')
+export default function SelectStationTunnel({ close }) {
+   const { sachetOrderDispatch } = useContext(SachetOrderContext)
 
-   const [list, current, selectOption] = useSingleList(
-      bulkOrderState.supplierItem.shippedProcessing
-   )
+   const [search, setSearch] = React.useState('')
+
+   const [list, current, selectOption] = useSingleList([
+      { id: 1, title: 'Station 1' },
+      { id: 2, title: 'Station 2' },
+      { id: 3, title: 'Station 3' },
+      { id: 4, title: 'Station 4' },
+   ])
+
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Output Bulk Item Processing"
+            title="Select Station"
             next={() => {
-               bulkOrderDispatch({ type: 'ADD_OUTPUT_ITEM', payload: current })
-               close(2)
+               sachetOrderDispatch({ type: 'ADD_STATION', payload: current })
+               close(4)
             }}
-            close={() => close(2)}
+            close={() => close(4)}
             nextAction="Save"
          />
 
@@ -34,13 +39,7 @@ export default function SelectOutputBulkItem({ close }) {
 
          <List>
             {Object.keys(current).length > 0 ? (
-               <ListItem
-                  type="SSL2"
-                  content={{
-                     title: current.title,
-                     description: `Shelf Life: ${current.shelfLife} On Hand: ${current.onHand}`,
-                  }}
-               />
+               <ListItem type="SSL1" title={current.title} />
             ) : (
                <ListSearch
                   onChange={value => setSearch(value)}
@@ -52,14 +51,11 @@ export default function SelectOutputBulkItem({ close }) {
                   .filter(option => option.title.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
-                        type="SSL2"
+                        type="SSL1"
                         key={option.id}
+                        title={option.title}
                         isActive={option.id === current.id}
                         onClick={() => selectOption('id', option.id)}
-                        content={{
-                           title: option.title,
-                           description: `Shelf Life: ${option.shelfLife} On Hand: ${option.onHand}`,
-                        }}
                      />
                   ))}
             </ListOptions>
