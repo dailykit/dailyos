@@ -12,7 +12,9 @@ import {
    StyledTable,
    StyledTabs,
    StyledTab,
+   StyledHeader,
 } from './styled'
+import { AddIcon } from '../../../../../../assets/icons'
 
 const Items = ({ openTunnel }) => {
    const { state, dispatch } = React.useContext(ComboProductContext)
@@ -32,7 +34,12 @@ const Items = ({ openTunnel }) => {
       <StyledWrapper>
          {state.components?.length ? (
             <React.Fragment>
-               <Text as="h2">Items ({state.components.length})</Text>
+               <StyledHeader>
+                  <Text as="h2">Items ({state.components.length})</Text>
+                  <span onClick={() => openTunnel(2)}>
+                     <AddIcon color="#555B6E" size="16" stroke="3" />
+                  </span>
+               </StyledHeader>
                {/* This filter will see if any of the item has product in it, if yes then view will change */}
                {state.components.filter(
                   component =>

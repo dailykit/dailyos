@@ -130,3 +130,13 @@ export const StyledComboTile = styled.div`
    grid-template-rows: 20px 1fr;
    margin-bottom: 12px;
 `
+
+export const StyledHeader = styled.div`
+   display: flex;
+   align-items: baseline;
+
+   span {
+      cursor: pointer;
+      margin-left: 12px;
+   }
+`
