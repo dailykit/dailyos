@@ -1,9 +1,6 @@
 import React from 'react'
 
 import {
-   TextButton,
-   Tag,
-   TagGroup,
    List,
    ListItem,
    ListOptions,
@@ -14,19 +11,54 @@ import {
 import { CloseIcon } from '../../../../../../assets/icons'
 
 import { TunnelHeader, TunnelBody } from '../styled'
-import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
+import { ComboProductContext } from '../../../../../../context/product/comboProduct'
+import { useMutation } from '@apollo/react-hooks'
+
+import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
 
 const ProductsTunnel = ({ close, products }) => {
-   const { state, dispatch } = React.useContext(CustomizableProductContext)
+   const { state, dispatch } = React.useContext(ComboProductContext)
 
    const [search, setSearch] = React.useState('')
-   const [list, current, selectOption] = ProductsTunnel(products)
+   const [list, current, selectOption] = useSingleList(products)
+
+   // Mutation
+   const [updateComboProductComponent] = useMutation(
+      UPDATE_COMBO_PRODUCT_COMPONENT,
+      {
+         onCompleted: data => {
+            const updatedComponent =
+               data.updateComboProductComponent.returning[0]
+            dispatch({
+               type: 'UPDATE_COMPONENT',
+               payload: {
+                  updatedComponent,
+               },
+            })
+            close(4)
+            close(3)
+         },
+         onError: error => {
+            console.log(error)
+         },
+      }
+   )
 
    const select = product => {
       selectOption('id', product.id)
-      console.log(product)
-      close(4)
-      close(3)
+      updateComboProductComponent({
+         variables: {
+            where: { id: { _eq: state.meta.componentId } },
+            set: {
+               customizableProductId:
+                  state.meta.productType === 'customizable' ? product.id : null,
+               inventoryProductId:
+                  state.meta.productType === 'inventory' ? product.id : null,
+               simpleRecipeProductId:
+                  state.meta.productType === 'simple' ? product.id : null,
+            },
+         },
+      })
    }
 
    return (

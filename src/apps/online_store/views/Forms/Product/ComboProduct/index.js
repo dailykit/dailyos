@@ -164,7 +164,7 @@ export default function ComboProduct() {
             <Tunnel layer={3}>
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
-            <Tunnel layer={3}>
+            <Tunnel layer={4}>
                <ProductsTunnel
                   close={closeTunnel}
                   products={products[state.meta.productType]}

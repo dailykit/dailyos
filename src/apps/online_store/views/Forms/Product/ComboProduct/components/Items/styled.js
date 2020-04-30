@@ -33,7 +33,7 @@ export const StyledListing = styled.div`
 export const StyledListingTile = styled.div`
    background: ${props => (props.active ? '#555B6E' : '#fff')};
    padding: 8px;
-   margin-bottom: 12px;
+   margin-bottom: 16px;
    color: ${props => (props.active ? '#fff' : '#555B6E')};
    cursor: pointer;
    height: 100px;
@@ -123,4 +123,10 @@ export const StyledLabel = styled.h5`
    font-size: 14px;
    line-height: 16px;
    color: #888d9d;
+`
+
+export const StyledComboTile = styled.div`
+   display: grid;
+   grid-template-rows: 20px 1fr;
+   margin-bottom: 12px;
 `

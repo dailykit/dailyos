@@ -5,6 +5,7 @@ export const ComboProductContext = React.createContext()
 export const state = {
    meta: {
       productType: '',
+      componentId: '',
    },
    id: '',
    name: '',
@@ -47,6 +48,17 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             components: [...state.components, ...payload.components],
+         }
+      }
+      case 'UPDATE_COMPONENT': {
+         const index = state.components.findIndex(
+            comp => comp.id === payload.id
+         )
+         const updatedComponents = state.components
+         updatedComponents[index] = payload
+         return {
+            ...state,
+            components: updatedComponents,
          }
       }
       case 'META': {
