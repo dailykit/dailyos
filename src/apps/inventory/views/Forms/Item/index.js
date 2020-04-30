@@ -14,7 +14,7 @@ import {
 } from '@dailykit/ui'
 
 import {
-   AVAILABLE_SUPPLIERS,
+   SUPPLIERS,
    MASTER_PROCESSINGS,
    MASTER_ALLERGENS,
 } from '../../../graphql'
@@ -60,9 +60,7 @@ export default function ItemForm() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
-   const { loading: supplierLoading, data: supplierData } = useQuery(
-      AVAILABLE_SUPPLIERS
-   )
+   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
 
    const { loading: processingsLoading, data: processingData } = useQuery(
       MASTER_PROCESSINGS
