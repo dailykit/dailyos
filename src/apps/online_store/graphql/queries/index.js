@@ -81,6 +81,19 @@ export const COMBO_PRODUCT = gql`
          name
          description
          tags
+         comboProductComponents {
+            id
+            label
+            customizableProduct {
+               name
+            }
+            inventoryProduct {
+               name
+            }
+            simpleRecipeProduct {
+               name
+            }
+         }
       }
    }
 `

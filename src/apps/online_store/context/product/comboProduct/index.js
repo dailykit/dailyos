@@ -22,6 +22,7 @@ export const reducers = (state, { type, payload }) => {
             name: payload.name,
             tags: payload.tags,
             description: payload.description,
+            components: payload.components,
          }
       }
       case 'NAME': {

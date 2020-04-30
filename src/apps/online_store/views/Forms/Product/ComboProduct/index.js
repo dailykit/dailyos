@@ -53,6 +53,7 @@ export default function ComboProduct() {
          id: tabs.current.id,
       },
       onCompleted: data => {
+         console.log('ComboProduct -> data', data)
          const {
             id,
             name,
