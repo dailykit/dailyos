@@ -1,7 +1,8 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 
-import { PRODUCTS } from '../../../graphql'
+import { COMBO_PRODUCTS } from '../../../graphql'
+import { Context } from '../../../context/tabs'
 
 // Components
 import {
@@ -24,9 +25,14 @@ import { StyledWrapper, StyledHeader } from '../styled'
 import { AddIcon } from '../../../assets/icons'
 
 const ProductsListing = () => {
+   const { dispatch } = React.useContext(Context)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   const { loading, error, data } = useQuery(PRODUCTS)
+   const { loading, error, data } = useQuery(COMBO_PRODUCTS)
+
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
+   }
 
    if (loading) return <h1>loading</h1>
    if (error) return <h1>Start the data-hub server</h1>
@@ -52,8 +58,13 @@ const ProductsListing = () => {
                   </TableRow>
                </TableHead>
                <TableBody>
-                  {data.simpleRecipeProducts.map(product => (
-                     <TableRow key={product.id}>
+                  {data.comboProducts.map(product => (
+                     <TableRow
+                        key={product.id}
+                        onClick={() =>
+                           addTab('Combo Product', 'comboProduct', product.id)
+                        }
+                     >
                         <TableCell>{product.name}</TableCell>
                      </TableRow>
                   ))}
