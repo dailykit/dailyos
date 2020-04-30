@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
 
 import {
    TextButton,
@@ -8,7 +10,11 @@ import {
    TagGroup,
    Text,
    IconButton,
+   Loader,
 } from '@dailykit/ui'
+
+// Mutations
+import { CREATE_BULK_ITEM, ADD_BULK_ITEM } from '../../../../../graphql'
 
 import { CloseIcon } from '../../../../../assets/icons'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
@@ -28,23 +34,50 @@ import {
 
 export default function ConfigTunnel({ close, open }) {
    const { state, dispatch } = React.useContext(ItemContext)
+   const [loading, setLoading] = useState(false)
+
+   const [addBulkItem] = useMutation(ADD_BULK_ITEM)
+   const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
+
+   const handleSave = async () => {
+      setLoading(true)
+      const res = await createBulkItem({
+         variables: {
+            processingName: state.processing.name,
+            itemId: state.id,
+            unit: state.processing.par_level.unit,
+         },
+      })
+
+      if (res?.data?.createBulkItem) {
+         const bulkItemAsShippedId = res?.data?.createBulkItem?.returning[0].id
+         const result = await addBulkItem({
+            variables: { itemId: state.id, bulkItemAsShippedId },
+         })
+
+         if (result?.data) {
+            dispatch({ type: 'ADD_PROCESSING', payload: bulkItemAsShippedId })
+            close(4)
+            setLoading(false)
+            toast.success('Bulk Item Added!')
+         }
+      }
+   }
+
+   if (loading) return <Loader />
 
    return (
       <>
+         <ToastContainer />
          <TunnelHeader>
             <div>
                <span onClick={() => close(4)}>
                   <CloseIcon size={24} />
                </span>
-               <span>Configure Processing: {state.processing.name.title}</span>
+               <span>Configure Processing: {state.processing.name}</span>
             </div>
             <div>
-               <TextButton
-                  onClick={() => {
-                     close(4)
-                  }}
-                  type="solid"
-               >
+               <TextButton onClick={handleSave} type="solid">
                   Save
                </TextButton>
             </div>
@@ -78,8 +111,8 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      >
-                        <option value="gms">gms</option>
-                        <option value="kgs">kgs</option>
+                        <option value="gram">gram</option>
+                        <option value="loaf">loaf</option>
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>

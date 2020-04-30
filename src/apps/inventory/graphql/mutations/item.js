@@ -38,13 +38,13 @@ export const ADD_BULK_ITEM = gql`
 export const CREATE_BULK_ITEM = gql`
    mutation CreateBulkItem(
       $processingName: String!
-      $supplierId: Int!
+      $itemId: Int!
       $unit: String!
    ) {
       createBulkItem(
          objects: {
             processingName: $processingName
-            supplierItemId: $supplierId
+            supplierItemId: $itemId
             unit: $unit
          }
       ) {

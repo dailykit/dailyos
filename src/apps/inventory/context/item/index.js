@@ -31,6 +31,7 @@ export const state = {
       value: '',
    },
    processing: {
+      id: null,
       name: '',
       par_level: {
          value: '',
@@ -385,6 +386,9 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             configurable: { ...state.configurable, nutrients },
          }
+
+      case 'ADD_PROCESSING':
+         return { ...state, processing: { ...state.processing, id: payload } }
       default:
          return state
    }
