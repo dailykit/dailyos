@@ -52,10 +52,10 @@ export const reducers = (state, { type, payload }) => {
       }
       case 'UPDATE_COMPONENT': {
          const index = state.components.findIndex(
-            comp => comp.id === payload.id
+            comp => comp.id === payload.updatedComponent.id
          )
          const updatedComponents = state.components
-         updatedComponents[index] = payload
+         updatedComponents[index] = payload.updatedComponent
          return {
             ...state,
             components: updatedComponents,

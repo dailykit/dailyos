@@ -15,6 +15,7 @@ import { ComboProductContext } from '../../../../../../context/product/comboProd
 import { useMutation } from '@apollo/react-hooks'
 
 import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
 
 const ProductsTunnel = ({ close, products }) => {
    const { state, dispatch } = React.useContext(ComboProductContext)
@@ -35,6 +36,7 @@ const ProductsTunnel = ({ close, products }) => {
                   updatedComponent,
                },
             })
+            toast.success('Product added!')
             close(4)
             close(3)
          },

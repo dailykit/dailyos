@@ -85,7 +85,7 @@ const ItemsView = ({ openTunnel }) => {
       <StyledLayout>
          <StyledListing>
             {state.components.map(component => (
-               <StyledComboTile>
+               <StyledComboTile key={component.id}>
                   <StyledLabel>{component.label}</StyledLabel>
                   {component.customizableProduct ||
                   component.inventoryProduct ||
