@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 
 export const CREATE_SUPPLIER = gql`
    mutation CreateSupplier($object: inventory_supplier_insert_input!) {
