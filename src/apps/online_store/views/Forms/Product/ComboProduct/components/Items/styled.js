@@ -117,3 +117,10 @@ export const StyledTable = styled.table`
       }
    }
 `
+
+export const StyledLabel = styled.h5`
+   font-weight: 500;
+   font-size: 14px;
+   line-height: 16px;
+   color: #888d9d;
+`

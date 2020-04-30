@@ -4,7 +4,7 @@ export const ComboProductContext = React.createContext()
 
 export const state = {
    meta: {
-      itemType: '',
+      productType: '',
    },
    id: '',
    name: '',

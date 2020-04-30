@@ -1,14 +1,7 @@
 import React from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import {
-   Input,
-   TextButton,
-   ButtonTile,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-} from '@dailykit/ui'
+import { Input, TextButton, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 
 // context
 import {
@@ -26,6 +19,7 @@ import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
 import {
    SIMPLE_RECIPE_PRODUCTS,
    INVENTORY_PRODUCTS,
+   CUSTOMIZABLE_PRODUCTS,
    COMBO_PRODUCT,
    UPDATE_COMBO_PRODUCT,
 } from '../../../../graphql'
@@ -34,22 +28,22 @@ import {
 import { Description, Items } from './components'
 
 // tunnels
-import { DescriptionTunnel, ItemsTunnel } from './tunnels'
+import {
+   DescriptionTunnel,
+   ItemsTunnel,
+   ProductTypeTunnel,
+   ProductsTunnel,
+} from './tunnels'
 
 export default function ComboProduct() {
    const { state: tabs } = React.useContext(Context)
-   console.log('ComboProduct -> tabs', tabs)
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState(state.name)
 
-   const [accompanimentTypes, setAccompanimentTypes] = React.useState([
-      { id: 1, title: 'Beverages' },
-      { id: 2, title: 'Salads' },
-      { id: 3, title: 'Sweets' },
-   ])
    const [products, setProducts] = React.useState({
       inventory: [],
       simple: [],
+      customizable: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
@@ -111,6 +105,21 @@ export default function ComboProduct() {
       },
       fetchPolicy: 'cache-and-network',
    })
+   useQuery(CUSTOMIZABLE_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.customizableProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            customizable: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
 
    //Mutations
    const [updateComboProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
@@ -150,6 +159,15 @@ export default function ComboProduct() {
             </Tunnel>
             <Tunnel layer={2}>
                <ItemsTunnel close={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ProductsTunnel
+                  close={closeTunnel}
+                  products={products[state.meta.productType]}
+               />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>

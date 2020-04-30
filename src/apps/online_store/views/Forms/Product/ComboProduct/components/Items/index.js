@@ -1,7 +1,7 @@
 import React from 'react'
-import { ButtonTile } from '@dailykit/ui'
+import { ButtonTile, Text } from '@dailykit/ui'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
-import { StyledWrapper } from './styled'
+import { StyledWrapper, StyledLabel } from './styled'
 
 const Items = ({ openTunnel }) => {
    const { state } = React.useContext(ComboProductContext)
@@ -9,9 +9,16 @@ const Items = ({ openTunnel }) => {
    return (
       <StyledWrapper>
          {state.components?.length ? (
-            state.components.map(component => (
-               <Item key={component.id} component={component} />
-            ))
+            <React.Fragment>
+               <Text as="h2">Items ({state.components.length})</Text>
+               {state.components.map(component => (
+                  <Item
+                     key={component.id}
+                     component={component}
+                     openTunnel={openTunnel}
+                  />
+               ))}
+            </React.Fragment>
          ) : (
             <ButtonTile
                type="primary"
@@ -24,8 +31,24 @@ const Items = ({ openTunnel }) => {
    )
 }
 
-const Item = ({ component }) => {
-   return <div>{component.label}</div>
+const Item = ({ component, openTunnel }) => {
+   return (
+      <StyledWrapper>
+         <StyledLabel>{component.label}</StyledLabel>
+         {component.customizableProduct ||
+         component.inventoryProduct ||
+         component.simpleRecipeProduct ? (
+            'Kuch toh hai!'
+         ) : (
+            <ButtonTile
+               type="primary"
+               size="sm"
+               text="Add Product"
+               onClick={() => openTunnel(3)}
+            />
+         )}
+      </StyledWrapper>
+   )
 }
 
 export default Items

@@ -55,6 +55,25 @@ export const INVENTORY_PRODUCTS = gql`
    }
 `
 
+export const CUSTOMIZABLE_PRODUCTS = gql`
+   {
+      customizableProducts {
+         id
+         name
+         default
+      }
+   }
+`
+
+export const COMBO_PRODUCTS = gql`
+   {
+      comboProducts {
+         id
+         name
+      }
+   }
+`
+
 export const COMBO_PRODUCT = gql`
    query ComboProduct($id: Int!) {
       comboProduct(id: $id) {
