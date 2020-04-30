@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 
 import {
@@ -68,7 +68,6 @@ export default function ConfigTunnel({ close, open }) {
 
    return (
       <>
-         <ToastContainer />
          <TunnelHeader>
             <div>
                <span onClick={() => close(4)}>

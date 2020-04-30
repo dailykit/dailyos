@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 
 // Mutations
@@ -64,7 +64,6 @@ export default function InfoTunnel({ close, next }) {
 
    return (
       <>
-         <ToastContainer />
          <TunnelHeader>
             <div>
                <span onClick={close}>
