@@ -5,26 +5,57 @@ import { TextButton, Input } from '@dailykit/ui'
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
+import { useMutation } from '@apollo/react-hooks'
+
+// graphql
+import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
 
 export default function DescriptionTunnel({ close }) {
    const { state, dispatch } = React.useContext(ComboProductContext)
 
-   const [tags, setTags] = React.useState(
-      state.tags.length ? state.tags.join(', ') : ''
-   )
-   const [description, setDescription] = React.useState(state.description)
+   const [busy, setBusy] = React.useState(false)
 
+   const [tags, setTags] = React.useState(
+      state.tags?.length ? state.tags.join(', ') : ''
+   )
+   const [description, setDescription] = React.useState(state.description || '')
+
+   // Mutation
+   const [updateComboProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
+      onCompleted: data => {
+         const { tags, description } = data.updateComboProduct.returning[0]
+         dispatch({
+            type: 'TAGS',
+            payload: { value: tags },
+         })
+         dispatch({
+            type: 'DESCRIPTION',
+            payload: { value: description },
+         })
+         close(1)
+         toast.success('Updated!')
+      },
+      onError: error => {
+         console.log(error)
+         setBusy(false)
+      },
+   })
+
+   // Handlers
    const save = () => {
+      if (busy) return
+      setBusy(true)
       const updatedTags = tags.split(',').map(tag => tag.trim())
-      dispatch({
-         type: 'TAGS',
-         payload: { value: updatedTags },
+      updateComboProduct({
+         variables: {
+            where: { id: { _eq: state.id } },
+            set: {
+               tags: updatedTags,
+               description: description,
+            },
+         },
       })
-      dispatch({
-         type: 'DESCRIPTION',
-         payload: { value: description },
-      })
-      close(1)
    }
 
    return (
@@ -38,7 +69,7 @@ export default function DescriptionTunnel({ close }) {
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {busy ? 'Saving...' : 'Save'}
                </TextButton>
             </div>
          </TunnelHeader>

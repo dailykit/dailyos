@@ -95,6 +95,24 @@ export const CREATE_COMBO_PRODUCT = gql`
    }
 `
 
+//{ id: { _eq: 5 } }
+//{ name: "" }
+export const UPDATE_COMBO_PRODUCT = gql`
+   mutation UpdateComboProduct(
+      $where: onlineStore_comboProduct_bool_exp!
+      $set: onlineStore_comboProduct_set_input
+   ) {
+      updateComboProduct(where: $where, _set: $set) {
+         returning {
+            description
+            name
+            tags
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_COLLECTION = gql`
    mutation CreateCollection($title: String) {
       createMenuCollection(title: $title) {

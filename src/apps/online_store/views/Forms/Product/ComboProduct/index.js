@@ -27,6 +27,7 @@ import {
    SIMPLE_RECIPE_PRODUCTS,
    INVENTORY_PRODUCTS,
    COMBO_PRODUCT,
+   UPDATE_COMBO_PRODUCT,
 } from '../../../../graphql'
 
 // components
@@ -104,21 +105,30 @@ export default function ComboProduct() {
       fetchPolicy: 'cache-and-network',
    })
 
-   // Mutations
-   //    const [updateComboProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
-   //       onCompleted: data => {
-   //          console.log(data)
-   //          dispatch({
-   //             type: 'TITLE',
-   //             payload: {
-   //                value: data.updateComboProduct.returning.name,
-   //             },
-   //          })
-   //       },
-   //    })
+   //Mutations
+   const [updateComboProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
+      onCompleted: data => {
+         const { name } = data.updateComboProduct.returning[0]
+         dispatch({
+            type: 'NAME',
+            payload: {
+               value: name,
+            },
+         })
+      },
+   })
 
    // Handlers
-   const updateName = () => {}
+   const updateName = e => {
+      updateComboProduct({
+         variables: {
+            where: { id: { _eq: state.id } },
+            set: {
+               name: e.target.value,
+            },
+         },
+      })
+   }
 
    // Effects
    React.useEffect(() => {

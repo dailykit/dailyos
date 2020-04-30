@@ -19,8 +19,8 @@ const Description = ({ openTunnel }) => {
                </StyledAction>
                <StyledRow>
                   <TagGroup>
-                     {state.tags.map(tag => (
-                        <Tag>{tag}</Tag>
+                     {state.tags.map((tag, i) => (
+                        <Tag key={i}>{tag}</Tag>
                      ))}
                   </TagGroup>
                </StyledRow>
