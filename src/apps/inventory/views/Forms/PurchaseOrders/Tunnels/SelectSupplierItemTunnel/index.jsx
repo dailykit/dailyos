@@ -28,7 +28,7 @@ export default function AddressTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Output Bulk Item Processing"
+            title="Select Supplier Item"
             next={() => {
                purchaseOrderDispatch({
                   type: 'ADD_SUPPLIER_ITEM',
