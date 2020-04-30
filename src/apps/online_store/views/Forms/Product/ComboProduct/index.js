@@ -31,10 +31,10 @@ import {
 } from '../../../../graphql'
 
 // components
-import { Description } from './components'
+import { Description, Items } from './components'
 
 // tunnels
-import { DescriptionTunnel } from './tunnels'
+import { DescriptionTunnel, ItemsTunnel } from './tunnels'
 
 export default function ComboProduct() {
    const { state: tabs } = React.useContext(Context)
@@ -59,7 +59,13 @@ export default function ComboProduct() {
          id: tabs.current.id,
       },
       onCompleted: data => {
-         const { id, name, tags, description } = data.comboProduct
+         const {
+            id,
+            name,
+            tags,
+            description,
+            comboProductComponents,
+         } = data.comboProduct
          dispatch({
             type: 'SEED',
             payload: {
@@ -67,6 +73,7 @@ export default function ComboProduct() {
                tags,
                description,
                id,
+               components: comboProductComponents,
             },
          })
       },
@@ -141,6 +148,9 @@ export default function ComboProduct() {
             <Tunnel layer={1}>
                <DescriptionTunnel close={closeTunnel} />
             </Tunnel>
+            <Tunnel layer={2}>
+               <ItemsTunnel close={closeTunnel} />
+            </Tunnel>
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
@@ -172,6 +182,7 @@ export default function ComboProduct() {
                   <div></div>
                </StyledMeta>
                <StyledRule />
+               <Items openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </ComboProductContext.Provider>

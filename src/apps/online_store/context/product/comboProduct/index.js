@@ -42,6 +42,12 @@ export const reducers = (state, { type, payload }) => {
             tags: payload.value,
          }
       }
+      case 'COMPONENTS': {
+         return {
+            ...state,
+            components: [...state.components, ...payload.components],
+         }
+      }
       case 'META': {
          return {
             ...state,

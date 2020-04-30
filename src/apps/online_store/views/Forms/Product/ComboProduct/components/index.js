@@ -1,3 +1,4 @@
 import Description from './Description'
+import Items from './Items'
 
-export { Description }
+export { Description, Items }

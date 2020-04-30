@@ -113,6 +113,20 @@ export const UPDATE_COMBO_PRODUCT = gql`
    }
 `
 
+// {comboProductId: 10, label: ""}
+export const CREATE_COMBO_PRODUCT_COMPONENT = gql`
+   mutation CreateComboProductComponent(
+      $objects: [onlineStore_comboProductComponent_insert_input!]!
+   ) {
+      createComboProductComponent(objects: $objects) {
+         returning {
+            id
+            label
+         }
+      }
+   }
+`
+
 export const CREATE_COLLECTION = gql`
    mutation CreateCollection($title: String) {
       createMenuCollection(title: $title) {
