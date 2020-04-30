@@ -3,6 +3,7 @@ import React from 'react'
 export const ItemContext = React.createContext()
 
 export const state = {
+   id: null,
    form_meta: {
       shipped: false,
    },
@@ -60,6 +61,8 @@ export const state = {
 
 export const reducer = (state, { type, payload }) => {
    switch (type) {
+      case 'ADD_ITEM_ID':
+         return { ...state, id: payload }
       case 'META': {
          return {
             ...state,
