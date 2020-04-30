@@ -55,6 +55,17 @@ export const INVENTORY_PRODUCTS = gql`
    }
 `
 
+export const COMBO_PRODUCT = gql`
+   query ComboProduct($id: Int!) {
+      comboProduct(id: $id) {
+         id
+         name
+         description
+         tags
+      }
+   }
+`
+
 export const ACCOMPANIMENT_TYPES = gql`
    {
       accompanimentTypes {

@@ -83,6 +83,18 @@ export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
    }
 `
 
+export const CREATE_COMBO_PRODUCT = gql`
+   mutation CreateComboProduct(
+      $objects: [onlineStore_comboProduct_insert_input!]!
+   ) {
+      createComboProduct(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_COLLECTION = gql`
    mutation CreateCollection($title: String) {
       createMenuCollection(title: $title) {
