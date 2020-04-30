@@ -55,6 +55,67 @@ export const INVENTORY_PRODUCTS = gql`
    }
 `
 
+export const CUSTOMIZABLE_PRODUCTS = gql`
+   {
+      customizableProducts {
+         id
+         name
+         default
+      }
+   }
+`
+
+export const COMBO_PRODUCTS = gql`
+   {
+      comboProducts {
+         id
+         name
+      }
+   }
+`
+
+export const COMBO_PRODUCT = gql`
+   query ComboProduct($id: Int!) {
+      comboProduct(id: $id) {
+         id
+         name
+         description
+         tags
+         comboProductComponents {
+            id
+            label
+            customizableProduct {
+               id
+               name
+            }
+            inventoryProduct {
+               id
+               name
+               inventoryProductOptions {
+                  id
+                  label
+                  price
+                  quantity
+               }
+            }
+            simpleRecipeProduct {
+               id
+               name
+               simpleRecipeProductOptions {
+                  id
+                  isActive
+                  price
+                  type
+                  simpleRecipeYield {
+                     yield
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
 export const ACCOMPANIMENT_TYPES = gql`
    {
       accompanimentTypes {

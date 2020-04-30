@@ -57,7 +57,7 @@ export const StyledHeader = styled.div`
 
 export const StyledBody = styled.div`
    background: #e5e5e5;
-   height: calc(100vh - 140px);
+   min-height: calc(100vh - 140px);
 `
 
 export const StyledRule = styled.hr`
