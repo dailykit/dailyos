@@ -1,6 +1,6 @@
 import { gql } from 'apollo-boost'
 
-export const AVAILABLE_SUPPLIERS = gql`
+export const SUPPLIERS = gql`
    query {
       suppliers {
          id
@@ -10,6 +10,7 @@ export const AVAILABLE_SUPPLIERS = gql`
       }
    }
 `
+
 export const MASTER_PROCESSINGS = gql`
    query {
       masterProcessings {
@@ -25,6 +26,19 @@ export const MASTER_ALLERGENS = gql`
          id
          name
          description
+      }
+   }
+`
+
+export const SUPPLIER = gql`
+   query Supplier($id: Int!) {
+      supplier(id: $id) {
+         id
+         name
+         contactPerson
+         available
+         shippingTerms
+         paymentTerms
       }
    }
 `

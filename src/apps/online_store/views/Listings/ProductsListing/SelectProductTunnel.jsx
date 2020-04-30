@@ -25,6 +25,15 @@ export default function SelectProductTunnel({ close }) {
             nextAction="Save"
          />
          <Spacer />
+         <br />
+         <SolidTile onClick={() => addTab('Advanced Product', 'product')}>
+            <Text as="h1">Advanced Product</Text>
+            <Text as="subtitle">
+               Advanced product is an item with your recipes, sold as Meal Kits
+               as well as Ready to Eat
+            </Text>
+         </SolidTile>
+         <br />
          <SolidTile
             onClick={() => addTab('Inventory Product', 'inventoryProduct')}
          >
@@ -34,11 +43,25 @@ export default function SelectProductTunnel({ close }) {
             </Text>
          </SolidTile>
          <br />
-         <SolidTile onClick={() => addTab('Advanced Product', 'product')}>
-            <Text as="h1">Advanced Product</Text>
+         <SolidTile
+            onClick={() => addTab('Simple Product', 'simpleRecipeProduct')}
+         >
+            <Text as="h1">Simple Recipe Product</Text>
             <Text as="subtitle">
-               Advanced product is an item with your recipes, sold as Meal Kits
-               as well as Ready to Eat
+               Simple Recipe product is only one recipes, sold as Meal Kits as
+               well as Ready to Eat
+            </Text>
+         </SolidTile>
+         <br />
+         <SolidTile
+            onClick={() =>
+               addTab('Customizable Product', 'customizableProduct')
+            }
+         >
+            <Text as="h1">Customizable Product</Text>
+            <Text as="subtitle">
+               Customizable product has recipe options with one recipe as
+               default
             </Text>
          </SolidTile>
       </TunnelContainer>

@@ -13,7 +13,7 @@ import {
    TableCell,
    Tunnels,
    Tunnel,
-   useTunnel
+   useTunnel,
 } from '@dailykit/ui'
 import SelectProductTunnel from './SelectProductTunnel'
 
@@ -41,8 +41,8 @@ const ProductsListing = () => {
          <StyledWrapper>
             <StyledHeader>
                <h1>Products</h1>
-               <IconButton type='solid' onClick={() => openTunnel(1)}>
-                  <AddIcon color='#fff' size={24} />
+               <IconButton type="solid" onClick={() => openTunnel(1)}>
+                  <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledHeader>
             <Table>
@@ -52,9 +52,9 @@ const ProductsListing = () => {
                   </TableRow>
                </TableHead>
                <TableBody>
-                  {data.products.map(product => (
+                  {data.simpleRecipeProducts.map(product => (
                      <TableRow key={product.id}>
-                        <TableCell>{product.title}</TableCell>
+                        <TableCell>{product.name}</TableCell>
                      </TableRow>
                   ))}
                </TableBody>
