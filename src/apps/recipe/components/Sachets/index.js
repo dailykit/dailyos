@@ -58,7 +58,8 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    const [currentMode, setCurrentMode] = React.useState('')
    const [sachetForm, setSachetForm] = React.useState({
       id: '',
-      quantity: { value: '', unit: '' },
+      quantity: '',
+      unit: '',
       tracking: true,
       modes: [
          {
@@ -140,64 +141,86 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    // Queries and Mutations
    const [fetchSachets, {}] = useLazyQuery(SACHETS_OF_PROCESSING, {
       onCompleted: data => {
-         setSachets(data.processing.sachets)
+         setSachets(data.ingredientSachets)
       }
    })
    const [fetchUnits, {}] = useLazyQuery(FETCH_UNITS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
-         setUnits(data.units)
+         const units = data.units.map(el => {
+            el.title = el.name
+            return el
+         })
+         setUnits(units)
       }
    })
    const [fetchStations, {}] = useLazyQuery(FETCH_STATIONS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
+         const stations = data.stations.map(el => {
+            el.title = el.name
+            return el
+         })
          stationsList.length = 0
-         stationsList.push(...data.stations)
+         stationsList.push(...stations)
       }
    })
    const [fetchSupplierItems, {}] = useLazyQuery(FETCH_SUPPLIER_ITEMS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
+         const items = data.supplierItems.map(el => {
+            el.title = el.name
+            return el
+         })
          supplierItemsList.length = 0
-         supplierItemsList.push(...data.supplierItems)
+         supplierItemsList.push(...items)
       }
    })
    const [fetchPackagings, {}] = useLazyQuery(FETCH_PACKAGINGS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
+         const packagings = data.packaging_packaging.map(el => {
+            el.title = el.name
+            return el
+         })
          packagingList.length = 0
-         packagingList.push(...data.packagings)
+         packagingList.push(...packagings)
       }
    })
    const [fetchLabelTemplates, {}] = useLazyQuery(FETCH_LABEL_TEMPLATES, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
+         const temps = data.label_templates.map(el => {
+            el.title = el.name
+            return el
+         })
          labelTemplateList.length = 0
-         labelTemplateList.push(...data.labelTemplates)
+         labelTemplateList.push(...temps)
       }
    })
    const [createSachet] = useMutation(CREATE_SACHET, {
       onCompleted: data => {
-         if (data.createSachet.success) {
-            setSachets([...sachets, data.createSachet.sachet])
+         if (data.createIngredientSachet.returning.length) {
+            console.log(data.createIngredientSachet.returning)
+            setSachets([...sachets, data.createIngredientSachet.returning[0]])
          } else {
             // Fire toast
             console.log('Sachet not created!')
          }
-      },
-      refetchQueries: [
-         {
-            query: SACHETS_OF_PROCESSING,
-            variables: { processingId }
-         }
-      ]
+      }
+      // refetchQueries: [
+      //    {
+      //       query: SACHETS_OF_PROCESSING,
+      //       variables: { +processingId }
+      //    }
+      // ]
    })
    const [deleteSachet] = useMutation(DELETE_SACHET, {
       onCompleted: data => {
-         if (data.deleteSachet.success) {
+         if (data.deleteIngredientSachet.returning?.length) {
             const updatedSachets = sachets.filter(
-               sachet => sachet.id !== data.deleteSachet.sachet.id
+               sachet =>
+                  sachet.id !== data.deleteIngredientSachet.returning[0].id
             )
             setSachets(updatedSachets)
             if (updatedSachets.length) setSelectedIndex(selectedIndex - 1)
@@ -211,22 +234,22 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
          cache,
          {
             data: {
-               deleteSachet: { sachet }
+               deleteIngredientSachet: { returning }
             }
          }
       ) => {
          const { processing: cached_processing } = cache.readQuery({
             query: SACHETS_OF_PROCESSING,
-            variables: { processingId }
+            variables: { processingId: +processingId }
          })
          cache.writeQuery({
             query: SACHETS_OF_PROCESSING,
-            variables: { processingId },
+            variables: { processingId: +processingId },
             data: {
                processing: {
                   ...cached_processing,
                   sachets: cached_processing.sachets.filter(
-                     sach => sach.id !== sachet.id
+                     sach => sach.id !== returning[0].id
                   )
                }
             }
@@ -236,10 +259,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
 
    // Side Effects
    React.useEffect(() => {
-      if (processingId && processingId.length) {
+      if (processingId) {
          fetchSachets({
             variables: {
-               processingId
+               processingId: +processingId,
+               ingredientId: +ingredientId
             }
          })
       }
@@ -262,11 +286,9 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    const deleteSachetHandler = sachetId => {
       deleteSachet({
          variables: {
-            input: {
-               ingredientId,
-               processingId,
-               sachetId
-            }
+            ingredientId: +ingredientId,
+            processingId: +processingId,
+            sachetId: +sachetId
          }
       })
    }
@@ -322,51 +344,50 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
 
    const createSachetHandler = async () => {
       let cleanSachet = {
-         quantity: {
-            value: +sachetForm.quantity.value,
-            unit:
-               sachetForm.quantity.unit.length > 0
-                  ? sachetForm.quantity.unit
-                  : units[0].id
-         },
+         quantity: sachetForm.quantity,
+         unit: sachetForm.unit,
          tracking: sachetForm.tracking
       }
-      let cleanModes = sachetForm.modes
-         .filter(mode => {
-            // This means mode is configured
-            return mode.station !== ''
-         })
-         .map(mode => {
-            const cleanSupplierItems = mode.supplierItems.map(supplierItem => {
-               return {
-                  item: supplierItem.item.id,
-                  accuracy: supplierItem.accuracy,
-                  packaging: supplierItem.packaging.id,
-                  isLabelled: supplierItem.isLabelled,
-                  labelTemplate: supplierItem.labelTemplate.id
-               }
-            })
-            return {
-               type: mode.type,
-               isActive: mode.isActive,
-               station: mode.station.id,
-               supplierItems: cleanSupplierItems
-            }
-         })
-      cleanSachet.modes = cleanModes
+      // let cleanModes = sachetForm.modes
+      //    .filter(mode => {
+      //       // This means mode is configured
+      //       return mode.station !== ''
+      //    })
+      //    .map(mode => {
+      //       const cleanSupplierItems = mode.supplierItems.map(supplierItem => {
+      //          return {
+      //             item: supplierItem.item.id,
+      //             accuracy: supplierItem.accuracy,
+      //             packaging: supplierItem.packaging.id,
+      //             isLabelled: supplierItem.isLabelled,
+      //             labelTemplate: supplierItem.labelTemplate.id
+      //          }
+      //       })
+      //       return {
+      //          type: mode.type,
+      //          isActive: mode.isActive,
+      //          station: mode.station.id,
+      //          supplierItems: cleanSupplierItems
+      //       }
+      //    })
+      // cleanSachet.modes = cleanModes
+      console.log(cleanSachet)
+      console.log(+ingredientId)
+      console.log(+processingId)
       createSachet({
          variables: {
-            input: {
-               ingredientId,
-               processingId,
-               sachet: cleanSachet
+            sachet: {
+               ingredientId: +ingredientId,
+               ingredientProcessingId: +processingId,
+               ...cleanSachet
             }
          }
       })
       closeSachetTunnel(1)
       setSachetForm({
          id: '',
-         quantity: { value: '', unit: '' },
+         quantity: '',
+         unit: '',
          tracking: true,
          modes: [
             {
@@ -473,7 +494,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
       fetchStations()
       fetchSupplierItems()
       fetchPackagings()
-      fetchLabelTemplates()
+      // fetchLabelTemplates()
       openSachetTunnel(1)
    }
 
@@ -505,7 +526,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                            </span>
                         </Actions>
                         <h3>
-                           {sachet.quantity.value} {sachet.quantity.unit.title}
+                           {sachet.quantity} {sachet.unit}
                         </h3>
                         <p>Active: Real-time</p>
                         <p>Available: 12/40 pkt</p>
@@ -535,7 +556,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                   <StyledTabContent
                      className={selectedView === 'modes' ? 'active' : ''}
                   >
-                     <Sachet sachet={sachets[selectedIndex]} />
+                     {/* <Sachet sachet={sachets[selectedIndex]} /> */}
                   </StyledTabContent>
                   <StyledTabContent
                      className={selectedView === 'inventory' ? 'active' : ''}
@@ -573,14 +594,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                      <Input
                         type='text'
                         placeholder='Enter Quantity'
-                        value={sachetForm.quantity?.value}
+                        value={sachetForm.quantity}
                         onChange={e =>
                            setSachetForm({
                               ...sachetForm,
-                              quantity: {
-                                 ...sachetForm.quantity,
-                                 value: e.target.value
-                              }
+                              quantity: e.target.value
                            })
                         }
                      />
@@ -588,15 +606,12 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         onChange={e =>
                            setSachetForm({
                               ...sachetForm,
-                              quantity: {
-                                 ...sachetForm.quantity,
-                                 unit: e.target.value
-                              }
+                              unit: e.target.value
                            })
                         }
                      >
                         {units.map(unit => (
-                           <option key={unit.id} value={unit.id}>
+                           <option key={unit.id} value={unit.title}>
                               {unit.title}
                            </option>
                         ))}

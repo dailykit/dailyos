@@ -47,23 +47,26 @@ const IngredientForm = () => {
       image: '',
    })
    const {} = useQuery(INGREDIENT, {
-      variables: { ID: state.current.ID },
+      variables: { ID: +state.current.ID },
       onCompleted: data => {
+         console.log(data)
          setIngredient(data.ingredient)
       },
    })
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
       onCompleted: data => {
-         if (data.updateIngredient.success) {
+         if (data.updateIngredient.returning?.length) {
             setIngredient({
                ...ingredient,
-               ...data.updateIngredient.ingredient,
+               ...data.updateIngredient.returning[0],
             })
-            if (state.current.title !== data.updateIngredient.ingredient.name) {
+            if (
+               state.current.title !== data.updateIngredient.returning[0].name
+            ) {
                dispatch({
                   type: 'SET_TITLE',
                   payload: {
-                     title: data.updateIngredient.ingredient.name,
+                     title: data.updateIngredient.returning[0].name,
                      oldTitle: state.current.title,
                   },
                })

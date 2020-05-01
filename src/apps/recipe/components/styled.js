@@ -8,12 +8,11 @@ export const StyledSection = styled.div`
 
 export const StyledListing = styled.div`
    display: grid;
-   grid-auto-flow: rows;
+   grid-auto-flow: row;
    grid-gap: 16px;
 `
 
 export const StyledDisplay = styled.div`
-   display: ${props => (props.hasElements ? 'block' : 'none')}
    background: #fff;
    padding: ${props =>
       props.contains === 'sachets' ? '0px 28px 28px 0px' : '32px 28px'};
@@ -63,7 +62,6 @@ export const StyledListingTile = styled.div`
 `
 
 export const Actions = styled.div`
-   display: ${props => (props.active ? 'block' : 'none')}
    position: absolute;
    top: 20px;
    right: 0;
