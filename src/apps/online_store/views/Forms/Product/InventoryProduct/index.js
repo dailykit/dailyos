@@ -23,7 +23,7 @@ import {
    ProductsTunnel,
    AccompanimentTypeTunnel,
    ItemTypeTunnel,
-} from './Tunnels'
+} from './tunnels'
 import { Item, Description } from './components'
 import { StyledWrapper } from '../../styled'
 import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'

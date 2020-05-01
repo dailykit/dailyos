@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { Text, Input, ButtonTile, IconButton, HelperText } from '@dailykit/ui'
+import React, { useContext } from './node_modules/react'
+import { Text, Input, ButtonTile, IconButton, HelperText } from './node_modules/@dailykit/ui'
 
 import { InventoryProductContext } from '../../../../../context/product/inventoryProduct'
 
@@ -8,9 +8,9 @@ import {
    TunnelHeader,
    Spacer,
 } from '../../../../../components'
-import { CloseIcon } from '../../../../../assets/icons/'
+import { CloseIcon } from '../../../../../assets/icons'
 
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation, Trans } from './node_modules/react-i18next'
 
 const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.'
 
