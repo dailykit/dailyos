@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import { Input } from '@dailykit/ui'
 
 import { ItemContext } from '../../../../../context/item'
@@ -9,6 +10,7 @@ import {
    Spacer,
 } from '../../../../../components'
 import { FlexContainer } from '../../../styled'
+import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 
 export default function ConfigureSachetTunnel({ open, close }) {
    const { state, dispatch } = useContext(ItemContext)
@@ -17,21 +19,36 @@ export default function ConfigureSachetTunnel({ open, close }) {
    const [par, setPar] = useState('')
    const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
 
+   const [creatSachetItem] = useMutation(CREATE_SACHET_ITEM)
+
+   const handleNext = async () => {
+      const res = await creatSachetItem({
+         variables: {
+            unitSize: quantity,
+            bulkItemId: state.activeProcessing.id,
+            unit: state.unit_quantity.unit,
+         },
+      })
+
+      if (res?.data?.createSachetItem?.returning[0]?.id) {
+         dispatch({
+            type: 'CONFIGURE_NEW_SACHET',
+            payload: {
+               id: res?.data?.createSachetItem?.returning[0]?.id,
+               quantity,
+               par,
+               maxInventoryLevel,
+            },
+         })
+         close(9)
+      }
+   }
+
    return (
       <TunnelContainer>
          <TunnelHeader
             title="Add Sachet"
-            next={() => {
-               dispatch({
-                  type: 'CONFIGURE_NEW_SACHET',
-                  payload: {
-                     quantity,
-                     par,
-                     maxInventoryLevel,
-                  },
-               })
-               close(9)
-            }}
+            next={handleNext}
             close={() => close(9)}
             nextAction="Save"
          />

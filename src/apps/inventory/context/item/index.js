@@ -145,6 +145,7 @@ export const reducer = (state, { type, payload }) => {
                name: payload.name,
                processingId: payload.id,
                sachets: [],
+               shipped: true,
             },
          }
       }
@@ -295,14 +296,14 @@ export const reducer = (state, { type, payload }) => {
             )
             if (index >= 0) {
                sachets.splice(index, 1, {
-                  id: index + 1,
+                  id: payload.id,
                   quantity: payload.quantity,
                   parLevel: payload.par,
                   maxInventoryLevel: payload.maxInventoryLevel,
                })
             } else {
                sachets.push({
-                  id: sachets.length,
+                  id: payload.id,
                   quantity: payload.quantity,
                   parLevel: payload.par,
                   maxInventoryLevel: payload.maxInventoryLevel,
@@ -328,14 +329,14 @@ export const reducer = (state, { type, payload }) => {
          )
          if (sachetIndex >= 0) {
             newSachetsList.splice(sachetIndex, 1, {
-               id: sachetIndex + 1,
+               id: payload.id,
                quantity: payload.quantity,
                parLevel: payload.par,
                maxInventoryLevel: payload.maxInventoryLevel,
             })
          } else {
             newSachetsList.push({
-               id: newSachetsList.length,
+               id: payload.id,
                quantity: payload.quantity,
                parLevel: payload.par,
                maxInventoryLevel: payload.maxInventoryLevel,

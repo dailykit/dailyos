@@ -142,6 +142,10 @@ export default function ItemForm() {
                <AllergensTunnelForDerivedProcessing
                   open={openTunnel}
                   close={closeTunnel}
+                  allergens={allergensData?.masterAllergens?.map(allergen => ({
+                     id: allergen.id,
+                     title: allergen.name,
+                  }))}
                />
             </Tunnel>
             <Tunnel layer={9}>
@@ -312,7 +316,7 @@ export default function ItemForm() {
                                        setActive(false)
                                        dispatch({
                                           type: 'SET_ACTIVE_PROCESSING',
-                                          payload: procs,
+                                          payload: {...procs, name: procs.title},
                                        })
                                     }}
                                  >

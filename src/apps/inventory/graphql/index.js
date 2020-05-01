@@ -12,6 +12,7 @@ import {
    CREATE_SUPPLIER_ITEM,
    ADD_BULK_ITEM,
    CREATE_BULK_ITEM,
+   CREATE_SACHET_ITEM,
 } from './mutations'
 
 export {
@@ -25,4 +26,5 @@ export {
    CREATE_SUPPLIER_ITEM,
    ADD_BULK_ITEM,
    CREATE_BULK_ITEM,
+   CREATE_SACHET_ITEM,
 }

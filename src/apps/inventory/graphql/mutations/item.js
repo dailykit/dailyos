@@ -60,12 +60,12 @@ export const CREATE_BULK_ITEM = gql`
 `
 export const CREATE_SACHET_ITEM = gql`
    mutation CreateSachetItem(
-      $unitSize: Int!
+      $unitSize: numeric!
       $bulkItemId: Int!
       $unit: String!
    ) {
       createSachetItem(
-         objects: { unitSize: $unitSize, bulkItemId: $bulkItem, unit: $unit }
+         objects: { unitSize: $unitSize, bulkItemId: $bulkItemId, unit: $unit }
       ) {
          returning {
             id
