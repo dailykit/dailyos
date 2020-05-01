@@ -16,24 +16,89 @@ import {
    FormBody,
 } from './styled'
 import { Categories, Configuration } from './components'
-import { ProductsTunnel } from './tunnels'
+import { ProductsTunnel, ProductTypeTunnel } from './tunnels'
 import {
    CREATE_COLLECTION,
-   PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
+   INVENTORY_PRODUCTS,
+   CUSTOMIZABLE_PRODUCTS,
+   COMBO_PRODUCTS,
    UPDATE_COLLECTION,
 } from '../../../graphql'
 
 const CollectionForm = () => {
    const [state, dispatch] = React.useReducer(reducer, initialState)
-   const [products, setProducts] = React.useState([])
+   const [products, setProducts] = React.useState({
+      simple: [],
+      inventory: [],
+      customizable: [],
+      combo: [],
+   })
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   // Queries and Mutations
-   useQuery(PRODUCTS, {
+   // Queries
+   useQuery(SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: data => {
-         setProducts(data.products)
+         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
       },
+      fetchPolicy: 'cache-and-network',
    })
+   useQuery(INVENTORY_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.inventoryProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   useQuery(CUSTOMIZABLE_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.customizableProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            customizable: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   useQuery(COMBO_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.comboProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            combo: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+
+   // Mutations
    const [createCollection] = useMutation(CREATE_COLLECTION, {
       onCompleted: data => {
          dispatch({
@@ -74,7 +139,13 @@ const CollectionForm = () => {
       <CollectionContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <ProductsTunnel close={closeTunnel} products={products} />
+               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ProductsTunnel
+                  close={closeTunnel}
+                  products={products[state.meta.productType]}
+               />
             </Tunnel>
          </Tunnels>
          <FormHeader>

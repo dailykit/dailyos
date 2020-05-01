@@ -3,14 +3,17 @@ import React from 'react'
 export const CollectionContext = React.createContext()
 
 export const state = {
+   meta: {
+      productType: '',
+   },
    current: {
-      category: ''
+      category: '',
    },
    id: '',
    title: '',
    categories: [],
    availability: '',
-   stage: 1
+   stage: 1,
 }
 
 export const reducer = (state, { type, payload }) => {
@@ -18,13 +21,13 @@ export const reducer = (state, { type, payload }) => {
       case 'ID': {
          return {
             ...state,
-            id: payload.id
+            id: payload.id,
          }
       }
       case 'TITLE': {
          return {
             ...state,
-            title: payload.value
+            title: payload.value,
          }
       }
       case 'CATEGORY_TITLE': {
@@ -32,18 +35,18 @@ export const reducer = (state, { type, payload }) => {
          updated_categories[state.current.category].title = payload.title
          return {
             ...state,
-            categories: updated_categories
+            categories: updated_categories,
          }
       }
       case 'CREATE_CATEGORY': {
          const new_category = {
             id: Math.floor(Math.random() * 1000),
             title: payload.title,
-            products: []
+            products: [],
          }
          return {
             ...state,
-            categories: [...state.categories, new_category]
+            categories: [...state.categories, new_category],
          }
       }
       case 'DELETE_CATEGORY': {
@@ -52,7 +55,7 @@ export const reducer = (state, { type, payload }) => {
          )
          return {
             ...state,
-            categories: updated_categories
+            categories: updated_categories,
          }
       }
       case 'CURRENT_CATEGORY': {
@@ -63,8 +66,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             current: {
                ...state.current,
-               category: index
-            }
+               category: index,
+            },
          }
       }
       case 'ADD_PRODUCTS': {
@@ -74,7 +77,7 @@ export const reducer = (state, { type, payload }) => {
          )
          return {
             ...state,
-            categories: updated_categories
+            categories: updated_categories,
          }
       }
       case 'DELETE_PRODUCT': {
@@ -88,19 +91,28 @@ export const reducer = (state, { type, payload }) => {
          updated_categories[index].products = updated_products
          return {
             ...state,
-            categories: updated_categories
+            categories: updated_categories,
          }
       }
       case 'AVAILABILITY': {
          return {
             ...state,
-            availability: payload
+            availability: payload,
          }
       }
       case 'NEXT_STAGE': {
          return {
             ...state,
-            stage: state.stage + 1
+            stage: state.stage + 1,
+         }
+      }
+      case 'META': {
+         return {
+            ...state,
+            meta: {
+               ...state.meta,
+               [payload.name]: payload.value,
+            },
          }
       }
       default:
