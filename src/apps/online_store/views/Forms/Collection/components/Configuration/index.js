@@ -92,7 +92,7 @@ const Configuration = () => {
       if (avail) {
          setRule(avail)
          dispatch({
-            type: 'AVAILABILITY',
+            type: 'RULE',
             payload: avail.toString(),
          })
       }
@@ -150,7 +150,7 @@ const Configuration = () => {
                      {t(address.concat('from'))}
                      <input
                         name="dtstart"
-                        type="datetime-local"
+                        type="date"
                         value={start}
                         onChange={e => setStart(e.target.value)}
                      />
@@ -159,7 +159,7 @@ const Configuration = () => {
                      {t(address.concat('till'))}
                      <input
                         name="until"
-                        type="datetime-local"
+                        type="date"
                         value={until}
                         onChange={e => setUntil(e.target.value)}
                      />

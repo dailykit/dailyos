@@ -31,6 +31,7 @@ const ProductsTunnel = ({ close, products }) => {
             products: selected,
          },
       })
+      close(2)
       close(1)
    }
 
@@ -38,7 +39,7 @@ const ProductsTunnel = ({ close, products }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(1)}>
+               <span onClick={() => close(2)}>
                   <CloseIcon />
                </span>
                <span><Trans i18nKey={address.concat('tunnel header')}>Select and add products to the collection</Trans></span>

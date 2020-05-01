@@ -38,7 +38,7 @@ export default function AllergensTunnel({ close, allergens }) {
    }
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={close}>
@@ -88,6 +88,6 @@ export default function AllergensTunnel({ close, allergens }) {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

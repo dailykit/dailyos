@@ -2,10 +2,8 @@ import gql from 'graphql-tag'
 
 export const CREATE_INGREDIENT = gql`
    mutation CreateIngredient($name: String) {
-      createIngredient(name: $name) {
-         success
-         message
-         ingredient {
+      createIngredient(objects: { name: $name }) {
+         returning {
             id
             name
          }
@@ -15,52 +13,45 @@ export const CREATE_INGREDIENT = gql`
 
 export const UPDATE_INGREDIENT = gql`
    mutation UpdateIngredient(
-      $ingredientId: ID!
+      $ingredientId: Int!
       $name: String!
       $image: String
    ) {
       updateIngredient(
-         input: { id: $ingredientId, name: $name, image: $image }
+         where: { id: { _eq: $ingredientId } }
+         _set: { image: $image, name: $name }
       ) {
-         success
-         message
-         ingredient {
+         returning {
             id
-            name
             image
+            name
          }
       }
    }
 `
 
 export const CREATE_PROCESSINGS = gql`
-   mutation CreateProcessings($ingredientId: ID!, $processingNames: [ID!]!) {
-      createProcessings(
-         input: {
-            ingredientId: $ingredientId
-            processingNames: $processingNames
-         }
-      ) {
-         id
-         sachets {
+   mutation CreateProcessings(
+      $procs: [ingredient_ingredientProcessing_insert_input!]!
+   ) {
+      createIngredientProcessing(objects: $procs) {
+         returning {
             id
-         }
-         name {
-            title
-         }
-         recipes {
-            id
+            processingName
          }
       }
    }
 `
 
 export const DELETE_PROCESSING = gql`
-   mutation DeleteProcessing($input: DeleteProcessingInput) {
-      deleteProcessing(input: $input) {
-         success
-         message
-         processing {
+   mutation DeleteProcessing($ingredientId: Int!, $processingId: Int!) {
+      deleteIngredientProcessing(
+         where: {
+            id: { _eq: $processingId }
+            ingredientId: { _eq: $ingredientId }
+         }
+      ) {
+         returning {
             id
          }
       }
@@ -68,56 +59,74 @@ export const DELETE_PROCESSING = gql`
 `
 
 export const CREATE_SACHET = gql`
-   mutation CreateSachet($input: CreateSachetInput!) {
-      createSachet(input: $input) {
-         success
-         message
-         sachet {
+   mutation CreateSachet(
+      $sachet: [ingredient_ingredientSachet_insert_input!]!
+   ) {
+      createIngredientSachet(objects: $sachet) {
+         returning {
             id
-            quantity {
-               value
-               unit {
-                  id
-                  title
-               }
-            }
             tracking
-            modes {
-               isActive
-               type
-               station {
-                  id
-                  title
-               }
-               supplierItems {
-                  isDefault
-                  item {
-                     id
-                     title
-                  }
-                  accuracy
-                  packaging {
-                     id
-                     title
-                  }
-                  isLabelled
-                  labelTemplate {
-                     id
-                     title
-                  }
-               }
-            }
+            quantity
+            unit
          }
       }
+      #   createSachet(input: $input) {
+      #      success
+      #      message
+      #      sachet {
+      #         id
+      #         quantity {
+      #            value
+      #            unit {
+      #               id
+      #               title
+      #            }
+      #         }
+      #         tracking
+      #         modes {
+      #            isActive
+      #            type
+      #            station {
+      #               id
+      #               title
+      #            }
+      #            supplierItems {
+      #               isDefault
+      #               item {
+      #                  id
+      #                  title
+      #               }
+      #               accuracy
+      #               packaging {
+      #                  id
+      #                  title
+      #               }
+      #               isLabelled
+      #               labelTemplate {
+      #                  id
+      #                  title
+      #               }
+      #            }
+      #         }
+      #      }
+      #   }
    }
 `
 
 export const DELETE_SACHET = gql`
-   mutation DeleteSachet($input: DeleteSachetInput!) {
-      deleteSachet(input: $input) {
-         success
-         message
-         sachet {
+   mutation DeleteSachet(
+      $ingredientId: Int!
+      $processingId: Int!
+      $sachetId: Int!
+   ) {
+      deleteIngredientSachet(
+         where: {
+            id: { _eq: $sachetId }
+            ingredientId: { _eq: $ingredientId }
+            ingredientProcessingId: { _eq: $processingId }
+         }
+      ) {
+         returning {
             id
          }
       }

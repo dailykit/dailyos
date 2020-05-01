@@ -12,38 +12,62 @@ export default function ItemCard({
    shippedProcessing,
    onHand,
    shelfLife,
-   edit
+   edit,
+   available,
+   par,
 }) {
    const { t } = useTranslation();
    return (
 
       <StyledCard>
          <div>
-            <Text as='title'>{title}</Text>
+            <Text as="title">{title}</Text>
 
             <div style={{ display: 'flex' }}>
                {shippedProcessing && (
                   <>
+<<<<<<< HEAD
                      <Text as='subtitle'>
                         {t(address.concat('processing as shipped'))}: {shippedProcessing.join(', ')}
+=======
+                     <Text as="subtitle">
+                        Processing as Shipped: {shippedProcessing.join(', ')}
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                      </Text>
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {onHand && (
                   <>
+<<<<<<< HEAD
                      <Text as='subtitle'>{t(address.concat('on hand'))}: {onHand} </Text>
+=======
+                     <Text as="subtitle">On Hand: {onHand} </Text>
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {shelfLife && (
+<<<<<<< HEAD
                   <Text as='subtitle'>{t(address.concat('shelf life'))}: {shelfLife} </Text>
+=======
+                  <Text as="subtitle">Shelf Life: {shelfLife} </Text>
+               )}
+
+               {available && <Text as="subtitle">Available: {available} </Text>}
+
+               {par && (
+                  <>
+                     <span style={{ width: '20px' }} />
+                     <Text as="subtitle">Par: {par}</Text>
+                  </>
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                )}
             </div>
          </div>
 
          <div>
-            <IconButton type='ghost' onClick={() => edit()}>
+            <IconButton type="ghost" onClick={() => edit()}>
                <EditIcon />
             </IconButton>
          </div>

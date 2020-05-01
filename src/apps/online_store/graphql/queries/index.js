@@ -2,11 +2,12 @@ import gql from 'graphql-tag'
 
 export const RECIPES = gql`
    {
-      recipes {
+      simpleRecipes {
          id
          name
-         servings {
-            size
+         simpleRecipeYields {
+            id
+            yield
          }
       }
    }
@@ -14,15 +15,107 @@ export const RECIPES = gql`
 
 export const PRODUCTS = gql`
    {
-      products {
+      simpleRecipeProducts {
          id
-         title
-         items {
-            label
+         name
+      }
+   }
+`
+
+export const SIMPLE_RECIPE_PRODUCTS = gql`
+   {
+      simpleRecipeProducts {
+         id
+         name
+         simpleRecipeProductOptions {
+            type
+            isActive
+            price
+            simpleRecipeYield {
+               id
+               yield
+            }
          }
       }
    }
 `
+
+export const INVENTORY_PRODUCTS = gql`
+   {
+      inventoryProducts {
+         id
+         name
+         inventoryProductOptions {
+            id
+            label
+            price
+            quantity
+         }
+      }
+   }
+`
+
+export const CUSTOMIZABLE_PRODUCTS = gql`
+   {
+      customizableProducts {
+         id
+         name
+         default
+      }
+   }
+`
+
+export const COMBO_PRODUCTS = gql`
+   {
+      comboProducts {
+         id
+         name
+      }
+   }
+`
+
+export const COMBO_PRODUCT = gql`
+   query ComboProduct($id: Int!) {
+      comboProduct(id: $id) {
+         id
+         name
+         description
+         tags
+         comboProductComponents {
+            id
+            label
+            customizableProduct {
+               id
+               name
+            }
+            inventoryProduct {
+               id
+               name
+               inventoryProductOptions {
+                  id
+                  label
+                  price
+                  quantity
+               }
+            }
+            simpleRecipeProduct {
+               id
+               name
+               simpleRecipeProductOptions {
+                  id
+                  isActive
+                  price
+                  type
+                  simpleRecipeYield {
+                     yield
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
 export const ACCOMPANIMENT_TYPES = gql`
    {
       accompanimentTypes {
@@ -34,12 +127,11 @@ export const ACCOMPANIMENT_TYPES = gql`
 
 export const COLLECTIONS = gql`
    {
-      menucollections {
+      menuCollections {
          id
-         title
-         categories {
-            title
-         }
+         name
+         categories
+         availability
       }
    }
 `

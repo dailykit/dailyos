@@ -11,6 +11,9 @@ import {
    CollectionForm,
    InventoryProductForm,
    CollectionsListing,
+   SimpleRecipeProductForm,
+   CustomizableProductForm,
+   ComboProductForm,
 } from '../../views'
 
 const renderComponent = (type, view) => {
@@ -23,6 +26,11 @@ const renderComponent = (type, view) => {
    if (type === 'forms' && view === 'collection') return <CollectionForm />
    if (type === 'forms' && view === 'inventoryProduct')
       return <InventoryProductForm />
+   if (type === 'forms' && view === 'simpleRecipeProduct')
+      return <SimpleRecipeProductForm />
+   if (type === 'forms' && view === 'customizableProduct')
+      return <CustomizableProductForm />
+   if (type === 'forms' && view === 'comboProduct') return <ComboProductForm />
 }
 
 const Main = () => {

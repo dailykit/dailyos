@@ -31,7 +31,7 @@ export default function SuppliersTunnel({ close, next, suppliers }) {
    }
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={close}>
@@ -76,6 +76,6 @@ export default function SuppliersTunnel({ close, next, suppliers }) {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

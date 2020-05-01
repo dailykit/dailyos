@@ -12,7 +12,7 @@ import {
    TagGroup,
    Tag,
    ListItem,
-   useMultiList
+   useMultiList,
 } from '@dailykit/ui'
 
 import { AddIcon, DeleteIcon, CloseIcon } from '../../assets/icons'
@@ -24,13 +24,13 @@ import {
    StyledDisplay,
    Actions,
    StyledTunnelHeader,
-   StyledTunnelMain
+   StyledTunnelMain,
 } from '../styled'
 import {
    PROCESSINGS_OF_INGREDIENT,
    CREATE_PROCESSINGS,
    DELETE_PROCESSING,
-   FETCH_PROCESSING_NAMES
+   FETCH_PROCESSING_NAMES,
 } from '../../graphql'
 import { Sachets } from '../'
 
@@ -45,31 +45,39 @@ const Processings = ({ ingredientId }) => {
    const [selectedIndex, setSelectedIndex] = React.useState(0)
 
    // Queries and Mutations
-   const _ = useQuery(FETCH_PROCESSING_NAMES, {
+   useQuery(FETCH_PROCESSING_NAMES, {
       onCompleted: data => {
          processingNamesList.length = 0
-         processingNamesList.push(...data.processingNames)
-      }
+         const names = data.masterProcessings.map(proc => {
+            proc.title = proc.name
+            return proc
+         })
+         processingNamesList.push(...names)
+      },
    })
-   const __ = useQuery(PROCESSINGS_OF_INGREDIENT, {
-      variables: { ingredientId },
+   useQuery(PROCESSINGS_OF_INGREDIENT, {
+      variables: { ingredientId: +ingredientId },
       onCompleted: data => {
-         setProcessings(data.ingredient.processings)
-      }
+         console.log(data)
+         setProcessings(data.ingredient.ingredientProcessings)
+      },
    })
 
    const [createProcessings] = useMutation(CREATE_PROCESSINGS, {
       onCompleted: data => {
-         setProcessings([...processings, ...data.createProcessings])
+         setProcessings([
+            ...processings,
+            ...data.createIngredientProcessing.returning,
+         ])
       },
       refetchQueries: [
          {
             query: PROCESSINGS_OF_INGREDIENT,
             variables: {
-               ingredientId
-            }
-         }
-      ]
+               ingredientId: +ingredientId,
+            },
+         },
+      ],
       // Can do it manually but returning obj has ids instead of populated fields, that creates problem while rendering
       // update: (cache, { data: { createProcessings } }) => {
       //    const { ingredient: cached_ingredient } = cache.readQuery({
@@ -93,10 +101,11 @@ const Processings = ({ ingredientId }) => {
    })
    const [deleteProcessing] = useMutation(DELETE_PROCESSING, {
       onCompleted: data => {
-         if (data.deleteProcessing.success) {
+         if (data.deleteIngredientProcessing.returning?.length) {
             const newProcessings = processings.filter(
                processing =>
-                  processing.id !== data.deleteProcessing.processing.id
+                  processing.id !==
+                  data.deleteIngredientProcessing.returning[0].id
             )
             setProcessings(newProcessings)
          } else {
@@ -108,49 +117,54 @@ const Processings = ({ ingredientId }) => {
          cache,
          {
             data: {
-               deleteProcessing: { processing }
-            }
+               deleteIngredientProcessing: { returning },
+            },
          }
       ) => {
          const { ingredient: cached_ingredient } = cache.readQuery({
             query: PROCESSINGS_OF_INGREDIENT,
-            variables: { ingredientId }
+            variables: { ingredientId: +ingredientId },
          })
          cache.writeQuery({
             query: PROCESSINGS_OF_INGREDIENT,
-            variables: { ingredientId },
+            variables: { ingredientId: +ingredientId },
             data: {
                ingredient: {
                   ...cached_ingredient,
                   processings: cached_ingredient.processings.filter(
-                     proc => proc.id !== processing.id
-                  )
-               }
-            }
+                     proc => proc.id !== returning[0].id
+                  ),
+               },
+            },
          })
-      }
+      },
    })
 
    //Lists
    const [
       processingNamesList,
       selectedProcessingNames,
-      selectProcessingName
+      selectProcessingName,
    ] = useMultiList([])
 
    // Tunnels
    const [
       processingTunnel,
       openProcessingTunnel,
-      closeProcessingTunnel
+      closeProcessingTunnel,
    ] = useTunnel(1)
    const [search, setSearch] = React.useState('')
 
    // Handlers
    const addProcessingsHandler = () => {
-      const names = selectedProcessingNames.map(item => item.id)
+      const procs = selectedProcessingNames.map(item => {
+         return {
+            ingredientId: +ingredientId,
+            processingName: item.name,
+         }
+      })
       createProcessings({
-         variables: { ingredientId, processingNames: names }
+         variables: { procs },
       })
       closeProcessingTunnel(1)
    }
@@ -158,11 +172,9 @@ const Processings = ({ ingredientId }) => {
    const deleteProcessingHandler = processingId => {
       deleteProcessing({
          variables: {
-            input: {
-               ingredientId,
-               processingId
-            }
-         }
+            ingredientId: +ingredientId,
+            processingId: +processingId,
+         },
       })
    }
 
@@ -172,7 +184,7 @@ const Processings = ({ ingredientId }) => {
             <StyledListingHeader>
                <h3>{t(address.concat('processings'))} ({processings?.length})</h3>
                <span onClick={() => openProcessingTunnel(1)}>
-                  <AddIcon color='#555B6E' size='18' stroke='2.5' />
+                  <AddIcon color="#555B6E" size="18" stroke="2.5" />
                </span>
             </StyledListingHeader>
             {processings?.map((processing, i) => (
@@ -188,14 +200,20 @@ const Processings = ({ ingredientId }) => {
                         <DeleteIcon />
                      </span>
                   </Actions>
+<<<<<<< HEAD
                   <h3>{processing.name.title}</h3>
                   <p>{t(address.concat('sachets'))}: {processing.sachets.length}</p>
                   <p>{t(address.concat('recipes'))}: {processing.recipes.length}</p>
+=======
+                  <h3>{processing.processingName}</h3>
+                  <p>Sachets: {processing.ingredientSachets?.length || 0}</p>
+                  <p>Recipes: {0}</p>
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                </StyledListingTile>
             ))}
             <ButtonTile
-               type='primary'
-               size='lg'
+               type="primary"
+               size="lg"
                onClick={() => openProcessingTunnel(1)}
             />
             <Tunnels tunnels={processingTunnel}>
@@ -203,21 +221,30 @@ const Processings = ({ ingredientId }) => {
                   <StyledTunnelHeader>
                      <div>
                         <CloseIcon
-                           size='20px'
-                           color='#888D9D'
+                           size="20px"
+                           color="#888D9D"
                            onClick={() => closeProcessingTunnel(1)}
                         />
                         <h1>{t(address.concat('select processings'))}</h1>
                      </div>
+<<<<<<< HEAD
                      <TextButton type='solid' onClick={addProcessingsHandler}>
                         {t(address.concat('save'))}
+=======
+                     <TextButton type="solid" onClick={addProcessingsHandler}>
+                        Save
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <List>
                         <ListSearch
                            onChange={value => setSearch(value)}
+<<<<<<< HEAD
                            placeholder={t(address.concat('type what you’re looking for...'))}
+=======
+                           placeholder="type what you’re looking for..."
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                         />
                         {selectedProcessingNames.length > 0 && (
                            <TagGroup style={{ margin: '8px 0' }}>
@@ -241,7 +268,7 @@ const Processings = ({ ingredientId }) => {
                               )
                               .map(option => (
                                  <ListItem
-                                    type='MSL1'
+                                    type="MSL1"
                                     key={option.id}
                                     title={option.title}
                                     onClick={() =>
@@ -258,11 +285,11 @@ const Processings = ({ ingredientId }) => {
                </Tunnel>
             </Tunnels>
          </StyledListing>
-         <StyledDisplay hasElements={processings?.length !== 0}>
+         <StyledDisplay hidden={!processings?.length}>
             <Sachets
                ingredientId={ingredientId}
                processingId={processings[selectedIndex]?.id}
-               processingName={processings[selectedIndex]?.name.title}
+               processingName={processings[selectedIndex]?.processingName}
             />
          </StyledDisplay>
       </StyledSection>

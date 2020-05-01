@@ -6,7 +6,7 @@ const state = {
    name: '',
    address: {},
    contact: {},
-   terms: { paymentTerms: '', shippingTerms: '' }
+   terms: { paymentTerms: '', shippingTerms: '' },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -25,6 +25,9 @@ const reducers = (state, { type, payload }) => {
 
       case 'SET_PAYMENT_TERMS':
          return { ...state, terms: { ...state.terms, paymentTerms: payload } }
+
+      case 'SET_ID':
+         return { ...state, id: payload }
 
       default:
          return state

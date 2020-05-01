@@ -1,6 +1,5 @@
 import React from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
 import {
    IconButton,
    Table,
@@ -12,7 +11,7 @@ import {
    SearchBox,
 } from '@dailykit/ui'
 
-import { generateRandomString } from '../../../utils'
+import { randomSuffix } from '../../../../../shared/utils'
 
 // Icons
 import {
@@ -33,7 +32,7 @@ import {
    StyledContent,
    StyledPagination,
 } from '../styled'
-import { CREATE_INGREDIENT, INGREDIENTS, INGREDIENT } from '../../../graphql'
+import { CREATE_INGREDIENT, INGREDIENTS } from '../../../graphql'
 
 import { useTranslation } from 'react-i18next'
 
@@ -50,37 +49,37 @@ const IngredientsListing = () => {
    }
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
-         if (data.createIngredient.success) {
+         if (data.createIngredient.returning?.length) {
             addTab(
-               data.createIngredient.ingredient.name,
+               data.createIngredient.returning[0].name,
                'ingredient',
-               data.createIngredient.ingredient.id
+               data.createIngredient.returning[0].id
             )
          } else {
             // Fire toast
             console.log(data)
          }
       },
-      update: (
-         cache,
-         {
-            data: {
-               createIngredient: { ingredient },
-            },
-         }
-      ) => {
-         const { ingredients } = cache.readQuery({ query: INGREDIENTS })
-         cache.writeQuery({
-            query: INGREDIENTS,
-            data: {
-               ingredients: ingredients.concat([ingredient]),
-            },
-         })
-      },
+      // update: (
+      //    cache,
+      //    {
+      //       data: {
+      //          createIngredient: { ingredient }
+      //       }
+      //    }
+      // ) => {
+      //    const { ingredients } = cache.readQuery({ query: INGREDIENTS })
+      //    cache.writeQuery({
+      //       query: INGREDIENTS,
+      //       data: {
+      //          ingredients: ingredients.concat([ingredient])
+      //       }
+      //    })
+      // }
    })
 
    const createIngredientHandler = async () => {
-      let name = 'ingredient-' + generateRandomString()
+      let name = 'ingredient-' + randomSuffix()
       createIngredient({ variables: { name } })
    }
 

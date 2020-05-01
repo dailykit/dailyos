@@ -16,10 +16,16 @@ import {
 } from '../../../context/bulkOrder'
 
 import FormHeading from '../../../components/FormHeading'
-import { FormActions, StyledWrapper, StyledForm } from '../styled'
-import { Spacer, ItemCard, ContactCard } from '../../../components/'
+import {
+   FormActions,
+   StyledWrapper,
+   StyledForm,
+   FlexContainer,
+} from '../styled'
+import { Spacer, ItemCard } from '../../../components'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
+import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 import SelectStationTunnel from './Tunnels/SelectStationTunnel'
 
@@ -28,15 +34,15 @@ import { useTranslation } from 'react-i18next'
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
 export default function BulkWorkOrderForm() {
+<<<<<<< HEAD
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
+=======
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
    const [bulkOrderState, bulkOrderDispatch] = useReducer(
       reducers,
       initialState
-   )
-
-   const [yieldPercentage, setYieldPercentage] = useState(
-      bulkOrderState.outputItemProcessing.yield || ''
    )
 
    return (
@@ -53,6 +59,9 @@ export default function BulkWorkOrderForm() {
             </Tunnel>
             <Tunnel layer={4}>
                <SelectStationTunnel close={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <SelectInputBulkItemTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -82,9 +91,6 @@ export default function BulkWorkOrderForm() {
                {bulkOrderState.supplierItem?.title ? (
                   <ItemCard
                      title={bulkOrderState.supplierItem.title}
-                     shippedProcessing={bulkOrderState.supplierItem.shippedProcessing.map(
-                        processing => processing.title
-                     )}
                      edit={() => openTunnel(1)}
                   />
                ) : (
@@ -95,6 +101,31 @@ export default function BulkWorkOrderForm() {
                         onClick={e => openTunnel(1)}
                      />
                   )}
+
+               <br />
+
+               {bulkOrderState.supplierItem?.title && (
+                  <>
+                     <Text as="title">Input Bulk item</Text>
+                     {bulkOrderState.inputItemProcessing?.title ? (
+                        <ItemCard
+                           title={bulkOrderState.inputItemProcessing.title}
+                           onHand={bulkOrderState.inputItemProcessing.onHand}
+                           shelfLife={
+                              bulkOrderState.inputItemProcessing.shelfLife
+                           }
+                           edit={() => openTunnel(2)}
+                        />
+                     ) : (
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text="Select Input Bulk Item"
+                           onClick={() => openTunnel(5)}
+                        />
+                     )}
+                  </>
+               )}
 
                <Spacer />
 
@@ -137,6 +168,7 @@ function Configurator({ open }) {
       bulkOrderState.outputItemProcessing.yield || ''
    )
    const [outputQuantity, setOutputQuantity] = useState('')
+   const [assignedDate, setAssignedDate] = useState('')
 
    return (
       <>
@@ -178,6 +210,7 @@ function Configurator({ open }) {
             %
          </div>
          <br />
+<<<<<<< HEAD
          <div style={{ width: '20%' }}>
             <Input
                type="text"
@@ -196,20 +229,58 @@ function Configurator({ open }) {
                      setOutputQuantity('')
                      return
                   }
+=======
+         <FlexContainer
+            style={{ width: '50%', justifyContent: 'space-between' }}
+         >
+            <div style={{ width: '45%' }}>
+               <Input
+                  type="text"
+                  placeholder="Enter Output Quantity"
+                  name="output"
+                  value={outputQuantity}
+                  onChange={e => {
+                     const value = parseInt(e.target.value)
+                     if (e.target.value.length === 0) setOutputQuantity('')
+                     if (value) {
+                        setOutputQuantity(e.target.value)
+                     }
+                  }}
+                  onBlur={e => {
+                     if (e.target.value.length === 0) {
+                        setOutputQuantity('')
+                        return
+                     }
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
 
-                  bulkOrderDispatch({
-                     type: 'SET_OUTPUT_QUANTITY',
-                     payload: parseInt(e.target.value),
-                  })
-               }}
-            />
-         </div>
+                     bulkOrderDispatch({
+                        type: 'SET_OUTPUT_QUANTITY',
+                        payload: parseInt(e.target.value),
+                     })
+                  }}
+               />
+            </div>
+
+            <div>
+               {bulkOrderState.outputItemProcessing.outputQuantity && (
+                  <>
+                     <Text as="subtitle">Suggested committed quantity</Text>
+                     <Text as="title">
+                        {Math.round((outputQuantity * 100) / yieldPercentage)}
+                     </Text>
+                  </>
+               )}
+            </div>
+         </FlexContainer>
 
          <br />
 
          <>
+<<<<<<< HEAD
             <Text as="title">{t(address.concat('user assigned'))}</Text>
 
+=======
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
             {bulkOrderState.assignedUser?.title ? (
                <ItemCard
                   title={bulkOrderState.assignedUser.title}
@@ -224,6 +295,33 @@ function Configurator({ open }) {
                   />
                )}
          </>
+
+         <br />
+         <br />
+
+         <Text as="title">Scheduled On</Text>
+         <br />
+
+         <Input
+            style={{
+               border: 0,
+               borderBottom: '1px solid rgba(0,0,0,0.2)',
+               color: '#555b6e',
+               padding: '5px',
+            }}
+            value={assignedDate}
+            onChange={e => {
+               setAssignedDate(e.target.value)
+            }}
+            type="datetime-local"
+            placeholder="Date (mm/dd/yyyy)"
+            onBlur={() => {
+               bulkOrderDispatch({
+                  type: 'SET_ASSIGNED_DATE',
+                  payload: assignedDate,
+               })
+            }}
+         />
 
          <br />
 

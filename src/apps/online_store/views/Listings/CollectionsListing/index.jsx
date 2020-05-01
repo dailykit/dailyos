@@ -1,5 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
+import { RRule } from 'rrule'
 
 import { COLLECTIONS } from '../../../graphql'
 
@@ -41,8 +42,6 @@ const CollectionsListing = () => {
    // Queries
    const { data, loading, error } = useQuery(COLLECTIONS)
 
-   console.log(data)
-
    return (
       <StyledWrapper>
          <StyledHeader>
@@ -57,19 +56,28 @@ const CollectionsListing = () => {
          <Table>
             <TableHead>
                <TableRow>
+<<<<<<< HEAD
                   <TableCell>{t(address.concat('collection name'))}</TableCell>
                   <TableCell>{t(address.concat('categories'))}</TableCell>
                   <TableCell>{t(address.concat('products'))}</TableCell>
                   <TableCell align="right">{t(address.concat('actions'))}</TableCell>
+=======
+                  <TableCell>Collection Name</TableCell>
+                  <TableCell>Categories</TableCell>
+                  <TableCell>Products</TableCell>
+                  {/* <TableCell align="right">Actions</TableCell> */}
+>>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                </TableRow>
             </TableHead>
             <TableBody>
-               {data?.menucollections.map((row, index) => (
+               {data?.menuCollections.map((row, index) => (
                   <TableRow key={row.id}>
-                     <TableCell>{row.title}</TableCell>
+                     <TableCell>{row.name}</TableCell>
                      <TableCell>{row.categories.length}</TableCell>
-                     <TableCell></TableCell>
-                     <TableCell align="right">
+                     <TableCell>
+                        {RRule.fromString(row.availability.rule).toText()}
+                     </TableCell>
+                     {/* <TableCell align="right">
                         <ButtonGroup align="right">
                            <IconButton type="outline">
                               <EditIcon />
@@ -78,7 +86,7 @@ const CollectionsListing = () => {
                               <DeleteIcon />
                            </IconButton>
                         </ButtonGroup>
-                     </TableCell>
+                     </TableCell> */}
                   </TableRow>
                ))}
             </TableBody>

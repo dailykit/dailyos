@@ -4,7 +4,9 @@
    "online storage": "Online Storage",
    "settings": "Settings",
    "units": {
+      "gm": "gm",
       "gms": "gms",
+      "kg": "kg",
       "kgs": "kgs",
       "hours": "hours",
       "minutes": "minutes",
@@ -133,6 +135,7 @@
                   },
                   "untitled supplier": "Untitled Supplier",
                   "save": "Save",
+                  "update": "Update",
                   "submit": "Submit",
                   "add logo of the supplier": "Add logo of the Supplier",
                   "upto 1MB - only JPGs, PNGs, and PDFs are allowed": "upto 1MB - only JPGs, PNGs, and PDFs are allowed",
@@ -143,6 +146,19 @@
                   "terms and conditions": "Terms and conditions",
                   "payment terms": "Payment Terms",
                   "shipping terms": "Shipping Terms"
+               },
+               "purchaseorders": {
+                  "tunnels": {
+                     "selectsupplieritemtunnel": {
+                        "select supplier item": "Select Supplier Item",
+                        "type what you're looking for": "type what you're looking for"
+                     }
+                  },
+                  "purchase order": "Purchase Order",
+                  "submit": "Submit",
+                  "supplier item": "Supplier Item",
+                  "enter order quantity": "Enter Order Quantity",
+                  "select supplier item": "Select Supplier Item"
                }
             },
             "home": {
