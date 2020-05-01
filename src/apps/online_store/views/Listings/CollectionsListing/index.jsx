@@ -56,17 +56,10 @@ const CollectionsListing = () => {
          <Table>
             <TableHead>
                <TableRow>
-<<<<<<< HEAD
                   <TableCell>{t(address.concat('collection name'))}</TableCell>
                   <TableCell>{t(address.concat('categories'))}</TableCell>
                   <TableCell>{t(address.concat('products'))}</TableCell>
-                  <TableCell align="right">{t(address.concat('actions'))}</TableCell>
-=======
-                  <TableCell>Collection Name</TableCell>
-                  <TableCell>Categories</TableCell>
-                  <TableCell>Products</TableCell>
-                  {/* <TableCell align="right">Actions</TableCell> */}
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
+                  {/* <TableCell align="right">{t(address.concat('actions'))}</TableCell> */}
                </TableRow>
             </TableHead>
             <TableBody>

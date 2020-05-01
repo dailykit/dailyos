@@ -191,217 +191,176 @@ export default function ItemForm() {
                   />
                </StyledWrapper>
             ) : (
-<<<<<<< HEAD
-                  <React.Fragment>
+                  <>
                      <StyledGrid>
-=======
-               <>
-                  <StyledGrid>
-                     <div>
-                        <div>
-                           <ItemIcon />
-                        </div>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                         <div>
                            <div>
-<<<<<<< HEAD
                               <ItemIcon />
-=======
-                              <span>
-                                 {state.unit_quantity.value +
-                                    state.unit_quantity.unit}
-                              </span>
-                              <span>${state.unit_price.value || 0}</span>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                            </div>
                            <div>
-<<<<<<< HEAD
-                              <span>{t(address.concat('unit qty'))}</span>
                               <div>
                                  <span>
                                     {state.unit_quantity.value +
                                        state.unit_quantity.unit}
                                  </span>
-                                 <span>$12</span>
+                                 <span>${state.unit_price.value || 0}</span>
                               </div>
-=======
-                              <span>
-                                 {state.case_quantity.value +
-                                    state.case_quantity.unit}
-                              </span>
-                              <span>
-                                 $
-                                 {+state.unit_price.value *
-                                    +state.case_quantity.value}
-                              </span>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
-                           </div>
-                        </div>
-                        <div>
-                           <div>
-<<<<<<< HEAD
-                              <CaseIcon />
-                           </div>
-                           <div>
-                              <span>{t(address.concat('case qty'))}</span>
                               <div>
                                  <span>
                                     {state.case_quantity.value +
                                        state.case_quantity.unit}
                                  </span>
-                                 <span>$12</span>
-                              </div>
-=======
-                              <span>
-                                 {state.min_order_value.value +
-                                    state.min_order_value.unit}
-                              </span>
-                              <span>
-                                 $
+                                 <span>
+                                    $
                                  {+state.unit_price.value *
-                                    +state.min_order_value.value}
-                              </span>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
-                           </div>
-                        </div>
-                        <div>
-                           <div>
-                              <TruckIcon />
+                                       +state.case_quantity.value}
+                                 </span>
+                              </div>
                            </div>
                            <div>
-                              <span>{t(address.concat('min order value'))}</span>
                               <div>
                                  <span>
                                     {state.min_order_value.value +
                                        state.min_order_value.unit}
                                  </span>
-                                 <span>$12</span>
-                              </div>
-                           </div>
-                        </div>
-                        <div>
-                           <div>
-                              <ClockIcon />
-                           </div>
-                           <div>
-                              <span>{t(address.concat('lead time'))}</span>
-                              <div>
                                  <span>
-                                    {state.lead_time.value + state.lead_time.unit}
+                                    $
+                                 {+state.unit_price.value *
+                                       +state.min_order_value.value}
                                  </span>
                               </div>
                            </div>
+                           <div>
+                              <div>
+                                 <TruckIcon />
+                              </div>
+                              <div>
+                                 <span>{t(address.concat('min order value'))}</span>
+                                 <div>
+                                    <span>
+                                       {state.min_order_value.value +
+                                          state.min_order_value.unit}
+                                    </span>
+                                    <span>$12</span>
+                                 </div>
+                              </div>
+                           </div>
+                           <div>
+                              <div>
+                                 <ClockIcon />
+                              </div>
+                              <div>
+                                 <span>{t(address.concat('lead time'))}</span>
+                                 <div>
+                                    <span>
+                                       {state.lead_time.value + state.lead_time.unit}
+                                    </span>
+                                 </div>
+                              </div>
+                           </div>
                         </div>
-<<<<<<< HEAD
-                        <div></div>
                      </StyledGrid>
-                  </React.Fragment>
-               )}
-=======
-                     </div>
-                  </StyledGrid>
 
-                  <FlexContainer
-                     style={{ marginTop: '30px', padding: '0 30px' }}
-                  >
-                     <Flexible width="1">
-                        <FlexContainer
-                           style={{
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                           }}
-                        >
-                           <Text as="title">Prcoessings</Text>
-                           <IconButton
-                              onClick={() => openTunnel(6)}
-                              type="ghost"
+                     <FlexContainer
+                        style={{ marginTop: '30px', padding: '0 30px' }}
+                     >
+                        <Flexible width="1">
+                           <FlexContainer
+                              style={{
+                                 justifyContent: 'space-between',
+                                 alignItems: 'center',
+                              }}
                            >
-                              <AddIcon />
-                           </IconButton>
-                        </FlexContainer>
-
-                        {state.processing?.name?.title && (
-                           <>
-                              <br />
-                              <Text as="subtitle">
-                                 As received from supplier.
-                              </Text>
-
-                              <ProcessingButton
-                                 active={active}
-                                 onClick={() => {
-                                    setActive(true)
-                                    dispatch({
-                                       type: 'SET_ACTIVE_PROCESSING',
-                                       payload: state.processing,
-                                    })
-                                 }}
+                              <Text as="title">Prcessings</Text>
+                              <IconButton
+                                 onClick={() => openTunnel(6)}
+                                 type="ghost"
                               >
-                                 <h3>{state.processing.name.title}</h3>
-                                 <Text as="subtitle">on hand: 0gm</Text>
-                                 <Text as="subtitle">
-                                    shelf life:{' '}
-                                    {`${state.processing?.shelf_life?.value} ${state.processing?.shelf_life?.unit}`}
-                                 </Text>
-                              </ProcessingButton>
-                           </>
-                        )}
+                                 <AddIcon />
+                              </IconButton>
+                           </FlexContainer>
 
-                        {state.derivedProcessings.length > 0 && (
-                           <>
-                              <br />
-                              <Text as="subtitle">
-                                 Derived from received processing
+                           {state.processing?.name?.title && (
+                              <>
+                                 <br />
+                                 <Text as="subtitle">
+                                    As received from supplier.
                               </Text>
 
-                              {state.derivedProcessings.map(procs => (
                                  <ProcessingButton
-                                    active={
-                                       state.activeProcessing.id === procs.id
-                                    }
+                                    active={active}
                                     onClick={() => {
-                                       setActive(false)
+                                       setActive(true)
                                        dispatch({
                                           type: 'SET_ACTIVE_PROCESSING',
-                                          payload: procs,
+                                          payload: state.processing,
                                        })
                                     }}
                                  >
-                                    <h3>{procs.name.title}</h3>
+                                    <h3>{state.processing.name.title}</h3>
                                     <Text as="subtitle">on hand: 0gm</Text>
                                     <Text as="subtitle">
                                        shelf life:{' '}
-                                       {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
+                                       {`${state.processing?.shelf_life?.value} ${state.processing?.shelf_life?.unit}`}
                                     </Text>
                                  </ProcessingButton>
-                              ))}
-                           </>
-                        )}
-                     </Flexible>
-                     <Flexible style={{ marginTop: '16vh' }} width="4">
-                        <div
-                           style={{
-                              padding: '15px',
-                              backgroundColor: '#fff',
-                              minHeight: '500px',
-                           }}
-                        >
-                           {state.activeProcessing?.name?.title ? (
-                              <ProcessingView open={openTunnel} />
-                           ) : (
-                              <Text as="title">
-                                 Select any Processing from left menu to get
-                                 started!
-                              </Text>
+                              </>
                            )}
-                        </div>
-                     </Flexible>
-                  </FlexContainer>
-               </>
-            )}
+
+                           {state.derivedProcessings.length > 0 && (
+                              <>
+                                 <br />
+                                 <Text as="subtitle">
+                                    Derived from received processing
+                              </Text>
+
+                                 {state.derivedProcessings.map(procs => (
+                                    <ProcessingButton
+                                       active={
+                                          state.activeProcessing.id === procs.id
+                                       }
+                                       onClick={() => {
+                                          setActive(false)
+                                          dispatch({
+                                             type: 'SET_ACTIVE_PROCESSING',
+                                             payload: procs,
+                                          })
+                                       }}
+                                    >
+                                       <h3>{procs.name.title}</h3>
+                                       <Text as="subtitle">on hand: 0gm</Text>
+                                       <Text as="subtitle">
+                                          shelf life:{' '}
+                                          {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
+                                       </Text>
+                                    </ProcessingButton>
+                                 ))}
+                              </>
+                           )}
+                        </Flexible>
+                        <Flexible style={{ marginTop: '16vh' }} width="4">
+                           <div
+                              style={{
+                                 padding: '15px',
+                                 backgroundColor: '#fff',
+                                 minHeight: '500px',
+                              }}
+                           >
+                              {state.activeProcessing?.name?.title ? (
+                                 <ProcessingView open={openTunnel} />
+                              ) : (
+                                    <Text as="title">
+                                       Select any Processing from left menu to get
+                                       started!
+                                    </Text>
+                                 )}
+                           </div>
+                        </Flexible>
+                     </FlexContainer>
+                  </>
+               )}
             <br />
             <br />
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
          </StyledMain>
       </ItemContext.Provider>
    )

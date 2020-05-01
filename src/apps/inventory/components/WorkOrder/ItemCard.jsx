@@ -26,31 +26,19 @@ export default function ItemCard({
             <div style={{ display: 'flex' }}>
                {shippedProcessing && (
                   <>
-<<<<<<< HEAD
                      <Text as='subtitle'>
                         {t(address.concat('processing as shipped'))}: {shippedProcessing.join(', ')}
-=======
-                     <Text as="subtitle">
-                        Processing as Shipped: {shippedProcessing.join(', ')}
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                      </Text>
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {onHand && (
                   <>
-<<<<<<< HEAD
                      <Text as='subtitle'>{t(address.concat('on hand'))}: {onHand} </Text>
-=======
-                     <Text as="subtitle">On Hand: {onHand} </Text>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {shelfLife && (
-<<<<<<< HEAD
-                  <Text as='subtitle'>{t(address.concat('shelf life'))}: {shelfLife} </Text>
-=======
                   <Text as="subtitle">Shelf Life: {shelfLife} </Text>
                )}
 
@@ -61,7 +49,6 @@ export default function ItemCard({
                      <span style={{ width: '20px' }} />
                      <Text as="subtitle">Par: {par}</Text>
                   </>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                )}
             </div>
          </div>

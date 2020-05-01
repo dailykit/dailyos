@@ -598,13 +598,8 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                   <StyledTextAndSelect>
                      <Input
                         type='text'
-<<<<<<< HEAD
                         placeholder={t(address.concat('enter quantity'))}
-                        value={sachetForm.quantity?.value}
-=======
-                        placeholder='Enter Quantity'
                         value={sachetForm.quantity}
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                         onChange={e =>
                            setSachetForm({
                               ...sachetForm,

@@ -79,10 +79,6 @@ export default function SelectProductTunnel({ close }) {
             </Text>
          </SolidTile>
          <br />
-<<<<<<< HEAD
-         <SolidTile onClick={() => addTab('Advanced Product', 'product')}>
-            <Text as="h1">{t(address.concat('advanced product'))}</Text>
-=======
          <SolidTile
             onClick={() => addTab('Simple Product', 'simpleRecipeProduct')}
          >
@@ -107,7 +103,6 @@ export default function SelectProductTunnel({ close }) {
          <br />
          <SolidTile onClick={() => createProduct('combo')}>
             <Text as="h1">Combo Product</Text>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
             <Text as="subtitle">
                <Trans i18nKey={address.concat('subtitle 2')}>
                   Advanced product is an item with your recipes, sold as Meal Kits

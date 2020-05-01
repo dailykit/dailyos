@@ -44,18 +44,7 @@ export default function ConfigTunnel({ close, open }) {
                <span>{t(address.concat('configure processing'))}: {state.processing.name.title}</span>
             </div>
             <div>
-<<<<<<< HEAD
                <TextButton type="solid">{t(address.concat('save'))}</TextButton>
-=======
-               <TextButton
-                  onClick={() => {
-                     close(4)
-                  }}
-                  type="solid"
-               >
-                  Save
-               </TextButton>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -238,14 +227,6 @@ export default function ConfigTunnel({ close, open }) {
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
-<<<<<<< HEAD
-               <StyledLabel>{t(address.concat('nutritions per 100gm'))}</StyledLabel>
-               <ButtonTile
-                  type="secondary"
-                  text={t(address.concat("add nutritions"))}
-                  onClick={e => console.log('Tile clicked')}
-               />
-=======
                <StyledLabel
                   style={{
                      width: '100%',
@@ -253,7 +234,7 @@ export default function ConfigTunnel({ close, open }) {
                      justifyContent: 'space-between',
                   }}
                >
-                  <div>Nutritions per 100gm</div>
+                  <div>{t(address.concat('nutritions per 100gm'))}</div>
                   <IconButton
                      onClick={() => {
                         dispatch({
@@ -268,41 +249,40 @@ export default function ConfigTunnel({ close, open }) {
                   </IconButton>
                </StyledLabel>
                {state.processing.nutrients?.fat ||
-               state.processing.nutrients?.cal ? (
-                  <>
-                     <div
-                        style={{
-                           width: '70%',
-                           minHeight: '100px',
-                           backgroundColor: '#F3F3F3',
-                           padding: '20px',
-                        }}
-                     >
-                        <Text as="title">
-                           <strong>calories: </strong>
-                           {state.processing.nutrients?.cal}
-                        </Text>
+                  state.processing.nutrients?.cal ? (
+                     <>
+                        <div
+                           style={{
+                              width: '70%',
+                              minHeight: '100px',
+                              backgroundColor: '#F3F3F3',
+                              padding: '20px',
+                           }}
+                        >
+                           <Text as="title">
+                              <strong>calories: </strong>
+                              {state.processing.nutrients?.cal}
+                           </Text>
 
-                        <Text as="title">
-                           <strong>Total Fat: </strong>
-                           {state.processing.nutrients?.fat}
-                        </Text>
-                     </div>
-                  </>
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Nutritions"
-                     onClick={e => {
-                        dispatch({
-                           type: 'SET_NUTRI_TARGET',
-                           payload: 'processing',
-                        })
-                        open(10)
-                     }}
-                  />
-               )}
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
+                           <Text as="title">
+                              <strong>Total Fat: </strong>
+                              {state.processing.nutrients?.fat}
+                           </Text>
+                        </div>
+                     </>
+                  ) : (
+                     <ButtonTile
+                        type="secondary"
+                        text="Add Nutritions"
+                        onClick={e => {
+                           dispatch({
+                              type: 'SET_NUTRI_TARGET',
+                              payload: 'processing',
+                           })
+                           open(10)
+                        }}
+                     />
+                  )}
             </StyledRow>
             <StyledRow>
                <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>

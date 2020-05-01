@@ -51,13 +51,8 @@ const IngredientForm = () => {
       name: '',
       image: '',
    })
-<<<<<<< HEAD
    const { } = useQuery(INGREDIENT, {
-      variables: { ID: state.current.ID },
-=======
-   const {} = useQuery(INGREDIENT, {
       variables: { ID: +state.current.ID },
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
       onCompleted: data => {
          console.log(data)
          setIngredient(data.ingredient)

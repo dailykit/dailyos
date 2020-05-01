@@ -34,12 +34,8 @@ import { useTranslation } from 'react-i18next'
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
 export default function BulkWorkOrderForm() {
-<<<<<<< HEAD
    const { t } = useTranslation()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
-=======
    const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
    const [bulkOrderState, bulkOrderDispatch] = useReducer(
       reducers,
       initialState
@@ -117,13 +113,13 @@ export default function BulkWorkOrderForm() {
                            edit={() => openTunnel(2)}
                         />
                      ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text="Select Input Bulk Item"
-                           onClick={() => openTunnel(5)}
-                        />
-                     )}
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text="Select Input Bulk Item"
+                              onClick={() => openTunnel(5)}
+                           />
+                        )}
                   </>
                )}
 
@@ -210,26 +206,6 @@ function Configurator({ open }) {
             %
          </div>
          <br />
-<<<<<<< HEAD
-         <div style={{ width: '20%' }}>
-            <Input
-               type="text"
-               placeholder={t(address.concat("enter output quantity"))}
-               name="output"
-               value={outputQuantity}
-               onChange={e => {
-                  const value = parseInt(e.target.value)
-                  if (e.target.value.length === 0) setOutputQuantity('')
-                  if (value) {
-                     setOutputQuantity(e.target.value)
-                  }
-               }}
-               onBlur={e => {
-                  if (e.target.value.length === 0) {
-                     setOutputQuantity('')
-                     return
-                  }
-=======
          <FlexContainer
             style={{ width: '50%', justifyContent: 'space-between' }}
          >
@@ -251,7 +227,6 @@ function Configurator({ open }) {
                         setOutputQuantity('')
                         return
                      }
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
 
                      bulkOrderDispatch({
                         type: 'SET_OUTPUT_QUANTITY',
@@ -271,29 +246,26 @@ function Configurator({ open }) {
                   </>
                )}
             </div>
-         </FlexContainer>
+         </FlexContainer >
 
          <br />
 
          <>
-<<<<<<< HEAD
-            <Text as="title">{t(address.concat('user assigned'))}</Text>
-
-=======
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
-            {bulkOrderState.assignedUser?.title ? (
-               <ItemCard
-                  title={bulkOrderState.assignedUser.title}
-                  edit={() => open(3)}
-               />
-            ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat("select and assign user to work"))}
-                     onClick={e => open(3)}
+            {
+               bulkOrderState.assignedUser?.title ? (
+                  <ItemCard
+                     title={bulkOrderState.assignedUser.title}
+                     edit={() => open(3)}
                   />
-               )}
+               ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat("select and assign user to work"))}
+                        onClick={e => open(3)}
+                     />
+                  )
+            }
          </>
 
          <br />

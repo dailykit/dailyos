@@ -159,6 +159,37 @@
                   "supplier item": "Supplier Item",
                   "enter order quantity": "Enter Order Quantity",
                   "select supplier item": "Select Supplier Item"
+               },
+               "sachetworkorder": {
+                  "tunnels": {
+                     "select input bulk item processing": "Select Input Bulk Item Processing",
+                     "type what you're looking for": "type what you're looking for",
+                     "select label templates": "Select Label Templates",
+                     "select output bulk sachet": "Select Output Bulk Sachet",
+                     "select packaging": "Select Packaging",
+                     "select station": "Select Station",
+                     "select supplier item": "Select Supplier Item",
+                     "select user": "Select User"
+                  },
+                  "work order": "Work Order",
+                  "publish": "Publish",
+                  "select supplier item": "Select Supplier Item",
+                  "input bulk item": "Input Bulk Item",
+                  "select input bulk item": "Select Input Bulk Item",
+                  "output sachet item": "Output Sachet Item",
+                  "select output sachet item": "Select Output Sachet Item",
+                  "enter number of sachtes": "Enter Number of Sachets",
+                  "suggested committed quantity": "Suggested committed quantity",
+                  "packaging": "Packaging",
+                  "select packaging": "Select Packaging",
+                  "label template": "Label Template",
+                  "select label template": "Select label template",
+                  "user assigned": "User Assigned",
+                  "select and assign user to work": "Select and assign user to work",
+                  "scheduled on": "Scheduled On",
+                  "date (mm/dd/yy)": "Date (mm/dd/yy)",
+                  "station assigned": "Station Assigned",
+                  "select and assign station to route to": "Select and assign station to route to"
                }
             },
             "home": {

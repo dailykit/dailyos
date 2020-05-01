@@ -200,15 +200,9 @@ const Processings = ({ ingredientId }) => {
                         <DeleteIcon />
                      </span>
                   </Actions>
-<<<<<<< HEAD
-                  <h3>{processing.name.title}</h3>
-                  <p>{t(address.concat('sachets'))}: {processing.sachets.length}</p>
-                  <p>{t(address.concat('recipes'))}: {processing.recipes.length}</p>
-=======
                   <h3>{processing.processingName}</h3>
                   <p>Sachets: {processing.ingredientSachets?.length || 0}</p>
                   <p>Recipes: {0}</p>
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                </StyledListingTile>
             ))}
             <ButtonTile
@@ -227,24 +221,15 @@ const Processings = ({ ingredientId }) => {
                         />
                         <h1>{t(address.concat('select processings'))}</h1>
                      </div>
-<<<<<<< HEAD
-                     <TextButton type='solid' onClick={addProcessingsHandler}>
-                        {t(address.concat('save'))}
-=======
                      <TextButton type="solid" onClick={addProcessingsHandler}>
                         Save
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <List>
                         <ListSearch
                            onChange={value => setSearch(value)}
-<<<<<<< HEAD
-                           placeholder={t(address.concat('type what you’re looking for...'))}
-=======
                            placeholder="type what you’re looking for..."
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                         />
                         {selectedProcessingNames.length > 0 && (
                            <TagGroup style={{ margin: '8px 0' }}>

@@ -11,16 +11,12 @@ import { BulkOrderContext } from '../../../../context/bulkOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
-<<<<<<< HEAD
 import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
-export default function AddressTunnel({ close }) {
-   const { t } = useTranslation()
-=======
 export default function SelectSupplierTunnel({ close }) {
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
+   const { t } = useTranslation()
    const { bulkOrderDispatch } = useContext(BulkOrderContext)
 
    const [search, setSearch] = useState('')

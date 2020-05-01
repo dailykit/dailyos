@@ -13,20 +13,15 @@ import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
-<<<<<<< HEAD:src/apps/online_store/views/Forms/Product/InventoryProduct/Tunnels/AccompanimentTypeTunnel.jsx
+
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.'
+const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
-export default function AccompanimentType({ close }) {
-   const { t } = useTranslation()
-   const { inventoryProductState, inventoryProductDispatch } = useContext(
-      InventoryProductContext
-=======
 export default function SelectLabelTemplateTunnel({ close }) {
+   const { t } = useTranslation()
    const { sachetOrderState, sachetOrderDispatch } = useContext(
       SachetOrderContext
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59:src/apps/inventory/views/Forms/SachetWorkOrder/Tunnels/SelectLabelTemplateTunnel.jsx
    )
 
    const [search, setSearch] = React.useState('')
@@ -54,7 +49,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Label Templates"
+            title={t(address.concat("select label templates"))}
             next={() => {
                sachetOrderDispatch({
                   type: 'SELECT_TEMPLATE_OPTIONS',
@@ -69,23 +64,10 @@ export default function SelectLabelTemplateTunnel({ close }) {
          <Spacer />
 
          <List>
-<<<<<<< HEAD:src/apps/online_store/views/Forms/Product/InventoryProduct/Tunnels/AccompanimentTypeTunnel.jsx
-            <Content>
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder={t(address.concat("type what you’re looking for").concat('...'))}
-               />
-               <ComboButton type="ghost" onClick={() => { }}>
-                  <AddIcon />
-                  {t(address.concat('new'))}
-               </ComboButton>
-            </Content>
-=======
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder="type what you’re looking for..."
+               placeholder={t(address.concat("type what you’re looking for")).concat('...')}
             />
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59:src/apps/inventory/views/Forms/SachetWorkOrder/Tunnels/SelectLabelTemplateTunnel.jsx
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>
                   {selected.map(option => (

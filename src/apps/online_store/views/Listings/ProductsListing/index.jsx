@@ -29,11 +29,8 @@ import { useTranslation } from 'react-i18next'
 const address = 'apps.online_store.views.listings.productslisting.'
 
 const ProductsListing = () => {
-<<<<<<< HEAD
    const { t } = useTranslation()
-=======
    const { dispatch } = React.useContext(Context)
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const { loading, error, data } = useQuery(COMBO_PRODUCTS)
@@ -54,15 +51,9 @@ const ProductsListing = () => {
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-<<<<<<< HEAD
-               <h1>{t(address.concat('products'))}</h1>
-               <IconButton type='solid' onClick={() => openTunnel(1)}>
-                  <AddIcon color='#fff' size={24} />
-=======
                <h1>Products</h1>
                <IconButton type="solid" onClick={() => openTunnel(1)}>
                   <AddIcon color="#fff" size={24} />
->>>>>>> 9ddf6699a763d989cd56e66611d8ac668ec40f59
                </IconButton>
             </StyledHeader>
             <Table>
