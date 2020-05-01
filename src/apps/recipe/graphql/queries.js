@@ -9,91 +9,50 @@ export const INGREDIENTS = gql`
    }
 `
 
+// Issue: It should take ID, but is asking for Int
 export const INGREDIENT = gql`
-   query Ingredient($ID: ID!) {
+   query Ingredient($ID: Int!) {
       ingredient(id: $ID) {
-         id
          name
          image
-         processings {
-            id
-         }
-         sachets {
-            id
-         }
+         id
       }
    }
 `
 
 export const PROCESSINGS_OF_INGREDIENT = gql`
-   query Ingredient($ingredientId: ID!) {
+   query Ingredient($ingredientId: Int!) {
       ingredient(id: $ingredientId) {
          id
-         processings {
+         ingredientProcessings {
             id
-            name {
-               title
-            }
-            sachets {
-               id
-            }
-            recipes {
-               id
-            }
+            processingName
          }
       }
    }
 `
 
 export const SACHETS_OF_PROCESSING = gql`
-   query Processing($processingId: ID!) {
-      processing(id: $processingId) {
-         id
-         sachets {
-            id
-            quantity {
-               value
-               unit {
-                  id
-                  title
-               }
-            }
-            tracking
-            modes {
-               isActive
-               type
-               station {
-                  id
-                  title
-               }
-               supplierItems {
-                  isDefault
-                  item {
-                     id
-                     title
-                  }
-                  accuracy
-                  packaging {
-                     id
-                     title
-                  }
-                  isLabelled
-                  labelTemplate {
-                     id
-                     title
-                  }
-               }
-            }
+   query Processing($processingId: Int!, $ingredientId: Int!) {
+      ingredientSachets(
+         where: {
+            ingredientId: { _eq: $ingredientId }
+            ingredientProcessing: { id: { _eq: $processingId } }
          }
+      ) {
+         id
+         quantity
+         unit
+         tracking
       }
    }
 `
-
+//  Issue: Don't use name, but title
 export const FETCH_PROCESSING_NAMES = gql`
    {
-      processingNames {
+      masterProcessings {
          id
-         title
+         name
       }
    }
 `
@@ -102,7 +61,7 @@ export const FETCH_UNITS = gql`
    {
       units {
          id
-         title
+         name
       }
    }
 `
@@ -111,7 +70,7 @@ export const FETCH_STATIONS = gql`
    {
       stations {
          id
-         title
+         name
       }
    }
 `
@@ -120,16 +79,16 @@ export const FETCH_SUPPLIER_ITEMS = gql`
    {
       supplierItems {
          id
-         title
+         name
       }
    }
 `
 
 export const FETCH_PACKAGINGS = gql`
    {
-      packagings {
+      packaging_packaging {
          id
-         title
+         name
       }
    }
 `
