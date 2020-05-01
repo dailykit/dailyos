@@ -4,7 +4,13 @@ import { Text, IconButton, TagGroup, Tag, ButtonTile } from '@dailykit/ui'
 import { Content, Flexible } from './styled'
 import { ProductContext } from '../../../context/product'
 import EditIcon from '../../../assets/icons/Edit'
+
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.'
+
 export default function Availability({ open }) {
+   const { t } = useTranslation()
    const { productState } = React.useContext(ProductContext)
 
    return (
@@ -31,14 +37,14 @@ export default function Availability({ open }) {
                   <br />
                </>
             ) : (
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text="Add Product Description"
-                  onClick={e => open(3)}
-                  style={{ margin: '20px 0' }}
-               />
-            )}
+                  <ButtonTile
+                     type="primary"
+                     size="sm"
+                     text={t(address.concat("add product description"))}
+                     onClick={e => open(3)}
+                     style={{ margin: '20px 0' }}
+                  />
+               )}
          </Flexible>
          <Flexible width="1">
             <div
@@ -49,7 +55,7 @@ export default function Availability({ open }) {
                }}
             >
                <Content style={{ alignItems: 'center' }}>
-                  <Text as="h2">Availability</Text>
+                  <Text as="h2">{t(address.concat('availability'))}</Text>
                   <div style={{ marginLeft: '5px' }}>
                      <IconButton type="ghost" onClick={() => open(5)}>
                         <EditIcon />
@@ -65,17 +71,17 @@ export default function Availability({ open }) {
                >
                   {productState.realtime && (
                      <div>
-                        <Text as="title">Realtime</Text>
+                        <Text as="title">{t(address.concat('realtime'))}</Text>
                      </div>
                   )}
                   {productState.preOrder.isActive && (
                      <div style={{ marginLeft: '60px' }}>
                         <div>
-                           <Text as="title">Pre-order</Text>
+                           <Text as="title">{t(address.concat('pre-order'))}</Text>
                         </div>
                         <div>
                            <Text as="title">
-                              {productState.preOrder.days} Days
+                              {productState.preOrder.days} {t(address.concat('days'))}
                            </Text>
                         </div>
                      </div>

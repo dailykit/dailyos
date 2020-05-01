@@ -23,7 +23,12 @@ import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 import SelectStationTunnel from './Tunnels/SelectStationTunnel'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.bulkworkorder.'
+
 export default function BulkWorkOrderForm() {
+   const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
    const [bulkOrderState, bulkOrderDispatch] = useReducer(
       reducers,
@@ -59,21 +64,21 @@ export default function BulkWorkOrderForm() {
                >
                   {/* TODO: add text here for input item */}
                   <Text as="h1">
-                     Work Order{' '}
+                     {t(address.concat('work order'))}{' '}
                      {bulkOrderState.supplierItem?.title &&
                         `- ${bulkOrderState.supplierItem.title}`}
                   </Text>
                </div>
 
                <FormActions>
-                  <TextButton onClick={() => {}} type="solid">
-                     Publish
+                  <TextButton onClick={() => { }} type="solid">
+                     {t(address.concat('publish'))}
                   </TextButton>
                </FormActions>
             </FormHeading>
 
             <StyledForm style={{ padding: '0px 60px' }}>
-               <Text as="title">Select supplier item</Text>
+               <Text as="title">{t(address.concat('select supplier item'))}</Text>
                {bulkOrderState.supplierItem?.title ? (
                   <ItemCard
                      title={bulkOrderState.supplierItem.title}
@@ -83,19 +88,19 @@ export default function BulkWorkOrderForm() {
                      edit={() => openTunnel(1)}
                   />
                ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text="Select Supplier Item"
-                     onClick={e => openTunnel(1)}
-                  />
-               )}
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat("select supplier item"))}
+                        onClick={e => openTunnel(1)}
+                     />
+                  )}
 
                <Spacer />
 
                {bulkOrderState.supplierItem?.title && (
                   <>
-                     <Text as="title">Output Bulk item</Text>
+                     <Text as="title">{t(address.concat('output bulk item'))}</Text>
                      {bulkOrderState.outputItemProcessing?.title ? (
                         <ItemCard
                            title={bulkOrderState.outputItemProcessing.title}
@@ -106,13 +111,13 @@ export default function BulkWorkOrderForm() {
                            edit={() => openTunnel(2)}
                         />
                      ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text="Select Output Bulk Item"
-                           onClick={e => openTunnel(2)}
-                        />
-                     )}
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(address.concat("select output bulk item"))}
+                              onClick={e => openTunnel(2)}
+                           />
+                        )}
                   </>
                )}
 
@@ -126,6 +131,7 @@ export default function BulkWorkOrderForm() {
 }
 
 function Configurator({ open }) {
+   const { t } = useTranslation()
    const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
    const [yieldPercentage, setYieldPercentage] = useState(
       bulkOrderState.outputItemProcessing.yield || ''
@@ -145,7 +151,7 @@ function Configurator({ open }) {
          >
             <Input
                type="text"
-               placeholder="Yield Percentage"
+               placeholder={t(address.concat("yield percentage"))}
                name="yield"
                value={yieldPercentage}
                onChange={e => {
@@ -175,7 +181,7 @@ function Configurator({ open }) {
          <div style={{ width: '20%' }}>
             <Input
                type="text"
-               placeholder="Enter Output Quantity"
+               placeholder={t(address.concat("enter output quantity"))}
                name="output"
                value={outputQuantity}
                onChange={e => {
@@ -202,7 +208,7 @@ function Configurator({ open }) {
          <br />
 
          <>
-            <Text as="title">User Assigned</Text>
+            <Text as="title">{t(address.concat('user assigned'))}</Text>
 
             {bulkOrderState.assignedUser?.title ? (
                <ItemCard
@@ -210,19 +216,19 @@ function Configurator({ open }) {
                   edit={() => open(3)}
                />
             ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text="Select and assign user to work"
-                  onClick={e => open(3)}
-               />
-            )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat("select and assign user to work"))}
+                     onClick={e => open(3)}
+                  />
+               )}
          </>
 
          <br />
 
          <>
-            <Text as="title">Station Assigned</Text>
+            <Text as="title">{t(address.concat('station assigned'))}</Text>
 
             {bulkOrderState.selectedStation?.title ? (
                <ItemCard
@@ -230,13 +236,13 @@ function Configurator({ open }) {
                   edit={() => open(4)}
                />
             ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text="Select and assign station to route to"
-                  onClick={e => open(4)}
-               />
-            )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat("select and assign station to route to"))}
+                     onClick={e => open(4)}
+                  />
+               )}
          </>
          <br />
       </>

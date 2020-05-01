@@ -4,7 +4,12 @@ import { Text, Checkbox, Input } from '@dailykit/ui'
 import { ProductContext } from '../../../../context/product/index'
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.tunnels.'
+
 export default function AvailabilityTunnel({ close }) {
+   const { t } = useTranslation()
    const { productState, productDispatch } = React.useContext(ProductContext)
    const [isPreOrder, setIsPreOrder] = React.useState(
       productState.preOrder.isActive
@@ -15,7 +20,7 @@ export default function AvailabilityTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Edit Availability"
+            title={t(address.concat("edit availability"))}
             close={() => {
                close(5)
             }}
@@ -34,7 +39,7 @@ export default function AvailabilityTunnel({ close }) {
          />
          <Spacer />
 
-         <Text as="title">Available for</Text>
+         <Text as="title">{t(address.concat('available for'))}</Text>
 
          <br />
 
@@ -43,7 +48,7 @@ export default function AvailabilityTunnel({ close }) {
             checked={isPreOrder}
             onChange={() => setIsPreOrder(!isPreOrder)}
          >
-            Pre-Orders
+            {t(address.concat('pre-orders'))}
          </Checkbox>
 
          {isPreOrder && (
@@ -57,7 +62,7 @@ export default function AvailabilityTunnel({ close }) {
                   value={days}
                   onChange={e => setDays(e.target.value)}
                />
-               Days
+               {t(address.concat('days'))}
             </div>
          )}
          <br />
@@ -69,7 +74,7 @@ export default function AvailabilityTunnel({ close }) {
             checked={isRealtime}
             onChange={() => setIsRealtime(!isRealtime)}
          >
-            Realtime
+            {t(address.concat('realtime'))}
          </Checkbox>
       </TunnelContainer>
    )

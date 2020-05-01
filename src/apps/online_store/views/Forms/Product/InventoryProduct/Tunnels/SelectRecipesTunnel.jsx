@@ -17,7 +17,12 @@ import {
    Spacer,
 } from '../../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.'
+
 export default function SelectRecipesTunnel({ close }) {
+   const { t } = useTranslation()
    const { inventoryProductState, inventoryProductDispatch } = useContext(
       InventoryProductContext
    )
@@ -74,7 +79,7 @@ export default function SelectRecipesTunnel({ close }) {
          <List>
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder="type what you’re looking for..."
+               placeholder={t(address.concat("type what you’re looking for")).concat('...')}
             />
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>

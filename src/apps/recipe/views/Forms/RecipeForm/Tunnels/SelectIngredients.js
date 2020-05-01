@@ -16,7 +16,12 @@ import { TunnelContainer } from '../styled'
 import { TunnelHeader, Spacer } from '../../../../components/index'
 import { INGREDIENTS } from '../../../../graphql'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.tunnels.'
+
 export default function SelectIngredients({ close, next, ings }) {
+   const { t } = useTranslation()
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
    const [search, setSearch] = useState('')
    const [list, selected, selectOption] = useMultiList(ings)
@@ -30,7 +35,7 @@ export default function SelectIngredients({ close, next, ings }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Ingredients"
+            title={t(address.concat("add ingredients"))}
             close={() => close(2)}
             next={() => {
                recipeDispatch({ type: 'ADD_INGREDIENTS', payload: selected })
@@ -47,7 +52,7 @@ export default function SelectIngredients({ close, next, ings }) {
          <List>
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder="type what you’re looking for..."
+               placeholder={t(address.concat("type what you’re looking for..."))}
             />
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>

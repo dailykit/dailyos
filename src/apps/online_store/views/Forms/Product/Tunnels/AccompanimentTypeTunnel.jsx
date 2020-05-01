@@ -16,7 +16,12 @@ import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 import { Content } from '../styled'
 import AddIcon from '../../../../assets/icons/Add'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.tunnels.'
+
 export default function AccompanimentType({ close, accompanimentTypes }) {
+   const { t } = useTranslation()
    const { productState, productDispatch } = useContext(ProductContext)
    const [search, setSearch] = React.useState('')
 
@@ -52,11 +57,11 @@ export default function AccompanimentType({ close, accompanimentTypes }) {
             <Content>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(address.concat("type what you’re looking for..."))}
                />
-               <ComboButton type="ghost" onClick={() => {}}>
+               <ComboButton type="ghost" onClick={() => { }}>
                   <AddIcon />
-                  New
+                  {t(address.concat('new'))}
                </ComboButton>
             </Content>
             {selected.length > 0 && (

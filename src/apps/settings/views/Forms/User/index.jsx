@@ -35,7 +35,12 @@ import {
 } from '../styled'
 import { StyledSelect, StyledAppItem, StyledDevicesList } from './styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.forms.user.'
+
 const UserForm = () => {
+   const { t } = useTranslation()
    const params = useParams()
    const history = useHistory()
    const { doesTabExists } = useTabs()
@@ -106,22 +111,22 @@ const UserForm = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">New User</Text>
-            <TextButton type="solid">Publish</TextButton>
+            <Text as="h2">{t(address.concat('new user'))}</Text>
+            <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
          </StyledHeader>
          <StyledForm>
             <StyledRow>
                <Input
                   type="text"
                   name="firstname"
-                  label="First Name"
+                  label={t(address.concat("first name"))}
                   value={form.firstname || ''}
                   onChange={e => handleChange(e)}
                />
                <Input
                   type="text"
                   name="lastname"
-                  label="Last Name"
+                  label={t(address.concat("last name"))}
                   value={form.lastname || ''}
                   onChange={e => handleChange(e)}
                />
@@ -130,7 +135,7 @@ const UserForm = () => {
                <Input
                   type="text"
                   name="email"
-                  label="Email"
+                  label={t(address.concat("email"))}
                   value={form.email || ''}
                   onChange={e => handleChange(e)}
                />
@@ -149,13 +154,13 @@ const UserForm = () => {
                <Input
                   type="text"
                   name="phoneNo"
-                  label="Phone Number"
+                  label={t(address.concat("phone number"))}
                   value={form.phoneNo || ''}
                   onChange={e => handleChange(e)}
                />
             </StyledRow>
             <StyledSection>
-               <Text as="title">Apps</Text>
+               <Text as="title">{t(address.concat('apps'))}</Text>
                {form.apps.length > 0 &&
                   form.apps.map(option => (
                      <StyledAppItem key={option.id}>
@@ -175,7 +180,7 @@ const UserForm = () => {
                                  openRolesTunnel(1)
                               }}
                            >
-                              Configure
+                              {t(address.concat('configure'))}
                            </TextButton>
                         </div>
                      </StyledAppItem>
@@ -184,12 +189,12 @@ const UserForm = () => {
                   noIcon
                   size="sm"
                   type="secondary"
-                  text="Select Apps"
+                  text={t(address.concat("select apps"))}
                   onClick={() => openAppsTunnel(1)}
                />
             </StyledSection>
             <StyledSection>
-               <Text as="title">Devices</Text>
+               <Text as="title">{t(address.concat('devices'))}</Text>
                {form.devices.length > 0 && (
                   <StyledDevicesList>
                      {form.devices.map(device => (
@@ -204,7 +209,7 @@ const UserForm = () => {
                   noIcon
                   size="sm"
                   type="secondary"
-                  text="Select Devices"
+                  text={t(address.concat("select devices"))}
                   onClick={() => openDevicesTunnel(1)}
                />
             </StyledSection>
@@ -218,7 +223,7 @@ const UserForm = () => {
                         >
                            <ClearIcon size={20} />
                         </IconButton>
-                        <Text as="h2">Configure Apps</Text>
+                        <Text as="h2">{t(address.concat('configure apps'))}</Text>
                      </div>
                      <TextButton
                         type="solid"
@@ -227,14 +232,14 @@ const UserForm = () => {
                            setForm({ ...form, apps: [...selected] })
                         }}
                      >
-                        Add
+                        {t(address.concat('add'))}
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <List>
                         <ListSearch
                            onChange={value => setSearch(value)}
-                           placeholder="type what you’re looking for..."
+                           placeholder={t(address.concat("type what you're looking for")).concat('...')}
                         />
                         <ListOptions>
                            {list
@@ -280,12 +285,12 @@ const UserForm = () => {
                            closeRolesTunnel(1)
                         }}
                      >
-                        Save
+                        {t(address.concat('save'))}
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <Text as="title">
-                        Roles for role: {form.roleName || 'Untitled'}
+                        {t(address.concat('roles for role'))}: {form.roleName || 'Untitled'}
                      </Text>
                   </StyledTunnelMain>
                </Tunnel>
@@ -300,7 +305,7 @@ const UserForm = () => {
                         >
                            <ClearIcon size={20} />
                         </IconButton>
-                        <Text as="h2">Select devices for the user</Text>
+                        <Text as="h2">{t(address.concat('select devices for the user'))}</Text>
                      </div>
                      <TextButton
                         type="solid"
@@ -309,14 +314,14 @@ const UserForm = () => {
                            setForm({ ...form, devices: [...selectedDevices] })
                         }}
                      >
-                        Add
+                        {t(address.concat('add'))}
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <List>
                         <ListSearch
                            onChange={value => setDeviceSearch(value)}
-                           placeholder="type what you’re looking for..."
+                           placeholder={t(address.concat("type what you're looking for")).concat('...')}
                         />
                         <ListOptions>
                            {devicesList

@@ -23,7 +23,12 @@ import {
    UPDATE_COLLECTION,
 } from '../../../graphql'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.collection.'
+
 const CollectionForm = () => {
+   const { t } = useTranslation()
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [products, setProducts] = React.useState([])
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -80,7 +85,7 @@ const CollectionForm = () => {
          <FormHeader>
             <FormHeaderInputs>
                <Input
-                  label="Collection Name"
+                  label={t(address.concat("collection name"))}
                   type="text"
                   name="title"
                   value={state.title}
@@ -97,26 +102,26 @@ const CollectionForm = () => {
                />
                <Breadcrumbs>
                   <span className={state.stage >= 1 ? 'active' : ''}>
-                     Add Products
+                     {t(address.concat('add products'))}
                   </span>
                   <span>
                      <ChevronRight />
                   </span>
                   <span className={state.stage >= 2 ? 'active' : ''}>
-                     Configure Shop
+                     {t(address.concat('configure shop'))}
                   </span>
                </Breadcrumbs>
             </FormHeaderInputs>
             <FormHeaderActions>
-               <TextButton type="ghost"> Open in editor </TextButton>
+               <TextButton type="ghost"> {t(address.concat('open in editor'))} </TextButton>
                <TextButton type="outline" onClick={save}>
-                  Save and Exit
+                  {t(address.concat('save and exit'))}
                </TextButton>
                <TextButton
                   type="solid"
                   onClick={() => dispatch({ type: 'NEXT_STAGE' })}
                >
-                  Proceed
+                  {t(address.concat('proceed'))}
                </TextButton>
             </FormHeaderActions>
          </FormHeader>
@@ -124,8 +129,8 @@ const CollectionForm = () => {
             {state.stage === 1 ? (
                <Categories openTunnel={openTunnel} />
             ) : (
-               <Configuration />
-            )}
+                  <Configuration />
+               )}
          </FormBody>
       </CollectionContext.Provider>
    )

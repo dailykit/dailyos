@@ -14,7 +14,12 @@ import { TunnelContainer } from '../styled'
 
 import { TunnelHeader, Spacer } from '../../../../components/index'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.tunnels.'
+
 export default function SelectSachet({ next, sachets }) {
+   const { t } = useTranslation()
    const { recipeDispatch } = useContext(RecipeContext)
    const [search, setSearch] = useState('')
    const [list, current, selectOption] = useSingleList(sachets)
@@ -22,7 +27,7 @@ export default function SelectSachet({ next, sachets }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Sachet"
+            title={t(address.concat("select sachet"))}
             close={() => next(5)}
             next={() => {
                recipeDispatch({
@@ -44,11 +49,11 @@ export default function SelectSachet({ next, sachets }) {
             {Object.keys(current).length > 0 ? (
                <ListItem type="SSL1" title={current.title} />
             ) : (
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
-               />
-            )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(address.concat("type what you’re looking for..."))}
+                  />
+               )}
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))

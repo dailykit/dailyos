@@ -10,7 +10,12 @@ import {
 } from '../../../../../components'
 import { CloseIcon } from '../../../../../assets/icons/'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.'
+
 export default function AddItemsTunnel({ close }) {
+   const { t } = useTranslation()
    const { inventoryProductState, inventoryProductDispatch } = useContext(
       InventoryProductContext
    )
@@ -28,7 +33,7 @@ export default function AddItemsTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Items"
+            title={t(address.concat("add items"))}
             close={() => {
                inventoryProductDispatch({ type: 'REFINE_ITEMS' })
                close(1)
@@ -40,7 +45,7 @@ export default function AddItemsTunnel({ close }) {
             nextAction="Save"
          />
          <Spacer />
-         <Text as="h2">Label your items to add recipes for.</Text>
+         <Text as="h2"><Trans i18nKey={address.concat("text 1")}>Label your items to add recipes for.</Trans></Text>
          <br />
 
          {inventoryProductState.items.map((item, index) => (
@@ -73,7 +78,7 @@ export default function AddItemsTunnel({ close }) {
                {item.label?.length === 0 && (
                   <HelperText
                      type="hint"
-                     message="fill this first to continue adding new items!"
+                     message={t(address.concat("fill this first to continue adding new items!"))}
                   />
                )}
             </React.Fragment>
@@ -81,7 +86,7 @@ export default function AddItemsTunnel({ close }) {
 
          <ButtonTile
             type="secondary"
-            text="Add Another Item"
+            text={t(address.concat("add another item"))}
             onClick={addItemsHandler}
             style={{ margin: '20px 0' }}
          />

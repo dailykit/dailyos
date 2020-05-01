@@ -6,7 +6,12 @@ import { Context as RecipeContext } from '../../../context/recipe/index'
 import { IngredientsSection, Stats, DeleteButton } from './styled'
 import DeleteIcon from '../../../assets/icons/Delete'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function CookingSteps() {
+   const { t } = useTranslation()
    const {
       recipeState: { procedures },
       recipeDispatch,
@@ -16,7 +21,7 @@ export default function CookingSteps() {
       <>
          <IngredientsSection>
             <Stats>
-               <Text as="subtitle">Cooking Process</Text>
+               <Text as="subtitle">{t(address.concat('cooking process'))}</Text>
                <IconButton
                   type="ghost"
                   onClick={() => {
@@ -51,7 +56,7 @@ export default function CookingSteps() {
                         <Stats>
                            <Input
                               type="text"
-                              placeholder="Title"
+                              placeholder={t(address.concat("title"))}
                               name="title"
                               value={step.title}
                               onChange={e => {
@@ -82,7 +87,7 @@ export default function CookingSteps() {
                         <br />
                         <Input
                            type="textarea"
-                           placeholder="Description"
+                           placeholder={t(address.concat("description"))}
                            name="description"
                            rows="3"
                            value={step.description}
@@ -101,9 +106,9 @@ export default function CookingSteps() {
                         <ButtonTile
                            type="primary"
                            size="sm"
-                           text="Select Photos for this Step"
-                           helper="upto 1mb | only JPGs and PNGs are allowed."
-                           onClick={() => {}}
+                           text={t(address.concat("select photos for this step"))}
+                           helper={t(address.concat("upto 1mb | only JPGs and PNGs are allowed."))}
+                           onClick={() => { }}
                            style={{ margin: '20px 0' }}
                         />{' '}
                      </React.Fragment>

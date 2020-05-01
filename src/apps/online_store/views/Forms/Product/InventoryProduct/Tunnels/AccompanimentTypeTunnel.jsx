@@ -20,7 +20,12 @@ import {
 import { Content } from '../../styled'
 import AddIcon from '../../../../../assets/icons/Add'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.'
+
 export default function AccompanimentType({ close }) {
+   const { t } = useTranslation()
    const { inventoryProductState, inventoryProductDispatch } = useContext(
       InventoryProductContext
    )
@@ -60,11 +65,11 @@ export default function AccompanimentType({ close }) {
             <Content>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(address.concat("type what you’re looking for").concat('...'))}
                />
-               <ComboButton type="ghost" onClick={() => {}}>
+               <ComboButton type="ghost" onClick={() => { }}>
                   <AddIcon />
-                  New
+                  {t(address.concat('new'))}
                </ComboButton>
             </Content>
             {selected.length > 0 && (

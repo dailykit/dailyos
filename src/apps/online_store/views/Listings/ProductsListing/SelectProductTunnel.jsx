@@ -6,7 +6,12 @@ import { Context } from '../../../context/tabs'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../components'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.listings.productslisting.'
+
 export default function SelectProductTunnel({ close }) {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
    const addTab = (title, view) => {
@@ -15,7 +20,7 @@ export default function SelectProductTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Type of Product"
+            title={t(address.concat("select type of product"))}
             close={() => {
                close(1)
             }}
@@ -28,17 +33,21 @@ export default function SelectProductTunnel({ close }) {
          <SolidTile
             onClick={() => addTab('Inventory Product', 'inventoryProduct')}
          >
-            <Text as="h1">Inventory Product</Text>
-            <Text as="subtitle">
-               Inventory product is just an item, supplied or bought
+            <Text as="h1">{t(address.concat('inventory product'))}</Text>
+            <Text as="subtitle 1">
+               <Trans i18nKey={address.concat('subtitle')}>
+                  Inventory product is just an item, supplied or bought
+               </Trans>
             </Text>
          </SolidTile>
          <br />
          <SolidTile onClick={() => addTab('Advanced Product', 'product')}>
-            <Text as="h1">Advanced Product</Text>
+            <Text as="h1">{t(address.concat('advanced product'))}</Text>
             <Text as="subtitle">
-               Advanced product is an item with your recipes, sold as Meal Kits
-               as well as Ready to Eat
+               <Trans i18nKey={address.concat('subtitle 2')}>
+                  Advanced product is an item with your recipes, sold as Meal Kits
+                  as well as Ready to Eat
+               </Trans>
             </Text>
          </SolidTile>
       </TunnelContainer>

@@ -11,30 +11,35 @@ import {
    StyledHeading,
 } from './styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.sections.sidebar.'
+
 const Sidebar = ({ visible, toggleSidebar }) => {
+   const { t } = useTranslation()
    const { addTab } = useTabs()
    return (
       <StyledSidebar visible={visible} onClick={() => toggleSidebar(false)}>
-         <StyledHeading>Listings</StyledHeading>
+         <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
             <StyledListItem onClick={() => addTab('Users', '/settings/users')}>
-               Users
+               {t(address.concat('users'))}
             </StyledListItem>
             <StyledListItem
                onClick={() => addTab('Devices', '/settings/devices')}
             >
-               Devices
+               {t(address.concat('devices'))}
             </StyledListItem>
             <StyledListItem onClick={() => addTab('Roles', '/settings/roles')}>
-               Roles
+               {t(address.concat('roles'))}
             </StyledListItem>
             <StyledListItem onClick={() => addTab('Apps', '/settings/apps')}>
-               Apps
+               {t(address.concat('apps'))}
             </StyledListItem>
             <StyledListItem
                onClick={() => addTab('Stations', '/settings/stations')}
             >
-               Station
+               {t(address.concat('station'))}
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

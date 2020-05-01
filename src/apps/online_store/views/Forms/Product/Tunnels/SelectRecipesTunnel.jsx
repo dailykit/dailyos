@@ -13,7 +13,12 @@ import { ProductContext } from '../../../../context/product'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.tunnels.'
+
 export default function SelectRecipesTunnel({ close, recipes }) {
+   const { t } = useTranslation()
    const { productState, productDispatch } = useContext(ProductContext)
    const [search, setSearch] = React.useState('')
 
@@ -42,7 +47,7 @@ export default function SelectRecipesTunnel({ close, recipes }) {
          <List>
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder="type what you’re looking for..."
+               placeholder={t(address.concat("type what you’re looking for..."))}
             />
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>

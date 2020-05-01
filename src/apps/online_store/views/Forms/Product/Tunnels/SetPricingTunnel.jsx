@@ -5,7 +5,12 @@ import { ProductContext } from '../../../../context/product/index'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.tunnels.'
+
 export default function SetPricingTunnel({ close }) {
+   const { t } = useTranslation()
    const {
       productState: {
          pricingConfigFor,
@@ -90,7 +95,7 @@ export default function SetPricingTunnel({ close }) {
          <TunnelHeader
             title={`Configure ${
                pricingConfigFor === 'MEAL_KIT' ? 'Meal Kit' : 'Ready to Eat'
-            }: ${title}`}
+               }: ${title}`}
             close={() => {
                close(4)
             }}
@@ -122,9 +127,9 @@ export default function SetPricingTunnel({ close }) {
                   margin: '0 auto',
                }}
             >
-               <Text as="subtitle">Servings</Text>
-               <Text as="subtitle">Price</Text>
-               <Text as="subtitle">Discounted Price</Text>
+               <Text as="subtitle">{t(address.concat('servings'))}</Text>
+               <Text as="subtitle">{t(address.concat('price'))}</Text>
+               <Text as="subtitle">{t(address.concat('discounted price'))}</Text>
             </div>
             {servings.map(serving => (
                <div

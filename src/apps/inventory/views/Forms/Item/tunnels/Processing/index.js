@@ -14,7 +14,12 @@ import { ItemContext } from '../../../../../context/item'
 
 import { TunnelHeader, TunnelBody } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.processing.'
+
 export default function ProcessingTunnel({ close, next, processings }) {
+   const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
    const { state, dispatch } = React.useContext(ItemContext)
    const [list, current, selectOption] = useSingleList(processings)
@@ -38,7 +43,7 @@ export default function ProcessingTunnel({ close, next, processings }) {
                <span onClick={close}>
                   <CloseIcon size={24} />
                </span>
-               <span>Select Processing as item shipped</span>
+               <span>{t(address.concat('select processing as item shipped'))}</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -46,11 +51,11 @@ export default function ProcessingTunnel({ close, next, processings }) {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for").concat('...'))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

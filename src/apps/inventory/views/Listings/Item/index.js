@@ -19,7 +19,12 @@ import {
 
 import { Context } from '../../../context/tabs'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.listings.item.'
+
 export default function ItemListing() {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const [search, setSearch] = React.useState('')
 
@@ -30,7 +35,7 @@ export default function ItemListing() {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <h1>Supplier Items</h1>
+            <h1>{t(address.concat('supplier items'))}</h1>
             <StyledPagination>
                {29}
                <span disabled={true}>
@@ -42,10 +47,10 @@ export default function ItemListing() {
             </StyledPagination>
          </StyledHeader>
          <StyledTableHeader>
-            <p>filters</p>
+            <p>{t(address.concat('filters'))}</p>
             <StyledTableActions>
                <SearchBox
-                  placeholder="Search"
+                  placeholder={t(address.concat("search"))}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                />

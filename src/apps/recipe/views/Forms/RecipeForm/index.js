@@ -28,7 +28,12 @@ import MetaView from './MetaView'
 
 import { RECIPE, UPDATE_RECIPE } from '../../../graphql'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function AddRecipeForm() {
+   const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [recipeState, recipeDispatch] = useReducer(
       recipeReducers,
@@ -125,7 +130,7 @@ export default function AddRecipeForm() {
             <Menu>
                <div>
                   <Input
-                     label="Recipe Name"
+                     label={t(address.concat("recipe name"))}
                      type="text"
                      name="recipeName"
                      value={recipeState.name}
@@ -140,7 +145,7 @@ export default function AddRecipeForm() {
                      style={{ margin: '0px 10px' }}
                      onClick={save}
                   >
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
 
                   <TextButton
@@ -148,7 +153,7 @@ export default function AddRecipeForm() {
                      type="solid"
                      style={{ margin: '0px 10px' }}
                   >
-                     Publish
+                     {t(address.concat('publish'))}
                   </TextButton>
                </RecipeActions>
             </Menu>
@@ -173,7 +178,7 @@ export default function AddRecipeForm() {
             <Container>
                <div style={{ width: '40%' }}>
                   <Input
-                     label="Chef Name"
+                     label={t(address.concat("chef name"))}
                      type="text"
                      name="chef"
                      value={chefName}
@@ -185,17 +190,17 @@ export default function AddRecipeForm() {
                   <ButtonTile
                      as="button"
                      type="secondary"
-                     text="Add Description"
+                     text={t(address.concat("add description"))}
                      onClick={() => openTunnel(1)}
                   />
                )}
                <br />
                <ButtonTile
-                  onClick={() => {}}
+                  onClick={() => { }}
                   type="primary"
                   size="lg"
-                  text="Add photos to your recipe"
-                  helper="upto 1MB &#8226; only JPGs, PNGs, and PDFs are allowed."
+                  text={t(address.concat("add photos to your recipe"))}
+                  helper={(t(address.concat("upto 1MB"))).concat("&#8226;").concat(t(address.concat("only JPGs, PNGs, and PDFs are allowed.")))}
                />
                <AddIngredients />
             </Container>

@@ -10,12 +10,17 @@ import { StyledHeader, StyledMenu, StyledNav } from './styled'
 // Icons
 import { MenuIcon, LeftIcon, RightIcon } from '../../../../shared/assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.sections.header.'
+
 const Header = ({ toggleSidebar }) => {
+   const { t } = useTranslation()
    const history = useHistory()
    return (
       <StyledHeader>
          <StyledMenu
-            title="Menu"
+            title={t(address.concat("menu"))}
             tabIndex="0"
             role="button"
             onClick={() => toggleSidebar(visible => !visible)}
@@ -28,14 +33,14 @@ const Header = ({ toggleSidebar }) => {
          <StyledNav>
             <button
                type="button"
-               title="Go Back"
+               title={t(address.concat("go back"))}
                onClick={() => history.goBack()}
             >
                <LeftIcon color="#000" size="22" />
             </button>
             <button
                type="button"
-               title="Go Foreward"
+               title={t(address.concat("go forward"))}
                onClick={() => history.goForward()}
             >
                <RightIcon color="#000" size="22" />

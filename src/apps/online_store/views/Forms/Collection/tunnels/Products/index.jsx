@@ -14,7 +14,12 @@ import { TunnelHeader, TunnelBody } from '../styled'
 import { CloseIcon } from '../../../../../assets/icons'
 import { CollectionContext } from '../../../../../context/collection'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.collection.tunnels.products.'
+
 const ProductsTunnel = ({ close, products }) => {
+   const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
    const { state, dispatch } = React.useContext(CollectionContext)
    const [list, selected, selectOption] = useMultiList(products)
@@ -36,11 +41,11 @@ const ProductsTunnel = ({ close, products }) => {
                <span onClick={() => close(1)}>
                   <CloseIcon />
                </span>
-               <span>Select and add products to the collection</span>
+               <span><Trans i18nKey={address.concat('tunnel header')}>Select and add products to the collection</Trans></span>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -48,7 +53,7 @@ const ProductsTunnel = ({ close, products }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(address.concat("type what you’re looking for")).concat('...')}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>
@@ -82,7 +87,7 @@ const ProductsTunnel = ({ close, products }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </React.Fragment >
    )
 }
 

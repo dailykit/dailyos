@@ -7,7 +7,12 @@ import { InventoryProductContext } from '../../../../context/product/inventoryPr
 import RecipeConfigurator from './RecipeConfigurator'
 import AddIcon from '../../../../assets/icons/Add'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.'
+
 export default function Item({ open }) {
+   const { t } = useTranslation()
    const {
       inventoryProductState: { itemView, currentInventoryItem },
       inventoryProductDispatch,
@@ -18,7 +23,7 @@ export default function Item({ open }) {
             <Content
                style={{ alignItems: 'center', justifyContent: 'space-between' }}
             >
-               <Text as="title">Inventory Items for {itemView.label}</Text>
+               <Text as="title">{t(address.concat('inventory items for'))} {itemView.label}</Text>
                <IconButton type="ghost" onClick={() => open(2)}>
                   <AddIcon />
                </IconButton>

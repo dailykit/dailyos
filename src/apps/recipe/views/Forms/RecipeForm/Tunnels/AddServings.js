@@ -8,7 +8,12 @@ import { TunnelContainer, ServingsInput } from '../styled'
 import { TunnelHeader, Spacer } from '../../../../components/index'
 import CloseIcon from '../../../../assets/icons/Close'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.tunnels.'
+
 export default function AddServings({ close, next }) {
+   const { t } = useTranslation()
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
 
    const addServingsHandler = () => {
@@ -29,7 +34,7 @@ export default function AddServings({ close, next }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Servings"
+            title={t(address.concat("add servings"))}
             close={() => {
                recipeDispatch({ type: 'REFINE_SERVINGS' })
                recipeDispatch({ type: 'ADD_SERVINGS_FOR_PUSHABLE' })
@@ -43,7 +48,7 @@ export default function AddServings({ close, next }) {
             nextAction="Add"
          />
          <Spacer />
-         <Text as="subtitle">Enter Servings:</Text>
+         <Text as="subtitle">{t(address.concat('enter servings'))}:</Text>
          <br />
          <ol>
             {recipeState.servings.map(serving => (
@@ -53,7 +58,7 @@ export default function AddServings({ close, next }) {
                         <Input
                            onChange={e => changeServingsHandler(serving, e)}
                            type="text"
-                           placeholder="enter"
+                           placeholder={t(address.concat("enter"))}
                            name={serving.id}
                            value={serving.value || ''}
                         />
@@ -76,7 +81,7 @@ export default function AddServings({ close, next }) {
                   {serving.value <= 0 ? (
                      <HelperText
                         type="hint"
-                        message="fill this first to continue adding new servings!"
+                        message={t(address.concat("fill this first to continue adding new servings!"))}
                      />
                   ) : null}
                </React.Fragment>
@@ -86,7 +91,7 @@ export default function AddServings({ close, next }) {
          <ButtonTile
             as="button"
             type="secondary"
-            text="Add more servings"
+            text={t(address.concat("add more servings"))}
             onClick={addServingsHandler}
          />
       </TunnelContainer>

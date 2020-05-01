@@ -9,7 +9,12 @@ import {
    StyledContainer,
 } from './styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.collection.components.configuration.'
+
 const Configuration = () => {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(CollectionContext)
    const [rule, setRule] = React.useState(undefined)
    const [freq, setFreq] = React.useState('1')
@@ -95,7 +100,7 @@ const Configuration = () => {
 
    return (
       <React.Fragment>
-         <StyledHeading>Collection Availability</StyledHeading>
+         <StyledHeading>{t(address.concat('collection availability'))}</StyledHeading>
          <StyledContainer>
             <StyledForm>
                <div>
@@ -107,7 +112,7 @@ const Configuration = () => {
                         checked={freq === '0'}
                         onChange={e => setFreq(e.target.value)}
                      />
-                     Repeat Yearly
+                     {t(address.concat('repeat yearly'))}
                   </label>
                   <label>
                      <input
@@ -117,7 +122,7 @@ const Configuration = () => {
                         checked={freq === '1'}
                         onChange={e => setFreq(e.target.value)}
                      />
-                     Repeat Monthly
+                     {t(address.concat('repeat monthly'))}
                   </label>
                   <label>
                      <input
@@ -127,7 +132,7 @@ const Configuration = () => {
                         checked={freq === '2'}
                         onChange={e => setFreq(e.target.value)}
                      />
-                     Repeat Weekly
+                     {t(address.concat('repeat weekly'))}
                   </label>
                   <label>
                      <input
@@ -137,12 +142,12 @@ const Configuration = () => {
                         checked={freq === '3'}
                         onChange={e => setFreq(e.target.value)}
                      />
-                     Repeat Daily
+                     {t(address.concat("repeat daily"))}
                   </label>
                </div>
                <div>
                   <label>
-                     From
+                     {t(address.concat('from'))}
                      <input
                         name="dtstart"
                         type="datetime-local"
@@ -151,7 +156,7 @@ const Configuration = () => {
                      />
                   </label>
                   <label>
-                     Till
+                     {t(address.concat('till'))}
                      <input
                         name="until"
                         type="datetime-local"
@@ -162,7 +167,7 @@ const Configuration = () => {
                </div>
                <div>
                   <label>
-                     Count
+                     {t(address.concat('count'))}
                      <input
                         type="number"
                         max="1000"
@@ -175,7 +180,7 @@ const Configuration = () => {
                </div>
                <div>
                   <label>
-                     Interval
+                     {t(address.concat('interval'))}
                      <input
                         type="number"
                         value={gap}
@@ -186,7 +191,7 @@ const Configuration = () => {
                   </label>
                </div>
                <div>
-                  Week starts on <br />
+                  {t(address.concat('week starts on'))} <br />
                   <label>
                      <input
                         type="radio"
@@ -195,7 +200,7 @@ const Configuration = () => {
                         checked={wkst === '0'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Monday
+                     {t(address.concat('monday'))}
                   </label>
                   <label>
                      <input
@@ -205,7 +210,7 @@ const Configuration = () => {
                         checked={wkst === '1'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Tuesday
+                     {t(address.concat('tuesday'))}
                   </label>
                   <label>
                      <input
@@ -215,7 +220,7 @@ const Configuration = () => {
                         checked={wkst === '2'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Wednesday
+                     {t(address.concat('wednesday'))}
                   </label>
                   <label>
                      <input
@@ -225,7 +230,7 @@ const Configuration = () => {
                         checked={wkst === '3'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Thursday
+                     {t(address.concat('thursday'))}
                   </label>
                   <label>
                      <input
@@ -235,7 +240,7 @@ const Configuration = () => {
                         checked={wkst === '4'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Friday
+                     {t(address.concat('friday'))}
                   </label>
                   <label>
                      <input
@@ -245,7 +250,7 @@ const Configuration = () => {
                         checked={wkst === '5'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Saturday
+                     {t(address.concat('saturday'))}
                   </label>
                   <label>
                      <input
@@ -255,11 +260,11 @@ const Configuration = () => {
                         checked={wkst === '6'}
                         onChange={e => setWkst(e.target.value)}
                      />
-                     Sunday
+                     {t(address.concat('sunday'))}
                   </label>
                </div>
                <div>
-                  Available on <br />
+                  {t(address.concat('available on'))} <br />
                   <label>
                      <input
                         type="checkbox"
@@ -268,7 +273,7 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.MO)}
                         onChange={() => toggleByDay(RRule.MO)}
                      />
-                     Every Monday
+                     {t(address.concat('every monday'))}
                   </label>
                   <label>
                      <input
@@ -278,7 +283,7 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.TU)}
                         onChange={() => toggleByDay(RRule.TU)}
                      />
-                     Every Tuesday
+                     {t(address.concat('every tuesday'))}
                   </label>
                   <label>
                      <input
@@ -288,7 +293,7 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.WE)}
                         onChange={() => toggleByDay(RRule.WE)}
                      />
-                     Every Wednesday
+                     {t(address.concat('every wednesday'))}
                   </label>
                   <label>
                      <input
@@ -298,7 +303,7 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.TH)}
                         onChange={() => toggleByDay(RRule.TH)}
                      />
-                     Every Thursday
+                     {t(address.concat('every thursday'))}
                   </label>
                   <label>
                      <input
@@ -308,7 +313,7 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.FR)}
                         onChange={() => toggleByDay(RRule.FR)}
                      />
-                     Every Friday
+                     {t(address.concat('every friday'))}
                   </label>
                   <label>
                      <input
@@ -318,7 +323,7 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.SA)}
                         onChange={() => toggleByDay(RRule.SA)}
                      />
-                     Every Saturday
+                     {t(address.concat('every saturday'))}
                   </label>
                   <label>
                      <input
@@ -328,11 +333,11 @@ const Configuration = () => {
                         checked={byWeekDay.includes(RRule.SU)}
                         onChange={() => toggleByDay(RRule.SU)}
                      />
-                     Every Sunday
+                     {t(address.concat('every sunday'))}
                   </label>
                </div>
                <div>
-                  Available in <br />
+                  {t(address.concat('available in'))} <br />
                   <label>
                      <input
                         name="bymonth"
@@ -341,7 +346,7 @@ const Configuration = () => {
                         checked={byMonth.includes('1')}
                         onChange={toggleByMonth}
                      />
-                     Jan
+                     {t(address.concat('jan'))}
                   </label>
                   <label>
                      <input
@@ -351,7 +356,7 @@ const Configuration = () => {
                         checked={byMonth.includes('2')}
                         onChange={toggleByMonth}
                      />
-                     Feb
+                     {t(address.concat('feb'))}
                   </label>
                   <label>
                      <input
@@ -361,7 +366,7 @@ const Configuration = () => {
                         checked={byMonth.includes('3')}
                         onChange={toggleByMonth}
                      />
-                     Mar
+                     {t(address.concat('mar'))}
                   </label>
                   <label>
                      <input
@@ -371,7 +376,7 @@ const Configuration = () => {
                         checked={byMonth.includes('4')}
                         onChange={toggleByMonth}
                      />
-                     Apr
+                     {t(address.concat('apr'))}
                   </label>
                   <label>
                      <input
@@ -381,7 +386,7 @@ const Configuration = () => {
                         checked={byMonth.includes('5')}
                         onChange={toggleByMonth}
                      />
-                     May
+                     {t(address.concat('may'))}
                   </label>
                   <label>
                      <input
@@ -391,7 +396,7 @@ const Configuration = () => {
                         checked={byMonth.includes('6')}
                         onChange={toggleByMonth}
                      />
-                     Jun
+                     {t(address.concat('jun'))}
                   </label>
                   <label>
                      <input
@@ -401,7 +406,7 @@ const Configuration = () => {
                         checked={byMonth.includes('7')}
                         onChange={toggleByMonth}
                      />
-                     Jul
+                     {t(address.concat('jul'))}
                   </label>
                   <label>
                      <input
@@ -411,7 +416,7 @@ const Configuration = () => {
                         checked={byMonth.includes('8')}
                         onChange={toggleByMonth}
                      />
-                     Aug
+                     {t(address.concat('aug'))}
                   </label>
                   <label>
                      <input
@@ -421,7 +426,7 @@ const Configuration = () => {
                         checked={byMonth.includes('9')}
                         onChange={toggleByMonth}
                      />
-                     Sep
+                     {t(address.concat('sep'))}
                   </label>
                   <label>
                      <input
@@ -431,7 +436,7 @@ const Configuration = () => {
                         checked={byMonth.includes('10')}
                         onChange={toggleByMonth}
                      />
-                     Oct
+                     {t(address.concat('oct'))}
                   </label>
                   <label>
                      <input
@@ -441,7 +446,7 @@ const Configuration = () => {
                         checked={byMonth.includes('11')}
                         onChange={toggleByMonth}
                      />
-                     Nov
+                     {t(address.concat('nov'))}
                   </label>
                   <label>
                      <input
@@ -451,7 +456,7 @@ const Configuration = () => {
                         checked={byMonth.includes('12')}
                         onChange={toggleByMonth}
                      />
-                     Dec
+                     {t(address.concat('dec'))}
                   </label>
                </div>
             </StyledForm>

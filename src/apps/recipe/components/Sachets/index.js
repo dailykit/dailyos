@@ -48,7 +48,12 @@ import {
 } from '../../graphql'
 import { Sachet } from '../'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.components.sachets.'
+
 const Sachets = ({ ingredientId, processingId, processingName }) => {
+   const { t } = useTranslation()
    // State
    const [sachets, setSachets] = React.useState([])
    const [selectedIndex, setSelectedIndex] = React.useState(0)
@@ -138,39 +143,39 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    })
 
    // Queries and Mutations
-   const [fetchSachets, {}] = useLazyQuery(SACHETS_OF_PROCESSING, {
+   const [fetchSachets, { }] = useLazyQuery(SACHETS_OF_PROCESSING, {
       onCompleted: data => {
          setSachets(data.processing.sachets)
       }
    })
-   const [fetchUnits, {}] = useLazyQuery(FETCH_UNITS, {
+   const [fetchUnits, { }] = useLazyQuery(FETCH_UNITS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
          setUnits(data.units)
       }
    })
-   const [fetchStations, {}] = useLazyQuery(FETCH_STATIONS, {
+   const [fetchStations, { }] = useLazyQuery(FETCH_STATIONS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
          stationsList.length = 0
          stationsList.push(...data.stations)
       }
    })
-   const [fetchSupplierItems, {}] = useLazyQuery(FETCH_SUPPLIER_ITEMS, {
+   const [fetchSupplierItems, { }] = useLazyQuery(FETCH_SUPPLIER_ITEMS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
          supplierItemsList.length = 0
          supplierItemsList.push(...data.supplierItems)
       }
    })
-   const [fetchPackagings, {}] = useLazyQuery(FETCH_PACKAGINGS, {
+   const [fetchPackagings, { }] = useLazyQuery(FETCH_PACKAGINGS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
          packagingList.length = 0
          packagingList.push(...data.packagings)
       }
    })
-   const [fetchLabelTemplates, {}] = useLazyQuery(FETCH_LABEL_TEMPLATES, {
+   const [fetchLabelTemplates, { }] = useLazyQuery(FETCH_LABEL_TEMPLATES, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
          labelTemplateList.length = 0
@@ -483,7 +488,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
             <>
                <StyledListing>
                   <StyledListingHeader>
-                     <h3>Sachets ({sachets.length})</h3>
+                     <h3>{t(address.concat('sachets'))} ({sachets.length})</h3>
                      <span>
                         <AddIcon
                            color='#555B6E'
@@ -507,8 +512,8 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         <h3>
                            {sachet.quantity.value} {sachet.quantity.unit.title}
                         </h3>
-                        <p>Active: Real-time</p>
-                        <p>Available: 12/40 pkt</p>
+                        <p>{t(address.concat('active: real-time'))}</p>
+                        <p>{t(address.concat('available: 12/40 pkt'))}</p>
                      </StyledListingTile>
                   ))}
                   <ButtonTile
@@ -523,13 +528,13 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         className={selectedView === 'modes' ? 'active' : ''}
                         onClick={() => setSelectedView('modes')}
                      >
-                        Modes of fulfillment
+                        {t(address.concat('modes of fulfillment'))}
                      </StyledTab>
                      <StyledTab
                         className={selectedView === 'inventory' ? 'active' : ''}
                         onClick={() => setSelectedView('inventory')}
                      >
-                        Inventory
+                        {t(address.concat('inventory'))}
                      </StyledTab>
                   </StyledTabsContainer>
                   <StyledTabContent
@@ -540,19 +545,19 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                   <StyledTabContent
                      className={selectedView === 'inventory' ? 'active' : ''}
                   >
-                     Inventory
+                     {t(address.concat('inventory'))}
                      {/* Content for inventory will come here! */}
                   </StyledTabContent>
                </StyledDisplay>
             </>
          ) : (
-            <ButtonTile
-               type='primary'
-               size='lg'
-               text='Add Sachet'
-               onClick={sachetTunnelHandler}
-            />
-         )}
+               <ButtonTile
+                  type='primary'
+                  size='lg'
+                  text='Add Sachet'
+                  onClick={sachetTunnelHandler}
+               />
+            )}
          <Tunnels tunnels={sachetTunnel}>
             <Tunnel layer={1} size='lg'>
                <StyledTunnelHeader>
@@ -562,17 +567,17 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         color='#888D9D'
                         onClick={() => closeSachetTunnel(1)}
                      />
-                     <h1>Add Sachet for Processing: {processingName}</h1>
+                     <h1>{t(address.concat('add sachet for processing'))}: {processingName}</h1>
                   </div>
                   <TextButton type='solid' onClick={createSachetHandler}>
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
                </StyledTunnelHeader>
                <StyledTunnelMain>
                   <StyledTextAndSelect>
                      <Input
                         type='text'
-                        placeholder='Enter Quantity'
+                        placeholder={t(address.concat('enter quantity'))}
                         value={sachetForm.quantity?.value}
                         onChange={e =>
                            setSachetForm({
@@ -605,7 +610,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                   <ToggleWrapper>
                      <Toggle
                         checked={sachetForm.tracking}
-                        label='Take Inventory'
+                        label={t(address.concat('take inventory'))}
                         setChecked={value =>
                            setSachetForm({
                               ...sachetForm,
@@ -617,10 +622,10 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                   <StyledTable cellSpacing={0}>
                      <thead>
                         <tr>
-                           <th>Mode of fulfillment</th>
-                           <th>Station</th>
-                           <th>Supplier item</th>
-                           <th>Accuracy</th>
+                           <th>{t(address.concat('mode of fulfillment'))}</th>
+                           <th>{t(address.concat('station'))}</th>
+                           <th>{t(address.concat('supplier item'))}</th>
+                           <th>{t(address.concat('Accuracy'))}</th>
                            <th>Packaging</th>
                            <th>Label</th>
                         </tr>
@@ -650,90 +655,90 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                               </td>
                               <td>
                                  {mode.supplierItems[0].item?.title?.length >
-                                 0 ? (
-                                    <RadioGroup
-                                       options={accuracyOptions}
-                                       active={3}
-                                       onChange={option =>
-                                          selectAccuracyHandler(option.value)
-                                       }
-                                    />
-                                 ) : (
-                                    '-'
-                                 )}
-                              </td>
-                              <td>
-                                 {mode.supplierItems[0].item?.title?.length >
-                                 0 ? (
-                                    <>
-                                       {mode.supplierItems[0].packaging
-                                          ?.title ? (
-                                          <Tag
-                                             onClick={() =>
-                                                openPackagingTunnel(1)
-                                             }
-                                          >
-                                             {
-                                                mode.supplierItems[0].packaging
-                                                   .title
-                                             }
-                                          </Tag>
-                                       ) : (
-                                          <ButtonTile
-                                             type='secondary'
-                                             text='Packaging'
-                                             onClick={() =>
-                                                openPackagingTunnel(1)
-                                             }
-                                          />
-                                       )}
-                                    </>
-                                 ) : (
-                                    '-'
-                                 )}
-                              </td>
-                              <td>
-                                 {mode.supplierItems[0].item?.title?.length >
-                                 0 ? (
-                                    <React.Fragment>
-                                       <Toggle
-                                          checked={
-                                             mode.supplierItems[0].isLabelled
-                                          }
-                                          setChecked={val =>
-                                             toggleIsLabelled(val)
+                                    0 ? (
+                                       <RadioGroup
+                                          options={accuracyOptions}
+                                          active={3}
+                                          onChange={option =>
+                                             selectAccuracyHandler(option.value)
                                           }
                                        />
-                                       {mode.supplierItems[0].isLabelled && (
-                                          <>
-                                             {mode.supplierItems[0]
-                                                .labelTemplate?.title ? (
+                                    ) : (
+                                       '-'
+                                    )}
+                              </td>
+                              <td>
+                                 {mode.supplierItems[0].item?.title?.length >
+                                    0 ? (
+                                       <>
+                                          {mode.supplierItems[0].packaging
+                                             ?.title ? (
                                                 <Tag
                                                    onClick={() =>
-                                                      openLabelTunnel(1)
+                                                      openPackagingTunnel(1)
                                                    }
                                                 >
                                                    {
-                                                      mode.supplierItems[0]
-                                                         .labelTemplate.title
+                                                      mode.supplierItems[0].packaging
+                                                         .title
                                                    }
                                                 </Tag>
                                              ) : (
                                                 <ButtonTile
-                                                   noIcon
                                                    type='secondary'
-                                                   text='Select Sub Title'
+                                                   text='Packaging'
                                                    onClick={() =>
-                                                      openLabelTunnel(1)
+                                                      openPackagingTunnel(1)
                                                    }
                                                 />
                                              )}
-                                          </>
-                                       )}
-                                    </React.Fragment>
-                                 ) : (
-                                    '-'
-                                 )}
+                                       </>
+                                    ) : (
+                                       '-'
+                                    )}
+                              </td>
+                              <td>
+                                 {mode.supplierItems[0].item?.title?.length >
+                                    0 ? (
+                                       <React.Fragment>
+                                          <Toggle
+                                             checked={
+                                                mode.supplierItems[0].isLabelled
+                                             }
+                                             setChecked={val =>
+                                                toggleIsLabelled(val)
+                                             }
+                                          />
+                                          {mode.supplierItems[0].isLabelled && (
+                                             <>
+                                                {mode.supplierItems[0]
+                                                   .labelTemplate?.title ? (
+                                                      <Tag
+                                                         onClick={() =>
+                                                            openLabelTunnel(1)
+                                                         }
+                                                      >
+                                                         {
+                                                            mode.supplierItems[0]
+                                                               .labelTemplate.title
+                                                         }
+                                                      </Tag>
+                                                   ) : (
+                                                      <ButtonTile
+                                                         noIcon
+                                                         type='secondary'
+                                                         text='Select Sub Title'
+                                                         onClick={() =>
+                                                            openLabelTunnel(1)
+                                                         }
+                                                      />
+                                                   )}
+                                             </>
+                                          )}
+                                       </React.Fragment>
+                                    ) : (
+                                       '-'
+                                    )}
                               </td>
                            </tr>
                         ))}
@@ -757,11 +762,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                      {Object.keys(currentStation).length > 0 ? (
                         <ListItem type='SSL1' title={currentStation.title} />
                      ) : (
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder='type what you’re looking for...'
-                        />
-                     )}
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder='type what you’re looking for...'
+                           />
+                        )}
                      <ListOptions>
                         {stationsList
                            .filter(option =>
@@ -801,11 +806,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                            title={currentSupplierItem.title}
                         />
                      ) : (
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder='type what you’re looking for...'
-                        />
-                     )}
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder='type what you’re looking for...'
+                           />
+                        )}
                      <ListOptions>
                         {supplierItemsList
                            .filter(option =>
@@ -844,11 +849,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                      {Object.keys(currentPackaging).length > 0 ? (
                         <ListItem type='SSL1' title={currentPackaging.title} />
                      ) : (
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder='type what you’re looking for...'
-                        />
-                     )}
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder='type what you’re looking for...'
+                           />
+                        )}
                      <ListOptions>
                         {packagingList
                            .filter(option =>
@@ -890,11 +895,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                            title={currentLabelTemplate.title}
                         />
                      ) : (
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder='type what you’re looking for...'
-                        />
-                     )}
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder='type what you’re looking for...'
+                           />
+                        )}
                      <ListOptions>
                         {labelTemplateList
                            .filter(option =>

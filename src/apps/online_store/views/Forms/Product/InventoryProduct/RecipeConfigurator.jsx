@@ -26,7 +26,12 @@ import {
 import EditIcon from '../../../../assets/icons/Edit'
 import AddIcon from '../../../../assets/icons/Add'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.'
+
 export default function RecipeConfigurator({ open }) {
+   const { t } = useTranslation()
    const [view, setView] = React.useState('pricing')
    const [isMealKit, setIsMealKit] = React.useState(false)
    const [isReadyToEat, setIsReadyToEat] = React.useState(false)
@@ -47,11 +52,11 @@ export default function RecipeConfigurator({ open }) {
          }}
       >
          {itemView.inventoryItems?.length === 0 && (
-            <Message>Please add recipes to this product.</Message>
+            <Message>{t(address.concat('please add recipes to this product'))}.</Message>
          )}
          {!currentInventoryItem.id && itemView.inventoryItems?.length > 0 && (
             <Message>
-               Please select a recipe from the left menu to configure.
+               {t(address.concat('please select a recipe from the left menu to configure'))}.
             </Message>
          )}
 
@@ -64,13 +69,13 @@ export default function RecipeConfigurator({ open }) {
                      active={view === 'pricing'}
                      onClick={() => setView('pricing')}
                   >
-                     <Text as="title">Pricing</Text>
+                     <Text as="title">{t(address.concat('pricing'))}</Text>
                   </ItemTab>
                   <ItemTab
                      active={view === 'accompaniments'}
                      onClick={() => setView('accompaniments')}
                   >
-                     <Text as="title">Accompaniments</Text>
+                     <Text as="title">{t(address.concat('accompaniments'))}</Text>
                   </ItemTab>
                </TabContainer>
 
@@ -80,10 +85,10 @@ export default function RecipeConfigurator({ open }) {
                         <Table>
                            <TableHead>
                               <TableRow>
-                                 <TableCell>Variant</TableCell>
-                                 <TableCell>Add Quantity</TableCell>
-                                 <TableCell>Set Pricing</TableCell>
-                                 <TableCell>Discounted Price</TableCell>
+                                 <TableCell>{t(address.concat('variant'))}</TableCell>
+                                 <TableCell>{t(address.concat('add quantity'))}</TableCell>
+                                 <TableCell>{t(address.concat('set pricing'))}</TableCell>
+                                 <TableCell>{t(address.concat('discounted price'))}</TableCell>
                               </TableRow>
                            </TableHead>
                            <TableBody>
@@ -94,7 +99,7 @@ export default function RecipeConfigurator({ open }) {
                                           <Input
                                              type="text"
                                              name="name"
-                                             placeholder="enter variant name"
+                                             placeholder={t(address.concat("enter variant name"))}
                                              value={variant.name}
                                              onChange={e => {
                                                 inventoryProductDispatch({
@@ -112,7 +117,7 @@ export default function RecipeConfigurator({ open }) {
                                           <Input
                                              type="text"
                                              name="quantity"
-                                             placeholder="Quantity"
+                                             placeholder={t(address.concat("quantity"))}
                                              value={variant.quantity}
                                              onChange={e => {
                                                 if (
@@ -137,7 +142,7 @@ export default function RecipeConfigurator({ open }) {
                                           <Input
                                              type="text"
                                              name="price"
-                                             placeholder="Set Pricing"
+                                             placeholder={t(address.concat("set pricing"))}
                                              value={variant.price}
                                              onChange={e => {
                                                 if (
@@ -162,7 +167,7 @@ export default function RecipeConfigurator({ open }) {
                                           <Input
                                              type="text"
                                              name="discount"
-                                             placeholder="Set Pricing"
+                                             placeholder={t(address.concat("set pricing"))}
                                              value={variant.discount}
                                              onChange={e => {
                                                 if (
@@ -229,7 +234,7 @@ export default function RecipeConfigurator({ open }) {
                            }
                         >
                            <AddIcon />
-                           Add another variant
+                           {t(address.concat('add another variant'))}
                         </ComboButton>
                      </div>
                   </>
@@ -242,7 +247,7 @@ export default function RecipeConfigurator({ open }) {
                            <ButtonTile
                               noIcon
                               type="secondary"
-                              text="Select Accompaniment Types"
+                              text={t(address.concat("select accompaniment types"))}
                               onClick={() => open(6)}
                               style={{ margin: '20px 0' }}
                            />
@@ -259,6 +264,7 @@ export default function RecipeConfigurator({ open }) {
    )
 }
 function MealKitPricing({ open }) {
+   const { t } = useTranslation()
    const [isMealKit, setIsMealKit] = React.useState(false)
    const {
       productState: { currentInventoryItem },
@@ -276,8 +282,8 @@ function MealKitPricing({ open }) {
                   }}
                />
             </TableCell>
-            <TableCell>Mealkits</TableCell>
-            <TableCell>true</TableCell>
+            <TableCell>{t(address.concat('mealkits'))}</TableCell>
+            <TableCell>{t(address.concat('true'))}</TableCell>
             <TableCell>{currentInventoryItem.mealKit[0].size}</TableCell>
             <TableCell>$ {currentInventoryItem.mealKit[0].price}</TableCell>
             <TableCell>$ {currentInventoryItem.mealKit[0].discount}</TableCell>
@@ -319,6 +325,7 @@ function MealKitPricing({ open }) {
 }
 
 function ReadyToEatPricing({ open }) {
+   const { t } = useTranslation()
    const [isReadyToEat, setIsReadyToEat] = React.useState(false)
    const {
       productState: { currentInventoryItem },
@@ -336,8 +343,8 @@ function ReadyToEatPricing({ open }) {
                   }}
                />
             </TableCell>
-            <TableCell>Ready To Eat</TableCell>
-            <TableCell>true</TableCell>
+            <TableCell>{t(address.concat('ready to eat'))}</TableCell>
+            <TableCell>{t(address.concat('true'))}</TableCell>
             <TableCell>{currentInventoryItem.readyToEat[0].size}</TableCell>
             <TableCell>$ {currentInventoryItem.readyToEat[0].price}</TableCell>
             <TableCell>
@@ -425,6 +432,7 @@ function Types({ open }) {
 }
 
 function Accompaniment({ open }) {
+   const { t } = useTranslation()
    const {
       productState: { activeAccomp, activeProduct },
       inventoryProductDispatch,
@@ -457,7 +465,7 @@ function Accompaniment({ open }) {
                onClick={() => open(7)}
             >
                <AddIcon />
-               Add Accompaniments
+               {t(address.concat('add accompaniments'))}
             </ComboButton>
          </Flexible>
          <Flexible width="3">
@@ -470,6 +478,7 @@ function Accompaniment({ open }) {
 }
 
 function AccompanimentProducts() {
+   const { t } = useTranslation()
    const [discount, setDiscount] = React.useState('')
    const {
       productState: { activeProduct },
@@ -479,7 +488,9 @@ function AccompanimentProducts() {
    if (!activeProduct.title)
       return (
          <Text as="subtitle">
-            Select a Product from the right menu to configure!
+            <Trans i18nKey={address.concat('subtitle')}>
+               Select a Product from the right menu to configure!
+            </Trans>
          </Text>
       )
 
@@ -495,7 +506,7 @@ function AccompanimentProducts() {
          >
             <Input
                type="text"
-               placeholder="Discount as Accompaniment"
+               placeholder={t(address.concat("discount as accompaniment"))}
                value={discount}
                onChange={e => {
                   const value = parseInt(parseInt(e.target.value))
@@ -512,7 +523,7 @@ function AccompanimentProducts() {
             %
          </div>
 
-         <Text as="title">Items</Text>
+         <Text as="title">{t(address.concat('items'))}</Text>
          <br />
 
          <div style={{ display: 'flex' }}>

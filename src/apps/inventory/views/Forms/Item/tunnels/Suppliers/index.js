@@ -14,7 +14,12 @@ import { ItemContext } from '../../../../../context/item'
 
 import { TunnelHeader, TunnelBody } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
+
 export default function SuppliersTunnel({ close, next, suppliers }) {
+   const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
    const { state, dispatch } = React.useContext(ItemContext)
    const [list, current, selectOption] = useSingleList(suppliers)
@@ -32,7 +37,7 @@ export default function SuppliersTunnel({ close, next, suppliers }) {
                <span onClick={close}>
                   <CloseIcon size={24} />
                </span>
-               <span>Select Supplier</span>
+               <span>{t(address.concat('select supplier'))}</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -46,11 +51,11 @@ export default function SuppliersTunnel({ close, next, suppliers }) {
                      }}
                   />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you're looking for")).concat('...')}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

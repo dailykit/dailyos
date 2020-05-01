@@ -6,7 +6,12 @@ import { ProductContext } from '../../../../context/product/index'
 import { CustomCrossButton } from '../styled'
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.tunnels.'
+
 export default function ProductDescriptionTunnel({ close }) {
+   const { t } = useTranslation()
    const {
       productState: { description: oldDescription, tags: oldTags },
       productDispatch,
@@ -20,7 +25,7 @@ export default function ProductDescriptionTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Product Description"
+            title={t(address.concat("add product description"))}
             close={() => {
                close(3)
             }}
@@ -41,7 +46,7 @@ export default function ProductDescriptionTunnel({ close }) {
          {!showInput && (
             <ButtonTile
                type="secondary"
-               text="Add search tags"
+               text={t(address.concat("add search tags"))}
                onClick={e => setShowInput(true)}
                style={{ margin: '20px 0' }}
             />
@@ -52,7 +57,7 @@ export default function ProductDescriptionTunnel({ close }) {
                <Input
                   type="text"
                   name="tags"
-                  placeholder="type the name of the tag"
+                  placeholder={t(address.concat("type the name of the tag"))}
                   value={tagName}
                   onChange={e => setTagName(e.target.value)}
                   onKeyDown={e => {
@@ -65,7 +70,7 @@ export default function ProductDescriptionTunnel({ close }) {
                />
                <HelperText
                   type="hint"
-                  message="Hit enter to register tag name."
+                  message={t(address.concat("hit enter to register tag name."))}
                />
             </>
          )}
@@ -96,14 +101,14 @@ export default function ProductDescriptionTunnel({ close }) {
          <Input
             type="text"
             name="description"
-            placeholder="Add product description in 120 words"
+            placeholder={t(address.concat("add product description in 120 words"))}
             value={description}
             onChange={e => setDescription(e.target.value)}
          />
 
          <HelperText
             type="hint"
-            message="description will not be saved if empty"
+            message={t(address.concat("description will not be saved if empty"))}
          />
       </TunnelContainer>
    )

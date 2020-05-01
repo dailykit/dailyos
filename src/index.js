@@ -9,6 +9,10 @@ import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 
+//i18next internationalization
+import './i18next'
+import { Trans } from 'react-i18next'
+
 import './global.css'
 
 import { StyledLoader } from './styled'
@@ -49,10 +53,10 @@ render(
       <Router>
          <Switch>
             <Route path="/" exact>
-               <Link to="/inventory">Inventory</Link>
-               <Link to="/recipe">Recipe</Link>
-               <Link to="/online-store">Online Store</Link>
-               <Link to="/settings">Settings</Link>
+               <Link to="/inventory"><Trans i18nKey='inventory'>Inventory</Trans></Link>
+               <Link to="/recipe"><Trans i18nKey='recipe'>Recipe</Trans></Link>
+               <Link to="/online-store"><Trans i18nKey='online store'>Online Store</Trans></Link>
+               <Link to="/settings"><Trans i18nKey='settings'>settings</Trans></Link>
             </Route>
             <Route path="/inventory" component={Inventory} />
             <Route path="/recipe" component={Recipe} />

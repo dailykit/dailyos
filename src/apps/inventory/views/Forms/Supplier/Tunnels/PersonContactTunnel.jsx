@@ -8,7 +8,12 @@ import { FlexContainer } from '../../styled'
 import { CircleButton } from '../styled'
 import { Camera } from '../../../../assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.supplier.tunnels.'
+
 export default function PersonContactTunnel({ close }) {
+   const { t } = useTranslation()
    const {
       supplierState: {
          contact: {
@@ -31,7 +36,7 @@ export default function PersonContactTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Person of Contact"
+            title={t(address.concat("add person of contact"))}
             next={() => {
                supplierDispatch({
                   type: 'ADD_CONTACT',
@@ -58,7 +63,7 @@ export default function PersonContactTunnel({ close }) {
                <FlexContainer>
                   <Input
                      name="firstName"
-                     placeholder="First name"
+                     placeholder={t(address.concat("first name"))}
                      type="text"
                      value={firstName}
                      onChange={e => setFirstName(e.target.value)}
@@ -66,7 +71,7 @@ export default function PersonContactTunnel({ close }) {
                   <div style={{ width: '15px' }} />
                   <Input
                      name="lastName"
-                     placeholder="Last name"
+                     placeholder={t(address.concat("last name"))}
                      type="text"
                      value={lastName}
                      onChange={e => setLastName(e.target.value)}
@@ -77,7 +82,7 @@ export default function PersonContactTunnel({ close }) {
 
                <Input
                   name="email"
-                  label="email"
+                  label={t(address.concat("email"))}
                   type="text"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -85,7 +90,7 @@ export default function PersonContactTunnel({ close }) {
 
                <br />
 
-               <Text as="subtitle">Phone number</Text>
+               <Text as="subtitle">{t(address.concat('phone number'))}</Text>
                <FlexContainer style={{ marginTop: '5px' }}>
                   <select
                      name="countryCodes"
@@ -101,7 +106,7 @@ export default function PersonContactTunnel({ close }) {
                   <div style={{ width: '10px' }} />
                   <Input
                      type="text"
-                     placeholder="10 digit phone number"
+                     placeholder={t(address.concat("10 digit phone number"))}
                      name="phoneNumber"
                      value={phoneNumber}
                      onChange={e => setPhoneNumber(e.target.value)}

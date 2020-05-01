@@ -28,7 +28,12 @@ import {
 
 import { RECIPES, CREATE_RECIPE } from '../../../graphql'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.listings.recipeslisting.'
+
 const RecipesListing = () => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(Context)
    const addTab = (title, view, ID) => {
       dispatch({
@@ -62,11 +67,11 @@ const RecipesListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <h1>Recipes</h1>
-            <p> pagination </p>
+            <h1>{t(address.concat('recipes'))}</h1>
+            <p> {t(address.concat('pagination'))} </p>
          </StyledHeader>
          <StyledTableHeader>
-            <p>filters</p>
+            <p>{t(address.concat('filters'))}</p>
             <StyledTableActions>
                <IconButton type="solid" onClick={createRecipeHandler}>
                   <AddIcon color="#fff" size={24} />
@@ -77,10 +82,10 @@ const RecipesListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell>Recipe Name</TableCell>
-                     <TableCell>Recipe Author</TableCell>
-                     <TableCell>Servings</TableCell>
-                     <TableCell>Ingredient Count</TableCell>
+                     <TableCell>{t(address.concat('recipe name'))}</TableCell>
+                     <TableCell>{t(address.concat('recipe author'))}</TableCell>
+                     <TableCell>{t(address.concat('servings'))}</TableCell>
+                     <TableCell>{t(address.concat('ingredient count'))}</TableCell>
                   </TableRow>
                </TableHead>
                <TableBody>

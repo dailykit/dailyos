@@ -3,6 +3,10 @@ import styled from 'styled-components'
 import { Text, IconButton } from '@dailykit/ui'
 import EditIcon from '../../assets/icons/Edit'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.components.workorder.'
+
 export default function ItemCard({
    title,
    shippedProcessing,
@@ -10,7 +14,9 @@ export default function ItemCard({
    shelfLife,
    edit
 }) {
+   const { t } = useTranslation();
    return (
+
       <StyledCard>
          <div>
             <Text as='title'>{title}</Text>
@@ -19,19 +25,19 @@ export default function ItemCard({
                {shippedProcessing && (
                   <>
                      <Text as='subtitle'>
-                        Processing as Shipped: {shippedProcessing.join(', ')}
+                        {t(address.concat('processing as shipped'))}: {shippedProcessing.join(', ')}
                      </Text>
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {onHand && (
                   <>
-                     <Text as='subtitle'>On Hand: {onHand} </Text>
+                     <Text as='subtitle'>{t(address.concat('on hand'))}: {onHand} </Text>
                      <span style={{ width: '20px' }} />
                   </>
                )}
                {shelfLife && (
-                  <Text as='subtitle'>Shelf Life: {shelfLife} </Text>
+                  <Text as='subtitle'>{t(address.concat('shelf life'))}: {shelfLife} </Text>
                )}
             </div>
          </div>

@@ -25,7 +25,12 @@ import { FormActions, StyledWrapper, FlexContainer } from '../styled'
 import { Container } from './styled'
 import EditIcon from '../../../assets/icons/Edit'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.supplier.'
+
 export default function SupplierForm() {
+   const { t } = useTranslation()
    const [name, setName] = useState('')
    const [paymentTerms, setPaymentTerms] = useState('')
    const [shippingTerms, setShippingTerms] = useState('')
@@ -68,7 +73,7 @@ export default function SupplierForm() {
                <FormHeading>
                   <div>
                      <Input
-                        label="Untitled Supplier"
+                        label={t(address.concat("untitled supplier"))}
                         type="text"
                         name="supplierName"
                         value={name}
@@ -79,35 +84,35 @@ export default function SupplierForm() {
 
                   <FormActions>
                      <TextButton
-                        onClick={() => {}}
+                        onClick={() => { }}
                         type="ghost"
                         style={{ margin: '0px 10px' }}
                      >
-                        save
+                        {t(address.concat('save'))}
                      </TextButton>
 
                      <TextButton
-                        onClick={() => {}}
+                        onClick={() => { }}
                         type="solid"
                         style={{ margin: '0px 10px' }}
                      >
-                        Submit
+                        {t(address.concat('submit'))}
                      </TextButton>
                   </FormActions>
                </FormHeading>
                <Container>
                   <ButtonTile
-                     onClick={() => {}}
+                     onClick={() => { }}
                      type="primary"
                      size="lg"
-                     text="Add logo of the Supplier"
-                     helper="upto 1MB &#8226; only JPGs, PNGs, and PDFs are allowed."
+                     text={t(address.concat("add logo of the supplier"))}
+                     helper={(t(address.concat("upto 1MB - only JPGs, PNGs, and PDFs are allowed")))}
                   />
 
                   <FlexContainer
                      style={{ alignItems: 'center', marginTop: '24px' }}
                   >
-                     <Text as="title">Address</Text>
+                     <Text as="title">{t(address.concat("address"))}</Text>
                      <hr
                         style={{
                            border: '1px solid #D8D8D8',
@@ -116,37 +121,37 @@ export default function SupplierForm() {
                         }}
                      />
                      {supplierState.address.location ||
-                     supplierState.address.address1 ? (
-                        <IconButton onClick={() => openTunnel(1)} type="ghost">
-                           <EditIcon />
-                        </IconButton>
-                     ) : null}
+                        supplierState.address.address1 ? (
+                           <IconButton onClick={() => openTunnel(1)} type="ghost">
+                              <EditIcon />
+                           </IconButton>
+                        ) : null}
                   </FlexContainer>
 
                   {supplierState.address.location ||
-                  supplierState.address.city ? (
-                     <AddressCard
-                        address={
-                           supplierState.address.location ||
-                           `${supplierState.address.address1}, ${supplierState.address.address2}`
-                        }
-                        zip={supplierState.address.zip}
-                        city={supplierState.address.city}
-                        image="https://via.placeholder.com/80x50"
-                     />
-                  ) : (
-                     <ButtonTile
-                        type="secondary"
-                        text="Add Address"
-                        onClick={() => openTunnel(1)}
-                        style={{ margin: '20px 0' }}
-                     />
-                  )}
+                     supplierState.address.city ? (
+                        <AddressCard
+                           address={
+                              supplierState.address.location ||
+                              `${supplierState.address.address1}, ${supplierState.address.address2}`
+                           }
+                           zip={supplierState.address.zip}
+                           city={supplierState.address.city}
+                           image="https://via.placeholder.com/80x50"
+                        />
+                     ) : (
+                        <ButtonTile
+                           type="secondary"
+                           text={t(address.concat("add address"))}
+                           onClick={() => openTunnel(1)}
+                           style={{ margin: '20px 0' }}
+                        />
+                     )}
 
                   <FlexContainer
                      style={{ alignItems: 'center', marginTop: '24px' }}
                   >
-                     <Text as="title">Person of Contact</Text>
+                     <Text as="title">{t(address.concat('person of contact'))}</Text>
                      <hr
                         style={{
                            border: '1px solid #D8D8D8',
@@ -156,32 +161,32 @@ export default function SupplierForm() {
                      />
 
                      {supplierState.contact.email ||
-                     supplierState.contact.firstName ? (
-                        <IconButton onClick={() => openTunnel(2)} type="ghost">
-                           <EditIcon />
-                        </IconButton>
-                     ) : null}
+                        supplierState.contact.firstName ? (
+                           <IconButton onClick={() => openTunnel(2)} type="ghost">
+                              <EditIcon />
+                           </IconButton>
+                        ) : null}
                   </FlexContainer>
 
                   {supplierState.contact.firstName &&
-                  supplierState.contact.email ? (
-                     <ContactCard
-                        name={`${supplierState.contact.firstName} ${supplierState.contact.lastName}`}
-                        image={`https://via.placeholder.com/32`}
-                     />
-                  ) : (
-                     <ButtonTile
-                        type="secondary"
-                        text="Add Person of Contact"
-                        onClick={() => openTunnel(2)}
-                        style={{ margin: '20px 0' }}
-                     />
-                  )}
+                     supplierState.contact.email ? (
+                        <ContactCard
+                           name={`${supplierState.contact.firstName} ${supplierState.contact.lastName}`}
+                           image={`https://via.placeholder.com/32`}
+                        />
+                     ) : (
+                        <ButtonTile
+                           type="secondary"
+                           text={t(address.concat("add person of contact"))}
+                           onClick={() => openTunnel(2)}
+                           style={{ margin: '20px 0' }}
+                        />
+                     )}
 
                   <FlexContainer
                      style={{ alignItems: 'center', marginTop: '24px' }}
                   >
-                     <Text as="title">Terms and Conditions</Text>
+                     <Text as="title">{t(address.concat('terms and conditions'))}</Text>
                      <hr
                         style={{
                            border: '1px solid #D8D8D8',
@@ -195,7 +200,7 @@ export default function SupplierForm() {
 
                   <Input
                      type="textarea"
-                     placeholder="Payment Terms"
+                     placeholder={t(address.concat("payment terms"))}
                      name="paymentTerms"
                      rows="4"
                      value={paymentTerms}
@@ -211,7 +216,7 @@ export default function SupplierForm() {
 
                   <Input
                      type="textarea"
-                     placeholder="Shipping Terms"
+                     placeholder={t(address.concat("shipping terms"))}
                      name="shippingTerms"
                      rows="4"
                      value={shippingTerms}

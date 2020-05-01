@@ -5,7 +5,12 @@ import { Context as RecipeContext } from '../../../context/recipe/index'
 import { StyledMeta, StyledMetaText, Content } from './styled'
 import { EditIcon } from '../../../assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function MetaView({ open }) {
+   const { t } = useTranslation()
    const {
       recipeState: {
          pushableState: { description, cookingTime, utensils },
@@ -27,7 +32,7 @@ export default function MetaView({ open }) {
             <StyledMetaText>
                {utensils && (
                   <>
-                     <strong>Utensils: </strong>
+                     <strong>{t(address.concat('utensils'))}: </strong>
                      {utensils}
                   </>
                )}
@@ -36,8 +41,8 @@ export default function MetaView({ open }) {
             <StyledMetaText>
                {cookingTime && (
                   <>
-                     <strong>Cooking Time: </strong>
-                     {cookingTime} mins.
+                     <strong>{t(address.concat('cooking time'))}: </strong>
+                     {cookingTime} {t(address.concat('mins'))}.
                   </>
                )}
             </StyledMetaText>

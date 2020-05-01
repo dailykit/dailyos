@@ -29,7 +29,12 @@ import {
 import { Context } from '../../../../context/tabs'
 import { FormActions, MainFormArea, Stats, StyledWrapper } from '../../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.'
+
 export default function AddProductForm() {
+   const { t } = useTranslation()
    const [inventoryProductState, inventoryProductDispatch] = useReducer(
       reducers,
       initialState
@@ -38,9 +43,9 @@ export default function AddProductForm() {
    const { state, dispatch } = useContext(Context)
    const [productName, setProductName] = useState('')
 
-   const handlePublish = () => {}
+   const handlePublish = () => { }
 
-   const handleSave = () => {}
+   const handleSave = () => { }
 
    const handleTabNameChange = title => {
       if (title.length > 0) {
@@ -91,7 +96,7 @@ export default function AddProductForm() {
                <FormHeading>
                   <div>
                      <Input
-                        label="Untitled Product"
+                        label={t(address.concat("untitled product"))}
                         type="text"
                         name="productName"
                         value={productName}
@@ -106,7 +111,7 @@ export default function AddProductForm() {
                         type="ghost"
                         style={{ margin: '0px 10px' }}
                      >
-                        save
+                        {t(address.concat('save'))}
                      </TextButton>
 
                      <TextButton
@@ -114,7 +119,7 @@ export default function AddProductForm() {
                         type="solid"
                         style={{ margin: '0px 10px' }}
                      >
-                        Publish
+                        {t(address.concat('publish'))}
                      </TextButton>
                   </FormActions>
                </FormHeading>
@@ -126,7 +131,7 @@ export default function AddProductForm() {
 
                   <Stats>
                      <h4 style={{ display: 'flex', alignItems: 'center' }}>
-                        Items (
+                        {t(address.concat('items'))} (
                         {inventoryProductState.items[0].label?.length > 0
                            ? inventoryProductState.items?.length
                            : '0'}
@@ -140,13 +145,13 @@ export default function AddProductForm() {
                      <ButtonTile
                         type="primary"
                         size="sm"
-                        text="Add Items"
+                        text={t(address.concat("add items"))}
                         onClick={e => openTunnel(1)}
                         style={{ margin: '20px 0' }}
                      />
                   ) : (
-                     <Items open={openTunnel} />
-                  )}
+                        <Items open={openTunnel} />
+                     )}
                </MainFormArea>
             </StyledWrapper>
          </InventoryProductContext.Provider>

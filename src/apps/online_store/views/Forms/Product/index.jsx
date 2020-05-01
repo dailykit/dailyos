@@ -36,7 +36,12 @@ import {
    PRODUCTS,
 } from '../../../graphql/queries/index'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.'
+
 export default function AddProductForm() {
+   const { t } = useTranslation()
    const [productState, productDispatch] = useReducer(reducers, initialState)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
    const { state, dispatch } = useContext(Context)
@@ -205,7 +210,7 @@ export default function AddProductForm() {
                <FormHeading>
                   <div>
                      <Input
-                        label="Untitled Product"
+                        label={t(address.concat("untitled product"))}
                         type="text"
                         name="productName"
                         value={productName}
@@ -220,7 +225,7 @@ export default function AddProductForm() {
                         type="ghost"
                         style={{ margin: '0px 10px' }}
                      >
-                        save
+                        {t(address.concat('save'))}
                      </TextButton>
 
                      <TextButton
@@ -228,7 +233,7 @@ export default function AddProductForm() {
                         type="solid"
                         style={{ margin: '0px 10px' }}
                      >
-                        Publish
+                        {t(address.concat('publish'))}
                      </TextButton>
                   </FormActions>
                </FormHeading>
@@ -240,7 +245,7 @@ export default function AddProductForm() {
 
                   <Stats>
                      <h4 style={{ display: 'flex', alignItems: 'center' }}>
-                        Items (
+                        {t(address.concat('items'))} (
                         {productState.items[0].label?.length > 0
                            ? productState.items?.length
                            : '0'}
@@ -254,13 +259,13 @@ export default function AddProductForm() {
                      <ButtonTile
                         type="primary"
                         size="sm"
-                        text="Add Items"
+                        text={t(address.concat("add items"))}
                         onClick={e => openTunnel(1)}
                         style={{ margin: '20px 0' }}
                      />
                   ) : (
-                     <Items open={openTunnel} />
-                  )}
+                        <Items open={openTunnel} />
+                     )}
                </MainFormArea>
             </StyledWrapper>
          </ProductContext.Provider>

@@ -35,7 +35,12 @@ import {
 } from '../../../context/item'
 import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.'
+
 export default function ItemForm() {
+   const { t } = useTranslation()
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [suppliers, setSuppliers] = React.useState([
       {
@@ -144,75 +149,75 @@ export default function ItemForm() {
                   <ButtonTile
                      type="primary"
                      size="lg"
-                     text="Add Item Information"
+                     text={t(address.concat("add item information"))}
                      onClick={() => openTunnel(1)}
                   />
                </StyledWrapper>
             ) : (
-               <React.Fragment>
-                  <StyledGrid>
-                     <div>
+                  <React.Fragment>
+                     <StyledGrid>
                         <div>
-                           <ItemIcon />
-                        </div>
-                        <div>
-                           <span>Unit qty</span>
                            <div>
-                              <span>
-                                 {state.unit_quantity.value +
-                                    state.unit_quantity.unit}
-                              </span>
-                              <span>$12</span>
+                              <ItemIcon />
+                           </div>
+                           <div>
+                              <span>{t(address.concat('unit qty'))}</span>
+                              <div>
+                                 <span>
+                                    {state.unit_quantity.value +
+                                       state.unit_quantity.unit}
+                                 </span>
+                                 <span>$12</span>
+                              </div>
                            </div>
                         </div>
-                     </div>
-                     <div>
                         <div>
-                           <CaseIcon />
-                        </div>
-                        <div>
-                           <span>Case qty</span>
                            <div>
-                              <span>
-                                 {state.case_quantity.value +
-                                    state.case_quantity.unit}
-                              </span>
-                              <span>$12</span>
+                              <CaseIcon />
+                           </div>
+                           <div>
+                              <span>{t(address.concat('case qty'))}</span>
+                              <div>
+                                 <span>
+                                    {state.case_quantity.value +
+                                       state.case_quantity.unit}
+                                 </span>
+                                 <span>$12</span>
+                              </div>
                            </div>
                         </div>
-                     </div>
-                     <div>
                         <div>
-                           <TruckIcon />
-                        </div>
-                        <div>
-                           <span>Min order value</span>
                            <div>
-                              <span>
-                                 {state.min_order_value.value +
-                                    state.min_order_value.unit}
-                              </span>
-                              <span>$12</span>
+                              <TruckIcon />
+                           </div>
+                           <div>
+                              <span>{t(address.concat('min order value'))}</span>
+                              <div>
+                                 <span>
+                                    {state.min_order_value.value +
+                                       state.min_order_value.unit}
+                                 </span>
+                                 <span>$12</span>
+                              </div>
                            </div>
                         </div>
-                     </div>
-                     <div>
                         <div>
-                           <ClockIcon />
-                        </div>
-                        <div>
-                           <span>Lead time</span>
                            <div>
-                              <span>
-                                 {state.lead_time.value + state.lead_time.unit}
-                              </span>
+                              <ClockIcon />
+                           </div>
+                           <div>
+                              <span>{t(address.concat('lead time'))}</span>
+                              <div>
+                                 <span>
+                                    {state.lead_time.value + state.lead_time.unit}
+                                 </span>
+                              </div>
                            </div>
                         </div>
-                     </div>
-                     <div></div>
-                  </StyledGrid>
-               </React.Fragment>
-            )}
+                        <div></div>
+                     </StyledGrid>
+                  </React.Fragment>
+               )}
          </StyledMain>
       </ItemContext.Provider>
    )
