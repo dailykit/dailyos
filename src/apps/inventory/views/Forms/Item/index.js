@@ -122,6 +122,13 @@ export default function ItemForm() {
                <SelectDerivedProcessingTunnel
                   next={openTunnel}
                   close={closeTunnel}
+                  processings={processingData?.masterProcessings?.map(
+                     processing => ({
+                        id: processing.id,
+                        title: processing.name,
+                     })
+                  )}
+                  rawProcessings={processingData?.masterProcessings}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
@@ -309,7 +316,7 @@ export default function ItemForm() {
                                        })
                                     }}
                                  >
-                                    <h3>{procs.name.title}</h3>
+                                    <h3>{procs.title}</h3>
                                     <Text as="subtitle">on hand: 0gm</Text>
                                     <Text as="subtitle">
                                        shelf life:{' '}

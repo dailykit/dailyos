@@ -234,9 +234,12 @@ export const reducer = (state, { type, payload }) => {
          )
 
          if (index >= 0) {
-            newDerivedProcessings.splice(index, 1, payload)
+            newDerivedProcessings.splice(index, 1, {
+               ...payload,
+               title: payload.name,
+            })
          } else {
-            newDerivedProcessings.push(payload)
+            newDerivedProcessings.push({ ...payload, title: payload.name })
          }
 
          return { ...state, derivedProcessings: newDerivedProcessings }
@@ -246,6 +249,7 @@ export const reducer = (state, { type, payload }) => {
 
       case 'CONFIGURE_DERIVED_PROCESSING':
          const {
+            id,
             par,
             parUnit,
             maxInventoryLevel,
@@ -263,6 +267,7 @@ export const reducer = (state, { type, payload }) => {
          )
          configuredDerivedProcessings.splice(activeConfigurable, 1, {
             ...state.configurable,
+            id,
             par_level: { unit: parUnit, value: par },
             max_inventory_level: {
                unit: maxInventoryUnit,
