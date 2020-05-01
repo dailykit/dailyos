@@ -116,23 +116,24 @@ const CollectionForm = () => {
 
    // Handlers
    const save = () => {
-      let data = state
-      delete data.current
-      delete data.stage
-      // Cleaning data
-      data.categories = data.categories.map(category => {
-         const products = category.products.map(product => product.id)
-         return {
-            title: category.title,
-            products,
-         }
-      })
-      console.log(data)
-      updateCollection({
-         variables: {
-            input: data,
-         },
-      })
+      console.log(state)
+      // delete data.current
+
+      // delete data.stage
+      // // Cleaning data
+      // data.categories = data.categories.map(category => {
+      //    const products = category.products.map(product => product.id)
+      //    return {
+      //       title: category.title,
+      //       products,
+      //    }
+      // })
+      // console.log(data)
+      // updateCollection({
+      //    variables: {
+      //       input: data,
+      //    },
+      // })
    }
 
    return (
@@ -179,9 +180,8 @@ const CollectionForm = () => {
                </Breadcrumbs>
             </FormHeaderInputs>
             <FormHeaderActions>
-               <TextButton type="ghost"> Open in editor </TextButton>
                <TextButton type="outline" onClick={save}>
-                  Save and Exit
+                  Save
                </TextButton>
                <TextButton
                   type="solid"

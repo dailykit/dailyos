@@ -145,7 +145,7 @@ const Configuration = () => {
                      From
                      <input
                         name="dtstart"
-                        type="datetime-local"
+                        type="date"
                         value={start}
                         onChange={e => setStart(e.target.value)}
                      />
@@ -154,7 +154,7 @@ const Configuration = () => {
                      Till
                      <input
                         name="until"
-                        type="datetime-local"
+                        type="date"
                         value={until}
                         onChange={e => setUntil(e.target.value)}
                      />
