@@ -58,3 +58,18 @@ export const CREATE_BULK_ITEM = gql`
       }
    }
 `
+export const CREATE_SACHET_ITEM = gql`
+   mutation CreateSachetItem(
+      $unitSize: Int!
+      $bulkItemId: Int!
+      $unit: String!
+   ) {
+      createSachetItem(
+         objects: { unitSize: $unitSize, bulkItemId: $bulkItem, unit: $unit }
+      ) {
+         returning {
+            id
+         }
+      }
+   }
+`
