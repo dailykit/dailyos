@@ -127,12 +127,11 @@ export const ACCOMPANIMENT_TYPES = gql`
 
 export const COLLECTIONS = gql`
    {
-      menucollections {
+      menuCollections {
          id
-         title
-         categories {
-            title
-         }
+         name
+         categories
+         availability
       }
    }
 `

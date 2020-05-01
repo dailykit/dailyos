@@ -170,13 +170,13 @@ export const UPDATE_COMBO_PRODUCT_COMPONENT = gql`
 `
 
 export const CREATE_COLLECTION = gql`
-   mutation CreateCollection($title: String) {
-      createMenuCollection(title: $title) {
-         success
-         message
-         menuCollection {
+   mutation CreateCollection(
+      $objects: [onlineStore_menuCollection_insert_input!]!
+   ) {
+      createMenuCollection(objects: $objects) {
+         returning {
             id
-            title
+            name
          }
       }
    }
