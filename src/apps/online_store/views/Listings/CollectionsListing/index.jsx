@@ -1,5 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
+import { RRule } from 'rrule'
 
 import { COLLECTIONS } from '../../../graphql'
 
@@ -36,8 +37,6 @@ const CollectionsListing = () => {
    // Queries
    const { data, loading, error } = useQuery(COLLECTIONS)
 
-   console.log(data)
-
    return (
       <StyledWrapper>
          <StyledHeader>
@@ -55,16 +54,18 @@ const CollectionsListing = () => {
                   <TableCell>Collection Name</TableCell>
                   <TableCell>Categories</TableCell>
                   <TableCell>Products</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  {/* <TableCell align="right">Actions</TableCell> */}
                </TableRow>
             </TableHead>
             <TableBody>
-               {data?.menucollections.map((row, index) => (
+               {data?.menuCollections.map((row, index) => (
                   <TableRow key={row.id}>
-                     <TableCell>{row.title}</TableCell>
+                     <TableCell>{row.name}</TableCell>
                      <TableCell>{row.categories.length}</TableCell>
-                     <TableCell></TableCell>
-                     <TableCell align="right">
+                     <TableCell>
+                        {RRule.fromString(row.availability.rule).toText()}
+                     </TableCell>
+                     {/* <TableCell align="right">
                         <ButtonGroup align="right">
                            <IconButton type="outline">
                               <EditIcon />
@@ -73,7 +74,7 @@ const CollectionsListing = () => {
                               <DeleteIcon />
                            </IconButton>
                         </ButtonGroup>
-                     </TableCell>
+                     </TableCell> */}
                   </TableRow>
                ))}
             </TableBody>
