@@ -12,7 +12,7 @@ export const state = {
    id: '',
    title: '',
    categories: [],
-   availability: '',
+   rule: '',
    stage: 1,
 }
 
@@ -94,10 +94,10 @@ export const reducer = (state, { type, payload }) => {
             categories: updated_categories,
          }
       }
-      case 'AVAILABILITY': {
+      case 'RULE': {
          return {
             ...state,
-            availability: payload,
+            rule: payload,
          }
       }
       case 'NEXT_STAGE': {

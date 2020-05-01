@@ -23,8 +23,8 @@ import {
    INVENTORY_PRODUCTS,
    CUSTOMIZABLE_PRODUCTS,
    COMBO_PRODUCTS,
-   UPDATE_COLLECTION,
 } from '../../../graphql'
+import { toast } from 'react-toastify'
 
 const CollectionForm = () => {
    const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -101,39 +101,52 @@ const CollectionForm = () => {
    // Mutations
    const [createCollection] = useMutation(CREATE_COLLECTION, {
       onCompleted: data => {
-         dispatch({
-            type: 'ID',
-            payload: { id: data.createMenuCollection.menuCollection.id },
-         })
-         console.log('Saved: ', data.createMenuCollection.menuCollection)
+         console.log('Saved: ', data.createMenuCollection.returning)
+         toast.success('Collection saved!')
       },
-   })
-   const [updateCollection] = useMutation(UPDATE_COLLECTION, {
-      onCompleted: data => {
-         console.log('UPDATED: ', data)
+      onError: error => {
+         console.log(error)
+         toast.error('Some error occurred!')
       },
    })
 
    // Handlers
    const save = () => {
-      console.log(state)
-      // delete data.current
-
-      // delete data.stage
-      // // Cleaning data
-      // data.categories = data.categories.map(category => {
-      //    const products = category.products.map(product => product.id)
-      //    return {
-      //       title: category.title,
-      //       products,
-      //    }
-      // })
-      // console.log(data)
-      // updateCollection({
-      //    variables: {
-      //       input: data,
-      //    },
-      // })
+      const updateCategories = state.categories.map(category => {
+         const cat = {
+            name: category.title,
+            comboProducts: [],
+            customizableProducts: [],
+            simpleRecipeProducts: [],
+            inventoryProducts: [],
+         }
+         category.products.forEach(product => {
+            if (product.__typename === 'onlineStore_simpleRecipeProduct')
+               cat.simpleRecipeProducts.push(product.id)
+            else if (product.__typename === 'onlineStore_comboProduct')
+               cat.comboProducts.push(product.id)
+            else if (product.__typename === 'onlineStore_inventoryProduct')
+               cat.inventoryProducts.push(product.id)
+            else cat.customizableProducts.push(product.id)
+         })
+         return cat
+      })
+      const object = {
+         availability: {
+            rule: state.rule,
+            time: {
+               end: '23:59',
+               start: '00:00',
+            },
+         },
+         categories: updateCategories,
+         name: state.title,
+      }
+      createCollection({
+         variables: {
+            objects: [object],
+         },
+      })
    }
 
    return (
@@ -162,10 +175,6 @@ const CollectionForm = () => {
                         payload: { value: e.target.value },
                      })
                   }
-                  onBlur={() => {
-                     if (!state.id)
-                        createCollection({ variables: { title: state.title } })
-                  }}
                />
                <Breadcrumbs>
                   <span className={state.stage >= 1 ? 'active' : ''}>

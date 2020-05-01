@@ -87,7 +87,7 @@ const Configuration = () => {
       if (avail) {
          setRule(avail)
          dispatch({
-            type: 'AVAILABILITY',
+            type: 'RULE',
             payload: avail.toString(),
          })
       }
