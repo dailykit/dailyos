@@ -104,9 +104,14 @@ export const FETCH_LABEL_TEMPLATES = gql`
 
 export const RECIPES = gql`
    {
-      recipes {
+      simpleRecipes {
          id
          name
+         author
+         cookingTime
+         simpleRecipeYields {
+            id
+         }
       }
    }
 `

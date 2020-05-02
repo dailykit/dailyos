@@ -1,9 +1,9 @@
-import { IconButton, Text, Input, ButtonTile } from '@dailykit/ui'
+import { IconButton, Text, Input, ButtonTile, Toggle } from '@dailykit/ui'
 import React, { useContext } from 'react'
 
 import AddIcon from '../../../assets/icons/Add'
 import { Context as RecipeContext } from '../../../context/recipe/index'
-import { IngredientsSection, Stats, DeleteButton } from './styled'
+import { IngredientsSection, Stats, InputWrapper } from './styled'
 import DeleteIcon from '../../../assets/icons/Delete'
 
 export default function CookingSteps() {
@@ -20,7 +20,7 @@ export default function CookingSteps() {
                <IconButton
                   type="ghost"
                   onClick={() => {
-                     recipeDispatch({ type: 'CREATE_STEP' })
+                     recipeDispatch({ type: 'ADD_PROCEDURE' })
                   }}
                >
                   <AddIcon />
@@ -29,87 +29,123 @@ export default function CookingSteps() {
 
             {procedures.map((procedure, index) => (
                <div style={{ marginTop: '10px' }} key={index}>
-                  {/* <Stats>
-                     <Input
-                        type='text'
-                        placeholder='Section Title'
-                        name='sectionTitle'
-                        value={procedure.name || `Step ${index + 1}`}
-                        onChange={e =>
-                           recipeDispatch({
-                              type: 'ADD_SECTION_TITLE',
-                              payload: { index, name: e.target.value }
-                           })
-                        }
-                     />
+                  <Stats>
+                     <InputWrapper>
+                        <Input
+                           type="text"
+                           placeholder="Procedure Title"
+                           name={`procedure-${index}-title`}
+                           value={procedure.title}
+                           onChange={e =>
+                              recipeDispatch({
+                                 type: 'PROCEDURE_TITLE',
+                                 payload: { index, value: e.target.value },
+                              })
+                           }
+                        />
+                        <span
+                           onClick={() =>
+                              recipeDispatch({
+                                 type: 'DELETE_PROCEDURE',
+                                 payload: { index },
+                              })
+                           }
+                        >
+                           <DeleteIcon color="#FF5A52" size="20" />
+                        </span>
+                     </InputWrapper>
                   </Stats>
-
-                  <br /> */}
-
+                  <br />
                   {procedure.steps.map((step, stepIndex) => (
                      <React.Fragment key={stepIndex}>
                         <Stats>
-                           <Input
-                              type="text"
-                              placeholder="Title"
-                              name="title"
-                              value={step.title}
-                              onChange={e => {
-                                 recipeDispatch({
-                                    type: 'EDIT_COOOKING_PROCESS',
-                                    payload: {
-                                       index: stepIndex,
-                                       sectionIndex: index,
-                                       currentName: e.target.name,
-                                       value: e.target.value,
-                                    },
-                                 })
-                              }}
-                           />
-                           {!index || (
-                              <DeleteButton
-                                 onClick={() => {
+                           <InputWrapper>
+                              <Input
+                                 type="text"
+                                 placeholder="Step Title"
+                                 name={`step-${stepIndex}-title`}
+                                 value={step.title}
+                                 onChange={e => {
                                     recipeDispatch({
-                                       type: 'REMOVE_PROCEDURE',
-                                       payload: { index },
+                                       type: 'STEP_TITLE',
+                                       payload: {
+                                          index,
+                                          stepIndex,
+                                          value: e.target.value,
+                                       },
                                     })
                                  }}
-                              >
-                                 <DeleteIcon color="rgb(255,90,82)" />
-                              </DeleteButton>
-                           )}
+                              />
+                              <div>
+                                 <Toggle
+                                    checked={step.isVisible}
+                                    label="Visibility"
+                                    setChecked={() => {
+                                       recipeDispatch({
+                                          type: 'STEP_VISIBILITY',
+                                          payload: {
+                                             index,
+                                             stepIndex,
+                                          },
+                                       })
+                                    }}
+                                 />
+                                 <span
+                                    onClick={() =>
+                                       recipeDispatch({
+                                          type: 'DELETE_STEP',
+                                          payload: { index, stepIndex },
+                                       })
+                                    }
+                                 >
+                                    <DeleteIcon color="#FF5A52" size="20" />
+                                 </span>
+                              </div>
+                           </InputWrapper>
                         </Stats>
                         <br />
                         <Input
                            type="textarea"
                            placeholder="Description"
-                           name="description"
+                           name={`description-${stepIndex}-title`}
                            rows="3"
                            value={step.description}
                            onChange={e => {
                               recipeDispatch({
-                                 type: 'EDIT_COOOKING_PROCESS',
+                                 type: 'STEP_DESCRIPTION',
                                  payload: {
-                                    index: stepIndex,
-                                    sectionIndex: index,
-                                    currentName: e.target.name,
+                                    index,
+                                    stepIndex,
                                     value: e.target.value,
                                  },
                               })
                            }}
                         />
-                        <ButtonTile
-                           type="primary"
-                           size="sm"
-                           text="Select Photos for this Step"
-                           helper="upto 1mb | only JPGs and PNGs are allowed."
-                           onClick={() => {}}
-                           style={{ margin: '20px 0' }}
-                        />{' '}
+                        <br />
                      </React.Fragment>
                   ))}
+                  <ButtonTile
+                     type="secondary"
+                     text={`Add a Step`}
+                     onClick={() => {
+                        recipeDispatch({
+                           type: 'ADD_STEP',
+                           payload: { index },
+                        })
+                     }}
+                  />
+                  <br />
                </div>
             ))}
+            <ButtonTile
+               type="secondary"
+               text="Add Procedure"
+               onClick={() => {
+                  recipeDispatch({
+                     type: 'ADD_PROCEDURE',
+                  })
+               }}
+            />
          </IngredientsSection>
       </>
    )

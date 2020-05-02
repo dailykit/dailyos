@@ -133,12 +133,10 @@ export const DELETE_SACHET = gql`
    }
 `
 
-export const CREATE_RECIPE = gql`
-   mutation CreateRecipe($name: String) {
-      createRecipe(name: $name) {
-         success
-         message
-         recipe {
+export const CREATE_SIMPLE_RECIPE = gql`
+   mutation CreateRecipe($objects: [simpleRecipe_simpleRecipe_insert_input!]!) {
+      createSimpleRecipe(objects: $objects) {
+         returning {
             id
             name
          }

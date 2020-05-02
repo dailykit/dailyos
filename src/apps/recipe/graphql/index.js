@@ -10,7 +10,7 @@ import {
    FETCH_STATIONS,
    FETCH_SUPPLIER_ITEMS,
    RECIPES,
-   RECIPE
+   RECIPE,
 } from './queries'
 import {
    CREATE_INGREDIENT,
@@ -19,8 +19,8 @@ import {
    CREATE_SACHET,
    DELETE_SACHET,
    DELETE_PROCESSING,
-   CREATE_RECIPE,
-   UPDATE_RECIPE
+   CREATE_SIMPLE_RECIPE,
+   UPDATE_RECIPE,
 } from './mutations'
 
 export {
@@ -42,6 +42,6 @@ export {
    DELETE_PROCESSING,
    RECIPES,
    RECIPE,
-   CREATE_RECIPE,
-   UPDATE_RECIPE
+   CREATE_SIMPLE_RECIPE,
+   UPDATE_RECIPE,
 }

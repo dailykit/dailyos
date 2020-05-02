@@ -30,10 +30,10 @@ export default function SelectSachet({ next, sachets }) {
                   payload: { sachet: current },
                })
 
-               recipeDispatch({
-                  type: 'ADD_SACHET_FOR_PUSHABLE',
-                  payload: current,
-               })
+               // recipeDispatch({
+               //    type: 'ADD_SACHET_FOR_PUSHABLE',
+               //    payload: current,
+               // })
                next(4)
                next(5)
             }}
