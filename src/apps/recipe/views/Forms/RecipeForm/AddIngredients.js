@@ -41,6 +41,7 @@ import {
    PROCESSINGS_OF_INGREDIENT,
    SACHETS_OF_PROCESSING,
 } from '../../../graphql'
+import { toast } from 'react-toastify'
 
 export default function AddIngredients() {
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
@@ -69,11 +70,11 @@ export default function AddIngredients() {
    const [fetchProcessings, {}] = useLazyQuery(PROCESSINGS_OF_INGREDIENT, {
       fetchPolicy: 'no-cache',
       onCompleted: async data => {
-         let procs = data.ingredient.processings
+         let procs = data.ingredient.ingredientProcessings
          let updatedProcs = await procs.map(proc => {
             return {
                ...proc,
-               title: proc.name.title,
+               title: proc.processingName,
             }
          })
          setProcessings(updatedProcs)
@@ -83,34 +84,50 @@ export default function AddIngredients() {
    const [fetchSachets, {}] = useLazyQuery(SACHETS_OF_PROCESSING, {
       fetchPolicy: 'no-cache',
       onCompleted: async data => {
-         let sachets = data.processing.sachets
-         let updatedSachets = await sachets.map(sachet => {
+         let sachets = data.ingredientSachets
+         let updatedSachets = sachets.map(sachet => {
             return {
                ...sachet,
-               title: sachet.quantity.value + sachet.quantity.unit.title + '',
+               title: sachet.quantity + ' ' + sachet.unit,
             }
          })
+         console.log('updatedSachets', updatedSachets)
          setSachets(updatedSachets)
          closeTunnel(4)
          openTunnel(5)
       },
    })
 
-   React.useEffect(() => {
-      fetchProcessings({
-         variables: {
-            ingredientId: selected.ingredientId,
-         },
-      })
-   }, [selected.ingredientId])
-
-   React.useEffect(() => {
-      fetchSachets({
-         variables: {
-            processingId: selected.processingId,
-         },
-      })
-   }, [selected.processingId])
+   // Click Handlers
+   const select = type => {
+      switch (type) {
+         case 'processing': {
+            if (selected.ingredientId) {
+               return fetchProcessings({
+                  variables: {
+                     ingredientId: selected.ingredientId,
+                  },
+               })
+            } else {
+               return toast.error('Select an Ingredient!')
+            }
+         }
+         case 'sachet': {
+            if (selected.ingredientId && selected.processingId) {
+               return fetchSachets({
+                  variables: {
+                     ingredientId: selected.ingredientId,
+                     processingId: selected.processingId,
+                  },
+               })
+            } else {
+               return toast.error('Select a Processing first!')
+            }
+         }
+         default:
+            return
+      }
+   }
 
    return (
       <>
@@ -201,6 +218,7 @@ export default function AddIngredients() {
                                              type: 'SET_VIEW',
                                              payload: ingredient,
                                           })
+                                          select('processing')
                                           // openTunnel(4)
                                        }}
                                     >
@@ -214,6 +232,7 @@ export default function AddIngredients() {
                                        ingredient={ingredient}
                                        serving={serving}
                                        openTunnel={openTunnel}
+                                       select={select}
                                     />
                                  </TableCell>
                               ))}
@@ -264,7 +283,7 @@ export default function AddIngredients() {
    )
 }
 
-function Sachet({ serving, openTunnel, ingredient }) {
+function Sachet({ serving, openTunnel, ingredient, select }) {
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
 
    const sachet = recipeState.sachets.find(
@@ -286,6 +305,7 @@ function Sachet({ serving, openTunnel, ingredient }) {
                      type: 'SET_VIEW',
                      payload: ingredient,
                   })
+                  select('sachet')
                   // openTunnel(5)
                }}
             >

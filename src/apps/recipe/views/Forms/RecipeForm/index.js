@@ -69,12 +69,8 @@ export default function AddRecipeForm() {
    // Handlers
    const save = () => {
       // Preparing basic object
-      const pushable = {
-         ...recipeState.pushableState,
-         procedures: recipeState.procedures,
-         chef: chefName,
-      }
-      updateRecipe({ variables: { input: pushable } })
+      console.log(state)
+      // updateRecipe({ variables: { input: pushable } })
    }
 
    const handlePublish = () => {

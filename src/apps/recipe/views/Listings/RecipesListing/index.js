@@ -30,34 +30,34 @@ import { RECIPES, CREATE_RECIPE } from '../../../graphql'
 
 const RecipesListing = () => {
    const { state, dispatch } = React.useContext(Context)
-   const addTab = (title, view, ID) => {
+   const addTab = (title, view) => {
       dispatch({
          type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, ID },
+         payload: { type: 'forms', title, view },
       })
    }
 
    // Queries and Mutations
    const { loading, error, data } = useQuery(RECIPES)
-   const [createRecipe] = useMutation(CREATE_RECIPE, {
-      onCompleted: data => {
-         if (data.createRecipe.success) {
-            addTab(
-               data.createRecipe.recipe.name,
-               'recipe',
-               data.createRecipe.recipe.id
-            )
-         } else {
-            // Fire toast
-            console.log(data)
-         }
-      },
-   })
+   // const [createRecipe] = useMutation(CREATE_RECIPE, {
+   //    onCompleted: data => {
+   //       if (data.createRecipe.success) {
+   //          addTab(
+   //             data.createRecipe.recipe.name,
+   //             'recipe',
+   //             data.createRecipe.recipe.id
+   //          )
+   //       } else {
+   //          // Fire toast
+   //          console.log(data)
+   //       }
+   //    },
+   // })
 
-   const createRecipeHandler = () => {
-      let name = 'recipe-' + generateRandomString()
-      createRecipe({ variables: { name } })
-   }
+   // const createRecipeHandler = () => {
+   //    let name = 'recipe-' + generateRandomString()
+   //    createRecipe({ variables: { name } })
+   // }
 
    return (
       <StyledWrapper>
@@ -68,7 +68,10 @@ const RecipesListing = () => {
          <StyledTableHeader>
             <p>filters</p>
             <StyledTableActions>
-               <IconButton type="solid" onClick={createRecipeHandler}>
+               <IconButton
+                  type="solid"
+                  onClick={() => addTab('Unititled Recipe', 'recipe')}
+               >
                   <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledTableActions>

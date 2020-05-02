@@ -33,10 +33,10 @@ export default function SelectProcessing({ next, procs }) {
                   },
                })
 
-               recipeDispatch({
-                  type: 'ADD_PROCESSING_FOR_PUSHABLE',
-                  payload: current,
-               })
+               // recipeDispatch({
+               //    type: 'ADD_PROCESSING_FOR_PUSHABLE',
+               //    payload: current,
+               // })
 
                next(4)
             }}
