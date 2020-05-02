@@ -320,7 +320,7 @@
                "recipes": "Recipes",
                "select processings": "Select Processings",
                "save": "Save",
-               "type what you're looking for": "type what you're looking for..."
+               "type what you’re looking for": "type what you're looking for..."
             },
             "recipes": {},
             "sachet": {
@@ -404,11 +404,11 @@
                      "fill this first to continue adding new servings!": "fill this first to continue adding new servings!",
                      "add more servings": "Add More Servings",
                      "add recipe meta": "Add Recipe Meta",
-                     "utensils (add list of utensils with comma seperated values)": "Utensils (add list of utensils with comma seperated values)",
+                     "utensils (add list of utensils with comma separated values)": "Utensils (add list of utensils with comma seperated values)",
                      "recipe description": "Recipe Description",
                      "cooking time (in minutes)": "Cooking Time (in minutes)",
                      "fill all of the fields above!": "Fill all of the fields above!",
-                     "type what you're looking for": "type what you're looking for..."
+                     "type what you’re looking for": "type what you're looking for..."
                   },
                   "ingredients": "Ingredients",
                   "ingredient name": "Ingredient Name",
@@ -423,7 +423,7 @@
                   "description": "Description",
                   "add procedure": "Add Procedure",
                   "select photos for this step": "Select Photos for this Step",
-                  "upto 1mb | only JPGs and PNGs are allowed.": "upto 1MB | only JPGs and PNGs are allowed.",
+                  "upto 1MB - only JPGs, PNGs, and PDFs are allowed": "upto 1MB - only JPGs and PNGs are allowed.",
                   "recipe name": "Recipe Name",
                   "save": "Save",
                   "author": "Author",
@@ -466,6 +466,7 @@
                   "cooking time": "Cooking Time",
                   "pagination": "Pagination",
                   "filters": "Filters",
+                  "total": "Total",
                   "recipe name": "Recipe Name",
                   "recipe author": "Recipe Author",
                   "servings": "Servings",

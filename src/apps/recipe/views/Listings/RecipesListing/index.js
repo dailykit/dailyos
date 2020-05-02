@@ -30,7 +30,7 @@ import { RECIPES, CREATE_RECIPE } from '../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.recipe.views.listings.ingredientslisting.'
+const address = 'apps.recipe.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
    const { t } = useTranslation()
