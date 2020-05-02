@@ -13,6 +13,7 @@ import {
    TableRow,
    TableCell,
    IconButton,
+   Toggle,
 } from '@dailykit/ui'
 
 import { Context as RecipeContext } from '../../../context/recipe/index'
@@ -184,6 +185,7 @@ export default function AddIngredients() {
                         <TableRow>
                            <TableCell></TableCell>
                            <TableCell>Ingredient Name</TableCell>
+                           <TableCell align="center">Visibility</TableCell>
                            <TableCell align="center">Processing</TableCell>
                            {recipeState.servings.map(serving => (
                               <TableCell key={serving.id}>
@@ -209,6 +211,19 @@ export default function AddIngredients() {
                            >
                               <TableCell></TableCell>
                               <TableCell>{ingredient.title}</TableCell>
+                              <TableCell>
+                                 <Toggle
+                                    checked={ingredient.isVisible}
+                                    setChecked={() =>
+                                       recipeDispatch({
+                                          type: 'VISIBILITY',
+                                          payload: {
+                                             id: ingredient.id,
+                                          },
+                                       })
+                                    }
+                                 />
+                              </TableCell>
                               <TableCell>
                                  {ingredient?.processing?.title || (
                                     <IconButton

@@ -15,12 +15,12 @@ export const state = {
          steps: [
             {
                title: '',
-               description: ''
+               description: '',
                // images: [{ caption: String, url: String }],
                // video: { caption: String, url: String }
-            }
-         ]
-      }
+            },
+         ],
+      },
    ],
    view: {},
    activeServing: {},
@@ -33,34 +33,34 @@ export const state = {
       utensils: '',
       description: '',
       type: 'Non-Vegetarian',
-      servings: [{ size: 4, ingredients: [] }]
-   }
+      servings: [{ size: 4, ingredients: [] }],
+   },
 }
 
 export const reducers = (state, { type, payload }) => {
    switch (type) {
-      case 'RECIPE_NAME_CHANGE':
+      case 'RECIPE_NAME_CHANGE': {
          return {
             ...state,
             name: payload.name,
-            pushableState: { ...state.pushableState, name: payload.name }
+            pushableState: { ...state.pushableState, name: payload.name },
          }
-
-      case 'CHANGE_RECIPE_TYPE':
+      }
+      case 'CHANGE_RECIPE_TYPE': {
          return {
             ...state,
             recipeType: payload,
-            pushableState: { ...state.pushableState, type: payload.title }
+            pushableState: { ...state.pushableState, type: payload.title },
          }
-
-      case 'ADD_SERVING':
+      }
+      case 'ADD_SERVING': {
          const id = state.servings[state.servings.length - 1].id + 1
          return {
             ...state,
-            servings: [...state.servings, { id, value: 1 }]
+            servings: [...state.servings, { id, value: 1 }],
          }
-
-      case 'REMOVE_SERVING':
+      }
+      case 'REMOVE_SERVING': {
          const servingIndexToRemove = state.servings.findIndex(
             serving =>
                serving.id === payload.id && serving.value === payload.value
@@ -74,7 +74,7 @@ export const reducers = (state, { type, payload }) => {
          const forPushableState = newServings.map(serving => {
             return {
                size: parseInt(serving.value),
-               ingredients: state.ingredients
+               ingredients: state.ingredients,
             }
          })
 
@@ -83,11 +83,11 @@ export const reducers = (state, { type, payload }) => {
             servings: newServings,
             pushableState: {
                ...state.pushableState,
-               servings: forPushableState
-            }
+               servings: forPushableState,
+            },
          }
-
-      case 'CHANGE_SERVINGS':
+      }
+      case 'CHANGE_SERVINGS': {
          const servingId = payload.id
 
          const match = state.servings.find(serving => serving.id === servingId)
@@ -98,13 +98,28 @@ export const reducers = (state, { type, payload }) => {
          const updatedServings = [...state.servings]
          updatedServings[index] = match
          return { ...state }
-      case 'ADD_INGREDIENTS':
-         const newIngredients = [...state.ingredients, ...payload]
+      }
+      case 'ADD_INGREDIENTS': {
+         const ingsToAdd = payload.map(ing => {
+            return {
+               ...ing,
+               isVisible: true,
+            }
+         })
+         const newIngredients = [...state.ingredients, ...ingsToAdd]
          const duplicateFreeArray = uniqBy(newIngredients, 'id')
-         console.log(duplicateFreeArray)
          return { ...state, ingredients: duplicateFreeArray }
-
-      case 'REFINE_SERVINGS':
+      }
+      case 'VISIBILITY': {
+         const index = state.ingredients.findIndex(ing => ing.id === payload.id)
+         const updatedIngs = state.ingredients
+         updatedIngs[index].isVisible = !updatedIngs[index].isVisible
+         return {
+            ...state,
+            ingredients: updatedIngs,
+         }
+      }
+      case 'REFINE_SERVINGS': {
          if (state.servings.length === 1) return state
          if (state.servings[state.servings.length - 1].value === 0) {
             const newServings = [...state.servings]
@@ -112,11 +127,11 @@ export const reducers = (state, { type, payload }) => {
             return { ...state, servings: newServings }
          }
          return state
-
-      case 'SET_VIEW':
+      }
+      case 'SET_VIEW': {
          return { ...state, view: payload }
-
-      case 'ADD_PROCESSING':
+      }
+      case 'ADD_PROCESSING': {
          const currentIngredient = state.ingredients.find(
             ing => ing.id === payload.ingredient.id
          )
@@ -127,13 +142,14 @@ export const reducers = (state, { type, payload }) => {
             currentIngredient
          )
          return state
-
-      case 'SET_ACTIVE_SERVING':
+      }
+      case 'SET_ACTIVE_SERVING': {
          return {
             ...state,
-            activeServing: { id: payload.id, value: parseInt(payload.value) }
+            activeServing: { id: payload.id, value: parseInt(payload.value) },
          }
-      case 'ADD_SACHET':
+      }
+      case 'ADD_SACHET': {
          const existingSachet = state.sachets.find(
             sachet =>
                sachet.ingredient.id === state.view.id &&
@@ -145,7 +161,7 @@ export const reducers = (state, { type, payload }) => {
             newState.sachets.splice(state.sachets.indexOf(existingSachet), 1, {
                ...payload.sachet,
                ingredient: state.view,
-               serving: state.activeServing
+               serving: state.activeServing,
             })
 
             return newState
@@ -157,12 +173,12 @@ export const reducers = (state, { type, payload }) => {
                {
                   ...payload.sachet,
                   ingredient: state.view,
-                  serving: state.activeServing
-               }
-            ]
+                  serving: state.activeServing,
+               },
+            ],
          }
-
-      case 'DELETE_INGREDIENT':
+      }
+      case 'DELETE_INGREDIENT': {
          const newState = { ...state }
          const sachetsBelongingToIngredient = newState.sachets.filter(
             sachet => sachet.ingredient.id === payload.id
@@ -191,13 +207,13 @@ export const reducers = (state, { type, payload }) => {
                ...state.pushableState,
                ingredients: newState.ingredients.map(ing => ({
                   ingredient: ing.id,
-                  processing: ing.processing.id
+                  processing: ing.processing.id,
                })),
-               servings: newPushableServings
-            }
+               servings: newPushableServings,
+            },
          }
-
-      case 'EDIT_COOOKING_PROCESS':
+      }
+      case 'EDIT_COOOKING_PROCESS': {
          const { sectionIndex, index: stepIndex, value, currentName } = payload
          const newStepsForEditing = [...state.procedures]
          if (currentName === 'title')
@@ -207,24 +223,25 @@ export const reducers = (state, { type, payload }) => {
                stepIndex
             ].description = value
          return { ...state, procedures: newStepsForEditing }
-
-      case 'CREATE_COOKING_PROCESS':
+      }
+      case 'CREATE_COOKING_PROCESS': {
          const newStepsForCreating = [...state.procedures]
          newStepsForCreating.push({
             title: '',
             description: '',
-            photos: [{ caption: '', imageUrl: '' }]
+            photos: [{ caption: '', imageUrl: '' }],
          })
          return { ...state, procedures: newStepsForCreating }
-      case 'DELETE_COOKING_PROCESS':
+      }
+      case 'DELETE_COOKING_PROCESS': {
          const newStepsForDeleting = [...state.procedures]
          newStepsForDeleting.splice(payload.index, 1)
          return { ...state, procedures: newStepsForDeleting }
-
-      case 'ADD_SERVINGS_FOR_PUSHABLE':
+      }
+      case 'ADD_SERVINGS_FOR_PUSHABLE': {
          const pushableServings = state.servings.map(serving => {
             return {
-               size: parseInt(serving.value)
+               size: parseInt(serving.value),
             }
          })
 
@@ -241,14 +258,14 @@ export const reducers = (state, { type, payload }) => {
             ...state,
             pushableState: {
                ...state.pushableState,
-               servings: pushableServings
-            }
+               servings: pushableServings,
+            },
          }
-      case 'ADD_INGREDIENTS_FOR_PUSHABLE':
+      }
+      case 'ADD_INGREDIENTS_FOR_PUSHABLE': {
          const ingredients = payload.map(ingredient => {
             return { ingredient: ingredient.id }
          })
-
          ingredients.forEach((ingredient, index) => {
             if (state.pushableState.ingredients[index]?.processing) {
                ingredient.processing =
@@ -259,14 +276,14 @@ export const reducers = (state, { type, payload }) => {
             ...state,
             pushableState: {
                ...state.pushableState,
-               ingredients
-            }
+               ingredients,
+            },
          }
-
-      case 'ADD_PROCESSING_FOR_PUSHABLE':
+      }
+      case 'ADD_PROCESSING_FOR_PUSHABLE': {
          // form an array of ingredients with the ingredient in the view with processing id
          const newIngs = [...state.ingredients].map(ing => ({
-            ingredient: ing.id
+            ingredient: ing.id,
          }))
 
          const indexOfActiveIng = newIngs.findIndex(
@@ -279,10 +296,10 @@ export const reducers = (state, { type, payload }) => {
             ...state,
             pushableState: {
                ...state.pushableState,
-               ingredients: newIngs
-            }
+               ingredients: newIngs,
+            },
          }
-
+      }
       case 'ADD_SACHET_FOR_PUSHABLE':
          const newServingsWithSachets = [...state.pushableState.servings]
          const servingIdForPushable = newServingsWithSachets.findIndex(
@@ -300,7 +317,7 @@ export const reducers = (state, { type, payload }) => {
          if (!sachet) {
             newServingsWithSachets.splice(servingIdForPushable, 1, {
                size: parseInt(state.activeServing.value),
-               sachets: newArrayOfSachets
+               sachets: newArrayOfSachets,
             })
          }
 
@@ -308,8 +325,8 @@ export const reducers = (state, { type, payload }) => {
             ...state,
             pushableState: {
                ...state.pushableState,
-               servings: newServingsWithSachets
-            }
+               servings: newServingsWithSachets,
+            },
          }
 
       case 'POPULATE_PUSHABLE':
@@ -318,8 +335,8 @@ export const reducers = (state, { type, payload }) => {
             pushableState: {
                ...state.pushableState,
                id: payload.id,
-               name: payload.name
-            }
+               name: payload.name,
+            },
          }
       case 'ADD_RECIPE_META':
          const { cookingTime, description, utensils } = payload
@@ -329,8 +346,8 @@ export const reducers = (state, { type, payload }) => {
                ...state.pushableState,
                cookingTime: parseInt(cookingTime),
                description,
-               utensils
-            }
+               utensils,
+            },
          }
 
       case 'POPULATE_STATE':
@@ -344,7 +361,7 @@ export const reducers = (state, { type, payload }) => {
             cookingTime: recipeCookingTime,
             servings: recipeServings,
             ingredients: recipeIngredients,
-            procedures: recipeProcedures
+            procedures: recipeProcedures,
          } = payload.recipe
 
          const mappedRecipeType = payload.recipeTypeOptions.find(
@@ -353,7 +370,7 @@ export const reducers = (state, { type, payload }) => {
 
          const mappedServings = recipeServings.map((serving, i) => ({
             id: i + 1,
-            value: serving.size
+            value: serving.size,
          }))
 
          if (mappedServings.length === 0) {
@@ -387,7 +404,7 @@ export const reducers = (state, { type, payload }) => {
                      id: sachet.id,
                      title: `${sachet.quantity.value} ${sachet.quantity.unit.title}`,
                      ingredient: sachet.ingredient,
-                     serving: { id: i + 1, value: serving.size }
+                     serving: { id: i + 1, value: serving.size },
                   }
                })
 
@@ -404,11 +421,11 @@ export const reducers = (state, { type, payload }) => {
             ingredients: recipeIngredients.map(
                ({
                   ingredient: { id, name },
-                  processing: { id: processingId, name: processingName }
+                  processing: { id: processingId, name: processingName },
                }) => ({
                   id,
                   title: name,
-                  processing: { id: processingId, title: processingName.title }
+                  processing: { id: processingId, title: processingName.title },
                })
             ),
             // sachets: stateSachets,
@@ -418,8 +435,8 @@ export const reducers = (state, { type, payload }) => {
                        name,
                        steps: steps.map(({ title, description }) => ({
                           title,
-                          description
-                       }))
+                          description,
+                       })),
                     }))
                   : [
                        {
@@ -427,12 +444,12 @@ export const reducers = (state, { type, payload }) => {
                           steps: [
                              {
                                 title: '',
-                                description: ''
+                                description: '',
                                 // images: [{ caption: String, url: String }],
                                 // video: { caption: String, url: String }
-                             }
-                          ]
-                       }
+                             },
+                          ],
+                       },
                     ],
             pushableState: {
                ...state.pushableState,
@@ -443,15 +460,15 @@ export const reducers = (state, { type, payload }) => {
                cookingTime: recipeCookingTime,
                servings: recipeServings.map(({ size, sachets }) => ({
                   size,
-                  sachets: sachets.map(({ id }) => id)
+                  sachets: sachets.map(({ id }) => id),
                })),
                ingredients: recipeIngredients.map(
                   ({ ingredient, processing }) => ({
                      ingredient: ingredient.id,
-                     processing: processing?.id
+                     processing: processing?.id,
                   })
-               )
-            }
+               ),
+            },
          }
 
       case 'ADD_SECTION_TITLE':
@@ -459,19 +476,19 @@ export const reducers = (state, { type, payload }) => {
          procedures[payload.index].name = payload.name
          return {
             ...state,
-            procedures
+            procedures,
          }
       case 'CREATE_STEP':
          const newSteps = [...state.procedures]
          newSteps[0].steps.push({
             title: '',
-            description: ''
+            description: '',
             // images: [{ caption: String, url: String }],
             // video: { caption: String, url: String }
          })
          return {
             ...state,
-            procedures: newSteps
+            procedures: newSteps,
          }
 
       case 'REMOVE_PROCEDURE':
