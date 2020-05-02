@@ -34,10 +34,10 @@ export default function SelectIngredients({ close, next, ings }) {
             close={() => close(2)}
             next={() => {
                recipeDispatch({ type: 'ADD_INGREDIENTS', payload: selected })
-               recipeDispatch({
-                  type: 'ADD_INGREDIENTS_FOR_PUSHABLE',
-                  payload: selected,
-               })
+               // recipeDispatch({
+               //    type: 'ADD_INGREDIENTS_FOR_PUSHABLE',
+               //    payload: selected,
+               // })
                next(2)
             }}
             nextAction="Done"
