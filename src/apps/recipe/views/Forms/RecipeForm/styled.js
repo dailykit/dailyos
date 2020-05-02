@@ -135,3 +135,9 @@ export const InputWrapper = styled.div`
       }
    }
 `
+
+export const InputGrid = styled.div`
+   display: grid;
+   grid-gap: 16px;
+   grid-template-columns: repeat(2, 1fr);
+`

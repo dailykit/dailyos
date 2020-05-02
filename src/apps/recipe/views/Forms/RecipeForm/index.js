@@ -19,14 +19,15 @@ import {
 } from '../../../context/recipe/index'
 
 import { ViewWrapper } from '../../../components/Styled/ViewWrapper'
-import { RecipeActions, RecipeType, Container } from './styled'
+import { RecipeActions, RecipeType, Container, InputGrid } from './styled'
 
 import AddIngredients from './AddIngredients'
 import Menu from '../../../components/Menu'
 import RecipeMeta from './Tunnels/RecipeMeta'
 import MetaView from './MetaView'
 
-import { RECIPE, UPDATE_RECIPE } from '../../../graphql'
+import { CREATE_SIMPLE_RECIPE } from '../../../graphql'
+import { toast } from 'react-toastify'
 
 export default function AddRecipeForm() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -36,6 +37,7 @@ export default function AddRecipeForm() {
    )
    const { state, dispatch } = useContext(Context)
    const [chefName, setChefName] = React.useState('')
+   const [cuisine, setCuisine] = React.useState('')
 
    const recipeTypeOptions = [
       { id: 1, title: 'Vegetarian' },
@@ -43,34 +45,74 @@ export default function AddRecipeForm() {
       { id: 3, title: 'Vegan' },
    ]
 
-   // Queries and Mutations
-   useQuery(RECIPE, {
-      variables: { ID: state.current.ID },
-      onCompleted: ({ recipe }) => {
-         if (recipe.chef) setChefName(recipe.chef)
-         recipeDispatch({
-            type: 'POPULATE_STATE',
-            payload: { recipe, recipeTypeOptions },
-         })
-      },
-   })
-
-   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+   // Mutation
+   const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: data => {
-         if (data.updateRecipe.success) {
-            // set global state after updating
-         } else {
-            // Fire toast
-            console.log(data)
-         }
+         console.log(data)
+         toast.success(`${data.createSimpleRecipe.returning[0].name} added!`)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Unkown error!')
       },
    })
 
    // Handlers
    const save = () => {
+      // Prepare ingredients
+      const ingredients = recipeState.ingredients.map(ing => {
+         return {
+            id: ing.id,
+            isVisible: ing.isVisible,
+            name: ing.name,
+            slipName: ing.name,
+            processing: {
+               id: ing.processing.id,
+               name: ing.processing.processingName,
+            },
+         }
+      })
+      // Prepare servings
+      const servings = recipeState.servings.map(serving => {
+         return {
+            yield: {
+               serving: serving.value,
+            },
+            ingredientSachets: {
+               data: [],
+            },
+         }
+      })
+      // Populate sachets
+      recipeState.sachets.forEach(sachet => {
+         const index = servings.findIndex(
+            serving => serving.yield.serving == sachet.serving.value
+         )
+         servings[index].ingredientSachets.data.push({
+            ingredientSachetId: sachet.id,
+         })
+      })
       // Preparing basic object
-      console.log(state)
-      // updateRecipe({ variables: { input: pushable } })
+      const object = {
+         cuisine,
+         author: chefName,
+         cookingTime: recipeState.pushableState.cookingTime,
+         description: recipeState.pushableState.description,
+         utensilsRequired: recipeState.pushableState.utensils,
+         type: recipeState.pushableState.type,
+         name: recipeState.name,
+         ingredients,
+         simpleRecipeYields: {
+            data: servings,
+         },
+      }
+      console.log(object)
+      // Save
+      createRecipe({
+         variables: {
+            objects: [object],
+         },
+      })
    }
 
    const handlePublish = () => {
@@ -156,7 +198,7 @@ export default function AddRecipeForm() {
             <RecipeType>
                <RadioGroup
                   options={recipeTypeOptions}
-                  active={recipeState.recipeType?.id || 2}
+                  active={2}
                   onChange={type =>
                      recipeDispatch({
                         type: 'CHANGE_RECIPE_TYPE',
@@ -167,15 +209,22 @@ export default function AddRecipeForm() {
             </RecipeType>
 
             <Container>
-               <div style={{ width: '40%' }}>
+               <InputGrid>
                   <Input
-                     label="Chef Name"
+                     label="Author"
                      type="text"
                      name="chef"
                      value={chefName}
                      onChange={e => setChefName(e.target.value)}
                   />
-               </div>
+                  <Input
+                     label="Cuisine"
+                     type="text"
+                     name="cuisine"
+                     value={cuisine}
+                     onChange={e => setCuisine(e.target.value)}
+                  />
+               </InputGrid>
                <br />
                {!recipeState.pushableState.description && (
                   <ButtonTile

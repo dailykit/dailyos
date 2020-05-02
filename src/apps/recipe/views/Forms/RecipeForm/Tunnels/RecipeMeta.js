@@ -68,7 +68,7 @@ export default function AddServings({ close }) {
             placeholder="Cooking Time (in minutes)"
             name="time"
             value={cookingTime}
-            onChange={e => setCookingTime(+e.target.value)}
+            onChange={e => setCookingTime(e.target.value)}
          />
          <br />
          <HelperText type="hint" message="Fill all of the fields above!" />

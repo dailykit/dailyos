@@ -9,7 +9,7 @@ export const state = {
    },
    name: '',
    recipeType: { id: 2, title: 'Non-Vegetarian' },
-   servings: [{ id: 1, value: 4 }],
+   servings: [{ id: 1, value: '4' }],
    ingredients: [],
    sachets: [],
    procedures: [],
@@ -24,7 +24,7 @@ export const state = {
       utensils: '',
       description: '',
       type: 'Non-Vegetarian',
-      servings: [{ size: 4, ingredients: [] }],
+      servings: [{ size: '4', ingredients: [] }],
    },
 }
 
@@ -389,7 +389,7 @@ export const reducers = (state, { type, payload }) => {
             ...state,
             pushableState: {
                ...state.pushableState,
-               cookingTime: parseInt(cookingTime),
+               cookingTime,
                description,
                utensils,
             },
