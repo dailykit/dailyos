@@ -14,7 +14,12 @@ import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
+
 const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(InventoryProductContext)
 
    const [search, setSearch] = React.useState('')
@@ -37,11 +42,11 @@ const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
                <span onClick={() => close(4)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select Accompaniment Type</span>
+               <span>{t(address.concat('select accompaniment type'))}</span>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -49,7 +54,7 @@ const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(address.concat("type what you’re looking for"))}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>

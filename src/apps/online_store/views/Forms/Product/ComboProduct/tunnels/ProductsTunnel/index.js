@@ -17,7 +17,12 @@ import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'
+
 const ProductsTunnel = ({ close, products }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ComboProductContext)
 
    const [search, setSearch] = React.useState('')
@@ -70,7 +75,7 @@ const ProductsTunnel = ({ close, products }) => {
                <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select Product to Add</span>
+               <span>{t(address.concat('select product to add'))}</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -78,11 +83,11 @@ const ProductsTunnel = ({ close, products }) => {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for"))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

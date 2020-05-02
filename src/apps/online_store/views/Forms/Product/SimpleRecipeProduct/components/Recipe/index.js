@@ -20,7 +20,12 @@ import {
 
 import { Accompaniments } from '../'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
+
 export default function Recipe({ openTunnel }) {
+   const { t } = useTranslation()
    const { state } = React.useContext(SimpleProductContext)
 
    const [_state, _setState] = React.useState({
@@ -45,7 +50,7 @@ export default function Recipe({ openTunnel }) {
                         }
                         active={_state.view === 'pricing'}
                      >
-                        Pricing
+                        {t(address.concat('pricing'))}
                      </StyledTab>
                      <StyledTab
                         onClick={() =>
@@ -53,7 +58,7 @@ export default function Recipe({ openTunnel }) {
                         }
                         active={_state.view === 'accompaniments'}
                      >
-                        Accompaniments
+                        {t(address.concat('accompaniments'))}
                      </StyledTab>
                   </StyledTabs>
                   <StyledTabView>
@@ -62,7 +67,7 @@ export default function Recipe({ openTunnel }) {
                            type="outline"
                            onClick={() => openTunnel(6)}
                         >
-                           Configure Pricing
+                           {t(address.concat('configure pricing'))}
                         </TextButton>
                      </StyledAction>
                      {_state.view === 'pricing' ? (
@@ -70,9 +75,9 @@ export default function Recipe({ openTunnel }) {
                            <thead>
                               <tr>
                                  <th></th>
-                                 <th>Servings</th>
-                                 <th>Price</th>
-                                 <th>Discount</th>
+                                 <th>{t(address.concat('servings'))}</th>
+                                 <th>{t(address.concat('price'))}</th>
+                                 <th>{t(address.concat('discount'))}</th>
                               </tr>
                            </thead>
                            <tbody>
@@ -86,12 +91,12 @@ export default function Recipe({ openTunnel }) {
                                                 {i === 0 ? (
                                                    <span>
                                                       {type === 'mealKit'
-                                                         ? 'Meal Kit'
-                                                         : 'Ready to Eat'}
+                                                         ? t(address.concat('meal kit'))
+                                                         : t(address.concat('ready to eat'))}
                                                    </span>
                                                 ) : (
-                                                   ''
-                                                )}
+                                                      ''
+                                                   )}
                                              </td>
                                              <td>
                                                 {el.yield.serving}{' '}
@@ -117,19 +122,19 @@ export default function Recipe({ openTunnel }) {
                            </tbody>
                         </StyledTable>
                      ) : (
-                        <Accompaniments openTunnel={openTunnel} />
-                     )}
+                           <Accompaniments openTunnel={openTunnel} />
+                        )}
                   </StyledTabView>
                </StyledPanel>
             </StyledLayout>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text="Add Recipe"
-               onClick={() => openTunnel(2)}
-            />
-         )}
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat("add recipe"))}
+                  onClick={() => openTunnel(2)}
+               />
+            )}
       </StyledWrapper>
    )
 }

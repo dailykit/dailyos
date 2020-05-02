@@ -16,7 +16,12 @@ import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.customizableproduct.tunnels.itemstunnel.'
+
 const ItemsTunnel = ({ close, items }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const [search, setSearch] = React.useState('')
@@ -59,16 +64,16 @@ const ItemsTunnel = ({ close, items }) => {
                   <CloseIcon color="#888D9D" />
                </span>
                <span>
-                  Select{' '}
+                  {t(address.concat('select'))}{' '}
                   {state.meta.itemType === 'inventory'
-                     ? 'Inventory Products'
-                     : 'Simple Recipe Products'}{' '}
-                  to Add
+                     ? t(address.concat('inventory products'))
+                     : t(address.concat('simple recipe products'))}{' '}
+                  {t(address.concat('to add'))}
                </span>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -76,7 +81,7 @@ const ItemsTunnel = ({ close, items }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(address.concat("type what you’re looking for"))}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>

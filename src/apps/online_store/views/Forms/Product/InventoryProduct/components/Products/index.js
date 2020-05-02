@@ -8,7 +8,12 @@ import {
 import { ButtonTile, Input } from '@dailykit/ui'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.components.products.'
+
 const Products = ({ openTunnel, view }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(InventoryProductContext)
 
    const [_state, _setState] = React.useState({
@@ -71,7 +76,7 @@ const Products = ({ openTunnel, view }) => {
                   ))}
                   <ButtonTile
                      type="secondary"
-                     text="Add Products"
+                     text={t(address.concat("add products"))}
                      onClick={() => openTunnel(5)}
                   />
                </StyledListing>
@@ -79,7 +84,7 @@ const Products = ({ openTunnel, view }) => {
                   <h2>{_state.currentProduct.title}</h2>
                   <Input
                      type="text"
-                     label="Discount as Accompaniment"
+                     label={t(address.concat("discount as accompaniment"))}
                      name="discount"
                      value={_state.discount}
                      onChange={e =>
@@ -98,12 +103,12 @@ const Products = ({ openTunnel, view }) => {
                </StyledPanel>
             </StyledLayout>
          ) : (
-            <ButtonTile
-               type="secondary"
-               text="Add Products"
-               onClick={() => openTunnel(5)}
-            />
-         )}
+               <ButtonTile
+                  type="secondary"
+                  text={t(address.concat("add products"))}
+                  onClick={() => openTunnel(5)}
+               />
+            )}
       </React.Fragment>
    )
 }

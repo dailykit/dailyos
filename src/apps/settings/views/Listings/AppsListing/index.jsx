@@ -19,7 +19,12 @@ import { useTabs } from '../../../context'
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.listings.appslisting.'
+
 const AppsListing = () => {
+   const { t } = useTranslation()
    const history = useHistory()
    const { tabs } = useTabs()
    React.useEffect(() => {
@@ -59,13 +64,13 @@ const AppsListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">Apps</Text>
+            <Text as="h2">{t(address.concat('apps'))}</Text>
          </StyledHeader>
          <Table>
             <TableHead>
                <TableRow>
-                  <TableCell>Apps</TableCell>
-                  <TableCell>Users Assigned</TableCell>
+                  <TableCell>{t(address.concat('apps'))}</TableCell>
+                  <TableCell>{t(address.concat('users assigned'))}</TableCell>
                </TableRow>
             </TableHead>
             <TableBody>

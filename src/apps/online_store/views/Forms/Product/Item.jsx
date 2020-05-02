@@ -7,7 +7,12 @@ import { ProductContext } from '../../../context/product/index'
 import RecipeConfigurator from './RecipeConfigurator'
 import AddIcon from '../../../assets/icons/Add'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.'
+
 export default function Item({ open }) {
+   const { t } = useTranslation()
    const {
       productState: { itemView, currentRecipe },
       productDispatch,
@@ -18,7 +23,7 @@ export default function Item({ open }) {
             <Content
                style={{ alignItems: 'center', justifyContent: 'space-between' }}
             >
-               <Text as="title">Recipes for {itemView.label}</Text>
+               <Text as="title">{t(address.concat('recipes for'))} {itemView.label}</Text>
                <IconButton type="ghost" onClick={() => open(2)}>
                   <AddIcon />
                </IconButton>

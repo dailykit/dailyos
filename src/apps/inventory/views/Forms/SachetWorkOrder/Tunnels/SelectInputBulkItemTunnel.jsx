@@ -11,7 +11,12 @@ import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
+
 export default function SelectInputBulkItemTunnel({ close }) {
+   const { t } = useTranslation()
    const { sachetOrderState, sachetOrderDispatch } = useContext(
       SachetOrderContext
    )
@@ -23,7 +28,7 @@ export default function SelectInputBulkItemTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Input Bulk Item Processing"
+            title={t(address.concat("select input bulk item processing"))}
             next={() => {
                sachetOrderDispatch({ type: 'ADD_INPUT_ITEM', payload: current })
                close(5)
@@ -44,11 +49,11 @@ export default function SelectInputBulkItemTunnel({ close }) {
                   }}
                />
             ) : (
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
-               />
-            )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(address.concat("type what you’re looking for"))}
+                  />
+               )}
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))

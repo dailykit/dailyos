@@ -28,7 +28,13 @@ import { StyledWrapper, StyledHeader } from '../styled'
 // Icons
 import { EditIcon, DeleteIcon, AddIcon } from '../../../assets/icons'
 
+
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.listings.collectionslisting.'
+
 const CollectionsListing = () => {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const addTab = (title, view) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
@@ -40,7 +46,7 @@ const CollectionsListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <h1>Collections</h1>
+            <h1>{t(address.concat('collections'))}</h1>
             <IconButton
                type="solid"
                onClick={() => addTab('Collection Form', 'collection')}
@@ -51,9 +57,9 @@ const CollectionsListing = () => {
          <Table>
             <TableHead>
                <TableRow>
-                  <TableCell>Collection Name</TableCell>
-                  <TableCell>Categories</TableCell>
-                  <TableCell>Products</TableCell>
+                  <TableCell>{t(address.concat('collection name'))}</TableCell>
+                  <TableCell>{t(address.concat('categories'))}</TableCell>
+                  <TableCell>{t(address.concat('products'))}</TableCell>
                   {/* <TableCell align="right">Actions</TableCell> */}
                </TableRow>
             </TableHead>

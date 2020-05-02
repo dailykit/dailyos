@@ -32,7 +32,12 @@ import {
    StyledLabel,
 } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.config.'
+
 export default function ConfigTunnel({ close, open }) {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [loading, setLoading] = useState(false)
 
@@ -73,11 +78,11 @@ export default function ConfigTunnel({ close, open }) {
                <span onClick={() => close(4)}>
                   <CloseIcon size={24} />
                </span>
-               <span>Configure Processing: {state.processing.name}</span>
+               <span>{t(address.concat('configure processing'))}: {state.processing.name}</span>
             </div>
             <div>
                <TextButton onClick={handleSave} type="solid">
-                  Save
+                  {t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -87,7 +92,7 @@ export default function ConfigTunnel({ close, open }) {
                   <InputWrapper>
                      <Input
                         type="text"
-                        label="Set par level"
+                        label={t(address.concat("set par level"))}
                         name="par_level"
                         value={state.processing.par_level.value}
                         onChange={e =>
@@ -110,14 +115,14 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      >
-                        <option value="gram">gram</option>
-                        <option value="loaf">loaf</option>
+                        <option value="gram">{t('units.gram')}</option>
+                        <option value="loaf">{t('units.loaf')}</option>
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>
                      <Input
                         type="text"
-                        label="Max inventory level"
+                        label={t(address.concat("max inventory level"))}
                         name="max_inventory_level"
                         value={state.processing.max_inventory_level.value}
                         onChange={e =>
@@ -140,21 +145,21 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      >
-                        <option value="gms">gms</option>
-                        <option value="kgs">kgs</option>
+                        <option value="gms">{t('units.gms')}</option>
+                        <option value="kgs">{t('units.kgs')}</option>
                      </StyledSelect>
                   </InputWrapper>
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
-               <StyledLabel>Processing information</StyledLabel>
+               <StyledLabel>{t(address.concat('processing information'))}</StyledLabel>
             </StyledRow>
             <StyledRow>
                <ButtonTile
                   type="primary"
                   size="sm"
-                  text="Add Photo to your processing"
-                  helper="upto 1MB - only JPG, PNG, PDF allowed"
+                  text={t(address.concat("add photo to your processing"))}
+                  helper={t(address.concat("upto 1MB - only JPG, PNG, PDF allowed"))}
                   onClick={e => console.log('Tile clicked')}
                />
             </StyledRow>
@@ -164,7 +169,7 @@ export default function ConfigTunnel({ close, open }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label="Labor time per 100gm"
+                           label={t(address.concat("labor time per 100gm"))}
                            name="labor_time"
                            value={state.processing.labor_time.value}
                            onChange={e =>
@@ -190,15 +195,15 @@ export default function ConfigTunnel({ close, open }) {
                               })
                            }
                         >
-                           <option value="hours">hours</option>
-                           <option value="minutes">minutes</option>
+                           <option value="hours">{t(address.concat('hours'))}</option>
+                           <option value="minutes">{t(address.concat('minutes'))}</option>
                         </StyledSelect>
                      </InputWrapper>
                   )}
                   <InputWrapper>
                      <Input
                         type="text"
-                        label="Percentage of yield"
+                        label={t(address.concat("percentage of yield"))}
                         name="yield"
                         value={state.processing.yield}
                         onChange={e =>
@@ -217,7 +222,7 @@ export default function ConfigTunnel({ close, open }) {
                   <InputWrapper>
                      <Input
                         type="text"
-                        label="Shelf life"
+                        label={t(address.concat("shelf life"))}
                         name="shelf_life"
                         value={state.processing.shelf_life.value}
                         onChange={e =>
@@ -240,14 +245,14 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      >
-                        <option value="hours">hours</option>
-                        <option value="days">days</option>
+                        <option value="hours">{t('units.hours')}</option>
+                        <option value="days">{t('units.days')}</option>
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>
                      <Input
                         type="text"
-                        label="Bulk density"
+                        label={t(address.concat("bulk density"))}
                         name="bulk_density"
                         value={state.processing.bulk_density}
                         onChange={e =>
@@ -268,7 +273,7 @@ export default function ConfigTunnel({ close, open }) {
                      justifyContent: 'space-between',
                   }}
                >
-                  <div>Nutritions per 100gm</div>
+                  <div>{t(address.concat('nutritions per 100gm'))}</div>
                   <IconButton
                      onClick={() => {
                         dispatch({
@@ -283,43 +288,43 @@ export default function ConfigTunnel({ close, open }) {
                   </IconButton>
                </StyledLabel>
                {state.processing.nutrients?.fat ||
-               state.processing.nutrients?.cal ? (
-                  <>
-                     <div
-                        style={{
-                           width: '70%',
-                           minHeight: '100px',
-                           backgroundColor: '#F3F3F3',
-                           padding: '20px',
-                        }}
-                     >
-                        <Text as="title">
-                           <strong>calories: </strong>
-                           {state.processing.nutrients?.cal}
-                        </Text>
+                  state.processing.nutrients?.cal ? (
+                     <>
+                        <div
+                           style={{
+                              width: '70%',
+                              minHeight: '100px',
+                              backgroundColor: '#F3F3F3',
+                              padding: '20px',
+                           }}
+                        >
+                           <Text as="title">
+                              <strong>{t(address.concat('calories'))}: </strong>
+                              {state.processing.nutrients?.cal}
+                           </Text>
 
-                        <Text as="title">
-                           <strong>Total Fat: </strong>
-                           {state.processing.nutrients?.fat}
-                        </Text>
-                     </div>
-                  </>
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Nutritions"
-                     onClick={e => {
-                        dispatch({
-                           type: 'SET_NUTRI_TARGET',
-                           payload: 'processing',
-                        })
-                        open(10)
-                     }}
-                  />
-               )}
+                           <Text as="title">
+                              <strong>{t(address.concat('total fat'))}: </strong>
+                              {state.processing.nutrients?.fat}
+                           </Text>
+                        </div>
+                     </>
+                  ) : (
+                     <ButtonTile
+                        type="secondary"
+                        text={t(address.concat("add nutritions"))}
+                        onClick={e => {
+                           dispatch({
+                              type: 'SET_NUTRI_TARGET',
+                              payload: 'processing',
+                           })
+                           open(10)
+                        }}
+                     />
+                  )}
             </StyledRow>
             <StyledRow>
-               <StyledLabel>Allergens</StyledLabel>
+               <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
                {state.processing.allergens.length ? (
                   <Highlight pointer onClick={() => open(5)}>
                      <TagGroup>
@@ -329,26 +334,26 @@ export default function ConfigTunnel({ close, open }) {
                      </TagGroup>
                   </Highlight>
                ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Allergens"
-                     onClick={() => open(5)}
-                  />
-               )}
+                     <ButtonTile
+                        type="secondary"
+                        text={t(address.concat("add allergens"))}
+                        onClick={() => open(5)}
+                     />
+                  )}
             </StyledRow>
             {!state.form_meta.shipped && (
                <>
                   <StyledRow>
                      <StyledLabel>
-                        Operating procedure for processing
+                        {t(address.concat('operating procedure for processing'))}
                      </StyledLabel>
                   </StyledRow>
                   <StyledRow>
-                     <StyledLabel>Standard operating procedure</StyledLabel>
+                     <StyledLabel>{t(address.concat('standard operating procedure'))}</StyledLabel>
                      <Highlight></Highlight>
                   </StyledRow>
                   <StyledRow>
-                     <StyledLabel>Equipments needed</StyledLabel>
+                     <StyledLabel>{t(address.concat('equipments needed'))}</StyledLabel>
                      <Highlight></Highlight>
                   </StyledRow>
                </>

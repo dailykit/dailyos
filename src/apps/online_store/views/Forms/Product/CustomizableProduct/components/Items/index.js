@@ -20,7 +20,12 @@ import {
 import { Accompaniments } from '../'
 import { StyledDefault } from '../../../SimpleRecipeProduct/components/Recipe/styled'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.customizableproduct.components.items.'
+
 export default function Items({ openTunnel }) {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(CustomizableProductContext)
 
    const [_state, _setState] = React.useState({
@@ -61,14 +66,14 @@ export default function Items({ openTunnel }) {
                      >
                         <h3>{item.title}</h3>
                         <StyledDefault hidden={state.default.id !== item.id}>
-                           Default
+                           {t(address.concat('default'))}
                         </StyledDefault>
                      </StyledListingTile>
                   ))}
                   <ButtonTile
                      type="primary"
                      size="sm"
-                     text="Add Products"
+                     text={t(address.concat("add products"))}
                      onClick={() => openTunnel(2)}
                   />
                </StyledListing>
@@ -91,7 +96,7 @@ export default function Items({ openTunnel }) {
                            })
                         }}
                      >
-                        Make Default
+                        {t(address.concat('make default'))}
                      </TextButton>
                   </StyledAction>
                   <StyledTabs>
@@ -101,7 +106,7 @@ export default function Items({ openTunnel }) {
                         }
                         active={_state.view === 'pricing'}
                      >
-                        Pricing
+                        {t(address.concat('pricing'))}
                      </StyledTab>
                      <StyledTab
                         onClick={() =>
@@ -109,7 +114,7 @@ export default function Items({ openTunnel }) {
                         }
                         active={_state.view === 'accompaniments'}
                      >
-                        Accompaniments
+                        {t(address.concat('accompaniments'))}
                      </StyledTab>
                   </StyledTabs>
                   <StyledTabView>
@@ -121,110 +126,110 @@ export default function Items({ openTunnel }) {
                                     {_state.currentItem
                                        ?.simpleRecipeProductOptions
                                        ? ''
-                                       : 'Labels'}
+                                       : t(address.concat('labels'))}
                                  </th>
                                  <th>
                                     {_state.currentItem
                                        ?.simpleRecipeProductOptions
-                                       ? 'Servings'
-                                       : 'Options'}
+                                       ? t(address.concat('servings'))
+                                       : t(address.concat('options'))}
                                  </th>
-                                 <th>Price</th>
-                                 <th>Discount</th>
+                                 <th>{t(address.concat('price'))}</th>
+                                 <th>{t(address.concat('discount'))}</th>
                               </tr>
                            </thead>
                            <tbody>
                               {_state.currentItem
                                  ?.simpleRecipeProductOptions ? (
-                                 <React.Fragment>
-                                    {_state.currentItem?.simpleRecipeProductOptions
-                                       .filter(
-                                          option => option.type === 'mealKit'
-                                       )
-                                       .filter(option => option.isActive)
-                                       .map((option, i) => (
-                                          <tr key={i}>
-                                             <td>
-                                                {i === 0 ? (
-                                                   <span>Meal Kit</span>
-                                                ) : (
-                                                   ''
-                                                )}
+                                    <React.Fragment>
+                                       {_state.currentItem?.simpleRecipeProductOptions
+                                          .filter(
+                                             option => option.type === 'mealKit'
+                                          )
+                                          .filter(option => option.isActive)
+                                          .map((option, i) => (
+                                             <tr key={i}>
+                                                <td>
+                                                   {i === 0 ? (
+                                                      <span>{t(address.concat('meal kit'))}</span>
+                                                   ) : (
+                                                         ''
+                                                      )}
+                                                </td>
+                                                <td>
+                                                   {
+                                                      option.simpleRecipeYield
+                                                         .yield.serving
+                                                   }
+                                                </td>
+                                                <td>${option.price[0].value} </td>
+                                                <td>
+                                                   {option.price[0].discount} %
                                              </td>
-                                             <td>
-                                                {
-                                                   option.simpleRecipeYield
-                                                      .yield.serving
-                                                }
+                                             </tr>
+                                          ))}
+                                       {_state.currentItem?.simpleRecipeProductOptions
+                                          .filter(
+                                             option => option.type === 'readyToEat'
+                                          )
+                                          .filter(option => option.isActive)
+                                          .map((option, i) => (
+                                             <tr key={i}>
+                                                <td>
+                                                   {i === 0 ? (
+                                                      <span>{t(address.concat('ready to eat'))}</span>
+                                                   ) : (
+                                                         ''
+                                                      )}
+                                                </td>
+                                                <td>
+                                                   {
+                                                      option.simpleRecipeYield
+                                                         .yield.serving
+                                                   }
+                                                </td>
+                                                <td>${option.price[0].value} </td>
+                                                <td>
+                                                   {option.price[0].discount} %
                                              </td>
-                                             <td>${option.price[0].value} </td>
-                                             <td>
-                                                {option.price[0].discount} %
+                                             </tr>
+                                          ))}
+                                    </React.Fragment>
+                                 ) : (
+                                    <React.Fragment>
+                                       {_state.currentItem?.inventoryProductOptions.map(
+                                          option => (
+                                             <tr key={option.id}>
+                                                <td>{option.label}</td>
+                                                <td>{option.quantity}</td>
+                                                <td>${option.price[0].value} </td>
+                                                <td>
+                                                   {option.price[0].discount} %
                                              </td>
-                                          </tr>
-                                       ))}
-                                    {_state.currentItem?.simpleRecipeProductOptions
-                                       .filter(
-                                          option => option.type === 'readyToEat'
-                                       )
-                                       .filter(option => option.isActive)
-                                       .map((option, i) => (
-                                          <tr key={i}>
-                                             <td>
-                                                {i === 0 ? (
-                                                   <span>Ready To Eat</span>
-                                                ) : (
-                                                   ''
-                                                )}
-                                             </td>
-                                             <td>
-                                                {
-                                                   option.simpleRecipeYield
-                                                      .yield.serving
-                                                }
-                                             </td>
-                                             <td>${option.price[0].value} </td>
-                                             <td>
-                                                {option.price[0].discount} %
-                                             </td>
-                                          </tr>
-                                       ))}
-                                 </React.Fragment>
-                              ) : (
-                                 <React.Fragment>
-                                    {_state.currentItem?.inventoryProductOptions.map(
-                                       option => (
-                                          <tr key={option.id}>
-                                             <td>{option.label}</td>
-                                             <td>{option.quantity}</td>
-                                             <td>${option.price[0].value} </td>
-                                             <td>
-                                                {option.price[0].discount} %
-                                             </td>
-                                          </tr>
-                                       )
-                                    )}
-                                 </React.Fragment>
-                              )}
+                                             </tr>
+                                          )
+                                       )}
+                                    </React.Fragment>
+                                 )}
                            </tbody>
                         </StyledTable>
                      ) : (
-                        <Accompaniments
-                           openTunnel={openTunnel}
-                           accompaniments={_state.currentItem.accompaniments}
-                        />
-                     )}
+                           <Accompaniments
+                              openTunnel={openTunnel}
+                              accompaniments={_state.currentItem.accompaniments}
+                           />
+                        )}
                   </StyledTabView>
                </StyledPanel>
             </StyledLayout>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text="Add Products"
-               onClick={() => openTunnel(2)}
-            />
-         )}
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat("add products"))}
+                  onClick={() => openTunnel(2)}
+               />
+            )}
       </StyledWrapper>
    )
 }

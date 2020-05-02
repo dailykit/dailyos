@@ -11,7 +11,12 @@ import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.comboproduct.tunnels.descriptiontunnel.'
+
 export default function DescriptionTunnel({ close }) {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ComboProductContext)
 
    const [busy, setBusy] = React.useState(false)
@@ -65,11 +70,11 @@ export default function DescriptionTunnel({ close }) {
                <span onClick={() => close(1)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Add Description and Tags</span>
+               <span>{t(address.concat('add description and tags'))}</span>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
+                  {busy ? t(address.concat('saving')) : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -77,7 +82,7 @@ export default function DescriptionTunnel({ close }) {
             <StyledRow>
                <Input
                   type="text"
-                  label="Tags"
+                  label={t(address.concat("tags"))}
                   name="tags"
                   value={tags}
                   onChange={e => setTags(e.target.value)}
@@ -86,7 +91,7 @@ export default function DescriptionTunnel({ close }) {
             <StyledRow>
                <Input
                   type="textarea"
-                  label="Description"
+                  label={t(address.concat("description"))}
                   name="textarea"
                   rows="5"
                   value={description}

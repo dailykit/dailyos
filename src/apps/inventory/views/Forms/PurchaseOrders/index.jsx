@@ -20,7 +20,12 @@ import FormHeading from '../../../components/FormHeading'
 import { ItemCard, Spacer } from '../../../components'
 import { FormActions, StyledWrapper, StyledForm } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.purchaseorders.'
+
 export default function PurchaseOrderForm() {
+   const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [purchaseOrderState, purchaseOrderDispatch] = useReducer(
       reducers,
@@ -46,18 +51,18 @@ export default function PurchaseOrderForm() {
                         width: '30%',
                      }}
                   >
-                     <Text as="h1">Purchase Order</Text>
+                     <Text as="h1">{t(address.concat('purchase order'))}</Text>
                   </div>
 
                   <FormActions>
-                     <TextButton onClick={() => {}} type="solid">
-                        Submit
+                     <TextButton onClick={() => { }} type="solid">
+                        {t(address.concat('submit'))}
                      </TextButton>
                   </FormActions>
                </FormHeading>
 
                <StyledForm style={{ padding: '0px 60px' }}>
-                  <Text as="title">Supplier Item</Text>
+                  <Text as="title">{t(address.concat('supplier item'))}</Text>
                   {purchaseOrderState.supplierItem?.title ? (
                      <>
                         <ItemCard
@@ -75,7 +80,7 @@ export default function PurchaseOrderForm() {
                         >
                            <Input
                               type="text"
-                              placeholder="Enter Order Quantity"
+                              placeholder={t(address.concat("enter order quantity"))}
                               value={orderQuantity}
                               onChange={e => {
                                  const value = parseInt(e.target.value)
@@ -89,20 +94,20 @@ export default function PurchaseOrderForm() {
                               onChange={e => setUnit(e.target.value)}
                               style={{ marginLeft: '5px' }}
                            >
-                              <option value="gm">gm</option>
-                              <option value="kg">kg</option>
+                              <option value="gm">{t('units.gm')}</option>
+                              <option value="kg">{t('units.kg')}</option>
                            </select>
                         </div>
                      </>
                   ) : (
-                     <ButtonTile
-                        noIcon
-                        type="secondary"
-                        text="Select Supplier Item"
-                        onClick={() => openTunnel(1)}
-                        style={{ margin: '20px 0' }}
-                     />
-                  )}
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text={t(address.concat("select supplier item"))}
+                           onClick={() => openTunnel(1)}
+                           style={{ margin: '20px 0' }}
+                        />
+                     )}
                </StyledForm>
             </StyledWrapper>
          </PurchaseOrderContext.Provider>

@@ -34,7 +34,12 @@ import {
 } from '../styled'
 import { StyledDevicesList } from './styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.forms.station.'
+
 const StationForm = () => {
+   const { t } = useTranslation()
    const params = useParams()
    const history = useHistory()
    const { doesTabExists } = useTabs()
@@ -86,12 +91,12 @@ const StationForm = () => {
                style={{ width: '320px' }}
                value={form.name || ''}
                onChange={e => handleChange(e)}
-               placeholder="Enter the station name"
+               placeholder={t(address.concat("enter the station name"))}
             />
-            <TextButton type="solid">Publish</TextButton>
+            <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
          </StyledHeader>
          <StyledForm>
-            <Text as="title">Select station type</Text>
+            <Text as="title">{t(address.concat('select station type'))}</Text>
             <RadioGroup
                options={[
                   { id: 1, title: 'Packaging' },
@@ -101,7 +106,7 @@ const StationForm = () => {
                onChange={option => setForm({ ...form, type: option })}
             />
             <StyledSection>
-               <Text as="title">Devices</Text>
+               <Text as="title">{t(address.concat('devices'))}</Text>
                {form.devices.length > 0 && (
                   <StyledDevicesList>
                      {form.devices.map(device => (
@@ -116,7 +121,7 @@ const StationForm = () => {
                   noIcon
                   size="sm"
                   type="secondary"
-                  text="Select Devices"
+                  text={t(address.concat("select devices"))}
                   onClick={() => openDevicesTunnel(1)}
                />
             </StyledSection>
@@ -130,7 +135,7 @@ const StationForm = () => {
                         >
                            <ClearIcon size={20} />
                         </IconButton>
-                        <Text as="h2">Select devices for the user</Text>
+                        <Text as="h2">{t(address.concat('select devices for the user'))}</Text>
                      </div>
                      <TextButton
                         type="solid"
@@ -139,14 +144,14 @@ const StationForm = () => {
                            setForm({ ...form, devices: [...selectedDevices] })
                         }}
                      >
-                        Add
+                        {t(address.concat('add'))}
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <List>
                         <ListSearch
                            onChange={value => setDevicesSearch(value)}
-                           placeholder="type what you’re looking for..."
+                           placeholder={t(address.concat("type what you're looking for")).concat('...')}
                         />
                         <ListOptions>
                            {devicesList

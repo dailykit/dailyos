@@ -6,7 +6,12 @@ import { Context } from '../../../context/tabs'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../components'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.inventory.views.listings.workorders.'
+
 export default function WorkOrderTypeTunnel({ close }) {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
    const addTab = (title, view) => {
@@ -15,7 +20,7 @@ export default function WorkOrderTypeTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Type of Work Order"
+            title={t(address.concat("select type of work order"))}
             close={() => {
                close(1)
             }}
@@ -26,17 +31,21 @@ export default function WorkOrderTypeTunnel({ close }) {
          />
          <Spacer />
          <SolidTile onClick={() => addTab('Bulk Work Order', 'bulkOrder')}>
-            <Text as="h1">Bulk Work Order</Text>
+            <Text as="h1">{t(address.concat('bulk work order'))}</Text>
             <Text as="subtitle">
-               Bulk Work Order is to create bulk items with changing processing
+               <Trans i18nKey={address.concat('bulk subtitle 1')}>
+                  Bulk Work Order is to create bulk items with changing processing
+               </Trans>
             </Text>
          </SolidTile>
          <br />
          <SolidTile onClick={() => addTab('Sachet Work Order', 'sachetOrder')}>
-            <Text as="h1">Sachet Work Order</Text>
+            <Text as="h1">{t(address.concat('sachet work order'))}</Text>
             <Text as="subtitle">
-               Sachet Work Order is to create planned lot items by portioning
-               and packaging
+               <Trans i18nKey={address.concat('sachet subtitle 1')}>
+                  Sachet Work Order is to create planned lot items by portioning
+                  and packaging
+               </Trans>
             </Text>
          </SolidTile>
       </TunnelContainer>

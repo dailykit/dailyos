@@ -12,7 +12,12 @@ import { StyledWrapper, StyledHeader } from '../styled'
 import { AddIcon } from '../../../assets/icons'
 import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.listings.workorders.'
+
 export default function WorkOrders() {
+   const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    return (
@@ -24,7 +29,7 @@ export default function WorkOrders() {
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-               <h1>Work Orders</h1>
+               <h1>{t(address.concat('work orders'))}</h1>
                <IconButton type="solid" onClick={() => openTunnel(1)}>
                   <AddIcon color="#fff" size={24} />
                </IconButton>

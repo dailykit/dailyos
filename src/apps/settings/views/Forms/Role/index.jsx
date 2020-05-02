@@ -37,7 +37,12 @@ import {
 } from '../styled'
 import { StyledAppItem, StyledPermissions } from './styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.forms.role.'
+
 const RoleForm = () => {
+   const { t } = useTranslation()
    const params = useParams()
    const history = useHistory()
    const { doesTabExists } = useTabs()
@@ -124,12 +129,12 @@ const RoleForm = () => {
                style={{ width: '320px' }}
                value={form.roleName || ''}
                onChange={e => handleChange(e)}
-               placeholder="Enter the role name"
+               placeholder={t(address.concat("enter the role name"))}
             />
-            <TextButton type="solid">Publish</TextButton>
+            <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
          </StyledHeader>
          <StyledSection>
-            <Text as="h2">Apps ({form.apps.length})</Text>
+            <Text as="h2">{t(address.concat('apps'))} ({form.apps.length})</Text>
             {form.apps.length > 0 &&
                form.apps.map(option => (
                   <StyledAppItem key={option.id}>
@@ -159,8 +164,8 @@ const RoleForm = () => {
                               {isOpen === option.title ? (
                                  <ArrowUpIcon color="#555B6E" size={24} />
                               ) : (
-                                 <ArrowDownIcon color="#555B6E" size={24} />
-                              )}
+                                    <ArrowDownIcon color="#555B6E" size={24} />
+                                 )}
                            </span>
                         </div>
                         <TextButton
@@ -170,7 +175,7 @@ const RoleForm = () => {
                               openPermissionsTunnel(1)
                            }}
                         >
-                           Configure
+                           {t(address.concat('configure'))}
                         </TextButton>
                      </div>
                      {isOpen === option.title && (
@@ -181,8 +186,8 @@ const RoleForm = () => {
                                     {permission.allowed ? (
                                        <TickIcon color="#28C1F7" size={20} />
                                     ) : (
-                                       <ClearIcon color="#FF5A52" size={20} />
-                                    )}
+                                          <ClearIcon color="#FF5A52" size={20} />
+                                       )}
                                  </span>
                                  <span>{permission.title}</span>
                               </li>
@@ -195,7 +200,7 @@ const RoleForm = () => {
                noIcon
                size="sm"
                type="secondary"
-               text="Select and Configure Apps"
+               text={t(address.concat("select and configure apps"))}
                onClick={() => openAppsTunnel(1)}
             />
          </StyledSection>
@@ -209,7 +214,7 @@ const RoleForm = () => {
                      >
                         <ClearIcon size={20} />
                      </IconButton>
-                     <Text as="h2">Configure Apps</Text>
+                     <Text as="h2">{t(address.concat('configure apps'))}</Text>
                   </div>
                   <TextButton
                      type="solid"
@@ -218,14 +223,14 @@ const RoleForm = () => {
                         setForm({ ...form, apps: [...selected] })
                      }}
                   >
-                     Add
+                     {t(address.concat('add'))}
                   </TextButton>
                </StyledTunnelHeader>
                <StyledTunnelMain>
                   <List>
                      <ListSearch
                         onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
+                        placeholder={t(address.concat("type what you're looking for")).concat('...')}
                      />
                      <ListOptions>
                         {list
@@ -269,12 +274,12 @@ const RoleForm = () => {
                         closePermissionsTunnel(1)
                      }}
                   >
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
                </StyledTunnelHeader>
                <StyledTunnelMain>
                   <Text as="title">
-                     Permissions for role: {form.roleName || 'Untitled'}
+                     {t(address.concat('permissions for role'))}: {form.roleName || 'Untitled'}
                   </Text>
                   <StyledPermissions>
                      {Object.keys(selectedApp).length > 0 &&

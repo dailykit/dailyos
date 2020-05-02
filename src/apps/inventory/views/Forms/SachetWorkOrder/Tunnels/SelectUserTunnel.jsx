@@ -11,7 +11,12 @@ import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
+
 export default function SelectUserTunnel({ close }) {
+   const { t } = useTranslation()
    const { sachetOrderDispatch } = useContext(SachetOrderContext)
 
    const [search, setSearch] = React.useState('')
@@ -34,7 +39,7 @@ export default function SelectUserTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select User"
+            title={t(address.concat("select user"))}
             next={() => {
                sachetOrderDispatch({ type: 'SELECT_USER', payload: current })
                close(3)
@@ -55,11 +60,11 @@ export default function SelectUserTunnel({ close }) {
                   }}
                />
             ) : (
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
-               />
-            )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(address.concat("type what you’re looking for"))}
+                  />
+               )}
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))

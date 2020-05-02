@@ -8,6 +8,10 @@ import { TunnelHeader, TunnelBody, StyledInputWrapper } from '../styled'
 
 import { StyledTable } from '../../components/Recipe/styled'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
+
 const reducer = (state, { type, payload }) => {
    console.log('Reducer called...')
    switch (type) {
@@ -64,6 +68,7 @@ const reducer = (state, { type, payload }) => {
 }
 
 const PriceConfigurationTunnel = ({ close }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(SimpleProductContext)
 
    const [_state, _dispatch] = React.useReducer(reducer, {
@@ -92,11 +97,11 @@ const PriceConfigurationTunnel = ({ close }) => {
                <span onClick={() => close(6)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Configure Pricing for Servings</span>
+               <span>{t(address.concat('configure pricing for servings'))}</span>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -104,12 +109,12 @@ const PriceConfigurationTunnel = ({ close }) => {
             <StyledTable full>
                <thead>
                   <tr>
-                     <th>Type</th>
-                     <th>Active</th>
+                     <th>{t(address.concat('type'))}</th>
+                     <th>{t(address.concat('active'))}</th>
                      {/* <th>Default</th> */}
-                     <th>Serving</th>
-                     <th>Price</th>
-                     <th>Discounted Price</th>
+                     <th>{t(address.concat('serving'))}</th>
+                     <th>{t(address.concat('price'))}</th>
+                     <th>{t(address.concat('discounted price'))}</th>
                   </tr>
                </thead>
                <tbody>
@@ -119,8 +124,8 @@ const PriceConfigurationTunnel = ({ close }) => {
                            <td>
                               {i === 0
                                  ? type === 'mealKit'
-                                    ? 'Meal Kit'
-                                    : 'Ready to Eat'
+                                    ? t(address.concat('meal kit'))
+                                    : t(address.concat('ready to eat'))
                                  : ''}
                            </td>
                            <td>

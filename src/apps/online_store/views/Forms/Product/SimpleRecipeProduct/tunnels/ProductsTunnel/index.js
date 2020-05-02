@@ -14,7 +14,12 @@ import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.productstunnel.'
+
 const ProductsTunnel = ({ close, products }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(SimpleProductContext)
 
    const [search, setSearch] = React.useState('')
@@ -46,11 +51,11 @@ const ProductsTunnel = ({ close, products }) => {
                <span onClick={() => close(5)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select Products to Add</span>
+               <span>{t(address.concat('select products to add'))}</span>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -58,7 +63,7 @@ const ProductsTunnel = ({ close, products }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(address.concat("type what you’re looking for"))}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>

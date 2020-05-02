@@ -33,7 +33,12 @@ import SelectPackagingTunnel from './Tunnels/SelectPackagingTunnel'
 import SelectLabelTemplateTunnel from './Tunnels/SelectLabelTemplateTunnel'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.sachetworkorder.'
+
 export default function SachetWorkOrder() {
+   const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
    const [sachetOrderState, sachetOrderDispatch] = useReducer(
       reducers,
@@ -77,40 +82,40 @@ export default function SachetWorkOrder() {
                >
                   {/* TODO: add text here for input item */}
                   <Text as="h1">
-                     Work Order{' '}
+                     {t(address.concat('work order'))}{' '}
                      {sachetOrderState.supplierItem?.title &&
                         `- ${sachetOrderState.supplierItem.title}`}
                   </Text>
                </div>
 
                <FormActions>
-                  <TextButton onClick={() => {}} type="solid">
-                     Publish
+                  <TextButton onClick={() => { }} type="solid">
+                     {t(address.concat('publish'))}
                   </TextButton>
                </FormActions>
             </FormHeading>
 
             <StyledForm style={{ padding: '0px 60px' }}>
-               <Text as="title">Select supplier item</Text>
+               <Text as="title">{t(address.concat('select supplier item'))}</Text>
                {sachetOrderState.supplierItem?.title ? (
                   <ItemCard
                      title={sachetOrderState.supplierItem.title}
                      edit={() => openTunnel(1)}
                   />
                ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text="Select Supplier Item"
-                     onClick={e => openTunnel(1)}
-                  />
-               )}
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat("select supplier item"))}
+                        onClick={e => openTunnel(1)}
+                     />
+                  )}
 
                <br />
 
                {sachetOrderState.supplierItem?.title && (
                   <>
-                     <Text as="title">Input Bulk item</Text>
+                     <Text as="title">{t(address.concat('input bulk item'))}</Text>
                      {sachetOrderState.inputItemProcessing?.title ? (
                         <ItemCard
                            title={sachetOrderState.inputItemProcessing.title}
@@ -121,13 +126,13 @@ export default function SachetWorkOrder() {
                            edit={() => openTunnel(5)}
                         />
                      ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text="Select Input Bulk Item"
-                           onClick={() => openTunnel(5)}
-                        />
-                     )}
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(address.concat("select input bulk item"))}
+                              onClick={() => openTunnel(5)}
+                           />
+                        )}
                   </>
                )}
 
@@ -135,7 +140,7 @@ export default function SachetWorkOrder() {
 
                {sachetOrderState.inputItemProcessing?.title && (
                   <>
-                     <Text as="title">Output Sachet item</Text>
+                     <Text as="title">{t(address.concat('output sachet item'))}</Text>
                      {sachetOrderState.outputSachet?.title ? (
                         <ItemCard
                            title={sachetOrderState.outputSachet.title}
@@ -144,13 +149,13 @@ export default function SachetWorkOrder() {
                            edit={() => openTunnel(2)}
                         />
                      ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text="Select Output Sachet Item"
-                           onClick={e => openTunnel(2)}
-                        />
-                     )}
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(address.concat("select output sachet item"))}
+                              onClick={e => openTunnel(2)}
+                           />
+                        )}
                   </>
                )}
 
@@ -164,6 +169,7 @@ export default function SachetWorkOrder() {
 }
 
 function Configurator({ open }) {
+   const { t } = useTranslation()
    const { sachetOrderState, sachetOrderDispatch } = useContext(
       SachetOrderContext
    )
@@ -174,7 +180,7 @@ function Configurator({ open }) {
       <>
          <Spacer />
 
-         <Text as="title">Enter Number of Sachets</Text>
+         <Text as="title">{t(address.concat('enter number of sachets'))}</Text>
          <br />
          <FlexContainer
             style={{ width: '50%', justifyContent: 'space-between' }}
@@ -208,11 +214,11 @@ function Configurator({ open }) {
             <div>
                {sachetOrderState.sachetQuantity && (
                   <>
-                     <Text as="subtitle">Suggested committed quantity</Text>
+                     <Text as="subtitle">{t(address.concat('suggested committed quantity'))}</Text>
                      <Text as="title">
                         {Math.round(
                            sachetOrderState.sachetQuantity *
-                              +sachetOrderState.outputSachet.quantity
+                           +sachetOrderState.outputSachet.quantity
                         )}
                      </Text>
                   </>
@@ -222,7 +228,7 @@ function Configurator({ open }) {
 
          <br />
 
-         <Text as="title">Packaging</Text>
+         <Text as="title">{t(address.concat('packaging'))}</Text>
 
          <>
             {sachetOrderState.packaging?.title ? (
@@ -231,18 +237,18 @@ function Configurator({ open }) {
                   edit={() => open(6)}
                />
             ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text="Select packaging"
-                  onClick={e => open(6)}
-               />
-            )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat("select packaging"))}
+                     onClick={e => open(6)}
+                  />
+               )}
          </>
 
          <br />
 
-         <Text as="title">Label Template</Text>
+         <Text as="title">{t(address.concat('label template'))}</Text>
 
          <>
             {sachetOrderState.labelTemplates[0]?.title ? (
@@ -253,18 +259,18 @@ function Configurator({ open }) {
                   edit={() => open(7)}
                />
             ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text="Select Label Template"
-                  onClick={e => open(7)}
-               />
-            )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat("select label template"))}
+                     onClick={e => open(7)}
+                  />
+               )}
          </>
 
          <br />
 
-         <Text as="title">User Assigned</Text>
+         <Text as="title">{t(address.concat('user assigned'))}</Text>
 
          <>
             {sachetOrderState.assignedUser?.title ? (
@@ -273,19 +279,19 @@ function Configurator({ open }) {
                   edit={() => open(3)}
                />
             ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text="Select and assign user to work"
-                  onClick={e => open(3)}
-               />
-            )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat("select and assign user to work"))}
+                     onClick={e => open(3)}
+                  />
+               )}
          </>
 
          <br />
          <br />
 
-         <Text as="title">Scheduled On</Text>
+         <Text as="title">{t(address.concat('scheduled on'))}</Text>
          <br />
 
          <Input
@@ -300,7 +306,7 @@ function Configurator({ open }) {
                setAssignedDate(e.target.value)
             }}
             type="datetime-local"
-            placeholder="Date (mm/dd/yyyy)"
+            placeholder={t(address.concat("date (mm/dd/yyyy)"))}
             onBlur={() => {
                sachetOrderDispatch({
                   type: 'SET_ASSIGNED_DATE',
@@ -312,7 +318,7 @@ function Configurator({ open }) {
          <br />
 
          <>
-            <Text as="title">Station Assigned</Text>
+            <Text as="title">{t(address.concat('station assigned'))}</Text>
 
             {sachetOrderState.selectedStation?.title ? (
                <ItemCard
@@ -320,13 +326,13 @@ function Configurator({ open }) {
                   edit={() => open(4)}
                />
             ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text="Select and assign station to route to"
-                  onClick={e => open(4)}
-               />
-            )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat("select and assign station to route to"))}
+                     onClick={e => open(4)}
+                  />
+               )}
          </>
          <br />
       </>

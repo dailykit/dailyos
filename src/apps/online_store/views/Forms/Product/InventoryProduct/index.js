@@ -36,7 +36,12 @@ import {
    INVENTORY_PRODUCTS,
 } from '../../../../graphql'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.'
+
 export default function InventoryProduct() {
+   const { t } = useTranslation()
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
    const [items, setItems] = React.useState({
@@ -199,7 +204,7 @@ export default function InventoryProduct() {
             <StyledHeader>
                <div>
                   <Input
-                     label="Product Name"
+                     label={t(address.concat("product name"))}
                      type="text"
                      name="name"
                      value={title}
@@ -218,11 +223,11 @@ export default function InventoryProduct() {
                      style={{ margin: '0px 10px' }}
                      onClick={save}
                   >
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
 
                   <TextButton type="solid" style={{ margin: '0px 10px' }}>
-                     Publish
+                     {t(address.concat('publish'))}
                   </TextButton>
                </div>
             </StyledHeader>

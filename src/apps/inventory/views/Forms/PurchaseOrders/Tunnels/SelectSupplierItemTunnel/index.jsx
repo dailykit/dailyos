@@ -15,7 +15,12 @@ import {
    Spacer,
 } from '../../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.purchaseorders.tunnels.selectsupplieritemtunnel.'
+
 export default function AddressTunnel({ close }) {
+   const { t } = useTranslation()
    const { purchaseOrderDispatch } = useContext(PurchaseOrderContext)
    const [search, setSearch] = useState('')
 
@@ -28,7 +33,7 @@ export default function AddressTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Supplier Item"
+            title={t(address.concat("select supplier item"))}
             next={() => {
                purchaseOrderDispatch({
                   type: 'ADD_SUPPLIER_ITEM',
@@ -46,11 +51,11 @@ export default function AddressTunnel({ close }) {
             {Object.keys(current).length > 0 ? (
                <ListItem type="SSL1" title={current.title} />
             ) : (
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
-               />
-            )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(address.concat("type what you’re looking for"))}
+                  />
+               )}
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))
