@@ -11,6 +11,25 @@ export const SUPPLIERS = gql`
    }
 `
 
+export const MASTER_PROCESSINGS = gql`
+   query {
+      masterProcessings {
+         id
+         name
+         description
+      }
+   }
+`
+export const MASTER_ALLERGENS = gql`
+   query {
+      masterAllergens {
+         id
+         name
+         description
+      }
+   }
+`
+
 export const SUPPLIER = gql`
    query Supplier($id: Int!) {
       supplier(id: $id) {

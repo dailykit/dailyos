@@ -3,6 +3,7 @@ import React from 'react'
 export const ItemContext = React.createContext()
 
 export const state = {
+   id: null,
    form_meta: {
       shipped: false,
    },
@@ -30,6 +31,7 @@ export const state = {
       value: '',
    },
    processing: {
+      id: null,
       name: '',
       par_level: {
          value: '',
@@ -60,16 +62,22 @@ export const state = {
 
 export const reducer = (state, { type, payload }) => {
    switch (type) {
+      case 'ADD_ITEM_ID':
+         return { ...state, id: payload }
       case 'META': {
          return {
             ...state,
+            form_meta: {
+               ...state.form_meta,
+               [payload.name]: payload.value,
+            },
             processing: { ...state.processing, shipped: true },
          }
       }
       case 'SUPPLIER': {
          return {
             ...state,
-            supplier: payload.supplier,
+            supplier: payload,
          }
       }
       case 'TITLE': {
@@ -134,8 +142,10 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               name: payload.value,
+               name: payload.name,
+               processingId: payload.id,
                sachets: [],
+               shipped: true,
             },
          }
       }
@@ -225,9 +235,12 @@ export const reducer = (state, { type, payload }) => {
          )
 
          if (index >= 0) {
-            newDerivedProcessings.splice(index, 1, payload)
+            newDerivedProcessings.splice(index, 1, {
+               ...payload,
+               title: payload.name,
+            })
          } else {
-            newDerivedProcessings.push(payload)
+            newDerivedProcessings.push({ ...payload, title: payload.name })
          }
 
          return { ...state, derivedProcessings: newDerivedProcessings }
@@ -237,6 +250,7 @@ export const reducer = (state, { type, payload }) => {
 
       case 'CONFIGURE_DERIVED_PROCESSING':
          const {
+            id,
             par,
             parUnit,
             maxInventoryLevel,
@@ -254,6 +268,7 @@ export const reducer = (state, { type, payload }) => {
          )
          configuredDerivedProcessings.splice(activeConfigurable, 1, {
             ...state.configurable,
+            id,
             par_level: { unit: parUnit, value: par },
             max_inventory_level: {
                unit: maxInventoryUnit,
@@ -281,14 +296,14 @@ export const reducer = (state, { type, payload }) => {
             )
             if (index >= 0) {
                sachets.splice(index, 1, {
-                  id: index + 1,
+                  id: payload.id,
                   quantity: payload.quantity,
                   parLevel: payload.par,
                   maxInventoryLevel: payload.maxInventoryLevel,
                })
             } else {
                sachets.push({
-                  id: sachets.length,
+                  id: payload.id,
                   quantity: payload.quantity,
                   parLevel: payload.par,
                   maxInventoryLevel: payload.maxInventoryLevel,
@@ -314,14 +329,14 @@ export const reducer = (state, { type, payload }) => {
          )
          if (sachetIndex >= 0) {
             newSachetsList.splice(sachetIndex, 1, {
-               id: sachetIndex + 1,
+               id: payload.id,
                quantity: payload.quantity,
                parLevel: payload.par,
                maxInventoryLevel: payload.maxInventoryLevel,
             })
          } else {
             newSachetsList.push({
-               id: newSachetsList.length,
+               id: payload.id,
                quantity: payload.quantity,
                parLevel: payload.par,
                maxInventoryLevel: payload.maxInventoryLevel,
@@ -377,6 +392,9 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             configurable: { ...state.configurable, nutrients },
          }
+
+      case 'ADD_PROCESSING':
+         return { ...state, processing: { ...state.processing, id: payload } }
       default:
          return state
    }

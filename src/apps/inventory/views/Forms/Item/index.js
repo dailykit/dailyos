@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useQuery } from '@apollo/react-hooks'
 
 import {
    Input,
@@ -9,7 +10,14 @@ import {
    Tunnels,
    Tunnel,
    useTunnel,
+   Loader,
 } from '@dailykit/ui'
+
+import {
+   SUPPLIERS,
+   MASTER_PROCESSINGS,
+   MASTER_ALLERGENS,
+} from '../../../graphql'
 
 // Tunnels
 import {
@@ -49,66 +57,34 @@ import AddIcon from '../../../../../shared/assets/icons/Add'
 export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
-   const [suppliers, setSuppliers] = React.useState([
-      {
-         id: 1,
-         supplier: { title: 'Swiggy', img: '' },
-         contact: { title: 'Ajay Singh', img: '' },
-      },
-      {
-         id: 2,
-         supplier: { title: 'Zomato', img: '' },
-         contact: { title: 'Praveen Bisht', img: '' },
-      },
-      {
-         id: 3,
-         supplier: { title: 'Food Panda', img: '' },
-         contact: { title: 'Sanjay Sharma', img: '' },
-      },
-      {
-         id: 4,
-         supplier: { title: 'Uber Eats', img: '' },
-         contact: { title: 'Arjun Negi', img: '' },
-      },
-   ])
-   const [processings, setProcessings] = React.useState([
-      {
-         id: 1,
-         title: 'Chopped',
-      },
-      {
-         id: 2,
-         title: 'Mashed',
-      },
-      {
-         id: 3,
-         title: 'Raw',
-      },
-   ])
-   const [allergens, setAllergens] = React.useState([
-      {
-         id: 1,
-         title: 'ALG 1',
-      },
-      {
-         id: 2,
-         title: 'ALG 2',
-      },
-      {
-         id: 3,
-         title: 'ALG 3',
-      },
-   ])
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
+   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+
+   const { loading: processingsLoading, data: processingData } = useQuery(
+      MASTER_PROCESSINGS
+   )
+
+   const { loading: allergensLoading, data: allergensData } = useQuery(
+      MASTER_ALLERGENS
+   )
+
+   if (supplierLoading || processingsLoading || allergensLoading)
+      return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <SuppliersTunnel
-                  close={() => closeTunnel(1)}
-                  next={() => openTunnel(2)}
-                  suppliers={suppliers}
+                  close={closeTunnel}
+                  open={openTunnel}
+                  suppliers={supplierData?.suppliers?.map(supplier => ({
+                     id: supplier.id,
+                     title: supplier.name,
+                     description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
+                  }))}
+                  rawSuppliers={supplierData.suppliers}
                />
             </Tunnel>
             <Tunnel layer={2}>
@@ -119,9 +95,15 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel layer={3}>
                <ProcessingTunnel
-                  close={() => closeTunnel(3)}
-                  next={() => openTunnel(4)}
-                  processings={processings}
+                  close={closeTunnel}
+                  open={openTunnel}
+                  processings={processingData?.masterProcessings?.map(
+                     processing => ({
+                        id: processing.id,
+                        title: processing.name,
+                     })
+                  )}
+                  rawProcessings={processingData?.masterProcessings}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
@@ -130,13 +112,23 @@ export default function ItemForm() {
             <Tunnel layer={5}>
                <AllergensTunnel
                   close={() => closeTunnel(5)}
-                  allergens={allergens}
+                  allergens={allergensData?.masterAllergens?.map(allergen => ({
+                     id: allergen.id,
+                     title: allergen.name,
+                  }))}
                />
             </Tunnel>
             <Tunnel layer={6}>
                <SelectDerivedProcessingTunnel
                   next={openTunnel}
                   close={closeTunnel}
+                  processings={processingData?.masterProcessings?.map(
+                     processing => ({
+                        id: processing.id,
+                        title: processing.name,
+                     })
+                  )}
+                  rawProcessings={processingData?.masterProcessings}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
@@ -150,6 +142,10 @@ export default function ItemForm() {
                <AllergensTunnelForDerivedProcessing
                   open={openTunnel}
                   close={closeTunnel}
+                  allergens={allergensData?.masterAllergens?.map(allergen => ({
+                     id: allergen.id,
+                     title: allergen.name,
+                  }))}
                />
             </Tunnel>
             <Tunnel layer={9}>
@@ -168,8 +164,10 @@ export default function ItemForm() {
                         <span> {state.sku} </span>
                      </StyledInfo>
                      <StyledSupplier>
-                        <span>{state.supplier.supplier.title} </span>
-                        <span>{state.supplier.contact.title} </span>
+                        <span>{state.supplier.name} </span>
+                        <span>
+                           {`${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})`}
+                        </span>
                      </StyledSupplier>
                   </>
                )}
@@ -266,7 +264,7 @@ export default function ItemForm() {
                               alignItems: 'center',
                            }}
                         >
-                           <Text as="title">Prcoessings</Text>
+                           <Text as="title">Processings</Text>
                            <IconButton
                               onClick={() => openTunnel(6)}
                               type="ghost"
@@ -275,7 +273,7 @@ export default function ItemForm() {
                            </IconButton>
                         </FlexContainer>
 
-                        {state.processing?.name?.title && (
+                        {state.processing?.name && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -292,7 +290,7 @@ export default function ItemForm() {
                                     })
                                  }}
                               >
-                                 <h3>{state.processing.name.title}</h3>
+                                 <h3>{state.processing.name}</h3>
                                  <Text as="subtitle">on hand: 0gm</Text>
                                  <Text as="subtitle">
                                     shelf life:{' '}
@@ -318,11 +316,11 @@ export default function ItemForm() {
                                        setActive(false)
                                        dispatch({
                                           type: 'SET_ACTIVE_PROCESSING',
-                                          payload: procs,
+                                          payload: {...procs, name: procs.title},
                                        })
                                     }}
                                  >
-                                    <h3>{procs.name.title}</h3>
+                                    <h3>{procs.title}</h3>
                                     <Text as="subtitle">on hand: 0gm</Text>
                                     <Text as="subtitle">
                                        shelf life:{' '}
@@ -341,7 +339,7 @@ export default function ItemForm() {
                               minHeight: '500px',
                            }}
                         >
-                           {state.activeProcessing?.name?.title ? (
+                           {state.activeProcessing?.name ? (
                               <ProcessingView open={openTunnel} />
                            ) : (
                               <Text as="title">

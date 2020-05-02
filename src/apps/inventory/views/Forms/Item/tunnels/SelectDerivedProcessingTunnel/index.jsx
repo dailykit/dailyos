@@ -15,23 +15,26 @@ import {
    Spacer,
 } from '../../../../../components'
 
-export default function SelectDerivedProcessingTunnel({ close, next }) {
+export default function SelectDerivedProcessingTunnel({
+   close,
+   next,
+   processings,
+   rawProcessings,
+}) {
    const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList([
-      { id: 1, name: { id: 1, title: 'Potato' } },
-      { id: 2, name: { id: 2, title: 'Tomato' } },
-      { id: 3, name: { id: 3, title: 'Onion' } },
-      { id: 4, name: { id: 4, title: 'Ginger' } },
-   ])
+   const [list, current, selectOption] = useSingleList(processings)
 
    return (
       <TunnelContainer>
          <TunnelHeader
             title="Select Processing"
             next={() => {
-               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
+               const payload = rawProcessings.find(
+                  processing => processing.id === current.id
+               )
+               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload })
                dispatch({
                   type: 'ADD_CONFIGURABLE_PROCESSING',
                   payload: current,
@@ -47,7 +50,7 @@ export default function SelectDerivedProcessingTunnel({ close, next }) {
 
          <List>
             {Object.keys(current).length > 0 ? (
-               <ListItem type="SSL1" title={current.name.title} />
+               <ListItem type="SSL1" title={current.title} />
             ) : (
                <ListSearch
                   onChange={value => setSearch(value)}
@@ -56,14 +59,12 @@ export default function SelectDerivedProcessingTunnel({ close, next }) {
             )}
             <ListOptions>
                {list
-                  .filter(option =>
-                     option.name.title.toLowerCase().includes(search)
-                  )
+                  .filter(option => option.title.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
                         type="SSL1"
                         key={option.id}
-                        title={option.name.title}
+                        title={option.title}
                         isActive={option.id === current.id}
                         onClick={() => selectOption('id', option.id)}
                      />

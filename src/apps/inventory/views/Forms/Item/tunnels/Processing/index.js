@@ -1,48 +1,50 @@
-import React from 'react'
-
+import React, { useContext } from 'react'
 import {
-   useSingleList,
    List,
    ListItem,
    ListOptions,
    ListSearch,
+   useSingleList,
 } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
 
 import { ItemContext } from '../../../../../context/item'
 
-import { TunnelHeader, TunnelBody } from '../styled'
+import {
+   TunnelContainer,
+   TunnelHeader,
+   Spacer,
+} from '../../../../../components'
 
-export default function ProcessingTunnel({ close, next, processings }) {
+export default function SupplierTunnel({
+   close,
+   processings,
+   open,
+   rawProcessings,
+}) {
+   const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
-   const { state, dispatch } = React.useContext(ItemContext)
-   const [list, current, selectOption] = useSingleList(processings)
 
-   const selectProcessing = processing => {
-      dispatch({
-         type: 'PROCESSING',
-         payload: { value: processing },
-      })
-      dispatch({
-         type: 'META',
-         payload: { name: 'shipped', value: true },
-      })
-      close()
-      next()
-   }
+   const [list, current, selectOption] = useSingleList(processings)
 
    return (
       <>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>Select Processing as item shipped</span>
-            </div>
-         </TunnelHeader>
-         <TunnelBody>
+         <TunnelContainer>
+            <TunnelHeader
+               title="Select Processing as Item Shipped"
+               next={() => {
+                  const payload = rawProcessings.find(
+                     processing => processing.id === current.id
+                  )
+                  dispatch({ type: 'PROCESSING', payload })
+                  close(3)
+                  open(4)
+               }}
+               close={() => close(3)}
+               nextAction="Next"
+            />
+
+            <Spacer />
+
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
@@ -63,12 +65,12 @@ export default function ProcessingTunnel({ close, next, processings }) {
                            key={option.id}
                            title={option.title}
                            isActive={option.id === current.id}
-                           onClick={() => selectProcessing(option)}
+                           onClick={() => selectOption('id', option.id)}
                         />
                      ))}
                </ListOptions>
             </List>
-         </TunnelBody>
+         </TunnelContainer>
       </>
    )
 }

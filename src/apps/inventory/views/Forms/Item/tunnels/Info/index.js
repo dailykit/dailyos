@@ -1,6 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
 
-import { TextButton, Input } from '@dailykit/ui'
+// Mutations
+import { CREATE_SUPPLIER_ITEM } from '../../../../../graphql'
+
+import { TextButton, Input, Loader } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
@@ -19,9 +24,46 @@ import {
 
 export default function InfoTunnel({ close, next }) {
    const { state, dispatch } = React.useContext(ItemContext)
+   const [loading, setLoading] = useState(false)
+
+   const [createSupplierItem] = useMutation(CREATE_SUPPLIER_ITEM)
+
+   const handleNext = async () => {
+      setLoading(true)
+
+      if (
+         !state.title ||
+         !state.supplier.id ||
+         !state.unit_quantity.value ||
+         !state.unit_quantity.unit
+      )
+         return setLoading(false)
+
+      const res = await createSupplierItem({
+         variables: {
+            name: state.title,
+            supplierId: state.supplier.id,
+            unit: state.unit_quantity.unit,
+            unitSize: +state.unit_quantity.value,
+         },
+      })
+
+      if (res?.data?.createSupplierItem) {
+         setLoading(false)
+         dispatch({
+            type: 'ADD_ITEM_ID',
+            payload: res?.data?.createSupplierItem?.returning[0]?.id,
+         })
+         close()
+         next()
+         toast.success('Item created!')
+      }
+   }
+
+   if (loading) return <Loader />
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={close}>
@@ -30,13 +72,7 @@ export default function InfoTunnel({ close, next }) {
                <span>Item Information</span>
             </div>
             <div>
-               <TextButton
-                  type="solid"
-                  onClick={() => {
-                     close()
-                     next()
-                  }}
-               >
+               <TextButton type="solid" onClick={handleNext}>
                   Next
                </TextButton>
             </div>
@@ -102,8 +138,8 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="gms">gms</option>
-                           <option value="kgs">kgs</option>
+                           <option value="gram">gram</option>
+                           <option value="loaf">loaf</option>
                         </StyledSelect>
                      </InputWrapper>
                      <Input
@@ -242,6 +278,6 @@ export default function InfoTunnel({ close, next }) {
                <Highlight></Highlight>
             </StyledRow>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

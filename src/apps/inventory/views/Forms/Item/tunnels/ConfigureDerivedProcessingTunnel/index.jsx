@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import {
    Input,
    ButtonTile,
@@ -7,6 +8,8 @@ import {
    IconButton,
    Text,
 } from '@dailykit/ui'
+
+import { CREATE_BULK_ITEM } from '../../../../../graphql'
 
 import { ItemContext } from '../../../../../context/item'
 
@@ -33,10 +36,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
       dispatch,
    } = useContext(ItemContext)
 
+   const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
+
    const [par, setPar] = useState('')
-   const [parUnit, setParUnit] = useState('gms')
+   const [parUnit, setParUnit] = useState('gram')
    const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
-   const [maxInventoryUnit, setMaxInventoryUnit] = useState('gms')
+   const [maxInventoryUnit, setMaxInventoryUnit] = useState('gram')
    const [laborTime, setLaborTime] = useState('')
    const [laborUnit, setLaborUnit] = useState('hours')
    const [yieldPercentage, setYieldPercentage] = useState('')
@@ -44,28 +49,41 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
    const [shelfLifeUnit, setShelfLifeUnit] = useState('hours')
    const [bulkDensity, setBulkDensity] = useState('')
 
+   const handleNext = async () => {
+      const res = await createBulkItem({
+         variables: {
+            processingName: state.configurable.title,
+            itemId: state.id,
+            unit: parUnit,
+         },
+      })
+
+      if (res?.data?.createBulkItem) {
+         dispatch({
+            type: 'CONFIGURE_DERIVED_PROCESSING',
+            payload: {
+               id: res?.data?.createBulkItem?.returning[0].id,
+               par,
+               parUnit,
+               maxInventoryLevel,
+               maxInventoryUnit,
+               laborTime,
+               laborUnit,
+               yieldPercentage,
+               shelfLife,
+               shelfLifeUnit,
+               bulkDensity,
+            },
+         })
+      }
+      close(7)
+   }
+
    return (
       <TunnelContainer>
          <TunnelHeader
             title="Configure Processing"
-            next={() => {
-               dispatch({
-                  type: 'CONFIGURE_DERIVED_PROCESSING',
-                  payload: {
-                     par,
-                     parUnit,
-                     maxInventoryLevel,
-                     maxInventoryUnit,
-                     laborTime,
-                     laborUnit,
-                     yieldPercentage,
-                     shelfLife,
-                     shelfLifeUnit,
-                     bulkDensity,
-                  },
-               })
-               close(7)
-            }}
+            next={handleNext}
             close={() => close(7)}
             nextAction="Save"
          />
@@ -91,8 +109,8 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                      defaultValue={parUnit}
                      onChange={e => setParUnit(e.target.value)}
                   >
-                     <option value="gms">gms</option>
-                     <option value="kgs">kgs</option>
+                     <option value="gram">gram</option>
+                     <option value="loaf">loaf</option>
                   </StyledSelect>
                </InputWrapper>
                <InputWrapper>
@@ -113,8 +131,8 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                      defaultValue={maxInventoryUnit}
                      onChange={e => setMaxInventoryUnit(e.target.value)}
                   >
-                     <option value="gms">gms</option>
-                     <option value="kgs">kgs</option>
+                     <option value="gram">gram</option>
+                     <option value="loaf">loaf</option>
                   </StyledSelect>
                </InputWrapper>
             </StyledInputGroup>
