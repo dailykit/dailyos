@@ -34,7 +34,12 @@ import {
 } from '../styled'
 import { CREATE_INGREDIENT, INGREDIENTS } from '../../../graphql'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.listings.ingredientslisting.'
+
 const IngredientsListing = () => {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const { loading, error, data } = useQuery(INGREDIENTS)
    const [search, setSearch] = React.useState('')
@@ -81,7 +86,7 @@ const IngredientsListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <h1>Ingredients</h1>
+            <h1>{t(address.concat('ingredients'))}</h1>
             <StyledPagination>
                {data?.ingredients?.length}
                <span disabled={true}>
@@ -93,10 +98,10 @@ const IngredientsListing = () => {
             </StyledPagination>
          </StyledHeader>
          <StyledTableHeader>
-            <p>filters</p>
+            <p>{t(address.concat('filters'))}</p>
             <StyledTableActions>
                <SearchBox
-                  placeholder="Search"
+                  placeholder={t(address.concat("search"))}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                />
@@ -113,13 +118,13 @@ const IngredientsListing = () => {
                         {' '}
                         <Checkbox checked={false} />{' '}
                      </TableCell>
-                     <TableCell> Name </TableCell>
-                     <TableCell> Variant </TableCell>
-                     <TableCell> Quantity </TableCell>
-                     <TableCell> Modes of Fulfillment </TableCell>
-                     <TableCell> Stations </TableCell>
-                     <TableCell> Supplier Item </TableCell>
-                     <TableCell> Availability </TableCell>
+                     <TableCell> {t(address.concat('name'))} </TableCell>
+                     <TableCell> {t(address.concat('variant'))} </TableCell>
+                     <TableCell> {t(address.concat('quantity'))} </TableCell>
+                     <TableCell> {t(address.concat('modes of fulfillment'))} </TableCell>
+                     <TableCell> {t(address.concat('stations'))} </TableCell>
+                     <TableCell> {t(address.concat('supplier item'))} </TableCell>
+                     <TableCell> {t(address.concat('availability'))} </TableCell>
                      <TableCell> </TableCell>
                   </TableRow>
                </TableHead>

@@ -9,6 +9,7 @@
       "kg": "kg",
       "kgs": "kgs",
       "hours": "hours",
+      "mins": "mins",
       "minutes": "minutes",
       "days": "days",
       "weeks": "weeks",
@@ -319,7 +320,7 @@
                "recipes": "Recipes",
                "select processings": "Select Processings",
                "save": "Save",
-               "type what you're looking for": "type what you're looking for"
+               "type what you're looking for": "type what you're looking for..."
             },
             "recipes": {},
             "sachet": {
@@ -341,6 +342,7 @@
                "available: 12/40 pkt": "Available: 12/40 pkt",
                "modes of fulfillment": "Modes of Fulfillment",
                "inventory": "Inventory",
+               "add sachet": "Add Sachet",
                "add sachet for processing": "Add Sachet for Processing",
                "save": "Save",
                "enter quantity": "Enter Quantity",
@@ -348,10 +350,20 @@
                "mode of fulfillment": "Mode of Fulfillment",
                "station": "Station",
                "supplier item": "Supplier Item",
-               "accuracy": "Accuracy"
+               "accuracy": "Accuracy",
+               "packaging": "Packaging",
+               "label": "Label",
+               "select sub title": "Select Sub Title",
+               "select station for": "Select Station for",
+               "type what you're looking for": "type what you're looking for...",
+               "select supplier items for": "Select Supplier Items for",
+               "add packaging for processing": "Add Packaging For Processing",
+               "add label template for processing": "Add Label template for Processing"
             },
             "styled": {},
-            "tabs": {}
+            "tabs": {
+               "close tab": "Close Tab"
+            }
          },
          "sections": {
             "header": {},
@@ -396,29 +408,34 @@
                      "recipe description": "Recipe Description",
                      "cooking time (in minutes)": "Cooking Time (in minutes)",
                      "fill all of the fields above!": "Fill all of the fields above!",
-                     "type what you're looking for ": "type what you're looking for "
+                     "type what you're looking for": "type what you're looking for..."
                   },
                   "ingredients": "Ingredients",
                   "ingredient name": "Ingredient Name",
                   "processing": "Processing",
                   "select ingredients": "Select Ingredients",
                   "select sachet": "Select Sachet",
+                  "slip name": "Slip Name",
+                  "procedure title": "Procedure Title",
                   "cooking process": "Cooking Process",
-                  "title": "Title",
+                  "step title": "Step Title",
+                  "add a step": "Add a Step",
                   "description": "Description",
+                  "add procedure": "Add Procedure",
                   "select photos for this step": "Select Photos for this Step",
                   "upto 1mb | only JPGs and PNGs are allowed.": "upto 1MB | only JPGs and PNGs are allowed.",
                   "recipe name": "Recipe Name",
                   "save": "Save",
+                  "author": "Author",
+                  "cuisine": "Cuisine",
                   "publish": "Publish",
                   "chef name": "Chef Name",
                   "add description": "Add Description",
                   "add photos to your recipe": "Add Photos to your recipe",
                   "upto 1MB": "upto 1MB",
-                  "only JPGs, PNGs and PDFs are allowed.": "only JPGs, PNGs and PDFs are allowed.",
+                  "only JPGs, PNGs and PDFs are allowed": "only JPGs, PNGs and PDFs are allowed.",
                   "utensils": "Utensils",
                   "cooking time": "Cooking Time",
-                  "mins": "mins",
                   "servings": "Servings",
                   "add servings": "Add Servings"
                }
@@ -443,6 +460,10 @@
                },
                "recipeslisting": {
                   "recipes": "Recipes",
+                  "name": "Name",
+                  "author": "Author",
+                  "# of servings": "# of Servings",
+                  "cooking time": "Cooking Time",
                   "pagination": "Pagination",
                   "filters": "Filters",
                   "recipe name": "Recipe Name",

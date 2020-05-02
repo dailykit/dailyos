@@ -8,7 +8,12 @@ import { IngredientsSection, Stats, CustomCrossButton } from './styled'
 import AddIcon from '../../../assets/icons/Add'
 import UserIcon from '../../../assets/icons/User'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function Servings({ open }) {
+   const { t } = useTranslation()
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
    console.log(recipeState)
 
@@ -21,7 +26,7 @@ export default function Servings({ open }) {
          <IngredientsSection>
             <Stats>
                <Text as="subtitle">
-                  Servings (
+                  {t(address.concat('servings'))} (
                   {recipeState.servings[0]?.value !== 0
                      ? recipeState.servings.length
                      : '0'}
@@ -49,14 +54,14 @@ export default function Servings({ open }) {
                         </CustomCrossButton>
                      </Tag>
                   ) : (
-                     <ButtonTile
-                        key={serving.id}
-                        as="button"
-                        type="secondary"
-                        text="Add Serving"
-                        onClick={() => open(1)}
-                     />
-                  )
+                        <ButtonTile
+                           key={serving.id}
+                           as="button"
+                           type="secondary"
+                           text={t(address.concat("add servings"))}
+                           onClick={() => open(1)}
+                        />
+                     )
                )}
             </TagGroup>
          </IngredientsSection>

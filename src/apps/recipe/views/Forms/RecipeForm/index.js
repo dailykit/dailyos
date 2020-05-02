@@ -29,7 +29,12 @@ import MetaView from './MetaView'
 import { CREATE_SIMPLE_RECIPE } from '../../../graphql'
 import { toast } from 'react-toastify'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function AddRecipeForm() {
+   const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [recipeState, recipeDispatch] = useReducer(
       recipeReducers,
@@ -164,7 +169,7 @@ export default function AddRecipeForm() {
             <Menu>
                <div>
                   <Input
-                     label="Recipe Name"
+                     label={t(address.concat("recipe name"))}
                      type="text"
                      name="recipeName"
                      value={recipeState.name}
@@ -179,7 +184,7 @@ export default function AddRecipeForm() {
                      style={{ margin: '0px 10px' }}
                      onClick={save}
                   >
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
 
                   <TextButton
@@ -187,7 +192,7 @@ export default function AddRecipeForm() {
                      type="solid"
                      style={{ margin: '0px 10px' }}
                   >
-                     Publish
+                     {t(address.concat('publish'))}
                   </TextButton>
                </RecipeActions>
             </Menu>
@@ -212,14 +217,14 @@ export default function AddRecipeForm() {
             <Container>
                <InputGrid>
                   <Input
-                     label="Author"
+                     label={t(address.concat("author"))}
                      type="text"
                      name="chef"
                      value={chefName}
                      onChange={e => setChefName(e.target.value)}
                   />
                   <Input
-                     label="Cuisine"
+                     label={t(address.concat("cuisine"))}
                      type="text"
                      name="cuisine"
                      value={cuisine}
@@ -231,17 +236,17 @@ export default function AddRecipeForm() {
                   <ButtonTile
                      as="button"
                      type="secondary"
-                     text="Add Description"
+                     text={t(address.concat("add description"))}
                      onClick={() => openTunnel(1)}
                   />
                )}
                <br />
                <ButtonTile
-                  onClick={() => {}}
+                  onClick={() => { }}
                   type="primary"
                   size="lg"
-                  text="Add photos to your recipe"
-                  helper="upto 1MB &#8226; only JPGs, PNGs, and PDFs are allowed."
+                  text={t(address.concat("add photos to your recipe"))}
+                  helper={t(address.concat("upto 1MB - only JPGs, PNGs, and PDFs are allowed"))}
                />
                <AddIngredients />
             </Container>

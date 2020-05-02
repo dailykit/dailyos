@@ -6,7 +6,12 @@ import { Context as RecipeContext } from '../../../context/recipe/index'
 import { IngredientsSection, Stats, InputWrapper } from './styled'
 import DeleteIcon from '../../../assets/icons/Delete'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function CookingSteps() {
+   const { t } = useTranslation()
    const {
       recipeState: { procedures },
       recipeDispatch,
@@ -16,7 +21,7 @@ export default function CookingSteps() {
       <>
          <IngredientsSection>
             <Stats>
-               <Text as="subtitle">Cooking Process</Text>
+               <Text as="subtitle">{t(address.concat('cooking process'))}</Text>
                <IconButton
                   type="ghost"
                   onClick={() => {
@@ -33,7 +38,7 @@ export default function CookingSteps() {
                      <InputWrapper>
                         <Input
                            type="text"
-                           placeholder="Procedure Title"
+                           placeholder={t(address.concat("procedure title"))}
                            name={`procedure-${index}-title`}
                            value={procedure.title}
                            onChange={e =>
@@ -62,7 +67,7 @@ export default function CookingSteps() {
                            <InputWrapper>
                               <Input
                                  type="text"
-                                 placeholder="Step Title"
+                                 placeholder={t(address.concat("step title"))}
                                  name={`step-${stepIndex}-title`}
                                  value={step.title}
                                  onChange={e => {
@@ -106,7 +111,7 @@ export default function CookingSteps() {
                         <br />
                         <Input
                            type="textarea"
-                           placeholder="Description"
+                           placeholder={t(address.concat("description"))}
                            name={`description-${stepIndex}-title`}
                            rows="3"
                            value={step.description}
@@ -126,7 +131,7 @@ export default function CookingSteps() {
                   ))}
                   <ButtonTile
                      type="secondary"
-                     text={`Add a Step`}
+                     text={t(address.concat('add a step'))}
                      onClick={() => {
                         recipeDispatch({
                            type: 'ADD_STEP',
@@ -139,7 +144,7 @@ export default function CookingSteps() {
             ))}
             <ButtonTile
                type="secondary"
-               text="Add Procedure"
+               text={t(address.concat("add procedure"))}
                onClick={() => {
                   recipeDispatch({
                      type: 'ADD_PROCEDURE',

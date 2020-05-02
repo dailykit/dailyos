@@ -28,7 +28,12 @@ import {
 
 import { RECIPES, CREATE_RECIPE } from '../../../graphql'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.listings.ingredientslisting.'
+
 const RecipesListing = () => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(Context)
    const addTab = (title, view) => {
       dispatch({
@@ -62,8 +67,8 @@ const RecipesListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <h1>Recipes</h1>
-            <p> Total: {data?.simpleRecipes.length} </p>
+            <h1>{t(address.concat('recipes'))}</h1>
+            <p> {t(address.concat('total'))}: {data?.simpleRecipes.length} </p>
          </StyledHeader>
          <StyledTableHeader>
             <p></p>
@@ -80,10 +85,10 @@ const RecipesListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell>Name</TableCell>
-                     <TableCell>Author</TableCell>
-                     <TableCell># of Servings</TableCell>
-                     <TableCell>Cooking Time</TableCell>
+                     <TableCell>{t(address.concat('name'))}</TableCell>
+                     <TableCell>{t(address.concat('author'))}</TableCell>
+                     <TableCell>{t(address.concat('# of servings'))}</TableCell>
+                     <TableCell>{t(address.concat('cooking time'))}</TableCell>
                      <TableCell></TableCell>
                   </TableRow>
                </TableHead>
@@ -95,7 +100,7 @@ const RecipesListing = () => {
                         <TableCell>
                            {recipe.simpleRecipeYields.length}
                         </TableCell>
-                        <TableCell>{recipe.cookingTime} mins.</TableCell>
+                        <TableCell>{recipe.cookingTime} {t('units.mins')}.</TableCell>
                         <TableCell></TableCell>
                      </TableRow>
                   ))}

@@ -7,7 +7,12 @@ import { TunnelContainer } from '../styled'
 
 import { TunnelHeader, Spacer } from '../../../../components/index'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.tunnels.'
+
 export default function AddServings({ close }) {
+   const { t } = useTranslation()
    const {
       recipeState: {
          pushableState: {
@@ -26,7 +31,7 @@ export default function AddServings({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Recipe Meta"
+            title={t(address.concat("add recipe meta"))}
             close={() => {
                close(1)
             }}
@@ -48,7 +53,7 @@ export default function AddServings({ close }) {
 
          <Input
             type="text"
-            placeholder="Utensils (add list of utensils with comma separated values)"
+            placeholder={t(address.concat("utensils (add list of utensils with comma separated values)"))}
             name="utensils"
             value={utensils}
             onChange={e => setUtensils(e.target.value)}
@@ -56,7 +61,7 @@ export default function AddServings({ close }) {
          <br />
          <Input
             type="textarea"
-            placeholder="Recipe Description"
+            placeholder={t(address.concat("recipe description"))}
             name="description"
             rows="3"
             value={description}
@@ -65,13 +70,13 @@ export default function AddServings({ close }) {
          <br />
          <Input
             type="text"
-            placeholder="Cooking Time (in minutes)"
+            placeholder={t(address.concat("cooking time (in minutes)"))}
             name="time"
             value={cookingTime}
             onChange={e => setCookingTime(e.target.value)}
          />
          <br />
-         <HelperText type="hint" message="Fill all of the fields above!" />
+         <HelperText type="hint" message={t(address.concat("fill all of the fields above!"))} />
       </TunnelContainer>
    )
 }

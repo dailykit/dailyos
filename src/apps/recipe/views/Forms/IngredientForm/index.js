@@ -39,14 +39,19 @@ import { Processings } from '../../../components'
 
 import { INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.ingredientform.'
+
 const IngredientForm = () => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(Context)
    const [ingredient, setIngredient] = React.useState({
       id: '',
       name: '',
       image: '',
    })
-   const {} = useQuery(INGREDIENT, {
+   const { } = useQuery(INGREDIENT, {
       variables: { ID: +state.current.ID },
       onCompleted: data => {
          console.log(data)
@@ -109,7 +114,7 @@ const IngredientForm = () => {
                   <Input
                      type="text"
                      label="Ingredient Name"
-                     placeholder="Untitled Ingredient"
+                     placeholder={t(address.concat("untitled ingredient"))}
                      name="ingredient"
                      value={ingredient.name}
                      onChange={e =>
@@ -120,9 +125,9 @@ const IngredientForm = () => {
                </InputWrapper>
                <ActionsWrapper>
                   <ComboButton type="ghost">
-                     <CodeIcon /> Open in editor
+                     <CodeIcon /> {t(address.concat('open in editor'))}
                   </ComboButton>
-                  <TextButton type="solid">Publish</TextButton>
+                  <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
                </ActionsWrapper>
             </StyledHeader>
          </StyledWrapper>
@@ -132,11 +137,11 @@ const IngredientForm = () => {
                   <StyledStatsContainer>
                      <StyledStat>
                         <h2>{0}</h2>
-                        <p>Processings</p>
+                        <p>{t(address.concat('processings'))}</p>
                      </StyledStat>
                      <StyledStat>
                         <h2>{0}</h2>
-                        <p> Sachets </p>
+                        <p> {t(address.concat('sachets'))} </p>
                      </StyledStat>
                   </StyledStatsContainer>
                   {ingredient.image?.length > 0 ? (
@@ -152,16 +157,16 @@ const IngredientForm = () => {
                         <img src={ingredient.image} alt="Ingredient" />
                      </ImageContainer>
                   ) : (
-                     <PhotoTileWrapper>
-                        <ButtonTile
-                           type="primary"
-                           size="sm"
-                           text="Add photo to your ingredient"
-                           helper="upto 1MB - only JPG, PNG, PDF allowed"
-                           onClick={() => openPhotoTunnel(1)}
-                        />
-                     </PhotoTileWrapper>
-                  )}
+                        <PhotoTileWrapper>
+                           <ButtonTile
+                              type="primary"
+                              size="sm"
+                              text={t(address.concat("add photo to your ingredient"))}
+                              helper={t(address.concat("upto 1MB - only JPG, PNG, PDF allowed"))}
+                              onClick={() => openPhotoTunnel(1)}
+                           />
+                        </PhotoTileWrapper>
+                     )}
                   <Tunnels tunnels={photoTunnel}>
                      <Tunnel layer={1}>
                         <StyledTunnelHeader>
@@ -172,7 +177,7 @@ const IngredientForm = () => {
                                  onClick={() => closePhotoTunnel(1)}
                               />
                               <h1>
-                                 Select Photo for ingredient: {ingredient.name}
+                                 {t(address.concat('select photo for ingredient'))}: {ingredient.name}
                               </h1>
                            </div>
                         </StyledTunnelHeader>
@@ -185,7 +190,7 @@ const IngredientForm = () => {
                                  )
                               }
                            >
-                              Add Dummy Photo
+                              {t(address.concat('add dummy photo'))}
                            </TextButton>
                         </StyledTunnelMain>
                      </Tunnel>
