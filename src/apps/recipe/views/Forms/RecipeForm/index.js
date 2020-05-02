@@ -65,7 +65,7 @@ export default function AddRecipeForm() {
             id: ing.id,
             isVisible: ing.isVisible,
             name: ing.name,
-            slipName: ing.name,
+            slipName: ing.slipName || ing.name,
             processing: {
                id: ing.processing.id,
                name: ing.processing.processingName,
@@ -101,6 +101,7 @@ export default function AddRecipeForm() {
          utensilsRequired: recipeState.pushableState.utensils,
          type: recipeState.pushableState.type,
          name: recipeState.name,
+         procedures: recipeState.procedures,
          ingredients,
          simpleRecipeYields: {
             data: servings,

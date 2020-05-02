@@ -14,6 +14,7 @@ import {
    TableCell,
    IconButton,
    Toggle,
+   Input,
 } from '@dailykit/ui'
 
 import { Context as RecipeContext } from '../../../context/recipe/index'
@@ -203,6 +204,7 @@ export default function AddIngredients() {
                               </TableCell>
                            ))}
                            <TableCell align="center">Visibility</TableCell>
+                           <TableCell align="center">Slip Name</TableCell>
                            <TableCell align="right"></TableCell>
                         </TableRow>
                      </TableHead>
@@ -270,6 +272,23 @@ export default function AddIngredients() {
                                           },
                                        })
                                     }
+                                 />
+                              </TableCell>
+                              <TableCell>
+                                 <Input
+                                    type="text"
+                                    placeholder="Slip Name"
+                                    name={`slip-${ingredient.id}`}
+                                    value={ingredient.slipName}
+                                    onChange={e => {
+                                       recipeDispatch({
+                                          type: 'SLIP_NAME',
+                                          payload: {
+                                             id: ingredient.id,
+                                             value: e.target.value,
+                                          },
+                                       })
+                                    }}
                                  />
                               </TableCell>
                               <TableCell align="right">

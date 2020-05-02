@@ -95,6 +95,7 @@ export const reducers = (state, { type, payload }) => {
             return {
                ...ing,
                isVisible: true,
+               slipName: ing.name,
             }
          })
          const newIngredients = [...state.ingredients, ...ingsToAdd]
@@ -105,6 +106,15 @@ export const reducers = (state, { type, payload }) => {
          const index = state.ingredients.findIndex(ing => ing.id === payload.id)
          const updatedIngs = state.ingredients
          updatedIngs[index].isVisible = !updatedIngs[index].isVisible
+         return {
+            ...state,
+            ingredients: updatedIngs,
+         }
+      }
+      case 'SLIP_NAME': {
+         const index = state.ingredients.findIndex(ing => ing.id === payload.id)
+         const updatedIngs = state.ingredients
+         updatedIngs[index].slipName = payload.value
          return {
             ...state,
             ingredients: updatedIngs,
