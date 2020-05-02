@@ -4,6 +4,9 @@ import uniqBy from 'lodash.uniqby'
 export const Context = React.createContext()
 
 export const state = {
+   meta: {
+      recentProcessingId: '',
+   },
    name: '',
    recipeType: { id: 2, title: 'Non-Vegetarian' },
    servings: [{ id: 1, value: 4 }],
@@ -129,7 +132,13 @@ export const reducers = (state, { type, payload }) => {
             1,
             currentIngredient
          )
-         return state
+         return {
+            ...state,
+            meta: {
+               ...state.meta,
+               recentProcessingId: payload.processing.id,
+            },
+         }
       }
       case 'SET_ACTIVE_SERVING': {
          return {
@@ -176,14 +185,14 @@ export const reducers = (state, { type, payload }) => {
             newState.sachets.splice(newState.sachets.indexOf(sachet), 1)
          })
 
-         const newPushableServings = newState.pushableState.servings.map(
-            serving => {
-               const newSachets = serving.sachets.filter(
-                  sachet => !sachet === sachet.id
-               )
-               return { ...serving, sachets: newSachets }
-            }
-         )
+         // const newPushableServings = newState.pushableState.servings.map(
+         //    serving => {
+         //       const newSachets = serving.sachets.filter(
+         //          sachet => !sachet === sachet.id
+         //       )
+         //       return { ...serving, sachets: newSachets }
+         //    }
+         // )
 
          newState.ingredients.splice(newState.ingredients.indexOf(payload), 1)
 
@@ -191,14 +200,14 @@ export const reducers = (state, { type, payload }) => {
             ...newState,
             activeServing: {},
             view: {},
-            pushableState: {
-               ...state.pushableState,
-               ingredients: newState.ingredients.map(ing => ({
-                  ingredient: ing.id,
-                  processing: ing.processing.id,
-               })),
-               servings: newPushableServings,
-            },
+            // pushableState: {
+            //    ...state.pushableState,
+            //    ingredients: newState.ingredients.map(ing => ({
+            //       ingredient: ing.id,
+            //       processing: ing.processing.id,
+            //    })),
+            //    servings: newPushableServings,
+            // },
          }
       }
       case 'ADD_PROCEDURE': {

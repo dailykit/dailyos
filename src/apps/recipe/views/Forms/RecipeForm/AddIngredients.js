@@ -43,6 +43,8 @@ import {
    SACHETS_OF_PROCESSING,
 } from '../../../graphql'
 import { toast } from 'react-toastify'
+import { CircleIcon } from '../../../assets/icons'
+import { state } from '../../../../online_store/context/tabs'
 
 export default function AddIngredients() {
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
@@ -99,6 +101,14 @@ export default function AddIngredients() {
       },
    })
 
+   // Effects
+   React.useEffect(() => {
+      setSelected({
+         ...selected,
+         processingId: recipeState.meta.recentProcessingId,
+      })
+   }, [recipeState.meta.recentProcessingId])
+
    // Click Handlers
    const select = type => {
       switch (type) {
@@ -109,8 +119,6 @@ export default function AddIngredients() {
                      ingredientId: selected.ingredientId,
                   },
                })
-            } else {
-               return toast.error('Select an Ingredient!')
             }
          }
          case 'sachet': {
@@ -122,7 +130,7 @@ export default function AddIngredients() {
                   },
                })
             } else {
-               return toast.error('Select a Processing first!')
+               return toast.error('Add a processing first!')
             }
          }
          default:
@@ -185,7 +193,6 @@ export default function AddIngredients() {
                         <TableRow>
                            <TableCell></TableCell>
                            <TableCell>Ingredient Name</TableCell>
-                           <TableCell align="center">Visibility</TableCell>
                            <TableCell align="center">Processing</TableCell>
                            {recipeState.servings.map(serving => (
                               <TableCell key={serving.id}>
@@ -195,6 +202,7 @@ export default function AddIngredients() {
                                  </span>
                               </TableCell>
                            ))}
+                           <TableCell align="center">Visibility</TableCell>
                            <TableCell align="right"></TableCell>
                         </TableRow>
                      </TableHead>
@@ -209,21 +217,21 @@ export default function AddIngredients() {
                                  })
                               }
                            >
-                              <TableCell></TableCell>
-                              <TableCell>{ingredient.title}</TableCell>
                               <TableCell>
-                                 <Toggle
-                                    checked={ingredient.isVisible}
-                                    setChecked={() =>
-                                       recipeDispatch({
-                                          type: 'VISIBILITY',
-                                          payload: {
-                                             id: ingredient.id,
-                                          },
-                                       })
+                                 <CircleIcon
+                                    color={
+                                       selected.ingredientId === ingredient.id
+                                          ? '#00A7E1'
+                                          : '#888D9D'
+                                    }
+                                    stroke={
+                                       selected.ingredientId === ingredient.id
+                                          ? '2'
+                                          : '1'
                                     }
                                  />
                               </TableCell>
+                              <TableCell>{ingredient.title}</TableCell>
                               <TableCell>
                                  {ingredient?.processing?.title || (
                                     <IconButton
@@ -251,20 +259,33 @@ export default function AddIngredients() {
                                     />
                                  </TableCell>
                               ))}
+                              <TableCell>
+                                 <Toggle
+                                    checked={ingredient.isVisible}
+                                    setChecked={() =>
+                                       recipeDispatch({
+                                          type: 'VISIBILITY',
+                                          payload: {
+                                             id: ingredient.id,
+                                          },
+                                       })
+                                    }
+                                 />
+                              </TableCell>
                               <TableCell align="right">
                                  <span
                                     style={{
                                        display: 'flex',
                                     }}
                                  >
-                                    <IconButton
+                                    {/* <IconButton
                                        type="solid"
                                        onClick={() => {
                                           openTunnel(3)
                                        }}
                                     >
                                        <EditIcon />
-                                    </IconButton>
+                                    </IconButton> */}
                                     <IconButton
                                        onClick={() => {
                                           recipeDispatch({

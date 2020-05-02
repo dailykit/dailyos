@@ -7,6 +7,7 @@ import CodeIcon from './Code'
 import UserIcon from './User'
 import ChevronLeftIcon from './ChevronLeft'
 import ChevronRightIcon from './ChevronRight'
+import CircleIcon from './Circle'
 
 export {
    MenuIcon,
@@ -17,5 +18,6 @@ export {
    CodeIcon,
    UserIcon,
    ChevronLeftIcon,
-   ChevronRightIcon
+   ChevronRightIcon,
+   CircleIcon,
 }
