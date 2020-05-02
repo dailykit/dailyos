@@ -63,10 +63,10 @@ const RecipesListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <h1>Recipes</h1>
-            <p> pagination </p>
+            <p> Total: {data?.simpleRecipes.length} </p>
          </StyledHeader>
          <StyledTableHeader>
-            <p>filters</p>
+            <p></p>
             <StyledTableActions>
                <IconButton
                   type="solid"
@@ -80,31 +80,23 @@ const RecipesListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell>Recipe Name</TableCell>
-                     <TableCell>Recipe Author</TableCell>
-                     <TableCell>Servings</TableCell>
-                     <TableCell>Ingredient Count</TableCell>
+                     <TableCell>Name</TableCell>
+                     <TableCell>Author</TableCell>
+                     <TableCell># of Servings</TableCell>
+                     <TableCell>Cooking Time</TableCell>
+                     <TableCell></TableCell>
                   </TableRow>
                </TableHead>
                <TableBody>
-                  {data?.recipes.map(recipe => (
-                     <TableRow
-                        key={recipe.id}
-                        onClick={() => addTab(recipe.name, 'recipe', recipe.id)}
-                     >
+                  {data?.simpleRecipes.map(recipe => (
+                     <TableRow key={recipe.id}>
                         <TableCell>{recipe.name}</TableCell>
-                        <TableCell>{recipe.name}</TableCell>
+                        <TableCell>{recipe.author}</TableCell>
                         <TableCell>
-                           {/* {recipe.servings.map(serving => (
-                              <div key={serving.id}>
-                                 {serving.value}
-                                 {recipe.servings[recipe.servings.length - 1]
-                                    .id !== serving.id && ','}
-                              </div>
-                           ))} */}
-                           {recipe.name}
+                           {recipe.simpleRecipeYields.length}
                         </TableCell>
-                        <TableCell>{recipe.name}</TableCell>
+                        <TableCell>{recipe.cookingTime} mins.</TableCell>
+                        <TableCell></TableCell>
                      </TableRow>
                   ))}
                </TableBody>
