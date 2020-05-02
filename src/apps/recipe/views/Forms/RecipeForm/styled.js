@@ -112,3 +112,26 @@ export const StyledMeta = styled.div`
 export const StyledMetaText = styled.p`
    color: rgb(64, 69, 74);
 `
+
+export const InputWrapper = styled.div`
+   display: flex;
+   width: 100%;
+   align-items: baseline;
+   justify-content: space-between;
+
+   input {
+      max-width: 240px;
+   }
+
+   span {
+      cursor: pointer;
+   }
+
+   > div {
+      display: flex;
+
+      span:last-child {
+         margin-left: 8px;
+      }
+   }
+`

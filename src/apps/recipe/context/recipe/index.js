@@ -9,19 +9,7 @@ export const state = {
    servings: [{ id: 1, value: 4 }],
    ingredients: [],
    sachets: [],
-   procedures: [
-      {
-         name: 'Step 1',
-         steps: [
-            {
-               title: '',
-               description: '',
-               // images: [{ caption: String, url: String }],
-               // video: { caption: String, url: String }
-            },
-         ],
-      },
-   ],
+   procedures: [],
    view: {},
    activeServing: {},
    processingsToShow: [],
@@ -213,31 +201,79 @@ export const reducers = (state, { type, payload }) => {
             },
          }
       }
-      case 'EDIT_COOOKING_PROCESS': {
-         const { sectionIndex, index: stepIndex, value, currentName } = payload
-         const newStepsForEditing = [...state.procedures]
-         if (currentName === 'title')
-            newStepsForEditing[sectionIndex].steps[stepIndex].title = value
-         if (currentName === 'description')
-            newStepsForEditing[sectionIndex].steps[
-               stepIndex
-            ].description = value
-         return { ...state, procedures: newStepsForEditing }
+      case 'ADD_PROCEDURE': {
+         return {
+            ...state,
+            procedures: [...state.procedures, { title: '', steps: [] }],
+         }
       }
-      case 'CREATE_COOKING_PROCESS': {
-         const newStepsForCreating = [...state.procedures]
-         newStepsForCreating.push({
+      case 'ADD_STEP': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].steps.push({
             title: '',
+            isVisible: true,
             description: '',
-            photos: [{ caption: '', imageUrl: '' }],
          })
-         return { ...state, procedures: newStepsForCreating }
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
       }
-      case 'DELETE_COOKING_PROCESS': {
-         const newStepsForDeleting = [...state.procedures]
-         newStepsForDeleting.splice(payload.index, 1)
-         return { ...state, procedures: newStepsForDeleting }
+      case 'PROCEDURE_TITLE': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].title = payload.value
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
       }
+      case 'DELETE_PROCEDURE': {
+         const updatedProcedures = state.procedures
+         updatedProcedures.splice(payload.index, 1)
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
+      }
+      case 'STEP_TITLE': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].steps[payload.stepIndex].title =
+            payload.value
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
+      }
+      case 'STEP_VISIBILITY': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].steps[
+            payload.stepIndex
+         ].isVisible = !updatedProcedures[payload.index].steps[
+            payload.stepIndex
+         ].isVisible
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
+      }
+      case 'STEP_DESCRIPTION': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].steps[payload.stepIndex].description =
+            payload.value
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
+      }
+      case 'DELETE_STEP': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].steps.splice(payload.stepIndex, 1)
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
+      }
+      // Pushable
       case 'ADD_SERVINGS_FOR_PUSHABLE': {
          const pushableServings = state.servings.map(serving => {
             return {
