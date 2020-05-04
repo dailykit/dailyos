@@ -11,9 +11,13 @@ const Sachet = ({ sachet }) => {
    const { t } = useTranslation()
    const [activeMode, setActiveMode] = React.useState('')
 
+   console.log('SACHET: ', sachet)
+
    React.useEffect(() => {
       if (sachet) {
-         const mode = sachet.modes.find(mode => mode.isActive === true)
+         const mode = sachet.modeOfFulfillments.find(
+            mode => mode.isLive === true
+         )
          setActiveMode(mode.type)
       }
    }, [sachet])
@@ -33,14 +37,14 @@ const Sachet = ({ sachet }) => {
                <tr>
                   <th>{t(address.concat('mode of fulfillment'))}</th>
                   <th>{t(address.concat('station'))}</th>
-                  <th>{t(address.concat('supplier item'))}</th>
+                  <th>{t(address.concat('item'))}</th>
                   <th>{t(address.concat('accuracy'))}</th>
                   <th>{t(address.concat('packaging'))}</th>
                   <th>{t(address.concat('label'))}</th>
                </tr>
             </thead>
             <tbody>
-               {sachet?.modes.map(mode => (
+               {sachet?.modeOfFulfillments.map(mode => (
                   <tr key={mode.type}>
                      <td>
                         <span className="badge">
@@ -48,19 +52,17 @@ const Sachet = ({ sachet }) => {
                         </span>
                         {mode.type}
                      </td>
-                     <td>{mode.station.title}</td>
-                     <td>{mode.supplierItems[0]?.item.title}</td>
+                     <td>{mode.station.name}</td>
+                     <td>{mode.sachetItem.unitSize}</td>
                      <td>
-                        {mode.supplierItems[0]?.accuracy
-                           ? t(address.concat('atleast ')) +
-                             mode.supplierItems[0]?.accuracy +
-                             '%'
+                        {mode.accuracy
+                           ? t(address.concat('atleast ')) + mode.accuracy + '%'
                            : t(address.concat('not weighing'))}
                      </td>
-                     <td>{mode.supplierItems[0]?.packaging.title}</td>
+                     <td>{mode.packaging.name}</td>
                      <td>
-                        {mode.supplierItems[0]?.isLabelled
-                           ? mode.supplierItems[0]?.labelTemplate.title
+                        {mode.isLabelled
+                           ? mode.labelTemplate.title
                            : t(address.concat('not labelled'))}
                      </td>
                   </tr>

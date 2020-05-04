@@ -47,6 +47,8 @@ import {
    DELETE_SACHET,
 } from '../../graphql'
 
+import { Sachet } from '../'
+
 import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.recipe.components.sachets.'
@@ -353,6 +355,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                // station: mode.station.id,
                stationId: mode.station.id,
                priority: 1,
+               accuracy: mode.accuracy,
                packagingId: mode.packaging.id,
                isLive: true,
                isPublished: false,
@@ -532,7 +535,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                   <StyledTabContent
                      className={selectedView === 'modes' ? 'active' : ''}
                   >
-                     {/* <Sachet sachet={sachets[selectedIndex]} /> */}
+                     <Sachet sachet={sachets[selectedIndex]} />
                   </StyledTabContent>
                   <StyledTabContent
                      className={selectedView === 'inventory' ? 'active' : ''}

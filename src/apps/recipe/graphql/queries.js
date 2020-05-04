@@ -44,6 +44,24 @@ export const SACHETS_OF_PROCESSING = gql`
          quantity
          unit
          tracking
+         modeOfFulfillments {
+            id
+            type
+            isLive
+            accuracy
+            station {
+               name
+            }
+            sachetItem {
+               unitSize
+            }
+            labelTemplate {
+               name
+            }
+            packaging {
+               name
+            }
+         }
       }
    }
 `

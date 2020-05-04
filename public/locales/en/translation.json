@@ -328,13 +328,13 @@
                "active": "Active",
                "mode of fulfillment": "Mode of Fulfillment",
                "station": "Station",
-               "supplier item": "Supplier Item",
+               "item": "Item",
                "accuracy": "Accuracy",
                "packaging": "Packaging",
                "label": "Label",
                "atleast ": "Atleast ",
                "not weighing": "Not Weighing",
-               "not labled": "Not Labled"
+               "not labelled": "Not Labelled"
             },
             "sachets": {
                "sachets": "Sachets",
