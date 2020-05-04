@@ -132,21 +132,25 @@ export default function ConfigTunnel({ close, open }) {
             </StyledRow>
 
             <StyledRow>
-               <StyledSelect
-                  name="unit"
-                  defaultValue={state.processing.unit}
-                  onChange={e =>
-                     dispatch({
-                        type: 'SET_UNIT',
-                        payload: {
-                           value: e.target.value,
-                        },
-                     })
-                  }
-               >
-                  <option value="gram">{t('units.gram')}</option>
-                  <option value="loaf">{t('units.loaf')}</option>
-               </StyledSelect>
+               <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Text as="title">Select Unit:</Text>
+                  <span style={{ width: '10px' }} />
+                  <StyledSelect
+                     name="unit"
+                     defaultValue={state.processing.unit}
+                     onChange={e =>
+                        dispatch({
+                           type: 'SET_UNIT',
+                           payload: {
+                              value: e.target.value,
+                           },
+                        })
+                     }
+                  >
+                     <option value="gram">{t('units.gram')}</option>
+                     <option value="loaf">{t('units.loaf')}</option>
+                  </StyledSelect>
+               </div>
             </StyledRow>
 
             <StyledRow>

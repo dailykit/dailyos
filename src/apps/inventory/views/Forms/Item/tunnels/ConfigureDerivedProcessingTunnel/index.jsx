@@ -137,14 +137,18 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
             </StyledInputGroup>
          </StyledRow>
          <StyledRow>
-            <StyledSelect
-               name="unit"
-               defaultValue={unit}
-               onChange={e => setUnit(e.target.value)}
-            >
-               <option value="gram">{t('units.gram')}</option>
-               <option value="loaf">{t('units.loaf')}</option>
-            </StyledSelect>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+               <Text as="title">Select Unit:</Text>
+               <span style={{ width: '10px' }} />
+               <StyledSelect
+                  name="unit"
+                  defaultValue={unit}
+                  onChange={e => setUnit(e.target.value)}
+               >
+                  <option value="gram">{t('units.gram')}</option>
+                  <option value="loaf">{t('units.loaf')}</option>
+               </StyledSelect>
+            </div>
          </StyledRow>
          <StyledRow>
             <StyledLabel>

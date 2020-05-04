@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
+import { TextButton, Input, Loader } from '@dailykit/ui'
 
 // Mutations
 import { CREATE_SUPPLIER_ITEM } from '../../../../../graphql'
-
-import { TextButton, Input, Loader } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
@@ -19,10 +19,7 @@ import {
    Highlight,
    InputWrapper,
    StyledSelect,
-   StyledLabel,
 } from '../styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
