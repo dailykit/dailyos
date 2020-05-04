@@ -35,7 +35,12 @@ import {
    ProductsTunnel,
 } from './tunnels'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.comboproduct.'
+
 export default function ComboProduct() {
+   const { t } = useTranslation()
    const { state: tabs } = React.useContext(Context)
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState(state.name)
@@ -175,7 +180,7 @@ export default function ComboProduct() {
             <StyledHeader>
                <div>
                   <Input
-                     label="Product Name"
+                     label={t(address.concat("product name"))}
                      type="text"
                      name="name"
                      value={title}
@@ -185,11 +190,11 @@ export default function ComboProduct() {
                </div>
                <div>
                   <TextButton type="ghost" style={{ margin: '0px 10px' }}>
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
 
                   <TextButton type="solid" style={{ margin: '0px 10px' }}>
-                     Publish
+                     {t(address.concat('publish'))}
                   </TextButton>
                </div>
             </StyledHeader>

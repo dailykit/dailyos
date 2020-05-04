@@ -26,7 +26,13 @@ import {
 import EditIcon from '../../../assets/icons/Edit'
 import AddIcon from '../../../assets/icons/Add'
 
+
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.'
+
 export default function RecipeConfigurator({ open }) {
+   const { t } = useTranslation()
    const [view, setView] = React.useState('pricing')
    const [isMealKit, setIsMealKit] = React.useState(false)
    const [isReadyToEat, setIsReadyToEat] = React.useState(false)
@@ -47,11 +53,13 @@ export default function RecipeConfigurator({ open }) {
          }}
       >
          {itemView.recipes?.length === 0 && (
-            <Message>Please add recipes to this product.</Message>
+            <Message><Trans i18nKey={address.concat('msg 1')}>Please add recipes to this product.</Trans></Message>
          )}
          {!currentRecipe.recipe && itemView.recipes?.length > 0 && (
             <Message>
-               Please select a recipe from the left menu to configure.
+               <Trans i18nKey={address.concat('msg 2')}>
+                  Please select a recipe from the left menu to configure.
+               </Trans>
             </Message>
          )}
 
@@ -64,13 +72,13 @@ export default function RecipeConfigurator({ open }) {
                      active={view === 'pricing'}
                      onClick={() => setView('pricing')}
                   >
-                     <Text as="title">Pricing</Text>
+                     <Text as="title">{t(address.concat('pricing'))}</Text>
                   </ItemTab>
                   <ItemTab
                      active={view === 'accompaniments'}
                      onClick={() => setView('accompaniments')}
                   >
-                     <Text as="title">Accompaniments</Text>
+                     <Text as="title">{t(address.concat('accompaniments'))}</Text>
                   </ItemTab>
                </TabContainer>
 
@@ -82,10 +90,10 @@ export default function RecipeConfigurator({ open }) {
                               <TableRow>
                                  <TableCell></TableCell>
                                  <TableCell></TableCell>
-                                 <TableCell>Make Default</TableCell>
-                                 <TableCell>Servings</TableCell>
-                                 <TableCell>Price</TableCell>
-                                 <TableCell>Discunted Price</TableCell>
+                                 <TableCell>{t(address.concat('make default'))}</TableCell>
+                                 <TableCell>{t(address.concat('servings'))}</TableCell>
+                                 <TableCell>{t(address.concat('price'))}</TableCell>
+                                 <TableCell>{t(address.concat('discounted price'))}</TableCell>
                                  <TableCell align="right"></TableCell>
                               </TableRow>
                            </TableHead>
@@ -93,71 +101,71 @@ export default function RecipeConfigurator({ open }) {
                               {currentRecipe.mealKit ? (
                                  <MealKitPricing open={open} />
                               ) : (
-                                 <TableRow>
-                                    <TableCell>
-                                       <Checkbox
-                                          checked={isMealKit}
-                                          onChange={() => {
-                                             setIsMealKit(!isMealKit)
-                                          }}
-                                       />
-                                    </TableCell>
-                                    <TableCell>Mealkits</TableCell>
-                                    <TableCell>true</TableCell>
-                                    <TableCell>...</TableCell>
-                                    <TableCell>...</TableCell>
-                                    <TableCell>...</TableCell>
-                                    <TableCell align="right">
-                                       <IconButton
-                                          type="solid"
-                                          onClick={() => {
-                                             productDispatch({
-                                                type: 'SET_MEALKIT',
-                                                payload: 'MEAL_KIT',
-                                             })
+                                    <TableRow>
+                                       <TableCell>
+                                          <Checkbox
+                                             checked={isMealKit}
+                                             onChange={() => {
+                                                setIsMealKit(!isMealKit)
+                                             }}
+                                          />
+                                       </TableCell>
+                                       <TableCell>{t(address.concat('mealkits'))}</TableCell>
+                                       <TableCell>{t(address.concat('true'))}</TableCell>
+                                       <TableCell>...</TableCell>
+                                       <TableCell>...</TableCell>
+                                       <TableCell>...</TableCell>
+                                       <TableCell align="right">
+                                          <IconButton
+                                             type="solid"
+                                             onClick={() => {
+                                                productDispatch({
+                                                   type: 'SET_MEALKIT',
+                                                   payload: 'MEAL_KIT',
+                                                })
 
-                                             open(4)
-                                          }}
-                                       >
-                                          <EditIcon />
-                                       </IconButton>
-                                    </TableCell>
-                                 </TableRow>
-                              )}
+                                                open(4)
+                                             }}
+                                          >
+                                             <EditIcon />
+                                          </IconButton>
+                                       </TableCell>
+                                    </TableRow>
+                                 )}
                               {currentRecipe.readyToEat ? (
                                  <ReadyToEatPricing />
                               ) : (
-                                 <TableRow>
-                                    <TableCell>
-                                       <Checkbox
-                                          checked={isReadyToEat}
-                                          onChange={() => {
-                                             setIsReadyToEat(!isReadyToEat)
-                                          }}
-                                       />
-                                    </TableCell>
-                                    <TableCell>Ready To Eat</TableCell>
-                                    <TableCell>true</TableCell>
-                                    <TableCell>...</TableCell>
-                                    <TableCell>...</TableCell>
-                                    <TableCell>...</TableCell>
-                                    <TableCell align="right">
-                                       <IconButton
-                                          type="solid"
-                                          onClick={() => {
-                                             productDispatch({
-                                                type: 'SET_MEALKIT',
-                                                payload: 'READY_TO_EAT',
-                                             })
+                                    <TableRow>
+                                       <TableCell>
+                                          <Checkbox
+                                             checked={isReadyToEat}
+                                             onChange={() => {
+                                                setIsReadyToEat(!isReadyToEat)
+                                             }}
+                                          />
+                                       </TableCell>
+                                       <TableCell>{t(address.concat('ready To eat'))}</TableCell>
+                                       <TableCell>{t(address.concat('true'))}</TableCell>
+                                       <TableCell>...</TableCell>
+                                       <TableCell>...</TableCell>
+                                       <TableCell>...</TableCell>
+                                       <TableCell align="right">
+                                          <IconButton
+                                             type="solid"
+                                             onClick={() => {
+                                                productDispatch({
+                                                   type: 'SET_MEALKIT',
+                                                   payload: 'READY_TO_EAT',
+                                                })
 
-                                             open(4)
-                                          }}
-                                       >
-                                          <EditIcon />
-                                       </IconButton>
-                                    </TableCell>
-                                 </TableRow>
-                              )}
+                                                open(4)
+                                             }}
+                                          >
+                                             <EditIcon />
+                                          </IconButton>
+                                       </TableCell>
+                                    </TableRow>
+                                 )}
                            </TableBody>
                         </Table>
                      </div>
@@ -188,6 +196,7 @@ export default function RecipeConfigurator({ open }) {
    )
 }
 function MealKitPricing({ open }) {
+   const { t } = useTranslation()
    const [isMealKit, setIsMealKit] = React.useState(false)
    const {
       productState: { currentRecipe },
@@ -205,8 +214,8 @@ function MealKitPricing({ open }) {
                   }}
                />
             </TableCell>
-            <TableCell>Mealkits</TableCell>
-            <TableCell>true</TableCell>
+            <TableCell>{t(address.concat('mealkits'))}</TableCell>
+            <TableCell>{t(address.concat('true'))}</TableCell>
             <TableCell>{currentRecipe.mealKit[0].size}</TableCell>
             <TableCell>$ {currentRecipe.mealKit[0].price}</TableCell>
             <TableCell>$ {currentRecipe.mealKit[0].discount}</TableCell>
@@ -248,6 +257,7 @@ function MealKitPricing({ open }) {
 }
 
 function ReadyToEatPricing({ open }) {
+   const { t } = useTranslation()
    const [isReadyToEat, setIsReadyToEat] = React.useState(false)
    const {
       productState: { currentRecipe },
@@ -265,8 +275,8 @@ function ReadyToEatPricing({ open }) {
                   }}
                />
             </TableCell>
-            <TableCell>Ready To Eat</TableCell>
-            <TableCell>true</TableCell>
+            <TableCell>{t(address.concat('ready to eat'))}</TableCell>
+            <TableCell>{t(address.concat('true'))}</TableCell>
             <TableCell>{currentRecipe.readyToEat[0].size}</TableCell>
             <TableCell>$ {currentRecipe.readyToEat[0].price}</TableCell>
             <TableCell>$ {currentRecipe.readyToEat[0].discount}</TableCell>
@@ -308,6 +318,7 @@ function ReadyToEatPricing({ open }) {
 }
 
 function Types({ open }) {
+   const { t } = useTranslation()
    const { productState, productDispatch } = React.useContext(ProductContext)
 
    React.useEffect(() => {
@@ -350,6 +361,7 @@ function Types({ open }) {
 }
 
 function Accompaniment({ open }) {
+   const { t } = useTranslation()
    const {
       productState: { activeAccomp, activeProduct },
       productDispatch,
@@ -382,7 +394,7 @@ function Accompaniment({ open }) {
                onClick={() => open(7)}
             >
                <AddIcon />
-               Add Accompaniments
+               {t(address.concat('add accompaniments'))}
             </ComboButton>
          </Flexible>
          <Flexible width="3">
@@ -395,6 +407,7 @@ function Accompaniment({ open }) {
 }
 
 function AccompanimentProducts() {
+   const { t } = useTranslation()
    const {
       productState: { activeProduct },
       productDispatch,
@@ -403,7 +416,9 @@ function AccompanimentProducts() {
    if (!activeProduct.title)
       return (
          <Text as="subtitle">
-            Select a Product from the right menu to configure!
+            <Trans i18nKey={address.concat('subtitle')}>
+               Select a Product from the right menu to configure!
+            </Trans>
          </Text>
       )
 
@@ -419,7 +434,7 @@ function AccompanimentProducts() {
          >
             <Input
                type="text"
-               placeholder="Discount as Accompaniment"
+               placeholder={t(address.concat("discount as accompaniment"))}
                value={activeProduct.discount || ''}
                onChange={e => {
                   const value = parseInt(e.target.value)
@@ -439,7 +454,7 @@ function AccompanimentProducts() {
             %
          </div>
 
-         <Text as="title">Items ({activeProduct.items.length})</Text>
+         <Text as="title">{t(address.concat('items'))} ({activeProduct.items.length})</Text>
          <br />
 
          <div style={{ display: 'flex' }}>

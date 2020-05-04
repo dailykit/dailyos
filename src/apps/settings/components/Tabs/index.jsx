@@ -10,7 +10,12 @@ import { StyledTabs, StyledTab } from './styled'
 // Icons
 import { CloseIcon } from '../../../../shared/assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.components.tabs.'
+
 const Tabs = () => {
+   const { t } = useTranslation()
    const location = useLocation()
    const { tabs, switchTab, removeTab } = useTabs()
    return (
@@ -26,7 +31,7 @@ const Tabs = () => {
                   <div
                      role="button"
                      tabIndex={0}
-                     title="Close Tab"
+                     title={t(address.concat("close tab"))}
                      onClick={e => removeTab(e, { tab, index })}
                      onKeyPress={e =>
                         e.charCode === 32 && removeTab(e, { tab, index })

@@ -11,7 +11,12 @@ import { StyledWrapper, StyledHeader } from '../styled'
 // Icons
 import { AddIcon } from '../../../assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.listings.purchaseorders.'
+
 export default function PurchaseOrders() {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
    const addTab = (title, view) => {
@@ -22,7 +27,7 @@ export default function PurchaseOrders() {
       <>
          <StyledWrapper>
             <StyledHeader>
-               <h1>Purchase Orders</h1>
+               <h1>{t(address.concat('purchase orders'))}</h1>
                <IconButton
                   type="solid"
                   onClick={() => addTab('New Purchase Order', 'purchaseOrder')}

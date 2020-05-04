@@ -16,10 +16,14 @@ import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
+//i18next
+import './i18next'
+
 import './global.css'
 
 import { StyledLoader } from './styled'
 
+import { useTranslation, Trans } from 'react-i18next'
 const Loader = () => (
    <StyledLoader>
       <img src="/assets/loader.gif" alt="Loading..." />
@@ -72,6 +76,7 @@ const client = new ApolloClient({
    cache: new InMemoryCache(),
 })
 
+
 render(
    <ApolloProvider client={client}>
       <ToastContainer
@@ -88,10 +93,10 @@ render(
       <Router>
          <Switch>
             <Route path="/" exact>
-               <Link to="/inventory">Inventory</Link>
-               <Link to="/recipe">Recipe</Link>
-               <Link to="/online-store">Online Store</Link>
-               <Link to="/settings">Settings</Link>
+               <Link to="/inventory"><Trans i18nKey='inventory'>Inventory</Trans></Link>
+               <Link to="/recipe"><Trans i18nKey='recipe'>Recipe</Trans></Link>
+               <Link to="/online-store"><Trans i18nKey='online store'>Online Store</Trans></Link>
+               <Link to="/settings"><Trans i18nKey='settings'>Settings</Trans></Link>
             </Route>
             <Route path="/inventory" component={Inventory} />
             <Route path="/recipe" component={Recipe} />

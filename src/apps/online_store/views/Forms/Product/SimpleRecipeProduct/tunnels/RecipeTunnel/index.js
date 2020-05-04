@@ -13,7 +13,12 @@ import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.recipetunnel.'
+
 export default function RecipeTunnel({ close, recipes }) {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(SimpleProductContext)
 
    const [search, setSearch] = React.useState('')
@@ -61,7 +66,7 @@ export default function RecipeTunnel({ close, recipes }) {
                <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select a Recipe</span>
+               <span>{t(address.concat('select a recipe'))}</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -69,11 +74,11 @@ export default function RecipeTunnel({ close, recipes }) {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for"))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

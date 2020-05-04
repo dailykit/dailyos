@@ -9,7 +9,12 @@ import { StyledTabs, StyledTab } from './styled'
 // Icons
 import { CloseIcon } from '../../assets/icons'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.components.sachets.'
+
 const Tabs = () => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(Context)
    const switchTab = tab => {
       dispatch({
@@ -33,7 +38,7 @@ const Tabs = () => {
                   <span title={tab.title}>{tab.title}</span>
                   {tab.title === state.current.title && (
                      <div
-                        title="Close Tab"
+                        title={t(address.concat("close tab"))}
                         onClick={e => removeTab(e, { ...tab, index })}
                      >
                         <CloseIcon color="#000" size="20" />

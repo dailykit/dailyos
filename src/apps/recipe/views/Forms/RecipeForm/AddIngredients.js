@@ -47,7 +47,12 @@ import { toast } from 'react-toastify'
 import { CircleIcon } from '../../../assets/icons'
 import { state } from '../../../../online_store/context/tabs'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.'
+
 export default function AddIngredients() {
+   const { t } = useTranslation()
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
    const [ingredients, setIngredients] = React.useState([])
@@ -71,7 +76,7 @@ export default function AddIngredients() {
          setIngredients(updatedIngs)
       },
    })
-   const [fetchProcessings, {}] = useLazyQuery(PROCESSINGS_OF_INGREDIENT, {
+   const [fetchProcessings, { }] = useLazyQuery(PROCESSINGS_OF_INGREDIENT, {
       fetchPolicy: 'no-cache',
       onCompleted: async data => {
          let procs = data.ingredient.ingredientProcessings
@@ -85,7 +90,7 @@ export default function AddIngredients() {
          openTunnel(4)
       },
    })
-   const [fetchSachets, {}] = useLazyQuery(SACHETS_OF_PROCESSING, {
+   const [fetchSachets, { }] = useLazyQuery(SACHETS_OF_PROCESSING, {
       fetchPolicy: 'no-cache',
       onCompleted: async data => {
          let sachets = data.ingredientSachets
@@ -173,7 +178,7 @@ export default function AddIngredients() {
          <IngredientsSection>
             <Stats>
                <Text as="subtitle">
-                  Ingredients (
+                  {t(address.concat('ingredients'))} (
                   {(recipeState &&
                      recipeState.ingredients &&
                      recipeState.ingredients.length) ||
@@ -193,8 +198,8 @@ export default function AddIngredients() {
                      <TableHead>
                         <TableRow>
                            <TableCell></TableCell>
-                           <TableCell>Ingredient Name</TableCell>
-                           <TableCell align="center">Processing</TableCell>
+                           <TableCell>{t(address.concat('ingredient name'))}</TableCell>
+                           <TableCell align="center">{t(address.concat('processing'))}</TableCell>
                            {recipeState.servings.map(serving => (
                               <TableCell key={serving.id}>
                                  <UserIcon />
@@ -203,8 +208,8 @@ export default function AddIngredients() {
                                  </span>
                               </TableCell>
                            ))}
-                           <TableCell align="center">Visibility</TableCell>
-                           <TableCell align="center">Slip Name</TableCell>
+                           <TableCell align="center">{t(address.concat('visibility'))}</TableCell>
+                           <TableCell align="center">{t(address.concat('slip name'))}</TableCell>
                            <TableCell align="right"></TableCell>
                         </TableRow>
                      </TableHead>
@@ -277,7 +282,7 @@ export default function AddIngredients() {
                               <TableCell>
                                  <Input
                                     type="text"
-                                    placeholder="Slip Name"
+                                    placeholder={t(address.concat("slip name"))}
                                     name={`slip-${ingredient.id}`}
                                     value={ingredient.slipName}
                                     onChange={e => {
@@ -328,7 +333,7 @@ export default function AddIngredients() {
                <ButtonTile
                   as="button"
                   type="secondary"
-                  text="Select Ingredients"
+                  text={t(address.concat("select ingredients"))}
                   onClick={() => openTunnel(2)}
                />
             )}
@@ -339,6 +344,7 @@ export default function AddIngredients() {
 }
 
 function Sachet({ serving, openTunnel, ingredient, select }) {
+   const { t } = useTranslation()
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
 
    const sachet = recipeState.sachets.find(
@@ -364,7 +370,7 @@ function Sachet({ serving, openTunnel, ingredient, select }) {
                   // openTunnel(5)
                }}
             >
-               Select Sachet
+               {t(address.concat('select sachet'))}
             </SelectButton>
          )}
       </>

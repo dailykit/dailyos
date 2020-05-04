@@ -6,7 +6,13 @@ import { ProductContext } from '../../../context/product/index'
 import Item from './Item'
 import { TabContainer, ItemTab } from './styled'
 
+
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.'
+
 export default function Items({ open }) {
+   const { t } = useTranslation()
    const { productState, productDispatch } = React.useContext(ProductContext)
 
    React.useEffect(() => {

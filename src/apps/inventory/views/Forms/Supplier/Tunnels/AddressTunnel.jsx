@@ -8,7 +8,12 @@ import MapView from '../../../../assets/images/mapView.png'
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 import { FlexContainer } from '../../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.supplier.tunnels.'
+
 export default function AddressTunnel({ close }) {
+   const { t } = useTranslation()
    const {
       supplierState: {
          address: {
@@ -35,7 +40,7 @@ export default function AddressTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Address"
+            title={t(address.concat("add address"))}
             next={() => {
                supplierDispatch({
                   type: 'ADD_ADDRESS',
@@ -63,7 +68,7 @@ export default function AddressTunnel({ close }) {
             <div>
                <Input
                   disabled={isManual}
-                  placeholder="Shipping Location"
+                  placeholder={t(address.concat("shipping location"))}
                   type="text"
                   name="location"
                   value={location}
@@ -77,14 +82,14 @@ export default function AddressTunnel({ close }) {
                   checked={isManual}
                   onChange={() => setIsManual(!isManual)}
                >
-                  Enter manually
+                  {t(address.concat('enter manually'))}
                </Checkbox>
 
                {isManual && (
                   <>
                      <br />
                      <Input
-                        placeholder="Address line 1"
+                        placeholder={t(address.concat("address line 1"))}
                         type="text"
                         name="address1"
                         value={address1}
@@ -94,7 +99,7 @@ export default function AddressTunnel({ close }) {
                      />{' '}
                      <br />
                      <Input
-                        placeholder="Address line 2"
+                        placeholder={t(address.concat("address line 2"))}
                         type="text"
                         name="address2"
                         value={address2}
@@ -105,7 +110,7 @@ export default function AddressTunnel({ close }) {
                      <br />
                      <FlexContainer>
                         <Input
-                           placeholder="City"
+                           placeholder={t(address.concat("city"))}
                            type="text"
                            name="city"
                            value={city}
@@ -113,7 +118,7 @@ export default function AddressTunnel({ close }) {
                         />
                         <div style={{ width: '10px' }} />
                         <Input
-                           placeholder="Zip code"
+                           placeholder={t(address.concat("zip code"))}
                            type="text"
                            name="zip"
                            value={zip}
@@ -122,7 +127,7 @@ export default function AddressTunnel({ close }) {
                      </FlexContainer>
                      <br />
                      <Input
-                        placeholder="Special Instructions"
+                        placeholder={t(address.concat("special instructions"))}
                         type="text"
                         name="instructions"
                         value={instructions}

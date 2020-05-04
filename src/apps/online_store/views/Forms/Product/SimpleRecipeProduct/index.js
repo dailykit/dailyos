@@ -36,7 +36,12 @@ import {
    CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
 } from '../../../../graphql'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
+
 export default function SimpleRecipeProduct() {
+   const { t } = useTranslation()
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const [title, setTitle] = React.useState('')
    const [recipes, setRecipes] = React.useState([])
@@ -192,7 +197,7 @@ export default function SimpleRecipeProduct() {
             <StyledHeader>
                <div>
                   <Input
-                     label="Product Name"
+                     label={t(address.concat("product name"))}
                      type="text"
                      name="name"
                      value={title}
@@ -211,11 +216,11 @@ export default function SimpleRecipeProduct() {
                      style={{ margin: '0px 10px' }}
                      onClick={save}
                   >
-                     Save
+                     {t(address.concat('save'))}
                   </TextButton>
 
                   <TextButton type="solid" style={{ margin: '0px 10px' }}>
-                     Publish
+                     {t(address.concat('publish'))}
                   </TextButton>
                </div>
             </StyledHeader>

@@ -13,7 +13,12 @@ import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
+
 export default function SelectLabelTemplateTunnel({ close }) {
+   const { t } = useTranslation()
    const { sachetOrderState, sachetOrderDispatch } = useContext(
       SachetOrderContext
    )
@@ -43,7 +48,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Label Templates"
+            title={t(address.concat("select label templates"))}
             next={() => {
                sachetOrderDispatch({
                   type: 'SELECT_TEMPLATE_OPTIONS',
@@ -60,7 +65,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
          <List>
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder="type what you’re looking for..."
+               placeholder={t(address.concat("type what you’re looking for"))}
             />
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>

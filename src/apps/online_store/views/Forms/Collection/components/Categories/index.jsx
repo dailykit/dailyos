@@ -5,7 +5,12 @@ import { Category, Title, Products, Product } from './styled'
 import { CollectionContext } from '../../../../../context/collection'
 import DeleteIcon from '../../../../../assets/icons/Delete'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.collection.components.categories.'
+
 const Categories = ({ openTunnel }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(CollectionContext)
    const [title, setTitle] = React.useState('')
 
@@ -36,7 +41,7 @@ const Categories = ({ openTunnel }) => {
                <Title>
                   <Input
                      type="text"
-                     placeholder="Category Name"
+                     placeholder={t(address.concat("category name"))}
                      value={category.title}
                      onChange={e =>
                         dispatch({
@@ -82,7 +87,7 @@ const Categories = ({ openTunnel }) => {
                   ))}
                   <ButtonTile
                      type="secondary"
-                     text="Add Product"
+                     text={t(address.concat("add product"))}
                      onClick={() => add_product(category.title)}
                   />
                </Products>
@@ -90,7 +95,7 @@ const Categories = ({ openTunnel }) => {
          ))}
          <Input
             type="text"
-            placeholder="Add Category"
+            placeholder={t(address.concat("add category"))}
             value={title}
             onChange={e => setTitle(e.target.value)}
             onBlur={create_category}

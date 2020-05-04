@@ -34,7 +34,11 @@ import {
 } from '../../graphql'
 import { Sachets } from '../'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.components.processings.'
 const Processings = ({ ingredientId }) => {
+   const { t } = useTranslation()
    // States
    const [processings, setProcessings] = React.useState([])
    const [selectedIndex, setSelectedIndex] = React.useState(0)
@@ -177,7 +181,7 @@ const Processings = ({ ingredientId }) => {
       <StyledSection hasElements={processings?.length !== 0}>
          <StyledListing>
             <StyledListingHeader>
-               <h3>Processings ({processings?.length})</h3>
+               <h3>{t(address.concat('processings'))} ({processings?.length})</h3>
                <span onClick={() => openProcessingTunnel(1)}>
                   <AddIcon color="#555B6E" size="18" stroke="2.5" />
                </span>
@@ -196,8 +200,8 @@ const Processings = ({ ingredientId }) => {
                      </span>
                   </Actions>
                   <h3>{processing.processingName}</h3>
-                  <p>Sachets: {processing.ingredientSachets?.length || 0}</p>
-                  <p>Recipes: {0}</p>
+                  <p>{t(address.concat('sachets'))}: {processing.ingredientSachets?.length || 0}</p>
+                  <p>{t(address.concat('recipes'))}: {0}</p>
                </StyledListingTile>
             ))}
             <ButtonTile
@@ -214,17 +218,17 @@ const Processings = ({ ingredientId }) => {
                            color="#888D9D"
                            onClick={() => closeProcessingTunnel(1)}
                         />
-                        <h1>Select Processings</h1>
+                        <h1>{t(address.concat('select processings'))}</h1>
                      </div>
                      <TextButton type="solid" onClick={addProcessingsHandler}>
-                        Save
+                        {t(address.concat('save'))}
                      </TextButton>
                   </StyledTunnelHeader>
                   <StyledTunnelMain>
                      <List>
                         <ListSearch
                            onChange={value => setSearch(value)}
-                           placeholder="type what you’re looking for..."
+                           placeholder={t(address.concat("type what you’re looking for"))}
                         />
                         {selectedProcessingNames.length > 0 && (
                            <TagGroup style={{ margin: '8px 0' }}>

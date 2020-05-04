@@ -13,7 +13,12 @@ import { CREATE_COMBO_PRODUCT } from '../../../graphql'
 
 import { randomSuffix } from '../../../../../shared/utils'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.listings.productslisting.'
+
 export default function SelectProductTunnel({ close }) {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
    // Mutations
@@ -52,7 +57,7 @@ export default function SelectProductTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Type of Product"
+            title={t(address.concat("select type of product"))}
             close={() => {
                close(1)
             }}
@@ -66,19 +71,23 @@ export default function SelectProductTunnel({ close }) {
          <SolidTile
             onClick={() => addTab('Inventory Product', 'inventoryProduct')}
          >
-            <Text as="h1">Inventory Product</Text>
+            <Text as="h1">{t(address.concat('inventory product'))}</Text>
             <Text as="subtitle">
-               Inventory product is just an item, supplied or bought
+               <Trans i18nKey={address.concat('subtitle 1')}>
+                  Inventory product is just an item, supplied or bought
+               </Trans>
             </Text>
          </SolidTile>
          <br />
          <SolidTile
             onClick={() => addTab('Simple Product', 'simpleRecipeProduct')}
          >
-            <Text as="h1">Simple Recipe Product</Text>
+            <Text as="h1">{t(address.concat('simple recipe product'))}</Text>
             <Text as="subtitle">
-               Simple Recipe product is only one recipes, sold as Meal Kits as
-               well as Ready to Eat
+               <Trans i18nKey={address.concat('subtitle 2')}>
+                  Simple Recipe product is only one recipes, sold as Meal Kits as
+                  well as Ready to Eat
+               </Trans>
             </Text>
          </SolidTile>
          <br />
@@ -87,18 +96,22 @@ export default function SelectProductTunnel({ close }) {
                addTab('Customizable Product', 'customizableProduct')
             }
          >
-            <Text as="h1">Customizable Product</Text>
+            <Text as="h1">{t(address.concat('customizable product'))}</Text>
             <Text as="subtitle">
-               Customizable product has recipe options with one recipe as
-               default
+               <Trans i18nKey={address.concat('subtitle 3')}>
+                  Customizable product has recipe options with one recipe as
+                  default
+               </Trans>
             </Text>
          </SolidTile>
          <br />
          <SolidTile onClick={() => createProduct('combo')}>
-            <Text as="h1">Combo Product</Text>
+            <Text as="h1">{t(address.concat('combo product'))}</Text>
             <Text as="subtitle">
-               Advanced product is an item with your recipes, sold as Meal Kits
-               as well as Ready to Eat
+               <Trans i18nKey={address.concat('subtitle 4')}>
+                  Advanced product is an item with your recipes, sold as Meal Kits
+                  as well as Ready to Eat
+               </Trans>
             </Text>
          </SolidTile>
       </TunnelContainer>

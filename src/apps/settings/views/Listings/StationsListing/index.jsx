@@ -27,7 +27,12 @@ import {
    AddIcon,
 } from '../../../../../shared/assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.listings.stationslisting.'
+
 const StationsListing = () => {
+   const { t } = useTranslation()
    const history = useHistory()
    const { tabs, addTab } = useTabs()
 
@@ -61,7 +66,7 @@ const StationsListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">Stations</Text>
+            <Text as="h2">{t(address.concat('stations'))}</Text>
             <IconButton type="solid" onClick={() => createTab()}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
@@ -69,11 +74,11 @@ const StationsListing = () => {
          <Table>
             <TableHead>
                <TableRow>
-                  <TableCell>Station Name</TableCell>
-                  <TableCell>Station Type</TableCell>
-                  <TableCell>Devices</TableCell>
-                  <TableCell>Sachets</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t(address.concat('station name'))}</TableCell>
+                  <TableCell>{t(address.concat('station type'))}</TableCell>
+                  <TableCell>{t(address.concat('devices'))}</TableCell>
+                  <TableCell>{t(address.concat('sachets'))}</TableCell>
+                  <TableCell align="right">{t(address.concat('actions'))}</TableCell>
                </TableRow>
             </TableHead>
             <TableBody>

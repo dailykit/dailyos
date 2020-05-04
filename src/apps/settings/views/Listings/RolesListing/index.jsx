@@ -29,7 +29,12 @@ import {
    AddIcon,
 } from '../../../../../shared/assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.listings.roleslisting.'
+
 const RolesListing = () => {
+   const { t } = useTranslation()
    const history = useHistory()
    const { tabs, addTab } = useTabs()
 
@@ -66,7 +71,7 @@ const RolesListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">Roles</Text>
+            <Text as="h2">{t(address.concat('roles'))}</Text>
             <IconButton type="solid" onClick={() => createTab()}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
@@ -74,9 +79,9 @@ const RolesListing = () => {
          <Table>
             <TableHead>
                <TableRow>
-                  <TableCell>Roles</TableCell>
-                  <TableCell>Apps Configured</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t(address.concat('roles'))}</TableCell>
+                  <TableCell>{t(address.concat('apps configured'))}</TableCell>
+                  <TableCell align="right">{t(address.concat('actions'))}</TableCell>
                </TableRow>
             </TableHead>
             <TableBody>

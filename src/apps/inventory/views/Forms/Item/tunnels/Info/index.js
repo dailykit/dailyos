@@ -22,7 +22,12 @@ import {
    StyledLabel,
 } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.info.'
+
 export default function InfoTunnel({ close, next }) {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [loading, setLoading] = useState(false)
 
@@ -69,11 +74,11 @@ export default function InfoTunnel({ close, next }) {
                <span onClick={close}>
                   <CloseIcon size={24} />
                </span>
-               <span>Item Information</span>
+               <span>{t(address.concat('item information'))}</span>
             </div>
             <div>
                <TextButton type="solid" onClick={handleNext}>
-                  Next
+                  {t(address.concat('next'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -82,7 +87,7 @@ export default function InfoTunnel({ close, next }) {
                <StyledInputGroup>
                   <Input
                      type="text"
-                     label="Item name"
+                     label={t(address.concat("item name"))}
                      name="title"
                      value={state.title}
                      onChange={e =>
@@ -94,7 +99,7 @@ export default function InfoTunnel({ close, next }) {
                   />
                   <Input
                      type="text"
-                     label="Item SKU"
+                     label={t(address.concat("item sku"))}
                      name="sku"
                      value={state.sku}
                      onChange={e =>
@@ -112,7 +117,7 @@ export default function InfoTunnel({ close, next }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label="Unit qty:"
+                           label={t(address.concat("unit qty").concat(':'))}
                            name="unit_quantity"
                            value={state.unit_quantity.value}
                            onChange={e =>
@@ -138,13 +143,13 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="gram">gram</option>
-                           <option value="loaf">loaf</option>
+                           <option value="gram">{t('units.gram')}</option>
+                           <option value="loaf">{t('units.loaf')}</option>
                         </StyledSelect>
                      </InputWrapper>
                      <Input
                         type="text"
-                        label="Unit price:"
+                        label={t(address.concat("unit price")).concat(':')}
                         name="unit_price"
                         value={state.unit_price.unit + state.unit_price.value}
                         onChange={e =>
@@ -166,7 +171,7 @@ export default function InfoTunnel({ close, next }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label="Case qty:"
+                           label={t(address.concat("case qty")).concat(':')}
                            name="case_quantity"
                            value={state.case_quantity.value}
                            onChange={e =>
@@ -192,7 +197,7 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="unit">unit</option>
+                           <option value="unit">{t(address.concat('unit'))}</option>
                         </StyledSelect>
                      </InputWrapper>
                   </Highlight>
@@ -200,7 +205,7 @@ export default function InfoTunnel({ close, next }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label="Minimum order value:"
+                           label={t(address.concat("minimum order value")).concat(':')}
                            name="minimum_order_value"
                            value={state.min_order_value.value}
                            onChange={e =>
@@ -226,7 +231,7 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="cs">cs</option>
+                           <option value="cs">{t('units.cs')}</option>
                         </StyledSelect>
                      </InputWrapper>
                   </Highlight>
@@ -238,7 +243,7 @@ export default function InfoTunnel({ close, next }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label="Lead time:"
+                           label={t(address.concat("lead time")).concat(':')}
                            name="lead_time"
                            value={state.lead_time.value}
                            onChange={e =>
@@ -264,8 +269,8 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="days">days</option>
-                           <option value="weeks">weeks</option>
+                           <option value="days">{t(address.concat('days'))}</option>
+                           <option value="weeks">{t(address.concat('weeks'))}</option>
                         </StyledSelect>
                      </InputWrapper>
                   </Highlight>
@@ -273,7 +278,7 @@ export default function InfoTunnel({ close, next }) {
             </StyledRow>
             <StyledRow>
                <StyledLabel>
-                  Upload cerificates for the item authentication (if any)
+                  {t(address.concat('upload cerificates for the item authentication (if any)'))}
                </StyledLabel>
                <Highlight></Highlight>
             </StyledRow>

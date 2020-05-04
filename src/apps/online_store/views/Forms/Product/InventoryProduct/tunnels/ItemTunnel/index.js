@@ -13,7 +13,12 @@ import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
+
 export default function ItemTunnel({ close, items }) {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(InventoryProductContext)
 
    const [search, setSearch] = React.useState('')
@@ -36,7 +41,7 @@ export default function ItemTunnel({ close, items }) {
                <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>Select an Item</span>
+               <span>{t(address.concat('select an item'))}</span>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -44,11 +49,11 @@ export default function ItemTunnel({ close, items }) {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for"))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

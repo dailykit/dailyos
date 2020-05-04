@@ -15,12 +15,17 @@ import {
    Spacer,
 } from '../../../../../components'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.processing.'
+
 export default function SupplierTunnel({
    close,
    processings,
    open,
    rawProcessings,
 }) {
+   const { t } = useTranslation()
    const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
@@ -30,7 +35,7 @@ export default function SupplierTunnel({
       <>
          <TunnelContainer>
             <TunnelHeader
-               title="Select Processing as Item Shipped"
+               title={t(address.concat("select processing as item shipped"))}
                next={() => {
                   const payload = rawProcessings.find(
                      processing => processing.id === current.id
@@ -49,11 +54,11 @@ export default function SupplierTunnel({
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for"))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

@@ -29,7 +29,12 @@ import {
    StyledLabel,
 } from '../styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
+
 export default function ConfigureDerivedProcessingTunnel({ close, open }) {
+   const { t } = useTranslation()
    const {
       state: { configurable },
       state,
@@ -82,7 +87,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Configure Processing"
+            title={t(address.concat("configure processing"))}
             next={handleNext}
             close={() => close(7)}
             nextAction="Save"
@@ -95,7 +100,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label="Set par level"
+                     label={t(address.concat("set par level"))}
                      name="par_level"
                      value={par}
                      onChange={e => {
@@ -109,14 +114,14 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                      defaultValue={parUnit}
                      onChange={e => setParUnit(e.target.value)}
                   >
-                     <option value="gram">gram</option>
-                     <option value="loaf">loaf</option>
+                     <option value="gram">{t('units.gram')}</option>
+                     <option value="loaf">{t('units.loaf')}</option>
                   </StyledSelect>
                </InputWrapper>
                <InputWrapper>
                   <Input
                      type="text"
-                     label="Max inventory level"
+                     label={t(address.concat("max inventory level"))}
                      name="max_inventory_level"
                      value={maxInventoryLevel}
                      onChange={e => {
@@ -131,21 +136,21 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                      defaultValue={maxInventoryUnit}
                      onChange={e => setMaxInventoryUnit(e.target.value)}
                   >
-                     <option value="gram">gram</option>
-                     <option value="loaf">loaf</option>
+                     <option value="gram">{t('units.gram')}</option>
+                     <option value="loaf">{t('units.loaf')}</option>
                   </StyledSelect>
                </InputWrapper>
             </StyledInputGroup>
          </StyledRow>
          <StyledRow>
-            <StyledLabel>Processing information</StyledLabel>
+            <StyledLabel>{t(address.concat('processing information'))}</StyledLabel>
          </StyledRow>
          <StyledRow>
             <ButtonTile
                type="primary"
                size="sm"
-               text="Add Photo to your processing"
-               helper="upto 1MB - only JPG, PNG, PDF allowed"
+               text={t(address.concat("add photo to your processing"))}
+               helper={t(address.concat("upto 1MB - only JPG, PNG, PDF allowed"))}
                onClick={e => console.log('Tile clicked')}
             />
          </StyledRow>
@@ -154,7 +159,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label="Labor time per 100gm"
+                     label={t(address.concat("labor time per 100gm"))}
                      name="labor_time"
                      value={laborTime}
                      onChange={e => {
@@ -168,15 +173,15 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                      defaultValue={laborUnit}
                      onChange={e => setLaborUnit(e.target.value)}
                   >
-                     <option value="hours">hours</option>
-                     <option value="minutes">minutes</option>
+                     <option value="hours">{t('units.hours')}</option>
+                     <option value="minutes">{t('units.minutes')}</option>
                   </StyledSelect>
                </InputWrapper>
 
                <InputWrapper>
                   <Input
                      type="text"
-                     label="Percentage of yield"
+                     label={t(address.concat("percentage of yield"))}
                      name="yield"
                      value={yieldPercentage}
                      onChange={e => {
@@ -194,7 +199,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label="Shelf life"
+                     label={t(address.concat("shelf life"))}
                      name="shelf_life"
                      value={shelfLife}
                      onChange={e => {
@@ -208,14 +213,14 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                      defaultValue={shelfLifeUnit}
                      onChange={e => setShelfLifeUnit(e.target.value)}
                   >
-                     <option value="hours">hours</option>
-                     <option value="days">days</option>
+                     <option value="hours">{t('units.hours')}</option>
+                     <option value="days">{t('units.days')}</option>
                   </StyledSelect>
                </InputWrapper>
                <InputWrapper>
                   <Input
                      type="text"
-                     label="Bulk density"
+                     label={t(address.concat("bulk density"))}
                      name="bulk_density"
                      value={bulkDensity}
                      onChange={e => {
@@ -235,7 +240,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                   justifyContent: 'space-between',
                }}
             >
-               <div>Nutritions per 100gm</div>
+               <div>{t(address.concat('nutritions per 100gm'))}</div>
                <IconButton
                   onClick={() => {
                      dispatch({
@@ -250,43 +255,43 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                </IconButton>
             </StyledLabel>
             {state.configurable.nutrients?.fat ||
-            state.configurable.nutrients?.cal ? (
-               <>
-                  <div
-                     style={{
-                        width: '70%',
-                        minHeight: '100px',
-                        backgroundColor: '#F3F3F3',
-                        padding: '20px',
-                     }}
-                  >
-                     <Text as="title">
-                        <strong>calories: </strong>
-                        {state.configurable.nutrients?.cal}
-                     </Text>
+               state.configurable.nutrients?.cal ? (
+                  <>
+                     <div
+                        style={{
+                           width: '70%',
+                           minHeight: '100px',
+                           backgroundColor: '#F3F3F3',
+                           padding: '20px',
+                        }}
+                     >
+                        <Text as="title">
+                           <strong>{t(address.concat('calories'))}: </strong>
+                           {state.configurable.nutrients?.cal}
+                        </Text>
 
-                     <Text as="title">
-                        <strong>Total Fat: </strong>
-                        {state.configurable.nutrients?.fat}
-                     </Text>
-                  </div>
-               </>
-            ) : (
-               <ButtonTile
-                  type="secondary"
-                  text="Add Nutritions"
-                  onClick={e => {
-                     dispatch({
-                        type: 'SET_NUTRI_TARGET',
-                        payload: 'deriveProcessing',
-                     })
-                     open(10)
-                  }}
-               />
-            )}
+                        <Text as="title">
+                           <strong>{t(address.concat('total fat'))}: </strong>
+                           {state.configurable.nutrients?.fat}
+                        </Text>
+                     </div>
+                  </>
+               ) : (
+                  <ButtonTile
+                     type="secondary"
+                     text={t(address.concat("add nutritions"))}
+                     onClick={e => {
+                        dispatch({
+                           type: 'SET_NUTRI_TARGET',
+                           payload: 'deriveProcessing',
+                        })
+                        open(10)
+                     }}
+                  />
+               )}
          </StyledRow>
          <StyledRow>
-            <StyledLabel>Allergens</StyledLabel>
+            <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
             {configurable.allergens?.length ? (
                <Highlight pointer onClick={() => open(8)}>
                   <TagGroup>
@@ -296,12 +301,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                   </TagGroup>
                </Highlight>
             ) : (
-               <ButtonTile
-                  type="secondary"
-                  text="Add Allergens"
-                  onClick={() => open(8)}
-               />
-            )}
+                  <ButtonTile
+                     type="secondary"
+                     text={t(address.concat("add allergens"))}
+                     onClick={() => open(8)}
+                  />
+               )}
          </StyledRow>
       </TunnelContainer>
    )

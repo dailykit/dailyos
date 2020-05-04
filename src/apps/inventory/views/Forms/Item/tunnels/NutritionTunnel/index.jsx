@@ -10,7 +10,12 @@ import {
 } from '../../../../../components'
 import { FlexContainer, Flexible } from '../../../styled'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.nutritiontunnel.'
+
 export default function NutritionTunnel({ close }) {
+   const { t } = useTranslation()
    const {
       state: { nutriTarget },
       dispatch,
@@ -44,7 +49,7 @@ export default function NutritionTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Add Nutrition Values"
+            title={t(address.concat("add nutrition values"))}
             next={() => {
                if (nutriTarget === 'processing') {
                   dispatch({
@@ -96,11 +101,15 @@ export default function NutritionTunnel({ close }) {
          <Spacer />
 
          <Text as="title">
-            Add the values as per 100gm and make your recipes smarter with
-            auto-generated Nutritional Facts
+            <Trans i18nKey={address.concat('title')}>
+               Add the values as per 100gm and make your recipes smarter with
+               auto-generated Nutritional Facts
+            </Trans>
          </Text>
          <Text as="subtitle">
-            You can skip the values you don’t want to put.
+            <Trans i18nKey={address.concat('subtitle')}>
+               You can skip the values you don’t want to put.
+            </Trans>
          </Text>
 
          <Spacer />
@@ -108,7 +117,7 @@ export default function NutritionTunnel({ close }) {
          <FlexContainer style={{ width: '60%' }}>
             <Flexible width="2" />
             <Flexible width="1">
-               <Text as="subtitle">% Daily value</Text>
+               <Text as="subtitle">% {t(address.concat('daily value'))}</Text>
             </Flexible>
          </FlexContainer>
          <br />
@@ -122,7 +131,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Calories"
+                     placeholder={t(address.concat("calories"))}
                      name="cal"
                      value={cal || ''}
                      onChange={e => {
@@ -130,7 +139,7 @@ export default function NutritionTunnel({ close }) {
                            setCal(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -148,7 +157,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Total Fat"
+                     placeholder={t(address.concat("total fat"))}
                      name="fat"
                      value={fat || ''}
                      onChange={e => {
@@ -156,7 +165,7 @@ export default function NutritionTunnel({ close }) {
                            setFat(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -176,7 +185,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Saturated Fat"
+                     placeholder={t(address.concat("saturated fat"))}
                      name="saturatedFat"
                      value={saturatedFat || ''}
                      onChange={e => {
@@ -184,7 +193,7 @@ export default function NutritionTunnel({ close }) {
                            setSaturatedFat(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -206,7 +215,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Trans Fat"
+                     placeholder={t(address.concat("trans fat"))}
                      name="transFat"
                      value={transFat || ''}
                      onChange={e => {
@@ -214,7 +223,7 @@ export default function NutritionTunnel({ close }) {
                            setTransFat(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -234,7 +243,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Cholestrol"
+                     placeholder={t(address.concat("cholestrol"))}
                      name="cholestrol"
                      value={cholestrol || ''}
                      onChange={e => {
@@ -242,7 +251,7 @@ export default function NutritionTunnel({ close }) {
                            setCholestrol(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -262,7 +271,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Sodium"
+                     placeholder={t(address.concat("sodium"))}
                      name="sodium"
                      value={sodium || ''}
                      onChange={e => {
@@ -270,7 +279,7 @@ export default function NutritionTunnel({ close }) {
                            setSodium(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -290,14 +299,14 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Total Carbohydrate"
+                     placeholder={t(address.concat("total carbohydrate"))}
                      name="totalCarbs"
                      value={carbs || ''}
                      onChange={e => {
                         if (sanitizeInput(e.target.e)) setCarbs(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -319,7 +328,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Dietry Fibre"
+                     placeholder={t(address.concat("dietry fibre"))}
                      name="dietryFibre"
                      value={dietryFibre || ''}
                      onChange={e => {
@@ -327,7 +336,7 @@ export default function NutritionTunnel({ close }) {
                            setDietryFibre(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -349,7 +358,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Sugar"
+                     placeholder={t(address.concat("sugar"))}
                      name="sugar"
                      value={sugar || ''}
                      onChange={e => {
@@ -357,7 +366,7 @@ export default function NutritionTunnel({ close }) {
                            setSugar(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -377,7 +386,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Protein"
+                     placeholder={t(address.concat("protein"))}
                      name="protein"
                      value={protein || ''}
                      onChange={e => {
@@ -385,7 +394,7 @@ export default function NutritionTunnel({ close }) {
                            setProtein(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -405,7 +414,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Vitamin A"
+                     placeholder={t(address.concat("vitamin A"))}
                      name="vitaminA"
                      value={vitA || ''}
                      onChange={e => {
@@ -413,7 +422,7 @@ export default function NutritionTunnel({ close }) {
                            setVitA(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -433,7 +442,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Vitamin C"
+                     placeholder={t(address.concat("vitamin C"))}
                      name="vitC"
                      value={vitC || ''}
                      onChange={e => {
@@ -461,7 +470,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Calcium"
+                     placeholder={t(address.concat("calcium"))}
                      name="calcium"
                      value={calcium || ''}
                      onChange={e => {
@@ -469,7 +478,7 @@ export default function NutritionTunnel({ close }) {
                            setCalcium(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">
@@ -489,7 +498,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder="Iron"
+                     placeholder={t(address.concat("iron"))}
                      name="iron"
                      value={iron || ''}
                      onChange={e => {
@@ -497,7 +506,7 @@ export default function NutritionTunnel({ close }) {
                            setIron(+e.target.value)
                      }}
                   />
-                  <div>gm</div>
+                  <div>{t('units.gm')}</div>
                </FlexContainer>
             </Flexible>
             <Flexible width="1">

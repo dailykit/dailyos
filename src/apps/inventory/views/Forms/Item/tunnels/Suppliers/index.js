@@ -15,12 +15,17 @@ import {
    Spacer,
 } from '../../../../../components'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
+
 export default function SupplierTunnel({
    close,
    suppliers,
    open,
    rawSuppliers,
 }) {
+   const { t } = useTranslation()
    const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
@@ -30,7 +35,7 @@ export default function SupplierTunnel({
       <>
          <TunnelContainer>
             <TunnelHeader
-               title="Select Supplier"
+               title={t(address.concat("select supplier"))}
                next={() => {
                   const payload = rawSuppliers.find(
                      supplier => supplier.id === current.id
@@ -55,11 +60,11 @@ export default function SupplierTunnel({
                      }}
                   />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for"))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

@@ -29,7 +29,12 @@ import {
    AddIcon,
 } from '../../../../../shared/assets/icons'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.settings.views.listings.userslisting.'
+
 const UsersListing = () => {
+   const { t } = useTranslation()
    const history = useHistory()
    const { tabs, addTab } = useTabs()
 
@@ -74,7 +79,7 @@ const UsersListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">Users</Text>
+            <Text as="h2">{t(address.concat('users'))}</Text>
             <IconButton type="solid" onClick={() => createTab()}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
@@ -82,10 +87,10 @@ const UsersListing = () => {
          <Table>
             <TableHead>
                <TableRow>
-                  <TableCell>Users</TableCell>
-                  <TableCell>Apps Configured</TableCell>
-                  <TableCell>Devices Assigned</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t(address.concat('users'))}</TableCell>
+                  <TableCell>{t(address.concat('apps configured'))}</TableCell>
+                  <TableCell>{t(address.concat('devices assigned'))}</TableCell>
+                  <TableCell align="right">{t(address.concat('actions'))}</TableCell>
                </TableRow>
             </TableHead>
             <TableBody>
@@ -113,8 +118,8 @@ const UsersListing = () => {
                         {row.devices ? (
                            <StyledBadge>{row.devices}</StyledBadge>
                         ) : (
-                           'NA'
-                        )}
+                              'NA'
+                           )}
                      </TableCell>
                      <TableCell align="right">
                         <ButtonGroup align="right">

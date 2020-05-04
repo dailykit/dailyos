@@ -11,7 +11,12 @@ import {
    StyledHeading,
 } from './styled'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.sections.sidebar.'
+
 const Sidebar = ({ visible, toggleSidebar }) => {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const addTab = (title, view) => {
       toggleSidebar(visible => !visible)
@@ -19,13 +24,13 @@ const Sidebar = ({ visible, toggleSidebar }) => {
    }
    return (
       <StyledSidebar visible={visible}>
-         <StyledHeading>Listings</StyledHeading>
+         <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
             <StyledListItem onClick={() => addTab('Products', 'products')}>
-               Products
+               {t(address.concat('products'))}
             </StyledListItem>
             <StyledListItem onClick={() => addTab('Menus', 'menus')}>
-               Menus
+               {t(address.concat('menus'))}
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

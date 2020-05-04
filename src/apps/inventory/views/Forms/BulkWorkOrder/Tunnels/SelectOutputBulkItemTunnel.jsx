@@ -11,7 +11,12 @@ import { BulkOrderContext } from '../../../../context/bulkOrder'
 
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
+
 export default function SelectOutputBulkItem({ close }) {
+   const { t } = useTranslation()
    const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
    const [search, setSearch] = useState('')
 
@@ -21,7 +26,7 @@ export default function SelectOutputBulkItem({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title="Select Output Bulk Item Processing"
+            title={t(address.concat("select output bulk item processing"))}
             next={() => {
                bulkOrderDispatch({ type: 'ADD_OUTPUT_ITEM', payload: current })
                close(2)
@@ -42,11 +47,11 @@ export default function SelectOutputBulkItem({ close }) {
                   }}
                />
             ) : (
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
-               />
-            )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(address.concat("type what you’re looking for"))}
+                  />
+               )}
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))

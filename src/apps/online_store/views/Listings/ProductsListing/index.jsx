@@ -24,7 +24,12 @@ import { StyledWrapper, StyledHeader } from '../styled'
 // Icons
 import { AddIcon } from '../../../assets/icons'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.online_store.views.listings.productslisting.'
+
 const ProductsListing = () => {
+   const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
@@ -34,8 +39,8 @@ const ProductsListing = () => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
-   if (loading) return <h1>loading</h1>
-   if (error) return <h1>Start the data-hub server</h1>
+   if (loading) return <h1>{t(address.concat('loading'))}</h1>
+   if (error) return <h1>{t(address.concat('start the data-hub server'))}</h1>
 
    return (
       <>
@@ -46,7 +51,7 @@ const ProductsListing = () => {
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-               <h1>Products</h1>
+               <h1>{t(address.concat('products'))}</h1>
                <IconButton type="solid" onClick={() => openTunnel(1)}>
                   <AddIcon color="#fff" size={24} />
                </IconButton>
@@ -54,7 +59,7 @@ const ProductsListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell>Product Name</TableCell>
+                     <TableCell>{t(address.concat('product name'))}</TableCell>
                   </TableRow>
                </TableHead>
                <TableBody>

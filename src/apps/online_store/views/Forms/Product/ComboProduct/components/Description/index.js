@@ -5,7 +5,12 @@ import { StyledRow, StyledContainer, StyledAction } from './styled'
 import { EditIcon } from '../../../../../../assets/icons'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 
+import { useTranslation } from 'react-i18next'
+
+const address = 'apps.online_store.views.forms.product.comboproduct.components.description.'
+
 const Description = ({ openTunnel }) => {
+   const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ComboProductContext)
 
    return (
@@ -29,13 +34,13 @@ const Description = ({ openTunnel }) => {
                </StyledRow>
             </StyledContainer>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="sm"
-               text="Add Description"
-               onClick={() => openTunnel(1)}
-            />
-         )}
+               <ButtonTile
+                  type="primary"
+                  size="sm"
+                  text={t(address.concat("add description"))}
+                  onClick={() => openTunnel(1)}
+               />
+            )}
       </React.Fragment>
    )
 }

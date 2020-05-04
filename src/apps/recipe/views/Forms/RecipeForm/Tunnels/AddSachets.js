@@ -15,7 +15,12 @@ import EditIcon from '../../../../assets/icons/Edit'
 
 import { TunnelHeader, Spacer } from '../../../../components/index'
 
+import { useTranslation, Trans } from 'react-i18next'
+
+const address = 'apps.recipe.views.forms.recipeform.tunnels.'
+
 export default function AddSachets({ close, openTunnel }) {
+   const { t } = useTranslation()
    const { recipeState, recipeDispatch } = useContext(RecipeContext)
 
    const renderSachets = serving => {
@@ -53,7 +58,7 @@ export default function AddSachets({ close, openTunnel }) {
                   openTunnel(5)
                }}
                type="secondary"
-               text="Select Sachet"
+               text={t(address.concat("select sachet"))}
             />
          )
       }
@@ -63,7 +68,7 @@ export default function AddSachets({ close, openTunnel }) {
       <>
          <TunnelContainer>
             <TunnelHeader
-               title="Add Ingredients"
+               title={t(address.concat("add ingredients"))}
                close={() => {
                   close(3)
                   recipeDispatch({
@@ -86,7 +91,7 @@ export default function AddSachets({ close, openTunnel }) {
                <FlexWidth width="1">
                   {/* TODO: add buttons for adding more ingredients when doing functionality part */}
                   <Text as="subtitle">
-                     Ingredients ({recipeState.ingredients.length})
+                     {t(address.concat('ingredients'))} ({recipeState.ingredients.length})
                   </Text>
 
                   <br />
@@ -136,21 +141,21 @@ export default function AddSachets({ close, openTunnel }) {
                                  </Text>
                               </FlexWidth>
                               {recipeState.view.processing &&
-                              recipeState.view.processing.title ? null : (
-                                 <FlexWidth width="3">
-                                    <ButtonTile
-                                       onClick={() => {
-                                          openTunnel(4)
-                                       }}
-                                       type="secondary"
-                                       text="Select Processing"
-                                    />
-                                 </FlexWidth>
-                              )}
+                                 recipeState.view.processing.title ? null : (
+                                    <FlexWidth width="3">
+                                       <ButtonTile
+                                          onClick={() => {
+                                             openTunnel(4)
+                                          }}
+                                          type="secondary"
+                                          text={t(address.concat("select processing"))}
+                                       />
+                                    </FlexWidth>
+                                 )}
                            </Content>
                            <Content>
                               <FlexWidth width="1">
-                                 <Text as="subtitle">For serving</Text>
+                                 <Text as="subtitle">{t(address.concat('for serving'))}</Text>
                               </FlexWidth>
                            </Content>
                            <br />
@@ -163,7 +168,7 @@ export default function AddSachets({ close, openTunnel }) {
                                              as="h2"
                                              style={{ textAlign: 'center' }}
                                           >
-                                             {serving.value} People.
+                                             {serving.value} {t(address.concat('people'))}.
                                           </Text>
                                        </FlexWidth>
                                        <FlexWidth width="3">
@@ -175,15 +180,15 @@ export default function AddSachets({ close, openTunnel }) {
                               ))}
                            {recipeState.servings[0].value <= 0 && (
                               <Content>
-                                 <Text as="h2">No servings available</Text>
+                                 <Text as="h2">{t(address.concat('no servings available'))}</Text>
                               </Content>
                            )}
                         </>
                      ) : (
-                        <Content>
-                           <Text as="h2">Select and ingredient</Text>
-                        </Content>
-                     )}
+                           <Content>
+                              <Text as="h2">{t(address.concat('select an ingredient'))}</Text>
+                           </Content>
+                        )}
                   </ManageIngredient>
                </FlexWidth>
             </Content>
