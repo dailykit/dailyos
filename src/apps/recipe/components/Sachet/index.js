@@ -21,8 +21,12 @@ const Sachet = ({ sachet }) => {
    return (
       <StyledContainer>
          <StyledTopBar>
-            <p>{sachet?.tracking ? t(address.concat('taken inventory')) : ' '}</p>
-            <span>{t(address.concat('active'))}: {activeMode}</span>
+            <p>
+               {sachet?.tracking ? t(address.concat('taken inventory')) : ' '}
+            </p>
+            <span>
+               {t(address.concat('active'))}: {activeMode}
+            </span>
          </StyledTopBar>
          <StyledTable cellSpacing={0} noActions>
             <thead>
@@ -39,14 +43,18 @@ const Sachet = ({ sachet }) => {
                {sachet?.modes.map(mode => (
                   <tr key={mode.type}>
                      <td>
-                        <span className='badge'>{t(address.concat('active'))}</span>
+                        <span className="badge">
+                           {t(address.concat('active'))}
+                        </span>
                         {mode.type}
                      </td>
                      <td>{mode.station.title}</td>
                      <td>{mode.supplierItems[0]?.item.title}</td>
                      <td>
                         {mode.supplierItems[0]?.accuracy
-                           ? t(address.concat('atleast ')) + mode.supplierItems[0]?.accuracy + '%'
+                           ? t(address.concat('atleast ')) +
+                             mode.supplierItems[0]?.accuracy +
+                             '%'
                            : t(address.concat('not weighing'))}
                      </td>
                      <td>{mode.supplierItems[0]?.packaging.title}</td>

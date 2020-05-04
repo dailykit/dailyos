@@ -75,11 +75,11 @@ export const FETCH_STATIONS = gql`
    }
 `
 
-export const FETCH_SUPPLIER_ITEMS = gql`
+export const FETCH_SACHET_ITEMS = gql`
    {
-      supplierItems {
+      sachetItems {
          id
-         name
+         unitSize
       }
    }
 `
