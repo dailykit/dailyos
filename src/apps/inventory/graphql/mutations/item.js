@@ -6,6 +6,8 @@ export const CREATE_SUPPLIER_ITEM = gql`
       $supplierId: Int!
       $unit: String!
       $unitSize: Int!
+      $leadTime: jsonb!
+      $prices: jsonb!
    ) {
       createSupplierItem(
          objects: {
@@ -13,6 +15,8 @@ export const CREATE_SUPPLIER_ITEM = gql`
             supplierId: $supplierId
             unit: $unit
             unitSize: $unitSize
+            leadTime: $leadTime
+            prices: $prices
          }
       ) {
          returning {
