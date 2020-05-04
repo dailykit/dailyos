@@ -1,34 +1,34 @@
 {
-   "inventory": "Inventory",
-   "recipe": "Recipe",
-   "online store": "Online Store",
-   "settings": "Settings",
+   "inventory": "Inventaire",
+   "recipe": "Recette",
+   "online store": "Boutique en ligne",
+   "settings": "Réglages",
    "units": {
       "gm": "gm",
       "gms": "gms",
       "kg": "kg",
       "kgs": "kgs",
-      "hours": "hours",
+      "hours": "heures",
       "mins": "mins",
       "minutes": "minutes",
-      "days": "days",
-      "weeks": "weeks",
-      "unit": "unit",
+      "days": "journées",
+      "weeks": "semaines",
+      "unit": "unité",
       "cs": "cs",
-      "gram": "gram",
+      "gram": "gramme",
       "loaf": "loaf"
    },
    "apps": {
       "inventory": {
          "components": {
             "tabs": {
-               "close tab": "Close Tab"
+               "close tab": "Fermer l'onglet"
             },
             "workorder": {
-               "processing as shipped": "Processing as Shipped",
-               "on hand": "On Hand",
-               "shelf life": "Shelf Life",
-               "available": "Available",
+               "processing as shipped": "Traitement comme expédié",
+               "on hand": "À portée de main",
+               "shelf life": "Durée de conservation",
+               "available": "Disponible",
                "par": "Par"
             }
          },
@@ -43,44 +43,44 @@
             "header": {},
             "main": {},
             "sidebar": {
-               "listings": "Listings",
-               "suppliers": "Suppliers",
-               "supplier items": "Supplier Items"
+               "listings": "Annonces",
+               "suppliers": "Fournisseurs",
+               "supplier items": "Articles fournisseurs"
             }
          },
          "views": {
             "forms": {
                "bulkworkorder": {
                   "tunnels": {
-                     "select input bulk item processing": "Select Input Bulk Item Processing",
-                     "select output bulk item processing": "Select Output Bulk Item Processing",
-                     "type what you're looking for": "type what you're looking for...",
-                     "select station": "Select Station",
-                     "select supplier item": "Select Supplier Item",
-                     "select user": "Select User"
+                     "select input bulk item processing": "Sélectionner le traitement des objets en bloc d'entrée",
+                     "select output bulk item processing": "Sélectionner le traitement des articles en vrac de sortie",
+                     "type what you're looking for": "tapez ce que vous cherchez...",
+                     "select station": "Sélectionnez la Station",
+                     "select supplier item": "Sélectionnez un fournisseur",
+                     "select user": "Sélectionner un utilisateur"
                   },
-                  "publish": "Publish",
-                  "select supplier item": "Select Supplier Item",
-                  "output bulk item": "Output Bulk Item",
-                  "select output bulk item": "Select Output Bulk Item",
-                  "yield percentage": "Yield Percentage",
-                  "enter output quantity": "Enter Output Quantity",
-                  "user assigned": "User Assigned",
-                  "select and assign user to work": "Select and assign user to work",
-                  "station assigned": "Station Assigned",
-                  "select and assign station to route to": "Select and assign station to route to",
-                  "work order": "Work Order",
-                  "input bulk item": "Input Bulk Item",
-                  "select input bulk item": "Select Input Bulk Item",
-                  "suggested committed quantity": "Suggested committed quantity",
-                  "scheduled on": "Scheduled On",
-                  "date (mm/dd/yy)": "Date (mm/dd/yy)"
+                  "publish": "Publier",
+                  "select supplier item": "Sélectionnez un fournisseur",
+                  "output bulk item": "Élément en vrac de sortie",
+                  "select output bulk item": "Sélectionner un objet en bloc de sortie",
+                  "yield percentage": "Pourcentage de rendement",
+                  "enter output quantity": "Entrez la quantité de sortie",
+                  "user assigned": "Assignation des utilisateurs",
+                  "select and assign user to work": "Sélectionner et assigner l'utilisateur au travail",
+                  "station assigned": "Station assignée",
+                  "select and assign station to route to": "Sélectionner et assigner la station à la route vers",
+                  "work order": "Ordres de travail",
+                  "input bulk item": "Entrée en vrac",
+                  "select input bulk item": "Sélectionner l'élément en vrac d'entrée",
+                  "suggested committed quantity": "Quantité engagée suggérée",
+                  "scheduled on": "Planifié le",
+                  "date (mm/dd/yy)": "Date (mm/jj/aa)"
                },
                "item": {
                   "tunnels": {
                      "allergens": {
-                        "add allergens": "Add Allergens",
-                        "save": "Save",
+                        "add allergens": "Ajouter un allergène",
+                        "save": "Enregistrer",
                         "type what you're looking for": "type what you're looking for..."
                      },
                      "allergenstunnel": {
@@ -141,16 +141,16 @@
                         "item sku": "Item SKU",
                         "unit qty": "Unit qty",
                         "unit price": "Unit Price",
-                        "case qty": "Case qty",
-                        "unit": "unit",
-                        "minimum order value": "Minimum order value",
-                        "lead time": "Lead time",
-                        "days": "Days",
-                        "weeks": "weeks",
-                        "upload certificates for the item authentication (if any)": "Upload certificates for the item authentication (if any)"
+                        "case qty": "Qté de la caisse",
+                        "unit": "unité",
+                        "minimum order value": "Montant de commande minimum",
+                        "lead time": "Délai de retard",
+                        "days": "Journées",
+                        "weeks": "semaines",
+                        "upload certificates for the item authentication (if any)": "Télécharger les certificats pour l'authentification de l'élément (le cas échéant)"
                      },
                      "nutritiontunnel": {
-                        "add nutrition values": "Add Nutrition Values",
+                        "add nutrition values": "Ajouter des valeurs nutritives",
                         "title": "Add the values as per 100gm and make your recipes smarter with auto-generated Nutritional Facts",
                         "subtitle": "You can skip the values you don’t want to put.",
                         "daily value": "Daily value",
