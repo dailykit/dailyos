@@ -175,45 +175,45 @@
                      },
                      "selectderivedprocessingtunnel": {
                         "select processing": "Sélectionnez le processus",
-                        "type what you're looking for": "type what you're looking for..."
+                        "type what you're looking for": "tapez ce que vous cherchez..."
                      },
                      "suppliers": {
-                        "select supplier": "Select Supplier",
-                        "type what you're looking for": "type what you're looking for..."
+                        "select supplier": "Sélectionner les fournisseurs",
+                        "type what you're looking for": "tapez ce que vous cherchez..."
                      }
                   },
-                  "add item information": "Add Item Information",
-                  "unit qty": "Unit qty",
-                  "case qty": "Case qty",
-                  "min order value": "Min Order Value",
-                  "lead time": "Lead time",
-                  "processings": "Processings",
-                  "as recieved from supplier": "As recieved from supplier",
-                  "on hand": "On Hand",
-                  "shelf life": "Shelf Life",
-                  "derived from recieved processing": "Derived from recieved processing",
-                  "select any processing from left menu to get started!": "Select any Processing from left menu to get started!",
-                  "real-time": "Real-Time",
-                  "planned-lot": "Planned-Lot",
-                  "awaiting": "Awaiting",
-                  "commited": "Commited",
-                  "consumed": "Consumed",
+                  "add item information": "Information sur l'identifiant",
+                  "unit qty": "Quantité d'unité",
+                  "case qty": "Qté de la caisse",
+                  "min order value": "Montant de commande minimum",
+                  "lead time": "Délai de retard",
+                  "processings": "Traitements",
+                  "as recieved from supplier": "Comme reçu du fournisseur",
+                  "on hand": "À portée de main",
+                  "shelf life": "Durée de conservation",
+                  "derived from recieved processing": "Dérivé du traitement reçu",
+                  "select any processing from left menu to get started!": "Sélectionnez n'importe quel traitement dans le menu de gauche pour commencer !",
+                  "real-time": "Temps Réel",
+                  "planned-lot": "Lot planifié",
+                  "awaiting": "En attente",
+                  "commited": "Engagé",
+                  "consumed": "Consommé",
                   "sachets": "Sachets",
                   "par": "Par",
-                  "add sachets": "Add Sachets"
+                  "add sachets": "Ajouter un Sachet"
                },
                "supplier": {
                   "tunnels": {
-                     "add address": "Add Address",
-                     "shipping location": "Shipping Location",
-                     "enter manually": "Enter Manually",
-                     "address line 1": "Address Line 1",
-                     "address line 2": "Address Line 2",
-                     "city": "City",
-                     "zip code": "Zip Code",
-                     "special instructions": "Special Instructions",
-                     "add person of contact": "Add Person Of Contact",
-                     "first name": "First Name",
+                     "add address": "Ajouter une adresse",
+                     "shipping location": "Lieu de livraison",
+                     "enter manually": "Saisir manuellement",
+                     "address line 1": "Adresse 1",
+                     "address line 2": "Adresse 2",
+                     "city": "Ville",
+                     "zip code": "Code postal",
+                     "special instructions": "Instructions spéciales",
+                     "add person of contact": "Attacher les contacts personnels",
+                     "first name": "Prénom",
                      "last name": "Nom De Famille",
                      "email": "courriel",
                      "phone number": "Numéro de téléphone",
@@ -275,38 +275,38 @@
                   "scheduled on": "Planifié le",
                   "date (mm/dd/yy)": "Date (mm/jj/aa)",
                   "station assigned": "Station assignée",
-                  "select and assign station to route to": "Select and assign station to route to"
+                  "select and assign station to route to": "Sélectionner et assigner la station à la route vers"
                }
             },
             "home": {
-               "inventory app": "Inventory App",
-               "suppliers": "Suppliers",
-               "items": "Items",
-               "work orders": "Work Orders",
-               "purchase orders": "Purchase Orders"
+               "inventory app": "Article de stock",
+               "suppliers": "Fournisseurs",
+               "items": "Produits",
+               "work orders": "Ordres de travail",
+               "purchase orders": "Bons de commande"
             },
             "listings": {
                "item": {
-                  "supplier items": "Supplier Items",
-                  "filters": "filters",
-                  "search": "Search"
+                  "supplier items": "Articles fournisseurs",
+                  "filters": "filtres",
+                  "search": "Recherche"
                },
                "purchaseorders": {
-                  "purchase orders": "Purchase Orders"
+                  "purchase orders": "Bons de commande"
                },
                "supplier": {
-                  "suppliers": "Suppliers",
-                  "name": "Name",
-                  "person of contact": "Person Of Contact",
-                  "active": "Active"
+                  "suppliers": "Fournisseurs",
+                  "name": "Nom",
+                  "person of contact": "Interlocuteur dédié",
+                  "active": "Actif"
                },
                "workorders": {
-                  "work orders": "Work Orders",
-                  "select type of work order": "Select Type of Work Order",
-                  "bulk work order": "Bulk Work Order",
-                  "bulk subtitle 1": "Bulk Work Order is to create bulk items with changing processing",
-                  "sachet work order": "Sachet Work Order",
-                  "sachet subtitle 1": "Sachet Work Order is to create planned lot items by portioning and packaging"
+                  "work orders": "Ordres de travail",
+                  "select type of work order": "Sélectionnez le type d'Ordre de Travail",
+                  "bulk work order": "Ajouter De L'Ordre De Travail",
+                  "bulk subtitle 1": "Le bon de travail en vrac est de créer des articles en vrac avec un traitement en cours",
+                  "sachet work order": "Ordre de Travail du Sachet",
+                  "sachet subtitle 1": "Le Bon de Travail du Sachet est de créer des articles de lot planifiés par portionnement et emballage"
                }
             }
          }
@@ -315,41 +315,41 @@
          "components": {
             "menu": {},
             "processings": {
-               "processings": "Processings",
+               "processings": "Traitements",
                "sachets": "Sachets",
-               "recipes": "Recipes",
-               "select processings": "Select Processings",
-               "save": "Save",
-               "type what you’re looking for": "type what you're looking for..."
+               "recipes": "Recette",
+               "select processings": "Sélectionnez le processus",
+               "save": "Enregistrer",
+               "type what you’re looking for": "tapez ce que vous cherchez..."
             },
             "recipes": {},
             "sachet": {
-               "taken inventory": "Taken Inventory",
-               "active": "Active",
-               "mode of fulfillment": "Mode of Fulfillment",
+               "taken inventory": "Ouvrir l'inventaire",
+               "active": "Actif",
+               "mode of fulfillment": "Modes de réalisation",
                "station": "Station",
-               "supplier item": "Supplier Item",
-               "accuracy": "Accuracy",
-               "packaging": "Packaging",
-               "label": "Label",
-               "atleast ": "Atleast ",
-               "not weighing": "Not Weighing",
-               "not labled": "Not Labled"
+               "supplier item": "Articles fournisseurs",
+               "accuracy": "Précision",
+               "packaging": "Emballage",
+               "label": "Nom",
+               "atleast ": "Au moins ",
+               "not weighing": "Pas de pondération",
+               "not labled": "Aucune étiquette"
             },
             "sachets": {
                "sachets": "Sachets",
-               "active: real-time": "Active: Real-time",
-               "available: 12/40 pkt": "Available: 12/40 pkt",
-               "modes of fulfillment": "Modes of Fulfillment",
-               "inventory": "Inventory",
-               "add sachet": "Add Sachet",
-               "add sachet for processing": "Add Sachet for Processing",
-               "save": "Save",
-               "enter quantity": "Enter Quantity",
-               "take inventory": "Take Inventory",
-               "mode of fulfillment": "Mode of Fulfillment",
+               "active: real-time": "Actif : Temps réel",
+               "available: 12/40 pkt": "Disponible: 12/40 pkt",
+               "modes of fulfillment": "Modes de réalisation",
+               "inventory": "Inventaire",
+               "add sachet": "Ajouter un Sachet",
+               "add sachet for processing": "Ajouter l'empaquetage pour le traitement",
+               "save": "Enregistrer",
+               "enter quantity": "Entrez la quantité",
+               "take inventory": "Ouvrir l'inventaire",
+               "mode of fulfillment": "Modes de réalisation",
                "station": "Station",
-               "supplier item": "Supplier Item",
+               "supplier item": "Articles fournisseurs",
                "accuracy": "Précision",
                "packaging": "Emballage",
                "label": "Nom",
@@ -419,58 +419,58 @@
                   "procedure title": "Titre de la procédure",
                   "cooking process": "Processus de cuisson",
                   "step title": "Titre de l'étape",
-                  "add a step": "Add a Step",
-                  "description": "Description",
-                  "add procedure": "Add Procedure",
-                  "select photos for this step": "Select Photos for this Step",
-                  "upto 1MB - only JPGs, PNGs, and PDFs are allowed": "upto 1MB - only JPGs and PNGs are allowed.",
-                  "recipe name": "Recipe Name",
-                  "save": "Save",
-                  "author": "Author",
+                  "add a step": "Ajouter une étape",
+                  "description": "La description",
+                  "add procedure": "Lancer la procédure",
+                  "select photos for this step": "Sélectionnez les photos pour cette étape",
+                  "upto 1MB - only JPGs, PNGs, and PDFs are allowed": "jusqu'à 1 Mo - seul JPG, PNG, PDF autorisé.",
+                  "recipe name": "Nom de la recette",
+                  "save": "Enregistrer",
+                  "author": "Auteur",
                   "cuisine": "Cuisine",
-                  "publish": "Publish",
-                  "chef name": "Chef Name",
-                  "add description": "Add Description",
-                  "add photos to your recipe": "Add Photos to your recipe",
-                  "upto 1MB": "upto 1MB",
-                  "only JPGs, PNGs and PDFs are allowed": "only JPGs, PNGs and PDFs are allowed.",
-                  "utensils": "Utensils",
-                  "cooking time": "Cooking Time",
-                  "servings": "Servings",
-                  "add servings": "Add Servings"
+                  "publish": "Publier",
+                  "chef name": "Nom du Chef",
+                  "add description": "Ajouter une description",
+                  "add photos to your recipe": "Ajoutez des photos à votre journal",
+                  "upto 1MB": "jusqu'à 1 Mo",
+                  "only JPGs, PNGs and PDFs are allowed": "jusqu'à 1 Mo - seul JPG, PNG, PDF autorisé.",
+                  "utensils": "Ustensiles",
+                  "cooking time": "Riz cuit",
+                  "servings": "Portions",
+                  "add servings": "Ajouter des portions"
                }
             },
             "home": {
-               "recipe app": "Recipe App",
-               "recipes": "Recipes",
-               "ingredients": "Ingredients"
+               "recipe app": "Niveau de recette",
+               "recipes": "Recette",
+               "ingredients": "Ingrédients"
             },
             "listings": {
                "ingredientslisting": {
-                  "ingredients": "Ingredients",
-                  "filters": "Filters",
-                  "search": "Search",
-                  "name": "Name",
-                  "variant": "Variant",
-                  "quantity": "Quantity",
-                  "modes of fulfillment": "Modes of Fulfillment",
+                  "ingredients": "Ingrédients",
+                  "filters": "Filtres",
+                  "search": "Recherche",
+                  "name": "Nom",
+                  "variant": "Variante",
+                  "quantity": "Quantité",
+                  "modes of fulfillment": "Modes de réalisation",
                   "stations": "Stations",
-                  "supplier item": "Supplier Item",
-                  "availability": "Availability"
+                  "supplier item": "Articles fournisseurs",
+                  "availability": "Accessibilité"
                },
                "recipeslisting": {
-                  "recipes": "Recipes",
-                  "name": "Name",
-                  "author": "Author",
-                  "# of servings": "# of Servings",
-                  "cooking time": "Cooking Time",
+                  "recipes": "Recette",
+                  "name": "Nom",
+                  "author": "Auteur",
+                  "# of servings": "# Ajouter des portions",
+                  "cooking time": "Riz cuit",
                   "pagination": "Pagination",
-                  "filters": "Filters",
+                  "filters": "Filtres",
                   "total": "Total",
-                  "recipe name": "Recipe Name",
-                  "recipe author": "Recipe Author",
-                  "servings": "Servings",
-                  "ingredient count": "Ingredient Count"
+                  "recipe name": "Nom de la recette",
+                  "recipe author": "Auteur de la recette",
+                  "servings": "Portions",
+                  "ingredient count": "Liste d'ingrédients"
                }
             }
          }
@@ -479,7 +479,7 @@
          "components": {
             "formheading": {},
             "tabs": {
-               "close tab": "Close Tab"
+               "close tab": "Fermer l'onglet"
             },
             "tunnelcomponents": {}
          },
@@ -487,8 +487,8 @@
             "header": {},
             "main": {},
             "sidebar": {
-               "listings": "Listings",
-               "products": "Products",
+               "listings": "Annonces",
+               "products": "Articles",
                "menus": "Menus"
             }
          },
@@ -497,8 +497,8 @@
                "collection": {
                   "components": {
                      "categories": {
-                        "category name": "Category Name",
-                        "add product": "Add Product",
+                        "category name": "Nom de catégorie",
+                        "add product": "Ajouter un produit",
                         "add category": "Ajouter la catégorie"
                      },
                      "configuration": {
@@ -557,85 +557,85 @@
                         "customizable product": "Grille personnalisable",
                         "subtitle 3": " Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation",
                         "combo product": "Produit combiné",
-                        "subtitle 4": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                        "subtitle 4": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                      }
                   },
-                  "collection name": "Collection Name",
-                  "add products": "Add Products",
-                  "configure shop": "Configure Shop",
-                  "open in editor": "Open in editor",
-                  "save": "Save",
-                  "save and exit": "Save and Exit",
-                  "proceed": "Proceed"
+                  "collection name": "Nom de la Collection",
+                  "add products": "Ajouter les produits",
+                  "configure shop": "Configurer les applis",
+                  "open in editor": "Ouvrir dans l'éditeur",
+                  "save": "Enregistrer",
+                  "save and exit": "Enregistrer et Quitter",
+                  "proceed": "Procéder"
                },
                "product": {
                   "comboproduct": {
                      "components": {
                         "description": {
-                           "add description": "Add Description"
+                           "add description": "Ajouter une description"
                         },
                         "items": {
-                           "items": "Items",
-                           "add product": "Add Product",
-                           "add items": "Add Items",
-                           "accompanients are taken as per added on the selected product": "Accompanients are taken as per added on the selected product",
-                           "pricing": "Pricing",
-                           "servings": "Servings",
-                           "options": "Options",
-                           "labels": "Labels",
-                           "price": "Price",
-                           "discount": "Discount",
-                           "meal kit": "Meal Kit",
-                           "ready to eat": "Ready to eat"
+                           "items": "Produits",
+                           "add product": "Ajouter un produit",
+                           "add items": "Ajouter des objets",
+                           "accompanients are taken as per added on the selected product": "Les accompagnateurs sont pris comme par ajout sur le produit sélectionné",
+                           "pricing": "Tarification",
+                           "servings": "Portions",
+                           "options": "Les options",
+                           "labels": "Nom",
+                           "price": "Prix",
+                           "discount": "Remise",
+                           "meal kit": "Kit Repas",
+                           "ready to eat": "Prêt à manger"
                         }
                      },
                      "tunnels": {
                         "descriptiontunnel": {
-                           "add description and tags": "Add Description and Tags",
-                           "saving": "Saving...",
-                           "save": "Save",
-                           "tags": "Tags",
-                           "description": "Description"
+                           "add description and tags": "Ajouter une description et des balises",
+                           "saving": "Enregistrement en cours...",
+                           "save": "Enregistrer",
+                           "tags": "Mots clés",
+                           "description": "La description"
                         },
                         "itemstunnel": {
-                           "add items": "Add Items",
-                           "saving": "Saving...",
-                           "save": "Save",
-                           "label your items to add recipes for": "Label your items to add recipes for",
-                           "enter": "Enter",
-                           "add another item": "Add Another Item"
+                           "add items": "Ajouter des objets",
+                           "saving": "Enregistrement en cours...",
+                           "save": "Enregistrer",
+                           "label your items to add recipes for": "Étiquetez vos objets pour lesquels ajouter des recettes",
+                           "enter": "Entrer",
+                           "add another item": "Cliquez ici pour ajouter une nouvelle"
                         },
                         "productstunnel": {
-                           "select product to add": "Select Product to Add",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select product to add": "Sélectionner les produits à ajouter",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "producttypetunnel": {
-                           "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
-                           "subtitle 1": "Inventory product is just an item, supplied or bought",
-                           "simple recipe product": "Simple Recipe Product",
-                           "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
-                           "customizable product": "Customizable Product",
-                           "subtitle 3": " Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                           "select product type": "Sélectionner un produit",
+                           "inventory product": "Produit inventaire",
+                           "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                           "simple recipe product": "Produit de recette simple",
+                           "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas ainsi que prêt à manger",
+                           "customizable product": "Grille personnalisable",
+                           "subtitle 3": " Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                         }
                      },
-                     "product name": "Product Name",
-                     "save": "Save",
-                     "publish": "Publish"
+                     "product name": "Nom de produit",
+                     "save": "Enregistrer",
+                     "publish": "Publier"
                   },
                   "customizableproduct": {
                      "components": {
                         "accompaniments": {
-                           "add accompaniment types": "Add Accompaniment Types"
+                           "add accompaniment types": "Sélectionnez le type d'Accompagnement"
                         },
                         "description": {
-                           "add description": "Add Description"
+                           "add description": "Ajouter une description"
                         },
                         "items": {
-                           "default": "Default",
-                           "add products": "Add Products",
-                           "make default": "Make Default",
-                           "pricing": "Pricing",
+                           "default": "Normale",
+                           "add products": "Ajouter les produits",
+                           "make default": "Définir par défaut",
+                           "pricing": "Tarification",
                            "accompaniments": "Accompagnements",
                            "labels": "Nom",
                            "servings": "Portions",
@@ -714,90 +714,90 @@
                         },
                         "products": {
                            "add products": "Ajouter les produits",
-                           "discount as accompaniment": "Discount as Accompaniment"
+                           "discount as accompaniment": "Remise en Accompagnement"
                         }
                      },
                      "tunnels": {
                         "accompanimenttypetunnel": {
-                           "select accompaniment type": "Select Accompaniment Type",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select accompaniment type": "Sélectionnez le type d'Accompagnement",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "descriptiontunnel": {
-                           "add description and tags": "Add Description and Tags",
-                           "save": "Save",
-                           "tags": "Tags",
-                           "description": "Description"
+                           "add description and tags": "Ajouter une description et des balises",
+                           "save": "Enregistrer",
+                           "tags": "Mots clés",
+                           "description": "La description"
                         },
                         "itemtunnel": {
-                           "select an item": "Select an Item",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select an item": "Sélectionner un objet",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "itemtypetunnel": {
-                           "select item type": "Select Item Type",
-                           "inventory item": "Inventory Item",
+                           "select item type": "Sélectionner le type d'élément",
+                           "inventory item": "Article de stock",
                            "subtitle 1": "blah....",
-                           "sachet item": "Sachet Item",
+                           "sachet item": "Objet de Sachet",
                            "subtitle 2": "blah ..."
                         },
                         "productstunnel": {
-                           "select product to add": "Select Product to Add",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select product to add": "Sélectionner les produits à ajouter",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "productstypetunnel": {
-                           "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
-                           "subtitle 1": "Inventory product is just an item, supplied or bought",
-                           "simple recipe product": "Simple Recipe Product",
-                           "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                           "select product type": "Sélectionner un produit",
+                           "inventory product": "Produit inventaire",
+                           "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                           "simple recipe product": "Produit de recette simple",
+                           "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                         }
                      },
-                     "product name": "Product Name",
-                     "save": "Save",
-                     "publish": "Publish"
+                     "product name": "Nom de produit",
+                     "save": "Enregistrer",
+                     "publish": "Publier"
                   },
                   "simplerecipeproduct": {
                      "components": {
                         "accompaniments": {
-                           "add accompaniment types": "Add Accompaniment Types"
+                           "add accompaniment types": "Sélectionnez le type d'Accompagnement"
                         },
                         "description": {
-                           "add description": "Add Description"
+                           "add description": "Ajouter une description"
                         },
                         "products": {
-                           "add products": "Add Products",
-                           "discount as accompaniment": "Discount as Accompaniment"
+                           "add products": "Ajouter les produits",
+                           "discount as accompaniment": "Remise en Accompagnement"
                         },
                         "recipe": {
-                           "pricing": "Pricing",
-                           "accompaniments": "Accompaniments",
-                           "configure pricing": "Configure Pricing",
-                           "servings": "Servings",
-                           "price": "Price",
-                           "discount": "Discount",
-                           "meal kit": "Meal Kit",
-                           "ready to eat": "Ready to eat",
-                           "add recipe": "Add Recipe"
+                           "pricing": "Tarification",
+                           "accompaniments": "Accompagnements",
+                           "configure pricing": "Configurer Traitement",
+                           "servings": "Portions",
+                           "price": "Prix",
+                           "discount": "Remise",
+                           "meal kit": "Kit Repas",
+                           "ready to eat": "Prêt à manger",
+                           "add recipe": "Ajouter Recette"
                         }
                      },
                      "tunnels": {
                         "accompanimenttypetunnel": {
-                           "select accompaniment type": "Select Accompaniment Type",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select accompaniment type": "Sélectionnez le type d'Accompagnement",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "descriptiontunnel": {
-                           "add description and tags": "Add Description and Tags",
-                           "save": "Save",
-                           "tags": "Tags",
-                           "description": "Description"
+                           "add description and tags": "Ajouter une description et des balises",
+                           "save": "Enregistrer",
+                           "tags": "Mots clés",
+                           "description": "La description"
                         },
                         "priceconfigurationtunnel": {
-                           "configure pricing for servings": "Configure Pricing for Servings",
-                           "save": "Save",
+                           "configure pricing for servings": "Configurer les prix pour les portions",
+                           "save": "Enregistrer",
                            "type": "Type",
-                           "active": "Active",
+                           "active": "Actif",
                            "servings": "Portions",
                            "price": "Prix",
                            "discounted price": "Prix réduit",
@@ -859,54 +859,54 @@
                   "add items": "Ajouter des objets",
                   "recipes for": "Recettes pour",
                   "msg 1": "Veuillez ajouter des recettes à ce produit.",
-                  "msg 2": "Please select a menu from the left menu to configure.",
-                  "pricing": "Pricing",
-                  "accompaniments": "Accompaniments",
-                  "make default": "Make Default",
-                  "servings": "Servings",
-                  "price": "Price",
-                  "discounted price": "Discounted Price",
-                  "mealkits": "Mealkits",
+                  "msg 2": "Veuillez sélectionner un menu dans le menu de gauche pour le configurer.",
+                  "pricing": "Tarification",
+                  "accompaniments": "Accompagnements",
+                  "make default": "Définir par défaut",
+                  "servings": "Portions",
+                  "price": "Prix",
+                  "discounted price": "Prix réduit",
+                  "mealkits": "Kits de repas",
                   "true": "true",
-                  "ready to eat": "Ready to eat",
-                  "select accompaniment types": "Select Accompaniment Types",
-                  "add accompaniments": "Add Accompaniments",
-                  "subtitle": "Select a Product from the right menu to configure!",
-                  "discount as accompaniment": "Discount as Accompaniment"
+                  "ready to eat": "Prêt à manger",
+                  "select accompaniment types": "Sélectionnez le type d'Accompagnement",
+                  "add accompaniments": "Sélectionnez le type d'Accompagnement",
+                  "subtitle": "Sélectionnez un produit dans le menu de droite pour le configurer!",
+                  "discount as accompaniment": "Remise en Accompagnement"
                }
             },
             "home": {
-               "seller app": "Seller App",
-               "products": "Products",
-               "10 created so far": "10 created so far",
-               "all active": "All active",
-               "go to products": "Go to Products",
-               "collections": "Collections",
-               "4 created so far": "4 created so far",
-               "all available": "All available",
-               "go to collections": "Go to Collections"
+               "seller app": "Application du vendeur",
+               "products": "Articles",
+               "10 created so far": "10 créés jusqu'à présent",
+               "all active": "Tous les Actifs",
+               "go to products": "Aller au produit",
+               "collections": "Dossiers",
+               "4 created so far": "4 créés jusqu'à présent",
+               "all available": "Tout disponible",
+               "go to collections": "Aller à la collection"
             },
             "listings": {
                "collectionslisting": {
-                  "collection name": "Collection Name",
-                  "categories": "Categories",
-                  "products": "Products",
+                  "collection name": "Nom de la Collection",
+                  "categories": "Catégories",
+                  "products": "Produits",
                   "actions": "Actions"
                },
                "productslisting": {
-                  "loading": "loading",
-                  "start the data-hub server": "Start the data-hub server",
-                  "products": "Products",
-                  "product name": "Product Name",
-                  "select type of product": "Select Type of Product",
-                  "inventory product": "Inventroy Product",
-                  "subtitle 1": "Inventory product is just an item, supplied or bought",
-                  "simple recipe product": "Simple Recipe Product",
-                  "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
-                  "customizable product": "Customizable Product",
-                  "subtitle 3": " Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
-                  "combo product": "Combo Product",
-                  "subtitle 4": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                  "loading": "chargement",
+                  "start the data-hub server": "Lancer le serveur data-hub",
+                  "products": "Produits",
+                  "product name": "Nom de produit",
+                  "select type of product": "Indiquer le type de projet",
+                  "inventory product": "Produit inventaire",
+                  "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                  "simple recipe product": "Produit de recette simple",
+                  "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation",
+                  "customizable product": "Grille personnalisable",
+                  "subtitle 3": " Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation",
+                  "combo product": "Produit combiné",
+                  "subtitle 4": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                }
             }
          }
@@ -916,22 +916,22 @@
             "loader": {},
             "sectiontabs": {},
             "tabs": {
-               "close tab": "Close Tab"
+               "close tab": "Fermer l'onglet"
             }
          },
          "sections": {
             "header": {
                "menu": "Menu",
-               "go back": "Go Back",
-               "go forward": "Go Forward"
+               "go back": "Revenir",
+               "go forward": "Suivante"
             },
             "main": {},
             "sidebar": {
-               "listings": "Listings",
-               "users": "Users",
-               "devices": "Devices",
-               "roles": "Roles",
-               "apps": "Apps",
+               "listings": "Annonces",
+               "users": "Utilisateurs",
+               "devices": "Appareils",
+               "roles": "Rôles",
+               "apps": "Applications",
                "station": "Station"
             }
          },
@@ -1002,28 +1002,28 @@
                   "users assigned": "Assignation des utilisateurs"
                },
                "deviceslisting": {
-                  "devices": "Devices",
+                  "devices": "Appareils",
                   "stations": "Stations",
-                  "users assigned": "Users Assigned",
+                  "users assigned": "Assignation des utilisateurs",
                   "actions": "Actions"
                },
                "roleslisting": {
-                  "roles": "Roles",
-                  "apps configured": "Apps Configured",
+                  "roles": "Rôles",
+                  "apps configured": "\"Pas d'applications configurées\"",
                   "actions": "Actions"
                },
                "stationslisting": {
                   "actions": "Actions",
                   "stations": "Stations",
-                  "station name": "Station Name",
-                  "station type": "Station Type",
-                  "devices": "Devices",
+                  "station name": "Nom de Station",
+                  "station type": "Nom de Station",
+                  "devices": "Appareils",
                   "sachets": "Sachets"
                },
                "userslisting": {
-                  "users": "Users",
-                  "apps configured": "Apps Configured",
-                  "devices assigned": "Devices Assigned",
+                  "users": "Utilisateurs",
+                  "apps configured": "Apps configurées",
+                  "devices assigned": "Equipements affectés",
                   "actions": "Actions"
                }
             }
