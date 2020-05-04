@@ -31,7 +31,8 @@ import {
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
+const address =
+   'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
 
 export default function ConfigureDerivedProcessingTunnel({ close, open }) {
    const { t } = useTranslation()
@@ -60,6 +61,14 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
             processingName: state.configurable.title,
             itemId: state.id,
             unit: parUnit,
+            yield: { value: yieldPercentage },
+            shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+            parLevel: +par,
+            nutritionInfo: state.configurable.nutrients,
+            maxLevel: +maxInventoryLevel,
+            labor: { unit: laborUnit, value: laborTime },
+            bulkDensity: +bulkDensity,
+            allergens: state.configurable.allergens,
          },
       })
 
@@ -87,7 +96,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("configure processing"))}
+            title={t(address.concat('configure processing'))}
             next={handleNext}
             close={() => close(7)}
             nextAction="Save"
@@ -100,7 +109,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat("set par level"))}
+                     label={t(address.concat('set par level'))}
                      name="par_level"
                      value={par}
                      onChange={e => {
@@ -121,7 +130,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat("max inventory level"))}
+                     label={t(address.concat('max inventory level'))}
                      name="max_inventory_level"
                      value={maxInventoryLevel}
                      onChange={e => {
@@ -143,14 +152,18 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
             </StyledInputGroup>
          </StyledRow>
          <StyledRow>
-            <StyledLabel>{t(address.concat('processing information'))}</StyledLabel>
+            <StyledLabel>
+               {t(address.concat('processing information'))}
+            </StyledLabel>
          </StyledRow>
          <StyledRow>
             <ButtonTile
                type="primary"
                size="sm"
-               text={t(address.concat("add photo to your processing"))}
-               helper={t(address.concat("upto 1MB - only JPG, PNG, PDF allowed"))}
+               text={t(address.concat('add photo to your processing'))}
+               helper={t(
+                  address.concat('upto 1MB - only JPG, PNG, PDF allowed')
+               )}
                onClick={e => console.log('Tile clicked')}
             />
          </StyledRow>
@@ -159,7 +172,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat("labor time per 100gm"))}
+                     label={t(address.concat('labor time per 100gm'))}
                      name="labor_time"
                      value={laborTime}
                      onChange={e => {
@@ -181,7 +194,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat("percentage of yield"))}
+                     label={t(address.concat('percentage of yield'))}
                      name="yield"
                      value={yieldPercentage}
                      onChange={e => {
@@ -199,7 +212,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat("shelf life"))}
+                     label={t(address.concat('shelf life'))}
                      name="shelf_life"
                      value={shelfLife}
                      onChange={e => {
@@ -220,7 +233,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat("bulk density"))}
+                     label={t(address.concat('bulk density'))}
                      name="bulk_density"
                      value={bulkDensity}
                      onChange={e => {
@@ -255,40 +268,40 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                </IconButton>
             </StyledLabel>
             {state.configurable.nutrients?.fat ||
-               state.configurable.nutrients?.cal ? (
-                  <>
-                     <div
-                        style={{
-                           width: '70%',
-                           minHeight: '100px',
-                           backgroundColor: '#F3F3F3',
-                           padding: '20px',
-                        }}
-                     >
-                        <Text as="title">
-                           <strong>{t(address.concat('calories'))}: </strong>
-                           {state.configurable.nutrients?.cal}
-                        </Text>
-
-                        <Text as="title">
-                           <strong>{t(address.concat('total fat'))}: </strong>
-                           {state.configurable.nutrients?.fat}
-                        </Text>
-                     </div>
-                  </>
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat("add nutritions"))}
-                     onClick={e => {
-                        dispatch({
-                           type: 'SET_NUTRI_TARGET',
-                           payload: 'deriveProcessing',
-                        })
-                        open(10)
+            state.configurable.nutrients?.cal ? (
+               <>
+                  <div
+                     style={{
+                        width: '70%',
+                        minHeight: '100px',
+                        backgroundColor: '#F3F3F3',
+                        padding: '20px',
                      }}
-                  />
-               )}
+                  >
+                     <Text as="title">
+                        <strong>{t(address.concat('calories'))}: </strong>
+                        {state.configurable.nutrients?.cal}
+                     </Text>
+
+                     <Text as="title">
+                        <strong>{t(address.concat('total fat'))}: </strong>
+                        {state.configurable.nutrients?.fat}
+                     </Text>
+                  </div>
+               </>
+            ) : (
+               <ButtonTile
+                  type="secondary"
+                  text={t(address.concat('add nutritions'))}
+                  onClick={e => {
+                     dispatch({
+                        type: 'SET_NUTRI_TARGET',
+                        payload: 'deriveProcessing',
+                     })
+                     open(10)
+                  }}
+               />
+            )}
          </StyledRow>
          <StyledRow>
             <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
@@ -301,12 +314,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                   </TagGroup>
                </Highlight>
             ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat("add allergens"))}
-                     onClick={() => open(8)}
-                  />
-               )}
+               <ButtonTile
+                  type="secondary"
+                  text={t(address.concat('add allergens'))}
+                  onClick={() => open(8)}
+               />
+            )}
          </StyledRow>
       </TunnelContainer>
    )
