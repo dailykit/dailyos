@@ -527,36 +527,36 @@
                         "every friday": "Tous les vendredis",
                         "every saturday": "Tous les samedis",
                         "every sunday": "Chaque dimanche",
-                        "available in": "Available in",
-                        "jan": "Jan",
-                        "feb": "Feb",
-                        "mar": "Mar",
-                        "apr": "Apr",
-                        "may": "May",
-                        "jun": "Jun",
-                        "jul": "Jul",
-                        "aug": "Aug",
-                        "sep": "Sep",
-                        "oct": "Oct",
-                        "nov": "Nov",
-                        "dec": "Dec"
+                        "available in": "Disponible dans",
+                        "jan": "Janvier",
+                        "feb": "Février",
+                        "mar": "Mars",
+                        "apr": "Avril",
+                        "may": "Mai",
+                        "jun": "Juin",
+                        "jul": "Juillet",
+                        "aug": "Août",
+                        "sep": "Septembre",
+                        "oct": "Octobre",
+                        "nov": "Novembre",
+                        "dec": "Décembre"
                      }
                   },
                   "tunnels": {
                      "products": {
-                        "select and add products to the collection": "Select and add products to the collection",
-                        "save": "Save",
-                        "type what you're looking for": "type what you're looking for..."
+                        "select and add products to the collection": "Sélectionner et ajouter des produits à la collection",
+                        "save": "Enregistrer",
+                        "type what you're looking for": "tapez ce que vous cherchez..."
                      },
                      "producttypetunnel": {
-                        "select product type": "Select Product Type",
-                        "inventory product": "Inventroy Product",
-                        "subtitle 1": "Inventory product is just an item, supplied or bought",
-                        "simple recipe product": "Simple Recipe Product",
-                        "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
-                        "customizable product": "Customizable Product",
-                        "subtitle 3": " Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
-                        "combo product": "Combo Product",
+                        "select product type": "Sélectionner un produit",
+                        "inventory product": "Produit inventaire",
+                        "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                        "simple recipe product": "Produit de recette simple",
+                        "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation",
+                        "customizable product": "Grille personnalisable",
+                        "subtitle 3": " Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation",
+                        "combo product": "Produit combiné",
                         "subtitle 4": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
                      }
                   },
@@ -636,33 +636,33 @@
                            "add products": "Add Products",
                            "make default": "Make Default",
                            "pricing": "Pricing",
-                           "accompaniments": "Accompaniments",
-                           "labels": "Labels",
-                           "servings": "Servings",
-                           "options": "Options",
-                           "discount": "Discount",
-                           "meal kit": "Meal Kit",
-                           "ready to eat": "Ready to eat"
+                           "accompaniments": "Accompagnements",
+                           "labels": "Nom",
+                           "servings": "Portions",
+                           "options": "Les options",
+                           "discount": "Remise",
+                           "meal kit": "Kit Repas",
+                           "ready to eat": "Prêt à manger"
                         },
                         "products": {
-                           "add products": "Add Products",
-                           "discount as accompaniment": "Discount as Accompaniment"
+                           "add products": "Ajouter les produits",
+                           "discount as accompaniment": "Remise en Accompagnement"
                         }
                      },
                      "tunnels": {
                         "accompanimenttypetunnel": {
-                           "select accompaniment type": "Select Accompaniment Type",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select accompaniment type": "Sélectionnez le type d'Accompagnement",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "descriptiontunnel": {
-                           "add description and tags": "Add Description and Tags",
-                           "save": "Save",
-                           "tags": "Tags",
-                           "description": "Description"
+                           "add description and tags": "Ajouter une description et des balises",
+                           "save": "Enregistrer",
+                           "tags": "Mots clés",
+                           "description": "La description"
                         },
                         "itemstunnel": {
-                           "select": "Select",
+                           "select": "Sélectionner",
                            "inventory products": "Inventroy Products",
                            "simple recipe products": "Simple Recipe Products",
                            "to add": "To Add",
