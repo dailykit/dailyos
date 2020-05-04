@@ -50,7 +50,7 @@ export default function ConfigTunnel({ close, open }) {
          variables: {
             processingName: state.processing.name,
             itemId: state.id,
-            unit: state.processing.par_level.unit,
+            unit: state.processing.unit, // string
             yield: { value: state.processing.yield },
             shelfLife: state.processing.shelf_life,
             parLevel: +state.processing.par_level.value,
@@ -113,22 +113,6 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      />
-                     <StyledSelect
-                        name="unit"
-                        defaultValue={state.processing.par_level.unit}
-                        onChange={e =>
-                           dispatch({
-                              type: 'PAR_LEVEL',
-                              payload: {
-                                 name: 'unit',
-                                 value: e.target.value,
-                              },
-                           })
-                        }
-                     >
-                        <option value="gram">{t('units.gram')}</option>
-                        <option value="loaf">{t('units.loaf')}</option>
-                     </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>
                      <Input
@@ -143,25 +127,28 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      />
-                     <StyledSelect
-                        name="unit"
-                        defaultValue={state.processing.max_inventory_level.unit}
-                        onChange={e =>
-                           dispatch({
-                              type: 'MAX_INVENTORY_LEVEL',
-                              payload: {
-                                 name: 'unit',
-                                 value: e.target.value,
-                              },
-                           })
-                        }
-                     >
-                        <option value="gms">{t('units.gms')}</option>
-                        <option value="kgs">{t('units.kgs')}</option>
-                     </StyledSelect>
                   </InputWrapper>
                </StyledInputGroup>
             </StyledRow>
+
+            <StyledRow>
+               <StyledSelect
+                  name="unit"
+                  defaultValue={state.processing.unit}
+                  onChange={e =>
+                     dispatch({
+                        type: 'SET_UNIT',
+                        payload: {
+                           value: e.target.value,
+                        },
+                     })
+                  }
+               >
+                  <option value="gram">{t('units.gram')}</option>
+                  <option value="loaf">{t('units.loaf')}</option>
+               </StyledSelect>
+            </StyledRow>
+
             <StyledRow>
                <StyledLabel>
                   {t(address.concat('processing information'))}

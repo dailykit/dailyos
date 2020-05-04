@@ -44,10 +44,11 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
 
    const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
 
+   const [unit, setUnit] = useState('gram')
    const [par, setPar] = useState('')
-   const [parUnit, setParUnit] = useState('gram')
+
    const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
-   const [maxInventoryUnit, setMaxInventoryUnit] = useState('gram')
+
    const [laborTime, setLaborTime] = useState('')
    const [laborUnit, setLaborUnit] = useState('hours')
    const [yieldPercentage, setYieldPercentage] = useState('')
@@ -60,7 +61,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
          variables: {
             processingName: state.configurable.title,
             itemId: state.id,
-            unit: parUnit,
+            unit,
             yield: { value: yieldPercentage },
             shelfLife: { unit: shelfLifeUnit, value: shelfLife },
             parLevel: +par,
@@ -78,9 +79,9 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
             payload: {
                id: res?.data?.createBulkItem?.returning[0].id,
                par,
-               parUnit,
+               unit,
                maxInventoryLevel,
-               maxInventoryUnit,
+
                laborTime,
                laborUnit,
                yieldPercentage,
@@ -118,14 +119,6 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                         if (value) setPar(value)
                      }}
                   />
-                  <StyledSelect
-                     name="unit"
-                     defaultValue={parUnit}
-                     onChange={e => setParUnit(e.target.value)}
-                  >
-                     <option value="gram">{t('units.gram')}</option>
-                     <option value="loaf">{t('units.loaf')}</option>
-                  </StyledSelect>
                </InputWrapper>
                <InputWrapper>
                   <Input
@@ -140,16 +133,18 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                         if (value) setMaxInventoryLevel(value)
                      }}
                   />
-                  <StyledSelect
-                     name="unit"
-                     defaultValue={maxInventoryUnit}
-                     onChange={e => setMaxInventoryUnit(e.target.value)}
-                  >
-                     <option value="gram">{t('units.gram')}</option>
-                     <option value="loaf">{t('units.loaf')}</option>
-                  </StyledSelect>
                </InputWrapper>
             </StyledInputGroup>
+         </StyledRow>
+         <StyledRow>
+            <StyledSelect
+               name="unit"
+               defaultValue={unit}
+               onChange={e => setUnit(e.target.value)}
+            >
+               <option value="gram">{t('units.gram')}</option>
+               <option value="loaf">{t('units.loaf')}</option>
+            </StyledSelect>
          </StyledRow>
          <StyledRow>
             <StyledLabel>
