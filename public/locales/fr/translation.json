@@ -153,28 +153,28 @@
                         "add nutrition values": "Ajouter des valeurs nutritives",
                         "title": "Ajoutez les valeurs selon 100gm et rendez vos recettes plus intelligentes avec des faits nutritionnels générés automatiquement",
                         "subtitle": "Vous pouvez ignorer les valeurs que vous ne voulez pas mettre.",
-                        "daily value": "Daily value",
-                        "calories": "Calories",
-                        "total fat": "Total Fat",
-                        "saturated fat": "Saturated Fat",
-                        "trans fat": "Trans Fat",
+                        "daily value": "Valeurs quotidiennes",
+                        "calories": "Éergie",
+                        "total fat": "Graisse totale",
+                        "saturated fat": "Graisses saturées",
+                        "trans fat": "Graisses transaturées",
                         "cholestrol": "Cholestrol",
-                        "sodium": "Sodium",
-                        "total carbohydrates": "Total Carbohydrates",
-                        "dietry fibre": "Dietry Fibre",
-                        "sugar": "Sugar",
-                        "protein": "Protein",
-                        "vitamin A": "Vitamin A",
-                        "vitamin C": "Vitamin C",
+                        "sodium": "Source de Sodium",
+                        "total carbohydrates": "Glucides totaux",
+                        "dietry fibre": "Fibre alimentaire",
+                        "sugar": "Sucre",
+                        "protein": "Protéine",
+                        "vitamin A": "Vitamine A",
+                        "vitamin C": "Vitamine C",
                         "calcium": "Calcium",
-                        "iron": "Iron"
+                        "iron": "Fer"
                      },
                      "processing": {
-                        "select processing as item shipped": "Select Processing as Item shipped",
-                        "type what you're looking for": "type what you're looking for..."
+                        "select processing as item shipped": "Sélectionner le traitement comme article expédié",
+                        "type what you're looking for": "tapez ce que vous cherchez..."
                      },
                      "selectderivedprocessingtunnel": {
-                        "select processing": "Select Processing",
+                        "select processing": "Sélectionnez le processus",
                         "type what you're looking for": "type what you're looking for..."
                      },
                      "suppliers": {
@@ -663,57 +663,57 @@
                         },
                         "itemstunnel": {
                            "select": "Sélectionner",
-                           "inventory products": "Inventroy Products",
-                           "simple recipe products": "Simple Recipe Products",
-                           "to add": "To Add",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "inventory products": "Produit d'inventaire",
+                           "simple recipe products": "Produit de recette simple",
+                           "to add": "À ajouter",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "itemtypetunnel": {
-                           "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
-                           "subtitle 1": "Inventory product is just an item, supplied or bought",
-                           "simple recipe product": "Simple Recipe Product",
-                           "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                           "select product type": "Sélectionner un produit",
+                           "inventory product": "Produit d'inventaire",
+                           "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                           "simple recipe product": "Produit de recette simple",
+                           "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                         },
                         "productstunnel": {
-                           "select products to add": "Select Products to Add",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select products to add": "Sélectionner les produits à ajouter",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "productstypetunnel": {
-                           "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
-                           "subtitle 1": "Inventory product is just an item, supplied or bought",
-                           "simple recipe product": "Simple Recipe Product",
-                           "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                           "select product type": "Sélectionner un produit",
+                           "inventory product": "Produit inventaire",
+                           "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                           "simple recipe product": "Produit de recette simple",
+                           "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                         }
                      },
-                     "product name": "Product Name",
-                     "save": "Save",
-                     "publish": "Publish"
+                     "product name": "Nom de produit",
+                     "save": "Enregistrer",
+                     "publish": "Publier"
                   },
                   "inventoryproduct": {
                      "components": {
                         "accompaniments": {
-                           "add accompaniment types": "Add Accompaniment Types"
+                           "add accompaniment types": "Sélectionnez le type d'Accompagnement"
                         },
                         "description": {
-                           "add description": "Add Description"
+                           "add description": "Ajouter une description"
                         },
                         "item": {
-                           "unit size": "Unit Size",
-                           "pricing": "Pricing",
-                           "accompaniments": "Accompaniments",
-                           "options": "Options",
-                           "quantity": "Quantity",
-                           "price": "Price",
-                           "discount": "Discount",
-                           "add option": "Add Option",
-                           "add item": "Add Item"
+                           "unit size": "Prix ​​unitaire",
+                           "pricing": "Tarification",
+                           "accompaniments": "Accompagnements",
+                           "options": "Les options",
+                           "quantity": "Quantité",
+                           "price": "Prix",
+                           "discount": "Remise",
+                           "add option": "Ajouter une option",
+                           "add item": "Ajouter un item"
                         },
                         "products": {
-                           "add products": "Add Products",
+                           "add products": "Ajouter les produits",
                            "discount as accompaniment": "Discount as Accompaniment"
                         }
                      },
@@ -798,67 +798,67 @@
                            "save": "Save",
                            "type": "Type",
                            "active": "Active",
-                           "servings": "Servings",
-                           "price": "Price",
-                           "discounted price": "Discounted Price",
-                           "meal kit": "Meal Kit",
-                           "ready to eat": "Ready to eat"
+                           "servings": "Portions",
+                           "price": "Prix",
+                           "discounted price": "Prix réduit",
+                           "meal kit": "Kit Repas",
+                           "ready to eat": "Prêt à manger"
                         },
                         "productstunnel": {
-                           "select product to add": "Select Product to Add",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select product to add": "Sélectionner les produits à ajouter",
+                           "save": "Enregistrer",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         },
                         "productstypetunnel": {
-                           "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
-                           "subtitle 1": "Inventory product is just an item, supplied or bought",
-                           "simple recipe product": "Simple Recipe Product",
-                           "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                           "select product type": "Sélectionner un produit",
+                           "inventory product": "Produit inventaire",
+                           "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
+                           "simple recipe product": "Produit de recette simple",
+                           "subtitle 2": "Le produit de recette simple est une seule recette, vendue en kit de repas et prête à la consommation"
                         },
                         "recipetunnel": {
-                           "select a recipe": "Select a Recipe",
-                           "type what you're looking for": "type what you're looking for..."
+                           "select a recipe": "Sélectionner une recette",
+                           "type what you're looking for": "tapez ce que vous cherchez..."
                         }
                      },
-                     "product name": "Product Name",
-                     "save": "Save",
-                     "publish": "Publish"
+                     "product name": "Nom de produit",
+                     "save": "Enregistrer",
+                     "publish": "Publier"
                   },
                   "tunnels": {
-                     "type what you're looking for": "type what you're looking for",
-                     "new": "New",
-                     "add items": "Add Items",
-                     "text": "Label your items to add recipes for.",
-                     "fill this first to continue adding new items!": "fill this first to continue adding new items!",
-                     "add another item": "Add Another Item",
-                     "edit availability": "Edit Availability",
-                     "available for": "Available for",
-                     "pre-orders": "Pre-Orders",
-                     "days": "Days",
-                     "realtime": "Realtime",
-                     "add product description": "Add Product Description",
-                     "add search tags": "Add Search Tags",
-                     "type the name of the tag": "type the name of the tag",
-                     "hit enter to register tag name": "Hit enter to register tag name.",
-                     "add product description in 120 words": "Add product description in 120 words",
-                     "description will not be saved if empty": "Description will not be saved if empty",
-                     "servings": "Servings",
-                     "price": "Price",
-                     "discounted price": "Discounted Price"
+                     "type what you're looking for": "tapez ce que vous cherchez",
+                     "new": "Nouvelle",
+                     "add items": "Ajouter des objets",
+                     "text": "Étiquetez vos objets pour lesquels ajouter des recettes.",
+                     "fill this first to continue adding new items!": "remplissez ce premier pour continuer à ajouter de nouvelles portions !",
+                     "add another item": "Cliquez ici pour ajouter une nouvelle",
+                     "edit availability": "Changer les disponibilités",
+                     "available for": "Disponible pour",
+                     "pre-orders": "Pré-commander",
+                     "days": "Journées",
+                     "realtime": "Temps réel",
+                     "add product description": "Description du produit",
+                     "add search tags": "Rechercher Étiquettes",
+                     "type the name of the tag": "saisir le nom du joueur",
+                     "hit enter to register tag name": "Appuyez sur entrée pour enregistrer le nom de la balise.",
+                     "add product description in 120 words": "Ajouter une description du produit en 120 mots",
+                     "description will not be saved if empty": "La description ne sera pas enregistrée si elle est vide",
+                     "servings": "Portions",
+                     "price": "Prix",
+                     "discounted price": "Prix réduit"
                   },
-                  "add product description": "Add Product Description",
-                  "availability": "Availability",
-                  "realtime": "Realtime",
-                  "pre-order": "Pre-order",
-                  "days": "Days",
-                  "untitled product": "Untitled Product",
-                  "save": "Save",
-                  "publish": "Publish",
-                  "items": "Items",
-                  "add items": "Add Items",
-                  "recipes for": "Recipes for",
-                  "msg 1": "Please add recipes to this product.",
+                  "add product description": "Description du produit",
+                  "availability": "Accessibilité",
+                  "realtime": "Temps réel",
+                  "pre-order": "Pré-commander",
+                  "days": "Journées",
+                  "untitled product": "Projet sans nom",
+                  "save": "Enregistrer",
+                  "publish": "Publier",
+                  "items": "Produits",
+                  "add items": "Ajouter des objets",
+                  "recipes for": "Recettes pour",
+                  "msg 1": "Veuillez ajouter des recettes à ce produit.",
                   "msg 2": "Please select a menu from the left menu to configure.",
                   "pricing": "Pricing",
                   "accompaniments": "Accompaniments",
@@ -938,68 +938,68 @@
          "views": {
             "forms": {
                "device": {
-                  "enter the device name": "Enter the device name",
-                  "launch": "Launch",
-                  "users": "Users",
-                  "select and assign users": "Select and assign users",
-                  "configure apps": "Configure Apps",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for"
+                  "enter the device name": "Entrez le nom du périphérique",
+                  "launch": "Démarrer",
+                  "users": "Utilisateurs",
+                  "select and assign users": "Sélectionner et assigner des utilisateurs",
+                  "configure apps": "Configurer les applis",
+                  "add": "Ajouter",
+                  "type what you're looking for": "tapez ce que vous cherchez"
                },
                "role": {
-                  "enter the role name": "Enter the role name",
-                  "publish": "Publish",
-                  "apps": "Apps",
-                  "configure": "Configure",
-                  "select and configure apps": "Select and Configure Apps",
-                  "configure apps": "Configure Apps",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for",
-                  "save": "Save",
-                  "permissions for role": "Permissions for role"
+                  "enter the role name": "Nommer le fichier",
+                  "publish": "Publier",
+                  "apps": "Applications",
+                  "configure": "Configurer",
+                  "select and configure apps": "Sélectionner et configurer",
+                  "configure apps": "Configurer les applis",
+                  "add": "Ajouter",
+                  "type what you're looking for": "tapez ce que vous cherchez",
+                  "save": "Enregistrer",
+                  "permissions for role": "Permissions pour le rôle"
                },
                "station": {
-                  "enter the station name": "Enter the station name",
-                  "publish": "Publish",
-                  "select station type": "Select station type",
-                  "devices": "Devices",
-                  "select devices": "Select Devices",
-                  "select devices for the user": "Select devices for the user",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for"
+                  "enter the station name": "Saisissez le nom de la radio",
+                  "publish": "Publier",
+                  "select station type": "Sélectionnez la Station",
+                  "devices": "Appareils",
+                  "select devices": "Sélectionnez",
+                  "select devices for the user": "Sélectionnez un icône pour cet utilisateur",
+                  "add": "Ajouter",
+                  "type what you're looking for": "tapez ce que vous cherchez"
                },
                "user": {
-                  "new user": "New User",
-                  "publish": "Publish",
-                  "first name": "First Name",
-                  "last name": "Last Name",
+                  "new user": "Nouvel utilisateur",
+                  "publish": "Publier",
+                  "first name": "Prénom",
+                  "last name": "Nom De Famille",
                   "email": "Email",
-                  "phone number": "Phone Number",
-                  "apps": "Apps",
-                  "configure": "Configure",
-                  "select apps": "Select Apps",
-                  "devices": "Devices",
-                  "select devices": "Select Devices",
-                  "configure apps": "Configure Apps",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for",
-                  "save": "Save",
-                  "roles for role": "Roles for role",
-                  "select devices for the user": "Select devices for the user"
+                  "phone number": "Numéro de téléphone",
+                  "apps": "Applications",
+                  "configure": "Configurer",
+                  "select apps": "Sélectionner les applications",
+                  "devices": "Appareils",
+                  "select devices": "Sélectionnez un appareil",
+                  "configure apps": "Configurer les applis",
+                  "add": "Ajouter",
+                  "type what you're looking for": "tapez ce que vous cherchez",
+                  "save": "Enregistrer",
+                  "roles for role": "Rôles pour le rôle",
+                  "select devices for the user": "Sélectionnez un icône pour cet utilisateur"
                }
             },
             "home": {
-               "settings app": "Setings App",
-               "users": "Users",
-               "roles": "Roles",
-               "apps": "Apps",
-               "devices": "Devices",
+               "settings app": "Application de configuration",
+               "users": "Utilisateurs",
+               "roles": "Rôles",
+               "apps": "Applications",
+               "devices": "Appareils",
                "stations": "Stations"
             },
             "listings": {
                "appslisting": {
-                  "apps": "Apps",
-                  "users assigned": "Users Assigned"
+                  "apps": "Applications",
+                  "users assigned": "Assignation des utilisateurs"
                },
                "deviceslisting": {
                   "devices": "Devices",
