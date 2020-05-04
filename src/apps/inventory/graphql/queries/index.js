@@ -42,3 +42,16 @@ export const SUPPLIER = gql`
       }
    }
 `
+
+export const SUPPLIER_ITEMS = gql`
+   subscription SupplierItems {
+      supplierItems {
+         id
+         name
+         supplier {
+            name
+            contactPerson
+         }
+      }
+   }
+`
