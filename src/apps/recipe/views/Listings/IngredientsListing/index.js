@@ -21,6 +21,7 @@ import {
    ChevronLeftIcon,
    ChevronRightIcon,
    EditIcon,
+   DeleteIcon,
 } from '../../../assets/icons'
 
 // State
@@ -34,6 +35,7 @@ import {
    StyledHeader,
    StyledContent,
    StyledPagination,
+   GridContainer,
 } from '../styled'
 import { CREATE_INGREDIENT, INGREDIENTS } from '../../../graphql'
 
@@ -44,13 +46,17 @@ const address = 'apps.recipe.views.listings.ingredientslisting.'
 const IngredientsListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const { loading, error, data } = useQuery(INGREDIENTS)
-   console.log(data)
+   const [ingredients, setIngredients] = React.useState([])
    const [search, setSearch] = React.useState('')
 
-   const addTab = (title, view, ID) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, ID } })
-   }
+   // Queries
+   const { loading, error, data } = useQuery(INGREDIENTS, {
+      onCompleted: data => {
+         setIngredients(data.ingredients)
+      },
+   })
+
+   // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
          if (data.createIngredient.returning?.length) {
@@ -82,6 +88,19 @@ const IngredientsListing = () => {
       // }
    })
 
+   // Effects
+   React.useEffect(() => {
+      if (data)
+         setIngredients(
+            data.ingredients.filter(ing => ing.name.includes(search))
+         )
+   }, [search])
+
+   // Handlers
+   const addTab = (title, view, ID) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, ID } })
+   }
+
    const createIngredientHandler = async () => {
       let name = 'ingredient-' + randomSuffix()
       createIngredient({ variables: { name } })
@@ -94,7 +113,7 @@ const IngredientsListing = () => {
          <StyledHeader>
             <h1>{t(address.concat('ingredients'))}</h1>
             <StyledPagination>
-               Total: {data?.ingredients?.length}
+               Total: {ingredients?.length}
                {/* <span disabled={true}>
                   <ChevronLeftIcon />
                </span>
@@ -130,7 +149,7 @@ const IngredientsListing = () => {
                <TableBody>
                   {!loading &&
                      !error &&
-                     data.ingredients.map(ingredient => (
+                     ingredients.map(ingredient => (
                         <TableRow key={ingredient.id}>
                            <TableCell>
                               {/* <Checkbox checked={false} /> */}
@@ -145,17 +164,22 @@ const IngredientsListing = () => {
                                  : 'NA'}
                            </TableCell>
                            <TableCell>
-                              <IconButton
-                                 onClick={() =>
-                                    addTab(
-                                       ingredient.name,
-                                       'ingredient',
-                                       ingredient.id
-                                    )
-                                 }
-                              >
-                                 <EditIcon color="#28C1F6" />
-                              </IconButton>
+                              <GridContainer>
+                                 <IconButton
+                                    onClick={() =>
+                                       addTab(
+                                          ingredient.name,
+                                          'ingredient',
+                                          ingredient.id
+                                       )
+                                    }
+                                 >
+                                    <EditIcon color="#28C1F6" />
+                                 </IconButton>
+                                 <IconButton>
+                                    <DeleteIcon color="#FF5A52" />
+                                 </IconButton>
+                              </GridContainer>
                            </TableCell>
                         </TableRow>
                      ))}
