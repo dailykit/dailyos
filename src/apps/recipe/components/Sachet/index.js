@@ -53,7 +53,10 @@ const Sachet = ({ sachet }) => {
                         {mode.type}
                      </td>
                      <td>{mode.station.name}</td>
-                     <td>{mode.sachetItem.unitSize}</td>
+                     <td>
+                        {mode.sachetItem?.unitSize ||
+                           mode.bulkItem?.processingName}
+                     </td>
                      <td>
                         {mode.accuracy
                            ? t(address.concat('atleast ')) + mode.accuracy + '%'

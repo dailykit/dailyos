@@ -59,6 +59,9 @@ export const SACHETS_OF_PROCESSING = gql`
             sachetItem {
                unitSize
             }
+            bulkItem {
+               processingName
+            }
             labelTemplate {
                name
             }
@@ -102,6 +105,15 @@ export const FETCH_SACHET_ITEMS = gql`
       sachetItems {
          id
          unitSize
+      }
+   }
+`
+
+export const FETCH_BULK_ITEMS = gql`
+   {
+      bulkItems {
+         id
+         processingName
       }
    }
 `

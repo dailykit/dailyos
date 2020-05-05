@@ -7,9 +7,8 @@ export const StyledSection = styled.div`
 `
 
 export const StyledListing = styled.div`
-   display: grid;
-   grid-auto-flow: row;
-   grid-gap: 16px;
+   display: flex;
+   flex-direction: column;
 `
 
 export const StyledDisplay = styled.div`
@@ -23,6 +22,7 @@ export const StyledListingHeader = styled.div`
    display: flex;
    justify-content: space-between;
    align-items: center;
+   margin-bottom: 16px;
 
    h3 {
       font-weight: 500;
@@ -42,6 +42,7 @@ export const StyledListingTile = styled.div`
    padding: 20px 12px;
    cursor: pointer;
    position: relative;
+   margin-bottom: 12px;
 
    h3 {
       margin-bottom: 20px;

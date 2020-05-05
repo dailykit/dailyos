@@ -79,6 +79,9 @@ export const CREATE_SACHET = gql`
                sachetItem {
                   unitSize
                }
+               bulkItem {
+                  processingName
+               }
                labelTemplate {
                   name
                }

@@ -40,6 +40,7 @@ import {
    SACHETS_OF_PROCESSING,
    FETCH_UNITS,
    FETCH_SACHET_ITEMS,
+   FETCH_BULK_ITEMS,
    FETCH_STATIONS,
    FETCH_PACKAGINGS,
    FETCH_LABEL_TEMPLATES,
@@ -173,6 +174,17 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
          sachetItemsList.push(...items)
       },
    })
+   const [fetchBulkItems, {}] = useLazyQuery(FETCH_BULK_ITEMS, {
+      fetchPolicy: 'cache-and-network',
+      onCompleted: data => {
+         const items = data.bulkItems.map(el => {
+            el.title = el.processingName
+            return el
+         })
+         bulkItemsList.length = 0
+         bulkItemsList.push(...items)
+      },
+   })
    const [fetchPackagings, {}] = useLazyQuery(FETCH_PACKAGINGS, {
       fetchPolicy: 'cache-and-network',
       onCompleted: data => {
@@ -271,6 +283,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    const [sachetItemsList, currentSachetItem, selectSahetItem] = useSingleList(
       []
    )
+   const [bulkItemsList, currentBulkItem, selectBulkItem] = useSingleList([])
    const [packagingList, currentPackaging, selectPackaging] = useSingleList([])
    const [
       labelTemplateList,
@@ -289,7 +302,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    }
 
    // Tunnels
-   const [sachetTunnel, openSachetTunnel, closeSachetTunnel] = useTunnel(3)
+   const [sachetTunnel, openSachetTunnel, closeSachetTunnel] = useTunnel(4)
    const [
       packagingTunnel,
       openPackagingTunnel,
@@ -359,10 +372,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                packagingId: mode.packaging.id,
                isLive: true,
                isPublished: false,
-               bulkItemId: null,
-               sachetItemId: mode.item.id,
+               bulkItemId: mode.type === 'realTime' ? mode.item.id : null,
+               sachetItemId: mode.type === 'plannedLot' ? mode.item.id : null,
             }
          })
+      console.log(cleanModes)
       createSachet({
          variables: {
             sachet: {
@@ -439,7 +453,8 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
    const selectStationHandler = station => {
       setModeForm({ ...modeForm, station })
       selectStation('id', station.id)
-      openSachetTunnel(3)
+      if (modeForm.type === 'realTime') openSachetTunnel(4)
+      else openSachetTunnel(3)
    }
    const selectSachetItemHandler = item => {
       selectSahetItem('id', item.id)
@@ -465,11 +480,37 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
          labelTemplate: '',
       })
    }
+   const selectBulkItemHandler = item => {
+      selectBulkItem('id', item.id)
+      let copyModeForm = modeForm
+      copyModeForm.item = item
+      console.log(copyModeForm)
+      const index = sachetForm.modes.findIndex(
+         mode => mode.type === modeForm.type
+      )
+      const copySachetForm = sachetForm
+      copySachetForm.modes[index] = copyModeForm
+      setSachetForm({ ...copySachetForm })
+      closeSachetTunnel(4)
+      closeSachetTunnel(2)
+      setModeForm({
+         isActive: false,
+         type: '',
+         station: '',
+         accuracy: 0,
+         item: '',
+         bulkItem: '',
+         packaging: '',
+         isLabelled: false,
+         labelTemplate: '',
+      })
+   }
 
    const sachetTunnelHandler = () => {
       fetchUnits()
       fetchStations()
       fetchSachetItems()
+      fetchBulkItems()
       fetchPackagings()
       // fetchLabelTemplates()
       openSachetTunnel(1)
@@ -616,7 +657,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         <tr>
                            <th>{t(address.concat('mode of fulfillment'))}</th>
                            <th>{t(address.concat('station'))}</th>
-                           <th>{t(address.concat('supplier item'))}</th>
+                           <th>{t(address.concat('item'))}</th>
                            <th>{t(address.concat('accuracy'))}</th>
                            <th>{t(address.concat('packaging'))}</th>
                            <th>{t(address.concat('label'))}</th>
@@ -753,7 +794,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         <ListSearch
                            onChange={value => setSearch(value)}
                            placeholder={t(
-                              address.concat('type what you’re looking for')
+                              address.concat("type what you're looking for")
                            )}
                         />
                      )}
@@ -784,7 +825,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         onClick={() => closeSachetTunnel(3)}
                      />
                      <h1>
-                        {t(address.concat('select supplier items for'))}:{' '}
+                        {t(address.concat('select sachet item for'))}:{' '}
                         {modeForm?.station.title}
                      </h1>
                   </div>
@@ -797,7 +838,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         <ListSearch
                            onChange={value => setSearch(value)}
                            placeholder={t(
-                              address.concat('type what you’re looking for')
+                              address.concat("type what you're looking for")
                            )}
                         />
                      )}
@@ -813,6 +854,50 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                                  title={option.title}
                                  isActive={option.id === currentSachetItem.id}
                                  onClick={() => selectSachetItemHandler(option)}
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
+               </StyledTunnelMain>
+            </Tunnel>
+            <Tunnel layer={4}>
+               <StyledTunnelHeader>
+                  <div>
+                     <CloseIcon
+                        size="20px"
+                        color="#888D9D"
+                        onClick={() => closeSachetTunnel(4)}
+                     />
+                     <h1>
+                        {t(address.concat('select bulk item for'))}:{' '}
+                        {modeForm?.station.title}
+                     </h1>
+                  </div>
+               </StyledTunnelHeader>
+               <StyledTunnelMain>
+                  <List>
+                     {Object.keys(currentBulkItem).length > 0 ? (
+                        <ListItem type="SSL1" title={currentBulkItem.title} />
+                     ) : (
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder={t(
+                              address.concat('type what you’re looking for')
+                           )}
+                        />
+                     )}
+                     <ListOptions>
+                        {bulkItemsList
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="SSL1"
+                                 key={option.id}
+                                 title={option.title}
+                                 isActive={option.id === currentBulkItem.id}
+                                 onClick={() => selectBulkItemHandler(option)}
                               />
                            ))}
                      </ListOptions>
