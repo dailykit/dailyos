@@ -22,7 +22,7 @@ import {
    CREATE_SIMPLE_RECIPE,
    UPDATE_RECIPE,
 } from './mutations'
-import { S_INGREDIENTS } from './subscriptions'
+import { S_INGREDIENTS, S_RECIPES } from './subscriptions'
 
 export {
    S_INGREDIENTS,
@@ -43,6 +43,7 @@ export {
    DELETE_SACHET,
    DELETE_PROCESSING,
    RECIPES,
+   S_RECIPES,
    RECIPE,
    CREATE_SIMPLE_RECIPE,
    UPDATE_RECIPE,

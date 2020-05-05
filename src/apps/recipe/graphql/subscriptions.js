@@ -12,3 +12,17 @@ export const S_INGREDIENTS = gql`
       }
    }
 `
+
+export const S_RECIPES = gql`
+   {
+      simpleRecipes {
+         id
+         name
+         author
+         cookingTime
+         simpleRecipeYields {
+            id
+         }
+      }
+   }
+`

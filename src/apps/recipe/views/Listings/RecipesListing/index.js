@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    IconButton,
    Table,
@@ -28,7 +28,7 @@ import {
    StyledContent,
 } from '../styled'
 
-import { RECIPES, CREATE_RECIPE } from '../../../graphql'
+import { RECIPES, CREATE_RECIPE, S_RECIPES } from '../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
 
@@ -41,9 +41,9 @@ const RecipesListing = () => {
    const [search, setSearch] = React.useState('')
 
    // Queries and Mutations
-   const { loading, error, data } = useQuery(RECIPES, {
-      onCompleted: data => {
-         setRecipes(data.simpleRecipes)
+   const { loading, error, data } = useSubscription(S_RECIPES, {
+      onSubscriptionData: data => {
+         setRecipes(data.subscriptionData.data.simpleRecipes)
       },
    })
    // const [createRecipe] = useMutation(CREATE_RECIPE, {
