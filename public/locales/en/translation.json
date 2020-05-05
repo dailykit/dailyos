@@ -456,7 +456,9 @@
                   "modes of fulfillment": "Modes of Fulfillment",
                   "stations": "Stations",
                   "supplier item": "Supplier Item",
-                  "availability": "Availability"
+                  "availability": "Availability",
+                  "processings": "Processings",
+                  "created at": "Created"
                },
                "recipeslisting": {
                   "recipes": "Recipes",

@@ -5,6 +5,10 @@ export const INGREDIENTS = gql`
       ingredients {
          id
          name
+         createdAt
+         ingredientProcessings {
+            id
+         }
       }
    }
 `

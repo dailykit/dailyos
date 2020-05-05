@@ -30,6 +30,7 @@
       "keycloak-js": "^9.0.3",
       "lodash": "^4.17.15",
       "lodash.uniqby": "^4.7.0",
+      "moment": "^2.25.3",
       "prettier": "^2.0.4",
       "react": "^16.13.1",
       "react-dom": "^16.13.1",
