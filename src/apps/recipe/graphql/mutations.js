@@ -68,48 +68,26 @@ export const CREATE_SACHET = gql`
             tracking
             quantity
             unit
+            modeOfFulfillments {
+               id
+               type
+               isLive
+               accuracy
+               station {
+                  name
+               }
+               sachetItem {
+                  unitSize
+               }
+               labelTemplate {
+                  name
+               }
+               packaging {
+                  name
+               }
+            }
          }
       }
-      #   createSachet(input: $input) {
-      #      success
-      #      message
-      #      sachet {
-      #         id
-      #         quantity {
-      #            value
-      #            unit {
-      #               id
-      #               title
-      #            }
-      #         }
-      #         tracking
-      #         modes {
-      #            isActive
-      #            type
-      #            station {
-      #               id
-      #               title
-      #            }
-      #            supplierItems {
-      #               isDefault
-      #               item {
-      #                  id
-      #                  title
-      #               }
-      #               accuracy
-      #               packaging {
-      #                  id
-      #                  title
-      #               }
-      #               isLabelled
-      #               labelTemplate {
-      #                  id
-      #                  title
-      #               }
-      #            }
-      #         }
-      #      }
-      #   }
    }
 `
 

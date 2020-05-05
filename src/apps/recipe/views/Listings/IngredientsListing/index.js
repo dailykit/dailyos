@@ -1,4 +1,5 @@
 import React from 'react'
+import * as moment from 'moment'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
    IconButton,
@@ -9,6 +10,7 @@ import {
    TableCell,
    Checkbox,
    SearchBox,
+   Loader,
 } from '@dailykit/ui'
 
 import { randomSuffix } from '../../../../../shared/utils'
@@ -18,6 +20,7 @@ import {
    AddIcon,
    ChevronLeftIcon,
    ChevronRightIcon,
+   EditIcon,
 } from '../../../assets/icons'
 
 // State
@@ -42,6 +45,7 @@ const IngredientsListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const { loading, error, data } = useQuery(INGREDIENTS)
+   console.log(data)
    const [search, setSearch] = React.useState('')
 
    const addTab = (title, view, ID) => {
@@ -83,25 +87,27 @@ const IngredientsListing = () => {
       createIngredient({ variables: { name } })
    }
 
+   if (loading) return <Loader />
+
    return (
       <StyledWrapper>
          <StyledHeader>
             <h1>{t(address.concat('ingredients'))}</h1>
             <StyledPagination>
-               {data?.ingredients?.length}
-               <span disabled={true}>
+               Total: {data?.ingredients?.length}
+               {/* <span disabled={true}>
                   <ChevronLeftIcon />
                </span>
                <span>
                   <ChevronRightIcon />
-               </span>
+               </span> */}
             </StyledPagination>
          </StyledHeader>
          <StyledTableHeader>
             <p>{t(address.concat('filters'))}</p>
             <StyledTableActions>
                <SearchBox
-                  placeholder={t(address.concat("search"))}
+                  placeholder={t(address.concat('search'))}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                />
@@ -114,17 +120,10 @@ const IngredientsListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell>
-                        {' '}
-                        <Checkbox checked={false} />{' '}
-                     </TableCell>
+                     <TableCell>{/* <Checkbox checked={false} /> */}</TableCell>
                      <TableCell> {t(address.concat('name'))} </TableCell>
-                     <TableCell> {t(address.concat('variant'))} </TableCell>
-                     <TableCell> {t(address.concat('quantity'))} </TableCell>
-                     <TableCell> {t(address.concat('modes of fulfillment'))} </TableCell>
-                     <TableCell> {t(address.concat('stations'))} </TableCell>
-                     <TableCell> {t(address.concat('supplier item'))} </TableCell>
-                     <TableCell> {t(address.concat('availability'))} </TableCell>
+                     <TableCell>{t(address.concat('processings'))}</TableCell>
+                     <TableCell>{t(address.concat('created at'))}</TableCell>
                      <TableCell> </TableCell>
                   </TableRow>
                </TableHead>
@@ -132,28 +131,32 @@ const IngredientsListing = () => {
                   {!loading &&
                      !error &&
                      data.ingredients.map(ingredient => (
-                        <TableRow
-                           key={ingredient.id}
-                           onClick={() =>
-                              addTab(
-                                 ingredient.name,
-                                 'ingredient',
-                                 ingredient.id
-                              )
-                           }
-                        >
+                        <TableRow key={ingredient.id}>
                            <TableCell>
-                              {' '}
-                              <Checkbox checked={false} />{' '}
+                              {/* <Checkbox checked={false} /> */}
                            </TableCell>
                            <TableCell> {ingredient.name} </TableCell>
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell></TableCell>
+                           <TableCell>
+                              {ingredient.ingredientProcessings.length}
+                           </TableCell>
+                           <TableCell>
+                              {ingredient.createdAt
+                                 ? moment(ingredient.createdAt).calendar()
+                                 : 'NA'}
+                           </TableCell>
+                           <TableCell>
+                              <IconButton
+                                 onClick={() =>
+                                    addTab(
+                                       ingredient.name,
+                                       'ingredient',
+                                       ingredient.id
+                                    )
+                                 }
+                              >
+                                 <EditIcon color="#28C1F6" />
+                              </IconButton>
+                           </TableCell>
                         </TableRow>
                      ))}
                </TableBody>

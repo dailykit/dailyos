@@ -5,6 +5,10 @@ export const INGREDIENTS = gql`
       ingredients {
          id
          name
+         createdAt
+         ingredientProcessings {
+            id
+         }
       }
    }
 `
@@ -44,6 +48,24 @@ export const SACHETS_OF_PROCESSING = gql`
          quantity
          unit
          tracking
+         modeOfFulfillments {
+            id
+            type
+            isLive
+            accuracy
+            station {
+               name
+            }
+            sachetItem {
+               unitSize
+            }
+            labelTemplate {
+               name
+            }
+            packaging {
+               name
+            }
+         }
       }
    }
 `
@@ -75,11 +97,11 @@ export const FETCH_STATIONS = gql`
    }
 `
 
-export const FETCH_SUPPLIER_ITEMS = gql`
+export const FETCH_SACHET_ITEMS = gql`
    {
-      supplierItems {
+      sachetItems {
          id
-         name
+         unitSize
       }
    }
 `
