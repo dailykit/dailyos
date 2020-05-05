@@ -22,8 +22,10 @@ import {
    CREATE_SIMPLE_RECIPE,
    UPDATE_RECIPE,
 } from './mutations'
+import { S_INGREDIENTS } from './subscriptions'
 
 export {
+   S_INGREDIENTS,
    INGREDIENTS,
    INGREDIENT,
    PROCESSINGS_OF_INGREDIENT,

@@ -1,6 +1,6 @@
 import React from 'react'
 import * as moment from 'moment'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    IconButton,
    Table,
@@ -37,7 +37,7 @@ import {
    StyledPagination,
    GridContainer,
 } from '../styled'
-import { CREATE_INGREDIENT, INGREDIENTS } from '../../../graphql'
+import { CREATE_INGREDIENT, INGREDIENTS, S_INGREDIENTS } from '../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
 
@@ -50,9 +50,10 @@ const IngredientsListing = () => {
    const [search, setSearch] = React.useState('')
 
    // Queries
-   const { loading, error, data } = useQuery(INGREDIENTS, {
-      onCompleted: data => {
-         setIngredients(data.ingredients)
+   const { loading, error, data } = useSubscription(S_INGREDIENTS, {
+      onSubscriptionData: data => {
+         console.log(data)
+         setIngredients(data.subscriptionData.data.ingredients)
       },
    })
 
