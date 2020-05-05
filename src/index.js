@@ -23,6 +23,8 @@ import './global.css'
 
 import { StyledLoader } from './styled'
 
+import { Lang } from './shared/components'
+
 import { useTranslation, Trans } from 'react-i18next'
 const Loader = () => (
    <StyledLoader>
@@ -76,7 +78,6 @@ const client = new ApolloClient({
    cache: new InMemoryCache(),
 })
 
-
 render(
    <ApolloProvider client={client}>
       <ToastContainer
@@ -93,10 +94,18 @@ render(
       <Router>
          <Switch>
             <Route path="/" exact>
-               <Link to="/inventory"><Trans i18nKey='inventory'>Inventory</Trans></Link>
-               <Link to="/recipe"><Trans i18nKey='recipe'>Recipe</Trans></Link>
-               <Link to="/online-store"><Trans i18nKey='online store'>Online Store</Trans></Link>
-               <Link to="/settings"><Trans i18nKey='settings'>Settings</Trans></Link>
+               <Link to="/inventory">
+                  <Trans i18nKey="inventory">Inventory</Trans>
+               </Link>
+               <Link to="/recipe">
+                  <Trans i18nKey="recipe">Recipe</Trans>
+               </Link>
+               <Link to="/online-store">
+                  <Trans i18nKey="online store">Online Store</Trans>
+               </Link>
+               <Link to="/settings">
+                  <Trans i18nKey="settings">Settings</Trans>
+               </Link>
             </Route>
             <Route path="/inventory" component={Inventory} />
             <Route path="/recipe" component={Recipe} />
@@ -104,6 +113,7 @@ render(
             <Route path="/settings" component={Settings} />
          </Switch>
       </Router>
+      <Lang />
    </ApolloProvider>,
    document.getElementById('root')
 )

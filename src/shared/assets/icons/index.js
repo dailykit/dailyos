@@ -5,6 +5,7 @@ import DeleteIcon from './Delete'
 import AddIcon from './Add'
 import LeftIcon from './Left'
 import RightIcon from './Right'
+import SettingsIcon from './Settings'
 
 export {
    MenuIcon,
@@ -14,4 +15,5 @@ export {
    AddIcon,
    LeftIcon,
    RightIcon,
+   SettingsIcon,
 }
