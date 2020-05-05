@@ -328,13 +328,13 @@
                "active": "Activo",
                "mode of fulfillment": "Modo de Cumplimiento",
                "station": "Emisora",
-               "supplier item": "Artículos de Proveedor",
+               "item": "Item",
                "accuracy": "Precisión",
                "packaging": "Embalaje",
                "label": "Etiqueta",
                "atleast ": "Al menos ",
                "not weighing": "Sin Peso",
-               "not labled": "No Legendario"
+               "not labelled": "Not Labelled"
             },
             "sachets": {
                "sachets": "Sachets",
@@ -456,7 +456,9 @@
                   "modes of fulfillment": "Modo de Cumplimiento",
                   "stations": "Emisora",
                   "supplier item": "Artículos de Proveedor",
-                  "availability": "Disponibilidad"
+                  "availability": "Disponibilidad",
+                  "processings": "Processings",
+                  "created at": "Created"
                },
                "recipeslisting": {
                   "recipes": "Receta",
