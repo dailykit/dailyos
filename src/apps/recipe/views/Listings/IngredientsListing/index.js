@@ -92,7 +92,9 @@ const IngredientsListing = () => {
    React.useEffect(() => {
       if (data)
          setIngredients(
-            data.ingredients.filter(ing => ing.name.includes(search))
+            data.ingredients.filter(ing =>
+               ing.name.toLowerCase().includes(search.toLowerCase())
+            )
          )
    }, [search])
 
@@ -139,7 +141,6 @@ const IngredientsListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell>{/* <Checkbox checked={false} /> */}</TableCell>
                      <TableCell> {t(address.concat('name'))} </TableCell>
                      <TableCell>{t(address.concat('processings'))}</TableCell>
                      <TableCell>{t(address.concat('created at'))}</TableCell>
@@ -151,9 +152,6 @@ const IngredientsListing = () => {
                      !error &&
                      ingredients.map(ingredient => (
                         <TableRow key={ingredient.id}>
-                           <TableCell>
-                              {/* <Checkbox checked={false} /> */}
-                           </TableCell>
                            <TableCell> {ingredient.name} </TableCell>
                            <TableCell>
                               {ingredient.ingredientProcessings.length}

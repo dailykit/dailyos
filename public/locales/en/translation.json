@@ -462,6 +462,7 @@
                },
                "recipeslisting": {
                   "recipes": "Recipes",
+                  "search": "Search",
                   "name": "Name",
                   "author": "Author",
                   "# of servings": "# of Servings",

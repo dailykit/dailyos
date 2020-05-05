@@ -7,12 +7,14 @@ import {
    TableRow,
    TableCell,
    TableBody,
+   Loader,
+   SearchBox,
 } from '@dailykit/ui'
 
 import { generateRandomString } from '../../../utils'
 
 // Icons
-import { AddIcon } from '../../../assets/icons'
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
 
 // State
 import { Context } from '../../../context/tabs'
@@ -35,15 +37,15 @@ const address = 'apps.recipe.views.listings.recipeslisting.'
 const RecipesListing = () => {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view },
-      })
-   }
+   const [recipes, setRecipes] = React.useState([])
+   const [search, setSearch] = React.useState('')
 
    // Queries and Mutations
-   const { loading, error, data } = useQuery(RECIPES)
+   const { loading, error, data } = useQuery(RECIPES, {
+      onCompleted: data => {
+         setRecipes(data.simpleRecipes)
+      },
+   })
    // const [createRecipe] = useMutation(CREATE_RECIPE, {
    //    onCompleted: data => {
    //       if (data.createRecipe.success) {
@@ -64,15 +66,42 @@ const RecipesListing = () => {
    //    createRecipe({ variables: { name } })
    // }
 
+   // Effects
+   React.useEffect(() => {
+      if (data)
+         setRecipes(
+            data.simpleRecipes.filter(rec =>
+               rec.name.toLowerCase().includes(search.toLowerCase())
+            )
+         )
+   }, [search])
+
+   // Handlers
+   const addTab = (title, view) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view },
+      })
+   }
+
+   if (loading) return <Loader />
+
    return (
       <StyledWrapper>
          <StyledHeader>
             <h1>{t(address.concat('recipes'))}</h1>
-            <p> {t(address.concat('total'))}: {data?.simpleRecipes.length} </p>
+            <p>
+               {t(address.concat('total'))}: {recipes.length}
+            </p>
          </StyledHeader>
          <StyledTableHeader>
             <p></p>
             <StyledTableActions>
+               <SearchBox
+                  placeholder={t(address.concat('search'))}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+               />
                <IconButton
                   type="solid"
                   onClick={() => addTab('Unititled Recipe', 'recipe')}
@@ -93,15 +122,21 @@ const RecipesListing = () => {
                   </TableRow>
                </TableHead>
                <TableBody>
-                  {data?.simpleRecipes.map(recipe => (
+                  {recipes.map(recipe => (
                      <TableRow key={recipe.id}>
                         <TableCell>{recipe.name}</TableCell>
                         <TableCell>{recipe.author}</TableCell>
                         <TableCell>
                            {recipe.simpleRecipeYields.length}
                         </TableCell>
-                        <TableCell>{recipe.cookingTime} {t('units.mins')}.</TableCell>
-                        <TableCell></TableCell>
+                        <TableCell>
+                           {recipe.cookingTime} {t('units.mins')}.
+                        </TableCell>
+                        <TableCell>
+                           <IconButton>
+                              <DeleteIcon color="#FF5A52" />
+                           </IconButton>
+                        </TableCell>
                      </TableRow>
                   ))}
                </TableBody>
