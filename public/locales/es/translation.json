@@ -179,7 +179,7 @@
                      },
                      "suppliers": {
                         "select supplier": "Seleccionar artículo de proveedor",
-                        "type what you're looking for": "escribe lo que estás buscando..."
+                        "type what you’re looking for": "type what you're looking for..."
                      }
                   },
                   "add item information": "Añadir información del artículo",
