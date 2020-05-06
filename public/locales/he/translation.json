@@ -326,6 +326,7 @@
             "sachet": {
                "taken inventory": "Taken Inventory",
                "active": "Active",
+               "live": "Live",
                "mode of fulfillment": "Mode of Fulfillment",
                "station": "Station",
                "item": "Item",
@@ -334,7 +335,22 @@
                "label": "Label",
                "atleast ": "Atleast ",
                "not weighing": "Not Weighing",
-               "not labelled": "Not Labelled"
+               "not labelled": "Not Labelled",
+               "daily value": "Daily value",
+               "calories": "Calories",
+               "total fat": "Total Fat",
+               "saturated fat": "Saturated Fat",
+               "trans fat": "Trans Fat",
+               "cholestrol": "Cholestrol",
+               "sodium": "Sodium",
+               "total carbohydrates": "Total Carbohydrates",
+               "dietry fibre": "Dietry Fibre",
+               "sugar": "Sugar",
+               "protein": "Protein",
+               "vitamin A": "Vitamin A",
+               "vitamin C": "Vitamin C",
+               "calcium": "Calcium",
+               "iron": "Iron"
             },
             "sachets": {
                "sachets": "Sachets",
