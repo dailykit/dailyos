@@ -28,15 +28,18 @@ import {
    StyledContent,
 } from '../styled'
 
-import { RECIPES, CREATE_RECIPE, S_RECIPES } from '../../../graphql'
+import { CREATE_SIMPLE_RECIPE, S_RECIPES } from '../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { toast } from 'react-toastify'
+
+import { randomSuffix } from '../../../../../shared/utils'
 
 const address = 'apps.recipe.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(Context)
+   const { dispatch } = React.useContext(Context)
    const [recipes, setRecipes] = React.useState([])
    const [search, setSearch] = React.useState('')
 
@@ -46,25 +49,20 @@ const RecipesListing = () => {
          setRecipes(data.subscriptionData.data.simpleRecipes)
       },
    })
-   // const [createRecipe] = useMutation(CREATE_RECIPE, {
-   //    onCompleted: data => {
-   //       if (data.createRecipe.success) {
-   //          addTab(
-   //             data.createRecipe.recipe.name,
-   //             'recipe',
-   //             data.createRecipe.recipe.id
-   //          )
-   //       } else {
-   //          // Fire toast
-   //          console.log(data)
-   //       }
-   //    },
-   // })
-
-   // const createRecipeHandler = () => {
-   //    let name = 'recipe-' + generateRandomString()
-   //    createRecipe({ variables: { name } })
-   // }
+   const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
+      onCompleted: data => {
+         addTab(
+            data.createSimpleRecipe.returning[0].name,
+            'recipe',
+            data.createSimpleRecipe.returning[0].id
+         )
+         toast.success('Recipe added!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Cannot create recipe!')
+      },
+   })
 
    // Effects
    React.useEffect(() => {
@@ -82,6 +80,10 @@ const RecipesListing = () => {
          type: 'ADD_TAB',
          payload: { type: 'forms', title, view },
       })
+   }
+   const createRecipeHandler = () => {
+      let name = 'recipe-' + randomSuffix()
+      createRecipe({ variables: { name } })
    }
 
    if (loading) return <Loader />
@@ -102,10 +104,7 @@ const RecipesListing = () => {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                />
-               <IconButton
-                  type="solid"
-                  onClick={() => addTab('Unititled Recipe', 'recipe')}
-               >
+               <IconButton type="solid" onClick={createRecipeHandler}>
                   <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledTableActions>
