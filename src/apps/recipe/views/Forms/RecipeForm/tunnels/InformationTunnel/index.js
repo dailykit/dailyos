@@ -9,8 +9,6 @@ import { UPDATE_RECIPE } from '../../../../../graphql'
 import { toast } from 'react-toastify'
 
 const InformationTunnel = ({ state, closeTunnel }) => {
-   console.log(state)
-
    // State
    const [busy, setBusy] = React.useState(false)
    const [_state, _setState] = React.useState({

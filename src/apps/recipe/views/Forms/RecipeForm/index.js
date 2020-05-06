@@ -1,48 +1,66 @@
 import React from 'react'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { Input, Tunnel, Tunnels, useTunnel, Loader } from '@dailykit/ui'
 
-import {
-   state as initialState,
-   reducers,
-   RecipeContext,
-} from '../../../context/recipee'
 import { Context } from '../../../context/tabs'
 
 import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
 
 import { Information } from './components'
 import { InformationTunnel } from './tunnels'
-import { RECIPE, S_RECIPE } from '../../../graphql'
+import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
 
 const RecipeForm = () => {
    // Context
-   const { state: tabs } = React.useContext(Context)
+   const { state: tabs, dispatch } = React.useContext(Context)
 
    // States
    const [title, setTitle] = React.useState('')
-   const [state, dispatch] = React.useState({})
+   const [state, setState] = React.useState({})
 
    // Tunnels
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
+   // Subscription
    const { loading } = useSubscription(S_RECIPE, {
       variables: {
          id: tabs.current.id,
       },
       onSubscriptionData: data => {
          console.log(data)
-         dispatch(data.subscriptionData.data.simpleRecipe)
+         setState(data.subscriptionData.data.simpleRecipe)
+         setTitle(data.subscriptionData.data.simpleRecipe.name)
       },
       onError: error => {
          console.log(error)
       },
    })
 
+   // Mutation
+   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { oldTitle: tabs.current.title, title },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
+
    // Handlers
    const updateName = () => {
-      //fire mutation
-      // change tab title
+      updateRecipe()
    }
 
    if (loading) return <Loader />
