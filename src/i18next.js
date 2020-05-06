@@ -1,10 +1,10 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
-import Backend from 'i18next-http-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import Backend from 'i18next-http-backend'
+import LanguageDetector from 'i18next-browser-languagedetector'
 
-const languages = ['en', 'fr'];
+const languages = ['en', 'fr', 'es', 'he', 'de', 'el', 'hi', 'it']
 
 i18n
    .use(Backend)
@@ -16,8 +16,7 @@ i18n
       whitelist: languages,
       interpolation: {
          escapeValue: false,
-      }
-   });
+      },
+   })
 
-
-export default i18n;
+export default i18n

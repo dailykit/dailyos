@@ -49,6 +49,24 @@ const Lang = () => {
             >
                עברית
             </StyledListItem>
+            <StyledListItem
+               active={lang === 'it'}
+               onClick={() => changeLang('it')}
+            >
+               Italiano
+            </StyledListItem>
+            <StyledListItem
+               active={lang === 'de'}
+               onClick={() => changeLang('de')}
+            >
+               Deutsche
+            </StyledListItem>
+            <StyledListItem
+               active={lang === 'hi'}
+               onClick={() => changeLang('hi')}
+            >
+               हिन्दी
+            </StyledListItem>
          </StyledList>
          <IconContainer onClick={() => setIsVisible(!isVisible)}>
             <SettingsIcon color="#28C1F6" size={32} />
