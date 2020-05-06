@@ -3,16 +3,19 @@ import { Input, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 
 import {
    state as initialState,
-   reducer,
+   reducers,
    RecipeContext,
 } from '../../../context/recipee'
 
 import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
 
+import { Information } from './components'
+import { InformationTunnel } from './tunnels'
+
 const RecipeForm = () => {
    // States
    const [title, setTitle] = React.useState('')
-   const [state, dispatch] = React.useReducer(reducer, initialState)
+   const [state, dispatch] = React.useReducer(reducers, initialState)
 
    // Tunnels
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -26,6 +29,13 @@ const RecipeForm = () => {
    return (
       <RecipeContext.Provider value={{ state, dispatch }}>
          <React.Fragment>
+            {/* Tunnels */}
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1}>
+                  <InformationTunnel closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
+            {/* View */}
             <StyledHeader>
                <InputWrapper>
                   <Input
@@ -39,9 +49,7 @@ const RecipeForm = () => {
                </InputWrapper>
             </StyledHeader>
             <StyledWrapper>
-               <Tunnels tunnels={tunnels}>
-                  <Tunnel layer={1}></Tunnel>
-               </Tunnels>
+               <Information openTunnel={openTunnel} />
             </StyledWrapper>
          </React.Fragment>
       </RecipeContext.Provider>

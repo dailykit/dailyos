@@ -1,0 +1,69 @@
+import React from 'react'
+import { Text, Tag, ButtonTile, IconButton } from '@dailykit/ui'
+
+import { Container, ContainerAction, Flex } from '../styled'
+import { RecipeContext } from '../../../../../context/recipee'
+import { EditIcon } from '../../../../../assets/icons'
+
+const Information = ({ openTunnel }) => {
+   const { state } = React.useContext(RecipeContext)
+
+   return (
+      <React.Fragment>
+         {state.type ||
+         state.cuisine ||
+         state.author ||
+         state.cookingTime ||
+         state.utensils.length ||
+         state.description ? (
+            <Container>
+               <ContainerAction>
+                  <IconButton onClick={() => openTunnel(1)}>
+                     <EditIcon color="#00A7E1" />
+                  </IconButton>
+               </ContainerAction>
+               <Container top="32" paddingX="32">
+                  <Flex justify="space-between">
+                     <div>
+                        <Text as="subtitle">Type</Text>
+                        <Text as="title">{state.type}</Text>
+                     </div>
+                     <div>
+                        <Text as="subtitle">Cuisine</Text>
+                        <Text as="title">{state.cuisine}</Text>
+                     </div>
+                     <div>
+                        <Text as="subtitle">Author</Text>
+                        <Text as="title">{state.author}</Text>
+                     </div>
+                     <div>
+                        <Text as="subtitle">Cooking Time</Text>
+                        <Text as="title">{state.cookingTime} mins.</Text>
+                     </div>
+                  </Flex>
+               </Container>
+               <Container top="16" paddingX="32">
+                  <Text as="subtitle">Utensils</Text>
+                  {state.utensils.map((utensil, i) => (
+                     <Tag key={i}>{utensil}</Tag>
+                  ))}
+               </Container>
+               <Container top="16" paddingX="32">
+                  <Text as="subtitle">Description</Text>
+                  <Text as="p">{state.description}</Text>
+               </Container>
+            </Container>
+         ) : (
+            <Container top="32" paddingX="32">
+               <ButtonTile
+                  type="secondary"
+                  text="Add Basic Information"
+                  onClick={() => openTunnel(1)}
+               />
+            </Container>
+         )}
+      </React.Fragment>
+   )
+}
+
+export default Information
