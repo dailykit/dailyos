@@ -17,6 +17,12 @@ export const reducers = (state, { type, payload }) => {
    console.log('reducer -> type', type)
    console.log('reducer -> payload', payload)
    switch (type) {
+      case 'SEED': {
+         return {
+            ...state,
+            ...payload,
+         }
+      }
       case 'NAME': {
          return {
             ...state,

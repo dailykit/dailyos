@@ -26,3 +26,18 @@ export const S_RECIPES = gql`
       }
    }
 `
+
+export const S_RECIPE = gql`
+   subscription($id: Int!) {
+      simpleRecipe(id: $id) {
+         id
+         name
+         author
+         type
+         description
+         cookingTime
+         cuisine
+         utensils
+      }
+   }
+`

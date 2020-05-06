@@ -126,14 +126,13 @@ export const CREATE_SIMPLE_RECIPE = gql`
 `
 
 export const UPDATE_RECIPE = gql`
-   mutation UpdateRecipe($input: UpdateRecipeInput) {
-      updateRecipe(input: $input) {
-         success
-         message
-         recipe {
+   mutation UpdateSimpleRecipe(
+      $id: Int!
+      $set: simpleRecipe_simpleRecipe_set_input
+   ) {
+      updateSimpleRecipe(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
             id
-            name
-            chef
          }
       }
    }

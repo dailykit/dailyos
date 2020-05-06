@@ -3,20 +3,23 @@ import { TextButton, Text, Input, RadioGroup, HelperText } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
-import { RecipeContext } from '../../../../../context/recipee'
 import { TunnelHeader, TunnelBody, Container, Grid } from '../styled'
+import { useMutation } from '@apollo/react-hooks'
+import { UPDATE_RECIPE } from '../../../../../graphql'
+import { toast } from 'react-toastify'
 
-const InformationTunnel = ({ closeTunnel }) => {
-   const { state, dispatch } = React.useContext(RecipeContext)
+const InformationTunnel = ({ state, closeTunnel }) => {
+   console.log(state)
 
    // State
+   const [busy, setBusy] = React.useState(false)
    const [_state, _setState] = React.useState({
       type: state.type || 'Vegetarian',
-      cuisine: state.cuisine,
-      cookingTime: state.cookingTime,
-      author: state.author,
-      utensils: state.utensils.join(','),
-      description: state.description,
+      cuisine: state.cuisine || '',
+      cookingTime: state.cookingTime || '',
+      author: state.author || '',
+      utensils: state.utensils?.join(',') || '',
+      description: state.description || '',
    })
 
    const options = [
@@ -25,22 +28,35 @@ const InformationTunnel = ({ closeTunnel }) => {
       { id: 'Vegan', title: 'Vegan' },
    ]
 
-   //Handlers
-   const save = () => {
-      // Fire mutation here
-      console.log('Local:', _state)
-      dispatch({
-         type: 'BASIC',
-         payload: {
+   // Mutation
+   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+      variables: {
+         id: state.id,
+         set: {
             type: _state.type,
             cuisine: _state.cuisine,
             cookingTime: _state.cookingTime,
             author: _state.author,
-            utensils: _state.utensils.split(','),
+            utensils: _state.utensils.split(',').map(tag => tag.trim()),
             description: _state.description,
          },
-      })
-      closeTunnel(1)
+      },
+      onCompleted: () => {
+         toast.success('Updated!')
+         closeTunnel(1)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+         setBusy(false)
+      },
+   })
+
+   //Handlers
+   const save = () => {
+      if (busy) return
+      setBusy(true)
+      updateRecipe()
    }
 
    return (
@@ -54,7 +70,7 @@ const InformationTunnel = ({ closeTunnel }) => {
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  Save
+                  {busy ? 'Saving...' : 'Save'}
                </TextButton>
             </div>
          </TunnelHeader>

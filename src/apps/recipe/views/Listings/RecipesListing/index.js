@@ -75,10 +75,10 @@ const RecipesListing = () => {
    }, [search])
 
    // Handlers
-   const addTab = (title, view) => {
+   const addTab = (title, view, id) => {
       dispatch({
          type: 'ADD_TAB',
-         payload: { type: 'forms', title, view },
+         payload: { type: 'forms', title, view, id },
       })
    }
    const createRecipeHandler = () => {
@@ -122,7 +122,10 @@ const RecipesListing = () => {
                </TableHead>
                <TableBody>
                   {recipes.map(recipe => (
-                     <TableRow key={recipe.id}>
+                     <TableRow
+                        key={recipe.id}
+                        onClick={() => addTab(recipe.name, 'recipe', recipe.id)}
+                     >
                         <TableCell>{recipe.name}</TableCell>
                         <TableCell>{recipe.author}</TableCell>
                         <TableCell>
