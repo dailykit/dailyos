@@ -31,10 +31,10 @@ const ProductsListing = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const options = [
-      { id: 'inventory', title: 'Inventory' },
-      { id: 'simple', title: 'Simple Recipe' },
-      { id: 'customizable', title: 'Customizable' },
-      { id: 'combo', title: 'Combo' },
+      { id: 'inventory', title: t(address.concat('inventory')) },
+      { id: 'simple', title: t(address.concat('simple recipe')) },
+      { id: 'customizable', title: t(address.concat('customizable')) },
+      { id: 'combo', title: t(address.concat('combo')) },
    ]
 
    const renderListing = () => {
