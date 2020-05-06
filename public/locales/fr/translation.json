@@ -179,7 +179,7 @@
                      },
                      "suppliers": {
                         "select supplier": "Sélectionner les fournisseurs",
-                        "type what you're looking for": "tapez ce que vous cherchez..."
+                        "type what you’re looking for": "type what you're looking for..."
                      }
                   },
                   "add item information": "Information sur l'identifiant",
