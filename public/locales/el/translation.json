@@ -179,7 +179,7 @@
                      },
                      "suppliers": {
                         "select supplier": "Επιλέξτε έναν προμηθευτή",
-                        "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
+                        "type what you’re looking for": "type what you're looking for..."
                      }
                   },
                   "add item information": "Προσθήκη πληροφοριών στοιχείου",
