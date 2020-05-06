@@ -48,6 +48,8 @@ export const SACHETS_OF_PROCESSING = gql`
          quantity
          unit
          tracking
+         defaultNutritionalValues
+         liveMOF
          modeOfFulfillments {
             id
             type
