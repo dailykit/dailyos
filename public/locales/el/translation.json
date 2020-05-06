@@ -326,6 +326,7 @@
             "sachet": {
                "taken inventory": "Λήψη αποθέματος",
                "active": "Ενεργός",
+               "live": "Live",
                "mode of fulfillment": "Τρόπος εκπλήρωσης",
                "station": "Σταθμός",
                "item": "Είδος",
@@ -334,7 +335,22 @@
                "label": "Επιγραφή",
                "atleast ": "Τουλάχιστον ",
                "not weighing": "Όχι ζύγιση",
-               "not labelled": "Χωρίς ετικέτα"
+               "not labelled": "Χωρίς ετικέτα",
+               "daily value": "Daily value",
+               "calories": "Calories",
+               "total fat": "Total Fat",
+               "saturated fat": "Saturated Fat",
+               "trans fat": "Trans Fat",
+               "cholestrol": "Cholestrol",
+               "sodium": "Sodium",
+               "total carbohydrates": "Total Carbohydrates",
+               "dietry fibre": "Dietry Fibre",
+               "sugar": "Sugar",
+               "protein": "Protein",
+               "vitamin A": "Vitamin A",
+               "vitamin C": "Vitamin C",
+               "calcium": "Calcium",
+               "iron": "Iron"
             },
             "sachets": {
                "sachets": "Φακελάκια",
