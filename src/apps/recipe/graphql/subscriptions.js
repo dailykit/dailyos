@@ -38,6 +38,7 @@ export const S_RECIPE = gql`
          cookingTime
          cuisine
          utensils
+         procedures
       }
    }
 `

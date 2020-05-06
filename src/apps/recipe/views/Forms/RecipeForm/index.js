@@ -7,8 +7,8 @@ import { Context } from '../../../context/tabs'
 
 import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
 
-import { Information } from './components'
-import { InformationTunnel } from './tunnels'
+import { Information, Procedures } from './components'
+import { InformationTunnel, ProceduresTunnel } from './tunnels'
 import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
 
 const RecipeForm = () => {
@@ -72,6 +72,9 @@ const RecipeForm = () => {
             <Tunnel layer={1}>
                <InformationTunnel state={state} closeTunnel={closeTunnel} />
             </Tunnel>
+            <Tunnel layer={2}>
+               <ProceduresTunnel state={state} closeTunnel={closeTunnel} />
+            </Tunnel>
          </Tunnels>
          {/* View */}
          <StyledHeader>
@@ -88,6 +91,8 @@ const RecipeForm = () => {
          </StyledHeader>
          <StyledWrapper>
             <Information state={state} openTunnel={openTunnel} />
+            {/* Photo component */}
+            <Procedures state={state} openTunnel={openTunnel} />
          </StyledWrapper>
       </React.Fragment>
    )

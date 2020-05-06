@@ -15,6 +15,8 @@ export const TunnelHeader = styled.div`
 
 export const TunnelBody = styled.div`
    padding: 16px 32px;
+   height: calc(100% - 106px);
+   overflow: auto;
 `
 
 export const StyledRow = styled.div`
@@ -65,4 +67,23 @@ export const Flex = styled.div`
    direction: ${props => props.direction || 'column'};
    justify-content: ${props => props.justify || 'space-between'};
    align-items: ${props => props.align || 'flex-start'};
+`
+
+export const InputWrapper = styled.div`
+   display: flex;
+   width: 100%;
+   align-items: baseline;
+   justify-content: space-between;
+   input {
+      max-width: 240px;
+   }
+   span {
+      cursor: pointer;
+   }
+   > div {
+      display: flex;
+      span:last-child {
+         margin-left: 8px;
+      }
+   }
 `
