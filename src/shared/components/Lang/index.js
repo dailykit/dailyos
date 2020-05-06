@@ -1,4 +1,5 @@
 import React from 'react'
+import i18next from 'i18next'
 
 import {
    StyledWrapper,
@@ -9,13 +10,16 @@ import {
 import { SettingsIcon } from '../../assets/icons'
 
 const Lang = () => {
-   const [lang, setLang] = React.useState('en')
+   const [lang, setLang] = React.useState(
+      localStorage.getItem('i18nextLng') || 'en'
+   )
    const [isVisible, setIsVisible] = React.useState(false)
 
    const changeLang = lang => {
-      console.log(lang)
-      setLang(lang)
-      setIsVisible(false)
+      i18next.changeLanguage(lang, () => {
+         setLang(lang)
+         setIsVisible(false)
+      })
    }
 
    return (
@@ -40,8 +44,8 @@ const Lang = () => {
                Español
             </StyledListItem>
             <StyledListItem
-               active={lang === 'hb'}
-               onClick={() => changeLang('hb')}
+               active={lang === 'he'}
+               onClick={() => changeLang('he')}
             >
                עברית
             </StyledListItem>
