@@ -898,10 +898,17 @@
                   "actions": "Ενέργειες"
                },
                "productslisting": {
+                  "inventory": "Inventory",
+                  "simple recipe": "Simple Recipe",
+                  "customizable": "Customizable",
+                  "combo": "Combo",
                   "loading": "φρτωση",
+                  "error": "Error: Couldn't fetch products!",
                   "start the data-hub server": "Ξεκινήστε τον διακομιστή κόμβου δεδομένων",
                   "products": "Προϊόντα",
                   "product name": "Ονομασία προϊόντος",
+                  "labels": "Labels",
+                  "recipe": "Recipe",
                   "select type of product": "Επιλέξτε Τύπος προϊόντος",
                   "inventory product": "Προϊόν Inventroy",
                   "subtitle 1": "Το προϊόν αποθέματος είναι απλώς ένα αντικείμενο, παρέχεται ή αγοράζεται",
