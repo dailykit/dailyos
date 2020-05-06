@@ -51,6 +51,7 @@ import {
 import { Sachet } from '../'
 
 import { useTranslation, Trans } from 'react-i18next'
+import NutritionTunnel from '../tunnels/NutritionalValues'
 
 const address = 'apps.recipe.components.sachets.'
 
@@ -68,6 +69,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
       quantity: '',
       unit: 'gram',
       tracking: true,
+      defaultNutritionalValues: '',
       modes: [
          {
             isActive: false,
@@ -309,6 +311,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
       closePackagingTunnel,
    ] = useTunnel(1)
    const [labelTunnel, openLabelTunnel, closeLabelTunnel] = useTunnel(1)
+   const [
+      nutritionTunnel,
+      openNutritionTunnel,
+      closeNutritionTunnel,
+   ] = useTunnel(1)
 
    // Handlers
    const selectAccuracyHandler = value => {
@@ -355,6 +362,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
          quantity: sachetForm.quantity,
          unit: sachetForm.unit,
          tracking: sachetForm.tracking,
+         defaultNutritionalValues: sachetForm.defaultNutritionalValues,
       }
       let cleanModes = sachetForm.modes
          .filter(mode => {
@@ -393,6 +401,7 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
          quantity: '',
          unit: '',
          tracking: true,
+         defaultNutritionalValues: '',
          modes: [
             {
                isActive: false,
@@ -504,6 +513,11 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
          isLabelled: false,
          labelTemplate: '',
       })
+   }
+
+   const saveNutritionalValues = values => {
+      setSachetForm({ ...sachetForm, defaultNutritionalValues: values })
+      closeNutritionTunnel(1)
    }
 
    const sachetTunnelHandler = () => {
@@ -770,6 +784,12 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                         ))}
                      </tbody>
                   </StyledTable>
+                  <TextButton
+                     type="ghost"
+                     onClick={() => openNutritionTunnel(1)}
+                  >
+                     Add Default Nutritional Values
+                  </TextButton>
                </StyledTunnelMain>
             </Tunnel>
             <Tunnel layer={2}>
@@ -1002,6 +1022,15 @@ const Sachets = ({ ingredientId, processingId, processingName }) => {
                      </ListOptions>
                   </List>
                </StyledTunnelMain>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={nutritionTunnel}>
+            <Tunnel layer={1}>
+               <NutritionTunnel
+                  values={sachetForm.defaultNutritionalValues}
+                  save={saveNutritionalValues}
+                  close={closeNutritionTunnel}
+               />
             </Tunnel>
          </Tunnels>
       </StyledSection>
