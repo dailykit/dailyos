@@ -35,3 +35,7 @@ export const StyledIcon = styled.div`
    border-radius: 4px;
    background: rgba(40, 193, 247, 0.48);
 `
+
+export const Spacer = styled.div`
+   height: 32px;
+`

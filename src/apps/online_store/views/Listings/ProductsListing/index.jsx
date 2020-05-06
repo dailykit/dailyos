@@ -1,46 +1,63 @@
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useTranslation, Trans } from 'react-i18next'
 
-import { COMBO_PRODUCTS } from '../../../graphql'
 import { Context } from '../../../context/tabs'
 
 // Components
 import {
    IconButton,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
+   RadioGroup,
    Tunnels,
    Tunnel,
    useTunnel,
 } from '@dailykit/ui'
 import SelectProductTunnel from './SelectProductTunnel'
+import {
+   InventoryProducts,
+   CustomizableProducts,
+   ComboProducts,
+   SimpleRecipeProducts,
+} from './components'
 
 // Styled
-import { StyledWrapper, StyledHeader } from '../styled'
+import { StyledWrapper, StyledHeader, Spacer } from '../styled'
 
 // Icons
 import { AddIcon } from '../../../assets/icons'
-
-import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
 const ProductsListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
+   const [view, setView] = React.useState('inventory')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   const { loading, error, data } = useQuery(COMBO_PRODUCTS)
+   const options = [
+      { id: 'inventory', title: 'Inventory' },
+      { id: 'simple', title: 'Simple Recipe' },
+      { id: 'custom', title: 'Customizable' },
+      { id: 'combo', title: 'Combo' },
+   ]
+
+   const renderListing = () => {
+      switch (view) {
+         case 'inventory':
+            return <InventoryProducts />
+         case 'simple':
+            return <SimpleRecipeProducts />
+         case 'customizable':
+            return <CustomizableProducts />
+         case 'combo':
+            return <ComboProducts />
+         default:
+            return <InventoryProducts />
+      }
+   }
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
-
-   if (loading) return <h1>{t(address.concat('loading'))}</h1>
-   if (error) return <h1>{t(address.concat('start the data-hub server'))}</h1>
 
    return (
       <>
@@ -56,7 +73,14 @@ const ProductsListing = () => {
                   <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledHeader>
-            <Table>
+            <RadioGroup
+               options={options}
+               active={'inventory'}
+               onChange={option => setView(option.id)}
+            />
+            <Spacer />
+            {renderListing()}
+            {/* <Table>
                <TableHead>
                   <TableRow>
                      <TableCell>{t(address.concat('product name'))}</TableCell>
@@ -74,7 +98,7 @@ const ProductsListing = () => {
                      </TableRow>
                   ))}
                </TableBody>
-            </Table>
+            </Table> */}
          </StyledWrapper>
       </>
    )
