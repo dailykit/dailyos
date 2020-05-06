@@ -33,6 +33,7 @@ export const state = {
    processing: {
       id: null,
       name: '',
+      unit: '',
       par_level: {
          value: '',
          unit: '',
@@ -252,9 +253,9 @@ export const reducer = (state, { type, payload }) => {
          const {
             id,
             par,
-            parUnit,
+            unit,
             maxInventoryLevel,
-            maxInventoryUnit,
+
             laborTime,
             laborUnit,
             yieldPercentage,
@@ -269,9 +270,9 @@ export const reducer = (state, { type, payload }) => {
          configuredDerivedProcessings.splice(activeConfigurable, 1, {
             ...state.configurable,
             id,
-            par_level: { unit: parUnit, value: par },
+            unit,
+            par_level: { value: par },
             max_inventory_level: {
-               unit: maxInventoryUnit,
                value: maxInventoryLevel,
             },
             labor_time: { unit: laborUnit, value: laborTime },
@@ -395,6 +396,12 @@ export const reducer = (state, { type, payload }) => {
 
       case 'ADD_PROCESSING':
          return { ...state, processing: { ...state.processing, id: payload } }
+
+      case 'SET_UNIT':
+         return {
+            ...state,
+            processing: { ...state.processing, unit: payload.value },
+         }
       default:
          return state
    }

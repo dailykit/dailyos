@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
+import { TextButton, Input, Loader } from '@dailykit/ui'
 
 // Mutations
 import { CREATE_SUPPLIER_ITEM } from '../../../../../graphql'
-
-import { TextButton, Input, Loader } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
@@ -19,10 +19,7 @@ import {
    Highlight,
    InputWrapper,
    StyledSelect,
-   StyledLabel,
 } from '../styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
@@ -50,6 +47,20 @@ export default function InfoTunnel({ close, next }) {
             supplierId: state.supplier.id,
             unit: state.unit_quantity.unit,
             unitSize: +state.unit_quantity.value,
+
+            prices: [
+               {
+                  unitPrice: {
+                     value: state.unit_price.value,
+                     unit: state.unit_price.unit,
+                  },
+               },
+            ],
+
+            leadTime: {
+               unit: state.lead_time.unit,
+               value: state.lead_time.value,
+            },
          },
       })
 
@@ -87,7 +98,7 @@ export default function InfoTunnel({ close, next }) {
                <StyledInputGroup>
                   <Input
                      type="text"
-                     label={t(address.concat("item name"))}
+                     label={t(address.concat('item name'))}
                      name="title"
                      value={state.title}
                      onChange={e =>
@@ -99,7 +110,7 @@ export default function InfoTunnel({ close, next }) {
                   />
                   <Input
                      type="text"
-                     label={t(address.concat("item sku"))}
+                     label={t(address.concat('item sku'))}
                      name="sku"
                      value={state.sku}
                      onChange={e =>
@@ -117,7 +128,10 @@ export default function InfoTunnel({ close, next }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label={t(address.concat("unit qty").concat(':'))}
+                           label={
+                              t(address.concat('unit qty').concat(':')) ||
+                              'unit qty'
+                           }
                            name="unit_quantity"
                            value={state.unit_quantity.value}
                            onChange={e =>
@@ -149,7 +163,7 @@ export default function InfoTunnel({ close, next }) {
                      </InputWrapper>
                      <Input
                         type="text"
-                        label={t(address.concat("unit price")).concat(':')}
+                        label={t(address.concat('unit price')).concat(':')}
                         name="unit_price"
                         value={state.unit_price.unit + state.unit_price.value}
                         onChange={e =>
@@ -165,7 +179,7 @@ export default function InfoTunnel({ close, next }) {
                   </StyledInputGroup>
                </Highlight>
             </StyledRow>
-            <StyledRow>
+            {/* <StyledRow>
                <StyledInputGroup>
                   <Highlight>
                      <InputWrapper>
@@ -236,14 +250,14 @@ export default function InfoTunnel({ close, next }) {
                      </InputWrapper>
                   </Highlight>
                </StyledInputGroup>
-            </StyledRow>
+            </StyledRow> */}
             <StyledRow>
                <StyledInputGroup>
                   <Highlight>
                      <InputWrapper>
                         <Input
                            type="text"
-                           label={t(address.concat("lead time")).concat(':')}
+                           label={t(address.concat('lead time')).concat(':')}
                            name="lead_time"
                            value={state.lead_time.value}
                            onChange={e =>
@@ -269,19 +283,27 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="days">{t(address.concat('days'))}</option>
-                           <option value="weeks">{t(address.concat('weeks'))}</option>
+                           <option value="days">
+                              {t(address.concat('days'))}
+                           </option>
+                           <option value="weeks">
+                              {t(address.concat('weeks'))}
+                           </option>
                         </StyledSelect>
                      </InputWrapper>
                   </Highlight>
                </StyledInputGroup>
             </StyledRow>
-            <StyledRow>
+            {/* <StyledRow>
                <StyledLabel>
-                  {t(address.concat('upload cerificates for the item authentication (if any)'))}
+                  {t(
+                     address.concat(
+                        'upload cerificates for the item authentication (if any)'
+                     )
+                  )}
                </StyledLabel>
                <Highlight></Highlight>
-            </StyledRow>
+            </StyledRow> */}
          </TunnelBody>
       </>
    )

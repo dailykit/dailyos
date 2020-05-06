@@ -6,6 +6,8 @@ export const CREATE_SUPPLIER_ITEM = gql`
       $supplierId: Int!
       $unit: String!
       $unitSize: Int!
+      $leadTime: jsonb!
+      $prices: jsonb!
    ) {
       createSupplierItem(
          objects: {
@@ -13,6 +15,8 @@ export const CREATE_SUPPLIER_ITEM = gql`
             supplierId: $supplierId
             unit: $unit
             unitSize: $unitSize
+            leadTime: $leadTime
+            prices: $prices
          }
       ) {
          returning {
@@ -35,17 +39,42 @@ export const ADD_BULK_ITEM = gql`
    }
 `
 
+// yield: { value: state.processing.yield },
+//             shelfLife: state.processing.shelf_life,
+//             parLevel: +state.processing.par_level.value,
+//             nutritionInfo: state.processing.nutrients || {},
+//             maxLevel: +state.processing.max_inventory_level.value,
+//             labor: state.processing.labor_time,
+//             bulkDensity: +state.processing.bulk_density,
+//             allergens: state.processing.allergens,
+
 export const CREATE_BULK_ITEM = gql`
    mutation CreateBulkItem(
       $processingName: String!
       $itemId: Int!
       $unit: String!
+      $yield: jsonb
+      $shelfLife: jsonb
+      $parLevel: numeric
+      $nutritionInfo: jsonb
+      $maxLevel: numeric
+      $labor: jsonb
+      $bulkDensity: numeric
+      $allergens: jsonb
    ) {
       createBulkItem(
          objects: {
             processingName: $processingName
             supplierItemId: $itemId
             unit: $unit
+            yield: $yield
+            shelfLife: $shelfLife
+            parLevel: $parLevel
+            nutritionInfo: $nutritionInfo
+            maxLevel: $maxLevel
+            labor: $labor
+            bulkDensity: $bulkDensity
+            allergens: $allergens
          }
       ) {
          returning {

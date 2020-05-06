@@ -184,178 +184,201 @@ export default function ItemForm() {
                   <ButtonTile
                      type="primary"
                      size="lg"
-                     text={t(address.concat("add item information"))}
+                     text={t(address.concat('add item information'))}
                      onClick={() => openTunnel(1)}
                   />
                </StyledWrapper>
             ) : (
-                  <>
-                     <StyledGrid>
+               <>
+                  <StyledGrid>
+                     <div>
                         <div>
-                           <div>
-                              <ItemIcon />
-                           </div>
-                           <div>
-                              <span>{t(address.concat('unit qty'))}</span>
-                              <div>
-                                 <span>
-                                    {state.unit_quantity.value +
-                                       state.unit_quantity.unit}
-                                 </span>
-                                 <span>${state.unit_price.value || 0}</span>
-                              </div>
-                           </div>
+                           <ItemIcon />
                         </div>
                         <div>
+                           <span>{t(address.concat('unit qty'))}</span>
                            <div>
-                              <CaseIcon />
+                              <span>
+                                 {state.unit_quantity.value +
+                                    state.unit_quantity.unit}
+                              </span>
+                              <span>${state.unit_price.value || 0}</span>
                            </div>
+                        </div>
+                     </div>
+                     <div>
+                        <div>
+                           <CaseIcon />
+                        </div>
+                        <div>
+                           <span>{t(address.concat('case qty'))}</span>
                            <div>
-                              <span>{t(address.concat('case qty'))}</span>
-                              <div>
-                                 <span>
-                                    {state.case_quantity.value +
-                                       state.case_quantity.unit}
-                                 </span>
-                                 <span>
-                                    $
+                              <span>
+                                 {state.case_quantity.value +
+                                    state.case_quantity.unit}
+                              </span>
+                              <span>
+                                 $
                                  {+state.unit_price.value *
-                                       +state.case_quantity.value}
-                                 </span>
-                              </div>
+                                    +state.case_quantity.value}
+                              </span>
                            </div>
                         </div>
+                     </div>
+                     <div>
                         <div>
+                           <TruckIcon />
+                        </div>
+                        <div>
+                           <span>{t(address.concat('min order value'))}</span>
                            <div>
-                              <TruckIcon />
-                           </div>
-                           <div>
-                              <span>{t(address.concat('min order value'))}</span>
-                              <div>
-                                 <span>
-                                    {state.min_order_value.value +
-                                       state.min_order_value.unit}
-                                 </span>
-                                 <span>
-                                    $
+                              <span>
+                                 {state.min_order_value.value +
+                                    state.min_order_value.unit}
+                              </span>
+                              <span>
+                                 $
                                  {+state.unit_price.value *
-                                       +state.min_order_value.value}
-                                 </span>
-                              </div>
+                                    +state.min_order_value.value}
+                              </span>
                            </div>
+                        </div>
+                     </div>
+                     <div>
+                        <div>
+                           <ClockIcon />
                         </div>
                         <div>
+                           <span>{t(address.concat('lead time'))}</span>
                            <div>
-                              <ClockIcon />
-                           </div>
-                           <div>
-                              <span>{t(address.concat('lead time'))}</span>
-                              <div>
-                                 <span>
-                                    {state.lead_time.value + state.lead_time.unit}
-                                 </span>
-                              </div>
+                              <span>
+                                 {state.lead_time.value + state.lead_time.unit}
+                              </span>
                            </div>
                         </div>
-                     </StyledGrid>
+                     </div>
+                  </StyledGrid>
 
-                     <FlexContainer
-                        style={{ marginTop: '30px', padding: '0 30px' }}
-                     >
-                        <Flexible width="1">
-                           <FlexContainer
-                              style={{
-                                 justifyContent: 'space-between',
-                                 alignItems: 'center',
-                              }}
+                  <FlexContainer
+                     style={{ marginTop: '30px', padding: '0 30px' }}
+                  >
+                     <Flexible width="1">
+                        <FlexContainer
+                           style={{
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                           }}
+                        >
+                           <Text as="title">
+                              {t(address.concat('processings'))}
+                           </Text>
+                           <IconButton
+                              onClick={() => openTunnel(6)}
+                              type="ghost"
                            >
-                              <Text as="title">{t(address.concat('processings'))}</Text>
-                              <IconButton
-                                 onClick={() => openTunnel(6)}
-                                 type="ghost"
-                              >
-                                 <AddIcon />
-                              </IconButton>
-                           </FlexContainer>
+                              <AddIcon />
+                           </IconButton>
+                        </FlexContainer>
 
-                           {state.processing?.name && (
-                              <>
-                                 <br />
-                                 <Text as="subtitle">
-                                    {t(address.concat('as received from supplier'))}.
+                        {state.processing?.name && (
+                           <>
+                              <br />
+                              <Text as="subtitle">
+                                 {t(
+                                    address.concat('as received from supplier')
+                                 )}
+                                 .
                               </Text>
 
+                              <ProcessingButton
+                                 active={active}
+                                 onClick={() => {
+                                    setActive(true)
+                                    dispatch({
+                                       type: 'SET_ACTIVE_PROCESSING',
+                                       payload: state.processing,
+                                    })
+                                 }}
+                              >
+                                 <h3>{state.processing.name}</h3>
+                                 <Text as="subtitle">
+                                    {t(address.concat('on hand'))}: 0{' '}
+                                    {t('units.gm')}
+                                 </Text>
+                                 <Text as="subtitle">
+                                    {t(address.concat('shelf life'))}:{' '}
+                                    {`${state.processing?.shelf_life?.value} ${state.processing?.shelf_life?.unit}`}
+                                 </Text>
+                              </ProcessingButton>
+                           </>
+                        )}
+
+                        {state.derivedProcessings.length > 0 && (
+                           <>
+                              <br />
+                              <Text as="subtitle">
+                                 {t(
+                                    address.concat(
+                                       'derived from received processing'
+                                    )
+                                 )}
+                              </Text>
+
+                              {state.derivedProcessings.map(procs => (
                                  <ProcessingButton
-                                    active={active}
+                                    key={procs.id}
+                                    active={
+                                       state.activeProcessing.id === procs.id
+                                    }
                                     onClick={() => {
-                                       setActive(true)
+                                       setActive(false)
                                        dispatch({
                                           type: 'SET_ACTIVE_PROCESSING',
-                                          payload: state.processing,
+                                          payload: {
+                                             ...procs,
+                                             name: procs.title,
+                                          },
                                        })
                                     }}
                                  >
-                                    <h3>{state.processing.name}</h3>
-                                    <Text as="subtitle">{t(address.concat('on hand'))}: 0 {t('units.gm')}</Text>
+                                    <h3>{procs.title}</h3>
+                                    <Text as="subtitle">
+                                       {t(address.concat('on hand'))}: 0{' '}
+                                       {t('units.gm')}
+                                    </Text>
                                     <Text as="subtitle">
                                        {t(address.concat('shelf life'))}:{' '}
-                                       {`${state.processing?.shelf_life?.value} ${state.processing?.shelf_life?.unit}`}
+                                       {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
                                     </Text>
                                  </ProcessingButton>
-                              </>
-                           )}
-
-                           {state.derivedProcessings.length > 0 && (
-                              <>
-                                 <br />
-                                 <Text as="subtitle">
-                                    {t(address.concat('derived from received processing'))}
-                                 </Text>
-
-                                 {state.derivedProcessings.map(procs => (
-                                    <ProcessingButton
-                                       active={
-                                          state.activeProcessing.id === procs.id
-                                       }
-                                       onClick={() => {
-                                          setActive(false)
-                                          dispatch({
-                                             type: 'SET_ACTIVE_PROCESSING',
-                                             payload: { ...procs, name: procs.title },
-                                          })
-                                       }}
-                                    >
-                                       <h3>{procs.title}</h3>
-                                       <Text as="subtitle">{t(address.concat('on hand'))}: 0 {t('units.gm')}</Text>
-                                       <Text as="subtitle">
-                                          {t(address.concat('shelf life'))}:{' '}
-                                          {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
-                                       </Text>
-                                    </ProcessingButton>
-                                 ))}
-                              </>
-                           )}
-                        </Flexible>
-                        <Flexible style={{ marginTop: '16vh' }} width="4">
-                           <div
-                              style={{
-                                 padding: '15px',
-                                 backgroundColor: '#fff',
-                                 minHeight: '500px',
-                              }}
-                           >
-                              {state.activeProcessing?.name ? (
-                                 <ProcessingView open={openTunnel} />
-                              ) : (
-                                    <Text as="title">
-                                       {t(address.concat('select any processing from left menu to get started!'))}
-                                    </Text>
+                              ))}
+                           </>
+                        )}
+                     </Flexible>
+                     <Flexible style={{ marginTop: '16vh' }} width="4">
+                        <div
+                           style={{
+                              padding: '15px',
+                              backgroundColor: '#fff',
+                              minHeight: '500px',
+                           }}
+                        >
+                           {state.activeProcessing?.name ? (
+                              <ProcessingView open={openTunnel} />
+                           ) : (
+                              <Text as="title">
+                                 {t(
+                                    address.concat(
+                                       'select any processing from left menu to get started!'
+                                    )
                                  )}
-                           </div>
-                        </Flexible>
-                     </FlexContainer>
-                  </>
-               )}
+                              </Text>
+                           )}
+                        </div>
+                     </Flexible>
+                  </FlexContainer>
+               </>
+            )}
             <br />
             <br />
          </StyledMain>
@@ -429,17 +452,17 @@ function RealTimeView() {
    return (
       <FlexContainer style={{ flexWrap: 'wrap' }}>
          <DataCard
-            title={t(address.concat("awaiting"))}
+            title={t(address.concat('awaiting'))}
             quantity="0gm"
             actionText="1 active purchase order"
          />
          <DataCard
-            title={t(address.concat("commited"))}
+            title={t(address.concat('commited'))}
             quantity="0gm"
             actionText="1 active purchase order"
          />
          <DataCard
-            title={t(address.concat("consumed"))}
+            title={t(address.concat('consumed'))}
             quantity="0gm"
             actionText="1 active purchase order"
          />
@@ -473,7 +496,8 @@ function PlannedLotView({ open }) {
                      </h3>
 
                      <Text as="subtitle">
-                        {t(address.concat('par'))}: {sachet.parLevel} {state.unit_quantity.unit}
+                        {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                        {state.unit_quantity.unit}
                      </Text>
                   </ProcessingButton>
                ))}
@@ -482,7 +506,7 @@ function PlannedLotView({ open }) {
                   <ButtonTile
                      type="primary"
                      size="lg"
-                     text={t(address.concat("add sachets"))}
+                     text={t(address.concat('add sachets'))}
                      onClick={e => open(9)}
                   />
                </div>
@@ -491,17 +515,17 @@ function PlannedLotView({ open }) {
                {state.activeSachet?.quantity && (
                   <FlexContainer style={{ flexWrap: 'wrap' }}>
                      <DataCard
-                        title={t(address.concat("awaiting"))}
+                        title={t(address.concat('awaiting'))}
                         quantity="0gm"
                         actionText="1 active purchase order"
                      />
                      <DataCard
-                        title={t(address.concat("commited"))}
+                        title={t(address.concat('commited'))}
                         quantity="0gm"
                         actionText="1 active purchase order"
                      />
                      <DataCard
-                        title={t(address.concat("consumed"))}
+                        title={t(address.concat('consumed'))}
                         quantity="0gm"
                         actionText="1 active purchase order"
                      />
