@@ -898,10 +898,17 @@
                   "actions": "Actions"
                },
                "productslisting": {
+                  "inventory": "Inventory",
+                  "simple recipe": "Simple Recipe",
+                  "customizable": "Customizable",
+                  "combo": "Combo",
                   "loading": "chargement",
+                  "error": "Error: Couldn't fetch products!",
                   "start the data-hub server": "Lancer le serveur data-hub",
                   "products": "Produits",
                   "product name": "Nom de produit",
+                  "labels": "Labels",
+                  "recipe": "Recipe",
                   "select type of product": "Indiquer le type de projet",
                   "inventory product": "Produit inventaire",
                   "subtitle 1": "Le produit d'inventaire n'est qu'un article, fourni ou acheté",
