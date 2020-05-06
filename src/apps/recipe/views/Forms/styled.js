@@ -21,6 +21,11 @@ export const StyledHeader = styled.div`
    align-items: center;
    justify-content: space-between;
    border-bottom: 1px solid #d8d8d8;
+   padding: 0 32px;
+`
+
+export const InputWrapper = styled.div`
+   width: ${props => props.width};
 `
 
 export const StyledForm = styled.div`
