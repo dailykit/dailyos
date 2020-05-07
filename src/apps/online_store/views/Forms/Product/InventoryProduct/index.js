@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {
    Input,
@@ -8,8 +8,10 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Loader,
 } from '@dailykit/ui'
 
+import { Context } from '../../../../context/tabs'
 import {
    state as initialState,
    InventoryProductContext,
@@ -34,6 +36,7 @@ import {
    CREATE_INVENTORY_PRODUCT,
    CREATE_INVENTORY_PRODUCT_OPTIONS,
    INVENTORY_PRODUCTS,
+   S_INVENTORY_PRODUCT,
 } from '../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
@@ -42,72 +45,82 @@ const address = 'apps.online_store.views.forms.product.inventoryproduct.'
 
 export default function InventoryProduct() {
    const { t } = useTranslation()
-   const [state, dispatch] = React.useReducer(reducers, initialState)
+
+   // Context
+   const [productState, productDispatch] = React.useReducer(
+      reducers,
+      initialState
+   )
+   const { state: tabs } = React.useContext(Context)
+
+   // State
    const [title, setTitle] = React.useState('')
-   const [items, setItems] = React.useState({
-      inventory: [
-         { id: 1, title: 'ITEM 1', unitSize: '1 pc' },
-         { id: 2, title: 'ITEM 2', unitSize: '1 pc' },
-         { id: 3, title: 'ITEM 3', unitSize: '1 pc' },
-         { id: 4, title: 'ITEM 4', unitSize: '1 pc' },
-         { id: 5, title: 'ITEM 5', unitSize: '1 pc' },
-         { id: 6, title: 'ITEM 6', unitSize: '1 pc' },
-         { id: 7, title: 'ITEM 7', unitSize: '1 pc' },
-      ],
-      sachet: [
-         { id: 1, title: 'SACHET 1', unitSize: '100 gms' },
-         { id: 2, title: 'SACHET 2', unitSize: '100 gms' },
-         { id: 3, title: 'SACHET 3', unitSize: '100 gms' },
-         { id: 4, title: 'SACHET 4', unitSize: '100 gms' },
-         { id: 5, title: 'SACHET 5', unitSize: '100 gms' },
-         { id: 6, title: 'SACHET 6', unitSize: '100 gms' },
-         { id: 7, title: 'SACHET 7', unitSize: '100 gms' },
-         { id: 8, title: 'SACHET 8', unitSize: '100 gms' },
-         { id: 9, title: 'SACHET 9', unitSize: '100 gms' },
-      ],
-   })
-   const [accompanimentTypes, setAccompanimentTypes] = React.useState([
-      { id: 1, title: 'Beverages' },
-      { id: 2, title: 'Salads' },
-      { id: 3, title: 'Sweets' },
-   ])
+   const [state, setState] = React.useState({})
+
+   // const [items, setItems] = React.useState({
+   //    inventory: [
+   //       { id: 1, title: 'ITEM 1', unitSize: '1 pc' },
+   //       { id: 2, title: 'ITEM 2', unitSize: '1 pc' },
+   //       { id: 3, title: 'ITEM 3', unitSize: '1 pc' },
+   //       { id: 4, title: 'ITEM 4', unitSize: '1 pc' },
+   //       { id: 5, title: 'ITEM 5', unitSize: '1 pc' },
+   //       { id: 6, title: 'ITEM 6', unitSize: '1 pc' },
+   //       { id: 7, title: 'ITEM 7', unitSize: '1 pc' },
+   //    ],
+   //    sachet: [
+   //       { id: 1, title: 'SACHET 1', unitSize: '100 gms' },
+   //       { id: 2, title: 'SACHET 2', unitSize: '100 gms' },
+   //       { id: 3, title: 'SACHET 3', unitSize: '100 gms' },
+   //       { id: 4, title: 'SACHET 4', unitSize: '100 gms' },
+   //       { id: 5, title: 'SACHET 5', unitSize: '100 gms' },
+   //       { id: 6, title: 'SACHET 6', unitSize: '100 gms' },
+   //       { id: 7, title: 'SACHET 7', unitSize: '100 gms' },
+   //       { id: 8, title: 'SACHET 8', unitSize: '100 gms' },
+   //       { id: 9, title: 'SACHET 9', unitSize: '100 gms' },
+   //    ],
+   // })
+   // const [accompanimentTypes, setAccompanimentTypes] = React.useState([
+   //    { id: 1, title: 'Beverages' },
+   //    { id: 2, title: 'Salads' },
+   //    { id: 3, title: 'Sweets' },
+   // ])
    const [products, setProducts] = React.useState({
       inventory: [],
       simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            simple: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         console.log('Inve -> data', data)
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            inventory: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
+   // useQuery(SIMPLE_RECIPE_PRODUCTS, {
+   //    onCompleted: data => {
+   //       const updatedProducts = data.simpleRecipeProducts.map(pdct => {
+   //          return {
+   //             ...pdct,
+   //             title: pdct.name,
+   //          }
+   //       })
+   //       setProducts({
+   //          ...products,
+   //          simple: updatedProducts,
+   //       })
+   //    },
+   //    fetchPolicy: 'cache-and-network',
+   // })
+   // useQuery(INVENTORY_PRODUCTS, {
+   //    onCompleted: data => {
+   //       console.log('Inve -> data', data)
+   //       const updatedProducts = data.inventoryProducts.map(pdct => {
+   //          return {
+   //             ...pdct,
+   //             title: pdct.name,
+   //          }
+   //       })
+   //       setProducts({
+   //          ...products,
+   //          inventory: updatedProducts,
+   //       })
+   //    },
+   //    fetchPolicy: 'cache-and-network',
+   // })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
    //       const { accompanimentTypes } = data
@@ -119,58 +132,82 @@ export default function InventoryProduct() {
    //    },
    // })
 
-   const [createInventoryProduct] = useMutation(CREATE_INVENTORY_PRODUCT, {
-      onCompleted: data => {
-         saveOptions(data.createInventoryProduct.returning[0].id)
+   // const [createInventoryProduct] = useMutation(CREATE_INVENTORY_PRODUCT, {
+   //    onCompleted: data => {
+   //       saveOptions(data.createInventoryProduct.returning[0].id)
+   //    },
+   // })
+
+   // const [createInventoryProductOptions] = useMutation(
+   //    CREATE_INVENTORY_PRODUCT_OPTIONS,
+   //    {
+   //       onCompleted: data => {
+   //          console.log('Saved!')
+   //          toast.success('Product saved!')
+   //       },
+   //    }
+   // )
+
+   // Update
+   const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
+      variables: {
+         id: tabs.current.id,
+      },
+      onSubscriptionData: data => {
+         console.log(data)
+         setState(data.subscriptionData.data.inventoryProduct)
+         setTitle(data.subscriptionData.data.inventoryProduct.name)
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
-   const [createInventoryProductOptions] = useMutation(
-      CREATE_INVENTORY_PRODUCT_OPTIONS,
-      {
-         onCompleted: data => {
-            console.log('Saved!')
-            toast.success('Product saved!')
-         },
-      }
-   )
+   // Handlers
+   const updateName = () => {
+      console.log(title)
+   }
 
    const save = () => {
-      const objects = {
-         accompaniments: state.accompaniments,
-         name: state.title,
-         tags: state.tags,
-         description: state.description,
-         //  default: state.default,
-         // Static id to changed later, as it throws fkey error rn
-         supplierItemId: state.meta.itemType === 'inventory' ? 3 : null,
-         sachetItemId: state.meta.itemType === 'sachet' ? state.item.id : null,
-      }
-      createInventoryProduct({
-         variables: {
-            objects: [objects],
-         },
-      })
+      // const objects = {
+      //    accompaniments: state.accompaniments,
+      //    name: state.title,
+      //    tags: state.tags,
+      //    description: state.description,
+      //    //  default: state.default,
+      //    // Static id to changed later, as it throws fkey error rn
+      //    supplierItemId: state.meta.itemType === 'inventory' ? 3 : null,
+      //    sachetItemId: state.meta.itemType === 'sachet' ? state.item.id : null,
+      // }
+      // createInventoryProduct({
+      //    variables: {
+      //       objects: [objects],
+      //    },
+      // })
    }
 
-   const saveOptions = productId => {
-      const objects = state.options.map(option => {
-         return {
-            inventoryProductId: productId,
-            label: option.title,
-            price: option.price,
-            quantity: option.quantity,
-         }
-      })
-      createInventoryProductOptions({
-         variables: {
-            objects,
-         },
-      })
-   }
+   // const saveOptions = productId => {
+   //    const objects = state.options.map(option => {
+   //       return {
+   //          inventoryProductId: productId,
+   //          label: option.title,
+   //          price: option.price,
+   //          quantity: option.quantity,
+   //       }
+   //    })
+   //    createInventoryProductOptions({
+   //       variables: {
+   //          objects,
+   //       },
+   //    })
+   // }
+
+   if (loading) return <Loader />
 
    return (
-      <InventoryProductContext.Provider value={{ state, dispatch }}>
+      <InventoryProductContext.Provider
+         value={{ productState, productDispatch }}
+      >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <DescriptionTunnel close={closeTunnel} />
@@ -181,13 +218,13 @@ export default function InventoryProduct() {
             <Tunnel layer={3}>
                <ItemTunnel
                   close={closeTunnel}
-                  items={items[state.meta.itemType]}
+                  // items={items[state.meta.itemType]}
                />
             </Tunnel>
             <Tunnel layer={4}>
                <AccompanimentTypeTunnel
                   close={closeTunnel}
-                  accompanimentTypes={accompanimentTypes}
+                  // accompanimentTypes={accompanimentTypes}
                />
             </Tunnel>
             <Tunnel layer={5}>
@@ -196,7 +233,7 @@ export default function InventoryProduct() {
             <Tunnel layer={6}>
                <ProductsTunnel
                   close={closeTunnel}
-                  products={products[state.meta.productsType]}
+                  // products={products[state.meta.productsType]}
                />
             </Tunnel>
          </Tunnels>
@@ -204,17 +241,12 @@ export default function InventoryProduct() {
             <StyledHeader>
                <div>
                   <Input
-                     label={t(address.concat("product name"))}
+                     label={t(address.concat('product name'))}
                      type="text"
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={e =>
-                        dispatch({
-                           type: 'TITLE',
-                           payload: { value: e.target.value },
-                        })
-                     }
+                     onBlur={updateName}
                   />
                </div>
                <div>
@@ -232,14 +264,14 @@ export default function InventoryProduct() {
                </div>
             </StyledHeader>
             <StyledBody>
-               <StyledMeta>
+               {/* <StyledMeta>
                   <div>
                      <Description openTunnel={openTunnel} />
                   </div>
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               <Item openTunnel={openTunnel} />
+               <Item openTunnel={openTunnel} /> */}
             </StyledBody>
          </StyledWrapper>
       </InventoryProductContext.Provider>

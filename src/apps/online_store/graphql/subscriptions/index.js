@@ -21,6 +21,32 @@ export const S_INVENTORY_PRODUCTS = gql`
    }
 `
 
+export const S_INVENTORY_PRODUCT = gql`
+   subscription($id: Int!) {
+      inventoryProduct(id: $id) {
+         id
+         name
+         accompaniments
+         tags
+         description
+         supplierItem {
+            id
+            name
+         }
+         sachetItem {
+            id
+            unitSize
+         }
+         inventoryProductOptions {
+            id
+            label
+            price
+            quantity
+         }
+      }
+   }
+`
+
 export const S_CUSTOMIZABLE_PRODUCTS = gql`
    {
       customizableProducts {

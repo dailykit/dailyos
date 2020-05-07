@@ -43,7 +43,12 @@ const InventoryProducts = () => {
          </TableHead>
          <TableBody>
             {data.inventoryProducts.map(product => (
-               <TableRow key={product.id}>
+               <TableRow
+                  key={product.id}
+                  onClick={() =>
+                     addTab(product.name, 'inventoryProduct', product.id)
+                  }
+               >
                   <TableCell>{product.name}</TableCell>
                   <TableCell align="right">
                      <GridContainer>
