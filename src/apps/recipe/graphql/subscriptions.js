@@ -49,6 +49,16 @@ export const S_RECIPE = gql`
          simpleRecipeYields {
             id
             yield
+            ingredientSachets {
+               ingredientSachet {
+                  id
+                  quantity
+                  unit
+                  ingredient {
+                     id
+                  }
+               }
+            }
          }
       }
    }

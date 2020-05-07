@@ -12,6 +12,7 @@ import {
    TableRow,
    TableHead,
    IconButton,
+   PlusIcon,
 } from '@dailykit/ui'
 import {
    UserIcon,
@@ -20,7 +21,10 @@ import {
    DeleteIcon,
 } from '../../../../../assets/icons'
 
-import { UPDATE_RECIPE } from '../../../../../graphql'
+import {
+   UPDATE_RECIPE,
+   DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
+} from '../../../../../graphql'
 import { RecipeContext } from '../../../../../context/recipee'
 
 const Ingredients = ({ state, openTunnel }) => {
@@ -36,6 +40,17 @@ const Ingredients = ({ state, openTunnel }) => {
          toast.error('Error!')
       },
    })
+   const [deleteYieldSachets] = useMutation(
+      DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
+      {
+         onCompleted: () => {
+            console.log('Deleted Sachets!')
+         },
+         onError: error => {
+            console.log(error)
+         },
+      }
+   )
 
    //Handlers
    const edit = ingredient => {
@@ -45,6 +60,7 @@ const Ingredients = ({ state, openTunnel }) => {
       })
       openTunnel(6)
    }
+
    const remove = ingredient => {
       const ingredients = state.ingredients
       const index = state.ingredients.findIndex(ing => ing.id === ingredient.id)
@@ -57,6 +73,52 @@ const Ingredients = ({ state, openTunnel }) => {
             },
          },
       })
+      deleteSachets(ingredient.id)
+   }
+
+   const deleteSachets = ingId => {
+      const servingIds = state.simpleRecipeYields.map(serving => serving.id)
+      const sachetIds = state.simpleRecipeYields
+         .flatMap(serving => {
+            return serving.ingredientSachets.map(sachet => {
+               if (sachet.ingredientSachet.ingredient.id === ingId)
+                  return sachet.ingredientSachet.id
+            })
+         })
+         .filter(id => id)
+      deleteYieldSachets({
+         variables: {
+            servingIds,
+            sachetIds,
+         },
+      })
+   }
+
+   const addSachet = (ingredient, serving, updating = false) => {
+      recipeDispatch({
+         type: 'EDIT_INGREDIENT',
+         payload: ingredient,
+      })
+      recipeDispatch({
+         type: 'SERVING',
+         payload: serving,
+      })
+      recipeDispatch({
+         type: 'UPDATING',
+         payload: updating ? true : false,
+      })
+      openTunnel(7)
+   }
+
+   const editSachet = (ingredient, serving) => {
+      const sachet = serving.ingredientSachets.find(
+         sachet => sachet.ingredientSachet.ingredient?.id === ingredient.id
+      ).ingredientSachet
+      recipeDispatch({
+         type: 'SACHET',
+         payload: sachet,
+      })
+      addSachet.call(this, ingredient, serving, true)
    }
 
    return (
@@ -76,7 +138,7 @@ const Ingredients = ({ state, openTunnel }) => {
                               <TableCell>Name</TableCell>
                               <TableCell>Processing</TableCell>
                               {state.simpleRecipeYields.map(serving => (
-                                 <TableCell>
+                                 <TableCell key={serving.id}>
                                     <UserIcon color="#555B6E" />
                                     {serving.yield.serving}
                                  </TableCell>
@@ -88,7 +150,7 @@ const Ingredients = ({ state, openTunnel }) => {
                         </TableHead>
                         <TableBody>
                            {state.ingredients.map(ingredient => (
-                              <TableRow>
+                              <TableRow key={ingredient.id}>
                                  <TableCell>{ingredient.name}</TableCell>
                                  <TableCell>
                                     {
@@ -97,9 +159,51 @@ const Ingredients = ({ state, openTunnel }) => {
                                     }
                                  </TableCell>
                                  {state.simpleRecipeYields.map(serving => (
-                                    <TableCell>
-                                       <UserIcon color="#555B6E" />
-                                       {serving.yield.serving}
+                                    <TableCell key={serving.id}>
+                                       {serving.ingredientSachets?.find(
+                                          sachet =>
+                                             sachet.ingredientSachet.ingredient
+                                                ?.id === ingredient.id
+                                       ) ? (
+                                          <React.Fragment>
+                                             <span>
+                                                {serving.ingredientSachets
+                                                   ?.find(
+                                                      sachet =>
+                                                         sachet.ingredientSachet
+                                                            .ingredient?.id ===
+                                                         ingredient.id
+                                                   )
+                                                   ?.ingredientSachet.quantity.toString()}{' '}
+                                                {
+                                                   serving.ingredientSachets?.find(
+                                                      sachet =>
+                                                         sachet.ingredientSachet
+                                                            .ingredient?.id ===
+                                                         ingredient.id
+                                                   )?.ingredientSachet.unit
+                                                }
+                                             </span>
+                                             <span
+                                                onClick={() =>
+                                                   editSachet(
+                                                      ingredient,
+                                                      serving
+                                                   )
+                                                }
+                                             >
+                                                <EditIcon color="#00A7E1" />
+                                             </span>
+                                          </React.Fragment>
+                                       ) : (
+                                          <span
+                                             onClick={() =>
+                                                addSachet(ingredient, serving)
+                                             }
+                                          >
+                                             <PlusIcon color="#00A7E1" />
+                                          </span>
+                                       )}
                                     </TableCell>
                                  ))}
                                  <TableCell align="center">

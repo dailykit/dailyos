@@ -147,6 +147,56 @@ export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    }
 `
 
+export const CREATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
+   mutation CreateSimpleRecipeSachet(
+      $objects: [simpleRecipe_simpleRecipeYield_ingredientSachet_insert_input!]!
+   ) {
+      createSimpleRecipeSachet(objects: $objects) {
+         returning {
+            ingredientSachetId
+         }
+      }
+   }
+`
+
+export const UPDATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
+   mutation UpdateSimpleRecipeSachet(
+      $sachetId: Int!
+      $yieldId: Int!
+      $set: simpleRecipe_simpleRecipeYield_ingredientSachet_set_input
+   ) {
+      updateSimpleRecipeSachet(
+         where: {
+            ingredientSachetId: { _eq: $sachetId }
+            recipeYieldId: { _eq: $yieldId }
+         }
+         _set: $set
+      ) {
+         returning {
+            ingredientSachetId
+         }
+      }
+   }
+`
+
+export const DELETE_SIMPLE_RECIPE_YIELD_SACHETS = gql`
+   mutation DeleteSimpleRecipeSachet(
+      $sachetIds: [Int!]!
+      $servingIds: [Int!]!
+   ) {
+      deleteSimpleRecipeSachet(
+         where: {
+            ingredientSachetId: { _in: $sachetIds }
+            simpleRecipeYield: { id: { _in: $servingIds } }
+         }
+      ) {
+         returning {
+            ingredientSachetId
+         }
+      }
+   }
+`
+
 export const UPDATE_RECIPE = gql`
    mutation UpdateSimpleRecipe(
       $id: Int!

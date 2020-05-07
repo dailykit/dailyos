@@ -20,6 +20,7 @@ import {
    IngredientsTunnel,
    ProcessingsTunnel,
    ConfigureIngredientTunnel,
+   SachetTunnel,
 } from './tunnels'
 import { UPDATE_RECIPE, S_RECIPE, S_INGREDIENTS } from '../../../graphql'
 
@@ -128,6 +129,28 @@ const RecipeForm = () => {
                   <ConfigureIngredientTunnel
                      state={state}
                      closeTunnel={closeTunnel}
+                  />
+               </Tunnel>
+               <Tunnel layer={7}>
+                  <SachetTunnel
+                     closeTunnel={closeTunnel}
+                     sachets={
+                        ingredients[
+                           ingredients.findIndex(
+                              ing => ing.id === recipeState.edit?.id
+                           )
+                        ]?.ingredientProcessings[
+                           ingredients[
+                              ingredients.findIndex(
+                                 ing => ing.id === recipeState.edit?.id
+                              )
+                           ]?.ingredientProcessings.findIndex(
+                              proc =>
+                                 proc.id ===
+                                 recipeState.edit?.ingredientProcessing?.id
+                           )
+                        ]?.ingredientSachets || []
+                     }
                   />
                </Tunnel>
             </Tunnels>
