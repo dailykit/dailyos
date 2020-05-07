@@ -742,11 +742,13 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Select Accompaniment Type",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
+                           "saving": "Saving...",
                            "tags": "Tags",
                            "description": "Description"
                         },

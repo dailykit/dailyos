@@ -25,7 +25,8 @@ import { Accompaniments } from '../'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.components.item.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.components.item.'
 
 export default function Item({ openTunnel }) {
    const { t } = useTranslation()
@@ -46,7 +47,9 @@ export default function Item({ openTunnel }) {
                </StyledListing>
                <StyledPanel>
                   <h2>{state.item.title}</h2>
-                  <h5>{t(address.concat('unit size'))}: {state.item.unitSize}</h5>
+                  <h5>
+                     {t(address.concat('unit size'))}: {state.item.unitSize}
+                  </h5>
                   <StyledTabs>
                      <StyledTab
                         onClick={() =>
@@ -109,10 +112,10 @@ export default function Item({ openTunnel }) {
                                                          value:
                                                             option.quantity -
                                                                1 ===
-                                                               0
+                                                            0
                                                                ? option.quantity
                                                                : option.quantity -
-                                                               1,
+                                                                 1,
                                                       },
                                                    })
                                                 }
@@ -227,19 +230,19 @@ export default function Item({ openTunnel }) {
                            </ComboButton>
                         </React.Fragment>
                      ) : (
-                           <Accompaniments openTunnel={openTunnel} />
-                        )}
+                        <Accompaniments openTunnel={openTunnel} />
+                     )}
                   </StyledTabView>
                </StyledPanel>
             </StyledLayout>
          ) : (
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat("add item"))}
-                  onClick={() => openTunnel(2)}
-               />
-            )}
+            <ButtonTile
+               type="primary"
+               size="lg"
+               text={t(address.concat('add item'))}
+               onClick={() => openTunnel(2)}
+            />
+         )}
       </StyledWrapper>
    )
 }

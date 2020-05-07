@@ -210,13 +210,14 @@ export default function InventoryProduct() {
       >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <DescriptionTunnel close={closeTunnel} />
+               <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
                <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
                <ItemTunnel
+                  state={state}
                   close={closeTunnel}
                   // items={items[state.meta.itemType]}
                />
@@ -232,6 +233,7 @@ export default function InventoryProduct() {
             </Tunnel>
             <Tunnel layer={6}>
                <ProductsTunnel
+                  state={state}
                   close={closeTunnel}
                   // products={products[state.meta.productsType]}
                />
@@ -264,14 +266,14 @@ export default function InventoryProduct() {
                </div>
             </StyledHeader>
             <StyledBody>
-               {/* <StyledMeta>
+               <StyledMeta>
                   <div>
-                     <Description openTunnel={openTunnel} />
+                     <Description state={state} openTunnel={openTunnel} />
                   </div>
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               <Item openTunnel={openTunnel} /> */}
+               {/* <Item state={state} openTunnel={openTunnel} /> */}
             </StyledBody>
          </StyledWrapper>
       </InventoryProductContext.Provider>

@@ -23,6 +23,19 @@ export const CREATE_INVENTORY_PRODUCT = gql`
    }
 `
 
+export const UPDATE_INVENTORY_PRODUCT = gql`
+   mutation UpdateInventoryProduct(
+      $id: Int!
+      $set: onlineStore_inventoryProduct_set_input
+   ) {
+      updateInventoryProduct(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_INVENTORY_PRODUCT_OPTIONS = gql`
    mutation CreateInventoryProductOptions(
       $objects: [onlineStore_inventoryProductOption_insert_input!]!
