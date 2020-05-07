@@ -4,6 +4,7 @@ export const RecipeContext = React.createContext()
 
 export const state = {
    newIngredient: undefined,
+   edit: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -14,6 +15,12 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             newIngredient: payload,
+         }
+      }
+      case 'EDIT_INGREDIENT': {
+         return {
+            ...state,
+            edit: payload,
          }
       }
       default:

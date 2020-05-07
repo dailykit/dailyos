@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    margin: 0 auto;
-   max-width: 1280px;
+   max-width: ${props => props.width || '1280'}px;
    h1 {
       color: #555b6e;
       font-size: 20px;

@@ -5,29 +5,27 @@ import { EditIcon } from '../../../../../assets/icons'
 
 const Procedures = ({ state, openTunnel }) => {
    return (
-      <React.Fragment>
+      <Container top="32" paddingX="32">
+         <Text as="subtitle">Cooking Steps</Text>
          {state.procedures?.length ? (
-            <Container top="32" paddingX="32">
+            <React.Fragment>
                <ContainerAction>
                   <IconButton onClick={() => openTunnel(2)}>
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                </ContainerAction>
-               <Text as="subtitle">Cooking Steps</Text>
                {state.procedures.map((procedure, i) => (
                   <Procedure key={i} procedure={procedure} />
                ))}
-            </Container>
+            </React.Fragment>
          ) : (
-            <Container top="32" paddingX="32">
-               <ButtonTile
-                  type="secondary"
-                  text="Add Procedures"
-                  onClick={() => openTunnel(2)}
-               />
-            </Container>
+            <ButtonTile
+               type="secondary"
+               text="Add Procedures"
+               onClick={() => openTunnel(2)}
+            />
          )}
-      </React.Fragment>
+      </Container>
    )
 }
 

@@ -19,6 +19,7 @@ import {
    ServingsTunnel,
    IngredientsTunnel,
    ProcessingsTunnel,
+   ConfigureIngredientTunnel,
 } from './tunnels'
 import { UPDATE_RECIPE, S_RECIPE, S_INGREDIENTS } from '../../../graphql'
 
@@ -123,6 +124,12 @@ const RecipeForm = () => {
                      }
                   />
                </Tunnel>
+               <Tunnel layer={6}>
+                  <ConfigureIngredientTunnel
+                     state={state}
+                     closeTunnel={closeTunnel}
+                  />
+               </Tunnel>
             </Tunnels>
             {/* View */}
             <StyledHeader>
@@ -137,7 +144,7 @@ const RecipeForm = () => {
                   />
                </InputWrapper>
             </StyledHeader>
-            <StyledWrapper>
+            <StyledWrapper width="980">
                <Information state={state} openTunnel={openTunnel} />
                {/* Photo component */}
                <Servings state={state} openTunnel={openTunnel} />

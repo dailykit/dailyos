@@ -17,12 +17,11 @@ import { TunnelHeader, TunnelBody } from '../styled'
 import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 import { toast } from 'react-toastify'
-import { state } from '../../../../../context/tabs'
 
 const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
-   console.log(processings)
+   const [busy, setBusy] = React.useState(false)
 
    // State for search input
    const [search, setSearch] = React.useState('')
@@ -45,6 +44,8 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
 
    //Handlers
    const add = () => {
+      if (busy) return
+      setBusy(true)
       const ingredients = state.ingredients || []
       ingredients.push({
          id: recipeState.newIngredient.id,
@@ -77,7 +78,7 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
             </div>
             <div>
                <TextButton type="solid" onClick={add}>
-                  Add
+                  {busy ? 'Adding...' : 'Add'}
                </TextButton>
             </div>
          </TunnelHeader>
