@@ -63,7 +63,11 @@ const Ingredients = ({ state, openTunnel }) => {
 
    const remove = ingredient => {
       const ingredients = state.ingredients
-      const index = state.ingredients.findIndex(ing => ing.id === ingredient.id)
+      const index = state.ingredients.findIndex(
+         ing =>
+            ing.id === ingredient.id &&
+            ing.ingredientProcessing.id === ingredient.ingredientProcessing.id
+      )
       ingredients.splice(index, 1)
       updateRecipe({
          variables: {
@@ -73,15 +77,20 @@ const Ingredients = ({ state, openTunnel }) => {
             },
          },
       })
-      deleteSachets(ingredient.id)
+      deleteSachets(ingredient)
    }
 
-   const deleteSachets = ingId => {
+   const deleteSachets = ing => {
+      console.log(ing)
       const servingIds = state.simpleRecipeYields.map(serving => serving.id)
       const sachetIds = state.simpleRecipeYields
          .flatMap(serving => {
             return serving.ingredientSachets.map(sachet => {
-               if (sachet.ingredientSachet.ingredient.id === ingId)
+               if (
+                  sachet.ingredientSachet.ingredient.id === ing.id &&
+                  sachet.ingredientSachet.ingredientProcessing.id ===
+                     ing.ingredientProcessing.id
+               )
                   return sachet.ingredientSachet.id
             })
          })
