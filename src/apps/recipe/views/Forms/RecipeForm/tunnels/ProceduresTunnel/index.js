@@ -13,7 +13,9 @@ const reducer = (state, { type, payload }) => {
       case 'ADD_PROCEDURE': {
          return {
             ...state,
-            procedures: [...state.procedures, { title: '', steps: [] }],
+            procedures: state.procedures
+               ? [...state.procedures, { title: '', steps: [] }]
+               : [{ title: '', steps: [] }],
          }
       }
       case 'ADD_STEP': {
@@ -132,7 +134,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
             </div>
          </TunnelHeader>
          <TunnelBody>
-            {state.procedures?.map((procedure, index) => (
+            {_state.procedures?.map((procedure, index) => (
                <Container bottom="32">
                   <InputWrapper>
                      <Input
