@@ -8,6 +8,12 @@ export const S_INGREDIENTS = gql`
          createdAt
          ingredientProcessings {
             id
+            processingName
+            ingredientSachets {
+               id
+               quantity
+               unit
+            }
          }
       }
    }

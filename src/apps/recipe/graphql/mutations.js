@@ -115,7 +115,7 @@ export const DELETE_SACHET = gql`
 `
 
 export const CREATE_SIMPLE_RECIPE = gql`
-   mutation CreateRecipe($name: String!) {
+   mutation CreateRecipe($name: jsonb) {
       createSimpleRecipe(objects: { name: $name }) {
          returning {
             id
