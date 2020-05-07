@@ -37,6 +37,7 @@ import {
    CREATE_INVENTORY_PRODUCT_OPTIONS,
    INVENTORY_PRODUCTS,
    S_INVENTORY_PRODUCT,
+   UPDATE_INVENTORY_PRODUCT,
 } from '../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
@@ -51,7 +52,7 @@ export default function InventoryProduct() {
       reducers,
       initialState
    )
-   const { state: tabs } = React.useContext(Context)
+   const { state: tabs, dispatch } = React.useContext(Context)
 
    // State
    const [title, setTitle] = React.useState('')
@@ -148,7 +149,7 @@ export default function InventoryProduct() {
    //    }
    // )
 
-   // Update
+   // Subscription
    const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
       variables: {
          id: tabs.current.id,
@@ -163,10 +164,26 @@ export default function InventoryProduct() {
       },
    })
 
-   // Handlers
-   const updateName = () => {
-      console.log(title)
-   }
+   // Mutation
+   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { oldTitle: tabs.current.title, title },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
 
    const save = () => {
       // const objects = {
@@ -248,7 +265,7 @@ export default function InventoryProduct() {
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
+                     onBlur={updateProduct}
                   />
                </div>
                <div>

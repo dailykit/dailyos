@@ -3,7 +3,6 @@ import { TagGroup, ButtonTile, Tag, IconButton } from '@dailykit/ui'
 
 import { StyledRow, StyledContainer, StyledAction } from './styled'
 import { EditIcon } from '../../../../../../assets/icons'
-import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
 import { useTranslation, Trans } from 'react-i18next'
 
