@@ -125,6 +125,28 @@ export const CREATE_SIMPLE_RECIPE = gql`
    }
 `
 
+export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
+   mutation CreateSimpleRecipeYields(
+      $objects: [simpleRecipe_simpleRecipeYield_insert_input!]!
+   ) {
+      createSimpleRecipeYield(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_SIMPLE_RECIPE_YIELD = gql`
+   mutation DeleteSimpleRecipeYield($id: Int!) {
+      deleteSimpleRecipeYield(where: { id: { _eq: $id } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const UPDATE_RECIPE = gql`
    mutation UpdateSimpleRecipe(
       $id: Int!

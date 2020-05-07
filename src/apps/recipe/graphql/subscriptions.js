@@ -39,6 +39,10 @@ export const S_RECIPE = gql`
          cuisine
          utensils
          procedures
+         simpleRecipeYields {
+            id
+            yield
+         }
       }
    }
 `
