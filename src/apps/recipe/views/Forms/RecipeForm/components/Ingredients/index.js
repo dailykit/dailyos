@@ -163,7 +163,11 @@ const Ingredients = ({ state, openTunnel }) => {
                                        {serving.ingredientSachets?.find(
                                           sachet =>
                                              sachet.ingredientSachet.ingredient
-                                                ?.id === ingredient.id
+                                                ?.id === ingredient.id &&
+                                             sachet.ingredientSachet
+                                                .ingredientProcessing.id ===
+                                                ingredient.ingredientProcessing
+                                                   .id
                                        ) ? (
                                           <React.Fragment>
                                              <span>
@@ -172,7 +176,13 @@ const Ingredients = ({ state, openTunnel }) => {
                                                       sachet =>
                                                          sachet.ingredientSachet
                                                             .ingredient?.id ===
-                                                         ingredient.id
+                                                            ingredient.id &&
+                                                         sachet.ingredientSachet
+                                                            .ingredientProcessing
+                                                            .id ===
+                                                            ingredient
+                                                               .ingredientProcessing
+                                                               .id
                                                    )
                                                    ?.ingredientSachet.quantity.toString()}{' '}
                                                 {
@@ -180,7 +190,13 @@ const Ingredients = ({ state, openTunnel }) => {
                                                       sachet =>
                                                          sachet.ingredientSachet
                                                             .ingredient?.id ===
-                                                         ingredient.id
+                                                            ingredient.id &&
+                                                         sachet.ingredientSachet
+                                                            .ingredientProcessing
+                                                            .id ===
+                                                            ingredient
+                                                               .ingredientProcessing
+                                                               .id
                                                    )?.ingredientSachet.unit
                                                 }
                                              </span>

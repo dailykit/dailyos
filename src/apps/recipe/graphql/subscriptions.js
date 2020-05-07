@@ -57,6 +57,9 @@ export const S_RECIPE = gql`
                   ingredient {
                      id
                   }
+                  ingredientProcessing {
+                     id
+                  }
                }
             }
          }
