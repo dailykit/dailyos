@@ -153,50 +153,17 @@ export const RECIPES = gql`
 `
 
 export const RECIPE = gql`
-   query Recipe($ID: ID!) {
-      recipe(id: $ID) {
+   query Recipe($id: Int!) {
+      simpleRecipe(id: $id) {
          id
          name
          cookingTime
          type
-         chef
+         author
          description
          utensils
          cookingTime
-         servings {
-            size
-            sachets {
-               id
-               ingredient {
-                  id
-               }
-               quantity {
-                  value
-                  unit {
-                     title
-                  }
-               }
-            }
-         }
-         ingredients {
-            ingredient {
-               id
-               name
-            }
-            processing {
-               id
-               name {
-                  title
-               }
-            }
-         }
-         procedures {
-            name
-            steps {
-               title
-               description
-            }
-         }
+         cuisine
       }
    }
 `

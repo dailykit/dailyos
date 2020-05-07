@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    margin: 0 auto;
-   max-width: 1280px;
+   max-width: ${props => props.width || '1280'}px;
    h1 {
       color: #555b6e;
       font-size: 20px;
@@ -21,6 +21,11 @@ export const StyledHeader = styled.div`
    align-items: center;
    justify-content: space-between;
    border-bottom: 1px solid #d8d8d8;
+   padding: 0 32px;
+`
+
+export const InputWrapper = styled.div`
+   width: ${props => props.width};
 `
 
 export const StyledForm = styled.div`

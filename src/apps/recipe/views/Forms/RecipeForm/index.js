@@ -1,256 +1,182 @@
-import React, { useContext, useReducer } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-
-import {
-   Input,
-   TextButton,
-   RadioGroup,
-   ButtonTile,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-} from '@dailykit/ui/'
-
-import { Context } from '../../../context/tabs/index'
-import {
-   Context as RecipeContext,
-   state as initialRecipeState,
-   reducers as recipeReducers,
-} from '../../../context/recipe/index'
-
-import { ViewWrapper } from '../../../components/Styled/ViewWrapper'
-import { RecipeActions, RecipeType, Container, InputGrid } from './styled'
-
-import AddIngredients from './AddIngredients'
-import Menu from '../../../components/Menu'
-import RecipeMeta from './Tunnels/RecipeMeta'
-import MetaView from './MetaView'
-
-import { CREATE_SIMPLE_RECIPE } from '../../../graphql'
+import React from 'react'
 import { toast } from 'react-toastify'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { Input, Tunnel, Tunnels, useTunnel, Loader } from '@dailykit/ui'
 
-import { useTranslation, Trans } from 'react-i18next'
+import { Context } from '../../../context/tabs'
+import {
+   state as initialState,
+   reducers,
+   RecipeContext,
+} from '../../../context/recipee'
 
-const address = 'apps.recipe.views.forms.recipeform.'
+import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
 
-export default function AddRecipeForm() {
-   const { t } = useTranslation()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [recipeState, recipeDispatch] = useReducer(
-      recipeReducers,
-      initialRecipeState
+import { Information, Procedures, Servings, Ingredients } from './components'
+import {
+   InformationTunnel,
+   ProceduresTunnel,
+   ServingsTunnel,
+   IngredientsTunnel,
+   ProcessingsTunnel,
+   ConfigureIngredientTunnel,
+   SachetTunnel,
+} from './tunnels'
+import { UPDATE_RECIPE, S_RECIPE, S_INGREDIENTS } from '../../../graphql'
+
+const RecipeForm = () => {
+   // Context
+   const { state: tabs, dispatch } = React.useContext(Context)
+   const [recipeState, recipeDispatch] = React.useReducer(
+      reducers,
+      initialState
    )
-   const { state, dispatch } = useContext(Context)
-   const [chefName, setChefName] = React.useState('')
-   const [cuisine, setCuisine] = React.useState('')
 
-   const recipeTypeOptions = [
-      { id: 1, title: 'Vegetarian' },
-      { id: 2, title: 'Non-Vegetarian' },
-      { id: 3, title: 'Vegan' },
-   ]
+   // States
+   const [title, setTitle] = React.useState('')
+   const [state, setState] = React.useState({})
+   const [ingredients, setIngredients] = React.useState([])
 
-   // Mutation
-   const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
-      onCompleted: data => {
+   // Tunnels
+   const [tunnels, openTunnel, closeTunnel] = useTunnel()
+
+   // Subscription
+   const { loading } = useSubscription(S_RECIPE, {
+      variables: {
+         id: tabs.current.id,
+      },
+      onSubscriptionData: data => {
          console.log(data)
-         toast.success(`${data.createSimpleRecipe.returning[0].name} added!`)
+         setState(data.subscriptionData.data.simpleRecipe)
+         setTitle(data.subscriptionData.data.simpleRecipe.name)
       },
       onError: error => {
          console.log(error)
-         toast.error('Unkown error!')
+      },
+   })
+   useSubscription(S_INGREDIENTS, {
+      onSubscriptionData: data => {
+         setIngredients(data.subscriptionData.data.ingredients)
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   // Mutation
+   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { oldTitle: tabs.current.title, title },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
       },
    })
 
    // Handlers
-   const save = () => {
-      // Prepare ingredients
-      const ingredients = recipeState.ingredients.map(ing => {
-         return {
-            id: ing.id,
-            isVisible: ing.isVisible,
-            name: ing.name,
-            slipName: ing.slipName || ing.name,
-            processing: {
-               id: ing.processing.id,
-               name: ing.processing.processingName,
-            },
-         }
-      })
-      // Prepare servings
-      const servings = recipeState.servings.map(serving => {
-         return {
-            yield: {
-               serving: serving.value,
-            },
-            ingredientSachets: {
-               data: [],
-            },
-         }
-      })
-      // Populate sachets
-      recipeState.sachets.forEach(sachet => {
-         const index = servings.findIndex(
-            serving => serving.yield.serving == sachet.serving.value
-         )
-         servings[index].ingredientSachets.data.push({
-            ingredientSachetId: sachet.id,
-         })
-      })
-      // Preparing basic object
-      const object = {
-         cuisine,
-         author: chefName,
-         cookingTime: recipeState.pushableState.cookingTime,
-         description: recipeState.pushableState.description,
-         utensilsRequired: recipeState.pushableState.utensils,
-         type: recipeState.pushableState.type,
-         name: recipeState.name,
-         procedures: recipeState.procedures,
-         ingredients,
-         simpleRecipeYields: {
-            data: servings,
-         },
-      }
-      console.log(object)
-      // Save
-      createRecipe({
-         variables: {
-            objects: [object],
-         },
-      })
+   const updateName = () => {
+      updateRecipe()
    }
 
-   const handlePublish = () => {
-      const pushable = {
-         ...recipeState.pushableState,
-         procedures: recipeState.procedures,
-         chef: chefName,
-      }
-
-      console.log('%c values', 'color: #28c1f7', {
-         state: pushable,
-      })
-   }
-
-   const handleRecipeNameChange = e => {
-      const name = e.target.value
-      recipeDispatch({ type: 'RECIPE_NAME_CHANGE', payload: { name } })
-   }
-
-   const handleTabNameChange = () => {
-      // TODO: add utils/generateRandomString() later to the title
-      const title = `${recipeState.name}`
-
-      if (title.length > 0) {
-         dispatch({
-            type: 'SET_TITLE',
-            payload: { title, oldTitle: state.current.title },
-         })
-      } else {
-         dispatch({
-            type: 'SET_TITLE',
-            payload: {
-               title: 'Untitled Recipe',
-               oldTitle: state.current.title,
-            },
-         })
-      }
-   }
+   if (loading) return <Loader />
 
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <RecipeMeta close={closeTunnel} />
-            </Tunnel>
-         </Tunnels>
-         <ViewWrapper>
-            <Menu>
-               <div>
+         <React.Fragment>
+            {/* Tunnels */}
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1}>
+                  <InformationTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={2}>
+                  <ProceduresTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={3}>
+                  <ServingsTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={4}>
+                  <IngredientsTunnel
+                     closeTunnel={closeTunnel}
+                     openTunnel={openTunnel}
+                     ingredients={ingredients}
+                  />
+               </Tunnel>
+               <Tunnel layer={5}>
+                  <ProcessingsTunnel
+                     state={state}
+                     closeTunnel={closeTunnel}
+                     processings={
+                        ingredients[
+                           ingredients.findIndex(
+                              ing => ing.id === recipeState.newIngredient?.id
+                           )
+                        ]?.ingredientProcessings || []
+                     }
+                  />
+               </Tunnel>
+               <Tunnel layer={6}>
+                  <ConfigureIngredientTunnel
+                     state={state}
+                     closeTunnel={closeTunnel}
+                  />
+               </Tunnel>
+               <Tunnel layer={7}>
+                  <SachetTunnel
+                     closeTunnel={closeTunnel}
+                     sachets={
+                        ingredients[
+                           ingredients.findIndex(
+                              ing => ing.id === recipeState.edit?.id
+                           )
+                        ]?.ingredientProcessings[
+                           ingredients[
+                              ingredients.findIndex(
+                                 ing => ing.id === recipeState.edit?.id
+                              )
+                           ]?.ingredientProcessings.findIndex(
+                              proc =>
+                                 proc.id ===
+                                 recipeState.edit?.ingredientProcessing?.id
+                           )
+                        ]?.ingredientSachets || []
+                     }
+                  />
+               </Tunnel>
+            </Tunnels>
+            {/* View */}
+            <StyledHeader>
+               <InputWrapper>
                   <Input
-                     label={t(address.concat("recipe name"))}
                      type="text"
-                     name="recipeName"
-                     value={recipeState.name}
-                     onChange={handleRecipeNameChange}
-                     onBlur={handleTabNameChange}
+                     label="Recipe Title"
+                     name="title"
+                     value={title}
+                     onChange={e => setTitle(e.target.value)}
+                     onBlur={updateName}
                   />
-               </div>
-
-               <RecipeActions>
-                  <TextButton
-                     type="ghost"
-                     style={{ margin: '0px 10px' }}
-                     onClick={save}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-
-                  <TextButton
-                     onClick={handlePublish}
-                     type="solid"
-                     style={{ margin: '0px 10px' }}
-                  >
-                     {t(address.concat('publish'))}
-                  </TextButton>
-               </RecipeActions>
-            </Menu>
-
-            {recipeState.pushableState.description && (
-               <MetaView open={openTunnel} />
-            )}
-
-            <RecipeType>
-               <RadioGroup
-                  options={recipeTypeOptions}
-                  active={2}
-                  onChange={type =>
-                     recipeDispatch({
-                        type: 'CHANGE_RECIPE_TYPE',
-                        payload: type,
-                     })
-                  }
-               />
-            </RecipeType>
-
-            <Container>
-               <InputGrid>
-                  <Input
-                     label={t(address.concat("author"))}
-                     type="text"
-                     name="chef"
-                     value={chefName}
-                     onChange={e => setChefName(e.target.value)}
-                  />
-                  <Input
-                     label={t(address.concat("cuisine"))}
-                     type="text"
-                     name="cuisine"
-                     value={cuisine}
-                     onChange={e => setCuisine(e.target.value)}
-                  />
-               </InputGrid>
-               <br />
-               {!recipeState.pushableState.description && (
-                  <ButtonTile
-                     as="button"
-                     type="secondary"
-                     text={t(address.concat("add description"))}
-                     onClick={() => openTunnel(1)}
-                  />
-               )}
-               <br />
-               <ButtonTile
-                  onClick={() => { }}
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat("add photos to your recipe"))}
-                  helper={t(address.concat("upto 1MB - only JPGs, PNGs, and PDFs are allowed"))}
-               />
-               <AddIngredients />
-            </Container>
-         </ViewWrapper>
+               </InputWrapper>
+            </StyledHeader>
+            <StyledWrapper width="980">
+               <Information state={state} openTunnel={openTunnel} />
+               {/* Photo component */}
+               <Servings state={state} openTunnel={openTunnel} />
+               <Ingredients state={state} openTunnel={openTunnel} />
+               <Procedures state={state} openTunnel={openTunnel} />
+            </StyledWrapper>
+         </React.Fragment>
       </RecipeContext.Provider>
    )
 }
+
+export default RecipeForm
