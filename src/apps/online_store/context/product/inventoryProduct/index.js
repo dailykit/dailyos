@@ -15,10 +15,26 @@ export const state = {
    options: [],
    default: {},
    accompaniments: [],
+   // New
+   updating: false,
+   option: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'UPDATING': {
+         return {
+            ...state,
+            updating: payload,
+         }
+      }
+      case 'OPTION': {
+         return {
+            ...state,
+            option: payload,
+         }
+      }
+
       case 'TITLE': {
          return {
             ...state,

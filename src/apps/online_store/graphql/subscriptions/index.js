@@ -32,10 +32,13 @@ export const S_INVENTORY_PRODUCT = gql`
          supplierItem {
             id
             name
+            unitSize
+            unit
          }
          sachetItem {
             id
             unitSize
+            unit
          }
          inventoryProductOptions {
             id

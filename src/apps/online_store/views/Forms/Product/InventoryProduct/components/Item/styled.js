@@ -130,3 +130,9 @@ export const StyledInputWrapper = styled.div`
       cursor: pointer;
    }
 `
+
+export const Grid = styled.div`
+   display: grid;
+   grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
+   grid-gap: ${props => props.gap || 8}px;
+`

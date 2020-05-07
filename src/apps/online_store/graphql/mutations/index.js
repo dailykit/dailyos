@@ -48,6 +48,29 @@ export const CREATE_INVENTORY_PRODUCT_OPTIONS = gql`
    }
 `
 
+export const UPDATE_INVENTORY_PRODUCT_OPTION = gql`
+   mutation UpdateInventoryProductOption(
+      $id: Int
+      $set: onlineStore_inventoryProductOption_set_input
+   ) {
+      updateInventoryProductOption(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_INVENTORY_PRODUCT_OPTION = gql`
+   mutation DeleteInventoryProductOption($id: Int!) {
+      deleteInventoryProductOption(where: { id: { _eq: $id } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
    mutation CreateSimpleRecipeProduct(
       $objects: [onlineStore_simpleRecipeProduct_insert_input!]!

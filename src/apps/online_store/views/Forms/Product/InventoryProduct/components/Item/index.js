@@ -1,9 +1,12 @@
 import React from 'react'
-import { ButtonTile, ComboButton, Input } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, ComboButton, IconButton } from '@dailykit/ui'
 
-import { AddIcon, MinusIcon } from '../../../../../../assets/icons'
+import { AddIcon } from '../../../../../../assets/icons'
 
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
+
+import { DELETE_INVENTORY_PRODUCT_OPTION } from '../../../../../../graphql'
 
 // styles
 import {
@@ -16,39 +19,78 @@ import {
    StyledTab,
    StyledTabView,
    StyledTable,
-   StyledAction,
-   StyledDefault,
-   StyledInputWrapper,
+   Grid,
 } from './styled'
 
 import { Accompaniments } from '../'
 
 import { useTranslation, Trans } from 'react-i18next'
+import {
+   EditIcon,
+   DeleteIcon,
+} from '../../../../../../../../shared/assets/icons'
+import { toast } from 'react-toastify'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.item.'
 
-export default function Item({ openTunnel }) {
+export default function Item({ state, openTunnel }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(InventoryProductContext)
+
+   const { productDispatch } = React.useContext(InventoryProductContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
    })
 
+   // Mutation
+   const [deleteOption] = useMutation(DELETE_INVENTORY_PRODUCT_OPTION, {
+      onCompleted: () => {
+         toast.success('Option deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
+   // Handlers
+   const addOption = () => {
+      productDispatch({ type: 'UPDATING', payload: false })
+      openTunnel(7)
+   }
+   const editOption = option => {
+      productDispatch({ type: 'UPDATING', payload: true })
+      productDispatch({ type: 'OPTION', payload: option })
+      openTunnel(7)
+   }
+   const remove = option => {
+      deleteOption({
+         variables: {
+            id: option.id,
+         },
+      })
+   }
+
    return (
       <StyledWrapper>
-         {state.item ? (
+         {state.sachetItem || state.supplierItem ? (
             <StyledLayout>
                <StyledListing>
                   <StyledListingTile active>
-                     <h3>{state.item.title}</h3>
+                     <h3>
+                        {state.supplierItem.name || state.sachetItem.unitSize}
+                     </h3>
                   </StyledListingTile>
                </StyledListing>
                <StyledPanel>
-                  <h2>{state.item.title}</h2>
+                  <h2>
+                     {state.supplierItem.name || state.sachetItem.unitSize}
+                  </h2>
                   <h5>
-                     {t(address.concat('unit size'))}: {state.item.unitSize}
+                     {t(address.concat('unit size'))}:{' '}
+                     {state.supplierItem.unitSize + state.supplierItem.unit ||
+                        state.sachetItem.unitSize + state.sachetItem.unit}
                   </h5>
                   <StyledTabs>
                      <StyledTab
@@ -78,153 +120,37 @@ export default function Item({ openTunnel }) {
                                     <th>{t(address.concat('quantity'))}</th>
                                     <th>{t(address.concat('price'))}</th>
                                     <th>{t(address.concat('discount'))}</th>
+                                    <th></th>
                                  </tr>
                               </thead>
                               <tbody>
-                                 {state.options.map(option => (
+                                 {state.inventoryProductOptions?.map(option => (
                                     <tr key={option.id}>
+                                       <td>{option.label}</td>
+                                       <td>{option.quantity}</td>
+                                       <td>${option.price[0].value}</td>
+                                       <td>{option.price[0].discount}%</td>
                                        <td>
-                                          <Input
-                                             type="text"
-                                             name={`title-${option.id}`}
-                                             value={option.title}
-                                             onChange={e =>
-                                                dispatch({
-                                                   type: 'UPDATE_OPTION',
-                                                   payload: {
-                                                      id: option.id,
-                                                      name: 'title',
-                                                      value: e.target.value,
-                                                   },
-                                                })
-                                             }
-                                          />
-                                       </td>
-                                       <td>
-                                          <StyledInputWrapper width="60">
-                                             <span
+                                          <Grid>
+                                             <IconButton
                                                 onClick={() =>
-                                                   dispatch({
-                                                      type: 'UPDATE_OPTION',
-                                                      payload: {
-                                                         id: option.id,
-                                                         name: 'quantity',
-                                                         value:
-                                                            option.quantity -
-                                                               1 ===
-                                                            0
-                                                               ? option.quantity
-                                                               : option.quantity -
-                                                                 1,
-                                                      },
-                                                   })
+                                                   editOption(option)
                                                 }
                                              >
-                                                <MinusIcon color="#00A7E1" />
-                                             </span>
-                                             <Input
-                                                type="text"
-                                                name={`quantity-${option.id}`}
-                                                value={option.quantity}
-                                                readOnly
-                                             />
-                                             <span
-                                                onClick={() =>
-                                                   dispatch({
-                                                      type: 'UPDATE_OPTION',
-                                                      payload: {
-                                                         id: option.id,
-                                                         name: 'quantity',
-                                                         value:
-                                                            option.quantity + 1,
-                                                      },
-                                                   })
-                                                }
+                                                <EditIcon color="#00A7E1" />
+                                             </IconButton>
+                                             <IconButton
+                                                onClick={() => remove(option)}
                                              >
-                                                <AddIcon color="#00A7E1" />
-                                             </span>
-                                          </StyledInputWrapper>
-                                       </td>
-                                       <td>
-                                          <StyledInputWrapper width="60">
-                                             $
-                                             <Input
-                                                type="text"
-                                                name={`price-${option.id}`}
-                                                value={option.price[0].value}
-                                                onChange={e =>
-                                                   dispatch({
-                                                      type: 'UPDATE_OPTION',
-                                                      payload: {
-                                                         id: option.id,
-                                                         name: 'price',
-                                                         value: [
-                                                            {
-                                                               rule:
-                                                                  option
-                                                                     .price[0]
-                                                                     .rule,
-                                                               value:
-                                                                  e.target
-                                                                     .value,
-                                                               discount:
-                                                                  option
-                                                                     .price[0]
-                                                                     .discount,
-                                                            },
-                                                         ],
-                                                      },
-                                                   })
-                                                }
-                                             />
-                                          </StyledInputWrapper>
-                                       </td>
-                                       <td>
-                                          <StyledInputWrapper width="60">
-                                             <Input
-                                                type="text"
-                                                name={`discount-${option.id}`}
-                                                value={option.price[0].discount}
-                                                onChange={e =>
-                                                   dispatch({
-                                                      type: 'UPDATE_OPTION',
-                                                      payload: {
-                                                         id: option.id,
-                                                         name: 'price',
-                                                         value: [
-                                                            {
-                                                               rule:
-                                                                  option
-                                                                     .price[0]
-                                                                     .rule,
-                                                               value:
-                                                                  option
-                                                                     .price[0]
-                                                                     .value,
-                                                               discount:
-                                                                  e.target
-                                                                     .value,
-                                                            },
-                                                         ],
-                                                      },
-                                                   })
-                                                }
-                                             />
-                                             %
-                                          </StyledInputWrapper>
+                                                <DeleteIcon color="#FF5A52" />
+                                             </IconButton>
+                                          </Grid>
                                        </td>
                                     </tr>
                                  ))}
                               </tbody>
                            </StyledTable>
-                           <ComboButton
-                              type="ghost"
-                              onClick={() =>
-                                 dispatch({
-                                    type: 'ADD_OPTION',
-                                 })
-                              }
-                           >
+                           <ComboButton type="ghost" onClick={addOption}>
                               <AddIcon />
                               {t(address.concat('add option'))}
                            </ComboButton>

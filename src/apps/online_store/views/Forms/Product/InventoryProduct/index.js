@@ -25,6 +25,7 @@ import {
    ProductsTunnel,
    AccompanimentTypeTunnel,
    ItemTypeTunnel,
+   PricingTunnel,
 } from './tunnels'
 import { Item, Description } from './components'
 import { StyledWrapper } from '../../styled'
@@ -255,6 +256,9 @@ export default function InventoryProduct() {
                   // products={products[state.meta.productsType]}
                />
             </Tunnel>
+            <Tunnel layer={7}>
+               <PricingTunnel state={state} close={closeTunnel} />
+            </Tunnel>
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
@@ -290,7 +294,7 @@ export default function InventoryProduct() {
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               {/* <Item state={state} openTunnel={openTunnel} /> */}
+               <Item state={state} openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </InventoryProductContext.Provider>
