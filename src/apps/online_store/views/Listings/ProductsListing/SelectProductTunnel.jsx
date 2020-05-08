@@ -12,6 +12,7 @@ import { useMutation } from '@apollo/react-hooks'
 import {
    CREATE_COMBO_PRODUCT,
    CREATE_INVENTORY_PRODUCT,
+   CREATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../graphql'
 
 import { randomSuffix } from '../../../../../shared/utils'
@@ -45,6 +46,16 @@ export default function SelectProductTunnel({ close }) {
          )
       },
    })
+   const [createRecipeProduct] = useMutation(CREATE_SIMPLE_RECIPE_PRODUCT, {
+      onCompleted: data => {
+         toast.success('Product created!')
+         addTab(
+            data.createSimpleRecipeProduct.returning[0].name,
+            'simpleRecipeProduct',
+            data.createSimpleRecipeProduct.returning[0].id
+         )
+      },
+   })
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
@@ -61,6 +72,7 @@ export default function SelectProductTunnel({ close }) {
                   objects: [object],
                },
             })
+            break
          }
          case 'inventory': {
             createInventoryProduct({
@@ -68,6 +80,15 @@ export default function SelectProductTunnel({ close }) {
                   objects: [object],
                },
             })
+            break
+         }
+         case 'recipe': {
+            createRecipeProduct({
+               variables: {
+                  objects: [object],
+               },
+            })
+            break
          }
          default:
             return
@@ -97,9 +118,7 @@ export default function SelectProductTunnel({ close }) {
             </Text>
          </SolidTile>
          <br />
-         <SolidTile
-            onClick={() => addTab('Simple Product', 'simpleRecipeProduct')}
-         >
+         <SolidTile onClick={() => createProduct('recipe')}>
             <Text as="h1">{t(address.concat('simple recipe product'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('subtitle 2')}>

@@ -79,6 +79,7 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
       createSimpleRecipeProduct(objects: $objects) {
          returning {
             id
+            name
          }
       }
    }
