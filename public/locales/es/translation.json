@@ -179,7 +179,7 @@
                      },
                      "suppliers": {
                         "select supplier": "Seleccionar artículo de proveedor",
-                        "type what you’re looking for": "type what you're looking for..."
+                        "type what you’re looking for": "escribe lo que estás buscando..."
                      }
                   },
                   "add item information": "Añadir información del artículo",
@@ -326,17 +326,17 @@
             "sachet": {
                "taken inventory": "Inventario Tomado",
                "active": "Activo",
-               "live": "Live",
+               "live": "En Vivo",
                "mode of fulfillment": "Modo de Cumplimiento",
                "station": "Emisora",
-               "item": "Item",
+               "item": "Elementos",
                "accuracy": "Precisión",
                "packaging": "Embalaje",
                "label": "Etiqueta",
                "atleast ": "Al menos ",
                "not weighing": "Sin Peso",
-               "not labelled": "Not Labelled",
-               "daily value": "Daily value",
+               "not labelled": "No Legendario",
+               "daily value": "Valor diario",
                "calories": "Calories",
                "total fat": "Total Fat",
                "saturated fat": "Saturated Fat",
