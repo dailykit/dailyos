@@ -81,48 +81,48 @@ export default function InventoryProduct() {
    //       { id: 9, title: 'SACHET 9', unitSize: '100 gms' },
    //    ],
    // })
-   // const [accompanimentTypes, setAccompanimentTypes] = React.useState([
-   //    { id: 1, title: 'Beverages' },
-   //    { id: 2, title: 'Salads' },
-   //    { id: 3, title: 'Sweets' },
-   // ])
+   const [accompanimentTypes, setAccompanimentTypes] = React.useState([
+      { id: 1, title: 'Beverages' },
+      { id: 2, title: 'Salads' },
+      { id: 3, title: 'Sweets' },
+   ])
    const [products, setProducts] = React.useState({
       inventory: [],
       simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   // useQuery(SIMPLE_RECIPE_PRODUCTS, {
-   //    onCompleted: data => {
-   //       const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-   //          return {
-   //             ...pdct,
-   //             title: pdct.name,
-   //          }
-   //       })
-   //       setProducts({
-   //          ...products,
-   //          simple: updatedProducts,
-   //       })
-   //    },
-   //    fetchPolicy: 'cache-and-network',
-   // })
-   // useQuery(INVENTORY_PRODUCTS, {
-   //    onCompleted: data => {
-   //       console.log('Inve -> data', data)
-   //       const updatedProducts = data.inventoryProducts.map(pdct => {
-   //          return {
-   //             ...pdct,
-   //             title: pdct.name,
-   //          }
-   //       })
-   //       setProducts({
-   //          ...products,
-   //          inventory: updatedProducts,
-   //       })
-   //    },
-   //    fetchPolicy: 'cache-and-network',
-   // })
+   useQuery(SIMPLE_RECIPE_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   useQuery(INVENTORY_PRODUCTS, {
+      onCompleted: data => {
+         console.log('Inve -> data', data)
+         const updatedProducts = data.inventoryProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
    //       const { accompanimentTypes } = data
@@ -242,8 +242,9 @@ export default function InventoryProduct() {
             </Tunnel>
             <Tunnel layer={4}>
                <AccompanimentTypeTunnel
+                  state={state}
                   close={closeTunnel}
-                  // accompanimentTypes={accompanimentTypes}
+                  accompanimentTypes={accompanimentTypes}
                />
             </Tunnel>
             <Tunnel layer={5}>
@@ -253,7 +254,7 @@ export default function InventoryProduct() {
                <ProductsTunnel
                   state={state}
                   close={closeTunnel}
-                  // products={products[state.meta.productsType]}
+                  products={products[productState.meta.productsType]}
                />
             </Tunnel>
             <Tunnel layer={7}>

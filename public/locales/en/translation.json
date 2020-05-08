@@ -764,8 +764,9 @@
                            "subtitle 2": "blah ..."
                         },
                         "productstunnel": {
-                           "select product to add": "Select Product to Add",
+                           "select products to add": "Select Products to Add",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "productstypetunnel": {

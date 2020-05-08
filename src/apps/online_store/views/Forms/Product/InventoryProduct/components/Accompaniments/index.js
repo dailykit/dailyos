@@ -10,46 +10,49 @@ import { Products } from '../'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.components.accompaniments.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.components.accompaniments.'
 
-const Accompaniments = ({ openTunnel }) => {
+const Accompaniments = ({ state, openTunnel }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(InventoryProductContext)
+   const { productState, productDispatch } = React.useContext(
+      InventoryProductContext
+   )
 
    return (
       <React.Fragment>
-         {state.accompaniments.length ? (
+         {state.accompaniments?.length ? (
             <React.Fragment>
                <StyledTabs>
-                  {state.accompaniments.map(el => (
+                  {state.accompaniments.map((el, i) => (
                      <StyledTab
                         key={el.type}
                         onClick={() =>
-                           dispatch({
+                           productDispatch({
                               type: 'META',
                               payload: {
-                                 name: 'accompanimentType',
-                                 value: el.type,
+                                 name: 'accompanimentTabIndex',
+                                 value: i,
                               },
                            })
                         }
-                        active={state.meta.accompanimentType === el.type}
+                        active={productState.meta.accompanimentTabIndex === i}
                      >
                         {el.type}
                      </StyledTab>
                   ))}
                </StyledTabs>
                <StyledTabView>
-                  <Products openTunnel={openTunnel} />
+                  <Products state={state} openTunnel={openTunnel} />
                </StyledTabView>
             </React.Fragment>
          ) : (
-               <ButtonTile
-                  type="secondary"
-                  text={t(address.concat("add accompaniment types"))}
-                  onClick={() => openTunnel(4)}
-               />
-            )}
+            <ButtonTile
+               type="secondary"
+               text={t(address.concat('add accompaniment types'))}
+               onClick={() => openTunnel(4)}
+            />
+         )}
       </React.Fragment>
    )
 }

@@ -7,6 +7,7 @@ export const state = {
       accompanimentType: '',
       productTypes: 'inventory',
       itemType: 'inventory',
+      accompanimentTabIndex: 0,
    },
    title: '',
    description: '',

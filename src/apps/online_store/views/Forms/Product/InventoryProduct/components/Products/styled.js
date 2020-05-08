@@ -38,3 +38,17 @@ export const StyledListingTile = styled.div`
       line-height: 14px;
    }
 `
+
+export const StyledInputWrapper = styled.div`
+   width: ${props => props.width}px;
+   display: flex;
+   align-items: center;
+
+   input {
+      text-align: ${props => props.align || 'left'};
+   }
+
+   span {
+      cursor: pointer;
+   }
+`

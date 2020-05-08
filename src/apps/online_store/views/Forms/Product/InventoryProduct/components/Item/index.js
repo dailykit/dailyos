@@ -156,7 +156,7 @@ export default function Item({ state, openTunnel }) {
                            </ComboButton>
                         </React.Fragment>
                      ) : (
-                        <Accompaniments openTunnel={openTunnel} />
+                        <Accompaniments state={state} openTunnel={openTunnel} />
                      )}
                   </StyledTabView>
                </StyledPanel>
