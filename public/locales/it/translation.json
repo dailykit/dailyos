@@ -729,6 +729,7 @@
                            "quantity": "Quantity",
                            "price": "Price",
                            "discount": "Discount",
+                           "discounted price": "Discounted Price",
                            "add option": "Add Option",
                            "add item": "Add Item"
                         },
@@ -741,17 +742,21 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Select Accompaniment Type",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
+                           "saving": "Saving...",
                            "tags": "Tags",
                            "description": "Description"
                         },
                         "itemtunnel": {
                            "select an item": "Select an Item",
-                           "type what you're looking for": "type what you're looking for..."
+                           "type what you're looking for": "type what you're looking for...",
+                           "add": "Add",
+                           "adding": "Adding..."
                         },
                         "itemtypetunnel": {
                            "select item type": "Select Item Type",
@@ -761,8 +766,9 @@
                            "subtitle 2": "blah ..."
                         },
                         "productstunnel": {
-                           "select product to add": "Select Product to Add",
+                           "select products to add": "Select Products to Add",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "productstypetunnel": {
@@ -771,6 +777,11 @@
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
+                        },
+                        "pricingtunnel": {
+                           "configure option": "Configure Option",
+                           "save": "Save",
+                           "saving": "Saving..."
                         }
                      },
                      "product name": "Product Name",
