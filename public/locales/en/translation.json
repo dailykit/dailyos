@@ -806,8 +806,11 @@
                            "accompaniments": "Accompaniments",
                            "configure pricing": "Configure Pricing",
                            "servings": "Servings",
+                           "visibility": "Visibility",
+                           "default": "Default",
                            "price": "Price",
                            "discount": "Discount",
+                           "discounted price": "Discounted Price",
                            "meal kit": "Meal Kit",
                            "ready to eat": "Ready to eat",
                            "add recipe": "Add Recipe"
@@ -828,14 +831,16 @@
                            "description": "Description"
                         },
                         "priceconfigurationtunnel": {
-                           "configure pricing for servings": "Configure Pricing for Servings",
+                           "configure pricing for serving": "Configure Pricing for Serving",
                            "save": "Save",
                            "saving": "Saving...",
                            "type": "Type",
                            "active": "Active",
-                           "servings": "Servings",
+                           "serving": "Serving",
+                           "visibility": "Visibility",
+                           "default": "Default",
                            "price": "Price",
-                           "discounted price": "Discounted Price",
+                           "discount": "Discount",
                            "meal kit": "Meal Kit",
                            "ready to eat": "Ready to eat"
                         },

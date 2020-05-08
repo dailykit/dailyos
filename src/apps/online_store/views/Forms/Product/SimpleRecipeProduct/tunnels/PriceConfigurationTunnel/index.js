@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextButton, Checkbox, Input } from '@dailykit/ui'
+import { TextButton, Checkbox, Input, Text } from '@dailykit/ui'
 
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import { CloseIcon } from '../../../../../../assets/icons'
@@ -8,86 +8,48 @@ import { TunnelHeader, TunnelBody, StyledInputWrapper } from '../styled'
 
 import { StyledTable } from '../../components/Recipe/styled'
 
+import { UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION } from '../../../../../../graphql'
+
 import { useTranslation, Trans } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
-
-const reducer = (state, { type, payload }) => {
-   console.log('Reducer called...')
-   switch (type) {
-      case 'ACTIVE': {
-         const updatedType = state.options[payload.type]
-         const index = updatedType.findIndex(el => el.id === payload.id)
-         updatedType[index].isActive = payload.value
-         return {
-            ...state,
-            options: {
-               ...state.options,
-               [payload.type]: updatedType,
-            },
-         }
-      }
-      case 'DEFAULT': {
-         console.log(payload)
-         return {
-            ...state,
-            default: {
-               type: payload.type,
-               value: payload.value,
-            },
-         }
-      }
-      case 'PRICE': {
-         const updatedType = state.options[payload.type]
-         const index = updatedType.findIndex(el => el.id === payload.id)
-         updatedType[index].price.value = payload.value
-         return {
-            ...state,
-            options: {
-               ...state.options,
-               [payload.type]: updatedType,
-            },
-         }
-      }
-      case 'DISCOUNT': {
-         const updatedType = state.options[payload.type]
-         const index = updatedType.findIndex(el => el.id === payload.id)
-         updatedType[index].price.discount = payload.value
-         return {
-            ...state,
-            options: {
-               ...state.options,
-               [payload.type]: updatedType,
-            },
-         }
-      }
-      default: {
-         return state
-      }
-   }
-}
+const address =
+   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
 
 const PriceConfigurationTunnel = ({ close }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+   const { productState } = React.useContext(SimpleProductContext)
 
-   const [_state, _dispatch] = React.useReducer(reducer, {
-      options: state.options,
-      default: state.default,
+   const [busy, setBusy] = React.useState(false)
+   const [isActive, setIsActive] = React.useState(productState.edit.isActive)
+   const [price, setPrice] = React.useState(productState.edit.price[0])
+
+   // Mutation
+   const [updateOption] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION, {
+      variables: {
+         id: productState.edit.id,
+         set: {
+            isActive,
+            price: [price],
+         },
+      },
+      onCompleted: () => {
+         toast.success('Option updated!')
+         close(6)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+         setBusy(false)
+      },
    })
 
+   // Handlers
    const save = () => {
-      dispatch({
-         type: 'OPTIONS',
-         payload: {
-            value: _state.options,
-         },
-      })
-      dispatch({
-         type: 'DEFAULT',
-         payload: { ..._state.default },
-      })
-      close(6)
+      if (busy) return
+      setBusy(true)
+      updateOption()
    }
 
    return (
@@ -97,11 +59,15 @@ const PriceConfigurationTunnel = ({ close }) => {
                <span onClick={() => close(6)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('configure pricing for servings'))}</span>
+               <Text as="title">
+                  {t(address.concat('configure pricing for serving'))}
+               </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -109,101 +75,58 @@ const PriceConfigurationTunnel = ({ close }) => {
             <StyledTable full>
                <thead>
                   <tr>
-                     <th>{t(address.concat('type'))}</th>
-                     <th>{t(address.concat('active'))}</th>
-                     {/* <th>Default</th> */}
+                     <th></th>
+                     <th>{t(address.concat('visibility'))}</th>
                      <th>{t(address.concat('serving'))}</th>
                      <th>{t(address.concat('price'))}</th>
-                     <th>{t(address.concat('discounted price'))}</th>
+                     <th>{t(address.concat('discount'))}</th>
                   </tr>
                </thead>
                <tbody>
-                  {Object.entries(_state.options).map(([type, value]) =>
-                     value.map((el, i) => (
-                        <tr key={type + i}>
-                           <td>
-                              {i === 0
-                                 ? type === 'mealKit'
-                                    ? t(address.concat('meal kit'))
-                                    : t(address.concat('ready to eat'))
-                                 : ''}
-                           </td>
-                           <td>
-                              <Checkbox
-                                 checked={el.isActive}
-                                 onChange={value =>
-                                    _dispatch({
-                                       type: 'ACTIVE',
-                                       payload: {
-                                          type,
-                                          value,
-                                          id: el.id,
-                                       },
-                                    })
-                                 }
-                              />
-                           </td>
-                           {/* <td>
-                              <input
-                                 type="radio"
-                                 checked={
-                                    el.id === _state.default.value.id &&
-                                    type === _state.default.type
-                                 }
-                                 onClick={() =>
-                                    _dispatch({
-                                       type: 'DEFAULT',
-                                       payload: {
-                                          type,
-                                          value: el,
-                                       },
-                                    })
-                                 }
-                              />
-                           </td> */}
-                           <td>{el.yield.serving}</td>
-                           <td>
-                              <StyledInputWrapper width="60">
-                                 $
-                                 <Input
-                                    type="text"
-                                    name={`${type}-price-input`}
-                                    value={el.price.value}
-                                    onChange={e =>
-                                       _dispatch({
-                                          type: 'PRICE',
-                                          payload: {
-                                             type,
-                                             value: e.target.value,
-                                             id: el.id,
-                                          },
-                                       })
-                                    }
-                                 />
-                              </StyledInputWrapper>
-                           </td>
-                           <td>
-                              <StyledInputWrapper width="60">
-                                 <Input
-                                    type="text"
-                                    value={el.price.discount}
-                                    onChange={e =>
-                                       _dispatch({
-                                          type: 'DISCOUNT',
-                                          payload: {
-                                             type,
-                                             value: e.target.value,
-                                             id: el.id,
-                                          },
-                                       })
-                                    }
-                                 />{' '}
-                                 %
-                              </StyledInputWrapper>
-                           </td>
-                        </tr>
-                     ))
-                  )}
+                  <tr>
+                     <td>
+                        {productState.edit.type === 'mealKit'
+                           ? t(address.concat('meal kit'))
+                           : t(address.concat('ready to eat'))}
+                     </td>
+                     <td>
+                        <Checkbox
+                           checked={isActive}
+                           onChange={value => setIsActive(value)}
+                        />
+                     </td>
+                     <td>
+                        {productState.edit.simpleRecipeYield.yield.serving}
+                     </td>
+                     <td>
+                        <StyledInputWrapper width="60">
+                           $
+                           <Input
+                              type="text"
+                              name="price"
+                              value={price.value}
+                              onChange={e =>
+                                 setPrice({ ...price, value: e.target.value })
+                              }
+                           />
+                        </StyledInputWrapper>
+                     </td>
+                     <td>
+                        <StyledInputWrapper width="60">
+                           <Input
+                              type="text"
+                              value={price.discount}
+                              onChange={e =>
+                                 setPrice({
+                                    ...price,
+                                    discount: e.target.value,
+                                 })
+                              }
+                           />
+                           %
+                        </StyledInputWrapper>
+                     </td>
+                  </tr>
                </tbody>
             </StyledTable>
          </TunnelBody>

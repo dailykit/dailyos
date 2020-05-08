@@ -15,17 +15,20 @@ export const state = {
    options: {},
    default: {},
    accompaniments: [],
-}
 
-// *** Hasura schema ***
-// id
-// name
-// simpleRecipeId
-// accompaniments
-// default
+   //New
+   edit: undefined,
+}
 
 export const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'EDIT': {
+         return {
+            ...state,
+            edit: payload,
+         }
+      }
+
       case 'TITLE': {
          return {
             ...state,

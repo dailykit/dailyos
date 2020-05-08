@@ -1,5 +1,11 @@
 import React from 'react'
-import { ButtonTile, Checkbox, Toggle, TextButton } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Checkbox,
+   Toggle,
+   TextButton,
+   IconButton,
+} from '@dailykit/ui'
 
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 
@@ -21,17 +27,30 @@ import {
 import { Accompaniments } from '../'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { EyeIcon, EditIcon } from '../../../../../../assets/icons'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
 
 export default function Recipe({ state, openTunnel }) {
    const { t } = useTranslation()
-   const { productState } = React.useContext(SimpleProductContext)
+   const { productDispatch } = React.useContext(SimpleProductContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
    })
+
+   // Handlers
+   const changeDefault = option => {
+      console.log(option)
+   }
+   const editOption = option => {
+      productDispatch({
+         type: 'EDIT',
+         payload: option,
+      })
+      openTunnel(6)
+   }
 
    return (
       <StyledWrapper>
@@ -63,71 +82,145 @@ export default function Recipe({ state, openTunnel }) {
                      </StyledTab>
                   </StyledTabs>
                   <StyledTabView>
-                     <StyledAction hidden={_state.view !== 'pricing'}>
-                        <TextButton
-                           type="outline"
-                           onClick={() => openTunnel(6)}
-                        >
-                           {t(address.concat('configure pricing'))}
-                        </TextButton>
-                     </StyledAction>
                      {_state.view === 'pricing' ? (
                         <StyledTable>
                            <thead>
                               <tr>
                                  <th></th>
+                                 <th style={{ textAlign: 'center' }}>
+                                    {t(address.concat('visibility'))}
+                                 </th>
+                                 <th style={{ textAlign: 'center' }}>
+                                    {t(address.concat('default'))}
+                                 </th>
                                  <th>{t(address.concat('servings'))}</th>
                                  <th>{t(address.concat('price'))}</th>
                                  <th>{t(address.concat('discount'))}</th>
+                                 <th>
+                                    {t(address.concat('discounted price'))}
+                                 </th>
+                                 <th></th>
                               </tr>
                            </thead>
                            <tbody>
-                              {/* {Object.entries(state.options).map(
-                                 ([type, value]) =>
-                                    value
-                                       .filter(el => el.isActive)
-                                       .map((el, i) => (
-                                          <tr key={i}>
-                                             <td>
-                                                {i === 0 ? (
-                                                   <span>
-                                                      {type === 'mealKit'
-                                                         ? t(
-                                                              address.concat(
-                                                                 'meal kit'
-                                                              )
-                                                           )
-                                                         : t(
-                                                              address.concat(
-                                                                 'ready to eat'
-                                                              )
-                                                           )}
-                                                   </span>
-                                                ) : (
-                                                   ''
+                              {state.simpleRecipeProductOptions
+                                 .filter(option => option.type === 'mealKit')
+                                 .map((option, i) => (
+                                    <tr key={i}>
+                                       <td>
+                                          {i === 0 ? (
+                                             <span>
+                                                {t(address.concat('meal kit'))}
+                                             </span>
+                                          ) : (
+                                             ''
+                                          )}
+                                       </td>
+                                       <td style={{ textAlign: 'center' }}>
+                                          <span hidden={!option.isActive}>
+                                             <EyeIcon color="#00A7E1" />
+                                          </span>
+                                       </td>
+                                       <td style={{ textAlign: 'center' }}>
+                                          <input
+                                             type="radio"
+                                             checked={
+                                                state.default?.id === option.id
+                                             }
+                                             onClick={() =>
+                                                changeDefault(option)
+                                             }
+                                          />
+                                       </td>
+                                       <td>
+                                          {
+                                             option.simpleRecipeYield.yield
+                                                .serving
+                                          }
+                                       </td>
+                                       <td>${option.price[0].value} </td>
+                                       <td>{option.price[0].discount} %</td>
+                                       <td>
+                                          $
+                                          {(
+                                             parseFloat(option.price[0].value) -
+                                             parseFloat(option.price[0].value) *
+                                                (parseFloat(
+                                                   option.price[0].discount
+                                                ) /
+                                                   100)
+                                          ).toFixed(2) || ''}
+                                       </td>
+                                       <td>
+                                          <IconButton
+                                             onClick={() => editOption(option)}
+                                          >
+                                             <EditIcon color="#00A7E1" />
+                                          </IconButton>
+                                       </td>
+                                    </tr>
+                                 ))}
+                              {state.simpleRecipeProductOptions
+                                 .filter(option => option.type === 'readyToEat')
+                                 .map((option, i) => (
+                                    <tr key={i}>
+                                       <td>
+                                          {i === 0 ? (
+                                             <span>
+                                                {t(
+                                                   address.concat(
+                                                      'ready to eat'
+                                                   )
                                                 )}
-                                             </td>
-                                             <td>
-                                                {el.yield.serving}{' '}
-                                                <StyledDefault
-                                                   hidden={
-                                                      !(
-                                                         el.id ===
-                                                            state.default.value
-                                                               .id &&
-                                                         type ===
-                                                            state.default.type
-                                                      )
-                                                   }
-                                                >
-                                                   Default
-                                                </StyledDefault>
-                                             </td>
-                                             <td>${el.price.value} </td>
-                                             <td>{el.price.discount} %</td>
-                                          </tr>
-                                       ))
-                              )} */}
+                                             </span>
+                                          ) : (
+                                             ''
+                                          )}
+                                       </td>
+                                       <td style={{ textAlign: 'center' }}>
+                                          <span hidden={!option.isActive}>
+                                             <EyeIcon color="#00A7E1" />
+                                          </span>
+                                       </td>
+                                       <td style={{ textAlign: 'center' }}>
+                                          <input
+                                             type="radio"
+                                             checked={
+                                                state.default?.id === option.id
+                                             }
+                                             onClick={() =>
+                                                changeDefault(option)
+                                             }
+                                          />
+                                       </td>
+                                       <td>
+                                          {
+                                             option.simpleRecipeYield.yield
+                                                .serving
+                                          }
+                                       </td>
+                                       <td>${option.price[0].value} </td>
+                                       <td>{option.price[0].discount} %</td>
+                                       <td>
+                                          $
+                                          {(
+                                             parseFloat(option.price[0].value) -
+                                             parseFloat(option.price[0].value) *
+                                                (parseFloat(
+                                                   option.price[0].discount
+                                                ) /
+                                                   100)
+                                          ).toFixed(2) || ''}
+                                       </td>
+                                       <td>
+                                          <IconButton
+                                             onClick={() => editOption(option)}
+                                          >
+                                             <EditIcon color="#00A7E1" />
+                                          </IconButton>
+                                       </td>
+                                    </tr>
+                                 ))}
                            </tbody>
                         </StyledTable>
                      ) : (

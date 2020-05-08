@@ -110,6 +110,19 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
    }
 `
 
+export const UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION = gql`
+   mutation UpdateSimpleRecipeProductOption(
+      $id: Int
+      $set: onlineStore_simpleRecipeProductOption_set_input
+   ) {
+      updateSimpleRecipeProductOption(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
    mutation CreateCustomizableProduct(
       $objects: [onlineStore_customizableProduct_insert_input!]!
