@@ -28,10 +28,16 @@ import {
    DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
    UPDATE_RECIPE,
 } from './mutations'
-import { S_INGREDIENTS, S_RECIPES, S_RECIPE } from './subscriptions'
+import {
+   S_INGREDIENTS,
+   S_INGREDIENT,
+   S_RECIPES,
+   S_RECIPE,
+} from './subscriptions'
 
 export {
    S_INGREDIENTS,
+   S_INGREDIENT,
    INGREDIENTS,
    INGREDIENT,
    PROCESSINGS_OF_INGREDIENT,

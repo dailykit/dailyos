@@ -100,8 +100,8 @@ const IngredientsListing = () => {
    }, [search])
 
    // Handlers
-   const addTab = (title, view, ID) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, ID } })
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
    const createIngredientHandler = async () => {

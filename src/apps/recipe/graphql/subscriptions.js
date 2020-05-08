@@ -19,6 +19,19 @@ export const S_INGREDIENTS = gql`
    }
 `
 
+export const S_INGREDIENT = gql`
+   subscription($id: Int!) {
+      ingredient(id: $id) {
+         id
+         name
+         ingredientProcessings {
+            id
+            processingName
+         }
+      }
+   }
+`
+
 export const S_RECIPES = gql`
    {
       simpleRecipes {
