@@ -1,11 +1,6 @@
 import React from 'react'
-import {
-   ButtonTile,
-   Checkbox,
-   Toggle,
-   TextButton,
-   IconButton,
-} from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, IconButton } from '@dailykit/ui'
 
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 
@@ -20,11 +15,13 @@ import {
    StyledTab,
    StyledTabView,
    StyledTable,
-   StyledAction,
-   StyledDefault,
 } from './styled'
 
 import { Accompaniments } from '../'
+
+import { toast } from 'react-toastify'
+
+import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
 import { EyeIcon, EditIcon } from '../../../../../../assets/icons'
@@ -40,9 +37,29 @@ export default function Recipe({ state, openTunnel }) {
       view: 'pricing',
    })
 
+   // Mutation
+   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      onCompleted: () => {
+         toast.success('Default set!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
+
    // Handlers
    const changeDefault = option => {
-      console.log(option)
+      if (option.id !== state.default) {
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  default: option.id,
+               },
+            },
+         })
+      }
    }
    const editOption = option => {
       productDispatch({
@@ -125,7 +142,7 @@ export default function Recipe({ state, openTunnel }) {
                                           <input
                                              type="radio"
                                              checked={
-                                                state.default?.id === option.id
+                                                state.default === option.id
                                              }
                                              onClick={() =>
                                                 changeDefault(option)
@@ -186,7 +203,7 @@ export default function Recipe({ state, openTunnel }) {
                                           <input
                                              type="radio"
                                              checked={
-                                                state.default?.id === option.id
+                                                state.default === option.id
                                              }
                                              onClick={() =>
                                                 changeDefault(option)

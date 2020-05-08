@@ -18,9 +18,9 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
          id
          name
          accompaniments
-         default
          tags
          description
+         default
          simpleRecipe {
             id
             name

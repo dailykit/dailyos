@@ -98,6 +98,10 @@ export const StyledTable = styled.table`
             color: #555b6e;
             padding: 8px;
 
+            input {
+               cursor: pointer;
+            }
+
             &:first-child {
                font-weight: 500;
                font-size: 16px;
