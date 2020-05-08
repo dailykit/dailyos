@@ -70,46 +70,6 @@ export default function SimpleRecipeProduct() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   // useQuery(RECIPES, {
-   //    onCompleted: data => {
-   //       const { simpleRecipes } = data
-   //       const updatedRecipes = simpleRecipes.map(item => {
-   //          item.title = item.name
-   //          return item
-   //       })
-   //       setRecipes(updatedRecipes)
-   //    },
-   // })
-   // useQuery(SIMPLE_RECIPE_PRODUCTS, {
-   //    onCompleted: data => {
-   //       const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-   //          return {
-   //             ...pdct,
-   //             title: pdct.name,
-   //          }
-   //       })
-   //       setProducts({
-   //          ...products,
-   //          simple: updatedProducts,
-   //       })
-   //    },
-   //    fetchPolicy: 'cache-and-network',
-   // })
-   // useQuery(INVENTORY_PRODUCTS, {
-   //    onCompleted: data => {
-   //       const updatedProducts = data.inventoryProducts.map(pdct => {
-   //          return {
-   //             ...pdct,
-   //             title: pdct.name,
-   //          }
-   //       })
-   //       setProducts({
-   //          ...products,
-   //          inventory: updatedProducts,
-   //       })
-   //    },
-   //    fetchPolicy: 'cache-and-network',
-   // })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
    //       const { accompanimentTypes } = data
@@ -140,45 +100,6 @@ export default function SimpleRecipeProduct() {
    //    }
    // )
 
-   // const saveOptions = productId => {
-   //    const objects = Object.entries(state.options).map(([type, options]) => {
-   //       return options.map(value => {
-   //          return {
-   //             isActive: value.isActive,
-   //             price: [value.price],
-   //             simpleRecipeYieldId: value.id,
-   //             simpleRecipeProductId: productId,
-   //             type,
-   //          }
-   //       })
-   //    })
-   //    createSimpleRecipeProductOptions({
-   //       variables: {
-   //          objects: objects.flat(),
-   //       },
-   //    })
-   // }
-
-   // const save = () => {
-   //    console.log(state)
-   //    const object = {
-   //       accompaniments: state.accompaniments,
-   //       // default: {
-   //       //    type: state.default.type,
-   //       //    id: state.default.value.id,
-   //       // },
-   //       description: state.description,
-   //       name: state.title,
-   //       simpleRecipeId: state.recipe.id,
-   //       tags: state.tags,
-   //    }
-   //    createSimpleRecipeProduct({
-   //       variables: {
-   //          objects: [object],
-   //       },
-   //    })
-   // }
-
    // Subscription
    const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
       variables: {
@@ -188,6 +109,58 @@ export default function SimpleRecipeProduct() {
          console.log(data)
          setState(data.subscriptionData.data.simpleRecipeProduct)
          setTitle(data.subscriptionData.data.simpleRecipeProduct.name)
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   // Subscription for fetching recipes
+   useSubscription(RECIPES, {
+      onSubscriptionData: data => {
+         const { simpleRecipes } = data.subscriptionData.data
+         const updatedRecipes = simpleRecipes.map(item => {
+            item.title = item.name
+            return item
+         })
+         setRecipes(updatedRecipes)
+      },
+   })
+
+   // Subscription for fetching products
+   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(INVENTORY_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
+         })
       },
       onError: error => {
          console.log(error)
@@ -271,7 +244,7 @@ export default function SimpleRecipeProduct() {
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               {/* <Recipe openTunnel={openTunnel} /> */}
+               <Recipe state={state} openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </SimpleProductContext.Provider>

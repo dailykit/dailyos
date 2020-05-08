@@ -21,6 +21,10 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
          default
          tags
          description
+         simpleRecipe {
+            id
+            name
+         }
          simpleRecipeProductOptions {
             id
             isActive
