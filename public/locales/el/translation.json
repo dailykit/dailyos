@@ -729,6 +729,7 @@
                            "quantity": "Ποσότητα",
                            "price": "Τιμή",
                            "discount": "Έκπτωση",
+                           "discounted price": "Discounted Price",
                            "add option": "Προσθήκη επιλογής",
                            "add item": "Προσθήκη Είδους"
                         },
@@ -741,17 +742,21 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Επιλέξτε Τύπος Συνοδείας",
                            "save": "Αποθήκευση",
+                           "saving": "Saving...",
                            "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Προσθήκη περιγραφής και ετικετών",
                            "save": "Αποθήκευση",
+                           "saving": "Saving...",
                            "tags": "Ετικέτες",
                            "description": "Περιγραφή"
                         },
                         "itemtunnel": {
                            "select an item": "Επιλέξτε ένα στοιχείο",
-                           "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
+                           "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε...",
+                           "add": "Add",
+                           "adding": "Adding..."
                         },
                         "itemtypetunnel": {
                            "select item type": "Επιλέξτε Τύπος αντικειμένου",
@@ -761,8 +766,9 @@
                            "subtitle 2": "μπλα ..."
                         },
                         "productstunnel": {
-                           "select product to add": "Παρακαλώ Επιλέξτε Προϊόντα για Προσθήκη",
+                           "select products to add": "Select Products to Add",
                            "save": "Σώσει",
+                           "saving": "Saving...",
                            "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
                         },
                         "productstypetunnel": {
@@ -771,6 +777,11 @@
                            "subtitle 1": "Το προϊόν αποθέματος είναι απλώς ένα αντικείμενο, παρέχεται ή αγοράζεται",
                            "simple recipe product": "Προϊόντα απλής συνταγής",
                            "subtitle 2": "Το προϊόν Simple Recipe είναι μόνο μία συνταγή, που πωλείται ως κιτ γεύματος καθώς και έτοιμο για κατανάλωση"
+                        },
+                        "pricingtunnel": {
+                           "configure option": "Configure Option",
+                           "save": "Save",
+                           "saving": "Saving..."
                         }
                      },
                      "product name": "Όνομα Προϊόντος",
