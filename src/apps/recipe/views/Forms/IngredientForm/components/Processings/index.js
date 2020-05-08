@@ -12,8 +12,15 @@ import {
    StyledListingTile,
    Actions,
 } from './styled'
+import { IngredientContext } from '../../../../../context/ingredient'
+
+import { Sachets } from '../'
 
 const Processings = ({ state, openTunnel }) => {
+   const { ingredientState, ingredientDispatch } = React.useContext(
+      IngredientContext
+   )
+
    return (
       <Container top="16" paddingX="32">
          {state.ingredientProcessings?.length ? (
@@ -23,13 +30,22 @@ const Processings = ({ state, openTunnel }) => {
                      <h3>
                         Processings ({state.ingredientProcessings?.length})
                      </h3>
-                     <span onClick={() => openTunnel(2)}>
+                     <span onClick={() => openTunnel(1)}>
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
                      </span>
                   </StyledListingHeader>
                   {state.ingredientProcessings?.map((processing, i) => (
-                     <StyledListingTile key={processing.id}>
-                        <Actions>
+                     <StyledListingTile
+                        key={processing.id}
+                        active={ingredientState.processingIndex === i}
+                        onClick={() =>
+                           ingredientDispatch({
+                              type: 'PROCESSING_INDEX',
+                              payload: i,
+                           })
+                        }
+                     >
+                        <Actions active={ingredientState.processingIndex === i}>
                            <span>
                               <DeleteIcon />
                            </span>
@@ -42,17 +58,19 @@ const Processings = ({ state, openTunnel }) => {
                   <ButtonTile
                      type="primary"
                      size="lg"
-                     onClick={() => openTunnel(2)}
+                     onClick={() => openTunnel(1)}
                   />
                </StyledListing>
-               <StyledDisplay>Hello</StyledDisplay>
+               <StyledDisplay>
+                  <Sachets state={state} openTunnel={openTunnel} />
+               </StyledDisplay>
             </StyledSection>
          ) : (
             <ButtonTile
                type="primary"
                size="lg"
-               text="Add Title"
-               onClick={() => openTunnel(2)}
+               text="Add Processings"
+               onClick={() => openTunnel(1)}
             />
          )}
       </Container>
