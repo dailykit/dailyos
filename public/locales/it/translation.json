@@ -1,35 +1,35 @@
 {
-   "inventory": "Inventory",
-   "recipe": "Recipe",
-   "online store": "Online Store",
-   "settings": "Settings",
+   "inventory": "Oggetti",
+   "recipe": "Ricetta",
+   "online store": "Online store",
+   "settings": "Impostazioni",
    "units": {
       "gm": "gm",
       "gms": "gms",
       "kg": "kg",
       "kgs": "kgs",
-      "hours": "hours",
-      "mins": "mins",
-      "minutes": "minutes",
-      "days": "days",
-      "weeks": "weeks",
-      "unit": "unit",
+      "hours": "ore",
+      "mins": "minuti",
+      "minutes": "minuti",
+      "days": "giorni",
+      "weeks": "settimane",
+      "unit": "unità",
       "cs": "cs",
-      "gram": "gram",
+      "gram": "grammi",
       "loaf": "loaf"
    },
    "apps": {
       "inventory": {
          "components": {
             "tabs": {
-               "close tab": "Close Tab"
+               "close tab": "Chiudi la scheda"
             },
             "workorder": {
-               "processing as shipped": "Processing as Shipped",
+               "processing as shipped": "Elaborazione come spedita",
                "on hand": "On Hand",
-               "shelf life": "Shelf Life",
-               "available": "Available",
-               "par": "Par"
+               "shelf life": "Durata dello scaffale",
+               "available": "Disponibile",
+               "par": "Panino"
             }
          },
          "context": {
@@ -43,17 +43,17 @@
             "header": {},
             "main": {},
             "sidebar": {
-               "listings": "Listings",
-               "suppliers": "Suppliers",
-               "supplier items": "Supplier Items"
+               "listings": "Annunci",
+               "suppliers": "Fornitori",
+               "supplier items": "Articoli del fornitore"
             }
          },
          "views": {
             "forms": {
                "bulkworkorder": {
                   "tunnels": {
-                     "select input bulk item processing": "Select Input Bulk Item Processing",
-                     "select output bulk item processing": "Select Output Bulk Item Processing",
+                     "select input bulk item processing": "Seleziona Elaborazione di articoli in blocco di input",
+                     "select output bulk item processing": "Seleziona Elaborazione di articoli in blocco di output",
                      "type what you're looking for": "type what you're looking for...",
                      "select station": "Select Station",
                      "select supplier item": "Select Supplier Item",
