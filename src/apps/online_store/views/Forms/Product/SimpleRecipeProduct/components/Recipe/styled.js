@@ -31,14 +31,25 @@ export const StyledListing = styled.div`
 
 export const StyledListingTile = styled.div`
    background: ${props => (props.active ? '#555B6E' : '#fff')};
-   padding: 8px;
    margin-bottom: 12px;
+   padding: 8px;
    color: ${props => (props.active ? '#fff' : '#555B6E')};
+   position: relative;
+   height: 60px;
+   display: flex;
+   align-items: center;
 
    h3 {
       font-weight: 500;
       font-size: 16px;
       line-height: 14px;
+   }
+
+   span {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      cursor: pointer;
    }
 `
 

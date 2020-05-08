@@ -21,10 +21,13 @@ import { Accompaniments } from '../'
 
 import { toast } from 'react-toastify'
 
-import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
+import {
+   UPDATE_SIMPLE_RECIPE_PRODUCT,
+   DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+} from '../../../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
-import { EyeIcon, EditIcon } from '../../../../../../assets/icons'
+import { EyeIcon, EditIcon, DeleteIcon } from '../../../../../../assets/icons'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -47,8 +50,42 @@ export default function Recipe({ state, openTunnel }) {
          toast.error('Error!')
       },
    })
+   const [removeRecipe] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            simpleRecipeId: null,
+            default: null,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Recipe removed!')
+         deleteOptions()
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
+   const [deleteOptions] = useMutation(DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS, {
+      variables: {
+         ids: state.simpleRecipeProductOptions?.map(option => option.id),
+      },
+      onCompleted: () => {
+         toast.success('Product options deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
 
    // Handlers
+   const remove = () => {
+      if (window.confirm('Do you want to remove tagged recipe?')) {
+         removeRecipe()
+      }
+   }
    const changeDefault = option => {
       if (option.id !== state.default) {
          updateProduct({
@@ -76,6 +113,9 @@ export default function Recipe({ state, openTunnel }) {
                <StyledListing>
                   <StyledListingTile active>
                      <h3>{state.simpleRecipe.name}</h3>
+                     <span onClick={remove}>
+                        <DeleteIcon color="#fff" />
+                     </span>
                   </StyledListingTile>
                </StyledListing>
                <StyledPanel>

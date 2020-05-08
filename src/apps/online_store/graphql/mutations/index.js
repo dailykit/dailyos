@@ -123,6 +123,16 @@ export const UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION = gql`
    }
 `
 
+export const DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
+   mutation DeleteSimpleRecipeProductOptions($ids: [Int!]!) {
+      deleteSimpleRecipeProductOption(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
    mutation CreateCustomizableProduct(
       $objects: [onlineStore_customizableProduct_insert_input!]!
