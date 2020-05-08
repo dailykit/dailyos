@@ -12,6 +12,29 @@ export const S_SIMPLE_RECIPE_PRODUCTS = gql`
    }
 `
 
+export const S_SIMPLE_RECIPE_PRODUCT = gql`
+   subscription SimpleRecipeProduct($id: Int!) {
+      simpleRecipeProduct(id: $id) {
+         id
+         name
+         accompaniments
+         default
+         tags
+         description
+         simpleRecipeProductOptions {
+            id
+            isActive
+            price
+            type
+            simpleRecipeYield {
+               id
+               yield
+            }
+         }
+      }
+   }
+`
+
 export const S_INVENTORY_PRODUCTS = gql`
    {
       inventoryProducts {
