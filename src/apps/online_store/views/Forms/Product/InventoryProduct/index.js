@@ -87,29 +87,12 @@ export default function InventoryProduct() {
    //    },
    // })
 
-   // const [createInventoryProduct] = useMutation(CREATE_INVENTORY_PRODUCT, {
-   //    onCompleted: data => {
-   //       saveOptions(data.createInventoryProduct.returning[0].id)
-   //    },
-   // })
-
-   // const [createInventoryProductOptions] = useMutation(
-   //    CREATE_INVENTORY_PRODUCT_OPTIONS,
-   //    {
-   //       onCompleted: data => {
-   //          console.log('Saved!')
-   //          toast.success('Product saved!')
-   //       },
-   //    }
-   // )
-
    // Subscription
    const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
       variables: {
          id: tabs.current.id,
       },
       onSubscriptionData: data => {
-         console.log(data)
          setState(data.subscriptionData.data.inventoryProduct)
          setTitle(data.subscriptionData.data.inventoryProduct.name)
       },
@@ -129,7 +112,6 @@ export default function InventoryProduct() {
                }
             }
          )
-         console.log(updatedItems)
          setItems({
             ...items,
             inventory: updatedItems,
@@ -156,7 +138,6 @@ export default function InventoryProduct() {
                }
             }
          )
-         console.log(updatedItems)
          setItems({
             ...items,
             sachet: updatedItems,
@@ -167,36 +148,44 @@ export default function InventoryProduct() {
       },
    })
 
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   // Subscription for fetching products
+   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             simple: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
+      onError: error => {
+         console.log(error)
+      },
    })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         console.log('Inve -> data', data)
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(INVENTORY_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             inventory: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
+      onError: error => {
+         console.log(error)
+      },
    })
 
    // Mutation
