@@ -15,7 +15,6 @@ import {
 import { CloseIcon } from '../../../../../assets/icons'
 
 import { TunnelBody, TunnelHeader } from '../styled'
-import { state } from '../../../../../context/ingredient'
 
 import { CREATE_PROCESSINGS } from '../../../../../graphql'
 

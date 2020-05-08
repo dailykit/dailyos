@@ -4,6 +4,7 @@ export const IngredientContext = React.createContext()
 
 export const state = {
    processingIndex: 0,
+   sachetIndex: 0,
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -12,6 +13,13 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             processingIndex: payload,
+            sachetIndex: 0,
+         }
+      }
+      case 'SACHET_INDEX': {
+         return {
+            ...state,
+            sachetIndex: payload,
          }
       }
       default:
