@@ -1,10 +1,14 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { Input, Tunnels, Tunnel, useTunnel, Loader } from '@dailykit/ui'
 
 import { StyledHeader, InputWrapper, StyledWrapper } from '../styled'
-import { S_INGREDIENT } from '../../../graphql'
+import { StyledMain } from './styled'
+import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 import { Context } from '../../../context/tabs'
+import { toast } from 'react-toastify'
+
+import { Stats } from './components'
 
 const IngredientForm = () => {
    const { state: tabs, dispatch } = React.useContext(Context)
@@ -30,7 +34,30 @@ const IngredientForm = () => {
    })
 
    // Mutations
-   const updateName = () => {}
+   const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               oldTitle: tabs.current.title,
+               title,
+            },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
 
    if (loading) return <Loader />
 
@@ -48,11 +75,13 @@ const IngredientForm = () => {
                   name="title"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  onBlur={updateName}
+                  onBlur={updateIngredient}
                />
             </InputWrapper>
          </StyledHeader>
-         <StyledWrapper width="980"></StyledWrapper>
+         <StyledMain>
+            <Stats state={state} openTunnel={openTunnel} />
+         </StyledMain>
       </React.Fragment>
    )
 }

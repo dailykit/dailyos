@@ -28,6 +28,9 @@ export const S_INGREDIENT = gql`
             id
             processingName
          }
+         ingredientSachets {
+            id
+         }
       }
    }
 `

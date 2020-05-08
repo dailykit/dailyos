@@ -12,19 +12,10 @@ export const CREATE_INGREDIENT = gql`
 `
 
 export const UPDATE_INGREDIENT = gql`
-   mutation UpdateIngredient(
-      $ingredientId: Int!
-      $name: String!
-      $image: String
-   ) {
-      updateIngredient(
-         where: { id: { _eq: $ingredientId } }
-         _set: { image: $image, name: $name }
-      ) {
+   mutation UpdateIngredient($id: Int!, $set: ingredient_ingredient_set_input) {
+      updateIngredient(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             id
-            image
-            name
          }
       }
    }
