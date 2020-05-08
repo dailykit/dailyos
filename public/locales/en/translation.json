@@ -754,7 +754,9 @@
                         },
                         "itemtunnel": {
                            "select an item": "Select an Item",
-                           "type what you're looking for": "type what you're looking for..."
+                           "type what you're looking for": "type what you're looking for...",
+                           "add": "Add",
+                           "adding": "Adding..."
                         },
                         "itemtypetunnel": {
                            "select item type": "Select Item Type",

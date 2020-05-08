@@ -10,10 +10,7 @@ import { ButtonTile, Input } from '@dailykit/ui'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
 import { useTranslation, Trans } from 'react-i18next'
-import {
-   UPDATE_INVENTORY_PRODUCT,
-   DELETE_INVENTORY_PRODUCT_OPTION,
-} from '../../../../../../graphql'
+import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
 
 import { toast } from 'react-toastify'
 import { StyledInputWrapper } from '../../tunnels/styled'

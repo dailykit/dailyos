@@ -6,7 +6,10 @@ import { AddIcon } from '../../../../../../assets/icons'
 
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
-import { DELETE_INVENTORY_PRODUCT_OPTION } from '../../../../../../graphql'
+import {
+   DELETE_INVENTORY_PRODUCT_OPTION,
+   UPDATE_INVENTORY_PRODUCT,
+} from '../../../../../../graphql'
 
 // styles
 import {
@@ -43,7 +46,7 @@ export default function Item({ state, openTunnel }) {
       view: 'pricing',
    })
 
-   // Mutation
+   // Mutations
    const [deleteOption] = useMutation(DELETE_INVENTORY_PRODUCT_OPTION, {
       onCompleted: () => {
          toast.success('Option deleted!')
@@ -51,6 +54,15 @@ export default function Item({ state, openTunnel }) {
       onError: error => {
          console.log(error)
          toast.error('Could not delete!')
+      },
+   })
+   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
+      onCompleted: () => {
+         toast.success('Item deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
       },
    })
 
@@ -71,6 +83,17 @@ export default function Item({ state, openTunnel }) {
          },
       })
    }
+   const deleteItem = () => {
+      updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               sachetItemId: null,
+               supplierItemId: null,
+            },
+         },
+      })
+   }
 
    return (
       <StyledWrapper>
@@ -79,17 +102,26 @@ export default function Item({ state, openTunnel }) {
                <StyledListing>
                   <StyledListingTile active>
                      <h3>
-                        {state.supplierItem.name || state.sachetItem.unitSize}
+                        {state.supplierItem?.name ||
+                           state.sachetItem.bulkItem.supplierItem.name +
+                              ' ' +
+                              state.sachetItem.bulkItem.processingName}
                      </h3>
+                     <span onClick={deleteItem}>
+                        <DeleteIcon color="#fff" />
+                     </span>
                   </StyledListingTile>
                </StyledListing>
                <StyledPanel>
                   <h2>
-                     {state.supplierItem.name || state.sachetItem.unitSize}
+                     {state.supplierItem?.name ||
+                        state.sachetItem.bulkItem.supplierItem.name +
+                           ' ' +
+                           state.sachetItem.bulkItem.processingName}
                   </h2>
                   <h5>
                      {t(address.concat('unit size'))}:{' '}
-                     {state.supplierItem.unitSize + state.supplierItem.unit ||
+                     {state.supplierItem?.unitSize + state.supplierItem?.unit ||
                         state.sachetItem.unitSize + state.sachetItem.unit}
                   </h5>
                   <StyledTabs>

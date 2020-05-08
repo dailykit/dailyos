@@ -4,7 +4,6 @@ export const InventoryProductContext = React.createContext()
 
 export const state = {
    meta: {
-      accompanimentType: '',
       productTypes: 'inventory',
       itemType: 'inventory',
       accompanimentTabIndex: 0,

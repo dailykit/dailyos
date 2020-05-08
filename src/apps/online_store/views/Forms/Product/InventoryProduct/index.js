@@ -39,6 +39,8 @@ import {
    INVENTORY_PRODUCTS,
    S_INVENTORY_PRODUCT,
    UPDATE_INVENTORY_PRODUCT,
+   S_SUPPLIER_ITEMS,
+   S_SACHET_ITEMS,
 } from '../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
@@ -59,28 +61,10 @@ export default function InventoryProduct() {
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
 
-   // const [items, setItems] = React.useState({
-   //    inventory: [
-   //       { id: 1, title: 'ITEM 1', unitSize: '1 pc' },
-   //       { id: 2, title: 'ITEM 2', unitSize: '1 pc' },
-   //       { id: 3, title: 'ITEM 3', unitSize: '1 pc' },
-   //       { id: 4, title: 'ITEM 4', unitSize: '1 pc' },
-   //       { id: 5, title: 'ITEM 5', unitSize: '1 pc' },
-   //       { id: 6, title: 'ITEM 6', unitSize: '1 pc' },
-   //       { id: 7, title: 'ITEM 7', unitSize: '1 pc' },
-   //    ],
-   //    sachet: [
-   //       { id: 1, title: 'SACHET 1', unitSize: '100 gms' },
-   //       { id: 2, title: 'SACHET 2', unitSize: '100 gms' },
-   //       { id: 3, title: 'SACHET 3', unitSize: '100 gms' },
-   //       { id: 4, title: 'SACHET 4', unitSize: '100 gms' },
-   //       { id: 5, title: 'SACHET 5', unitSize: '100 gms' },
-   //       { id: 6, title: 'SACHET 6', unitSize: '100 gms' },
-   //       { id: 7, title: 'SACHET 7', unitSize: '100 gms' },
-   //       { id: 8, title: 'SACHET 8', unitSize: '100 gms' },
-   //       { id: 9, title: 'SACHET 9', unitSize: '100 gms' },
-   //    ],
-   // })
+   const [items, setItems] = React.useState({
+      inventory: [],
+      sachet: [],
+   })
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
       { id: 1, title: 'Beverages' },
       { id: 2, title: 'Salads' },
@@ -92,37 +76,6 @@ export default function InventoryProduct() {
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            simple: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         console.log('Inve -> data', data)
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            inventory: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
    //       const { accompanimentTypes } = data
@@ -163,6 +116,87 @@ export default function InventoryProduct() {
       onError: error => {
          console.log(error)
       },
+   })
+
+   // Subscriptions for fetching items
+   useSubscription(S_SUPPLIER_ITEMS, {
+      onSubscriptionData: data => {
+         const updatedItems = data.subscriptionData.data.supplierItems.map(
+            item => {
+               return {
+                  id: item.id,
+                  title: item.name + ' - ' + item.unitSize + ' ' + item.unit,
+               }
+            }
+         )
+         console.log(updatedItems)
+         setItems({
+            ...items,
+            inventory: updatedItems,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(S_SACHET_ITEMS, {
+      onSubscriptionData: data => {
+         const updatedItems = data.subscriptionData.data.sachetItems.map(
+            item => {
+               return {
+                  id: item.id,
+                  title:
+                     item.bulkItem.supplierItem.name +
+                     ' ' +
+                     item.bulkItem.processingName +
+                     ' - ' +
+                     item.unitSize +
+                     ' ' +
+                     item.unit,
+               }
+            }
+         )
+         console.log(updatedItems)
+         setItems({
+            ...items,
+            sachet: updatedItems,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   useQuery(SIMPLE_RECIPE_PRODUCTS, {
+      onCompleted: data => {
+         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   useQuery(INVENTORY_PRODUCTS, {
+      onCompleted: data => {
+         console.log('Inve -> data', data)
+         const updatedProducts = data.inventoryProducts.map(pdct => {
+            return {
+               ...pdct,
+               title: pdct.name,
+            }
+         })
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
+         })
+      },
+      fetchPolicy: 'cache-and-network',
    })
 
    // Mutation
@@ -237,7 +271,7 @@ export default function InventoryProduct() {
                <ItemTunnel
                   state={state}
                   close={closeTunnel}
-                  // items={items[state.meta.itemType]}
+                  items={items[productState.meta.itemType]}
                />
             </Tunnel>
             <Tunnel layer={4}>

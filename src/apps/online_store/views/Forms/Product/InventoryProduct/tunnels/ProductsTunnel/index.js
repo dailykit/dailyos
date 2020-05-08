@@ -35,25 +35,6 @@ const ProductsTunnel = ({ state, close, products }) => {
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(products)
 
-   // const save = () => {
-   //    const products = selected.map(el => {
-   //       return {
-   //          ...el,
-   //          discount: {
-   //             value: '',
-   //          },
-   //       }
-   //    })
-   //    // dispatch({
-   //    //    type: 'ADD_ACCOMPANIMENTS',
-   //    //    payload: {
-   //    //       value: products,
-   //    //    },
-   //    // })
-   //    close(6)
-   //    close(5)
-   // }
-
    //Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {

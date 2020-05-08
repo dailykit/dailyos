@@ -8,14 +8,15 @@ import { InventoryProductContext } from '../../../../../../context/product/inven
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtypetunnel.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtypetunnel.'
 
 const ProductsTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(InventoryProductContext)
+   const { productDispatch } = React.useContext(InventoryProductContext)
 
    const select = value => {
-      dispatch({ type: 'META', payload: { name: 'itemType', value } })
+      productDispatch({ type: 'META', payload: { name: 'itemType', value } })
       open(3)
    }
 
@@ -26,18 +27,26 @@ const ProductsTypeTunnel = ({ close, open }) => {
                <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select an item type'))}</span>
+               <Text as="title">{t(address.concat('select item type'))}</Text>
             </div>
          </TunnelHeader>
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>
                <Text as="h1">{t(address.concat('inventory item'))}</Text>
-               <Text as="subtitle"><Trans i18nKey={address.concat('subtitle 1')}>Bleh Bleh Bleh</Trans></Text>
+               <Text as="subtitle">
+                  <Trans i18nKey={address.concat('subtitle 1')}>
+                     Bleh Bleh Bleh
+                  </Trans>
+               </Text>
             </SolidTile>
             <br />
             <SolidTile onClick={() => select('sachet')}>
                <Text as="h1">{t(address.concat('sachet item'))}</Text>
-               <Text as="subtitle"><Trans i18nKey={address.concat('subtitle 2')}>Blah Blah Blah</Trans></Text>
+               <Text as="subtitle">
+                  <Trans i18nKey={address.concat('subtitle 2')}>
+                     Blah Blah Blah
+                  </Trans>
+               </Text>
             </SolidTile>
          </TunnelBody>
       </React.Fragment>
