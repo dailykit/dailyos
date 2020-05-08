@@ -54,42 +54,42 @@
                   "tunnels": {
                      "select input bulk item processing": "Seleziona Elaborazione di articoli in blocco di input",
                      "select output bulk item processing": "Seleziona Elaborazione di articoli in blocco di output",
-                     "type what you're looking for": "type what you're looking for...",
-                     "select station": "Select Station",
-                     "select supplier item": "Select Supplier Item",
-                     "select user": "Select User"
+                     "type what you're looking for": "digita quello che stai cercando...",
+                     "select station": "Seleziona la stazione",
+                     "select supplier item": "Seleziona l'articolo del fornitore",
+                     "select user": "Seleziona utente"
                   },
-                  "publish": "Publish",
-                  "select supplier item": "Select Supplier Item",
-                  "output bulk item": "Output Bulk Item",
-                  "select output bulk item": "Select Output Bulk Item",
-                  "yield percentage": "Yield Percentage",
-                  "enter output quantity": "Enter Output Quantity",
-                  "user assigned": "User Assigned",
-                  "select and assign user to work": "Select and assign user to work",
-                  "station assigned": "Station Assigned",
-                  "select and assign station to route to": "Select and assign station to route to",
-                  "work order": "Work Order",
-                  "input bulk item": "Input Bulk Item",
-                  "select input bulk item": "Select Input Bulk Item",
-                  "suggested committed quantity": "Suggested committed quantity",
-                  "scheduled on": "Scheduled On",
-                  "date (mm/dd/yy)": "Date (mm/dd/yy)"
+                  "publish": "Pubblica",
+                  "select supplier item": "Seleziona l'articolo del fornitore",
+                  "output bulk item": "Prodotto sfuso in uscita",
+                  "select output bulk item": "Seleziona articolo di massa in uscita",
+                  "yield percentage": "Percentuale di rendimento",
+                  "enter output quantity": "Immettere la quantità di output",
+                  "user assigned": "Utente assegnato",
+                  "select and assign user to work": "Seleziona e assegna l'utente al lavoro",
+                  "station assigned": "Stazione assegnata",
+                  "select and assign station to route to": "Selezionare e assegnare la stazione a cui indirizzare",
+                  "work order": "Ordine Di Lavoro",
+                  "input bulk item": "Inserisci articolo in blocco",
+                  "select input bulk item": "Seleziona Input Bulk Item",
+                  "suggested committed quantity": "Quantità impegnata consigliata",
+                  "scheduled on": "In programma il",
+                  "date (mm/dd/yy)": "Data (mm/dd/yy)"
                },
                "item": {
                   "tunnels": {
                      "allergens": {
-                        "add allergens": "Add Allergens",
-                        "save": "Save",
-                        "type what you're looking for": "type what you're looking for..."
+                        "add allergens": "Aggiungi allergeni",
+                        "save": "Salva",
+                        "type what you're looking for": "digita quello che stai cercando..."
                      },
                      "allergenstunnel": {
-                        "add allergens": "Add Allergens",
-                        "save": "Save",
-                        "type what you're looking for": "type what you're looking for..."
+                        "add allergens": "Aggiungi allergeni",
+                        "save": "Salva",
+                        "type what you're looking for": "digita quello che stai cercando..."
                      },
                      "config": {
-                        "configure processing": "Configure Processing",
+                        "configure processing": "Configura elaborazione",
                         "save": "Save",
                         "set par level": "Set par level",
                         "max inventory level": "Max Inventory Level",
@@ -146,51 +146,51 @@
                         "minimum order value": "Minimum order value",
                         "lead time": "Lead time",
                         "days": "Days",
-                        "weeks": "weeks",
-                        "upload certificates for the item authentication (if any)": "Upload certificates for the item authentication (if any)"
+                        "weeks": "settimane",
+                        "upload certificates for the item authentication (if any)": "Carica i certificati per l'autenticazione degli elementi (se presenti)"
                      },
                      "nutritiontunnel": {
-                        "add nutrition values": "Add Nutrition Values",
-                        "title": "Add the values as per 100gm and make your recipes smarter with auto-generated Nutritional Facts",
-                        "subtitle": "You can skip the values you don’t want to put.",
-                        "daily value": "Daily value",
-                        "calories": "Calories",
-                        "total fat": "Total Fat",
-                        "saturated fat": "Saturated Fat",
-                        "trans fat": "Trans Fat",
-                        "cholestrol": "Cholestrol",
-                        "sodium": "Sodium",
-                        "total carbohydrates": "Total Carbohydrates",
-                        "dietry fibre": "Dietry Fibre",
-                        "sugar": "Sugar",
-                        "protein": "Protein",
-                        "vitamin A": "Vitamin A",
-                        "vitamin C": "Vitamin C",
-                        "calcium": "Calcium",
-                        "iron": "Iron"
+                        "add nutrition values": "Aggiungi valori nutrizionali",
+                        "title": "Aggiungi i valori come 100 gm e rendi le tue ricette più intelligenti con Fatti Nutrizionali auto-generati",
+                        "subtitle": "Puoi saltare i valori che non vuoi inserire.",
+                        "daily value": "Valore giornaliero",
+                        "calories": "Calorie",
+                        "total fat": "Grassi totali",
+                        "saturated fat": "Grassi saturi",
+                        "trans fat": "Grassi trans",
+                        "cholestrol": "Colestrol",
+                        "sodium": "Sodio",
+                        "total carbohydrates": "Carboidrati totali",
+                        "dietry fibre": "Fibra alimentare",
+                        "sugar": "Zucchero",
+                        "protein": "Proteine",
+                        "vitamin A": "Vitamina A",
+                        "vitamin C": "Vitamina C",
+                        "calcium": "Calcio",
+                        "iron": "Ferro"
                      },
                      "processing": {
-                        "select processing as item shipped": "Select Processing as Item shipped",
-                        "type what you're looking for": "type what you're looking for..."
+                        "select processing as item shipped": "Seleziona elaborazione come articolo spedito",
+                        "type what you're looking for": "digita quello che stai cercando..."
                      },
                      "selectderivedprocessingtunnel": {
-                        "select processing": "Select Processing",
-                        "type what you're looking for": "type what you're looking for..."
+                        "select processing": "Seleziona Elaborazione",
+                        "type what you're looking for": "digita quello che stai cercando..."
                      },
                      "suppliers": {
-                        "select supplier": "Select Supplier",
-                        "type what you’re looking for": "type what you're looking for..."
+                        "select supplier": "Seleziona fornitore",
+                        "type what you’re looking for": "digita quello che stai cercando..."
                      }
                   },
-                  "add item information": "Add Item Information",
-                  "unit qty": "Unit qty",
-                  "case qty": "Case qty",
-                  "min order value": "Min Order Value",
-                  "lead time": "Lead time",
-                  "processings": "Processings",
-                  "as recieved from supplier": "As recieved from supplier",
-                  "on hand": "On Hand",
-                  "shelf life": "Shelf Life",
+                  "add item information": "Aggiungi informazioni sull'articolo",
+                  "unit qty": "Quantità unità",
+                  "case qty": "Qtà della cassa",
+                  "min order value": "Valore minimo dell'ordine",
+                  "lead time": "Tempi di consegna",
+                  "processings": "Lavorazioni",
+                  "as recieved from supplier": "Ricevuto dal fornitore",
+                  "on hand": "In mano",
+                  "shelf life": "Data di scadenza",
                   "derived from recieved processing": "Derived from recieved processing",
                   "select any processing from left menu to get started!": "Select any Processing from left menu to get started!",
                   "real-time": "Real-Time",
