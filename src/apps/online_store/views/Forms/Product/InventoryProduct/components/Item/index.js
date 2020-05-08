@@ -49,7 +49,7 @@ export default function Item({ state, openTunnel }) {
    // Mutations
    const [deleteOption] = useMutation(DELETE_INVENTORY_PRODUCT_OPTION, {
       onCompleted: () => {
-         toast.success('Option deleted!')
+         toast.success('Option(s) deleted!')
       },
       onError: error => {
          console.log(error)
@@ -59,6 +59,12 @@ export default function Item({ state, openTunnel }) {
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success('Item deleted!')
+         const ids = state.inventoryProductOptions.map(op => op.id)
+         deleteOption({
+            variables: {
+               id: { _in: ids },
+            },
+         })
       },
       onError: error => {
          console.log(error)
@@ -79,7 +85,7 @@ export default function Item({ state, openTunnel }) {
    const remove = option => {
       deleteOption({
          variables: {
-            id: option.id,
+            id: { _eq: option.id },
          },
       })
    }

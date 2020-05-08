@@ -62,8 +62,8 @@ export const UPDATE_INVENTORY_PRODUCT_OPTION = gql`
 `
 
 export const DELETE_INVENTORY_PRODUCT_OPTION = gql`
-   mutation DeleteInventoryProductOption($id: Int!) {
-      deleteInventoryProductOption(where: { id: { _eq: $id } }) {
+   mutation DeleteInventoryProductOption($id: Int_comparison_exp) {
+      deleteInventoryProductOption(where: { id: $id }) {
          returning {
             id
          }
