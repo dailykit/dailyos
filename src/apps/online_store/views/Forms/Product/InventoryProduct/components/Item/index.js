@@ -158,6 +158,9 @@ export default function Item({ state, openTunnel }) {
                                     <th>{t(address.concat('quantity'))}</th>
                                     <th>{t(address.concat('price'))}</th>
                                     <th>{t(address.concat('discount'))}</th>
+                                    <th>
+                                       {t(address.concat('discounted price'))}
+                                    </th>
                                     <th></th>
                                  </tr>
                               </thead>
@@ -168,6 +171,17 @@ export default function Item({ state, openTunnel }) {
                                        <td>{option.quantity}</td>
                                        <td>${option.price[0].value}</td>
                                        <td>{option.price[0].discount}%</td>
+                                       <td>
+                                          $
+                                          {(
+                                             parseFloat(option.price[0].value) -
+                                             parseFloat(option.price[0].value) *
+                                                (parseFloat(
+                                                   option.price[0].discount
+                                                ) /
+                                                   100)
+                                          ).toFixed(2) || ''}
+                                       </td>
                                        <td>
                                           <Grid>
                                              <IconButton

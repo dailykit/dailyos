@@ -730,6 +730,7 @@
                            "quantity": "Quantity",
                            "price": "Price",
                            "discount": "Discount",
+                           "discounted price": "Discounted Price",
                            "add option": "Add Option",
                            "add item": "Add Item"
                         },
