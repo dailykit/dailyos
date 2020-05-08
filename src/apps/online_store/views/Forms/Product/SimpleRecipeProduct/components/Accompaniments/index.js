@@ -50,7 +50,7 @@ const Accompaniments = ({ state, openTunnel }) => {
             <ButtonTile
                type="secondary"
                text={t(address.concat('add accompaniment types'))}
-               onClick={() => openTunnel(4)}
+               onClick={() => openTunnel(3)}
             />
          )}
       </React.Fragment>

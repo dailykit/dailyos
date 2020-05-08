@@ -35,7 +35,7 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
       onCompleted: () => {
          toast.success('Accompaniment types added!')
-         close(4)
+         close(3)
       },
       onError: error => {
          console.log(error)
@@ -66,7 +66,7 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(4)}>
+               <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <Text as="title">

@@ -80,25 +80,6 @@ export default function SimpleRecipeProduct() {
    //       setAccompanimentTypes(updatedAccompanimentTypes)
    //    },
    // })
-   // const [createSimpleRecipeProductOptions] = useMutation(
-   //    CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
-   //    {
-   //       onCompleted: data => {
-   //          console.log('Saved!')
-   //          console.log(data.createSimpleRecipeProductOptions)
-   //          toast.success('Product added!')
-   //       },
-   //    }
-   // )
-   // const [createSimpleRecipeProduct] = useMutation(
-   //    CREATE_SIMPLE_RECIPE_PRODUCT,
-   //    {
-   //       onCompleted: data => {
-   //          const productId = data.createSimpleRecipeProduct.returning[0].id
-   //          saveOptions(productId)
-   //       },
-   //    }
-   // )
 
    // Subscription
    const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
@@ -206,6 +187,7 @@ export default function SimpleRecipeProduct() {
             </Tunnel>
             <Tunnel layer={3}>
                <AccompanimentTypeTunnel
+                  state={state}
                   close={closeTunnel}
                   accompanimentTypes={accompanimentTypes}
                />
