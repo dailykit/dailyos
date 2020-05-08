@@ -82,7 +82,7 @@ export default function Recipe({ state, openTunnel }) {
 
    // Handlers
    const remove = () => {
-      if (window.confirm('Do you want to remove tagged recipe?')) {
+      if (window.confirm('Do you want to remove this recipe?')) {
          removeRecipe()
       }
    }

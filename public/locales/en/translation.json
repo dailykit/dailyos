@@ -859,6 +859,8 @@
                         },
                         "recipetunnel": {
                            "select a recipe": "Select a Recipe",
+                           "add": "Add",
+                           "adding": "Adding...",
                            "type what you're looking for": "type what you're looking for..."
                         }
                      },

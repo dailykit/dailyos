@@ -109,7 +109,7 @@ export const StyledTable = styled.table`
             color: #555b6e;
             padding: 8px;
 
-            input {
+            input[type='radio'] {
                cursor: pointer;
             }
 

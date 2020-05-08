@@ -123,6 +123,7 @@ export default function SimpleRecipeProduct() {
             item.title = item.name
             return item
          })
+         console.log(updatedRecipes)
          setRecipes(updatedRecipes)
       },
    })
