@@ -18,6 +18,7 @@ export const CREATE_INVENTORY_PRODUCT = gql`
       createInventoryProduct(objects: $objects) {
          returning {
             id
+            name
          }
       }
    }

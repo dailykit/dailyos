@@ -21,7 +21,7 @@ export default function DescriptionTunnel({ state, close }) {
    const [tags, setTags] = React.useState(
       state.tags?.length ? state.tags.join(', ') : ''
    )
-   const [description, setDescription] = React.useState(state.description)
+   const [description, setDescription] = React.useState(state.description || '')
 
    // Mutations
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {

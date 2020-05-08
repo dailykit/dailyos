@@ -220,40 +220,6 @@ export default function InventoryProduct() {
       },
    })
 
-   const save = () => {
-      // const objects = {
-      //    accompaniments: state.accompaniments,
-      //    name: state.title,
-      //    tags: state.tags,
-      //    description: state.description,
-      //    //  default: state.default,
-      //    // Static id to changed later, as it throws fkey error rn
-      //    supplierItemId: state.meta.itemType === 'inventory' ? 3 : null,
-      //    sachetItemId: state.meta.itemType === 'sachet' ? state.item.id : null,
-      // }
-      // createInventoryProduct({
-      //    variables: {
-      //       objects: [objects],
-      //    },
-      // })
-   }
-
-   // const saveOptions = productId => {
-   //    const objects = state.options.map(option => {
-   //       return {
-   //          inventoryProductId: productId,
-   //          label: option.title,
-   //          price: option.price,
-   //          quantity: option.quantity,
-   //       }
-   //    })
-   //    createInventoryProductOptions({
-   //       variables: {
-   //          objects,
-   //       },
-   //    })
-   // }
-
    if (loading) return <Loader />
 
    return (
@@ -306,19 +272,6 @@ export default function InventoryProduct() {
                      onChange={e => setTitle(e.target.value)}
                      onBlur={updateProduct}
                   />
-               </div>
-               <div>
-                  <TextButton
-                     type="ghost"
-                     style={{ margin: '0px 10px' }}
-                     onClick={save}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-
-                  <TextButton type="solid" style={{ margin: '0px 10px' }}>
-                     {t(address.concat('publish'))}
-                  </TextButton>
                </div>
             </StyledHeader>
             <StyledBody>
