@@ -31,11 +31,18 @@ export const StyledListingTile = styled.div`
    margin-bottom: 12px;
    color: ${props => (props.active ? '#fff' : '#555B6E')};
    cursor: pointer;
+   position: relative;
 
    h3 {
       font-weight: 500;
       font-size: 16px;
       line-height: 14px;
+   }
+
+   span {
+      position: absolute;
+      top: 8px;
+      right: 8px;
    }
 `
 

@@ -10,10 +10,14 @@ import { ButtonTile, Input } from '@dailykit/ui'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
 import { useTranslation, Trans } from 'react-i18next'
-import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
+import {
+   UPDATE_INVENTORY_PRODUCT,
+   DELETE_INVENTORY_PRODUCT_OPTION,
+} from '../../../../../../graphql'
 
 import { toast } from 'react-toastify'
 import { StyledInputWrapper } from '../../tunnels/styled'
+import { DeleteIcon } from '../../../../../../assets/icons'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.products.'
@@ -69,6 +73,25 @@ const Products = ({ state, openTunnel, view }) => {
          },
       })
    }
+   const deleteProduct = product => {
+      if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
+         const accompaniments = state.accompaniments
+         const products = accompaniments[
+            productState.meta.accompanimentTabIndex
+         ].products.filter(pro => pro.id !== product.id)
+         accompaniments[
+            productState.meta.accompanimentTabIndex
+         ].products = products
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  accompaniments,
+               },
+            },
+         })
+      }
+   }
 
    return (
       <React.Fragment>
@@ -85,6 +108,9 @@ const Products = ({ state, openTunnel, view }) => {
                         onClick={() => setCurrent(i)}
                      >
                         {product.name}
+                        <span onClick={() => deleteProduct(product)}>
+                           <DeleteIcon color="#fff" />
+                        </span>
                      </StyledListingTile>
                   ))}
                   <ButtonTile
