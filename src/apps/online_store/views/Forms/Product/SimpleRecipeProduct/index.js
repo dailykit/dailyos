@@ -37,6 +37,7 @@ import {
    CREATE_SIMPLE_RECIPE_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
    S_SIMPLE_RECIPE_PRODUCT,
+   UPDATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
@@ -193,12 +194,26 @@ export default function SimpleRecipeProduct() {
       },
    })
 
-   // Mutations
-
-   // Handlers
-   const updateName = () => {
-      console.log(title)
-   }
+   // Mutation
+   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { oldTitle: tabs.current.title, title },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
 
    if (loading) return <Loader />
 
@@ -244,7 +259,7 @@ export default function SimpleRecipeProduct() {
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
+                     onBlur={updateProduct}
                   />
                </div>
             </StyledHeader>
