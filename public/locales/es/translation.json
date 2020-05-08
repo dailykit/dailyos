@@ -729,6 +729,7 @@
                            "quantity": "Cantidad",
                            "price": "Precio",
                            "discount": "Descuento",
+                           "discounted price": "Discounted Price",
                            "add option": "Añadir opción",
                            "add item": "Agregar elemento"
                         },
@@ -741,17 +742,21 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Seleccionar tipo de acompañamiento",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "type what you're looking for": "escribe lo que estás buscando..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Añadir Descripción y Etiquetas",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "tags": "Etiquetas",
                            "description": "Descripción"
                         },
                         "itemtunnel": {
                            "select an item": "Seleccionar elemento",
-                           "type what you're looking for": "escribe lo que estás buscando..."
+                           "type what you're looking for": "escribe lo que estás buscando...",
+                           "add": "Add",
+                           "adding": "Adding..."
                         },
                         "itemtypetunnel": {
                            "select item type": "Seleccionar tipo de artículo",
@@ -761,8 +766,9 @@
                            "subtitle 2": "bla ..."
                         },
                         "productstunnel": {
-                           "select product to add": "Seleccionar tipo de producto",
+                           "select products to add": "Select Products to Add",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "type what you're looking for": "escribe lo que estás buscando..."
                         },
                         "productstypetunnel": {
@@ -771,6 +777,11 @@
                            "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                            "simple recipe product": "Producto receta simple",
                            "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer"
+                        },
+                        "pricingtunnel": {
+                           "configure option": "Configure Option",
+                           "save": "Save",
+                           "saving": "Saving..."
                         }
                      },
                      "product name": "Producto",
