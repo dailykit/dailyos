@@ -206,10 +206,14 @@ export default function SimpleRecipeProduct() {
       <SimpleProductContext.Provider value={{ productState, productDispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <DescriptionTunnel close={closeTunnel} />
+               <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <RecipeTunnel close={closeTunnel} recipes={recipes} />
+               <RecipeTunnel
+                  state={state}
+                  close={closeTunnel}
+                  recipes={recipes}
+               />
             </Tunnel>
             <Tunnel layer={3}>
                <AccompanimentTypeTunnel
@@ -222,12 +226,13 @@ export default function SimpleRecipeProduct() {
             </Tunnel>
             <Tunnel layer={5}>
                <ProductsTunnel
+                  state={state}
                   close={closeTunnel}
                   products={products[productState.meta.productsType]}
                />
             </Tunnel>
             <Tunnel layer={6}>
-               <PriceConfigurationTunnel close={closeTunnel} />
+               <PriceConfigurationTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -245,7 +250,9 @@ export default function SimpleRecipeProduct() {
             </StyledHeader>
             <StyledBody>
                <StyledMeta>
-                  <div>{/* <Description openTunnel={openTunnel} /> */}</div>
+                  <div>
+                     <Description state={state} openTunnel={openTunnel} />
+                  </div>
                   <div></div>
                </StyledMeta>
                <StyledRule />

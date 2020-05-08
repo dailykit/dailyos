@@ -817,17 +817,20 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Select Accompaniment Type",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
+                           "saving": "Saving...",
                            "tags": "Tags",
                            "description": "Description"
                         },
                         "priceconfigurationtunnel": {
                            "configure pricing for servings": "Configure Pricing for Servings",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type": "Type",
                            "active": "Active",
                            "servings": "Servings",
@@ -839,6 +842,7 @@
                         "productstunnel": {
                            "select product to add": "Select Product to Add",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "productstypetunnel": {
