@@ -1,3 +1,4 @@
 import Stats from './Stats'
+import Processings from './Processings'
 
-export { Stats }
+export { Stats, Processings }

@@ -8,7 +8,7 @@ import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 import { Context } from '../../../context/tabs'
 import { toast } from 'react-toastify'
 
-import { Stats } from './components'
+import { Stats, Processings } from './components'
 
 const IngredientForm = () => {
    const { state: tabs, dispatch } = React.useContext(Context)
@@ -81,6 +81,7 @@ const IngredientForm = () => {
          </StyledHeader>
          <StyledMain>
             <Stats state={state} openTunnel={openTunnel} />
+            <Processings state={state} openTunnel={openTunnel} />
          </StyledMain>
       </React.Fragment>
    )
