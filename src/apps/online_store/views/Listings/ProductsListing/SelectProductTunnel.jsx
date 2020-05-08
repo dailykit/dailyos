@@ -9,7 +9,10 @@ import { Context } from '../../../context/tabs'
 import { TunnelContainer, TunnelHeader, Spacer } from '../../../components'
 import { useMutation } from '@apollo/react-hooks'
 
-import { CREATE_COMBO_PRODUCT } from '../../../graphql'
+import {
+   CREATE_COMBO_PRODUCT,
+   CREATE_INVENTORY_PRODUCT,
+} from '../../../graphql'
 
 import { randomSuffix } from '../../../../../shared/utils'
 
@@ -32,6 +35,16 @@ export default function SelectProductTunnel({ close }) {
          )
       },
    })
+   const [createInventoryProduct] = useMutation(CREATE_INVENTORY_PRODUCT, {
+      onCompleted: data => {
+         toast.success('Product created!')
+         addTab(
+            data.createInventoryProduct.returning[0].name,
+            'inventoryProduct',
+            data.createInventoryProduct.returning[0].id
+         )
+      },
+   })
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
@@ -49,6 +62,13 @@ export default function SelectProductTunnel({ close }) {
                },
             })
          }
+         case 'inventory': {
+            createInventoryProduct({
+               variables: {
+                  objects: [object],
+               },
+            })
+         }
          default:
             return
       }
@@ -57,7 +77,7 @@ export default function SelectProductTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("select type of product"))}
+            title={t(address.concat('select type of product'))}
             close={() => {
                close(1)
             }}
@@ -68,9 +88,7 @@ export default function SelectProductTunnel({ close }) {
          />
          <Spacer />
          <br />
-         <SolidTile
-            onClick={() => addTab('Inventory Product', 'inventoryProduct')}
-         >
+         <SolidTile onClick={() => createProduct('inventory')}>
             <Text as="h1">{t(address.concat('inventory product'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('subtitle 1')}>
@@ -85,8 +103,8 @@ export default function SelectProductTunnel({ close }) {
             <Text as="h1">{t(address.concat('simple recipe product'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('subtitle 2')}>
-                  Simple Recipe product is only one recipes, sold as Meal Kits as
-                  well as Ready to Eat
+                  Simple Recipe product is only one recipes, sold as Meal Kits
+                  as well as Ready to Eat
                </Trans>
             </Text>
          </SolidTile>
@@ -109,8 +127,8 @@ export default function SelectProductTunnel({ close }) {
             <Text as="h1">{t(address.concat('combo product'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('subtitle 4')}>
-                  Advanced product is an item with your recipes, sold as Meal Kits
-                  as well as Ready to Eat
+                  Advanced product is an item with your recipes, sold as Meal
+                  Kits as well as Ready to Eat
                </Trans>
             </Text>
          </SolidTile>

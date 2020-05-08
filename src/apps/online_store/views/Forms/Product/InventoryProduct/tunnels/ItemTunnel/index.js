@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { useMutation } from '@apollo/react-hooks'
 import {
    TextButton,
    useSingleList,
@@ -7,31 +7,57 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
+   Text,
 } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 
+import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
+
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
 
-export default function ItemTunnel({ close, items }) {
+export default function ItemTunnel({ state, close, items }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(InventoryProductContext)
+   const { productState } = React.useContext(InventoryProductContext)
 
+   const [busy, setBusy] = React.useState(false)
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(items)
 
-   const selectItem = item => {
-      selectOption('id', item.id)
-      dispatch({
-         type: 'ITEM',
-         payload: { value: item },
-      })
-      close(3)
-      close(2)
+   //Mutation
+   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            supplierItemId:
+               productState.meta.itemType === 'inventory' ? current.id : null,
+            sachetItemId:
+               productState.meta.itemType === 'sachet' ? current.id : null,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Item added!')
+         close(3)
+         close(2)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+         setBusy(false)
+      },
+   })
+
+   // Handlers
+   const add = item => {
+      if (busy) return
+      else setBusy(true)
+      updateProduct()
    }
 
    return (
@@ -41,7 +67,14 @@ export default function ItemTunnel({ close, items }) {
                <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select an item'))}</span>
+               <Text as="title">{t(address.concat('select an item'))}</Text>
+            </div>
+            <div>
+               <TextButton type="solid" onClick={add}>
+                  {busy
+                     ? t(address.concat('adding'))
+                     : t(address.concat('add'))}
+               </TextButton>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -49,11 +82,13 @@ export default function ItemTunnel({ close, items }) {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you’re looking for"))}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+               )}
                <ListOptions>
                   {list
                      .filter(option =>
@@ -65,7 +100,7 @@ export default function ItemTunnel({ close, items }) {
                            key={option.id}
                            title={option.title}
                            isActive={option.id === current.id}
-                           onClick={() => selectItem(option)}
+                           onClick={() => selectOption('id', option.id)}
                         />
                      ))}
                </ListOptions>

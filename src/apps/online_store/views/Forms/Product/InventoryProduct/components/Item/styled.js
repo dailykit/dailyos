@@ -42,11 +42,19 @@ export const StyledListingTile = styled.div`
    padding: 8px;
    margin-bottom: 12px;
    color: ${props => (props.active ? '#fff' : '#555B6E')};
+   position: relative;
 
    h3 {
       font-weight: 500;
       font-size: 16px;
       line-height: 14px;
+   }
+
+   span {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      cursor: pointer;
    }
 `
 
@@ -129,4 +137,10 @@ export const StyledInputWrapper = styled.div`
    span {
       cursor: pointer;
    }
+`
+
+export const Grid = styled.div`
+   display: grid;
+   grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
+   grid-gap: ${props => props.gap || 8}px;
 `

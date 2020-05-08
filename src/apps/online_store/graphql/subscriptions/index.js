@@ -21,6 +21,68 @@ export const S_INVENTORY_PRODUCTS = gql`
    }
 `
 
+export const S_INVENTORY_PRODUCT = gql`
+   subscription($id: Int!) {
+      inventoryProduct(id: $id) {
+         id
+         name
+         accompaniments
+         tags
+         description
+         supplierItem {
+            id
+            name
+            unitSize
+            unit
+         }
+         sachetItem {
+            id
+            unitSize
+            unit
+            bulkItem {
+               processingName
+               supplierItem {
+                  name
+               }
+            }
+         }
+         inventoryProductOptions {
+            id
+            label
+            price
+            quantity
+         }
+      }
+   }
+`
+
+export const S_SACHET_ITEMS = gql`
+   subscription SachetItems {
+      sachetItems {
+         id
+         unitSize
+         unit
+         bulkItem {
+            processingName
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`
+
+export const S_SUPPLIER_ITEMS = gql`
+   subscription SupplierItems {
+      supplierItems {
+         id
+         name
+         unitSize
+         unit
+      }
+   }
+`
+
 export const S_CUSTOMIZABLE_PRODUCTS = gql`
    {
       customizableProducts {

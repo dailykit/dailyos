@@ -18,6 +18,20 @@ export const CREATE_INVENTORY_PRODUCT = gql`
       createInventoryProduct(objects: $objects) {
          returning {
             id
+            name
+         }
+      }
+   }
+`
+
+export const UPDATE_INVENTORY_PRODUCT = gql`
+   mutation UpdateInventoryProduct(
+      $id: Int!
+      $set: onlineStore_inventoryProduct_set_input
+   ) {
+      updateInventoryProduct(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
          }
       }
    }
@@ -28,6 +42,29 @@ export const CREATE_INVENTORY_PRODUCT_OPTIONS = gql`
       $objects: [onlineStore_inventoryProductOption_insert_input!]!
    ) {
       createInventoryProductOption(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const UPDATE_INVENTORY_PRODUCT_OPTION = gql`
+   mutation UpdateInventoryProductOption(
+      $id: Int
+      $set: onlineStore_inventoryProductOption_set_input
+   ) {
+      updateInventoryProductOption(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_INVENTORY_PRODUCT_OPTION = gql`
+   mutation DeleteInventoryProductOption($id: Int_comparison_exp) {
+      deleteInventoryProductOption(where: { id: $id }) {
          returning {
             id
          }

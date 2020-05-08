@@ -8,14 +8,18 @@ import { InventoryProductContext } from '../../../../../../context/product/inven
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.productstypetunnel.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.tunnels.productstypetunnel.'
 
 const ProductsTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(InventoryProductContext)
+   const { productDispatch } = React.useContext(InventoryProductContext)
 
    const select = value => {
-      dispatch({ type: 'META', payload: { name: 'productsType', value } })
+      productDispatch({
+         type: 'META',
+         payload: { name: 'productsType', value },
+      })
       open(6)
    }
 
@@ -26,7 +30,9 @@ const ProductsTypeTunnel = ({ close, open }) => {
                <span onClick={() => close(5)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select a product type'))}</span>
+               <Text as="title">
+                  {t(address.concat('select product type'))}
+               </Text>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -43,8 +49,8 @@ const ProductsTypeTunnel = ({ close, open }) => {
                <Text as="h1">{t(address.concat('simple recipe product'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('subtitle 2')}>
-                     Simple Recipe product is only one recipes, sold as Meal Kits
-                     as well as Ready to Eat
+                     Simple Recipe product is only one recipes, sold as Meal
+                     Kits as well as Ready to Eat
                   </Trans>
                </Text>
             </SolidTile>
