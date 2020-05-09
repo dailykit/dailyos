@@ -805,8 +805,11 @@
                            "accompaniments": "Acompañantes",
                            "configure pricing": "Configurar precios",
                            "servings": "Colegios",
+                           "visibility": "Visibility",
+                           "default": "Default",
                            "price": "Precio",
                            "discount": "Descuento",
+                           "discounted price": "Discounted Price",
                            "meal kit": "Kit de comida",
                            "ready to eat": "Listo para compartir",
                            "add recipe": "Añadir Receta"
@@ -816,28 +819,34 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Seleccionar tipo de acompañamiento",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "type what you're looking for": "escribe lo que estás buscando..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Añadir Descripción y Etiquetas",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "tags": "Etiquetas",
                            "description": "Descripción"
                         },
                         "priceconfigurationtunnel": {
-                           "configure pricing for servings": "Configurar los precios para los precios",
+                           "configure pricing for serving": "Configure Pricing for Serving",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "type": "Tipo",
                            "active": "Activo",
-                           "servings": "Colegios",
+                           "serving": "Serving",
+                           "visibility": "Visibility",
+                           "default": "Default",
                            "price": "Precio",
-                           "discounted price": "Precio con descuento",
+                           "discount": "Discount",
                            "meal kit": "Kit de comida",
                            "ready to eat": "Listo para compartir"
                         },
                         "productstunnel": {
                            "select product to add": "Seleccionar tipo de producto",
                            "save": "Guardar",
+                           "saving": "Saving...",
                            "type what you're looking for": "escribe lo que estás buscando..."
                         },
                         "productstypetunnel": {
@@ -849,6 +858,8 @@
                         },
                         "recipetunnel": {
                            "select a recipe": "Selecciona una receta",
+                           "add": "Add",
+                           "adding": "Adding...",
                            "type what you're looking for": "escribe lo que estás buscando..."
                         }
                      },
