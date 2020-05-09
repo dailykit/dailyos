@@ -805,8 +805,11 @@
                            "accompaniments": "Συνοδευτικά",
                            "configure pricing": "Διαμόρφωση τιμολόγησης",
                            "servings": "Σερβίρισμα",
+                           "visibility": "Visibility",
+                           "default": "Default",
                            "price": "Τιμή",
                            "discount": "Έκπτωση",
+                           "discounted price": "Discounted Price",
                            "meal kit": "Σετ γεύματος",
                            "ready to eat": "Ετοιμος να φάω",
                            "add recipe": "Προσθήκη συνταγής"
@@ -816,28 +819,34 @@
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Επιλέξτε Τύπος Συνοδείας",
                            "save": "Αποθήκευση",
+                           "saving": "Saving...",
                            "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Προσθήκη περιγραφής και ετικετών",
                            "save": "Αποθήκευση",
+                           "saving": "Saving...",
                            "tags": "Ετικέτες",
                            "description": "Περιγραφή"
                         },
                         "priceconfigurationtunnel": {
-                           "configure pricing for servings": "Διαμόρφωση τιμολόγησης για μερίδες",
+                           "configure pricing for serving": "Configure Pricing for Serving",
                            "save": "Αποθήκευση",
+                           "saving": "Saving...",
                            "type": "Τύπος",
                            "active": "Ενεργό",
-                           "servings": "Σερβίρισμα",
+                           "serving": "Serving",
+                           "visibility": "Visibility",
+                           "default": "Default",
                            "price": "Τιμή",
-                           "discounted price": "Τιμή με έκπτωση",
+                           "discount": "Discount",
                            "meal kit": "Σετ γεύματος",
                            "ready to eat": "Ετοιμος να φάω"
                         },
                         "productstunnel": {
                            "select product to add": "Παρακαλώ Επιλέξτε Προϊόντα για Προσθήκη",
                            "save": "Αποθήκευση",
+                           "saving": "Saving...",
                            "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
                         },
                         "productstypetunnel": {
@@ -849,6 +858,8 @@
                         },
                         "recipetunnel": {
                            "select a recipe": "Επιλέξτε μια συνταγή",
+                           "add": "Add",
+                           "adding": "Adding...",
                            "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε..."
                         }
                      },
