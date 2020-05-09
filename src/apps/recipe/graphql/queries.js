@@ -131,9 +131,9 @@ export const FETCH_PACKAGINGS = gql`
 
 export const FETCH_LABEL_TEMPLATES = gql`
    {
-      labelTemplates {
+      deviceHub_labelTemplate {
          id
-         title
+         name
       }
    }
 `

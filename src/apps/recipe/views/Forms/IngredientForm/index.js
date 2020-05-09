@@ -11,6 +11,7 @@ import {
    FETCH_UNITS,
    FETCH_STATIONS,
    FETCH_PACKAGINGS,
+   FETCH_LABEL_TEMPLATES,
 } from '../../../graphql'
 
 import {
@@ -28,6 +29,7 @@ import {
    SachetTunnel,
    ItemTunnel,
    PackagingTunnel,
+   LabelTemplateTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 import {
@@ -55,6 +57,7 @@ const IngredientForm = () => {
       plannedLot: [],
    })
    const [packagings, setPackagings] = React.useState([])
+   const [templates, setTemplates] = React.useState([])
 
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
@@ -165,6 +168,20 @@ const IngredientForm = () => {
          console.log(error)
       },
    })
+   useSubscription(FETCH_LABEL_TEMPLATES, {
+      onSubscriptionData: data => {
+         const templates = data.subscriptionData.data.deviceHub_labelTemplate.map(
+            template => ({
+               id: template.id,
+               title: template.name,
+            })
+         )
+         setTemplates([...templates])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -233,6 +250,12 @@ const IngredientForm = () => {
                   <PackagingTunnel
                      closeTunnel={closeTunnel}
                      packagings={packagings}
+                  />
+               </Tunnel>
+               <Tunnel layer={6}>
+                  <LabelTemplateTunnel
+                     closeTunnel={closeTunnel}
+                     templates={templates}
                   />
                </Tunnel>
             </Tunnels>

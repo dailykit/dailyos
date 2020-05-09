@@ -39,6 +39,8 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
       { id: 3, title: "Don't Weigh", value: '0' },
    ]
 
+   // Mutations
+
    // Handlers
    const close = () => {
       // clear sachet state
@@ -47,6 +49,8 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
    const add = () => {
       if (busy) return
       setBusy(true)
+      console.log(ingredientState.realTime)
+      console.log(ingredientState.plannedLot)
    }
    const propagate = (type, val) => {
       if (
@@ -74,6 +78,13 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
          payload: type,
       })
       openTunnel(5)
+   }
+   const selectLabelTemplate = type => {
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: type,
+      })
+      openTunnel(6)
    }
 
    return (
@@ -199,7 +210,28 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                            '-'
                         )}
                      </td>
-                     <td></td>
+                     <td>
+                        {ingredientState.realTime.bulkItem ? (
+                           <Select
+                              option={
+                                 ingredientState.realTime.labelTemplate || []
+                              }
+                              addOption={() => selectLabelTemplate('realTime')}
+                              removeOption={() =>
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'realTime',
+                                       name: 'labelTemplate',
+                                       value: undefined,
+                                    },
+                                 })
+                              }
+                           />
+                        ) : (
+                           '-'
+                        )}
+                     </td>
                   </tr>
                   <tr>
                      <td>
@@ -273,7 +305,30 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                            '-'
                         )}
                      </td>
-                     <td></td>
+                     <td>
+                        {ingredientState.plannedLot.sachetItem ? (
+                           <Select
+                              option={
+                                 ingredientState.plannedLot.labelTemplate || []
+                              }
+                              addOption={() =>
+                                 selectLabelTemplate('plannedLot')
+                              }
+                              removeOption={() =>
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'plannedLot',
+                                       name: 'labelTemplate',
+                                       value: undefined,
+                                    },
+                                 })
+                              }
+                           />
+                        ) : (
+                           '-'
+                        )}
+                     </td>
                   </tr>
                </tbody>
             </StyledTable>
