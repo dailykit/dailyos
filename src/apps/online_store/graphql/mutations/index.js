@@ -79,6 +79,20 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
       createSimpleRecipeProduct(objects: $objects) {
          returning {
             id
+            name
+         }
+      }
+   }
+`
+
+export const UPDATE_SIMPLE_RECIPE_PRODUCT = gql`
+   mutation UpdateSimpleRecipeProduct(
+      $id: Int!
+      $set: onlineStore_simpleRecipeProduct_set_input
+   ) {
+      updateSimpleRecipeProduct(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
          }
       }
    }
@@ -89,6 +103,29 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
       $objects: [onlineStore_simpleRecipeProductOption_insert_input!]!
    ) {
       createSimpleRecipeProductOption(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION = gql`
+   mutation UpdateSimpleRecipeProductOption(
+      $id: Int
+      $set: onlineStore_simpleRecipeProductOption_set_input
+   ) {
+      updateSimpleRecipeProductOption(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
+   mutation DeleteSimpleRecipeProductOptions($ids: [Int!]!) {
+      deleteSimpleRecipeProductOption(where: { id: { _in: $ids } }) {
          returning {
             id
          }

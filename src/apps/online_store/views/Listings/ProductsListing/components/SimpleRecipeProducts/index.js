@@ -44,9 +44,14 @@ const InventoryProducts = () => {
          </TableHead>
          <TableBody>
             {data.simpleRecipeProducts.map(product => (
-               <TableRow key={product.id}>
+               <TableRow
+                  key={product.id}
+                  onClick={() =>
+                     addTab(product.name, 'simpleRecipeProduct', product.id)
+                  }
+               >
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.simpleRecipe.name}</TableCell>
+                  <TableCell>{product.simpleRecipe?.name || ''}</TableCell>
                   <TableCell align="right">
                      <GridContainer>
                         <IconButton>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import {
    TextButton,
    useMultiList,
@@ -8,31 +9,57 @@ import {
    ListSearch,
    Tag,
    TagGroup,
+   Text,
 } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+
+import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { toast } from 'react-toastify'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.accompanimenttypetunnel.'
+const address =
+   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.accompanimenttypetunnel.'
 
-const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
+const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+
+   const [busy, setBusy] = React.useState(false)
 
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(accompanimentTypes)
 
+   //Mutation
+   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      onCompleted: () => {
+         toast.success('Accompaniment types added!')
+         close(3)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+         setBusy(false)
+      },
+   })
+
+   // Handlers
    const save = () => {
-      dispatch({
-         type: 'ACCOMPANIMENT_TYPES',
-         payload: {
-            value: selected,
+      if (busy) return
+      setBusy(true)
+      const accompaniments = selected.map(type => ({
+         type: type.title,
+         products: [],
+      }))
+      updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               accompaniments,
+            },
          },
       })
-      close(3)
    }
 
    return (
@@ -42,11 +69,15 @@ const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
                <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select accompaniment type'))}</span>
+               <Text as="title">
+                  {t(address.concat('select accompaniment type'))}
+               </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -54,7 +85,9 @@ const AccompanimentTypeTunnel = ({ close, accompanimentTypes }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder={t(address.concat("type what you’re looking for"))}
+                  placeholder={t(
+                     address.concat("type what you're looking for")
+                  )}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>
