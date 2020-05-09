@@ -19,6 +19,66 @@ export const S_INGREDIENTS = gql`
    }
 `
 
+export const S_INGREDIENT = gql`
+   subscription($id: Int!) {
+      ingredient(id: $id) {
+         id
+         name
+         ingredientProcessings {
+            id
+            processingName
+            ingredientSachets {
+               id
+               tracking
+               unit
+               quantity
+               defaultNutritionalValues
+               modeOfFulfillments {
+                  id
+                  accuracy
+                  station {
+                     id
+                     name
+                  }
+                  isLive
+                  priority
+                  labelTemplate {
+                     id
+                     name
+                  }
+                  packaging {
+                     id
+                     name
+                  }
+                  type
+                  bulkItem {
+                     id
+                     processingName
+                     supplierItem {
+                        name
+                     }
+                  }
+                  sachetItem {
+                     id
+                     unitSize
+                     unit
+                     bulkItem {
+                        processingName
+                        supplierItem {
+                           name
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         ingredientSachets {
+            id
+         }
+      }
+   }
+`
+
 export const S_RECIPES = gql`
    {
       simpleRecipes {
@@ -62,6 +122,34 @@ export const S_RECIPE = gql`
                   }
                }
             }
+         }
+      }
+   }
+`
+
+export const S_SACHET_ITEMS = gql`
+   subscription SachetItems {
+      sachetItems {
+         id
+         unitSize
+         unit
+         bulkItem {
+            processingName
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`
+
+export const S_BULK_ITEMS = gql`
+   subscription BulkItems {
+      bulkItems {
+         id
+         processingName
+         supplierItem {
+            name
          }
       }
    }

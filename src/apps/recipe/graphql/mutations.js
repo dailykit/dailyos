@@ -12,19 +12,10 @@ export const CREATE_INGREDIENT = gql`
 `
 
 export const UPDATE_INGREDIENT = gql`
-   mutation UpdateIngredient(
-      $ingredientId: Int!
-      $name: String!
-      $image: String
-   ) {
-      updateIngredient(
-         where: { id: { _eq: $ingredientId } }
-         _set: { image: $image, name: $name }
-      ) {
+   mutation UpdateIngredient($id: Int!, $set: ingredient_ingredient_set_input) {
+      updateIngredient(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             id
-            image
-            name
          }
       }
    }
@@ -44,13 +35,8 @@ export const CREATE_PROCESSINGS = gql`
 `
 
 export const DELETE_PROCESSING = gql`
-   mutation DeleteProcessing($ingredientId: Int!, $processingId: Int!) {
-      deleteIngredientProcessing(
-         where: {
-            id: { _eq: $processingId }
-            ingredientId: { _eq: $ingredientId }
-         }
-      ) {
+   mutation DeleteProcessing($id: Int!) {
+      deleteIngredientProcessing(where: { id: { _eq: $id } }) {
          returning {
             id
          }
@@ -60,53 +46,43 @@ export const DELETE_PROCESSING = gql`
 
 export const CREATE_SACHET = gql`
    mutation CreateSachet(
-      $sachet: [ingredient_ingredientSachet_insert_input!]!
+      $objects: [ingredient_ingredientSachet_insert_input!]!
    ) {
-      createIngredientSachet(objects: $sachet) {
+      createIngredientSachet(objects: $objects) {
          returning {
             id
-            tracking
-            quantity
-            unit
-            modeOfFulfillments {
-               id
-               type
-               isLive
-               accuracy
-               station {
-                  name
-               }
-               sachetItem {
-                  unitSize
-               }
-               bulkItem {
-                  processingName
-               }
-               labelTemplate {
-                  name
-               }
-               packaging {
-                  name
-               }
-            }
          }
       }
    }
 `
 
-export const DELETE_SACHET = gql`
-   mutation DeleteSachet(
-      $ingredientId: Int!
-      $processingId: Int!
-      $sachetId: Int!
+export const UPDATE_SACHET = gql`
+   mutation UpdateSachet(
+      $id: Int!
+      $set: ingredient_ingredientSachet_set_input
    ) {
-      deleteIngredientSachet(
-         where: {
-            id: { _eq: $sachetId }
-            ingredientId: { _eq: $ingredientId }
-            ingredientProcessingId: { _eq: $processingId }
+      updateIngredientSachet(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
          }
-      ) {
+      }
+   }
+`
+
+export const UPDATE_MODE = gql`
+   mutation UpdateMode(
+      $id: Int!
+      $set: ingredient_modeOfFulfillment_set_input
+   ) {
+      updateModeOfFulfillment(pk_columns: { id: $id }, _set: $set) {
+         id
+      }
+   }
+`
+
+export const DELETE_SACHET = gql`
+   mutation DeleteSachet($id: Int!) {
+      deleteIngredientSachet(where: { id: { _eq: $id } }) {
          returning {
             id
          }

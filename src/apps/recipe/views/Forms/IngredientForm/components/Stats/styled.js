@@ -1,38 +1,12 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
-   max-width: 1280px;
-   margin: 0 auto;
-`
-
-export const StyledHeader = styled.div`
-   height: 80px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-`
-
-export const InputWrapper = styled.div`
-   max-width: 256px;
-`
-
-export const ActionsWrapper = styled.div`
-   display: flex;
-   justify-content: space-between;
-`
-
-export const StyledMain = styled.div`
-   position: relative;
-   min-height: calc(100% - 120px);
-   background: #f3f3f3;
-`
-
-export const StyledTop = styled.div`
+export const StyledContainer = styled.div`
    display: grid;
-   grid-template-columns: 20% 80%;
+   grid-template-columns: 300px 1fr;
    grid-gap: 40px;
    height: 192px;
    align-items: center;
+   padding: 0 32px;
 `
 
 export const StyledStatsContainer = styled.div`
@@ -45,16 +19,13 @@ export const StyledStat = styled.div`
    margin-right: 12px;
    color: #555b6e;
    font-weight: 500;
-
    &:not(:last-child) {
       border-right: 1px solid #dddddd;
    }
-
    h2 {
       font-size: 20px;
       line-height: 23px;
    }
-
    p {
       font-size: 14px;
       line-height: 16px;
@@ -68,13 +39,11 @@ export const ImageContainer = styled.div`
    width: 464px;
    height: 128px;
    position: relative;
-
    img {
       width: 464px;
       height: 128px;
       object-fit: auto;
    }
-
    div {
       position: absolute;
       padding: 12px;
