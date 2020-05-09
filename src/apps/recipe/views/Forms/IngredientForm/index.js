@@ -10,6 +10,7 @@ import {
    FETCH_PROCESSING_NAMES,
    FETCH_UNITS,
    FETCH_STATIONS,
+   FETCH_PACKAGINGS,
 } from '../../../graphql'
 
 import {
@@ -22,7 +23,12 @@ import { Context } from '../../../context/tabs'
 import { toast } from 'react-toastify'
 
 import { Stats, Processings } from './components'
-import { ProcessingsTunnel, SachetTunnel, ItemTunnel } from './tunnels'
+import {
+   ProcessingsTunnel,
+   SachetTunnel,
+   ItemTunnel,
+   PackagingTunnel,
+} from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 import {
    S_SUPPLIER_ITEMS,
@@ -48,6 +54,7 @@ const IngredientForm = () => {
       realTime: [],
       plannedLot: [],
    })
+   const [packagings, setPackagings] = React.useState([])
 
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
@@ -144,6 +151,20 @@ const IngredientForm = () => {
          console.log(error)
       },
    })
+   useSubscription(FETCH_PACKAGINGS, {
+      onSubscriptionData: data => {
+         const packagings = data.subscriptionData.data.packaging_packaging.map(
+            packaging => ({
+               id: packaging.id,
+               title: packaging.name,
+            })
+         )
+         setPackagings([...packagings])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -206,6 +227,12 @@ const IngredientForm = () => {
                   <ItemTunnel
                      closeTunnel={closeTunnel}
                      items={items[ingredientState.currentMode]}
+                  />
+               </Tunnel>
+               <Tunnel layer={5}>
+                  <PackagingTunnel
+                     closeTunnel={closeTunnel}
+                     packagings={packagings}
                   />
                </Tunnel>
             </Tunnels>

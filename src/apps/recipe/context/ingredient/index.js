@@ -15,7 +15,7 @@ export const state = {
       station: undefined,
       packaging: undefined,
       priority: 1,
-      accuracy: 50,
+      accuracy: 0,
    },
    plannedLot: {
       isPublished: true,
@@ -26,8 +26,8 @@ export const state = {
       sachetItem: undefined,
       station: undefined,
       packaging: undefined,
-      priority: 1,
-      accuracy: 50,
+      priority: 2,
+      accuracy: 0,
    },
    currentMode: undefined,
 }

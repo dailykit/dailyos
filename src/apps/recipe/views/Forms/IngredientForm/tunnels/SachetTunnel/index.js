@@ -1,5 +1,13 @@
 import React from 'react'
-import { Text, TextButton, Input, Toggle, Checkbox } from '@dailykit/ui'
+import {
+   Text,
+   TextButton,
+   Input,
+   Toggle,
+   Checkbox,
+   RadioGroup,
+   Select,
+} from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
@@ -24,6 +32,12 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
    const [quantity, setQuantity] = React.useState('')
    const [unit, setUnit] = React.useState(units[0]?.title || '')
    const [tracking, setTracking] = React.useState(true)
+
+   const options = [
+      { id: 1, title: 'Atleast 80%', value: '80' },
+      { id: 2, title: 'Atleast 95%', value: '95' },
+      { id: 3, title: "Don't Weigh", value: '0' },
+   ]
 
    // Handlers
    const close = () => {
@@ -53,6 +67,13 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
             value: val,
          },
       })
+   }
+   const selectPackaging = type => {
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: type,
+      })
+      openTunnel(5)
    }
 
    return (
@@ -138,8 +159,46 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                      </td>
                      <td>{ingredientState.realTime.station?.title || '-'}</td>
                      <td>{ingredientState.realTime.bulkItem?.title || '-'}</td>
-                     <td></td>
-                     <td></td>
+                     <td>
+                        {ingredientState.realTime.bulkItem ? (
+                           <RadioGroup
+                              options={options}
+                              active={3}
+                              onChange={option =>
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'realTime',
+                                       name: 'accuracy',
+                                       value: option.value,
+                                    },
+                                 })
+                              }
+                           />
+                        ) : (
+                           '-'
+                        )}
+                     </td>
+                     <td>
+                        {ingredientState.realTime.bulkItem ? (
+                           <Select
+                              option={ingredientState.realTime.packaging || []}
+                              addOption={() => selectPackaging('realTime')}
+                              removeOption={() =>
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'realTime',
+                                       name: 'packaging',
+                                       value: undefined,
+                                    },
+                                 })
+                              }
+                           />
+                        ) : (
+                           '-'
+                        )}
+                     </td>
                      <td></td>
                   </tr>
                   <tr>
@@ -172,8 +231,48 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                      <td>
                         {ingredientState.plannedLot.sachetItem?.title || '-'}
                      </td>
-                     <td></td>
-                     <td></td>
+                     <td>
+                        {ingredientState.plannedLot.sachetItem ? (
+                           <RadioGroup
+                              options={options}
+                              active={3}
+                              onChange={option =>
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'plannedLot',
+                                       name: 'accuracy',
+                                       value: option.value,
+                                    },
+                                 })
+                              }
+                           />
+                        ) : (
+                           '-'
+                        )}
+                     </td>
+                     <td>
+                        {ingredientState.plannedLot.sachetItem ? (
+                           <Select
+                              option={
+                                 ingredientState.plannedLot.packaging || []
+                              }
+                              addOption={() => selectPackaging('plannedLot')}
+                              removeOption={() =>
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'plannedLot',
+                                       name: 'packaging',
+                                       value: undefined,
+                                    },
+                                 })
+                              }
+                           />
+                        ) : (
+                           '-'
+                        )}
+                     </td>
                      <td></td>
                   </tr>
                </tbody>
