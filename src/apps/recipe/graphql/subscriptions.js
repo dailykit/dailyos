@@ -32,6 +32,43 @@ export const S_INGREDIENT = gql`
                tracking
                unit
                quantity
+               modeOfFulfillments {
+                  id
+                  accuracy
+                  station {
+                     id
+                     name
+                  }
+                  isLive
+                  priority
+                  labelTemplate {
+                     id
+                     name
+                  }
+                  packaging {
+                     id
+                     name
+                  }
+                  type
+                  bulkItem {
+                     id
+                     processingName
+                     supplierItem {
+                        name
+                     }
+                  }
+                  sachetItem {
+                     id
+                     unitSize
+                     unit
+                     bulkItem {
+                        processingName
+                        supplierItem {
+                           name
+                        }
+                     }
+                  }
+               }
             }
          }
          ingredientSachets {
@@ -110,6 +147,9 @@ export const S_BULK_ITEMS = gql`
       bulkItems {
          id
          processingName
+         supplierItem {
+            name
+         }
       }
    }
 `

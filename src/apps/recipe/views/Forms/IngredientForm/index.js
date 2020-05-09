@@ -112,7 +112,7 @@ const IngredientForm = () => {
          const updatedItems = data.subscriptionData.data.bulkItems.map(item => {
             return {
                id: item.id,
-               title: item.processingName,
+               title: item.supplierItem.name + ' ' + item.processingName,
             }
          })
          setItems({

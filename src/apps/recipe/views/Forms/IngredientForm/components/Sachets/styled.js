@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledSection = styled.div`
    display: grid;
    grid-template-columns: 250px 1fr;
-   grid-gap: 40px;
+   grid-gap: 10px;
 `
 
 export const StyledListing = styled.div`
