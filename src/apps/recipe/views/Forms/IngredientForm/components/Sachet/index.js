@@ -1,9 +1,9 @@
 import React from 'react'
-import { Text, IconButton, Checkbox } from '@dailykit/ui'
+import { Text, IconButton, Checkbox, ButtonTile } from '@dailykit/ui'
 
 import { TickIcon, CloseIcon, EditIcon } from '../../../../../assets/icons'
 
-import { Container, Flex, Grid } from '../styled'
+import { Container, Flex, Grid, ContainerAction } from '../styled'
 import { StyledTable } from './styled'
 
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -185,6 +185,26 @@ const Sachet = ({ state, openTunnel }) => {
                ))}
             </tbody>
          </StyledTable>
+         <Container top="32">
+            {sachet.defaultNutritionalValues ? (
+               <Container>
+                  <ContainerAction>
+                     <IconButton onClick={() => openTunnel(13)}>
+                        <EditIcon color="#00A7E1" />
+                     </IconButton>
+                  </ContainerAction>
+                  <Text as="p">
+                     Default Nutritional Values (view to be made)
+                  </Text>
+               </Container>
+            ) : (
+               <ButtonTile
+                  type="secondary"
+                  text="Add Default Nutritional Values"
+                  onClick={() => openTunnel(13)}
+               />
+            )}
+         </Container>
       </React.Fragment>
    )
 }

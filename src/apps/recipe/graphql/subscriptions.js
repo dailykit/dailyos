@@ -32,6 +32,7 @@ export const S_INGREDIENT = gql`
                tracking
                unit
                quantity
+               defaultNutritionalValues
                modeOfFulfillments {
                   id
                   accuracy

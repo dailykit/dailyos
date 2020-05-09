@@ -38,6 +38,7 @@ import {
    EditItemTunnel,
    EditPackagingTunnel,
    EditLabelTemplateTunnel,
+   NutritionTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 
@@ -297,6 +298,9 @@ const IngredientForm = () => {
                      closeTunnel={closeTunnel}
                      templates={templates}
                   />
+               </Tunnel>
+               <Tunnel layer={13}>
+                  <NutritionTunnel state={state} closeTunnel={closeTunnel} />
                </Tunnel>
             </Tunnels>
             <StyledHeader>
