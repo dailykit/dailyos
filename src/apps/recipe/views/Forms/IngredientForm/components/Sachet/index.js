@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, IconButton } from '@dailykit/ui'
+import { Text, IconButton, Checkbox } from '@dailykit/ui'
 
 import { TickIcon, CloseIcon, EditIcon } from '../../../../../assets/icons'
 
@@ -7,6 +7,9 @@ import { Container, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
 
 import { IngredientContext } from '../../../../../context/ingredient'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { UPDATE_MODE } from '../../../../../graphql'
 
 const Sachet = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -25,7 +28,33 @@ const Sachet = ({ state, openTunnel }) => {
       )
    }, [state])
 
+   // Mutation
+   const [updateMode] = useMutation(UPDATE_MODE, {
+      onCompleted: () => {
+         toast.success('Mode updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
    // Handlers
+   const setLive = (mode, val) => {
+      if (val) {
+         if (!(mode.station && (mode.bulkItem || mode.sachetItem))) {
+            return toast.error('Mode not configured!')
+         }
+      }
+      updateMode({
+         variables: {
+            id: mode.id,
+            set: {
+               isLive: val,
+            },
+         },
+      })
+   }
    const editMOF = mode => {
       ingredientDispatch({
          type: 'EDIT_MODE',
@@ -116,6 +145,10 @@ const Sachet = ({ state, openTunnel }) => {
                {sachet.modeOfFulfillments?.map(mode => (
                   <tr key={mode.id}>
                      <td>
+                        <Checkbox
+                           checked={mode.isLive}
+                           onChange={val => setLive(mode, val)}
+                        />
                         {mode.type === 'realTime' ? 'Real Time' : 'Planned Lot'}
                      </td>
                      <td>{mode.priority}</td>
