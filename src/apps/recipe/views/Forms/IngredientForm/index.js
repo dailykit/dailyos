@@ -22,8 +22,12 @@ import { Context } from '../../../context/tabs'
 import { toast } from 'react-toastify'
 
 import { Stats, Processings } from './components'
-import { ProcessingsTunnel, SachetTunnel } from './tunnels'
+import { ProcessingsTunnel, SachetTunnel, ItemTunnel } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
+import {
+   S_SUPPLIER_ITEMS,
+   S_SACHET_ITEMS,
+} from '../../../../online_store/graphql'
 
 const IngredientForm = () => {
    const { state: tabs, dispatch } = React.useContext(Context)
@@ -40,6 +44,10 @@ const IngredientForm = () => {
    const [processings, setProcessings] = React.useState([])
    const [units, setUnits] = React.useState([])
    const [stations, setStations] = React.useState([])
+   const [items, setItems] = React.useState({
+      realTime: [],
+      plannedLot: [],
+   })
 
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
@@ -85,6 +93,52 @@ const IngredientForm = () => {
             title: station.name,
          }))
          setStations([...stations])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   // Subscriptions for fetching items
+   useSubscription(S_SUPPLIER_ITEMS, {
+      onSubscriptionData: data => {
+         const updatedItems = data.subscriptionData.data.supplierItems.map(
+            item => {
+               return {
+                  id: item.id,
+                  title: item.name + ' - ' + item.unitSize + ' ' + item.unit,
+               }
+            }
+         )
+         setItems({
+            ...items,
+            plannedLot: updatedItems,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(S_SACHET_ITEMS, {
+      onSubscriptionData: data => {
+         const updatedItems = data.subscriptionData.data.sachetItems.map(
+            item => {
+               return {
+                  id: item.id,
+                  title:
+                     item.bulkItem.supplierItem.name +
+                     ' ' +
+                     item.bulkItem.processingName +
+                     ' - ' +
+                     item.unitSize +
+                     ' ' +
+                     item.unit,
+               }
+            }
+         )
+         setItems({
+            ...items,
+            realTime: updatedItems,
+         })
       },
       onError: error => {
          console.log(error)
@@ -146,6 +200,12 @@ const IngredientForm = () => {
                      openTunnel={openTunnel}
                      closeTunnel={closeTunnel}
                      stations={stations}
+                  />
+               </Tunnel>
+               <Tunnel layer={4}>
+                  <ItemTunnel
+                     closeTunnel={closeTunnel}
+                     items={items[ingredientState.currentMode]}
                   />
                </Tunnel>
             </Tunnels>

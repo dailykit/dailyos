@@ -136,8 +136,8 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                            />
                         </StyledInputWrapper>
                      </td>
-                     <td></td>
-                     <td></td>
+                     <td>{ingredientState.realTime.station?.title || '-'}</td>
+                     <td>{ingredientState.realTime.bulkItem?.title || '-'}</td>
                      <td></td>
                      <td></td>
                      <td></td>
@@ -168,8 +168,10 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                            />
                         </StyledInputWrapper>
                      </td>
-                     <td></td>
-                     <td></td>
+                     <td>{ingredientState.plannedLot.station?.title || '-'}</td>
+                     <td>
+                        {ingredientState.plannedLot.sachetItem?.title || '-'}
+                     </td>
                      <td></td>
                      <td></td>
                      <td></td>

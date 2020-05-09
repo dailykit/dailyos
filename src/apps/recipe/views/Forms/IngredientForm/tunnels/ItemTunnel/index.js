@@ -1,13 +1,10 @@
 import React from 'react'
 import {
    Text,
-   TextButton,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   Tag,
-   TagGroup,
    useSingleList,
 } from '@dailykit/ui'
 
@@ -17,14 +14,14 @@ import { TunnelBody, TunnelHeader } from '../styled'
 
 import { IngredientContext } from '../../../../../context/ingredient'
 
-const StationTunnel = ({ openTunnel, closeTunnel, stations }) => {
+const ItemTunnel = ({ openTunnel, closeTunnel, items }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
 
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList(stations)
+   const [list, current, selectOption] = useSingleList(items)
 
    React.useEffect(() => {
       if (Object.keys(current).length) {
@@ -32,11 +29,15 @@ const StationTunnel = ({ openTunnel, closeTunnel, stations }) => {
             type: 'MODE',
             payload: {
                mode: ingredientState.currentMode,
-               name: 'station',
+               name:
+                  ingredientState.currentMode === 'realTime'
+                     ? 'bulkItem'
+                     : 'sachetItem',
                value: current,
             },
          })
-         openTunnel(4)
+         closeTunnel(4)
+         closeTunnel(3)
       }
    }, [current])
 
@@ -44,10 +45,10 @@ const StationTunnel = ({ openTunnel, closeTunnel, stations }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => closeTunnel(3)}>
+               <span onClick={() => closeTunnel(4)}>
                   <CloseIcon color="#888D9D" size="20" />
                </span>
-               <Text as="title">Select Station</Text>
+               <Text as="title">Select Item</Text>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -81,4 +82,4 @@ const StationTunnel = ({ openTunnel, closeTunnel, stations }) => {
    )
 }
 
-export default StationTunnel
+export default ItemTunnel
