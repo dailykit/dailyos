@@ -8,7 +8,7 @@ import { StyledTable } from './styled'
 
 import { IngredientContext } from '../../../../../context/ingredient'
 
-const Sachet = ({ state }) => {
+const Sachet = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -37,7 +37,7 @@ const Sachet = ({ state }) => {
                      <Text as="subtitle">Active:</Text>{' '}
                      <Text as="title">{sachet.liveMOF || 'NA'}</Text>
                   </Flex>
-                  <IconButton>
+                  <IconButton onClick={() => openTunnel(7)}>
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                </Flex>

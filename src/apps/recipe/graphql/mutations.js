@@ -61,6 +61,19 @@ export const CREATE_SACHET = gql`
    }
 `
 
+export const UPDATE_SACHET = gql`
+   mutation UpdateSachet(
+      $id: Int!
+      $set: ingredient_ingredientSachet_set_input
+   ) {
+      updateIngredientSachet(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const DELETE_SACHET = gql`
    mutation DeleteSachet(
       $ingredientId: Int!

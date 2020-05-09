@@ -32,6 +32,7 @@ import {
    ItemTunnel,
    PackagingTunnel,
    LabelTemplateTunnel,
+   EditSachetTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 
@@ -252,6 +253,13 @@ const IngredientForm = () => {
                   <LabelTemplateTunnel
                      closeTunnel={closeTunnel}
                      templates={templates}
+                  />
+               </Tunnel>
+               <Tunnel layer={7}>
+                  <EditSachetTunnel
+                     state={state}
+                     closeTunnel={closeTunnel}
+                     units={units}
                   />
                </Tunnel>
             </Tunnels>
