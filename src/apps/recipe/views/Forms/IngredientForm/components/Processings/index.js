@@ -15,11 +15,44 @@ import {
 import { IngredientContext } from '../../../../../context/ingredient'
 
 import { Sachets } from '../'
+import { useMutation } from '@apollo/react-hooks'
+import { DELETE_PROCESSING } from '../../../../../graphql'
+import { toast } from 'react-toastify'
 
 const Processings = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
+
+   // Mutation
+   const [deleteProcessing] = useMutation(DELETE_PROCESSING, {
+      onCompleted: () => {
+         toast.success('Processing deleted!')
+         ingredientDispatch({
+            type: 'PROCESSING_INDEX',
+            payload: 0,
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handler
+   const remove = processing => {
+      if (
+         window.confirm(
+            `Do you want to delete processing - ${processing.processingName}?`
+         )
+      ) {
+         deleteProcessing({
+            variables: {
+               id: processing.id,
+            },
+         })
+      }
+   }
 
    return (
       <Container top="16" paddingX="32">
@@ -46,7 +79,7 @@ const Processings = ({ state, openTunnel }) => {
                         }
                      >
                         <Actions active={ingredientState.processingIndex === i}>
-                           <span>
+                           <span onClick={() => remove(processing)}>
                               <DeleteIcon />
                            </span>
                         </Actions>

@@ -35,13 +35,8 @@ export const CREATE_PROCESSINGS = gql`
 `
 
 export const DELETE_PROCESSING = gql`
-   mutation DeleteProcessing($ingredientId: Int!, $processingId: Int!) {
-      deleteIngredientProcessing(
-         where: {
-            id: { _eq: $processingId }
-            ingredientId: { _eq: $ingredientId }
-         }
-      ) {
+   mutation DeleteProcessing($id: Int!) {
+      deleteIngredientProcessing(where: { id: { _eq: $id } }) {
          returning {
             id
          }
