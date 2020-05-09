@@ -18,6 +18,62 @@ const Sachet = ({ state, openTunnel }) => {
          .ingredientSachets[ingredientState.sachetIndex]
    )
 
+   React.useEffect(() => {
+      setSachet(
+         state.ingredientProcessings[ingredientState.processingIndex]
+            .ingredientSachets[ingredientState.sachetIndex]
+      )
+   }, [state])
+
+   // Handlers
+   const editMOF = mode => {
+      ingredientDispatch({
+         type: 'EDIT_MODE',
+         payload: {
+            ...mode,
+            packaging: mode.packaging
+               ? {
+                    ...mode.packaging,
+                    title: mode.packaging.name,
+                 }
+               : null,
+            labelTemplate: mode.labelTemplate
+               ? {
+                    ...mode.labelTemplate,
+                    title: mode.labelTemplate.name,
+                 }
+               : null,
+            bulkItem: mode.bulkItem
+               ? {
+                    ...mode.bulkItem,
+                    title:
+                       mode.bulkItem.supplierItem.name +
+                       ' ' +
+                       mode.bulkItem.processingName,
+                 }
+               : null,
+            sachetItem: mode.sachetItem
+               ? {
+                    ...mode.sachetItem,
+                    title:
+                       mode.sachetItem.bulkItem.supplierItem.name +
+                       ' ' +
+                       mode.sachetItem.bulkItem.processingName +
+                       ' ' +
+                       mode.sachetItem.unitSize +
+                       ' ' +
+                       mode.sachetItem.unit,
+                 }
+               : null,
+         },
+      })
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: mode.type,
+      })
+      openTunnel(8)
+   }
+
    return (
       <React.Fragment>
          <Container bottom="32">
@@ -53,6 +109,7 @@ const Sachet = ({ state, openTunnel }) => {
                   <th>Accuracy</th>
                   <th>Packaging</th>
                   <th>Label</th>
+                  <th></th>
                </tr>
             </thead>
             <tbody>
@@ -86,6 +143,11 @@ const Sachet = ({ state, openTunnel }) => {
                      </td>
                      <td>{mode.packaging?.name || '-'}</td>
                      <td>{mode.labelTemplate?.title || '-'}</td>
+                     <td>
+                        <span onClick={() => editMOF(mode)}>
+                           <EditIcon color="#00A7E1" />
+                        </span>
+                     </td>
                   </tr>
                ))}
             </tbody>

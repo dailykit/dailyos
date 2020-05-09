@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledSection = styled.div`
    display: grid;
    grid-template-columns: 250px 1fr;
-   grid-gap: 10px;
+   grid-gap: 32px;
 `
 
 export const StyledListing = styled.div`
@@ -13,9 +13,8 @@ export const StyledListing = styled.div`
 
 export const StyledDisplay = styled.div`
    background: #fff;
-   padding: ${props =>
-      props.contains === 'sachets' ? '0px 28px 28px 0px' : '32px 28px'};
-   margin-top: ${props => (props.contains === 'sachets' ? '16px' : '0')};
+   padding: 0px 28px 28px 0px;
+   margin-top: 0;
 `
 
 export const StyledListingHeader = styled.div`

@@ -33,6 +33,11 @@ import {
    PackagingTunnel,
    LabelTemplateTunnel,
    EditSachetTunnel,
+   EditModeTunnel,
+   EditStationTunnel,
+   EditItemTunnel,
+   EditPackagingTunnel,
+   EditLabelTemplateTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 
@@ -260,6 +265,37 @@ const IngredientForm = () => {
                      state={state}
                      closeTunnel={closeTunnel}
                      units={units}
+                  />
+               </Tunnel>
+               <Tunnel layer={8} size="lg">
+                  <EditModeTunnel
+                     state={state}
+                     closeTunnel={closeTunnel}
+                     openTunnel={openTunnel}
+                  />
+               </Tunnel>
+               <Tunnel layer={9}>
+                  <EditStationTunnel
+                     closeTunnel={closeTunnel}
+                     stations={stations}
+                  />
+               </Tunnel>
+               <Tunnel laayer={10}>
+                  <EditItemTunnel
+                     closeTunnel={closeTunnel}
+                     items={items[ingredientState.currentMode]}
+                  />
+               </Tunnel>
+               <Tunnel layer={11}>
+                  <EditPackagingTunnel
+                     closeTunnel={closeTunnel}
+                     packagings={packagings}
+                  />
+               </Tunnel>
+               <Tunnel layer={12}>
+                  <EditLabelTemplateTunnel
+                     closeTunnel={closeTunnel}
+                     templates={templates}
                   />
                </Tunnel>
             </Tunnels>

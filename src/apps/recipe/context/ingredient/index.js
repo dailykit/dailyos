@@ -30,6 +30,7 @@ export const state = {
       accuracy: 0,
    },
    currentMode: undefined,
+   editMode: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -90,6 +91,12 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             currentMode: payload,
+         }
+      }
+      case 'EDIT_MODE': {
+         return {
+            ...state,
+            editMode: payload,
          }
       }
       default:

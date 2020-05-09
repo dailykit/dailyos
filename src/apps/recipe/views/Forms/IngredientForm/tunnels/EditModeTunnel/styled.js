@@ -39,10 +39,6 @@ export const StyledTable = styled.table`
             align-items: center;
             height: inherit;
 
-            span {
-               cursor: pointer;
-            }
-
             &:first-child {
                display: flex;
                position: relative;

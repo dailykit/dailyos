@@ -74,6 +74,17 @@ export const UPDATE_SACHET = gql`
    }
 `
 
+export const UPDATE_MODE = gql`
+   mutation UpdateMode(
+      $id: Int!
+      $set: ingredient_modeOfFulfillment_set_input
+   ) {
+      updateModeOfFulfillment(pk_columns: { id: $id }, _set: $set) {
+         id
+      }
+   }
+`
+
 export const DELETE_SACHET = gql`
    mutation DeleteSachet(
       $ingredientId: Int!
