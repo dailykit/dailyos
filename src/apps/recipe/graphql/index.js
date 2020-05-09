@@ -33,6 +33,8 @@ import {
    S_INGREDIENT,
    S_RECIPES,
    S_RECIPE,
+   S_BULK_ITEMS,
+   S_SACHET_ITEMS,
 } from './subscriptions'
 
 export {
@@ -59,6 +61,8 @@ export {
    S_RECIPES,
    RECIPE,
    S_RECIPE,
+   S_BULK_ITEMS,
+   S_SACHET_ITEMS,
    CREATE_SIMPLE_RECIPE,
    CREATE_SIMPLE_RECIPE_YIELDS,
    DELETE_SIMPLE_RECIPE_YIELD,

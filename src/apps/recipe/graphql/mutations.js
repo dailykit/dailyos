@@ -51,35 +51,11 @@ export const DELETE_PROCESSING = gql`
 
 export const CREATE_SACHET = gql`
    mutation CreateSachet(
-      $sachet: [ingredient_ingredientSachet_insert_input!]!
+      $objects: [ingredient_ingredientSachet_insert_input!]!
    ) {
-      createIngredientSachet(objects: $sachet) {
+      createIngredientSachet(objects: $objects) {
          returning {
             id
-            tracking
-            quantity
-            unit
-            modeOfFulfillments {
-               id
-               type
-               isLive
-               accuracy
-               station {
-                  name
-               }
-               sachetItem {
-                  unitSize
-               }
-               bulkItem {
-                  processingName
-               }
-               labelTemplate {
-                  name
-               }
-               packaging {
-                  name
-               }
-            }
          }
       }
    }

@@ -56,6 +56,36 @@ export const reducers = (state, { type, payload }) => {
             },
          }
       }
+      case 'CLEAN': {
+         return {
+            ...state,
+            realTime: {
+               isPublished: true,
+               isLive: false,
+               station: undefined,
+               labelTemplate: undefined,
+               bulkItem: undefined,
+               sachetItem: undefined,
+               station: undefined,
+               packaging: undefined,
+               priority: 1,
+               accuracy: 0,
+            },
+            plannedLot: {
+               isPublished: true,
+               isLive: false,
+               station: undefined,
+               labelTemplate: undefined,
+               bulkItem: undefined,
+               sachetItem: undefined,
+               station: undefined,
+               packaging: undefined,
+               priority: 2,
+               accuracy: 0,
+            },
+            currentMode: undefined,
+         }
+      }
       case 'CURRENT_MODE': {
          return {
             ...state,

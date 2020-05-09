@@ -21,6 +21,9 @@ import {
 } from '../styled'
 
 import { StyledTable } from './styled'
+import { CREATE_SACHET } from '../../../../../graphql'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -40,17 +43,74 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
    ]
 
    // Mutations
+   const [createSachet] = useMutation(CREATE_SACHET, {
+      onCompleted: () => {
+         toast.success('Sachet added!')
+         close()
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+         setBusy(false)
+      },
+   })
 
    // Handlers
    const close = () => {
-      // clear sachet state
+      ingredientDispatch({
+         type: 'CLEAN',
+      })
       closeTunnel(2)
    }
    const add = () => {
       if (busy) return
       setBusy(true)
-      console.log(ingredientState.realTime)
-      console.log(ingredientState.plannedLot)
+      console.log(ingredientState.realTime.bulkItem)
+      console.log(ingredientState.plannedLot.sachetItem)
+      const object = {
+         ingredientId: state.id,
+         ingredientProcessingId:
+            state.ingredientProcessings[ingredientState.processingIndex].id,
+         quantity,
+         unit,
+         tracking,
+         modeOfFulfillments: {
+            data: [
+               {
+                  type: 'realTime',
+                  stationId: ingredientState.realTime.station?.id || null,
+                  isPublished: ingredientState.realTime.isPublished,
+                  isLive: ingredientState.realTime.isLive,
+                  priority: parseInt(ingredientState.realTime.priority),
+                  bulkItemId: ingredientState.realTime.bulkItem?.id || null,
+                  sachetItemId: null,
+                  accuracy: ingredientState.realTime.accuracy,
+                  packagingId: ingredientState.realTime.packaging?.id || null,
+                  labelTemplateId:
+                     ingredientState.realTime.labelTemplate?.id || null,
+               },
+               {
+                  type: 'plannedLot',
+                  stationId: ingredientState.plannedLot.station?.id || null,
+                  isPublished: ingredientState.plannedLot.isPublished,
+                  isLive: ingredientState.plannedLot.isLive,
+                  priority: parseInt(ingredientState.plannedLot.priority),
+                  bulkItemId: null,
+                  sachetItemId:
+                     ingredientState.plannedLot.sachetItem?.id || null,
+                  accuracy: ingredientState.plannedLot.accuracy,
+                  packagingId: ingredientState.plannedLot.packaging?.id || null,
+                  labelTemplateId:
+                     ingredientState.plannedLot.labelTemplate?.id || null,
+               },
+            ],
+         },
+      }
+      createSachet({
+         variables: {
+            objects: [object],
+         },
+      })
    }
    const propagate = (type, val) => {
       if (
@@ -91,7 +151,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => closeTunnel(2)}>
+               <span onClick={close}>
                   <CloseIcon color="#888D9D" size="20" />
                </span>
                <Text as="title">Add Sachet</Text>

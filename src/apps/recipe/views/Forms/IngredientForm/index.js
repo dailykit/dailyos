@@ -12,6 +12,8 @@ import {
    FETCH_STATIONS,
    FETCH_PACKAGINGS,
    FETCH_LABEL_TEMPLATES,
+   S_BULK_ITEMS,
+   S_SACHET_ITEMS,
 } from '../../../graphql'
 
 import {
@@ -32,10 +34,6 @@ import {
    LabelTemplateTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
-import {
-   S_SUPPLIER_ITEMS,
-   S_SACHET_ITEMS,
-} from '../../../../online_store/graphql'
 
 const IngredientForm = () => {
    const { state: tabs, dispatch } = React.useContext(Context)
@@ -109,19 +107,17 @@ const IngredientForm = () => {
       },
    })
    // Subscriptions for fetching items
-   useSubscription(S_SUPPLIER_ITEMS, {
+   useSubscription(S_BULK_ITEMS, {
       onSubscriptionData: data => {
-         const updatedItems = data.subscriptionData.data.supplierItems.map(
-            item => {
-               return {
-                  id: item.id,
-                  title: item.name + ' - ' + item.unitSize + ' ' + item.unit,
-               }
+         const updatedItems = data.subscriptionData.data.bulkItems.map(item => {
+            return {
+               id: item.id,
+               title: item.processingName,
             }
-         )
+         })
          setItems({
             ...items,
-            plannedLot: updatedItems,
+            realTime: updatedItems,
          })
       },
       onError: error => {
@@ -147,7 +143,7 @@ const IngredientForm = () => {
          )
          setItems({
             ...items,
-            realTime: updatedItems,
+            plannedLot: updatedItems,
          })
       },
       onError: error => {
