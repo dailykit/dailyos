@@ -14,11 +14,46 @@ import {
 import { IngredientContext } from '../../../../../context/ingredient'
 
 import { Sachet } from '../'
+import { DELETE_SACHET } from '../../../../../graphql'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
 
 const Sachets = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
+
+   // Mutation
+   const [deleteSachet] = useMutation(DELETE_SACHET, {
+      onCompleted: () => {
+         toast.success('Sachet deleted!')
+         ingredientDispatch({
+            type: 'SACHET_INDEX',
+            payload: 0,
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handler
+   const remove = sachet => {
+      if (
+         window.confirm(
+            `Do you want to delete sachet - ${
+               sachet.quantity + ' ' + sachet.unit
+            }?`
+         )
+      ) {
+         deleteSachet({
+            variables: {
+               id: sachet.id,
+            },
+         })
+      }
+   }
 
    return (
       <React.Fragment>
@@ -54,7 +89,7 @@ const Sachets = ({ state, openTunnel }) => {
                         }
                      >
                         <Actions active={ingredientState.sachetIndex === i}>
-                           <span>
+                           <span onClick={() => remove(sachet)}>
                               <DeleteIcon />
                            </span>
                         </Actions>

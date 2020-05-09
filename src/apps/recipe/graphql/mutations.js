@@ -81,18 +81,8 @@ export const UPDATE_MODE = gql`
 `
 
 export const DELETE_SACHET = gql`
-   mutation DeleteSachet(
-      $ingredientId: Int!
-      $processingId: Int!
-      $sachetId: Int!
-   ) {
-      deleteIngredientSachet(
-         where: {
-            id: { _eq: $sachetId }
-            ingredientId: { _eq: $ingredientId }
-            ingredientProcessingId: { _eq: $processingId }
-         }
-      ) {
+   mutation DeleteSachet($id: Int!) {
+      deleteIngredientSachet(where: { id: { _eq: $id } }) {
          returning {
             id
          }

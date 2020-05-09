@@ -26,7 +26,7 @@ const Sachet = ({ state, openTunnel }) => {
          state.ingredientProcessings[ingredientState.processingIndex]
             .ingredientSachets[ingredientState.sachetIndex]
       )
-   }, [state])
+   }, [state, ingredientState.sachetIndex])
 
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
@@ -152,7 +152,7 @@ const Sachet = ({ state, openTunnel }) => {
                         {mode.type === 'realTime' ? 'Real Time' : 'Planned Lot'}
                      </td>
                      <td>{mode.priority}</td>
-                     <td>{mode.station.name}</td>
+                     <td>{mode.station?.name || ''}</td>
                      <td>
                         {mode.bulkItem
                            ? mode.bulkItem.supplierItem.name +
