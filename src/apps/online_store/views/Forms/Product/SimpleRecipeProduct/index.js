@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {
    Input,
@@ -8,8 +8,10 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Loader,
 } from '@dailykit/ui'
 
+import { Context } from '../../../../context/tabs'
 import {
    state as initialState,
    SimpleProductContext,
@@ -34,16 +36,27 @@ import {
    INVENTORY_PRODUCTS,
    CREATE_SIMPLE_RECIPE_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   S_SIMPLE_RECIPE_PRODUCT,
+   UPDATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { Tabs } from '../../../../components'
 
 const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
 
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()
-   const [state, dispatch] = React.useReducer(reducers, initialState)
+
+   const { state: tabs, dispatch } = React.useContext(Context)
+   const [productState, productDispatch] = React.useReducer(
+      reducers,
+      initialState
+   )
+
    const [title, setTitle] = React.useState('')
+   const [state, setState] = React.useState({})
+
    const [recipes, setRecipes] = React.useState([])
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
       { id: 1, title: 'Beverages' },
@@ -54,48 +67,9 @@ export default function SimpleRecipeProduct() {
       inventory: [],
       simple: [],
    })
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   useQuery(RECIPES, {
-      onCompleted: data => {
-         const { simpleRecipes } = data
-         const updatedRecipes = simpleRecipes.map(item => {
-            item.title = item.name
-            return item
-         })
-         setRecipes(updatedRecipes)
-      },
-   })
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            simple: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            inventory: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
    // useQuery(ACCOMPANIMENT_TYPES, {
    //    onCompleted: data => {
    //       const { accompanimentTypes } = data
@@ -106,76 +80,114 @@ export default function SimpleRecipeProduct() {
    //       setAccompanimentTypes(updatedAccompanimentTypes)
    //    },
    // })
-   const [createSimpleRecipeProductOptions] = useMutation(
-      CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
-      {
-         onCompleted: data => {
-            console.log('Saved!')
-            console.log(data.createSimpleRecipeProductOptions)
-            toast.success('Product added!')
-         },
-      }
-   )
-   const [createSimpleRecipeProduct] = useMutation(
-      CREATE_SIMPLE_RECIPE_PRODUCT,
-      {
-         onCompleted: data => {
-            const productId = data.createSimpleRecipeProduct.returning[0].id
-            saveOptions(productId)
-         },
-      }
-   )
 
-   const saveOptions = productId => {
-      const objects = Object.entries(state.options).map(([type, options]) => {
-         return options.map(value => {
-            return {
-               isActive: value.isActive,
-               price: [value.price],
-               simpleRecipeYieldId: value.id,
-               simpleRecipeProductId: productId,
-               type,
-            }
+   // Subscription
+   const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
+      variables: {
+         id: tabs.current.id,
+      },
+      onSubscriptionData: data => {
+         console.log(data)
+         setState(data.subscriptionData.data.simpleRecipeProduct)
+         setTitle(data.subscriptionData.data.simpleRecipeProduct.name)
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   // Subscription for fetching recipes
+   useSubscription(RECIPES, {
+      onSubscriptionData: data => {
+         const { simpleRecipes } = data.subscriptionData.data
+         const updatedRecipes = simpleRecipes.map(item => {
+            item.title = item.name
+            return item
          })
-      })
-      createSimpleRecipeProductOptions({
-         variables: {
-            objects: objects.flat(),
-         },
-      })
-   }
+         console.log(updatedRecipes)
+         setRecipes(updatedRecipes)
+      },
+   })
 
-   const save = () => {
-      console.log(state)
-      const object = {
-         accompaniments: state.accompaniments,
-         // default: {
-         //    type: state.default.type,
-         //    id: state.default.value.id,
-         // },
-         description: state.description,
-         name: state.title,
-         simpleRecipeId: state.recipe.id,
-         tags: state.tags,
-      }
-      createSimpleRecipeProduct({
-         variables: {
-            objects: [object],
+   // Subscription for fetching products
+   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(INVENTORY_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   // Mutation
+   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
          },
-      })
-   }
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { oldTitle: tabs.current.title, title },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+      },
+   })
+
+   if (loading) return <Loader />
 
    return (
-      <SimpleProductContext.Provider value={{ state, dispatch }}>
+      <SimpleProductContext.Provider value={{ productState, productDispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <DescriptionTunnel close={closeTunnel} />
+               <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <RecipeTunnel close={closeTunnel} recipes={recipes} />
+               <RecipeTunnel
+                  state={state}
+                  close={closeTunnel}
+                  recipes={recipes}
+               />
             </Tunnel>
             <Tunnel layer={3}>
                <AccompanimentTypeTunnel
+                  state={state}
                   close={closeTunnel}
                   accompanimentTypes={accompanimentTypes}
                />
@@ -185,54 +197,37 @@ export default function SimpleRecipeProduct() {
             </Tunnel>
             <Tunnel layer={5}>
                <ProductsTunnel
+                  state={state}
                   close={closeTunnel}
-                  products={products[state.meta.productsType]}
+                  products={products[productState.meta.productsType]}
                />
             </Tunnel>
             <Tunnel layer={6}>
-               <PriceConfigurationTunnel close={closeTunnel} />
+               <PriceConfigurationTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
                <div>
                   <Input
-                     label={t(address.concat("product name"))}
+                     label={t(address.concat('product name'))}
                      type="text"
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={e =>
-                        dispatch({
-                           type: 'TITLE',
-                           payload: { value: e.target.value },
-                        })
-                     }
+                     onBlur={updateProduct}
                   />
-               </div>
-               <div>
-                  <TextButton
-                     type="ghost"
-                     style={{ margin: '0px 10px' }}
-                     onClick={save}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-
-                  <TextButton type="solid" style={{ margin: '0px 10px' }}>
-                     {t(address.concat('publish'))}
-                  </TextButton>
                </div>
             </StyledHeader>
             <StyledBody>
                <StyledMeta>
                   <div>
-                     <Description openTunnel={openTunnel} />
+                     <Description state={state} openTunnel={openTunnel} />
                   </div>
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               <Recipe openTunnel={openTunnel} />
+               <Recipe state={state} openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </SimpleProductContext.Provider>

@@ -1,5 +1,4 @@
 import React from 'react'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import { TagGroup, ButtonTile, Tag, IconButton } from '@dailykit/ui'
 
 import { StyledRow, StyledContainer, StyledAction } from './styled'
@@ -7,15 +6,15 @@ import { EditIcon } from '../../../../../../assets/icons'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.components.description.'
+const address =
+   'apps.online_store.views.forms.product.simplerecipeproduct.components.description.'
 
-const Description = ({ openTunnel }) => {
+const Description = ({ state, openTunnel }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(SimpleProductContext)
 
    return (
       <React.Fragment>
-         {state.description || state.tags.length ? (
+         {state.description || state.tags?.length ? (
             <StyledContainer>
                <StyledAction>
                   <IconButton type="outline" onClick={() => openTunnel(1)}>
@@ -24,8 +23,8 @@ const Description = ({ openTunnel }) => {
                </StyledAction>
                <StyledRow>
                   <TagGroup>
-                     {state.tags.map(tag => (
-                        <Tag>{tag}</Tag>
+                     {state.tags.map((tag, i) => (
+                        <Tag key={i}>{tag}</Tag>
                      ))}
                   </TagGroup>
                </StyledRow>
@@ -34,13 +33,13 @@ const Description = ({ openTunnel }) => {
                </StyledRow>
             </StyledContainer>
          ) : (
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text={t(address.concat("add description"))}
-                  onClick={() => openTunnel(1)}
-               />
-            )}
+            <ButtonTile
+               type="primary"
+               size="sm"
+               text={t(address.concat('add description'))}
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </React.Fragment>
    )
 }

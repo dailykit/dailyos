@@ -1,35 +1,54 @@
 import React from 'react'
 
-import { TextButton, Input } from '@dailykit/ui'
+import { TextButton, Input, Text } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.descriptiontunnel.'
+import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 
-export default function DescriptionTunnel({ close }) {
+const address =
+   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.descriptiontunnel.'
+
+const DescriptionTunnel = ({ state, close }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(SimpleProductContext)
 
+   const [busy, setBusy] = React.useState(false)
    const [tags, setTags] = React.useState(
-      state.tags.length ? state.tags.join(', ') : ''
+      state.tags?.length ? state.tags.join(', ') : ''
    )
-   const [description, setDescription] = React.useState(state.description)
+   const [description, setDescription] = React.useState(state.description || '')
 
+   // Mutations
+   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            tags: tags.split(',').map(tag => tag.trim()),
+            description,
+         },
+      },
+      onCompleted: data => {
+         console.log(data)
+         toast.success('Updated!')
+         close(1)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+         setBusy(false)
+      },
+   })
+
+   // Handlers
    const save = () => {
-      const updatedTags = tags.split(',').map(tag => tag.trim())
-      dispatch({
-         type: 'TAGS',
-         payload: { value: updatedTags },
-      })
-      dispatch({
-         type: 'DESCRIPTION',
-         payload: { value: description },
-      })
-      close(1)
+      if (busy) return
+      setBusy(true)
+      updateProduct()
    }
 
    return (
@@ -39,11 +58,15 @@ export default function DescriptionTunnel({ close }) {
                <span onClick={() => close(1)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('add description and tags'))}</span>
+               <Text as="title">
+                  {t(address.concat('add description and tags'))}
+               </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -51,7 +74,7 @@ export default function DescriptionTunnel({ close }) {
             <StyledRow>
                <Input
                   type="text"
-                  label={t(address.concat("tags"))}
+                  label={t(address.concat('tags'))}
                   name="tags"
                   value={tags}
                   onChange={e => setTags(e.target.value)}
@@ -60,7 +83,7 @@ export default function DescriptionTunnel({ close }) {
             <StyledRow>
                <Input
                   type="textarea"
-                  label={t(address.concat("description"))}
+                  label={t(address.concat('description'))}
                   name="textarea"
                   rows="5"
                   value={description}
@@ -71,3 +94,5 @@ export default function DescriptionTunnel({ close }) {
       </React.Fragment>
    )
 }
+
+export default DescriptionTunnel

@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { useMutation } from '@apollo/react-hooks'
 import {
    TextButton,
    useSingleList,
@@ -7,56 +7,101 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
+   Text,
 } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody } from '../styled'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+
+import { toast } from 'react-toastify'
+
+import {
+   UPDATE_SIMPLE_RECIPE_PRODUCT,
+   CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+} from '../../../../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.recipetunnel.'
+const address =
+   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.recipetunnel.'
 
-export default function RecipeTunnel({ close, recipes }) {
+export default function RecipeTunnel({ state, close, recipes }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(SimpleProductContext)
+
+   const [busy, setBusy] = React.useState(false)
 
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(recipes)
 
-   const selectRecipe = recipe => {
-      selectOption('id', recipe.id)
-      dispatch({
-         type: 'RECIPE',
-         payload: { value: recipe },
-      })
-      const yields = recipe.simpleRecipeYields.map((el, i) => {
-         return {
-            ...el,
-            isActive: true,
-            price: {
-               value: 0,
-               discount: 0,
-               rule: '',
-            },
-         }
-      })
-      const options = {
-         mealKit: yields,
-         readyToEat: yields,
-      }
-      dispatch({
-         type: 'OPTIONS',
-         payload: { value: options },
-      })
-      dispatch({
-         type: 'DEFAULT',
-         payload: {
-            type: 'mealKit',
-            value: yields[0],
+   // 2
+
+   // Mutation
+   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            simpleRecipeId: current.id,
          },
-      })
-      close(2)
+      },
+      onCompleted: () => {
+         toast.success('Recipe added! Creating options...')
+         createOptions()
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+         setBusy(false)
+      },
+   })
+   const [createOptions] = useMutation(CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS, {
+      variables: {
+         objects: current.simpleRecipeYields?.flatMap(serving => {
+            return [
+               {
+                  simpleRecipeProductId: state.id,
+                  simpleRecipeYieldId: serving.id,
+                  type: 'mealKit',
+                  isActive: true,
+                  price: [
+                     {
+                        rule: '',
+                        value: '0',
+                        discount: '0',
+                     },
+                  ],
+               },
+               {
+                  simpleRecipeProductId: state.id,
+                  simpleRecipeYieldId: serving.id,
+                  type: 'readyToEat',
+                  isActive: true,
+                  price: [
+                     {
+                        rule: '',
+                        value: '0',
+                        discount: '0',
+                     },
+                  ],
+               },
+            ]
+         }),
+      },
+      onCompleted: () => {
+         toast.success('Options added!')
+         close(2)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error!')
+         setBusy(false)
+      },
+   })
+
+   // Handlers
+   const add = () => {
+      if (busy) return
+      setBusy(true)
+      updateProduct()
    }
 
    return (
@@ -66,7 +111,14 @@ export default function RecipeTunnel({ close, recipes }) {
                <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select a recipe'))}</span>
+               <Text as="title">{t(address.concat('select a recipe'))}</Text>
+            </div>
+            <div>
+               <TextButton type="solid" onClick={add}>
+                  {busy
+                     ? t(address.concat('adding'))
+                     : t(address.concat('add'))}
+               </TextButton>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -74,11 +126,13 @@ export default function RecipeTunnel({ close, recipes }) {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you’re looking for"))}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+               )}
                <ListOptions>
                   {list
                      .filter(option =>
@@ -90,7 +144,7 @@ export default function RecipeTunnel({ close, recipes }) {
                            key={option.id}
                            title={option.title}
                            isActive={option.id === current.id}
-                           onClick={() => selectRecipe(option)}
+                           onClick={() => selectOption('id', option.id)}
                         />
                      ))}
                </ListOptions>
