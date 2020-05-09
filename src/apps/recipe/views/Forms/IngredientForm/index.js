@@ -8,6 +8,8 @@ import {
    S_INGREDIENT,
    UPDATE_INGREDIENT,
    FETCH_PROCESSING_NAMES,
+   FETCH_UNITS,
+   FETCH_STATIONS,
 } from '../../../graphql'
 
 import {
@@ -20,7 +22,8 @@ import { Context } from '../../../context/tabs'
 import { toast } from 'react-toastify'
 
 import { Stats, Processings } from './components'
-import { ProcessingsTunnel } from './tunnels'
+import { ProcessingsTunnel, SachetTunnel } from './tunnels'
+import StationTunnel from './tunnels/StationTunnel'
 
 const IngredientForm = () => {
    const { state: tabs, dispatch } = React.useContext(Context)
@@ -35,6 +38,8 @@ const IngredientForm = () => {
    const [state, setState] = React.useState({})
 
    const [processings, setProcessings] = React.useState([])
+   const [units, setUnits] = React.useState([])
+   const [stations, setStations] = React.useState([])
 
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
@@ -56,6 +61,30 @@ const IngredientForm = () => {
             proc => ({ id: proc.id, title: proc.name })
          )
          setProcessings([...processings])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(FETCH_UNITS, {
+      onSubscriptionData: data => {
+         const units = data.subscriptionData.data.units.map(unit => ({
+            id: unit.id,
+            title: unit.name,
+         }))
+         setUnits([...units])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(FETCH_STATIONS, {
+      onSubscriptionData: data => {
+         const stations = data.subscriptionData.data.stations.map(station => ({
+            id: station.id,
+            title: station.name,
+         }))
+         setStations([...stations])
       },
       onError: error => {
          console.log(error)
@@ -102,6 +131,21 @@ const IngredientForm = () => {
                      state={state}
                      processings={processings}
                      closeTunnel={closeTunnel}
+                  />
+               </Tunnel>
+               <Tunnel layer={2} size="lg">
+                  <SachetTunnel
+                     state={state}
+                     openTunnel={openTunnel}
+                     closeTunnel={closeTunnel}
+                     units={units}
+                  />
+               </Tunnel>
+               <Tunnel layer={3}>
+                  <StationTunnel
+                     openTunnel={openTunnel}
+                     closeTunnel={closeTunnel}
+                     stations={stations}
                   />
                </Tunnel>
             </Tunnels>
