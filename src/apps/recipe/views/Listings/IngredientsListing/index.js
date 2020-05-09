@@ -40,6 +40,7 @@ import {
 import { CREATE_INGREDIENT, INGREDIENTS, S_INGREDIENTS } from '../../../graphql'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 const address = 'apps.recipe.views.listings.ingredientslisting.'
 
@@ -60,33 +61,17 @@ const IngredientsListing = () => {
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
-         if (data.createIngredient.returning?.length) {
-            addTab(
-               data.createIngredient.returning[0].name,
-               'ingredient',
-               data.createIngredient.returning[0].id
-            )
-         } else {
-            // Fire toast
-            console.log(data)
-         }
+         toast.success('Ingredient created!')
+         addTab(
+            data.createIngredient.returning[0].name,
+            'ingredient',
+            data.createIngredient.returning[0].id
+         )
       },
-      // update: (
-      //    cache,
-      //    {
-      //       data: {
-      //          createIngredient: { ingredient }
-      //       }
-      //    }
-      // ) => {
-      //    const { ingredients } = cache.readQuery({ query: INGREDIENTS })
-      //    cache.writeQuery({
-      //       query: INGREDIENTS,
-      //       data: {
-      //          ingredients: ingredients.concat([ingredient])
-      //       }
-      //    })
-      // }
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
    })
 
    // Effects
@@ -152,7 +137,16 @@ const IngredientsListing = () => {
                   {!loading &&
                      !error &&
                      ingredients.map(ingredient => (
-                        <TableRow key={ingredient.id}>
+                        <TableRow
+                           key={ingredient.id}
+                           onClick={() =>
+                              addTab(
+                                 ingredient.name,
+                                 'ingredient',
+                                 ingredient.id
+                              )
+                           }
+                        >
                            <TableCell> {ingredient.name} </TableCell>
                            <TableCell>
                               {ingredient.ingredientProcessings.length}
@@ -164,17 +158,6 @@ const IngredientsListing = () => {
                            </TableCell>
                            <TableCell>
                               <GridContainer>
-                                 <IconButton
-                                    onClick={() =>
-                                       addTab(
-                                          ingredient.name,
-                                          'ingredient',
-                                          ingredient.id
-                                       )
-                                    }
-                                 >
-                                    <EditIcon color="#28C1F6" />
-                                 </IconButton>
                                  <IconButton>
                                     <DeleteIcon color="#FF5A52" />
                                  </IconButton>
