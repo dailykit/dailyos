@@ -58,47 +58,11 @@ export default function CustomizableProduct() {
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
 
-   const [accompanimentTypes, setAccompanimentTypes] = React.useState([
-      { id: 1, title: 'Beverages' },
-      { id: 2, title: 'Salads' },
-      { id: 3, title: 'Sweets' },
-   ])
    const [products, setProducts] = React.useState({
       inventory: [],
       simple: [],
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            simple: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
-         })
-         setProducts({
-            ...products,
-            inventory: updatedProducts,
-         })
-      },
-      fetchPolicy: 'cache-and-network',
-   })
 
    // Subscription
    const { loading } = useSubscription(S_CUSTOMIZABLE_PRODUCT, {
@@ -113,6 +77,44 @@ export default function CustomizableProduct() {
       onError: error => {
          console.log(error)
          toast.error('Error')
+      },
+   })
+   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
+         setProducts({
+            ...products,
+            simple: updatedProducts,
+         })
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
+   useSubscription(INVENTORY_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
+         setProducts({
+            ...products,
+            inventory: updatedProducts,
+         })
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
