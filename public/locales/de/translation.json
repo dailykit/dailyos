@@ -656,13 +656,16 @@
                            "add products": "Add Products",
                            "make default": "Make Default",
                            "pricing": "Pricing",
+                           "price": "Price",
+                           "discounted price": "Discounted Price",
                            "accompaniments": "Accompaniments",
                            "labels": "Labels",
                            "servings": "Servings",
                            "options": "Options",
                            "discount": "Discount",
                            "meal kit": "Meal Kit",
-                           "ready to eat": "Ready to eat"
+                           "ready to eat": "Ready to eat",
+                           "accompanients are taken as per added on the selected product": "Accompanients are taken as per added on the selected product"
                         },
                         "products": {
                            "add products": "Add Products",
@@ -687,6 +690,7 @@
                            "simple recipe products": "Simple Recipe Products",
                            "to add": "To Add",
                            "save": "Save",
+                           "saving": "Saving...",
                            "type what you're looking for": "type what you're looking for..."
                         },
                         "itemtypetunnel": {
