@@ -1,48 +1,44 @@
 import React from 'react'
 
-import { TextButton, Input } from '@dailykit/ui'
+import { TextButton, Input, Text } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
 import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
-import { useMutation } from '@apollo/react-hooks'
 
-// graphql
-import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
+import { useTranslation, Trans } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
-import { useTranslation } from 'react-i18next'
+import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.tunnels.descriptiontunnel.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.tunnels.descriptiontunnel.'
 
-export default function DescriptionTunnel({ close }) {
+export default function DescriptionTunnel({ state, close }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(ComboProductContext)
 
    const [busy, setBusy] = React.useState(false)
-
    const [tags, setTags] = React.useState(
       state.tags?.length ? state.tags.join(', ') : ''
    )
    const [description, setDescription] = React.useState(state.description || '')
 
-   // Mutation
-   const [updateComboProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
-      onCompleted: data => {
-         const { tags, description } = data.updateComboProduct.returning[0]
-         dispatch({
-            type: 'TAGS',
-            payload: { value: tags },
-         })
-         dispatch({
-            type: 'DESCRIPTION',
-            payload: { value: description },
-         })
-         close(1)
+   // Mutations
+   const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            tags: tags.split(',').map(tag => tag.trim()),
+            description,
+         },
+      },
+      onCompleted: () => {
          toast.success('Updated!')
+         close(1)
       },
       onError: error => {
          console.log(error)
+         toast.error('Error!')
          setBusy(false)
       },
    })
@@ -51,16 +47,7 @@ export default function DescriptionTunnel({ close }) {
    const save = () => {
       if (busy) return
       setBusy(true)
-      const updatedTags = tags.split(',').map(tag => tag.trim())
-      updateComboProduct({
-         variables: {
-            where: { id: { _eq: state.id } },
-            set: {
-               tags: updatedTags,
-               description: description,
-            },
-         },
-      })
+      updateProduct()
    }
 
    return (
@@ -70,11 +57,15 @@ export default function DescriptionTunnel({ close }) {
                <span onClick={() => close(1)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('add description and tags'))}</span>
+               <Text as="title">
+                  {t(address.concat('add description and tags'))}
+               </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {busy ? t(address.concat('saving')) : t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -82,7 +73,7 @@ export default function DescriptionTunnel({ close }) {
             <StyledRow>
                <Input
                   type="text"
-                  label={t(address.concat("tags"))}
+                  label={t(address.concat('tags'))}
                   name="tags"
                   value={tags}
                   onChange={e => setTags(e.target.value)}
@@ -91,7 +82,7 @@ export default function DescriptionTunnel({ close }) {
             <StyledRow>
                <Input
                   type="textarea"
-                  label={t(address.concat("description"))}
+                  label={t(address.concat('description'))}
                   name="textarea"
                   rows="5"
                   value={description}

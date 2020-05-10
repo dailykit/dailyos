@@ -1,7 +1,14 @@
 import React from 'react'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Input, TextButton, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import {
+   Input,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   Loader,
+} from '@dailykit/ui'
 
 // context
 import {
@@ -143,6 +150,8 @@ export default function ComboProduct() {
       },
    })
 
+   if (loading) return <Loader />
+
    return (
       <ComboProductContext.Provider value={{ productState, productDispatch }}>
          <Tunnels tunnels={tunnels}>
@@ -188,7 +197,7 @@ export default function ComboProduct() {
             <StyledBody>
                <StyledMeta>
                   <div>
-                     {/* <Description state={state} openTunnel={openTunnel} /> */}
+                     <Description state={state} openTunnel={openTunnel} />
                   </div>
                   <div></div>
                </StyledMeta>

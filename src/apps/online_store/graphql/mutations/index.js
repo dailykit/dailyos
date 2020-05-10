@@ -197,14 +197,11 @@ export const CREATE_COMBO_PRODUCT = gql`
 //{ name: "" }
 export const UPDATE_COMBO_PRODUCT = gql`
    mutation UpdateComboProduct(
-      $where: onlineStore_comboProduct_bool_exp!
+      $id: Int!
       $set: onlineStore_comboProduct_set_input
    ) {
-      updateComboProduct(where: $where, _set: $set) {
+      updateComboProduct(where: { id: { _eq: $id } }, _set: $set) {
          returning {
-            description
-            name
-            tags
             id
          }
       }
