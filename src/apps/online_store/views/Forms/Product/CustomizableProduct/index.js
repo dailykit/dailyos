@@ -214,7 +214,7 @@ export default function CustomizableProduct() {
       >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               {/* <DescriptionTunnel close={closeTunnel} /> */}
+               <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
                {/* <ItemTypeTunnel close={closeTunnel} open={openTunnel} /> */}
@@ -257,7 +257,7 @@ export default function CustomizableProduct() {
             <StyledBody>
                <StyledMeta>
                   <div>
-                     {/* <Description state={state} openTunnel={openTunnel} /> */}
+                     <Description state={state} openTunnel={openTunnel} />
                   </div>
                   <div></div>
                </StyledMeta>
