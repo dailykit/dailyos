@@ -1,5 +1,5 @@
 import React from 'react'
-import { ButtonTile, Text, HelperText } from '@dailykit/ui'
+import { ButtonTile, Text, HelperText, useMultiList } from '@dailykit/ui'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
    StyledWrapper,
@@ -19,7 +19,10 @@ import { AddIcon, DeleteIcon } from '../../../../../../assets/icons'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
+import {
+   UPDATE_COMBO_PRODUCT_COMPONENT,
+   DELETE_COMBO_PRODUCT_COMPONENT,
+} from '../../../../../../graphql'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.components.items.'
@@ -116,6 +119,19 @@ const ItemsView = ({ state, openTunnel }) => {
          },
          onError: error => {
             console.log(error)
+            toast.error('Error')
+         },
+      }
+   )
+   const [deleteComboProductComponent] = useMutation(
+      DELETE_COMBO_PRODUCT_COMPONENT,
+      {
+         onCompleted: () => {
+            toast.success('Label removed!')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error')
          },
       }
    )
@@ -139,13 +155,31 @@ const ItemsView = ({ state, openTunnel }) => {
          })
       }
    }
+   const removeComponent = component => {
+      if (
+         window.confirm(
+            `Are you sure you want to remove label - ${component.label}?`
+         )
+      ) {
+         deleteComboProductComponent({
+            variables: {
+               id: component.id,
+            },
+         })
+      }
+   }
 
    return (
       <StyledLayout>
          <StyledListing>
             {state.comboProductComponents.map(component => (
                <StyledComboTile key={component.id}>
-                  <StyledLabel>{component.label}</StyledLabel>
+                  <StyledLabel>
+                     {component.label}{' '}
+                     <span onClick={() => removeComponent(component)}>
+                        <DeleteIcon color="#FF5A52" />
+                     </span>{' '}
+                  </StyledLabel>
                   {component.customizableProduct ||
                   component.inventoryProduct ||
                   component.simpleRecipeProduct ? (
@@ -164,7 +198,7 @@ const ItemsView = ({ state, openTunnel }) => {
                      </StyledListingTile>
                   ) : (
                      <ButtonTile
-                        type="primary"
+                        type="secondary"
                         size="sm"
                         text={t(address.concat('add product'))}
                         onClick={() => open(component.id)}

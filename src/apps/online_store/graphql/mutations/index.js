@@ -234,6 +234,16 @@ export const UPDATE_COMBO_PRODUCT_COMPONENT = gql`
    }
 `
 
+export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
+   mutation DeleteComboProductComponent($id: Int!) {
+      deleteComboProductComponent(where: { id: { _eq: $id } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_COLLECTION = gql`
    mutation CreateCollection(
       $objects: [onlineStore_menuCollection_insert_input!]!

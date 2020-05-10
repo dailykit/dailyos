@@ -132,11 +132,18 @@ export const StyledLabel = styled.h5`
    font-size: 14px;
    line-height: 16px;
    color: #888d9d;
+   margin-top: 8px;
+   margin-bottom: 4px;
+
+   span {
+      margin-left: 8px;
+      cursor: pointer;
+   }
 `
 
 export const StyledComboTile = styled.div`
-   display: grid;
-   grid-template-rows: 20px 1fr;
+   display: flex;
+   flex-direction: column;
    margin-bottom: 12px;
 `
 
