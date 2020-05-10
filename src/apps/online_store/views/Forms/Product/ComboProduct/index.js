@@ -129,7 +129,7 @@ export default function ComboProduct() {
    //Mutations
    const [updatedProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
       variables: {
-         where: { id: { _eq: state.id } },
+         id: state.id,
          set: {
             name: title,
          },
@@ -202,7 +202,7 @@ export default function ComboProduct() {
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               {/* <Items state={state} openTunnel={openTunnel} /> */}
+               <Items state={state} openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </ComboProductContext.Provider>

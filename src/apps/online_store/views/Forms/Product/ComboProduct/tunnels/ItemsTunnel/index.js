@@ -13,11 +13,14 @@ import { toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.tunnels.itemstunnel.'
+const address =
+   'apps.online_store.views.forms.product.comboproduct.tunnels.itemstunnel.'
 
-export default function ItemTunnel({ close }) {
+export default function ItemTunnel({ state, close }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(ComboProductContext)
+   const { productState, productDispatch } = React.useContext(
+      ComboProductContext
+   )
 
    const [busy, setBusy] = React.useState(false)
 
@@ -28,12 +31,6 @@ export default function ItemTunnel({ close }) {
       CREATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: data => {
-            dispatch({
-               type: 'COMPONENTS',
-               payload: {
-                  components: data.createComboProductComponent.returning,
-               },
-            })
             close(2)
             toast.success('Items added!')
          },
@@ -73,24 +70,28 @@ export default function ItemTunnel({ close }) {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(1)}>
+               <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('add items'))}</span>
+               <Text as="title">{t(address.concat('add items'))}</Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {busy ? t(address.concat('saving')) : t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
          <TunnelBody>
-            <Text as="h2">{t(address.concat('label your items to add recipes for'))}</Text>
+            <Text as="h2">
+               {t(address.concat('label your items to add recipes for'))}
+            </Text>
             {labels.map((label, i) => (
                <StyledRow>
                   <Input
                      type="text"
-                     placeholder={t(address.concat("enter"))}
+                     placeholder={t(address.concat('enter'))}
                      name={`label-${i}`}
                      value={label}
                      onChange={e => updatedLabel(i, e.target.value)}
@@ -99,7 +100,7 @@ export default function ItemTunnel({ close }) {
             ))}
             <ButtonTile
                type="secondary"
-               text={t(address.concat("add another item"))}
+               text={t(address.concat('add another item'))}
                onClick={() => setLabels([...labels, ''])}
             />
          </TunnelBody>
