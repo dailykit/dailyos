@@ -1,6 +1,13 @@
 import React from 'react'
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import { Input, TextButton, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
+import {
+   Input,
+   TextButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   Loader,
+} from '@dailykit/ui'
 
 import {
    CollectionContext,
@@ -23,16 +30,28 @@ import {
    INVENTORY_PRODUCTS,
    CUSTOMIZABLE_PRODUCTS,
    COMBO_PRODUCTS,
+   UPDATE_COLLECTION,
+   S_COLLECTION,
 } from '../../../graphql'
 import { toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
+import { Context } from '../../../context/tabs'
 
 const address = 'apps.online_store.views.forms.collection.'
 
 const CollectionForm = () => {
    const { t } = useTranslation()
-   const [state, dispatch] = React.useReducer(reducer, initialState)
+
+   const { state: tabs, dispatch } = React.useContext(Context)
+   const [collectionState, collectionDispatch] = React.useReducer(
+      reducer,
+      initialState
+   )
+
+   const [title, setTitle] = React.useState('')
+   const [state, setState] = React.useState({})
+
    const [products, setProducts] = React.useState({
       simple: [],
       inventory: [],
@@ -41,83 +60,107 @@ const CollectionForm = () => {
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   // Queries
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
-            }
+   // Subscription
+   const { loading } = useSubscription(S_COLLECTION, {
+      variables: {
+         id: tabs.current.id,
+      },
+      onSubscriptionData: data => {
+         console.log(data)
+         setState(data.subscriptionData.data.menuCollection)
+         setTitle(data.subscriptionData.data.menuCollection.name)
+         collectionDispatch({
+            type: 'SEED',
+            payload: data.subscriptionData.data.menuCollection,
          })
+      },
+   })
+   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
+            }
+         )
          setProducts({
             ...products,
             simple: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
    })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(INVENTORY_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             inventory: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
    })
-   useQuery(CUSTOMIZABLE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.customizableProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(CUSTOMIZABLE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.customizableProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             customizable: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
    })
-   useQuery(COMBO_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.comboProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(COMBO_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.comboProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             combo: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
    })
 
    // Mutations
-   const [createCollection] = useMutation(CREATE_COLLECTION, {
+   const [updateCollection] = useMutation(UPDATE_COLLECTION, {
       onCompleted: data => {
-         console.log('Saved: ', data.createMenuCollection.returning)
-         toast.success('Collection saved!')
+         toast.success('Updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               oldTitle: tabs.current.title,
+               title,
+            },
+         })
       },
       onError: error => {
          console.log(error)
-         toast.error('Some error occurred!')
+         toast.error('Error')
       },
    })
 
    // Handlers
    const save = () => {
-      const updateCategories = state.categories.map(category => {
+      const updateCategories = collectionState.categories.map(category => {
          const cat = {
             name: category.title,
             comboProducts: [],
@@ -138,7 +181,7 @@ const CollectionForm = () => {
       })
       const object = {
          availability: {
-            rule: state.rule,
+            rule: collectionState.rule,
             time: {
                end: '23:59',
                start: '00:00',
@@ -146,16 +189,35 @@ const CollectionForm = () => {
          },
          categories: updateCategories,
          name: state.title,
+         store: collectionState.categories,
       }
-      createCollection({
+      updateCollection({
          variables: {
-            objects: [object],
+            id: state.id,
+            set: {
+               ...object,
+            },
          },
       })
    }
 
+   const updateName = () => {
+      updateCollection({
+         variables: {
+            id: state.id,
+            set: {
+               name: title,
+            },
+         },
+      })
+   }
+
+   if (loading) return <Loader />
+
    return (
-      <CollectionContext.Provider value={{ state, dispatch }}>
+      <CollectionContext.Provider
+         value={{ collectionState, collectionDispatch }}
+      >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
@@ -163,32 +225,38 @@ const CollectionForm = () => {
             <Tunnel layer={2}>
                <ProductsTunnel
                   close={closeTunnel}
-                  products={products[state.meta.productType]}
+                  products={products[collectionState.meta.productType]}
                />
             </Tunnel>
          </Tunnels>
          <FormHeader>
             <FormHeaderInputs>
                <Input
-                  label={t(address.concat("collection name"))}
+                  label={t(address.concat('collection name'))}
                   type="text"
                   name="title"
-                  value={state.title}
-                  onChange={e =>
-                     dispatch({
-                        type: 'TITLE',
-                        payload: { value: e.target.value },
-                     })
-                  }
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  onBlur={updateName}
                />
                <Breadcrumbs>
-                  <span className={state.stage >= 1 ? 'active' : ''}>
+                  <span
+                     className={collectionState.stage >= 1 ? 'active' : ''}
+                     onClick={() =>
+                        collectionDispatch({ type: 'STAGE', payload: 1 })
+                     }
+                  >
                      {t(address.concat('add products'))}
                   </span>
                   <span>
                      <ChevronRight />
                   </span>
-                  <span className={state.stage >= 2 ? 'active' : ''}>
+                  <span
+                     className={collectionState.stage >= 2 ? 'active' : ''}
+                     onClick={() =>
+                        collectionDispatch({ type: 'STAGE', payload: 2 })
+                     }
+                  >
                      {t(address.concat('configure shop'))}
                   </span>
                </Breadcrumbs>
@@ -199,18 +267,21 @@ const CollectionForm = () => {
                </TextButton>
                <TextButton
                   type="solid"
-                  onClick={() => dispatch({ type: 'NEXT_STAGE' })}
+                  onClick={() =>
+                     collectionDispatch({ type: 'STAGE', payload: 2 })
+                  }
+                  hidden={collectionState.stage === 2}
                >
                   {t(address.concat('proceed'))}
                </TextButton>
             </FormHeaderActions>
          </FormHeader>
          <FormBody>
-            {state.stage === 1 ? (
+            {collectionState.stage === 1 ? (
                <Categories openTunnel={openTunnel} />
             ) : (
-                  <Configuration />
-               )}
+               <Configuration />
+            )}
          </FormBody>
       </CollectionContext.Provider>
    )

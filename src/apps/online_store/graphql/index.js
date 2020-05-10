@@ -46,6 +46,7 @@ import {
    S_SIMPLE_RECIPE_PRODUCT,
    S_SACHET_ITEMS,
    S_SUPPLIER_ITEMS,
+   S_COLLECTION,
 } from './subscriptions'
 
 export {
@@ -90,4 +91,5 @@ export {
    S_SIMPLE_RECIPE_PRODUCT,
    S_SACHET_ITEMS,
    S_SUPPLIER_ITEMS,
+   S_COLLECTION,
 }

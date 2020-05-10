@@ -8,6 +8,7 @@ import {
    ListSearch,
    Tag,
    TagGroup,
+   Text,
 } from '@dailykit/ui'
 
 import { TunnelHeader, TunnelBody } from '../styled'
@@ -21,11 +22,13 @@ const address = 'apps.online_store.views.forms.collection.tunnels.products.'
 const ProductsTunnel = ({ close, products }) => {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
-   const { state, dispatch } = React.useContext(CollectionContext)
+   const { collectionState, collectionDispatch } = React.useContext(
+      CollectionContext
+   )
    const [list, selected, selectOption] = useMultiList(products)
 
    const save = () => {
-      dispatch({
+      collectionDispatch({
          type: 'ADD_PRODUCTS',
          payload: {
             products: selected,
@@ -42,7 +45,11 @@ const ProductsTunnel = ({ close, products }) => {
                <span onClick={() => close(2)}>
                   <CloseIcon />
                </span>
-               <span>{t(address.concat('select and add products to the collection'))}</span>
+               <Text as="title">
+                  {t(
+                     address.concat('select and add products to the collection')
+                  )}
+               </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
@@ -54,7 +61,9 @@ const ProductsTunnel = ({ close, products }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder={t(address.concat("type what you’re looking for"))}
+                  placeholder={t(
+                     address.concat("type what you're looking for")
+                  )}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>

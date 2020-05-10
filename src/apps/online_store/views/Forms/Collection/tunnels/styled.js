@@ -6,6 +6,11 @@ export const TunnelHeader = styled.div`
    justify-content: space-between;
    align-items: center;
    padding: 0 16px;
+
+   > div {
+      display: flex;
+      align-items: center;
+   }
 `
 
 export const SolidTile = styled.button`
@@ -25,4 +30,6 @@ export const SolidTile = styled.button`
 
 export const TunnelBody = styled.div`
    padding: 32px;
+   height: calc(100% - 106px);
+   overflow: auto;
 `
