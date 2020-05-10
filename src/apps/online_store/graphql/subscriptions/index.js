@@ -119,6 +119,44 @@ export const S_CUSTOMIZABLE_PRODUCTS = gql`
    }
 `
 
+export const S_CUSTOMIZABLE_PRODUCT = gql`
+   subscription CustomizableProduct($id: Int!) {
+      customizableProduct(id: $id) {
+         id
+         name
+         default
+         description
+         tags
+         customizableProductOptions {
+            id
+            inventoryProduct {
+               id
+               name
+               inventoryProductOptions {
+                  id
+                  label
+                  price
+                  quantity
+               }
+            }
+            simpleRecipeProduct {
+               id
+               name
+               simpleRecipeProductOptions {
+                  id
+                  isActive
+                  price
+                  simpleRecipeYield {
+                     yield
+                  }
+                  type
+               }
+            }
+         }
+      }
+   }
+`
+
 export const S_COMBO_PRODUCTS = gql`
    {
       comboProducts {

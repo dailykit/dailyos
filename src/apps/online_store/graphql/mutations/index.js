@@ -140,6 +140,20 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
       createCustomizableProduct(objects: $objects) {
          returning {
             id
+            name
+         }
+      }
+   }
+`
+
+export const UPDATE_CUSTOMIZABLE_PRODUCT = gql`
+   mutation UpdateCustomizableProduct(
+      $id: Int
+      $set: onlineStore_customizableProduct_set_input
+   ) {
+      updateCustomizableProduct(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
          }
       }
    }
@@ -150,6 +164,16 @@ export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
       $objects: [onlineStore_customizableProductOption_insert_input!]!
    ) {
       createCustomizableProductOption(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_CUSTOMIZABLE_PRODUCT_OPTION = gql`
+   mutation DeleteCustomizableProductOption($id: Int) {
+      deleteCustomizableProductOption(where: { id: { _eq: $id } }) {
          returning {
             id
          }

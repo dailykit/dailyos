@@ -13,6 +13,7 @@ import {
    CREATE_COMBO_PRODUCT,
    CREATE_INVENTORY_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT,
+   CREATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../graphql'
 
 import { randomSuffix } from '../../../../../shared/utils'
@@ -56,6 +57,19 @@ export default function SelectProductTunnel({ close }) {
          )
       },
    })
+   const [createCustomizableProduct] = useMutation(
+      CREATE_CUSTOMIZABLE_PRODUCT,
+      {
+         onCompleted: data => {
+            toast.success('Product created!')
+            addTab(
+               data.createCustomizableProduct.returning[0].name,
+               'customizableProduct',
+               data.createCustomizableProduct.returning[0].id
+            )
+         },
+      }
+   )
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
@@ -84,6 +98,14 @@ export default function SelectProductTunnel({ close }) {
          }
          case 'recipe': {
             createRecipeProduct({
+               variables: {
+                  objects: [object],
+               },
+            })
+            break
+         }
+         case 'customizable': {
+            createCustomizableProduct({
                variables: {
                   objects: [object],
                },
@@ -128,11 +150,7 @@ export default function SelectProductTunnel({ close }) {
             </Text>
          </SolidTile>
          <br />
-         <SolidTile
-            onClick={() =>
-               addTab('Customizable Product', 'customizableProduct')
-            }
-         >
+         <SolidTile onClick={() => createProduct('customizable')}>
             <Text as="h1">{t(address.concat('customizable product'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('subtitle 3')}>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {
    Input,
@@ -8,6 +8,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Loader,
 } from '@dailykit/ui'
 
 // context
@@ -29,29 +30,33 @@ import {
    INVENTORY_PRODUCTS,
    CREATE_CUSTOMIZABLE_PRODUCT,
    CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+   S_CUSTOMIZABLE_PRODUCT,
+   UPDATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../../graphql'
 
 // components
-import { Description, Items } from './components'
+import { Description, Products } from './components'
 
 // tunnels
-import {
-   DescriptionTunnel,
-   ItemTypeTunnel,
-   ItemsTunnel,
-   AccompanimentTypeTunnel,
-   ProductsTypeTunnel,
-   ProductsTunnel,
-} from './tunnels'
+import { DescriptionTunnel, ProductTypeTunnel, ProductsTunnel } from './tunnels'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { Tabs } from '../../../../components'
+import { Context } from '../../../../context/tabs'
 
 const address = 'apps.online_store.views.forms.product.customizableproduct.'
 
 export default function CustomizableProduct() {
    const { t } = useTranslation()
-   const [state, dispatch] = React.useReducer(reducers, initialState)
+
+   const { state: tabs, dispatch } = React.useContext(Context)
+   const [productState, productDispatch] = React.useReducer(
+      reducers,
+      initialState
+   )
+
    const [title, setTitle] = React.useState('')
+   const [state, setState] = React.useState({})
 
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([
       { id: 1, title: 'Beverages' },
@@ -105,73 +110,116 @@ export default function CustomizableProduct() {
    //    },
    // })
 
-   const [createCustomizableProduct] = useMutation(
-      CREATE_CUSTOMIZABLE_PRODUCT,
-      {
-         onCompleted: data => {
-            const productId = data.createCustomizableProduct.returning[0].id
-            saveOptions(productId)
-         },
-      }
-   )
+   // const [createCustomizableProduct] = useMutation(
+   //    CREATE_CUSTOMIZABLE_PRODUCT,
+   //    {
+   //       onCompleted: data => {
+   //          const productId = data.createCustomizableProduct.returning[0].id
+   //          saveOptions(productId)
+   //       },
+   //    }
+   // )
 
-   const [createCustomizableProductOptions] = useMutation(
-      CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
-      {
-         onCompleted: data => {
-            console.log('Saved!')
-            console.log(data)
-            toast.success('Product saved!')
-         },
-      }
-   )
+   // const [createCustomizableProductOptions] = useMutation(
+   //    CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+   //    {
+   //       onCompleted: data => {
+   //          console.log('Saved!')
+   //          console.log(data)
+   //          toast.success('Product saved!')
+   //       },
+   //    }
+   // )
 
-   const save = () => {
-      const objects = {
-         name: state.title,
-         tags: state.tags,
-         description: state.description,
-         default: state.default,
-      }
-      createCustomizableProduct({
-         variables: {
-            objects: [objects],
-         },
-      })
-   }
+   // Subscription
+   const { loading } = useSubscription(S_CUSTOMIZABLE_PRODUCT, {
+      variables: {
+         id: tabs.current.id,
+      },
+      onSubscriptionData: data => {
+         console.log(data)
+         setState(data.subscriptionData.data.customizableProduct)
+         setTitle(data.subscriptionData.data.customizableProduct.name)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
 
-   const saveOptions = productId => {
-      const objects = state.items.map(item => {
-         return {
-            customizableProductId: productId,
-            accompaniments: item.accompaniments,
-            inventoryProductId: item.type === 'inventory' ? item.id : null,
-            simpleRecipeProductId: item.type === 'simple' ? item.id : null,
-         }
-      })
-      createCustomizableProductOptions({
-         variables: {
-            objects,
+   // Mutation
+   const [updatedProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
+      variables: {
+         id: state.id,
+         set: {
+            name: title,
          },
-      })
-   }
+      },
+      onCompleted: () => {
+         toast.success('Name updated!')
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               oldTitle: tabs.current.title,
+               title,
+            },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // const objects = {
+   //    name: state.title,
+   //    tags: state.tags,
+   //    description: state.description,
+   //    default: state.default,
+   // }
+   // createCustomizableProduct({
+   //    variables: {
+   //       objects: [objects],
+   //    },
+   // })
+
+   // const saveOptions = productId => {
+   //    const objects = state.items.map(item => {
+   //       return {
+   //          customizableProductId: productId,
+   //          accompaniments: item.accompaniments,
+   //          inventoryProductId: item.type === 'inventory' ? item.id : null,
+   //          simpleRecipeProductId: item.type === 'simple' ? item.id : null,
+   //       }
+   //    })
+   //    createCustomizableProductOptions({
+   //       variables: {
+   //          objects,
+   //       },
+   //    })
+   // }
+
+   if (loading) return <Loader />
 
    return (
-      <CustomizableProductContext.Provider value={{ state, dispatch }}>
+      <CustomizableProductContext.Provider
+         value={{ productState, productDispatch }}
+      >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <DescriptionTunnel close={closeTunnel} />
+               <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
+               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
-               <ItemsTunnel
+               <ProductsTunnel
+                  state={state}
                   close={closeTunnel}
-                  items={products[state.meta.itemType]}
+                  products={products[productState.meta.itemType]}
                />
             </Tunnel>
-            <Tunnel layer={4}>
+            {/* <Tunnel layer={4}>
                <AccompanimentTypeTunnel
                   close={closeTunnel}
                   accompanimentTypes={accompanimentTypes}
@@ -185,48 +233,30 @@ export default function CustomizableProduct() {
                   close={closeTunnel}
                   products={products[state.meta.productsType]}
                />
-            </Tunnel>
+            </Tunnel> */}
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
                <div>
                   <Input
-                     label={t(address.concat("product name"))}
+                     label={t(address.concat('product name'))}
                      type="text"
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={e =>
-                        dispatch({
-                           type: 'TITLE',
-                           payload: { value: e.target.value },
-                        })
-                     }
+                     onBlur={updatedProduct}
                   />
-               </div>
-               <div>
-                  <TextButton
-                     type="ghost"
-                     style={{ margin: '0px 10px' }}
-                     onClick={save}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-
-                  <TextButton type="solid" style={{ margin: '0px 10px' }}>
-                     {t(address.concat('publish'))}
-                  </TextButton>
                </div>
             </StyledHeader>
             <StyledBody>
                <StyledMeta>
                   <div>
-                     <Description openTunnel={openTunnel} />
+                     <Description state={state} openTunnel={openTunnel} />
                   </div>
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               <Items openTunnel={openTunnel} />
+               <Products state={state} openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </CustomizableProductContext.Provider>
