@@ -13,8 +13,9 @@ import {
    StyledTabs,
    StyledTab,
    StyledHeader,
+   StyledLink,
 } from './styled'
-import { AddIcon, DeleteIcon } from '../../../../../../assets/icons'
+import { AddIcon, DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
@@ -23,6 +24,7 @@ import {
    UPDATE_COMBO_PRODUCT_COMPONENT,
    DELETE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
+import { Context } from '../../../../../../context/tabs'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.components.items.'
@@ -42,6 +44,35 @@ const Items = ({ state, openTunnel }) => {
          },
       })
       openTunnel(3)
+   }
+
+   // Mutation
+   const [deleteComboProductComponent] = useMutation(
+      DELETE_COMBO_PRODUCT_COMPONENT,
+      {
+         onCompleted: () => {
+            toast.success('Label removed!')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error')
+         },
+      }
+   )
+
+   // Handlers
+   const removeComponent = component => {
+      if (
+         window.confirm(
+            `Are you sure you want to remove label - ${component.label}?`
+         )
+      ) {
+         deleteComboProductComponent({
+            variables: {
+               id: component.id,
+            },
+         })
+      }
    }
 
    return (
@@ -64,11 +95,20 @@ const Items = ({ state, openTunnel }) => {
                      component.inventoryProduct ||
                      component.simpleRecipeProduct
                ).length ? (
-                  <ItemsView state={state} openTunnel={openTunnel} />
+                  <ItemsView
+                     state={state}
+                     openTunnel={openTunnel}
+                     deleteComboProductComponent={deleteComboProductComponent}
+                  />
                ) : (
                   state.comboProductComponents.map(component => (
                      <React.Fragment>
-                        <StyledLabel>{component.label}</StyledLabel>
+                        <StyledLabel>
+                           {component.label}
+                           <span onClick={() => removeComponent(component)}>
+                              <DeleteIcon color="#FF5A52" />
+                           </span>
+                        </StyledLabel>
                         <ButtonTile
                            type="primary"
                            size="sm"
@@ -91,16 +131,17 @@ const Items = ({ state, openTunnel }) => {
    )
 }
 
-const ItemsView = ({ state, openTunnel }) => {
+const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
    const { t } = useTranslation()
-   const { productState, productDipsatch } = React.useContext(
+   const { dispatch } = React.useContext(Context)
+   const { productState, productDispatch } = React.useContext(
       ComboProductContext
    )
 
    const [active, setActive] = React.useState('')
 
    const open = id => {
-      productDipsatch({
+      productDispatch({
          type: 'META',
          payload: {
             name: 'componentId',
@@ -116,18 +157,6 @@ const ItemsView = ({ state, openTunnel }) => {
       {
          onCompleted: data => {
             toast.success('Product removed!')
-         },
-         onError: error => {
-            console.log(error)
-            toast.error('Error')
-         },
-      }
-   )
-   const [deleteComboProductComponent] = useMutation(
-      DELETE_COMBO_PRODUCT_COMPONENT,
-      {
-         onCompleted: () => {
-            toast.success('Label removed!')
          },
          onError: error => {
             console.log(error)
@@ -167,6 +196,9 @@ const ItemsView = ({ state, openTunnel }) => {
             },
          })
       }
+   }
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
    return (
@@ -214,6 +246,29 @@ const ItemsView = ({ state, openTunnel }) => {
                      {active.customizableProduct?.name ||
                         active.inventoryProduct?.name ||
                         active.simpleRecipeProduct?.name}
+                     <StyledLink
+                        onClick={() => {
+                           active.inventoryProduct
+                              ? addTab(
+                                   active.inventoryProduct.name,
+                                   'inventoryProduct',
+                                   active.inventoryProduct.id
+                                )
+                              : active.simpleRecipeProduct
+                              ? addTab(
+                                   active.simpleRecipeProduct.name,
+                                   'simpleRecipeProduct',
+                                   active.simpleRecipeProduct.id
+                                )
+                              : addTab(
+                                   active.customizableProduct.name,
+                                   'customizableProduct',
+                                   active.customizableProduct.id
+                                )
+                        }}
+                     >
+                        <LinkIcon color="#00A7E1" stroke={1.5} />
+                     </StyledLink>
                   </h2>
                   <HelperText
                      type="hint"
@@ -244,6 +299,7 @@ const ItemsView = ({ state, openTunnel }) => {
                               </th>
                               <th>{t(address.concat('price'))}</th>
                               <th>{t(address.concat('discount'))}</th>
+                              <th>{t(address.concat('discounted price'))}</th>
                            </tr>
                         </thead>
                         <tbody>
@@ -273,6 +329,21 @@ const ItemsView = ({ state, openTunnel }) => {
                                           </td>
                                           <td>${option.price[0].value} </td>
                                           <td>{option.price[0].discount} %</td>
+                                          <td>
+                                             $
+                                             {(
+                                                parseFloat(
+                                                   option.price[0].value
+                                                ) -
+                                                parseFloat(
+                                                   option.price[0].value
+                                                ) *
+                                                   (parseFloat(
+                                                      option.price[0].discount
+                                                   ) /
+                                                      100)
+                                             ).toFixed(2) || ''}
+                                          </td>
                                        </tr>
                                     ))}
                                  {active.simpleRecipeProduct.simpleRecipeProductOptions
@@ -303,6 +374,21 @@ const ItemsView = ({ state, openTunnel }) => {
                                           </td>
                                           <td>${option.price[0].value} </td>
                                           <td>{option.price[0].discount} %</td>
+                                          <td>
+                                             $
+                                             {(
+                                                parseFloat(
+                                                   option.price[0].value
+                                                ) -
+                                                parseFloat(
+                                                   option.price[0].value
+                                                ) *
+                                                   (parseFloat(
+                                                      option.price[0].discount
+                                                   ) /
+                                                      100)
+                                             ).toFixed(2) || ''}
+                                          </td>
                                        </tr>
                                     ))}
                               </React.Fragment>
@@ -315,6 +401,21 @@ const ItemsView = ({ state, openTunnel }) => {
                                           <td>{option.quantity}</td>
                                           <td>${option.price[0].value} </td>
                                           <td>{option.price[0].discount} %</td>
+                                          <td>
+                                             $
+                                             {(
+                                                parseFloat(
+                                                   option.price[0].value
+                                                ) -
+                                                parseFloat(
+                                                   option.price[0].value
+                                                ) *
+                                                   (parseFloat(
+                                                      option.price[0].discount
+                                                   ) /
+                                                      100)
+                                             ).toFixed(2) || ''}
+                                          </td>
                                        </tr>
                                     )
                                  )}

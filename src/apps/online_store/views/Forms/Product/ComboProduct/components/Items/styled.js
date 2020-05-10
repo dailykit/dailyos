@@ -25,6 +25,11 @@ export const StyledPanel = styled.div`
    }
 `
 
+export const StyledLink = styled.span`
+   margin-left: 8px;
+   cursor: pointer;
+`
+
 export const StyledListing = styled.div`
    display: flex;
    flex-direction: column;
