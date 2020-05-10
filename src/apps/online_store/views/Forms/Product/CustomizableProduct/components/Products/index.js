@@ -22,22 +22,25 @@ import {
    StyledTable,
    StyledAction,
    StyledDefault,
+   StyledLink,
 } from './styled'
 
 import { useTranslation, Trans } from 'react-i18next'
-import { DeleteIcon } from '../../../../../../assets/icons'
+import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 import {
    DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
    UPDATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../../../../graphql'
+import { Context } from '../../../../../../context/tabs'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.components.items.'
 
 const Products = ({ state, openTunnel }) => {
    const { t } = useTranslation()
+   const { dispatch } = React.useContext(Context)
    const { productState, productDispatch } = React.useContext(
       CustomizableProductContext
    )
@@ -95,6 +98,9 @@ const Products = ({ state, openTunnel }) => {
          },
       })
    }
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
+   }
 
    return (
       <StyledWrapper>
@@ -138,6 +144,33 @@ const Products = ({ state, openTunnel }) => {
                         state.customizableProductOptions[
                            productState.productIndex
                         ].simpleRecipeProduct?.name}
+                     <StyledLink
+                        onClick={() => {
+                           state.customizableProductOptions[
+                              productState.productIndex
+                           ].inventoryProduct
+                              ? addTab(
+                                   state.customizableProductOptions[
+                                      productState.productIndex
+                                   ].inventoryProduct.name,
+                                   'inventoryProduct',
+                                   state.customizableProductOptions[
+                                      productState.productIndex
+                                   ].inventoryProduct.id
+                                )
+                              : addTab(
+                                   state.customizableProductOptions[
+                                      productState.productIndex
+                                   ].simpleRecipeProduct.name,
+                                   'simpleRecipeProduct',
+                                   state.customizableProductOptions[
+                                      productState.productIndex
+                                   ].simpleRecipeProduct.id
+                                )
+                        }}
+                     >
+                        <LinkIcon color="#00A7E1" stroke={1.5} />
+                     </StyledLink>
                   </h2>
                   <HelperText
                      type="hint"

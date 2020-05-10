@@ -7,6 +7,7 @@ import MinusIcon from './Minus'
 import ChevronRight from './ChevronRight'
 import Down from './Down'
 import EyeIcon from './Eye'
+import LinkIcon from './Link'
 
 export {
    MenuIcon,
@@ -18,4 +19,5 @@ export {
    ChevronRight,
    Down,
    EyeIcon,
+   LinkIcon,
 }
