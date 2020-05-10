@@ -605,6 +605,7 @@
                            "labels": "Etiqueta",
                            "price": "Precio",
                            "discount": "Descuento",
+                           "discounted price": "Discounted Price",
                            "meal kit": "Kit de comida",
                            "ready to eat": "Listo para compartir"
                         }
