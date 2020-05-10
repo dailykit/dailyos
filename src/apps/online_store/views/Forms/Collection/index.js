@@ -62,6 +62,10 @@ const CollectionForm = () => {
          console.log(data)
          setState(data.subscriptionData.data.menuCollection)
          setTitle(data.subscriptionData.data.menuCollection.name)
+         collectionDispatch({
+            type: 'SEED',
+            payload: data.subscriptionData.data.menuCollection,
+         })
       },
    })
    useSubscription(SIMPLE_RECIPE_PRODUCTS, {
@@ -146,20 +150,10 @@ const CollectionForm = () => {
          toast.error('Error')
       },
    })
-   const [createCollection] = useMutation(CREATE_COLLECTION, {
-      onCompleted: data => {
-         console.log('Saved: ', data.createMenuCollection.returning)
-         toast.success('Collection saved!')
-      },
-      onError: error => {
-         console.log(error)
-         toast.error('Some error occurred!')
-      },
-   })
 
    // Handlers
    const save = () => {
-      const updateCategories = state.categories.map(category => {
+      const updateCategories = collectionState.categories.map(category => {
          const cat = {
             name: category.title,
             comboProducts: [],
@@ -188,10 +182,14 @@ const CollectionForm = () => {
          },
          categories: updateCategories,
          name: state.title,
+         store: collectionState.categories,
       }
-      createCollection({
+      updateCollection({
          variables: {
-            objects: [object],
+            id: state.id,
+            set: {
+               ...object,
+            },
          },
       })
    }
@@ -208,7 +206,9 @@ const CollectionForm = () => {
    }
 
    return (
-      <CollectionContext.Provider value={{ state, dispatch }}>
+      <CollectionContext.Provider
+         value={{ collectionState, collectionDispatch }}
+      >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
@@ -231,13 +231,13 @@ const CollectionForm = () => {
                   onBlur={updateName}
                />
                <Breadcrumbs>
-                  <span className={state.stage >= 1 ? 'active' : ''}>
+                  <span className={collectionState.stage >= 1 ? 'active' : ''}>
                      {t(address.concat('add products'))}
                   </span>
                   <span>
                      <ChevronRight />
                   </span>
-                  <span className={state.stage >= 2 ? 'active' : ''}>
+                  <span className={collectionState.stage >= 2 ? 'active' : ''}>
                      {t(address.concat('configure shop'))}
                   </span>
                </Breadcrumbs>
@@ -248,14 +248,14 @@ const CollectionForm = () => {
                </TextButton>
                <TextButton
                   type="solid"
-                  onClick={() => dispatch({ type: 'NEXT_STAGE' })}
+                  onClick={() => collectionDispatch({ type: 'NEXT_STAGE' })}
                >
                   {t(address.concat('proceed'))}
                </TextButton>
             </FormHeaderActions>
          </FormHeader>
          <FormBody>
-            {state.stage === 1 ? (
+            {collectionState.stage === 1 ? (
                <Categories openTunnel={openTunnel} />
             ) : (
                <Configuration />

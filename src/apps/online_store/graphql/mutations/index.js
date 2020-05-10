@@ -245,13 +245,10 @@ export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
 `
 
 export const CREATE_COLLECTION = gql`
-   mutation CreateCollection(
-      $objects: [onlineStore_menuCollection_insert_input!]!
-   ) {
-      createMenuCollection(objects: $objects) {
+   mutation CreateCollection($name: String!) {
+      createMenuCollection(objects: { name: $name }) {
          returning {
             id
-            name
          }
       }
    }

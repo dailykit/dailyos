@@ -7,16 +7,19 @@ import DeleteIcon from '../../../../../assets/icons/Delete'
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.collection.components.categories.'
+const address =
+   'apps.online_store.views.forms.collection.components.categories.'
 
 const Categories = ({ openTunnel }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(CollectionContext)
+   const { collectionState, collectionDispatch } = React.useContext(
+      CollectionContext
+   )
    const [title, setTitle] = React.useState('')
 
    const create_category = () => {
       if (title) {
-         dispatch({
+         collectionDispatch({
             type: 'CREATE_CATEGORY',
             payload: {
                title,
@@ -27,7 +30,7 @@ const Categories = ({ openTunnel }) => {
    }
 
    const add_product = title => {
-      dispatch({
+      collectionDispatch({
          type: 'CURRENT_CATEGORY',
          payload: { category: { title } },
       })
@@ -36,15 +39,15 @@ const Categories = ({ openTunnel }) => {
 
    return (
       <React.Fragment>
-         {state.categories.map(category => (
+         {collectionState.categories.map(category => (
             <Category key={category.id}>
                <Title>
                   <Input
                      type="text"
-                     placeholder={t(address.concat("category name"))}
+                     placeholder={t(address.concat('category name'))}
                      value={category.title}
                      onChange={e =>
-                        dispatch({
+                        collectionDispatch({
                            type: 'CATEGORY_TITLE',
                            payload: {
                               title: e.target.value,
@@ -54,7 +57,7 @@ const Categories = ({ openTunnel }) => {
                   />
                   <span
                      onClick={() =>
-                        dispatch({
+                        collectionDispatch({
                            type: 'DELETE_CATEGORY',
                            payload: { title: category.title },
                         })
@@ -70,7 +73,7 @@ const Categories = ({ openTunnel }) => {
                         <span>{product.title}</span>
                         <span
                            onClick={() =>
-                              dispatch({
+                              collectionDispatch({
                                  type: 'DELETE_PRODUCT',
                                  payload: {
                                     product,
@@ -87,7 +90,7 @@ const Categories = ({ openTunnel }) => {
                   ))}
                   <ButtonTile
                      type="secondary"
-                     text={t(address.concat("add product"))}
+                     text={t(address.concat('add product'))}
                      onClick={() => add_product(category.title)}
                   />
                </Products>
@@ -95,7 +98,7 @@ const Categories = ({ openTunnel }) => {
          ))}
          <Input
             type="text"
-            placeholder={t(address.concat("add category"))}
+            placeholder={t(address.concat('add category'))}
             value={title}
             onChange={e => setTitle(e.target.value)}
             onBlur={create_category}

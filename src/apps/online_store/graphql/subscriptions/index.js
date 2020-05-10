@@ -220,6 +220,7 @@ export const S_COLLECTION = gql`
          active
          availability
          categories
+         store
       }
    }
 `

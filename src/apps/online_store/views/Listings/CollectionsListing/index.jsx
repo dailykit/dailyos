@@ -1,8 +1,8 @@
 import React from 'react'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks'
 import { RRule } from 'rrule'
 
-import { COLLECTIONS } from '../../../graphql'
+import { COLLECTIONS, CREATE_COLLECTION } from '../../../graphql'
 
 // State
 import { Context } from '../../../context/tabs'
@@ -30,6 +30,8 @@ import { StyledWrapper, StyledHeader } from '../styled'
 import { EditIcon, DeleteIcon, AddIcon } from '../../../assets/icons'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { randomSuffix } from '../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
 
@@ -47,16 +49,32 @@ const CollectionsListing = () => {
       },
    })
 
+   // Mutation
+   const [createCollection] = useMutation(CREATE_COLLECTION, {
+      variables: {
+         name: 'collection-' + randomSuffix(),
+      },
+      onCompleted: data => {
+         addTab(
+            data.createMenuCollection.returning[0].name,
+            'collection',
+            data.createMenuCollection.returning[0].id
+         )
+         toast.success('Collection saved!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Some error occurred!')
+      },
+   })
+
    if (loading) return <Loader />
 
    return (
       <StyledWrapper>
          <StyledHeader>
             <h1>{t(address.concat('collections'))}</h1>
-            <IconButton
-               type="solid"
-               onClick={() => addTab('Collection Form', 'collection')}
-            >
+            <IconButton type="solid" onClick={createCollection}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
          </StyledHeader>
@@ -78,9 +96,11 @@ const CollectionsListing = () => {
                      }}
                   >
                      <TableCell>{row.name}</TableCell>
-                     <TableCell>{row.categories.length}</TableCell>
+                     <TableCell>{row.categories?.length || 0}</TableCell>
                      <TableCell>
-                        {RRule.fromString(row.availability.rule).toText()}
+                        {RRule.fromString(
+                           row.availability?.rule || ''
+                        ).toText()}
                      </TableCell>
                      <TableCell align="right">
                         <IconButton>

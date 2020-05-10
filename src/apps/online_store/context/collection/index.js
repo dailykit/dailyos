@@ -18,6 +18,15 @@ export const state = {
 
 export const reducer = (state, { type, payload }) => {
    switch (type) {
+      case 'SEED': {
+         return {
+            ...state,
+            id: payload.id,
+            title: payload.name,
+            categories: payload.store || [],
+            rule: payload.availability?.rule || '',
+         }
+      }
       case 'ID': {
          return {
             ...state,
