@@ -535,7 +535,7 @@
                         "monday": "Δευτέρα",
                         "tuesday": "Τρίτη",
                         "wednesday": "Τετάρτη",
-                        "thrusday": "Πέμπτη",
+                        "thursday": "Thursday",
                         "friday": "Παρασκευή",
                         "saturday": "Σάββατο",
                         "sunday": "Κριακή",
@@ -543,7 +543,7 @@
                         "every monday": "Κάθε Δευτέρα",
                         "every tuesday": "Κάθε Τρίτη",
                         "every wednesday": "Κάθε Τετάρτη",
-                        "every thrusday": "Κάθε Πέμπτη",
+                        "every thursday": "Every Thursday",
                         "every friday": "Κάθε Παρασκευή",
                         "every saturday": "Κάθε Πέμπτη",
                         "every sunday": "Κάθε Κυριακή",
@@ -935,9 +935,11 @@
             },
             "listings": {
                "collectionslisting": {
+                  "collections": "Collections",
                   "collection name": "Όνομα Συλλογής",
                   "categories": "Κατηγορίες",
                   "products": "Προϊόντα",
+                  "availability": "Availability",
                   "actions": "Ενέργειες"
                },
                "productslisting": {
