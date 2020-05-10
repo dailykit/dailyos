@@ -605,6 +605,7 @@
                            "labels": "Nom",
                            "price": "Prix",
                            "discount": "Remise",
+                           "discounted price": "Discounted Price",
                            "meal kit": "Kit Repas",
                            "ready to eat": "Prêt à manger"
                         }
