@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { Input, TextButton, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 
@@ -36,14 +36,21 @@ import {
 } from './tunnels'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { S_COMBO_PRODUCT } from '../../../../graphql/subscriptions'
 
 const address = 'apps.online_store.views.forms.product.comboproduct.'
 
 export default function ComboProduct() {
    const { t } = useTranslation()
-   const { state: tabs } = React.useContext(Context)
-   const [state, dispatch] = React.useReducer(reducers, initialState)
-   const [title, setTitle] = React.useState(state.name)
+
+   const { state: tabs, dispatch } = React.useContext(Context)
+   const [productState, productDispatch] = React.useReducer(
+      reducers,
+      initialState
+   )
+
+   const [title, setTitle] = React.useState('')
+   const [state, setState] = React.useState({})
 
    const [products, setProducts] = React.useState({
       inventory: [],
@@ -53,29 +60,14 @@ export default function ComboProduct() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Queries
-   useQuery(COMBO_PRODUCT, {
+   const { loading } = useSubscription(S_COMBO_PRODUCT, {
       variables: {
          id: tabs.current.id,
       },
-      onCompleted: data => {
+      onSubscriptionData: data => {
          console.log('ComboProduct -> data', data)
-         const {
-            id,
-            name,
-            tags,
-            description,
-            comboProductComponents,
-         } = data.comboProduct
-         dispatch({
-            type: 'SEED',
-            payload: {
-               name,
-               tags,
-               description,
-               id,
-               components: comboProductComponents,
-            },
-         })
+         setState(data.subscriptionData.data.comboProduct)
+         setTitle(data.subscriptionData.data.comboProduct.name)
       },
       onError: error => {
          console.log(error)
@@ -128,51 +120,46 @@ export default function ComboProduct() {
    })
 
    //Mutations
-   const [updateComboProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
+   const [updatedProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
+      variables: {
+         where: { id: { _eq: state.id } },
+         set: {
+            name: title,
+         },
+      },
       onCompleted: data => {
-         const { name } = data.updateComboProduct.returning[0]
+         toast.success('Name updated!')
          dispatch({
-            type: 'NAME',
+            type: 'SET_TITLE',
             payload: {
-               value: name,
+               oldTitle: tabs.current.title,
+               title,
             },
          })
       },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
    })
 
-   // Handlers
-   const updateName = e => {
-      updateComboProduct({
-         variables: {
-            where: { id: { _eq: state.id } },
-            set: {
-               name: e.target.value,
-            },
-         },
-      })
-   }
-
-   // Effects
-   React.useEffect(() => {
-      setTitle(state.name)
-   }, [state.name])
-
    return (
-      <ComboProductContext.Provider value={{ state, dispatch }}>
+      <ComboProductContext.Provider value={{ productState, productDispatch }}>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <DescriptionTunnel close={closeTunnel} />
+               <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <ItemsTunnel close={closeTunnel} />
+               <ItemsTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={4}>
                <ProductsTunnel
+                  state={state}
                   close={closeTunnel}
-                  products={products[state.meta.productType]}
+                  products={products[productState.meta.productType]}
                />
             </Tunnel>
          </Tunnels>
@@ -180,12 +167,12 @@ export default function ComboProduct() {
             <StyledHeader>
                <div>
                   <Input
-                     label={t(address.concat("product name"))}
+                     label={t(address.concat('product name'))}
                      type="text"
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={e => updateName(e)}
+                     onBlur={updatedProduct}
                   />
                </div>
                <div>
@@ -201,12 +188,12 @@ export default function ComboProduct() {
             <StyledBody>
                <StyledMeta>
                   <div>
-                     <Description openTunnel={openTunnel} />
+                     {/* <Description state={state} openTunnel={openTunnel} /> */}
                   </div>
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               <Items openTunnel={openTunnel} />
+               {/* <Items state={state} openTunnel={openTunnel} /> */}
             </StyledBody>
          </StyledWrapper>
       </ComboProductContext.Provider>
