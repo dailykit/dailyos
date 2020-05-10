@@ -14,9 +14,12 @@ import {
    StyledTab,
    StyledHeader,
 } from './styled'
-import { AddIcon } from '../../../../../../assets/icons'
+import { AddIcon, DeleteIcon } from '../../../../../../assets/icons'
 
 import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.components.items.'
@@ -104,6 +107,39 @@ const ItemsView = ({ state, openTunnel }) => {
       openTunnel(3)
    }
 
+   // Mutation
+   const [updateComboProductComponent] = useMutation(
+      UPDATE_COMBO_PRODUCT_COMPONENT,
+      {
+         onCompleted: data => {
+            toast.success('Product removed!')
+         },
+         onError: error => {
+            console.log(error)
+         },
+      }
+   )
+
+   // Handlers
+   const removeProduct = component => {
+      if (
+         window.confirm(
+            `Are you sure you want to remove product from ${component.label}?`
+         )
+      ) {
+         updateComboProductComponent({
+            variables: {
+               id: component.id,
+               set: {
+                  customizableProductId: null,
+                  inventoryProductId: null,
+                  simpleRecipeProductId: null,
+               },
+            },
+         })
+      }
+   }
+
    return (
       <StyledLayout>
          <StyledListing>
@@ -122,6 +158,9 @@ const ItemsView = ({ state, openTunnel }) => {
                               component.inventoryProduct?.name ||
                               component.simpleRecipeProduct?.name}
                         </h3>
+                        <span onClick={() => removeProduct(component)}>
+                           <DeleteIcon color="#fff" />
+                        </span>
                      </StyledListingTile>
                   ) : (
                      <ButtonTile
