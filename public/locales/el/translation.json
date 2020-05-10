@@ -605,6 +605,7 @@
                            "labels": "Ετικέτες",
                            "price": "Τιμή",
                            "discount": "Έκπτωση",
+                           "discounted price": "Discounted Price",
                            "meal kit": "Σετ γεύματος",
                            "ready to eat": "Ετοιμος να φάω"
                         }
