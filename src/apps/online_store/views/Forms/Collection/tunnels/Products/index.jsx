@@ -43,7 +43,7 @@ const ProductsTunnel = ({ close, products }) => {
          <TunnelHeader>
             <div>
                <span onClick={() => close(2)}>
-                  <CloseIcon />
+                  <CloseIcon color="#888D9D" />
                </span>
                <Text as="title">
                   {t(
