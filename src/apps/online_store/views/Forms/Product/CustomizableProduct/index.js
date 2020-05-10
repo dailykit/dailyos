@@ -35,17 +35,10 @@ import {
 } from '../../../../graphql'
 
 // components
-import { Description, Items } from './components'
+import { Description, Products } from './components'
 
 // tunnels
-import {
-   DescriptionTunnel,
-   ItemTypeTunnel,
-   ItemsTunnel,
-   AccompanimentTypeTunnel,
-   ProductsTypeTunnel,
-   ProductsTunnel,
-} from './tunnels'
+import { DescriptionTunnel, ProductTypeTunnel, ProductsTunnel } from './tunnels'
 
 import { useTranslation, Trans } from 'react-i18next'
 import { Tabs } from '../../../../components'
@@ -217,13 +210,14 @@ export default function CustomizableProduct() {
                <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               {/* <ItemTypeTunnel close={closeTunnel} open={openTunnel} /> */}
+               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
-               {/* <ItemsTunnel
+               <ProductsTunnel
+                  state={state}
                   close={closeTunnel}
-                  items={products[state.meta.itemType]}
-               /> */}
+                  products={products[productState.meta.itemType]}
+               />
             </Tunnel>
             {/* <Tunnel layer={4}>
                <AccompanimentTypeTunnel
@@ -262,7 +256,7 @@ export default function CustomizableProduct() {
                   <div></div>
                </StyledMeta>
                <StyledRule />
-               {/* <Items openTunnel={openTunnel} /> */}
+               <Products state={state} openTunnel={openTunnel} />
             </StyledBody>
          </StyledWrapper>
       </CustomizableProductContext.Provider>

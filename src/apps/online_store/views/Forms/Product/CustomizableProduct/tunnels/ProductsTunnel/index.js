@@ -1,61 +1,96 @@
 import React from 'react'
+
 import {
    TextButton,
-   useMultiList,
+   Tag,
+   TagGroup,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   Tag,
-   TagGroup,
+   useMultiList,
+   Text,
 } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
+
 import { TunnelHeader, TunnelBody } from '../styled'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
 
-const address = 'apps.online_store.views.forms.product.customizableproduct.tunnels.productstunnel.'
+const address =
+   'apps.online_store.views.forms.product.customizableproduct.tunnels.itemstunnel.'
 
-const ProductsTunnel = ({ close, products }) => {
+const ProductsTunnel = ({ state, close, products }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(CustomizableProductContext)
+   const { productState, productDispatch } = React.useContext(
+      CustomizableProductContext
+   )
+
+   const [busy, setBusy] = React.useState(false)
 
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(products)
 
+   const [createCustomizableProductOptions] = useMutation(
+      CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+      {
+         onCompleted: () => {
+            toast.success('Products added!')
+            close(3)
+            close(2)
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error')
+            setBusy(false)
+         },
+      }
+   )
+
    const save = () => {
-      const products = selected.map(el => {
+      if (busy) return
+      else setBusy(true)
+      const objects = selected.map(product => {
          return {
-            ...el,
-            discount: {
-               value: '',
-            },
+            customizableProductId: state.id,
+            inventoryProductId:
+               productState.meta.itemType === 'inventory' ? product.id : null,
+            simpleRecipeProductId:
+               productState.meta.itemType === 'simple' ? product.id : null,
          }
       })
-      dispatch({
-         type: 'ADD_ACCOMPANIMENTS',
-         payload: {
-            value: products,
+      createCustomizableProductOptions({
+         variables: {
+            objects,
          },
       })
-      close(6)
-      close(5)
    }
 
    return (
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(6)}>
+               <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select products to add'))}</span>
+               <Text as="title">
+                  {t(address.concat('select'))}{' '}
+                  {productState.meta.itemType === 'inventory'
+                     ? t(address.concat('inventory products'))
+                     : t(address.concat('simple recipe products'))}{' '}
+                  {t(address.concat('to add'))}
+               </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
@@ -63,7 +98,9 @@ const ProductsTunnel = ({ close, products }) => {
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder={t(address.concat("type what you’re looking for"))}
+                  placeholder={t(
+                     address.concat("type what you're looking for")
+                  )}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>
