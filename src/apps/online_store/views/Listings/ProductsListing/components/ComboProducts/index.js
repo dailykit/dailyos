@@ -45,7 +45,12 @@ const ComboProducts = () => {
          </TableHead>
          <TableBody>
             {data.comboProducts.map(product => (
-               <TableRow key={product.id}>
+               <TableRow
+                  key={product.id}
+                  onClick={() =>
+                     addTab(product.name, 'comboProduct', product.id)
+                  }
+               >
                   <TableCell>{product.name}</TableCell>
                   <TableCell>
                      {product.comboProductComponents.map(comp => (
@@ -54,17 +59,6 @@ const ComboProducts = () => {
                   </TableCell>
                   <TableCell align="right">
                      <GridContainer>
-                        <IconButton
-                           onClick={() =>
-                              addTab(
-                                 'Combo Product',
-                                 'comboProduct',
-                                 product.id
-                              )
-                           }
-                        >
-                           <EditIcon color="#28C1F6" />
-                        </IconButton>
                         <IconButton>
                            <DeleteIcon color="#FF5A52" />
                         </IconButton>

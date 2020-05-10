@@ -25,6 +25,11 @@ export const StyledPanel = styled.div`
    }
 `
 
+export const StyledLink = styled.span`
+   margin-left: 8px;
+   cursor: pointer;
+`
+
 export const StyledListing = styled.div`
    display: flex;
    flex-direction: column;
@@ -32,17 +37,26 @@ export const StyledListing = styled.div`
 
 export const StyledListingTile = styled.div`
    background: ${props => (props.active ? '#555B6E' : '#fff')};
-   padding: 8px;
+   padding: 16px;
    margin-bottom: 16px;
    color: ${props => (props.active ? '#fff' : '#555B6E')};
    cursor: pointer;
-   height: 100px;
+   height: 80px;
+   display: flex;
+   align-items: center;
+   position: relative;
 
    h3 {
       font-weight: 500;
       font-size: 16px;
       line-height: 14px;
       margin-bottom: 8px;
+   }
+
+   span {
+      position: absolute;
+      top: 8px;
+      right: 8px;
    }
 `
 
@@ -123,11 +137,18 @@ export const StyledLabel = styled.h5`
    font-size: 14px;
    line-height: 16px;
    color: #888d9d;
+   margin-top: 8px;
+   margin-bottom: 4px;
+
+   span {
+      margin-left: 8px;
+      cursor: pointer;
+   }
 `
 
 export const StyledComboTile = styled.div`
-   display: grid;
-   grid-template-rows: 20px 1fr;
+   display: flex;
+   flex-direction: column;
    margin-bottom: 12px;
 `
 

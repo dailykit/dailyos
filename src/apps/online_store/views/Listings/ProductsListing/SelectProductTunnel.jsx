@@ -31,7 +31,7 @@ export default function SelectProductTunnel({ close }) {
       onCompleted: data => {
          toast.success('Product created!')
          addTab(
-            'Combo Product',
+            data.createComboProduct.returning[0].name,
             'comboProduct',
             data.createComboProduct.returning[0].id
          )

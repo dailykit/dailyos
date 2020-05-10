@@ -169,3 +169,45 @@ export const S_COMBO_PRODUCTS = gql`
       }
    }
 `
+
+export const S_COMBO_PRODUCT = gql`
+   subscription ComboProduct($id: Int!) {
+      comboProduct(id: $id) {
+         id
+         name
+         description
+         tags
+         comboProductComponents {
+            id
+            label
+            customizableProduct {
+               id
+               name
+            }
+            inventoryProduct {
+               id
+               name
+               inventoryProductOptions {
+                  id
+                  label
+                  price
+                  quantity
+               }
+            }
+            simpleRecipeProduct {
+               id
+               name
+               simpleRecipeProductOptions {
+                  id
+                  isActive
+                  price
+                  type
+                  simpleRecipeYield {
+                     yield
+                  }
+               }
+            }
+         }
+      }
+   }
+`

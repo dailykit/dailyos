@@ -9,14 +9,15 @@ import { ComboProductContext } from '../../../../../../context/product/comboProd
 
 import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.tunnels.producttypetunnel.'
+const address =
+   'apps.online_store.views.forms.product.comboproduct.tunnels.producttypetunnel.'
 
 const ProductTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(ComboProductContext)
+   const { productDispatch } = React.useContext(ComboProductContext)
 
    const select = type => {
-      dispatch({
+      productDispatch({
          type: 'META',
          payload: {
             name: 'productType',
@@ -33,7 +34,9 @@ const ProductTypeTunnel = ({ close, open }) => {
                <span onClick={() => close(2)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select product type'))}</span>
+               <Text as="title">
+                  {t(address.concat('select product type'))}
+               </Text>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -50,8 +53,8 @@ const ProductTypeTunnel = ({ close, open }) => {
                <Text as="h1">{t(address.concat('simple recipe product'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('subtitle 2')}>
-                     Simple Recipe Product is only one recipe, sold as Meal Kits as
-                     well as Ready to Eat
+                     Simple Recipe Product is only one recipe, sold as Meal Kits
+                     as well as Ready to Eat
                   </Trans>
                </Text>
             </SolidTile>
@@ -60,8 +63,8 @@ const ProductTypeTunnel = ({ close, open }) => {
                <Text as="h1">{t(address.concat('customizable product'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('subtitle 3')}>
-                     Simple Recipe Product is only one recipe, sold as Meal Kits as
-                     well as Ready to Eat
+                     Simple Recipe Product is only one recipe, sold as Meal Kits
+                     as well as Ready to Eat
                   </Trans>
                </Text>
             </SolidTile>

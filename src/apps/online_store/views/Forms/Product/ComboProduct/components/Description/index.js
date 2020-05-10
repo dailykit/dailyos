@@ -3,15 +3,14 @@ import { TagGroup, ButtonTile, Tag, IconButton } from '@dailykit/ui'
 
 import { StyledRow, StyledContainer, StyledAction } from './styled'
 import { EditIcon } from '../../../../../../assets/icons'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.components.description.'
+const address =
+   'apps.online_store.views.forms.product.inventoryproduct.components.description.'
 
-const Description = ({ openTunnel }) => {
+const Description = ({ state, openTunnel }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(ComboProductContext)
 
    return (
       <React.Fragment>
@@ -34,13 +33,13 @@ const Description = ({ openTunnel }) => {
                </StyledRow>
             </StyledContainer>
          ) : (
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text={t(address.concat("add description"))}
-                  onClick={() => openTunnel(1)}
-               />
-            )}
+            <ButtonTile
+               type="primary"
+               size="sm"
+               text={t(address.concat('add description'))}
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </React.Fragment>
    )
 }

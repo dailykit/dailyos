@@ -188,23 +188,19 @@ export const CREATE_COMBO_PRODUCT = gql`
       createComboProduct(objects: $objects) {
          returning {
             id
+            name
          }
       }
    }
 `
 
-//{ id: { _eq: 5 } }
-//{ name: "" }
 export const UPDATE_COMBO_PRODUCT = gql`
    mutation UpdateComboProduct(
-      $where: onlineStore_comboProduct_bool_exp!
+      $id: Int!
       $set: onlineStore_comboProduct_set_input
    ) {
-      updateComboProduct(where: $where, _set: $set) {
+      updateComboProduct(where: { id: { _eq: $id } }, _set: $set) {
          returning {
-            description
-            name
-            tags
             id
          }
       }
@@ -219,7 +215,6 @@ export const CREATE_COMBO_PRODUCT_COMPONENT = gql`
       createComboProductComponent(objects: $objects) {
          returning {
             id
-            label
          }
       }
    }
@@ -228,40 +223,22 @@ export const CREATE_COMBO_PRODUCT_COMPONENT = gql`
 // {id: {_eq: 10}}, _set: {customizableProductId: 10, inventoryProductId: 10, simpleRecipeProductId: 10}
 export const UPDATE_COMBO_PRODUCT_COMPONENT = gql`
    mutation UpdateComboProductComponent(
-      $where: onlineStore_comboProductComponent_bool_exp!
+      $id: Int!
       $set: onlineStore_comboProductComponent_set_input
    ) {
-      updateComboProductComponent(where: $where, _set: $set) {
+      updateComboProductComponent(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             id
-            label
-            customizableProduct {
-               id
-               name
-            }
-            inventoryProduct {
-               id
-               name
-               inventoryProductOptions {
-                  id
-                  label
-                  price
-                  quantity
-               }
-            }
-            simpleRecipeProduct {
-               id
-               name
-               simpleRecipeProductOptions {
-                  id
-                  isActive
-                  price
-                  type
-                  simpleRecipeYield {
-                     yield
-                  }
-               }
-            }
+         }
+      }
+   }
+`
+
+export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
+   mutation DeleteComboProductComponent($id: Int!) {
+      deleteComboProductComponent(where: { id: { _eq: $id } }) {
+         returning {
+            id
          }
       }
    }

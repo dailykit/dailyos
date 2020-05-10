@@ -6,6 +6,7 @@ import {
    ListOptions,
    ListSearch,
    useSingleList,
+   Text,
 } from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../assets/icons'
@@ -19,11 +20,14 @@ import { toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'
+const address =
+   'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ close, products }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(ComboProductContext)
+   const { productState, productDispatch } = React.useContext(
+      ComboProductContext
+   )
 
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(products)
@@ -33,14 +37,6 @@ const ProductsTunnel = ({ close, products }) => {
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: data => {
-            const updatedComponent =
-               data.updateComboProductComponent.returning[0]
-            dispatch({
-               type: 'UPDATE_COMPONENT',
-               payload: {
-                  updatedComponent,
-               },
-            })
             toast.success('Product added!')
             close(4)
             close(3)
@@ -55,14 +51,20 @@ const ProductsTunnel = ({ close, products }) => {
       selectOption('id', product.id)
       updateComboProductComponent({
          variables: {
-            where: { id: { _eq: state.meta.componentId } },
+            id: productState.meta.componentId,
             set: {
                customizableProductId:
-                  state.meta.productType === 'customizable' ? product.id : null,
+                  productState.meta.productType === 'customizable'
+                     ? product.id
+                     : null,
                inventoryProductId:
-                  state.meta.productType === 'inventory' ? product.id : null,
+                  productState.meta.productType === 'inventory'
+                     ? product.id
+                     : null,
                simpleRecipeProductId:
-                  state.meta.productType === 'simple' ? product.id : null,
+                  productState.meta.productType === 'simple'
+                     ? product.id
+                     : null,
             },
          },
       })
@@ -75,7 +77,9 @@ const ProductsTunnel = ({ close, products }) => {
                <span onClick={() => close(3)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <span>{t(address.concat('select product to add'))}</span>
+               <Text as="title">
+                  {t(address.concat('select product to add'))}
+               </Text>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -83,11 +87,13 @@ const ProductsTunnel = ({ close, products }) => {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you’re looking for"))}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+               )}
                <ListOptions>
                   {list
                      .filter(option =>
