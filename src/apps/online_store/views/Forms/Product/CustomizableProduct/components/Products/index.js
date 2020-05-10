@@ -26,6 +26,10 @@ import {
 import { StyledDefault } from '../../../SimpleRecipeProduct/components/Recipe/styled'
 
 import { useTranslation, Trans } from 'react-i18next'
+import { DeleteIcon } from '../../../../../../assets/icons'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { DELETE_CUSTOMIZABLE_PRODUCT_OPTION } from '../../../../../../graphql'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.components.items.'
@@ -36,29 +40,38 @@ const Products = ({ state, openTunnel }) => {
       CustomizableProductContext
    )
 
-   // const [_state, _setState] = React.useState({
-   //    view: 'pricing',
-   //    items: [],
-   //    currentItem: {},
-   // })
+   // Mutation
+   const [deleteOption] = useMutation(DELETE_CUSTOMIZABLE_PRODUCT_OPTION, {
+      onCompleted: () => {
+         toast.success('Product deleted')
+         productDispatch({
+            type: 'PRODUCT_INDEX',
+            payload: 0,
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
 
-   // React.useEffect(() => {
-   //    _setState({
-   //       ..._state,
-   //       items: [...state.items],
-   //       currentItem: state.items[0] || {},
-   //    })
-   // }, [state.items])
-
-   // React.useEffect(() => {
-   //    // dispatch({
-   //    //    type: 'META',
-   //    //    payload: {
-   //    //       name: 'currentItem',
-   //    //       value: _state.currentItem,
-   //    //    },
-   //    // })
-   // }, [_state.currentItem])
+   // Handlers
+   const remove = product => {
+      if (
+         window.confirm(
+            `Are you sure you want to delete product - ${
+               product.inventoryProduct?.name ||
+               product.simpleRecipeProduct?.name
+            }?`
+         )
+      ) {
+         deleteOption({
+            variables: {
+               id: product.id,
+            },
+         })
+      }
+   }
 
    return (
       <StyledWrapper>
@@ -79,6 +92,9 @@ const Products = ({ state, openTunnel }) => {
                            {option.inventoryProduct?.name ||
                               option.simpleRecipeProduct?.name}
                         </h3>
+                        <span onClick={() => remove(option)}>
+                           <DeleteIcon color="#fff" />
+                        </span>
                         <StyledDefault hidden={true}>
                            {t(address.concat('default'))}
                         </StyledDefault>

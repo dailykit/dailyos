@@ -171,6 +171,16 @@ export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
    }
 `
 
+export const DELETE_CUSTOMIZABLE_PRODUCT_OPTION = gql`
+   mutation DeleteCustomizableProductOption($id: Int) {
+      deleteCustomizableProductOption(where: { id: { _eq: $id } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_COMBO_PRODUCT = gql`
    mutation CreateComboProduct(
       $objects: [onlineStore_comboProduct_insert_input!]!
