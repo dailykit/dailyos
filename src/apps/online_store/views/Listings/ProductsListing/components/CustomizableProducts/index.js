@@ -44,7 +44,12 @@ const CustomizableProducts = () => {
          </TableHead>
          <TableBody>
             {data.customizableProducts.map(product => (
-               <TableRow key={product.id}>
+               <TableRow
+                  key={product.id}
+                  onClick={() =>
+                     addTab(product.name, 'customizableProduct', product.id)
+                  }
+               >
                   <TableCell>{product.name}</TableCell>
                   <TableCell align="right">
                      <GridContainer>

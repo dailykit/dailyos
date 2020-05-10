@@ -140,6 +140,7 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
       createCustomizableProduct(objects: $objects) {
          returning {
             id
+            name
          }
       }
    }
