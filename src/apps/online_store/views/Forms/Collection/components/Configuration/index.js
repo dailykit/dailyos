@@ -1,5 +1,5 @@
 import React from 'react'
-import { RRule } from 'rrule'
+import { RRule, rrulestr } from 'rrule'
 
 import { CollectionContext } from '../../../../../context/collection'
 import {
@@ -11,24 +11,28 @@ import {
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.views.forms.collection.components.configuration.'
+const address =
+   'apps.online_store.views.forms.collection.components.configuration.'
 
 const Configuration = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(CollectionContext)
+   const { collectionState, collectionDispatch } = React.useContext(
+      CollectionContext
+   )
+
    const [rule, setRule] = React.useState(undefined)
    const [freq, setFreq] = React.useState('1')
    const [start, setStart] = React.useState('')
    const [until, setUntil] = React.useState('')
    const [count, setCount] = React.useState('30')
    const [gap, setGap] = React.useState('1')
-   const [wkst, setWkst] = React.useState('1')
+   const [wkst, setWkst] = React.useState('0')
    const [byWeekDay, setByWeekDay] = React.useState([])
    const [byMonth, setByMonth] = React.useState([])
 
    const toggleByDay = obj => {
-      const index = byWeekDay.findIndex(wk => wk.weekday === obj.weekday)
-      if (index === -1) {
+      const index = byWeekDay.findIndex(wk => wk.weekday == obj.weekday)
+      if (index == -1) {
          const copy = byWeekDay
          copy.push(obj)
          setByWeekDay([...copy])
@@ -41,8 +45,8 @@ const Configuration = () => {
 
    const toggleByMonth = e => {
       const { value } = e.target
-      const index = byMonth.findIndex(mon => mon === value)
-      if (index === -1) {
+      const index = byMonth.findIndex(mon => mon == value)
+      if (index == -1) {
          const copy = byMonth
          copy.push(value)
          setByMonth([...copy])
@@ -52,6 +56,36 @@ const Configuration = () => {
          setByMonth([...copy])
       }
    }
+
+   React.useEffect(() => {
+      try {
+         if (collectionState.rule) {
+            const rule = rrulestr(collectionState.rule)
+            setFreq(rule.origOptions.freq || 2)
+            setStart(
+               rule.origOptions.dtstart
+                  ? rule.origOptions.dtstart.toISOString().split('T')[0]
+                  : ''
+            )
+            setUntil(
+               rule.origOptions.until
+                  ? rule.origOptions.until.toISOString().split('T')[0]
+                  : ''
+            )
+            setCount(rule.origOptions.count || 30)
+            setGap(rule.origOptions.interval || 1)
+            setWkst(rule.origOptions.wkst || '0')
+            setByWeekDay(rule.origOptions.byweekday || [])
+            setByMonth(
+               rule.origOptions.bymonth
+                  ? rule.origOptions.bymonth.map(m => m.toString())
+                  : []
+            )
+         }
+      } catch (err) {
+         console.log(err)
+      }
+   }, [])
 
    React.useEffect(() => {
       let rule = {
@@ -91,7 +125,7 @@ const Configuration = () => {
       const avail = new RRule(rule)
       if (avail) {
          setRule(avail)
-         dispatch({
+         collectionDispatch({
             type: 'RULE',
             payload: avail.toString(),
          })
@@ -100,7 +134,9 @@ const Configuration = () => {
 
    return (
       <React.Fragment>
-         <StyledHeading>{t(address.concat('collection availability'))}</StyledHeading>
+         <StyledHeading>
+            {t(address.concat('collection availability'))}
+         </StyledHeading>
          <StyledContainer>
             <StyledForm>
                <div>
@@ -109,7 +145,7 @@ const Configuration = () => {
                         name="freq"
                         type="radio"
                         value="0"
-                        checked={freq === '0'}
+                        checked={freq == '0'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat yearly'))}
@@ -119,7 +155,7 @@ const Configuration = () => {
                         name="freq"
                         type="radio"
                         value="1"
-                        checked={freq === '1'}
+                        checked={freq == '1'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat monthly'))}
@@ -129,7 +165,7 @@ const Configuration = () => {
                         name="freq"
                         type="radio"
                         value="2"
-                        checked={freq === '2'}
+                        checked={freq == '2'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat weekly'))}
@@ -139,7 +175,7 @@ const Configuration = () => {
                         name="freq"
                         type="radio"
                         value="3"
-                        checked={freq === '3'}
+                        checked={freq == '3'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat daily'))}
@@ -197,7 +233,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="0"
-                        checked={wkst === '0'}
+                        checked={wkst == '0'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('monday'))}
@@ -207,7 +243,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="1"
-                        checked={wkst === '1'}
+                        checked={wkst == '1'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('tuesday'))}
@@ -217,7 +253,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="2"
-                        checked={wkst === '2'}
+                        checked={wkst == '2'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('wednesday'))}
@@ -227,7 +263,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="3"
-                        checked={wkst === '3'}
+                        checked={wkst == '3'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('thursday'))}
@@ -237,7 +273,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="4"
-                        checked={wkst === '4'}
+                        checked={wkst == '4'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('friday'))}
@@ -247,7 +283,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="5"
-                        checked={wkst === '5'}
+                        checked={wkst == '5'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('saturday'))}
@@ -257,7 +293,7 @@ const Configuration = () => {
                         type="radio"
                         name="wkst"
                         value="6"
-                        checked={wkst === '6'}
+                        checked={wkst == '6'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('sunday'))}
