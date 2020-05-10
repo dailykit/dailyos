@@ -99,37 +99,6 @@ export default function CustomizableProduct() {
       },
       fetchPolicy: 'cache-and-network',
    })
-   // useQuery(ACCOMPANIMENT_TYPES, {
-   //    onCompleted: data => {
-   //       const { accompanimentTypes } = data
-   //       const updatedAccompanimentTypes = accompanimentTypes.map(item => {
-   //          item.title = item.name
-   //          return item
-   //       })
-   //       setAccompanimentTypes(updatedAccompanimentTypes)
-   //    },
-   // })
-
-   // const [createCustomizableProduct] = useMutation(
-   //    CREATE_CUSTOMIZABLE_PRODUCT,
-   //    {
-   //       onCompleted: data => {
-   //          const productId = data.createCustomizableProduct.returning[0].id
-   //          saveOptions(productId)
-   //       },
-   //    }
-   // )
-
-   // const [createCustomizableProductOptions] = useMutation(
-   //    CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
-   //    {
-   //       onCompleted: data => {
-   //          console.log('Saved!')
-   //          console.log(data)
-   //          toast.success('Product saved!')
-   //       },
-   //    }
-   // )
 
    // Subscription
    const { loading } = useSubscription(S_CUSTOMIZABLE_PRODUCT, {
@@ -171,34 +140,6 @@ export default function CustomizableProduct() {
       },
    })
 
-   // const objects = {
-   //    name: state.title,
-   //    tags: state.tags,
-   //    description: state.description,
-   //    default: state.default,
-   // }
-   // createCustomizableProduct({
-   //    variables: {
-   //       objects: [objects],
-   //    },
-   // })
-
-   // const saveOptions = productId => {
-   //    const objects = state.items.map(item => {
-   //       return {
-   //          customizableProductId: productId,
-   //          accompaniments: item.accompaniments,
-   //          inventoryProductId: item.type === 'inventory' ? item.id : null,
-   //          simpleRecipeProductId: item.type === 'simple' ? item.id : null,
-   //       }
-   //    })
-   //    createCustomizableProductOptions({
-   //       variables: {
-   //          objects,
-   //       },
-   //    })
-   // }
-
    if (loading) return <Loader />
 
    return (
@@ -219,21 +160,6 @@ export default function CustomizableProduct() {
                   products={products[productState.meta.itemType]}
                />
             </Tunnel>
-            {/* <Tunnel layer={4}>
-               <AccompanimentTypeTunnel
-                  close={closeTunnel}
-                  accompanimentTypes={accompanimentTypes}
-               />
-            </Tunnel>
-            <Tunnel layer={5}>
-               <ProductsTypeTunnel close={closeTunnel} open={openTunnel} />
-            </Tunnel>
-            <Tunnel layer={6}>
-               <ProductsTunnel
-                  close={closeTunnel}
-                  products={products[state.meta.productsType]}
-               />
-            </Tunnel> */}
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
