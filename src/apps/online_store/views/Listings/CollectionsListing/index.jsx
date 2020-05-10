@@ -60,7 +60,7 @@ const CollectionsListing = () => {
             'collection',
             data.createMenuCollection.returning[0].id
          )
-         toast.success('Collection saved!')
+         toast.success('Collection created!')
       },
       onError: error => {
          console.log(error)
