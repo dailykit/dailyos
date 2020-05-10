@@ -257,6 +257,7 @@ export const CREATE_COLLECTION = gql`
    }
 `
 
+// Not in use
 export const UPDATE_PRODUCT = gql`
    mutation UpdateProduct($input: UpdateProductInput) {
       updateProduct(input: $input) {
@@ -270,21 +271,13 @@ export const UPDATE_PRODUCT = gql`
 `
 
 export const UPDATE_COLLECTION = gql`
-   mutation UpdateCollection($input: UpdateMenuCollectionInput) {
-      updateMenuCollection(input: $input) {
-         success
-         message
-         menuCollection {
+   mutation UpdateCollection(
+      $id: Int!
+      $set: onlineStore_menuCollection_set_input
+   ) {
+      updateMenuCollection(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
             id
-            title
-            categories {
-               title
-               products {
-                  id
-                  title
-               }
-            }
-            availability
          }
       }
    }

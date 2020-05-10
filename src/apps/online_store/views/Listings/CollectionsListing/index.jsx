@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { RRule } from 'rrule'
 
 import { COLLECTIONS } from '../../../graphql'
@@ -20,6 +20,7 @@ import {
    Avatar,
    TagGroup,
    Tag,
+   Loader,
 } from '@dailykit/ui'
 
 // Styled
@@ -28,7 +29,6 @@ import { StyledWrapper, StyledHeader } from '../styled'
 // Icons
 import { EditIcon, DeleteIcon, AddIcon } from '../../../assets/icons'
 
-
 import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
@@ -36,12 +36,18 @@ const address = 'apps.online_store.views.listings.collectionslisting.'
 const CollectionsListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
    // Queries
-   const { data, loading, error } = useQuery(COLLECTIONS)
+   const { data, loading } = useSubscription(COLLECTIONS, {
+      onError: error => {
+         console.log(error)
+      },
+   })
+
+   if (loading) return <Loader />
 
    return (
       <StyledWrapper>
@@ -59,28 +65,28 @@ const CollectionsListing = () => {
                <TableRow>
                   <TableCell>{t(address.concat('collection name'))}</TableCell>
                   <TableCell>{t(address.concat('categories'))}</TableCell>
-                  <TableCell>{t(address.concat('products'))}</TableCell>
-                  {/* <TableCell align="right">Actions</TableCell> */}
+                  <TableCell>{t(address.concat('availability'))}</TableCell>
+                  <TableCell></TableCell>
                </TableRow>
             </TableHead>
             <TableBody>
                {data?.menuCollections.map((row, index) => (
-                  <TableRow key={row.id}>
+                  <TableRow
+                     key={row.id}
+                     onClick={() => {
+                        addTab(row.name, 'collection', row.id)
+                     }}
+                  >
                      <TableCell>{row.name}</TableCell>
                      <TableCell>{row.categories.length}</TableCell>
                      <TableCell>
                         {RRule.fromString(row.availability.rule).toText()}
                      </TableCell>
-                     {/* <TableCell align="right">
-                        <ButtonGroup align="right">
-                           <IconButton type="outline">
-                              <EditIcon />
-                           </IconButton>
-                           <IconButton type="outline">
-                              <DeleteIcon />
-                           </IconButton>
-                        </ButtonGroup>
-                     </TableCell> */}
+                     <TableCell align="right">
+                        <IconButton>
+                           <DeleteIcon color="#FF5A52" />
+                        </IconButton>
+                     </TableCell>
                   </TableRow>
                ))}
             </TableBody>

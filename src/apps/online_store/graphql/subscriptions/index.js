@@ -211,3 +211,15 @@ export const S_COMBO_PRODUCT = gql`
       }
    }
 `
+
+export const S_COLLECTION = gql`
+   subscription Collection($id: Int!) {
+      menuCollection(id: $id) {
+         id
+         name
+         active
+         availability
+         categories
+      }
+   }
+`

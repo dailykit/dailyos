@@ -936,9 +936,11 @@
             },
             "listings": {
                "collectionslisting": {
+                  "collections": "Collections",
                   "collection name": "Collection Name",
                   "categories": "Categories",
                   "products": "Products",
+                  "availability": "Availability",
                   "actions": "Actions"
                },
                "productslisting": {
