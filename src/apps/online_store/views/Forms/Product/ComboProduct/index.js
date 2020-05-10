@@ -66,7 +66,7 @@ export default function ComboProduct() {
    })
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   // Queries
+   // Subscriptions
    const { loading } = useSubscription(S_COMBO_PRODUCT, {
       variables: {
          id: tabs.current.id,
@@ -80,50 +80,62 @@ export default function ComboProduct() {
          console.log(error)
       },
    })
-   useQuery(SIMPLE_RECIPE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             simple: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
+      onError: error => {
+         console.log(error)
+      },
    })
-   useQuery(INVENTORY_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.inventoryProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(INVENTORY_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             inventory: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
+      onError: error => {
+         console.log(error)
+      },
    })
-   useQuery(CUSTOMIZABLE_PRODUCTS, {
-      onCompleted: data => {
-         const updatedProducts = data.customizableProducts.map(pdct => {
-            return {
-               ...pdct,
-               title: pdct.name,
+   useSubscription(CUSTOMIZABLE_PRODUCTS, {
+      onSubscriptionData: data => {
+         const updatedProducts = data.subscriptionData.data.customizableProducts.map(
+            pdct => {
+               return {
+                  ...pdct,
+                  title: pdct.name,
+               }
             }
-         })
+         )
          setProducts({
             ...products,
             customizable: updatedProducts,
          })
       },
-      fetchPolicy: 'cache-and-network',
+      onError: error => {
+         console.log(error)
+      },
    })
 
    //Mutations
