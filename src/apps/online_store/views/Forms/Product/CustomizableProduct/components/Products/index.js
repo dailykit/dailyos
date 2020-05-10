@@ -21,15 +21,17 @@ import {
    StyledTabView,
    StyledTable,
    StyledAction,
+   StyledDefault,
 } from './styled'
-
-import { StyledDefault } from '../../../SimpleRecipeProduct/components/Recipe/styled'
 
 import { useTranslation, Trans } from 'react-i18next'
 import { DeleteIcon } from '../../../../../../assets/icons'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { DELETE_CUSTOMIZABLE_PRODUCT_OPTION } from '../../../../../../graphql'
+import {
+   DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
+   UPDATE_CUSTOMIZABLE_PRODUCT,
+} from '../../../../../../graphql'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.components.items.'
@@ -54,6 +56,15 @@ const Products = ({ state, openTunnel }) => {
          toast.error('Error')
       },
    })
+   const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
+      onCompleted: () => {
+         toast.success('Default updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
 
    // Handlers
    const remove = product => {
@@ -71,6 +82,18 @@ const Products = ({ state, openTunnel }) => {
             },
          })
       }
+   }
+   const makeDefault = () => {
+      updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               default:
+                  state.customizableProductOptions[productState.productIndex]
+                     .id,
+            },
+         },
+      })
    }
 
    return (
@@ -95,7 +118,7 @@ const Products = ({ state, openTunnel }) => {
                         <span onClick={() => remove(option)}>
                            <DeleteIcon color="#fff" />
                         </span>
-                        <StyledDefault hidden={true}>
+                        <StyledDefault hidden={state.default !== option.id}>
                            {t(address.concat('default'))}
                         </StyledDefault>
                      </StyledListingTile>
@@ -124,21 +147,15 @@ const Products = ({ state, openTunnel }) => {
                         )
                      )}
                   />
-                  <StyledAction hidden={true}>
-                     <TextButton
-                        type="outline"
-                        // onClick={() => {
-                        //    dispatch({
-                        //       type: 'DEFAULT',
-                        //       payload: {
-                        //          value: {
-                        //             type: _state.currentItem.type,
-                        //             id: _state.currentItem.id,
-                        //          },
-                        //       },
-                        //    })
-                        // }}
-                     >
+                  <StyledAction
+                     hidden={
+                        state.default ===
+                        state.customizableProductOptions[
+                           productState.productIndex
+                        ].id
+                     }
+                  >
+                     <TextButton type="ghost" onClick={makeDefault}>
                         {t(address.concat('make default'))}
                      </TextButton>
                   </StyledAction>

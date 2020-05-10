@@ -55,6 +55,15 @@ export const StyledListingTile = styled.div`
    }
 `
 
+export const StyledDefault = styled.div`
+   padding: 2px;
+   color: #fff;
+   background: #00a7e1;
+   position: absolute;
+   bottom: 8px;
+   right: 8px;
+`
+
 export const StyledTabs = styled.div`
    display: flex;
    margin: 8px 0;
