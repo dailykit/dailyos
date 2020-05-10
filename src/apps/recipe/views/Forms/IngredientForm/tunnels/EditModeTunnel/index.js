@@ -1,29 +1,12 @@
 import React from 'react'
-import {
-   Text,
-   TextButton,
-   Input,
-   Toggle,
-   Checkbox,
-   RadioGroup,
-   Select,
-} from '@dailykit/ui'
-
-import { CloseIcon, EditIcon } from '../../../../../assets/icons'
-
-import { IngredientContext } from '../../../../../context/ingredient'
-
-import {
-   TunnelHeader,
-   TunnelBody,
-   StyledInputWrapper,
-   StyledRow,
-} from '../styled'
-
-import { StyledTable } from './styled'
-import { UPDATE_MODE } from '../../../../../graphql'
 import { useMutation } from '@apollo/react-hooks'
+import { Input, RadioGroup, Select, Text, TextButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon, EditIcon } from '../../../../../assets/icons'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { UPDATE_MODE } from '../../../../../graphql'
+import { StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { StyledTable } from './styled'
 
 const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(

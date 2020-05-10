@@ -1,24 +1,19 @@
 import React from 'react'
-
+import { useMutation } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Text,
+   useSingleList,
 } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody } from '../styled'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
-import { useMutation } from '@apollo/react-hooks'
-
-import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
-import { toast } from 'react-toastify'
-
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../../assets/icons'
+import { ComboProductContext } from '../../../../../../context/product/comboProduct'
+import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
+import { TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'

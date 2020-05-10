@@ -1,15 +1,11 @@
 import React from 'react'
-
-import { TextButton, Input, Text } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-
-import { useTranslation, Trans } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
+import { Input, Text, TextButton } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
+import { CloseIcon } from '../../../../../../assets/icons'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
+import { StyledRow, TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.descriptiontunnel.'

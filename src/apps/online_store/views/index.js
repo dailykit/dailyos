@@ -2,7 +2,6 @@ import Home from './Home'
 import { ProductsListing, CollectionsListing } from './Listings'
 
 import {
-   ProductForm,
    CollectionForm,
    InventoryProductForm,
    SimpleRecipeProductForm,
@@ -13,7 +12,6 @@ import {
 export {
    Home,
    ProductsListing,
-   ProductForm,
    CollectionForm,
    SimpleRecipeProductForm,
    InventoryProductForm,

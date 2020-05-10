@@ -1,18 +1,15 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { Input, Text, TextButton } from '@dailykit/ui'
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
-import { CloseIcon, MinusIcon, AddIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, StyledInputWrapper, Grid } from '../styled'
-
+import { AddIcon, CloseIcon, MinusIcon } from '../../../../../../assets/icons'
+import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import {
    CREATE_INVENTORY_PRODUCT_OPTIONS,
    UPDATE_INVENTORY_PRODUCT_OPTION,
 } from '../../../../../../graphql'
-import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
+import { Grid, StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.pricingtunnel.'

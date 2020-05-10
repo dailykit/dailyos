@@ -1,15 +1,13 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { RRule, rrulestr } from 'rrule'
-
 import { CollectionContext } from '../../../../../context/collection'
 import {
-   StyledHeading,
-   StyledForm,
-   StyledDisplay,
    StyledContainer,
+   StyledDisplay,
+   StyledForm,
+   StyledHeading,
 } from './styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address =
    'apps.online_store.views.forms.collection.components.configuration.'

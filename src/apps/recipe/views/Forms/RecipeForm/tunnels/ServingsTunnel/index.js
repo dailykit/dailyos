@@ -1,12 +1,10 @@
 import React from 'react'
-import { TextButton, Text, Input, ButtonTile, HelperText } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, Container, Grid } from '../styled'
 import { useMutation } from '@apollo/react-hooks'
-import { CREATE_SIMPLE_RECIPE_YIELDS } from '../../../../../graphql'
+import { ButtonTile, HelperText, Input, Text, TextButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../assets/icons'
+import { CREATE_SIMPLE_RECIPE_YIELDS } from '../../../../../graphql'
+import { Container, TunnelBody, TunnelHeader } from '../styled'
 
 const ServingsTunnel = ({ state, closeTunnel }) => {
    // State

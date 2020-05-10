@@ -1,49 +1,34 @@
 import React from 'react'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Input, Loader, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
-   Input,
-   TextButton,
-   ButtonTile,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   Loader,
-} from '@dailykit/ui'
-
-import { Context } from '../../../../context/tabs'
-import {
-   state as initialState,
    InventoryProductContext,
    reducers,
+   state as initialState,
 } from '../../../../context/product/inventoryProduct'
-
+import { Context } from '../../../../context/tabs'
 import {
-   ItemTunnel,
-   DescriptionTunnel,
-   ProductsTypeTunnel,
-   ProductsTunnel,
+   INVENTORY_PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
+   S_INVENTORY_PRODUCT,
+   S_SACHET_ITEMS,
+   S_SUPPLIER_ITEMS,
+   UPDATE_INVENTORY_PRODUCT,
+} from '../../../../graphql'
+import { StyledWrapper } from '../../styled'
+import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
+import { Description, Item } from './components'
+import {
    AccompanimentTypeTunnel,
+   DescriptionTunnel,
+   ItemTunnel,
    ItemTypeTunnel,
    PricingTunnel,
+   ProductsTunnel,
+   ProductsTypeTunnel,
 } from './tunnels'
-import { Item, Description } from './components'
-import { StyledWrapper } from '../../styled'
-import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
-import {
-   RECIPES,
-   ACCOMPANIMENT_TYPES,
-   SIMPLE_RECIPE_PRODUCTS,
-   CREATE_INVENTORY_PRODUCT,
-   CREATE_INVENTORY_PRODUCT_OPTIONS,
-   INVENTORY_PRODUCTS,
-   S_INVENTORY_PRODUCT,
-   UPDATE_INVENTORY_PRODUCT,
-   S_SUPPLIER_ITEMS,
-   S_SACHET_ITEMS,
-} from '../../../../graphql'
-
-import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.online_store.views.forms.product.inventoryproduct.'
 

@@ -1,31 +1,29 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-
-import { Container, Grid } from '../styled'
 import {
-   Text,
    ButtonTile,
-   Table,
-   TableCell,
-   TableBody,
-   TableRow,
-   TableHead,
    IconButton,
    PlusIcon,
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableRow,
+   Text,
 } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import {
-   UserIcon,
-   EyeIcon,
-   EditIcon,
    DeleteIcon,
+   EditIcon,
+   EyeIcon,
+   UserIcon,
 } from '../../../../../assets/icons'
-
-import {
-   UPDATE_RECIPE,
-   DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
-} from '../../../../../graphql'
 import { RecipeContext } from '../../../../../context/recipee'
+import {
+   DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
+   UPDATE_RECIPE,
+} from '../../../../../graphql'
+import { Container, Grid } from '../styled'
 
 const Ingredients = ({ state, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)

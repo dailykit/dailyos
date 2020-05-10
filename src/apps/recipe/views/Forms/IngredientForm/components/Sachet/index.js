@@ -1,15 +1,12 @@
 import React from 'react'
-import { Text, IconButton, Checkbox, ButtonTile } from '@dailykit/ui'
-
-import { TickIcon, CloseIcon, EditIcon } from '../../../../../assets/icons'
-
-import { Container, Flex, Grid, ContainerAction } from '../styled'
-import { StyledTable } from './styled'
-
-import { IngredientContext } from '../../../../../context/ingredient'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, Checkbox, IconButton, Text } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
+import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
+import { Container, ContainerAction, Flex, Grid } from '../styled'
+import { StyledTable } from './styled'
 
 const Sachet = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(

@@ -1,39 +1,31 @@
 import React from 'react'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    IconButton,
-   Table,
-   TableHead,
-   TableRow,
-   TableCell,
-   TableBody,
    Loader,
    SearchBox,
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableRow,
 } from '@dailykit/ui'
-
-import { generateRandomString } from '../../../utils'
-
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { randomSuffix } from '../../../../../shared/utils'
 // Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-
 // State
 import { Context } from '../../../context/tabs'
-
+import { CREATE_SIMPLE_RECIPE, S_RECIPES } from '../../../graphql'
 // Styled
 import {
-   StyledWrapper,
-   StyledTableHeader,
-   StyledTableActions,
-   StyledHeader,
    StyledContent,
+   StyledHeader,
+   StyledTableActions,
+   StyledTableHeader,
+   StyledWrapper,
 } from '../styled'
-
-import { CREATE_SIMPLE_RECIPE, S_RECIPES } from '../../../graphql'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { toast } from 'react-toastify'
-
-import { randomSuffix } from '../../../../../shared/utils'
 
 const address = 'apps.recipe.views.listings.recipeslisting.'
 

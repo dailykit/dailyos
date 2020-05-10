@@ -1,20 +1,18 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, Input } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { DeleteIcon } from '../../../../../../assets/icons'
+import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
+import { StyledInputWrapper } from '../../tunnels/styled'
 import {
-   StyledListing,
    StyledLayout,
+   StyledListing,
    StyledListingTile,
    StyledPanel,
 } from './styled'
-import { ButtonTile, Input } from '@dailykit/ui'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
-
-import { toast } from 'react-toastify'
-import { StyledInputWrapper } from '../../tunnels/styled'
-import { DeleteIcon } from '../../../../../../assets/icons'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.products.'

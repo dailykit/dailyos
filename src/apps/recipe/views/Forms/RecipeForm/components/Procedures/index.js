@@ -1,7 +1,7 @@
 import React from 'react'
-import { ButtonTile, Text, IconButton } from '@dailykit/ui'
-import { Container, ContainerAction } from '../styled'
+import { ButtonTile, IconButton, Text } from '@dailykit/ui'
 import { EditIcon } from '../../../../../assets/icons'
+import { Container, ContainerAction } from '../styled'
 
 const Procedures = ({ state, openTunnel }) => {
    return (

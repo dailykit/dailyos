@@ -7,7 +7,6 @@ import { Context } from '../../context/tabs'
 import {
    Home,
    ProductsListing,
-   ProductForm,
    CollectionForm,
    InventoryProductForm,
    CollectionsListing,
@@ -22,7 +21,6 @@ const renderComponent = (type, view) => {
    if (type === 'listings' && view === 'collections')
       return <CollectionsListing />
    // Forms
-   if (type === 'forms' && view === 'product') return <ProductForm />
    if (type === 'forms' && view === 'collection') return <CollectionForm />
    if (type === 'forms' && view === 'inventoryProduct')
       return <InventoryProductForm />

@@ -1,49 +1,42 @@
 import React from 'react'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Input,
+   Loader,
    TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
 } from '@dailykit/ui'
-
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 // context
 import {
-   state as initialState,
    ComboProductContext,
    reducers,
+   state as initialState,
 } from '../../../../context/product/comboProduct'
 import { Context } from '../../../../context/tabs'
-
-// styles
-import { StyledWrapper } from '../../styled'
-import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
-
 // graphql
 import {
-   SIMPLE_RECIPE_PRODUCTS,
-   INVENTORY_PRODUCTS,
    CUSTOMIZABLE_PRODUCTS,
-   COMBO_PRODUCT,
+   INVENTORY_PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
    UPDATE_COMBO_PRODUCT,
 } from '../../../../graphql'
-
+import { S_COMBO_PRODUCT } from '../../../../graphql/subscriptions'
+// styles
+import { StyledWrapper } from '../../styled'
+import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 // components
 import { Description, Items } from './components'
-
 // tunnels
 import {
    DescriptionTunnel,
    ItemsTunnel,
-   ProductTypeTunnel,
    ProductsTunnel,
+   ProductTypeTunnel,
 } from './tunnels'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { S_COMBO_PRODUCT } from '../../../../graphql/subscriptions'
 
 const address = 'apps.online_store.views.forms.product.comboproduct.'
 

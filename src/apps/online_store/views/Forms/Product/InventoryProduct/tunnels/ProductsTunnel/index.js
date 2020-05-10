@@ -1,8 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
-   TextButton,
-   useMultiList,
    List,
    ListItem,
    ListOptions,
@@ -10,15 +8,15 @@ import {
    Tag,
    TagGroup,
    Text,
+   TextButton,
+   useMultiList,
 } from '@dailykit/ui'
-
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { CloseIcon } from '../../../../../../assets/icons'
-import { TunnelHeader, TunnelBody } from '../styled'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { toast } from 'react-toastify'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.productstunnel.'

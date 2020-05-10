@@ -1,24 +1,18 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Text } from '@dailykit/ui'
-
-import { toast } from 'react-toastify'
-
-import { Context } from '../../../context/tabs'
-
-import { TunnelContainer, TunnelHeader, Spacer } from '../../../components'
 import { useMutation } from '@apollo/react-hooks'
-
+import { Text } from '@dailykit/ui'
+import { Trans, useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import styled from 'styled-components'
+import { randomSuffix } from '../../../../../shared/utils'
+import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
+import { Context } from '../../../context/tabs'
 import {
    CREATE_COMBO_PRODUCT,
+   CREATE_CUSTOMIZABLE_PRODUCT,
    CREATE_INVENTORY_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT,
-   CREATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../graphql'
-
-import { randomSuffix } from '../../../../../shared/utils'
-
-import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 

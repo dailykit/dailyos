@@ -1,11 +1,9 @@
 import React from 'react'
-import { Input, ButtonTile, Text } from '@dailykit/ui'
-
-import { Category, Title, Products, Product } from './styled'
-import { CollectionContext } from '../../../../../context/collection'
-import DeleteIcon from '../../../../../assets/icons/Delete'
-
+import { ButtonTile, Input, Text } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import DeleteIcon from '../../../../../assets/icons/Delete'
+import { CollectionContext } from '../../../../../context/collection'
+import { Category, Product, Products, Title } from './styled'
 
 const address =
    'apps.online_store.views.forms.collection.components.categories.'

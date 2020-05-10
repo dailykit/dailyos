@@ -1,12 +1,10 @@
 import React from 'react'
-import { TextButton, Text, Input, ButtonTile, Toggle } from '@dailykit/ui'
-
-import { CloseIcon, DeleteIcon } from '../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, Container, InputWrapper } from '../styled'
 import { useMutation } from '@apollo/react-hooks'
-import { UPDATE_RECIPE } from '../../../../../graphql'
+import { ButtonTile, Input, Text, TextButton, Toggle } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon, DeleteIcon } from '../../../../../assets/icons'
+import { UPDATE_RECIPE } from '../../../../../graphql'
+import { Container, InputWrapper, TunnelBody, TunnelHeader } from '../styled'
 
 const reducer = (state, { type, payload }) => {
    switch (type) {
