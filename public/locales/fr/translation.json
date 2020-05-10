@@ -535,7 +535,7 @@
                         "monday": "Lundi",
                         "tuesday": "Mardi",
                         "wednesday": "Mercredi",
-                        "thrusday": "Jeudi",
+                        "thursday": "Thursday",
                         "friday": "Vendredi",
                         "saturday": "Samedi",
                         "sunday": "Dimanche",
@@ -543,7 +543,7 @@
                         "every monday": "Tous les lundis",
                         "every tuesday": "Tous les mardis",
                         "every wednesday": "Tous les mercredis",
-                        "every thrusday": "Tous les mardis",
+                        "every thursday": "Every Thursday",
                         "every friday": "Tous les vendredis",
                         "every saturday": "Tous les samedis",
                         "every sunday": "Chaque dimanche",
@@ -935,9 +935,11 @@
             },
             "listings": {
                "collectionslisting": {
+                  "collections": "Collections",
                   "collection name": "Nom de la Collection",
                   "categories": "Catégories",
                   "products": "Produits",
+                  "availability": "Availability",
                   "actions": "Actions"
                },
                "productslisting": {
