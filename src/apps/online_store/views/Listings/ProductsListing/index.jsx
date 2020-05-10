@@ -27,7 +27,7 @@ const address = 'apps.online_store.views.listings.productslisting.'
 
 const ProductsListing = () => {
    const { t } = useTranslation()
-   const [view, setView] = React.useState('customizable')
+   const [view, setView] = React.useState('combo')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const options = [
@@ -68,7 +68,7 @@ const ProductsListing = () => {
             </StyledHeader>
             <RadioGroup
                options={options}
-               active={'customizable'}
+               active={'combo'}
                onChange={option => setView(option.id)}
             />
             <Spacer />
