@@ -283,7 +283,7 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                         {t(address.concat('pricing'))}
                      </StyledTab>
                   </StyledTabs>
-                  {(active.simpleRecipeProduct || active.inventoryProduct) && (
+                  {active.simpleRecipeProduct || active.inventoryProduct ? (
                      <StyledTable>
                         <thead>
                            <tr>
@@ -423,6 +423,10 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                            )}
                         </tbody>
                      </StyledTable>
+                  ) : (
+                     <Text as="p">
+                        Cannot display Pricing for a Customizable Product.
+                     </Text>
                   )}
                </React.Fragment>
             )}
