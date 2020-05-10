@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, ButtonTile } from '@dailykit/ui'
+import { Input, ButtonTile, Text } from '@dailykit/ui'
 
 import { Category, Title, Products, Product } from './styled'
 import { CollectionContext } from '../../../../../context/collection'
@@ -29,18 +29,18 @@ const Categories = ({ openTunnel }) => {
       }
    }
 
-   const add_product = title => {
+   const add_product = index => {
       collectionDispatch({
          type: 'CURRENT_CATEGORY',
-         payload: { category: { title } },
+         payload: { index },
       })
       openTunnel(1)
    }
 
    return (
       <React.Fragment>
-         {collectionState.categories.map(category => (
-            <Category key={category.id}>
+         {collectionState.categories.map((category, index) => (
+            <Category key={index}>
                <Title>
                   <Input
                      type="text"
@@ -50,6 +50,7 @@ const Categories = ({ openTunnel }) => {
                         collectionDispatch({
                            type: 'CATEGORY_TITLE',
                            payload: {
+                              index,
                               title: e.target.value,
                            },
                         })
@@ -70,7 +71,7 @@ const Categories = ({ openTunnel }) => {
                <Products>
                   {category.products.map(product => (
                      <Product key={product.id}>
-                        <span>{product.title}</span>
+                        <Text as="p">{product.title}</Text>
                         <span
                            onClick={() =>
                               collectionDispatch({
@@ -91,7 +92,7 @@ const Categories = ({ openTunnel }) => {
                   <ButtonTile
                      type="secondary"
                      text={t(address.concat('add product'))}
-                     onClick={() => add_product(category.title)}
+                     onClick={() => add_product(index)}
                   />
                </Products>
             </Category>

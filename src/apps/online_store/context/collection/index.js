@@ -41,7 +41,7 @@ export const reducer = (state, { type, payload }) => {
       }
       case 'CATEGORY_TITLE': {
          const updated_categories = state.categories
-         updated_categories[state.current.category].title = payload.title
+         updated_categories[payload.index].title = payload.title
          return {
             ...state,
             categories: updated_categories,
@@ -49,7 +49,6 @@ export const reducer = (state, { type, payload }) => {
       }
       case 'CREATE_CATEGORY': {
          const new_category = {
-            id: Math.floor(Math.random() * 1000),
             title: payload.title,
             products: [],
          }
@@ -68,14 +67,11 @@ export const reducer = (state, { type, payload }) => {
          }
       }
       case 'CURRENT_CATEGORY': {
-         const index = state.categories.findIndex(
-            category => category.title === payload.category.title
-         )
          return {
             ...state,
             current: {
                ...state.current,
-               category: index,
+               category: payload.index,
             },
          }
       }

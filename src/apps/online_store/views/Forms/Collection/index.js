@@ -1,6 +1,13 @@
 import React from 'react'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import {
+   Input,
+   TextButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   Loader,
+} from '@dailykit/ui'
 
 import {
    CollectionContext,
@@ -174,7 +181,7 @@ const CollectionForm = () => {
       })
       const object = {
          availability: {
-            rule: state.rule,
+            rule: collectionState.rule,
             time: {
                end: '23:59',
                start: '00:00',
@@ -204,6 +211,8 @@ const CollectionForm = () => {
          },
       })
    }
+
+   if (loading) return <Loader />
 
    return (
       <CollectionContext.Provider
