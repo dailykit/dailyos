@@ -105,10 +105,10 @@ export const reducer = (state, { type, payload }) => {
             rule: payload,
          }
       }
-      case 'NEXT_STAGE': {
+      case 'STAGE': {
          return {
             ...state,
-            stage: state.stage + 1,
+            stage: payload,
          }
       }
       case 'META': {

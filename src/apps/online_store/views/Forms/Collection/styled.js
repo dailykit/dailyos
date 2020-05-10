@@ -23,6 +23,10 @@ export const Breadcrumbs = styled.div`
    .active {
       color: #00a7e1;
    }
+
+   span {
+      cursor: pointer;
+   }
 `
 
 export const FormHeaderActions = styled.div`

@@ -240,13 +240,23 @@ const CollectionForm = () => {
                   onBlur={updateName}
                />
                <Breadcrumbs>
-                  <span className={collectionState.stage >= 1 ? 'active' : ''}>
+                  <span
+                     className={collectionState.stage >= 1 ? 'active' : ''}
+                     onClick={() =>
+                        collectionDispatch({ type: 'STAGE', payload: 1 })
+                     }
+                  >
                      {t(address.concat('add products'))}
                   </span>
                   <span>
                      <ChevronRight />
                   </span>
-                  <span className={collectionState.stage >= 2 ? 'active' : ''}>
+                  <span
+                     className={collectionState.stage >= 2 ? 'active' : ''}
+                     onClick={() =>
+                        collectionDispatch({ type: 'STAGE', payload: 2 })
+                     }
+                  >
                      {t(address.concat('configure shop'))}
                   </span>
                </Breadcrumbs>
@@ -257,7 +267,10 @@ const CollectionForm = () => {
                </TextButton>
                <TextButton
                   type="solid"
-                  onClick={() => collectionDispatch({ type: 'NEXT_STAGE' })}
+                  onClick={() =>
+                     collectionDispatch({ type: 'STAGE', payload: 2 })
+                  }
+                  hidden={collectionState.stage === 2}
                >
                   {t(address.concat('proceed'))}
                </TextButton>
