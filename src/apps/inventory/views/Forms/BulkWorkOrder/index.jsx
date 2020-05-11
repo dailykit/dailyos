@@ -78,16 +78,9 @@ export default function BulkWorkOrderForm() {
          toast.error('Output quantity is not configured!')
          return false
       }
-      if (!bulkOrderState.assignedUser?.id) {
-         toast.error('No user is assigned!')
-         return false
-      }
+
       if (!bulkOrderState.assignedDate) {
          toast.error("Can't publish unscheduled work order!")
-         return false
-      }
-      if (!bulkOrderState.selectedStation?.id) {
-         toast.error('No station is selected!')
          return false
       }
 
