@@ -51,6 +51,9 @@ export const SUPPLIER_ITEMS = gql`
          bulkItems {
             id
             processingName
+            onHand
+            shelfLife
+            yield
          }
       }
    }

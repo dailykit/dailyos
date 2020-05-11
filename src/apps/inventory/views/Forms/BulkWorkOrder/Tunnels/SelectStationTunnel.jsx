@@ -1,4 +1,3 @@
-import React, { useState, useContext } from 'react'
 import {
    List,
    ListItem,
@@ -6,32 +5,26 @@ import {
    ListSearch,
    useSingleList,
 } from '@dailykit/ui'
-
-import { BulkOrderContext } from '../../../../context/bulkOrder'
-
-import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
-
+import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
+import { BulkOrderContext } from '../../../../context/bulkOrder'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
-export default function SelectStationTunnel({ close }) {
+export default function SelectStationTunnel({ close, stations }) {
    const { t } = useTranslation()
    const { bulkOrderDispatch } = useContext(BulkOrderContext)
 
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList([
-      { id: 1, title: 'Station 1' },
-      { id: 2, title: 'Station 2' },
-      { id: 3, title: 'Station 3' },
-      { id: 4, title: 'Station 4' },
-   ])
+   const [list, current, selectOption] = useSingleList(stations)
 
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("select station"))}
+            title={t(address.concat('select station'))}
             next={() => {
                bulkOrderDispatch({ type: 'ADD_STATION', payload: current })
                close(4)
@@ -44,21 +37,23 @@ export default function SelectStationTunnel({ close }) {
 
          <List>
             {Object.keys(current).length > 0 ? (
-               <ListItem type="SSL1" title={current.title} />
+               <ListItem type="SSL1" title={current.name} />
             ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(address.concat("type what you’re looking for"))}
-                  />
-               )}
+               <ListSearch
+                  onChange={value => setSearch(value)}
+                  placeholder={t(
+                     address.concat('type what you’re looking for')
+                  )}
+               />
+            )}
             <ListOptions>
                {list
-                  .filter(option => option.title.toLowerCase().includes(search))
+                  .filter(option => option.name.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
                         type="SSL1"
                         key={option.id}
-                        title={option.title}
+                        title={option.name}
                         isActive={option.id === current.id}
                         onClick={() => selectOption('id', option.id)}
                      />
