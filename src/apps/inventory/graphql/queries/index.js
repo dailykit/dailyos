@@ -42,3 +42,38 @@ export const SUPPLIER = gql`
       }
    }
 `
+
+export const SUPPLIER_ITEMS = gql`
+   query {
+      supplierItems {
+         id
+         name
+         bulkItems {
+            id
+            processingName
+         }
+      }
+   }
+`
+
+export const SETTINGS_USERS = gql`
+   query {
+      settings_user {
+         lastName
+         firstName
+         id
+      }
+   }
+`
+
+export const STATIONS = gql`
+   query {
+      stations {
+         id
+         name
+         bulkWorkOrders {
+            id
+         }
+      }
+   }
+`

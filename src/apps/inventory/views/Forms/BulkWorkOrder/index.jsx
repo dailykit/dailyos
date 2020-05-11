@@ -9,6 +9,8 @@ import {
    Input,
 } from '@dailykit/ui/'
 
+import { useTranslation } from 'react-i18next'
+
 import {
    BulkOrderContext,
    state as initialState,
@@ -28,8 +30,6 @@ import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 import SelectStationTunnel from './Tunnels/SelectStationTunnel'
-
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 

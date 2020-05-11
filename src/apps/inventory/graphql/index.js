@@ -3,6 +3,9 @@ import {
    MASTER_ALLERGENS,
    SUPPLIERS,
    SUPPLIER,
+   SUPPLIER_ITEMS,
+   SETTINGS_USERS,
+   STATIONS,
 } from './queries'
 
 import {
@@ -27,4 +30,7 @@ export {
    ADD_BULK_ITEM,
    CREATE_BULK_ITEM,
    CREATE_SACHET_ITEM,
+   SUPPLIER_ITEMS,
+   SETTINGS_USERS,
+   STATIONS,
 }
