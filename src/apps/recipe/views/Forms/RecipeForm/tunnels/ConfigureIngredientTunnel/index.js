@@ -48,7 +48,7 @@ const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => closeTunnel(1)}>
+               <span onClick={() => closeTunnel(6)}>
                   <CloseIcon color="#888D9D" size="20" />
                </span>
                <Text as="title">Edit Ingredient Details</Text>
