@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Input,
@@ -11,6 +11,7 @@ import {
 } from '@dailykit/ui/'
 import React, { useContext, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 import { ItemCard, Spacer } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
@@ -31,7 +32,12 @@ import SelectStationTunnel from './Tunnels/SelectStationTunnel'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
-import { SUPPLIER_ITEMS, SETTINGS_USERS, STATIONS } from '../../../graphql'
+import {
+   SUPPLIER_ITEMS,
+   SETTINGS_USERS,
+   STATIONS,
+   CREATE_BULK_WORK_ORDER,
+} from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
@@ -48,6 +54,77 @@ export default function BulkWorkOrderForm() {
    )
    const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
    const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
+
+   const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
+
+   const checkForm = () => {
+      if (!bulkOrderState.supplierItem?.id) {
+         toast.error('No Supplier Item selecetd!')
+         return false
+      }
+      if (!bulkOrderState.inputItemProcessing?.id) {
+         toast.error('No Input Bulk Item selecetd!')
+         return false
+      }
+      if (!bulkOrderState.outputItemProcessing?.id) {
+         toast.error('No Output Bulk Item selecetd!')
+         return false
+      }
+      if (!bulkOrderState.outputItemProcessing.yield) {
+         toast.error('Yield Percentage is not configured!')
+         return false
+      }
+      if (!bulkOrderState.outputItemProcessing.outputQuantity) {
+         toast.error('Output quantity is not configured!')
+         return false
+      }
+      if (!bulkOrderState.assignedUser?.id) {
+         toast.error('No user is assigned!')
+         return false
+      }
+      if (!bulkOrderState.assignedDate) {
+         toast.error("Can't publish unscheduled work order!")
+         return false
+      }
+      if (!bulkOrderState.selectedStation?.id) {
+         toast.error('No station is selected!')
+         return false
+      }
+
+      return true
+   }
+
+   const handlePublish = async () => {
+      const isValid = checkForm()
+
+      if (isValid) {
+         // create work order
+         const response = await createBulkWorkOrder({
+            variables: {
+               object: {
+                  status: 'PENDING',
+                  inputQuantity: bulkOrderState.inputQuantity,
+                  inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
+                  outputQuantity:
+                     bulkOrderState.outputItemProcessing.outputQuantity,
+                  inputBulkItemId: bulkOrderState.inputItemProcessing.id,
+                  outputBulkItemId: bulkOrderState.outputItemProcessing.id,
+                  userId: bulkOrderState.assignedUser.id,
+                  stationId: bulkOrderState.selectedStation.id,
+                  scheduledOn: bulkOrderState.assignedDate,
+               },
+            },
+         })
+
+         if (response?.data) {
+            toast.success('Work Order created successfully!')
+            bulkOrderDispatch({
+               type: 'SET_ID',
+               payload: response.data.createBulkWorkOrder.returning.id,
+            })
+         }
+      }
+   }
 
    if (supplierItemLoading) return <Loader />
 
@@ -109,7 +186,7 @@ export default function BulkWorkOrderForm() {
                </div>
 
                <FormActions>
-                  <TextButton onClick={() => {}} type="solid">
+                  <TextButton onClick={handlePublish} type="solid">
                      {t(address.concat('publish'))}
                   </TextButton>
                </FormActions>
@@ -345,7 +422,7 @@ function Configurator({ open }) {
 
             {bulkOrderState.selectedStation?.name ? (
                <ItemCard
-                  title={bulkOrderState.selectedStation.title}
+                  title={bulkOrderState.selectedStation.name}
                   edit={() => open(4)}
                />
             ) : (

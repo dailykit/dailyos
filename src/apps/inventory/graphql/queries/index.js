@@ -54,6 +54,7 @@ export const SUPPLIER_ITEMS = gql`
             onHand
             shelfLife
             yield
+            unit
          }
       }
    }

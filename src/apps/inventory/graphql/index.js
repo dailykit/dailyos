@@ -16,6 +16,7 @@ import {
    ADD_BULK_ITEM,
    CREATE_BULK_ITEM,
    CREATE_SACHET_ITEM,
+   CREATE_BULK_WORK_ORDER,
 } from './mutations'
 
 export {
@@ -33,4 +34,5 @@ export {
    SUPPLIER_ITEMS,
    SETTINGS_USERS,
    STATIONS,
+   CREATE_BULK_WORK_ORDER,
 }

@@ -3,16 +3,21 @@ import React from 'react'
 const BulkOrderContext = React.createContext()
 
 const state = {
+   id: '',
    supplierItem: {},
    outputItemProcessing: {},
    inputItemProcessing: {},
    selectedStation: {},
    assignedUser: {},
    assignedDate: '',
+   inputQuantity: '',
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'SET_ID':
+         return { ...state, id: payload }
+
       case 'ADD_SUPPLIER_ITEM':
          return { ...state, supplierItem: payload }
 
@@ -35,6 +40,9 @@ const reducers = (state, { type, payload }) => {
                ...state.outputItemProcessing,
                outputQuantity: payload,
             },
+            inputQuantity: Math.round(
+               (payload * 100) / state.outputItemProcessing.yield
+            ),
          }
 
       case 'SELECT_USER':
