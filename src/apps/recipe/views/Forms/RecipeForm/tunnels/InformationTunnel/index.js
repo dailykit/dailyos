@@ -30,10 +30,12 @@ const InformationTunnel = ({ state, closeTunnel }) => {
          id: state.id,
          set: {
             type: _state.type,
-            cuisine: _state.cuisine,
+            cuisine: _state.cuisine || null,
             cookingTime: _state.cookingTime,
             author: _state.author,
-            utensils: _state.utensils.split(',').map(tag => tag.trim()),
+            utensils: _state.utensils
+               ? _state.utensils.split(',').map(tag => tag.trim())
+               : [],
             description: _state.description,
          },
       },
