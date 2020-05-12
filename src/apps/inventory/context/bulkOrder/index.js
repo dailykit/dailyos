@@ -4,6 +4,7 @@ const BulkOrderContext = React.createContext()
 
 const state = {
    id: '',
+   status: '',
    supplierItem: {},
    outputItemProcessing: {},
    inputItemProcessing: {},
@@ -15,8 +16,8 @@ const state = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
-      case 'SET_ID':
-         return { ...state, id: payload }
+      case 'SET_META':
+         return { ...state, id: payload.id, status: payload.status }
 
       case 'ADD_SUPPLIER_ITEM':
          return { ...state, supplierItem: payload }
