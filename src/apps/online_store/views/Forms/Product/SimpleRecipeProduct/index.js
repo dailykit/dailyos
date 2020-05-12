@@ -1,47 +1,32 @@
 import React from 'react'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Input, Loader, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
-   Input,
-   TextButton,
-   ButtonTile,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   Loader,
-} from '@dailykit/ui'
-
+   reducers,
+   SimpleProductContext,
+   state as initialState,
+} from '../../../../context/product/simpleProduct'
 import { Context } from '../../../../context/tabs'
 import {
-   state as initialState,
-   SimpleProductContext,
-   reducers,
-} from '../../../../context/product/simpleProduct'
-
-import {
-   RecipeTunnel,
-   DescriptionTunnel,
-   ProductsTypeTunnel,
-   ProductsTunnel,
-   AccompanimentTypeTunnel,
-   PriceConfigurationTunnel,
-} from './tunnels'
-import { Recipe, Description } from './components'
-import { StyledWrapper } from '../../styled'
-import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
-import {
-   RECIPES,
-   ACCOMPANIMENT_TYPES,
-   SIMPLE_RECIPE_PRODUCTS,
    INVENTORY_PRODUCTS,
-   CREATE_SIMPLE_RECIPE_PRODUCT,
-   CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   RECIPES,
+   SIMPLE_RECIPE_PRODUCTS,
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../graphql'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { Tabs } from '../../../../components'
+import { StyledWrapper } from '../../styled'
+import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
+import { Description, Recipe } from './components'
+import {
+   AccompanimentTypeTunnel,
+   DescriptionTunnel,
+   PriceConfigurationTunnel,
+   ProductsTunnel,
+   ProductsTypeTunnel,
+   RecipeTunnel,
+} from './tunnels'
 
 const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
 

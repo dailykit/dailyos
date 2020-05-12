@@ -1,22 +1,20 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { useTranslation, Trans } from 'react-i18next'
-
 import {
+   IconButton,
+   Loader,
    Table,
-   TableHead,
    TableBody,
    TableCell,
+   TableHead,
    TableRow,
-   Loader,
-   IconButton,
-   Text,
    Tag,
+   Text,
 } from '@dailykit/ui'
-
+import { useTranslation } from 'react-i18next'
+import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { Context } from '../../../../../context/tabs'
 import { S_COMBO_PRODUCTS } from '../../../../../graphql'
-import { EditIcon, DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { GridContainer } from '../../../styled'
 
 const address = 'apps.online_store.views.listings.productslisting.'

@@ -1,39 +1,30 @@
 import React from 'react'
-import {
-   ButtonTile,
-   Checkbox,
-   Toggle,
-   TextButton,
-   HelperText,
-} from '@dailykit/ui'
-
-import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
-
-// styles
-import {
-   StyledWrapper,
-   StyledLayout,
-   StyledListing,
-   StyledPanel,
-   StyledListingTile,
-   StyledTabs,
-   StyledTab,
-   StyledTabView,
-   StyledTable,
-   StyledAction,
-   StyledDefault,
-   StyledLink,
-} from './styled'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, HelperText, TextButton } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
+import { Context } from '../../../../../../context/tabs'
 import {
    DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
    UPDATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../../../../graphql'
-import { Context } from '../../../../../../context/tabs'
+// styles
+import {
+   StyledAction,
+   StyledDefault,
+   StyledLayout,
+   StyledLink,
+   StyledListing,
+   StyledListingTile,
+   StyledPanel,
+   StyledTab,
+   StyledTable,
+   StyledTabs,
+   StyledTabView,
+   StyledWrapper,
+} from './styled'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.components.items.'

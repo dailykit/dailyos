@@ -1,44 +1,40 @@
 import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Input, Tunnels, Tunnel, useTunnel, Loader } from '@dailykit/ui'
-
-import { StyledHeader, InputWrapper } from '../styled'
-import { StyledMain } from './styled'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Input, Loader, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import {
-   S_INGREDIENT,
-   UPDATE_INGREDIENT,
-   FETCH_PROCESSING_NAMES,
-   FETCH_UNITS,
-   FETCH_STATIONS,
-   FETCH_PACKAGINGS,
-   FETCH_LABEL_TEMPLATES,
-   S_BULK_ITEMS,
-   S_SACHET_ITEMS,
-} from '../../../graphql'
-
-import {
-   state as initialState,
-   reducers,
    IngredientContext,
+   reducers,
+   state as initialState,
 } from '../../../context/ingredient'
 import { Context } from '../../../context/tabs'
-
-import { toast } from 'react-toastify'
-
-import { Stats, Processings } from './components'
 import {
+   FETCH_LABEL_TEMPLATES,
+   FETCH_PACKAGINGS,
+   FETCH_PROCESSING_NAMES,
+   FETCH_STATIONS,
+   FETCH_UNITS,
+   S_BULK_ITEMS,
+   S_INGREDIENT,
+   S_SACHET_ITEMS,
+   UPDATE_INGREDIENT,
+} from '../../../graphql'
+import { InputWrapper, StyledHeader } from '../styled'
+import { Processings, Stats } from './components'
+import { StyledMain } from './styled'
+import {
+   EditItemTunnel,
+   EditLabelTemplateTunnel,
+   EditModeTunnel,
+   EditPackagingTunnel,
+   EditSachetTunnel,
+   EditStationTunnel,
+   ItemTunnel,
+   LabelTemplateTunnel,
+   NutritionTunnel,
+   PackagingTunnel,
    ProcessingsTunnel,
    SachetTunnel,
-   ItemTunnel,
-   PackagingTunnel,
-   LabelTemplateTunnel,
-   EditSachetTunnel,
-   EditModeTunnel,
-   EditStationTunnel,
-   EditItemTunnel,
-   EditPackagingTunnel,
-   EditLabelTemplateTunnel,
-   NutritionTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 

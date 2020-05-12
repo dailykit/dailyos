@@ -1,12 +1,9 @@
 import React from 'react'
-
 import { Text } from '@dailykit/ui'
-
+import { Trans, useTranslation } from 'react-i18next'
 import { CloseIcon } from '../../../../../../assets/icons'
-import { TunnelHeader, TunnelBody, SolidTile } from '../styled'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { SolidTile, TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.productstypetunnel.'

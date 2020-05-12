@@ -1,37 +1,26 @@
 import React from 'react'
-import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks'
-import { RRule } from 'rrule'
-
-import { COLLECTIONS, CREATE_COLLECTION } from '../../../graphql'
-
-// State
-import { Context } from '../../../context/tabs'
-
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 // Components
 import {
-   ButtonGroup,
    IconButton,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   AvatarGroup,
-   Avatar,
-   TagGroup,
-   Tag,
    Loader,
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableRow,
 } from '@dailykit/ui'
-
-// Styled
-import { StyledWrapper, StyledHeader } from '../styled'
-
-// Icons
-import { EditIcon, DeleteIcon, AddIcon } from '../../../assets/icons'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { randomSuffix } from '../../../../../shared/utils'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { RRule } from 'rrule'
+import { randomSuffix } from '../../../../../shared/utils'
+// Icons
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+// State
+import { Context } from '../../../context/tabs'
+import { COLLECTIONS, CREATE_COLLECTION } from '../../../graphql'
+// Styled
+import { StyledHeader, StyledWrapper } from '../styled'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
 

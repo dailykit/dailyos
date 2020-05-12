@@ -1,21 +1,15 @@
 import React from 'react'
 import {
-   Text,
-   TextButton,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   Tag,
-   TagGroup,
+   Text,
    useSingleList,
 } from '@dailykit/ui'
-
 import { CloseIcon } from '../../../../../assets/icons'
-
-import { TunnelBody, TunnelHeader } from '../styled'
-
 import { IngredientContext } from '../../../../../context/ingredient'
+import { TunnelBody, TunnelHeader } from '../styled'
 
 const StationTunnel = ({ openTunnel, closeTunnel, stations }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(

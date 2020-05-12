@@ -1,19 +1,16 @@
 import React from 'react'
-import { TextButton, Toggle, Text, Input } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
-import {
-   StyledInputWrapper,
-   Container,
-   TunnelHeader,
-   TunnelBody,
-} from '../styled'
-import { IngredientContext } from '../../../../../context/ingredient'
-
-import { UPDATE_SACHET } from '../../../../../graphql'
 import { useMutation } from '@apollo/react-hooks'
+import { Input, Text, TextButton, Toggle } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../assets/icons'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { UPDATE_SACHET } from '../../../../../graphql'
+import {
+   Container,
+   StyledInputWrapper,
+   TunnelBody,
+   TunnelHeader,
+} from '../styled'
 
 const EditSachetTunnel = ({ state, units, closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(

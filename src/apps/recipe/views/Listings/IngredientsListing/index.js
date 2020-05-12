@@ -1,46 +1,34 @@
-import React from 'react'
-import * as moment from 'moment'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    IconButton,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   Checkbox,
-   SearchBox,
    Loader,
+   SearchBox,
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableRow,
 } from '@dailykit/ui'
-
+import * as moment from 'moment'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { randomSuffix } from '../../../../../shared/utils'
-
 // Icons
-import {
-   AddIcon,
-   ChevronLeftIcon,
-   ChevronRightIcon,
-   EditIcon,
-   DeleteIcon,
-} from '../../../assets/icons'
-
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
-
+import { CREATE_INGREDIENT, S_INGREDIENTS } from '../../../graphql'
 // Styled
 import {
-   StyledWrapper,
-   StyledTableHeader,
-   StyledTableActions,
-   StyledHeader,
-   StyledContent,
-   StyledPagination,
    GridContainer,
+   StyledContent,
+   StyledHeader,
+   StyledPagination,
+   StyledTableActions,
+   StyledTableHeader,
+   StyledWrapper,
 } from '../styled'
-import { CREATE_INGREDIENT, INGREDIENTS, S_INGREDIENTS } from '../../../graphql'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { toast } from 'react-toastify'
 
 const address = 'apps.recipe.views.listings.ingredientslisting.'
 

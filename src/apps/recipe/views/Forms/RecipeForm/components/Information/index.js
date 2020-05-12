@@ -1,8 +1,7 @@
 import React from 'react'
-import { Text, Tag, ButtonTile, IconButton } from '@dailykit/ui'
-
-import { Container, ContainerAction, Flex } from '../styled'
+import { ButtonTile, IconButton, Tag, Text } from '@dailykit/ui'
 import { EditIcon } from '../../../../../assets/icons'
+import { Container, ContainerAction, Flex } from '../styled'
 
 const Information = ({ state, openTunnel }) => {
    return (

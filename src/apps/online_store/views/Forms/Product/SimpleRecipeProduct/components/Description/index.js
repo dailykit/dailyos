@@ -1,10 +1,8 @@
 import React from 'react'
-import { TagGroup, ButtonTile, Tag, IconButton } from '@dailykit/ui'
-
-import { StyledRow, StyledContainer, StyledAction } from './styled'
+import { ButtonTile, IconButton, Tag, TagGroup } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { EditIcon } from '../../../../../../assets/icons'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { StyledAction, StyledContainer, StyledRow } from './styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.description.'

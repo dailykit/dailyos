@@ -1,17 +1,13 @@
 import React from 'react'
-
-import { TextButton, Input, Text, ButtonTile } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import { useMutation } from '@apollo/react-hooks'
-
+import { ButtonTile, Input, Text, TextButton } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../../assets/icons'
+import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 // graphql
 import { CREATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
-import { toast } from 'react-toastify'
-
-import { useTranslation } from 'react-i18next'
+import { StyledRow, TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.itemstunnel.'

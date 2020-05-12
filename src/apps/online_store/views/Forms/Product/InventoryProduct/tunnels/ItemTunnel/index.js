@@ -1,23 +1,20 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
-   TextButton,
-   useSingleList,
    List,
    ListItem,
    ListOptions,
    ListSearch,
    Text,
+   TextButton,
+   useSingleList,
 } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-import { TunnelHeader, TunnelBody } from '../styled'
-import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
-
-import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { CloseIcon } from '../../../../../../assets/icons'
+import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
+import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
+import { TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'

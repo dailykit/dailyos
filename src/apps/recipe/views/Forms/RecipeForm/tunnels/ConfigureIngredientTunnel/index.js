@@ -1,13 +1,11 @@
 import React from 'react'
-import { TextButton, Text, Input, Toggle } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, Container, Grid } from '../styled'
 import { useMutation } from '@apollo/react-hooks'
-import { UPDATE_RECIPE } from '../../../../../graphql'
+import { Input, Text, TextButton, Toggle } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
+import { UPDATE_RECIPE } from '../../../../../graphql'
+import { Container, Grid, TunnelBody, TunnelHeader } from '../styled'
 
 const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -50,7 +48,7 @@ const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => closeTunnel(1)}>
+               <span onClick={() => closeTunnel(6)}>
                   <CloseIcon color="#888D9D" size="20" />
                </span>
                <Text as="title">Edit Ingredient Details</Text>

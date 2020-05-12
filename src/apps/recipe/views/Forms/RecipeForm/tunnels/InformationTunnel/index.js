@@ -1,12 +1,10 @@
 import React from 'react'
-import { TextButton, Text, Input, RadioGroup, HelperText } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, Container, Grid } from '../styled'
 import { useMutation } from '@apollo/react-hooks'
-import { UPDATE_RECIPE } from '../../../../../graphql'
+import { HelperText, Input, RadioGroup, Text, TextButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../assets/icons'
+import { UPDATE_RECIPE } from '../../../../../graphql'
+import { Container, Grid, TunnelBody, TunnelHeader } from '../styled'
 
 const InformationTunnel = ({ state, closeTunnel }) => {
    // State
@@ -32,10 +30,12 @@ const InformationTunnel = ({ state, closeTunnel }) => {
          id: state.id,
          set: {
             type: _state.type,
-            cuisine: _state.cuisine,
+            cuisine: _state.cuisine || null,
             cookingTime: _state.cookingTime,
             author: _state.author,
-            utensils: _state.utensils.split(',').map(tag => tag.trim()),
+            utensils: _state.utensils
+               ? _state.utensils.split(',').map(tag => tag.trim())
+               : [],
             description: _state.description,
          },
       },

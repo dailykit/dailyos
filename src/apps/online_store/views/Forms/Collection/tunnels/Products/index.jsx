@@ -1,7 +1,5 @@
 import React from 'react'
 import {
-   TextButton,
-   useMultiList,
    List,
    ListItem,
    ListOptions,
@@ -9,13 +7,13 @@ import {
    Tag,
    TagGroup,
    Text,
+   TextButton,
+   useMultiList,
 } from '@dailykit/ui'
-
-import { TunnelHeader, TunnelBody } from '../styled'
+import { useTranslation } from 'react-i18next'
 import { CloseIcon } from '../../../../../assets/icons'
 import { CollectionContext } from '../../../../../context/collection'
-
-import { useTranslation } from 'react-i18next'
+import { TunnelBody, TunnelHeader } from '../styled'
 
 const address = 'apps.online_store.views.forms.collection.tunnels.products.'
 

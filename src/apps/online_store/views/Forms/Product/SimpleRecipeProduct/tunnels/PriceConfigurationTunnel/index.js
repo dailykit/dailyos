@@ -1,18 +1,13 @@
 import React from 'react'
-import { TextButton, Checkbox, Input, Text } from '@dailykit/ui'
-
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, StyledInputWrapper } from '../styled'
-
-import { StyledTable } from '../../components/Recipe/styled'
-
-import { UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION } from '../../../../../../graphql'
-
-import { useTranslation, Trans } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
+import { Checkbox, Input, Text, TextButton } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../../assets/icons'
+import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION } from '../../../../../../graphql'
+import { StyledTable } from '../../components/Recipe/styled'
+import { StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'

@@ -1,42 +1,39 @@
 import React from 'react'
-import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Input,
-   TextButton,
-   Tunnels,
-   Tunnel,
-   useTunnel,
    Loader,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
-
-import {
-   CollectionContext,
-   state as initialState,
-   reducer,
-} from '../../../context/collection'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { ChevronRight } from '../../../assets/icons'
 import {
-   FormHeader,
-   FormHeaderInputs,
-   FormHeaderActions,
+   CollectionContext,
+   reducer,
+   state as initialState,
+} from '../../../context/collection'
+import { Context } from '../../../context/tabs'
+import {
+   COMBO_PRODUCTS,
+   CUSTOMIZABLE_PRODUCTS,
+   INVENTORY_PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
+   S_COLLECTION,
+   UPDATE_COLLECTION,
+} from '../../../graphql'
+import { Categories, Configuration } from './components'
+import {
    Breadcrumbs,
    FormBody,
+   FormHeader,
+   FormHeaderActions,
+   FormHeaderInputs,
 } from './styled'
-import { Categories, Configuration } from './components'
 import { ProductsTunnel, ProductTypeTunnel } from './tunnels'
-import {
-   CREATE_COLLECTION,
-   SIMPLE_RECIPE_PRODUCTS,
-   INVENTORY_PRODUCTS,
-   CUSTOMIZABLE_PRODUCTS,
-   COMBO_PRODUCTS,
-   UPDATE_COLLECTION,
-   S_COLLECTION,
-} from '../../../graphql'
-import { toast } from 'react-toastify'
-
-import { useTranslation } from 'react-i18next'
-import { Context } from '../../../context/tabs'
 
 const address = 'apps.online_store.views.forms.collection.'
 

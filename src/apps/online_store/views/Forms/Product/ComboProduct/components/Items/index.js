@@ -1,30 +1,29 @@
 import React from 'react'
-import { ButtonTile, Text, HelperText, useMultiList } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, HelperText, Text } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { AddIcon, DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
+import { Context } from '../../../../../../context/tabs'
 import {
-   StyledWrapper,
+   DELETE_COMBO_PRODUCT_COMPONENT,
+   UPDATE_COMBO_PRODUCT_COMPONENT,
+} from '../../../../../../graphql'
+import {
+   StyledComboTile,
+   StyledHeader,
    StyledLabel,
    StyledLayout,
+   StyledLink,
    StyledListing,
    StyledListingTile,
    StyledPanel,
-   StyledComboTile,
+   StyledTab,
    StyledTable,
    StyledTabs,
-   StyledTab,
-   StyledHeader,
-   StyledLink,
+   StyledWrapper,
 } from './styled'
-import { AddIcon, DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
-
-import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-import {
-   UPDATE_COMBO_PRODUCT_COMPONENT,
-   DELETE_COMBO_PRODUCT_COMPONENT,
-} from '../../../../../../graphql'
-import { Context } from '../../../../../../context/tabs'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.components.items.'

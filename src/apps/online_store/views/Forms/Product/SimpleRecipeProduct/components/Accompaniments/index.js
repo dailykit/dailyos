@@ -1,14 +1,9 @@
 import React from 'react'
-
 import { ButtonTile } from '@dailykit/ui'
-
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-
-import { StyledTab, StyledTabs, StyledTabView } from './styled'
-
 import { Products } from '../'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
+import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { StyledTab, StyledTabs, StyledTabView } from './styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.accompaniments.'

@@ -1,27 +1,24 @@
 import React from 'react'
-import { useTranslation, Trans } from 'react-i18next'
-
 // Components
 import {
    IconButton,
    RadioGroup,
-   Tunnels,
    Tunnel,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import SelectProductTunnel from './SelectProductTunnel'
-import {
-   InventoryProducts,
-   CustomizableProducts,
-   ComboProducts,
-   SimpleRecipeProducts,
-} from './components'
-
-// Styled
-import { StyledWrapper, StyledHeader, Spacer } from '../styled'
-
+import { useTranslation } from 'react-i18next'
 // Icons
 import { AddIcon } from '../../../assets/icons'
+// Styled
+import { Spacer, StyledHeader, StyledWrapper } from '../styled'
+import {
+   ComboProducts,
+   CustomizableProducts,
+   InventoryProducts,
+   SimpleRecipeProducts,
+} from './components'
+import SelectProductTunnel from './SelectProductTunnel'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 

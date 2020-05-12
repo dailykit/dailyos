@@ -1,10 +1,9 @@
 import React from 'react'
-import { Select, Text, ButtonTile } from '@dailykit/ui'
-
-import { Container } from '../styled'
 import { useMutation } from '@apollo/react-hooks'
-import { DELETE_SIMPLE_RECIPE_YIELD } from '../../../../../graphql'
+import { ButtonTile, Select, Text } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { DELETE_SIMPLE_RECIPE_YIELD } from '../../../../../graphql'
+import { Container } from '../styled'
 
 const Servings = ({ state, openTunnel }) => {
    const options =

@@ -1,48 +1,29 @@
 import React from 'react'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Input, Loader, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import {
-   Input,
-   TextButton,
-   ButtonTile,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   Loader,
-} from '@dailykit/ui'
-
 // context
 import {
-   state as initialState,
    CustomizableProductContext,
    reducers,
+   state as initialState,
 } from '../../../../context/product/customizableProduct'
-
-// styles
-import { StyledWrapper } from '../../styled'
-import { StyledHeader, StyledBody, StyledMeta, StyledRule } from '../styled'
-
+import { Context } from '../../../../context/tabs'
 // graphql
 import {
-   RECIPES,
-   ACCOMPANIMENT_TYPES,
-   SIMPLE_RECIPE_PRODUCTS,
    INVENTORY_PRODUCTS,
-   CREATE_CUSTOMIZABLE_PRODUCT,
-   CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+   SIMPLE_RECIPE_PRODUCTS,
    S_CUSTOMIZABLE_PRODUCT,
    UPDATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../../graphql'
-
+// styles
+import { StyledWrapper } from '../../styled'
+import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 // components
 import { Description, Products } from './components'
-
 // tunnels
-import { DescriptionTunnel, ProductTypeTunnel, ProductsTunnel } from './tunnels'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { Tabs } from '../../../../components'
-import { Context } from '../../../../context/tabs'
+import { DescriptionTunnel, ProductsTunnel, ProductTypeTunnel } from './tunnels'
 
 const address = 'apps.online_store.views.forms.product.customizableproduct.'
 

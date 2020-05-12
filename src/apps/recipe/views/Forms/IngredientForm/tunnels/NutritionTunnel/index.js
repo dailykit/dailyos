@@ -1,14 +1,12 @@
 import React from 'react'
-import { Text, Input, TextButton } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, Container } from '../styled'
-import { FlexContainer, Flexible } from './styled'
-import { IngredientContext } from '../../../../../context/ingredient'
 import { useMutation } from '@apollo/react-hooks'
-import { UPDATE_SACHET } from '../../../../../graphql'
+import { Input, Text, TextButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../assets/icons'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { UPDATE_SACHET } from '../../../../../graphql'
+import { Container, TunnelBody, TunnelHeader } from '../styled'
+import { FlexContainer, Flexible } from './styled'
 
 const NutritionTunnel = ({ state, closeTunnel }) => {
    const { ingredientState } = React.useContext(IngredientContext)

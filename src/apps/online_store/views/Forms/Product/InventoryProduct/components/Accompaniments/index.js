@@ -1,14 +1,9 @@
 import React from 'react'
-
 import { ButtonTile } from '@dailykit/ui'
-
-import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
-
-import { StyledTab, StyledTabs, StyledTabView } from './styled'
-
+import { useTranslation } from 'react-i18next'
 import { Products } from '../'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
+import { StyledTab, StyledTabs, StyledTabView } from './styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.accompaniments.'

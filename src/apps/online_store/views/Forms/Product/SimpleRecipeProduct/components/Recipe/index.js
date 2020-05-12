@@ -1,33 +1,27 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { ButtonTile, IconButton } from '@dailykit/ui'
-
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { Accompaniments } from '../'
+import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-
+import {
+   DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   UPDATE_SIMPLE_RECIPE_PRODUCT,
+} from '../../../../../../graphql'
 // styles
 import {
-   StyledWrapper,
    StyledLayout,
    StyledListing,
-   StyledPanel,
    StyledListingTile,
-   StyledTabs,
+   StyledPanel,
    StyledTab,
-   StyledTabView,
    StyledTable,
+   StyledTabs,
+   StyledTabView,
+   StyledWrapper,
 } from './styled'
-
-import { Accompaniments } from '../'
-
-import { toast } from 'react-toastify'
-
-import {
-   UPDATE_SIMPLE_RECIPE_PRODUCT,
-   DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
-} from '../../../../../../graphql'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { EyeIcon, EditIcon, DeleteIcon } from '../../../../../../assets/icons'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'

@@ -1,14 +1,12 @@
 import React from 'react'
 import { ButtonTile } from '@dailykit/ui'
-
-import { EditIcon, DeleteIcon } from '../../../../../assets/icons'
-
+import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
 import {
+   ImageContainer,
+   PhotoTileWrapper,
    StyledContainer,
    StyledStat,
    StyledStatsContainer,
-   ImageContainer,
-   PhotoTileWrapper,
 } from './styled'
 
 const Stats = ({ state, openTunnel }) => {

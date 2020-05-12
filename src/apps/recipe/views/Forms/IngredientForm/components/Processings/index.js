@@ -1,23 +1,20 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import { ButtonTile } from '@dailykit/ui'
-
+import { toast } from 'react-toastify'
+import { Sachets } from '../'
 import { AddIcon, DeleteIcon } from '../../../../../assets/icons'
-
+import { IngredientContext } from '../../../../../context/ingredient'
+import { DELETE_PROCESSING } from '../../../../../graphql'
 import { Container } from '../styled'
 import {
-   StyledSection,
+   Actions,
    StyledDisplay,
    StyledListing,
    StyledListingHeader,
    StyledListingTile,
-   Actions,
+   StyledSection,
 } from './styled'
-import { IngredientContext } from '../../../../../context/ingredient'
-
-import { Sachets } from '../'
-import { useMutation } from '@apollo/react-hooks'
-import { DELETE_PROCESSING } from '../../../../../graphql'
-import { toast } from 'react-toastify'
 
 const Processings = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(

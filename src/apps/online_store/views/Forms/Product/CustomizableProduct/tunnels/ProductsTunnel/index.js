@@ -1,26 +1,22 @@
 import React from 'react'
-
+import { useMutation } from '@apollo/react-hooks'
 import {
-   TextButton,
-   Tag,
-   TagGroup,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useMultiList,
+   Tag,
+   TagGroup,
    Text,
+   TextButton,
+   useMultiList,
 } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody } from '../styled'
-import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
-
-import { useTranslation, Trans } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-import { CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS } from '../../../../../../graphql'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../../assets/icons'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
+import { CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS } from '../../../../../../graphql'
+import { TunnelBody, TunnelHeader } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.tunnels.itemstunnel.'

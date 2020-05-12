@@ -1,38 +1,32 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { ButtonTile, ComboButton, IconButton } from '@dailykit/ui'
-
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { Accompaniments } from '../'
+import {
+   DeleteIcon,
+   EditIcon,
+} from '../../../../../../../../shared/assets/icons'
 import { AddIcon } from '../../../../../../assets/icons'
-
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
-
 import {
    DELETE_INVENTORY_PRODUCT_OPTION,
    UPDATE_INVENTORY_PRODUCT,
 } from '../../../../../../graphql'
-
 // styles
 import {
-   StyledWrapper,
+   Grid,
    StyledLayout,
    StyledListing,
-   StyledPanel,
    StyledListingTile,
-   StyledTabs,
+   StyledPanel,
    StyledTab,
-   StyledTabView,
    StyledTable,
-   Grid,
+   StyledTabs,
+   StyledTabView,
+   StyledWrapper,
 } from './styled'
-
-import { Accompaniments } from '../'
-
-import { useTranslation, Trans } from 'react-i18next'
-import {
-   EditIcon,
-   DeleteIcon,
-} from '../../../../../../../../shared/assets/icons'
-import { toast } from 'react-toastify'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.item.'
