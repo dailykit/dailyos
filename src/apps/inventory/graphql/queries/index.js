@@ -81,3 +81,16 @@ export const STATIONS = gql`
       }
    }
 `
+
+export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
+   subscription SupplierItems {
+      supplierItems {
+         id
+         name
+         supplier {
+            name
+            contactPerson
+         }
+      }
+   }
+`
