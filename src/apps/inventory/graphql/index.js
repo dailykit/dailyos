@@ -3,6 +3,7 @@ import {
    MASTER_ALLERGENS,
    SUPPLIERS,
    SUPPLIER,
+   SUPPLIER_ITEMS,
 } from './queries'
 
 import {
@@ -20,6 +21,7 @@ export {
    UPDATE_SUPPLIER,
    DELETE_SUPPLIER,
    SUPPLIERS,
+   SUPPLIER_ITEMS,
    SUPPLIER,
    MASTER_PROCESSINGS,
    MASTER_ALLERGENS,
