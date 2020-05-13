@@ -1,3 +1,4 @@
 import Lang from './Lang'
+import Nutrition from './Nutrition'
 
-export { Lang }
+export { Lang, Nutrition }

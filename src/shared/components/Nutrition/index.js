@@ -7,7 +7,7 @@ const Nutrition = ({ data, vertical = false }) => {
       <Container>
          <Major>
             <h4>Calories</h4>
-            <h3>220</h3>
+            <h3>{data.calories}</h3>
          </Major>
          <Grid vertical={vertical}>
             <Wrapper>

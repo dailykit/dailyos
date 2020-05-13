@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Container = styled.div`
    color: #555b6e;
    min-width: 400px;
-   width: 500px;
+   max-width: 600px;
 
    * {
       font-size: 14px;
