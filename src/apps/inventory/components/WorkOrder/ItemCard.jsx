@@ -26,29 +26,40 @@ export default function ItemCard({
                {shippedProcessing && (
                   <>
                      <Text as="subtitle">
-                        {t(address.concat('processing as shipped'))}: {shippedProcessing.join(', ')}
+                        {t(address.concat('processing as shipped'))}:{' '}
+                        {shippedProcessing.join(', ')}
                      </Text>
                      <span style={{ width: '20px' }} />
                   </>
                )}
-               {onHand && (
+               {onHand ? (
                   <>
-                     <Text as="subtitle">{t(address.concat('on hand'))}: {onHand} </Text>
+                     <Text as="subtitle">
+                        {t(address.concat('on hand'))}: {onHand}{' '}
+                     </Text>
                      <span style={{ width: '20px' }} />
                   </>
-               )}
-               {shelfLife && (
-                  <Text as="subtitle">{t(address.concat('shelf life'))}: {shelfLife} </Text>
-               )}
+               ) : null}
+               {shelfLife ? (
+                  <Text as="subtitle">
+                     {t(address.concat('shelf life'))}: {shelfLife}{' '}
+                  </Text>
+               ) : null}
 
-               {available && <Text as="subtitle">{t(address.concat('available'))}: {available} </Text>}
+               {available ? (
+                  <Text as="subtitle">
+                     {t(address.concat('available'))}: {available}{' '}
+                  </Text>
+               ) : null}
 
-               {par && (
+               {par ? (
                   <>
                      <span style={{ width: '20px' }} />
-                     <Text as="subtitle">{t(address.concat('par'))}: {par}</Text>
+                     <Text as="subtitle">
+                        {t(address.concat('par'))}: {par}
+                     </Text>
                   </>
-               )}
+               ) : null}
             </div>
          </div>
 

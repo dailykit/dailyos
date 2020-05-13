@@ -11,7 +11,7 @@ import {
    TableCell,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { SUPPLIER_ITEMS } from '../../../graphql'
+import { SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
 
 import {
    StyledWrapper,
@@ -37,7 +37,7 @@ export default function ItemListing() {
    const { dispatch } = React.useContext(Context)
    const [search, setSearch] = React.useState('')
 
-   const { loading, data, error } = useSubscription(SUPPLIER_ITEMS)
+   const { loading, data, error } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
 
    const addTab = (title, view) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
