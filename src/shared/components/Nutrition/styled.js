@@ -35,7 +35,7 @@ export const Rule = styled.hr`
 export const Wrapper = styled.div``
 
 export const Row = styled.div`
-   display: flex;
+   display: ${props => (props.hidden ? 'none' : 'flex')};
    justify-content: space-between;
    padding-left: ${props => (props.inset ? '32px' : '0px')};
 
