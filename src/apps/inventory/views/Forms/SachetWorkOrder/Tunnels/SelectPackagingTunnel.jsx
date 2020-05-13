@@ -1,4 +1,3 @@
-import React, { useState, useContext } from 'react'
 import {
    List,
    ListItem,
@@ -6,48 +5,26 @@ import {
    ListSearch,
    useSingleList,
 } from '@dailykit/ui'
-
-import { SachetOrderContext } from '../../../../context/sachetOrder'
-
-import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
-
+import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
+import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
-export default function SelectPackagingTunnel({ close }) {
+export default function SelectPackagingTunnel({ close, packagings }) {
    const { t } = useTranslation()
    const { sachetOrderDispatch } = useContext(SachetOrderContext)
 
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList([
-      {
-         id: 1,
-         title: 'packaging 1',
-         description: 'lorem ipsum dolla sit amet',
-      },
-      {
-         id: 2,
-         title: 'packaging 2',
-         description: 'lorem ipsum dolla sit amet',
-      },
-      {
-         id: 3,
-         title: 'packaging 3',
-         description: 'lorem ipsum dolla sit amet',
-      },
-      {
-         id: 4,
-         title: 'packaging 4',
-         description: 'lorem ipsum dolla sit amet',
-      },
-   ])
+   const [list, current, selectOption] = useSingleList(packagings)
 
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("select packaging"))}
+            title={t(address.concat('select packaging'))}
             next={() => {
                sachetOrderDispatch({
                   type: 'SELECT_PACKAGING',
@@ -63,32 +40,25 @@ export default function SelectPackagingTunnel({ close }) {
 
          <List>
             {Object.keys(current).length > 0 ? (
-               <ListItem
-                  type="SSL2"
-                  content={{
-                     title: current.title,
-                     description: current.description,
-                  }}
-               />
+               <ListItem type="SSL1" title={current.name} />
             ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(address.concat("type what you’re looking for"))}
-                  />
-               )}
+               <ListSearch
+                  onChange={value => setSearch(value)}
+                  placeholder={t(
+                     address.concat('type what you’re looking for')
+                  )}
+               />
+            )}
             <ListOptions>
                {list
-                  .filter(option => option.title.toLowerCase().includes(search))
+                  .filter(option => option.name.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
-                        type="SSL2"
+                        type="SSL1"
                         key={option.id}
+                        title={option.name}
                         isActive={option.id === current.id}
                         onClick={() => selectOption('id', option.id)}
-                        content={{
-                           title: option.title,
-                           description: option.description,
-                        }}
                      />
                   ))}
             </ListOptions>

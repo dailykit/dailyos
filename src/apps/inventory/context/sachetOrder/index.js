@@ -11,17 +11,7 @@ const state = {
    selectedStation: {},
    assignedDate: '',
    packaging: {},
-   labelTemplates: [
-      {
-         id: 1,
-         title: 'Slip Name',
-      },
-      { id: 2, title: 'Bar Code' },
-      {
-         id: 3,
-         title: 'Sachet Quantity',
-      },
-   ],
+   labelTemplates: [],
 }
 
 const reducers = (state, { type, payload }) => {

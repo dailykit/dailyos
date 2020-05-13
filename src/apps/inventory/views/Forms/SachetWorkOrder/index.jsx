@@ -18,6 +18,7 @@ import {
    SETTINGS_USERS,
    STATIONS,
    SACHET_ITEMS,
+   PACKAGINGS,
 } from '../../../graphql'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
@@ -56,7 +57,10 @@ export default function SachetWorkOrder() {
       SUPPLIER_ITEMS
    )
    const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
-   // const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
+   const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
+   const { data: packagingData, loading: packagingsLoading } = useQuery(
+      PACKAGINGS
+   )
    const { data: sachetItemsData, loading: sachetItemLoading } = useQuery(
       SACHET_ITEMS,
       {
@@ -66,11 +70,12 @@ export default function SachetWorkOrder() {
 
    if (supplierItemLoading) return <Loader />
 
-   if (sachetOrderState.outputSachet?.processingName && userLoading)
+   if (
+      sachetOrderState.outputSachet?.processingName &&
+      (userLoading || stationsLoading || packagingsLoading || sachetItemLoading)
+   ) {
       return <Loader />
-
-   if (sachetOrderState.inputItemProcessing?.id && sachetItemLoading)
-      return <Loader />
+   }
 
    return (
       <SachetOrderContext.Provider
@@ -90,10 +95,19 @@ export default function SachetWorkOrder() {
                />
             </Tunnel>
             <Tunnel layer={3}>
-               <SelectUserTunnel close={closeTunnel} />
+               <SelectUserTunnel
+                  close={closeTunnel}
+                  users={userData?.settings_user?.map(user => ({
+                     ...user,
+                     name: `${user.firstName} ${user.lastName}`,
+                  }))}
+               />
             </Tunnel>
             <Tunnel layer={4}>
-               <SelectStationTunnel close={closeTunnel} />
+               <SelectStationTunnel
+                  close={closeTunnel}
+                  stations={stationsData?.stations}
+               />
             </Tunnel>
             <Tunnel layer={5}>
                <SelectInputBulkItemTunnel
@@ -103,7 +117,10 @@ export default function SachetWorkOrder() {
             </Tunnel>
 
             <Tunnel layer={6}>
-               <SelectPackagingTunnel close={closeTunnel} />
+               <SelectPackagingTunnel
+                  packagings={packagingData?.packaging_packaging}
+                  close={closeTunnel}
+               />
             </Tunnel>
             <Tunnel layer={7}>
                <SelectLabelTemplateTunnel close={closeTunnel} />
@@ -188,9 +205,9 @@ export default function SachetWorkOrder() {
                      </Text>
                      {sachetOrderState.outputSachet?.unitSize ? (
                         <ItemCard
-                           title={sachetOrderState.outputSachet.title}
-                           par={sachetOrderState.outputSachet.par}
-                           available={`${sachetOrderState.outputSachet.available} / ${sachetOrderState.outputSachet.total}`}
+                           title={`${sachetOrderState.outputSachet.unitSize} ${sachetOrderState.outputSachet.unit}`}
+                           onHand={sachetOrderState.outputSachet.onHand}
+                           par={sachetOrderState.outputSachet.parLevel}
                            edit={() => {
                               openTunnel(2)
                            }}
@@ -208,7 +225,7 @@ export default function SachetWorkOrder() {
                   </>
                )}
 
-               {sachetOrderState.outputSachet?.title && (
+               {sachetOrderState.outputSachet?.id && (
                   <Configurator open={openTunnel} />
                )}
             </StyledForm>
@@ -267,10 +284,8 @@ function Configurator({ open }) {
                         {t(address.concat('suggested committed quantity'))}
                      </Text>
                      <Text as="title">
-                        {Math.round(
-                           sachetOrderState.sachetQuantity *
-                              +sachetOrderState.outputSachet.quantity
-                        )}
+                        {sachetOrderState.sachetQuantity *
+                           +sachetOrderState.outputSachet.unitSize}
                      </Text>
                   </>
                )}
@@ -282,9 +297,9 @@ function Configurator({ open }) {
          <Text as="title">{t(address.concat('packaging'))}</Text>
 
          <>
-            {sachetOrderState.packaging?.title ? (
+            {sachetOrderState.packaging?.name ? (
                <ItemCard
-                  title={sachetOrderState.packaging.title}
+                  title={sachetOrderState.packaging.name}
                   edit={() => open(6)}
                />
             ) : (
@@ -299,34 +314,37 @@ function Configurator({ open }) {
 
          <br />
 
-         <Text as="title">{t(address.concat('label template'))}</Text>
-
-         <>
-            {sachetOrderState.labelTemplates[0]?.title ? (
-               <ItemCard
-                  title={sachetOrderState.labelTemplates
-                     .map(temp => `${temp.title}`)
-                     .join(', ')}
-                  edit={() => open(7)}
-               />
-            ) : (
-               <ButtonTile
-                  noIcon
-                  type="secondary"
-                  text={t(address.concat('select label template'))}
-                  onClick={e => open(7)}
-               />
-            )}
-         </>
+         {sachetOrderState.packaging?.name && (
+            <>
+               <Text as="title">{t(address.concat('label template'))}</Text>
+               <>
+                  {sachetOrderState.labelTemplates[0]?.title ? (
+                     <ItemCard
+                        title={sachetOrderState.labelTemplates
+                           .map(temp => `${temp.title}`)
+                           .join(', ')}
+                        edit={() => open(7)}
+                     />
+                  ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat('select label template'))}
+                        onClick={e => open(7)}
+                     />
+                  )}
+               </>
+            </>
+         )}
 
          <br />
 
          <Text as="title">{t(address.concat('user assigned'))}</Text>
 
          <>
-            {sachetOrderState.assignedUser?.title ? (
+            {sachetOrderState.assignedUser?.name ? (
                <ItemCard
-                  title={sachetOrderState.assignedUser.title}
+                  title={sachetOrderState.assignedUser.name}
                   edit={() => open(3)}
                />
             ) : (
@@ -371,9 +389,9 @@ function Configurator({ open }) {
          <>
             <Text as="title">{t(address.concat('station assigned'))}</Text>
 
-            {sachetOrderState.selectedStation?.title ? (
+            {sachetOrderState.selectedStation?.name ? (
                <ItemCard
-                  title={sachetOrderState.selectedStation.title}
+                  title={sachetOrderState.selectedStation.name}
                   edit={() => open(4)}
                />
             ) : (

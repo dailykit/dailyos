@@ -8,6 +8,7 @@ import {
    SETTINGS_USERS,
    STATIONS,
    SACHET_ITEMS,
+   PACKAGINGS,
 } from './queries'
 
 import {
@@ -41,4 +42,5 @@ export {
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
    SACHET_ITEMS,
+   PACKAGINGS,
 }
