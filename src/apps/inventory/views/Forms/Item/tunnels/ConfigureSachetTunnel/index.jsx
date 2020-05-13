@@ -1,18 +1,16 @@
-import React, { useState, useContext } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { Input } from '@dailykit/ui'
-
-import { ItemContext } from '../../../../../context/item'
+import React, { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import {
+   Spacer,
    TunnelContainer,
    TunnelHeader,
-   Spacer,
 } from '../../../../../components'
-import { FlexContainer } from '../../../styled'
+import { ItemContext } from '../../../../../context/item'
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
-
-import { useTranslation } from 'react-i18next'
+import { FlexContainer } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
@@ -32,6 +30,8 @@ export default function ConfigureSachetTunnel({ open, close }) {
             unitSize: quantity,
             bulkItemId: state.activeProcessing.id,
             unit: state.unit_quantity.unit,
+            par,
+            maxLevel: maxInventoryLevel,
          },
       })
 
@@ -52,7 +52,7 @@ export default function ConfigureSachetTunnel({ open, close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("add sachet"))}
+            title={t(address.concat('add sachet'))}
             next={handleNext}
             close={() => close(9)}
             nextAction="Save"
@@ -88,14 +88,16 @@ export default function ConfigureSachetTunnel({ open, close }) {
                   type="text"
                   name="par"
                   value={par}
-                  placeholder={t(address.concat("set par level"))}
+                  placeholder={t(address.concat('set par level'))}
                   onChange={e => {
                      const value = parseInt(e.target.value)
                      if (e.target.value.length === 0) setPar('')
                      if (value) setPar(value)
                   }}
                />
-               <span style={{ marginLeft: '5px' }}>{t(address.concat('pkt'))}</span>
+               <span style={{ marginLeft: '5px' }}>
+                  {t(address.concat('pkt'))}
+               </span>
             </FlexContainer>
 
             <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
@@ -103,14 +105,16 @@ export default function ConfigureSachetTunnel({ open, close }) {
                   type="text"
                   name="inventory level"
                   value={maxInventoryLevel}
-                  placeholder={t(address.concat("max inventory level"))}
+                  placeholder={t(address.concat('max inventory level'))}
                   onChange={e => {
                      const value = parseInt(e.target.value)
                      if (e.target.value.length === 0) setMaxInventoryLevel('')
                      if (value) setMaxInventoryLevel(value)
                   }}
                />
-               <span style={{ marginLeft: '5px' }}>{t(address.concat('pkt'))}</span>
+               <span style={{ marginLeft: '5px' }}>
+                  {t(address.concat('pkt'))}
+               </span>
             </FlexContainer>
          </FlexContainer>
       </TunnelContainer>

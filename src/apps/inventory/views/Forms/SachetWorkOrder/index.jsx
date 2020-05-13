@@ -1,39 +1,46 @@
-import React, { useReducer, useState, useContext } from 'react'
 import {
-   TextButton,
-   Text,
-   Tunnels,
-   Tunnel,
-   useTunnel,
    ButtonTile,
-   Input,
    IconButton,
+   Input,
+   Text,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   Loader,
 } from '@dailykit/ui/'
+import React, { useContext, useReducer, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useQuery } from '@apollo/react-hooks'
 
 import {
-   SachetOrderContext,
-   state as initialState,
-   reducers,
-} from '../../../context/sachetOrder'
+   SUPPLIER_ITEMS,
+   SETTINGS_USERS,
+   STATIONS,
+   SACHET_ITEMS,
+} from '../../../graphql'
 
+import AddIcon from '../../../../../shared/assets/icons/Add'
+import { ItemCard, Spacer } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
 import {
-   FormActions,
-   StyledWrapper,
-   StyledForm,
+   reducers,
+   SachetOrderContext,
+   state as initialState,
+} from '../../../context/sachetOrder'
+import {
    FlexContainer,
+   FormActions,
+   StyledForm,
+   StyledWrapper,
 } from '../styled'
-import { Spacer, ItemCard } from '../../../components'
-import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
-import SelectOutputSachetItemTunnel from './Tunnels/SelectOutputSachetItemTunnel'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
-import SelectUserTunnel from './Tunnels/SelectUserTunnel'
-import SelectStationTunnel from './Tunnels/SelectStationTunnel'
-import SelectPackagingTunnel from './Tunnels/SelectPackagingTunnel'
 import SelectLabelTemplateTunnel from './Tunnels/SelectLabelTemplateTunnel'
-import AddIcon from '../../../../../shared/assets/icons/Add'
-
-import { useTranslation } from 'react-i18next'
+import SelectOutputSachetItemTunnel from './Tunnels/SelectOutputSachetItemTunnel'
+import SelectPackagingTunnel from './Tunnels/SelectPackagingTunnel'
+import SelectStationTunnel from './Tunnels/SelectStationTunnel'
+import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
+import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.'
 
@@ -45,16 +52,42 @@ export default function SachetWorkOrder() {
       initialState
    )
 
+   const { data: supplierItemData, loading: supplierItemLoading } = useQuery(
+      SUPPLIER_ITEMS
+   )
+   const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
+   // const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
+   const { data: sachetItemsData, loading: sachetItemLoading } = useQuery(
+      SACHET_ITEMS,
+      {
+         variables: { bulkItemId: sachetOrderState.inputItemProcessing?.id },
+      }
+   )
+
+   if (supplierItemLoading) return <Loader />
+
+   if (sachetOrderState.outputSachet?.processingName && userLoading)
+      return <Loader />
+
+   if (sachetOrderState.inputItemProcessing?.id && sachetItemLoading)
+      return <Loader />
+
    return (
       <SachetOrderContext.Provider
          value={{ sachetOrderState, sachetOrderDispatch }}
       >
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <SelectSupplierItemTunnel close={closeTunnel} />
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <SelectSupplierItemTunnel
+                  supplierItems={supplierItemData?.supplierItems}
+                  close={closeTunnel}
+               />
             </Tunnel>
             <Tunnel layer={2}>
-               <SelectOutputSachetItemTunnel close={closeTunnel} />
+               <SelectOutputSachetItemTunnel
+                  close={closeTunnel}
+                  sachetItems={sachetItemsData?.sachetItems}
+               />
             </Tunnel>
             <Tunnel layer={3}>
                <SelectUserTunnel close={closeTunnel} />
@@ -63,7 +96,10 @@ export default function SachetWorkOrder() {
                <SelectStationTunnel close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={5}>
-               <SelectInputBulkItemTunnel close={closeTunnel} />
+               <SelectInputBulkItemTunnel
+                  close={closeTunnel}
+                  bulkItems={sachetOrderState.supplierItem?.bulkItems}
+               />
             </Tunnel>
 
             <Tunnel layer={6}>
@@ -89,36 +125,43 @@ export default function SachetWorkOrder() {
                </div>
 
                <FormActions>
-                  <TextButton onClick={() => { }} type="solid">
+                  <TextButton onClick={() => {}} type="solid">
                      {t(address.concat('publish'))}
                   </TextButton>
                </FormActions>
             </FormHeading>
 
             <StyledForm style={{ padding: '0px 60px' }}>
-               <Text as="title">{t(address.concat('select supplier item'))}</Text>
-               {sachetOrderState.supplierItem?.title ? (
+               <Text as="title">
+                  {t(address.concat('select supplier item'))}
+               </Text>
+               {sachetOrderState.supplierItem?.name ? (
                   <ItemCard
-                     title={sachetOrderState.supplierItem.title}
+                     title={sachetOrderState.supplierItem.name}
                      edit={() => openTunnel(1)}
                   />
                ) : (
-                     <ButtonTile
-                        noIcon
-                        type="secondary"
-                        text={t(address.concat("select supplier item"))}
-                        onClick={e => openTunnel(1)}
-                     />
-                  )}
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text={t(address.concat('select supplier item'))}
+                     onClick={() => openTunnel(1)}
+                  />
+               )}
 
                <br />
 
-               {sachetOrderState.supplierItem?.title && (
+               {sachetOrderState.supplierItem?.name && (
                   <>
-                     <Text as="title">{t(address.concat('input bulk item'))}</Text>
-                     {sachetOrderState.inputItemProcessing?.title ? (
+                     <Text as="title">
+                        {t(address.concat('input bulk item'))}
+                     </Text>
+                     {sachetOrderState.inputItemProcessing?.processingName ? (
                         <ItemCard
-                           title={sachetOrderState.inputItemProcessing.title}
+                           title={
+                              sachetOrderState.inputItemProcessing
+                                 .processingName
+                           }
                            onHand={sachetOrderState.inputItemProcessing.onHand}
                            shelfLife={
                               sachetOrderState.inputItemProcessing.shelfLife
@@ -126,36 +169,42 @@ export default function SachetWorkOrder() {
                            edit={() => openTunnel(5)}
                         />
                      ) : (
-                           <ButtonTile
-                              noIcon
-                              type="secondary"
-                              text={t(address.concat("select input bulk item"))}
-                              onClick={() => openTunnel(5)}
-                           />
-                        )}
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text={t(address.concat('select input bulk item'))}
+                           onClick={() => openTunnel(5)}
+                        />
+                     )}
                   </>
                )}
 
                <Spacer />
 
-               {sachetOrderState.inputItemProcessing?.title && (
+               {sachetOrderState.inputItemProcessing?.id && (
                   <>
-                     <Text as="title">{t(address.concat('output sachet item'))}</Text>
-                     {sachetOrderState.outputSachet?.title ? (
+                     <Text as="title">
+                        {t(address.concat('output sachet item'))}
+                     </Text>
+                     {sachetOrderState.outputSachet?.unitSize ? (
                         <ItemCard
                            title={sachetOrderState.outputSachet.title}
                            par={sachetOrderState.outputSachet.par}
                            available={`${sachetOrderState.outputSachet.available} / ${sachetOrderState.outputSachet.total}`}
-                           edit={() => openTunnel(2)}
+                           edit={() => {
+                              openTunnel(2)
+                           }}
                         />
                      ) : (
-                           <ButtonTile
-                              noIcon
-                              type="secondary"
-                              text={t(address.concat("select output sachet item"))}
-                              onClick={e => openTunnel(2)}
-                           />
-                        )}
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text={t(address.concat('select output sachet item'))}
+                           onClick={() => {
+                              openTunnel(2)
+                           }}
+                        />
+                     )}
                   </>
                )}
 
@@ -214,11 +263,13 @@ function Configurator({ open }) {
             <div>
                {sachetOrderState.sachetQuantity && (
                   <>
-                     <Text as="subtitle">{t(address.concat('suggested committed quantity'))}</Text>
+                     <Text as="subtitle">
+                        {t(address.concat('suggested committed quantity'))}
+                     </Text>
                      <Text as="title">
                         {Math.round(
                            sachetOrderState.sachetQuantity *
-                           +sachetOrderState.outputSachet.quantity
+                              +sachetOrderState.outputSachet.quantity
                         )}
                      </Text>
                   </>
@@ -237,13 +288,13 @@ function Configurator({ open }) {
                   edit={() => open(6)}
                />
             ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat("select packaging"))}
-                     onClick={e => open(6)}
-                  />
-               )}
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(address.concat('select packaging'))}
+                  onClick={e => open(6)}
+               />
+            )}
          </>
 
          <br />
@@ -259,13 +310,13 @@ function Configurator({ open }) {
                   edit={() => open(7)}
                />
             ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat("select label template"))}
-                     onClick={e => open(7)}
-                  />
-               )}
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(address.concat('select label template'))}
+                  onClick={e => open(7)}
+               />
+            )}
          </>
 
          <br />
@@ -279,13 +330,13 @@ function Configurator({ open }) {
                   edit={() => open(3)}
                />
             ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat("select and assign user to work"))}
-                     onClick={e => open(3)}
-                  />
-               )}
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(address.concat('select and assign user to work'))}
+                  onClick={e => open(3)}
+               />
+            )}
          </>
 
          <br />
@@ -306,7 +357,7 @@ function Configurator({ open }) {
                setAssignedDate(e.target.value)
             }}
             type="datetime-local"
-            placeholder={t(address.concat("date (mm/dd/yyyy)"))}
+            placeholder={t(address.concat('date (mm/dd/yyyy)'))}
             onBlur={() => {
                sachetOrderDispatch({
                   type: 'SET_ASSIGNED_DATE',
@@ -326,13 +377,15 @@ function Configurator({ open }) {
                   edit={() => open(4)}
                />
             ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat("select and assign station to route to"))}
-                     onClick={e => open(4)}
-                  />
-               )}
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(
+                     address.concat('select and assign station to route to')
+                  )}
+                  onClick={() => open(4)}
+               />
+            )}
          </>
          <br />
       </>

@@ -94,3 +94,17 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const SACHET_ITEMS = gql`
+   query SachetItems($bulkItemId: Int!) {
+      sachetItems(where: { bulkItemId: { _eq: $bulkItemId } }) {
+         id
+         parLevel
+         unitSize
+         unit
+         onHand
+         committed
+         consumed
+      }
+   }
+`

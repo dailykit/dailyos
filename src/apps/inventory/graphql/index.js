@@ -7,6 +7,7 @@ import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    SETTINGS_USERS,
    STATIONS,
+   SACHET_ITEMS,
 } from './queries'
 
 import {
@@ -39,4 +40,5 @@ export {
    STATIONS,
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
+   SACHET_ITEMS,
 }
