@@ -10,8 +10,9 @@ import {
    Loader,
 } from '@dailykit/ui/'
 import React, { useContext, useReducer, useState } from 'react'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import {
    SUPPLIER_ITEMS,
@@ -19,10 +20,12 @@ import {
    STATIONS,
    SACHET_ITEMS,
    PACKAGINGS,
+   UPDATE_SACHET_WORK_ORDER,
+   CREATE_SACHET_WORK_ORDER,
 } from '../../../graphql'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import { ItemCard, Spacer } from '../../../components'
+import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
 import {
    reducers,
@@ -47,11 +50,14 @@ const address = 'apps.inventory.views.forms.sachetworkorder.'
 
 export default function SachetWorkOrder() {
    const { t } = useTranslation()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
    const [sachetOrderState, sachetOrderDispatch] = useReducer(
       reducers,
       initialState
    )
+
+   const [status, setStatus] = useState(sachetOrderState.status || '')
+
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
 
    const { data: supplierItemData, loading: supplierItemLoading } = useQuery(
       SUPPLIER_ITEMS
@@ -67,6 +73,81 @@ export default function SachetWorkOrder() {
          variables: { bulkItemId: sachetOrderState.inputItemProcessing?.id },
       }
    )
+
+   const [createSachetWorkOrder] = useMutation(CREATE_SACHET_WORK_ORDER)
+   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER)
+
+   const checkForm = () => {
+      if (!sachetOrderState.supplierItem?.id) {
+         toast.error('No Supplier Item selecetd!')
+         return false
+      }
+      if (!sachetOrderState.inputItemProcessing?.id) {
+         toast.error('No Input Bulk Item selecetd!')
+         return false
+      }
+      if (!sachetOrderState.outputSachet?.id) {
+         toast.error('No Output Bulk Item selecetd!')
+         return false
+      }
+
+      if (!sachetOrderState.assignedDate) {
+         toast.error("Can't publish unscheduled work order!")
+         return false
+      }
+
+      return true
+   }
+
+   const saveStatus = async status => {
+      const response = await updateSachetWorkOrder({
+         variables: { id: sachetOrderState.id, status },
+      })
+      if (response?.data) {
+         toast.info('Work Order updated successfully!')
+         sachetOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: response.data.updateSachetWorkOrder.returning[0].id,
+               status: response.data.updateSachetWorkOrder.returning[0].status,
+            },
+         })
+      }
+   }
+
+   const handlePublish = async () => {
+      const isValid = checkForm()
+      if (isValid) {
+         const response = await createSachetWorkOrder({
+            variables: {
+               object: {
+                  status: 'PENDING',
+                  inputQuantity: sachetOrderState.inputQuantity,
+                  packagingId: sachetOrderState.packaging.id,
+                  label: sachetOrderState.labelTemplates,
+                  inputBulkItemId: sachetOrderState.inputItemProcessing.id,
+                  outputSachetItemId: sachetOrderState.outputSachet.id,
+                  outputQuantity: sachetOrderState.sachetQuantity,
+                  scheduledOn: sachetOrderState.assignedDate,
+                  stationId: sachetOrderState.selectedStation.id,
+                  userId: sachetOrderState.assignedUser.id,
+               },
+            },
+         })
+         if (response?.data) {
+            toast.success('Work Order created successfully!')
+            setStatus(response.data.createSachetWorkOrder.returning[0].status)
+            sachetOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: response.data.createSachetWorkOrder.returning[0].id,
+                  status:
+                     response.data.createSachetWorkOrder.returning[0].status,
+               },
+            })
+         }
+      }
+   }
 
    if (supplierItemLoading) return <Loader />
 
@@ -133,7 +214,6 @@ export default function SachetWorkOrder() {
                      width: '30%',
                   }}
                >
-                  {/* TODO: add text here for input item */}
                   <Text as="h1">
                      {t(address.concat('work order'))}{' '}
                      {sachetOrderState.supplierItem?.title &&
@@ -142,9 +222,13 @@ export default function SachetWorkOrder() {
                </div>
 
                <FormActions>
-                  <TextButton onClick={() => {}} type="solid">
-                     {t(address.concat('publish'))}
-                  </TextButton>
+                  {status ? (
+                     <StatusSwitch currentStatus={status} onSave={saveStatus} />
+                  ) : (
+                     <TextButton onClick={handlePublish} type="solid">
+                        {t(address.concat('publish'))}
+                     </TextButton>
+                  )}
                </FormActions>
             </FormHeading>
 
@@ -307,7 +391,7 @@ function Configurator({ open }) {
                   noIcon
                   type="secondary"
                   text={t(address.concat('select packaging'))}
-                  onClick={e => open(6)}
+                  onClick={() => open(6)}
                />
             )}
          </>
@@ -330,7 +414,7 @@ function Configurator({ open }) {
                         noIcon
                         type="secondary"
                         text={t(address.concat('select label template'))}
-                        onClick={e => open(7)}
+                        onClick={() => open(7)}
                      />
                   )}
                </>
@@ -352,7 +436,7 @@ function Configurator({ open }) {
                   noIcon
                   type="secondary"
                   text={t(address.concat('select and assign user to work'))}
-                  onClick={e => open(3)}
+                  onClick={() => open(3)}
                />
             )}
          </>
