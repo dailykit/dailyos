@@ -18,11 +18,11 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
 
    const [busy, setBusy] = React.useState(false)
 
-   const [cal, setCal] = React.useState(
-      sachet.defaultNutritionalValues?.cal || ''
+   const [calories, setCalories] = React.useState(
+      sachet.defaultNutritionalValues?.calories || ''
    )
-   const [fat, setFat] = React.useState(
-      sachet.defaultNutritionalValues?.fat || ''
+   const [totalFat, setTotalFat] = React.useState(
+      sachet.defaultNutritionalValues?.totalFat || ''
    )
    const [saturatedFat, setSaturatedFat] = React.useState(
       sachet.defaultNutritionalValues?.saturatedFat || ''
@@ -30,29 +30,29 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
    const [transFat, setTransFat] = React.useState(
       sachet.defaultNutritionalValues?.transFat || ''
    )
-   const [cholestrol, setCholestrol] = React.useState(
-      sachet.defaultNutritionalValues?.cholestrol || ''
+   const [cholesterol, setCholesterol] = React.useState(
+      sachet.defaultNutritionalValues?.cholesterol || ''
    )
    const [sodium, setSodium] = React.useState(
       sachet.defaultNutritionalValues?.sodium || ''
    )
-   const [carbs, setCarbs] = React.useState(
-      sachet.defaultNutritionalValues?.carbs || ''
+   const [totalCarbohydrates, setTotalCarbohydrates] = React.useState(
+      sachet.defaultNutritionalValues?.totalCarbohydrates || ''
    )
-   const [dietryFibre, setDietryFibre] = React.useState(
-      sachet.defaultNutritionalValues?.dietryFibre || ''
+   const [dietaryFibre, setDietaryFibre] = React.useState(
+      sachet.defaultNutritionalValues?.dietaryFibre || ''
    )
-   const [sugar, setSugar] = React.useState(
-      sachet.defaultNutritionalValues?.sugar || ''
+   const [sugars, setSugars] = React.useState(
+      sachet.defaultNutritionalValues?.sugars || ''
    )
    const [protein, setProtein] = React.useState(
       sachet.defaultNutritionalValues?.protein || ''
    )
-   const [vitA, setVitA] = React.useState(
-      sachet.defaultNutritionalValues?.vitA || ''
+   const [vitaminA, setVitaminA] = React.useState(
+      sachet.defaultNutritionalValues?.vitaminA || ''
    )
-   const [vitC, setVitC] = React.useState(
-      sachet.defaultNutritionalValues?.vitC || ''
+   const [vitaminC, setVitaminC] = React.useState(
+      sachet.defaultNutritionalValues?.vitaminC || ''
    )
    const [calcium, setCalcium] = React.useState(
       sachet.defaultNutritionalValues?.calcium || ''
@@ -93,20 +93,20 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
             id: sachet.id,
             set: {
                defaultNutritionalValues: {
-                  cal,
-                  fat,
-                  saturatedFat,
-                  transFat,
-                  cholestrol,
-                  sodium,
-                  carbs,
-                  dietryFibre,
-                  sugar,
-                  protein,
-                  vitA,
-                  vitC,
-                  calcium,
-                  iron,
+                  calories: calories,
+                  totalFat: totalFat,
+                  saturatedFat: saturatedFat,
+                  transFat: transFat,
+                  cholesterol: cholesterol,
+                  sodium: sodium,
+                  totalCarbohydrates: totalCarbohydrates,
+                  dietaryFibre: dietaryFibre,
+                  sugars: sugars,
+                  protein: protein,
+                  vitaminA: vitaminA,
+                  vitaminC: vitaminC,
+                  calcium: calcium,
+                  iron: iron,
                },
             },
          },
@@ -158,19 +158,18 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                      <Input
                         type="text"
                         label="Calories"
-                        name="cal"
-                        value={cal || ''}
+                        name="calories"
+                        value={calories || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setCal(+e.target.value)
+                              setCalories(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(cal)}
+                     {calcDailyValue(calories)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -186,11 +185,11 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                      <Input
                         type="text"
                         label="Total Fat"
-                        name="fat"
-                        value={fat || ''}
+                        name="totalFat"
+                        value={totalFat || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setFat(+e.target.value)
+                              setTotalFat(+e.target.value)
                         }}
                      />
                      <div>gm</div>
@@ -198,7 +197,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(fat)}
+                     {calcDailyValue(totalFat)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -281,20 +280,20 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                   >
                      <Input
                         type="text"
-                        label="Cholestrol"
-                        name="cholestrol"
-                        value={cholestrol || ''}
+                        label="Cholesterol"
+                        name="cholesterol"
+                        value={cholesterol || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setCholestrol(+e.target.value)
+                              setCholesterol(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
+                     <div>mg</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(cholestrol)}
+                     {calcDailyValue(cholesterol)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -317,7 +316,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                               setSodium(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
+                     <div>mg</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
@@ -339,10 +338,10 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                         type="text"
                         label="Total Carbohydrates"
                         name="totalCarbs"
-                        value={carbs || ''}
+                        value={totalCarbohydrates || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setCarbs(+e.target.value)
+                              setTotalCarbohydrates(+e.target.value)
                         }}
                      />
                      <div>gm</div>
@@ -350,7 +349,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(carbs)}
+                     {calcDailyValue(totalCarbohydrates)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -371,12 +370,12 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                   >
                      <Input
                         type="text"
-                        label="Dietry Fibre"
-                        name="dietryFibre"
-                        value={dietryFibre || ''}
+                        label="Dietary Fibre"
+                        name="dietaryFibre"
+                        value={dietaryFibre || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setDietryFibre(+e.target.value)
+                              setDietaryFibre(+e.target.value)
                         }}
                      />
                      <div>gm</div>
@@ -384,7 +383,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(dietryFibre)}
+                     {calcDailyValue(dietaryFibre)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -405,12 +404,12 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                   >
                      <Input
                         type="text"
-                        label="Sugar"
-                        name="sugar"
-                        value={sugar || ''}
+                        label="Sugars"
+                        name="sugars"
+                        value={sugars || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setSugar(+e.target.value)
+                              setSugars(+e.target.value)
                         }}
                      />
                      <div>gm</div>
@@ -418,7 +417,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(sugar)}
+                     {calcDailyValue(sugars)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -463,18 +462,18 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                         type="text"
                         label="Vitamin A"
                         name="vitaminA"
-                        value={vitA || ''}
+                        value={vitaminA || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setVitA(+e.target.value)
+                              setVitaminA(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
+                     <div>%</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(vitA)}
+                     {calcDailyValue(vitaminA)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -490,19 +489,19 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                      <Input
                         type="text"
                         label="Vitamin C"
-                        name="vitC"
-                        value={vitC || ''}
+                        name="vitaminC"
+                        value={vitaminC || ''}
                         onChange={e => {
                            if (sanitizeInput(e.target.value))
-                              setVitC(+e.target.value)
+                              setVitaminC(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
+                     <div>%</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(vitC)}
+                     {calcDailyValue(vitaminC)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -525,7 +524,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                               setCalcium(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
+                     <div>%</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
@@ -553,7 +552,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
                               setIron(+e.target.value)
                         }}
                      />
-                     <div>gm</div>
+                     <div>%</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">

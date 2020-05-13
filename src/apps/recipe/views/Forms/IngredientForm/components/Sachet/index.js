@@ -7,6 +7,7 @@ import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
 import { Container, ContainerAction, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
+import { Nutrition } from '../../../../../../../shared/components'
 
 const Sachet = ({ state, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -190,9 +191,7 @@ const Sachet = ({ state, openTunnel }) => {
                         <EditIcon color="#00A7E1" />
                      </IconButton>
                   </ContainerAction>
-                  <Text as="p">
-                     Default Nutritional Values (view to be made)
-                  </Text>
+                  <Nutrition data={sachet.defaultNutritionalValues} vertical />
                </Container>
             ) : (
                <ButtonTile
