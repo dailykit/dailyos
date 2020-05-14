@@ -3,6 +3,8 @@ import React from 'react'
 const SachetOrderContext = React.createContext()
 
 const state = {
+   id: null,
+   status: '',
    supplierItem: {},
    inputItemProcessing: {},
    outputSachet: {},
@@ -11,21 +13,14 @@ const state = {
    selectedStation: {},
    assignedDate: '',
    packaging: {},
-   labelTemplates: [
-      {
-         id: 1,
-         title: 'Slip Name',
-      },
-      { id: 2, title: 'Bar Code' },
-      {
-         id: 3,
-         title: 'Sachet Quantity',
-      },
-   ],
+   labelTemplates: [],
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'SET_META':
+         return { ...state, id: payload.id, status: payload.status }
+
       case 'ADD_SUPPLIER_ITEM':
          return { ...state, supplierItem: payload }
 
@@ -35,7 +30,12 @@ const reducers = (state, { type, payload }) => {
       case 'ADD_OUTPUT_SACHET':
          return { ...state, outputSachet: payload }
       case 'ADD_SACHET_QUANTITY':
-         return { ...state, sachetQuantity: state.sachetQuantity + 1 }
+         return {
+            ...state,
+            sachetQuantity: state.sachetQuantity + 1,
+            inputQuantity:
+               (state.sachetQuantity + 1) * +state.outputSachet.unitSize,
+         }
 
       case 'REMOVE_SACHET_QUANTITY':
          return { ...state, sachetQuantity: state.sachetQuantity - 1 }

@@ -1,19 +1,17 @@
-import React, { useEffect, useContext } from 'react'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useMultiList,
-   TagGroup,
    Tag,
+   TagGroup,
+   useMultiList,
 } from '@dailykit/ui'
-
-import { SachetOrderContext } from '../../../../context/sachetOrder'
-
-import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
-
+import React, { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
+import { SachetOrderContext } from '../../../../context/sachetOrder'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
@@ -36,7 +34,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
          title: 'Sachet Quantity',
       },
       { id: 4, title: 'Supplier Name' },
-      { id: 4, title: 'Packaging date' },
+      { id: 5, title: 'Packaging date' },
    ])
 
    useEffect(() => {
@@ -48,7 +46,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("select label templates"))}
+            title={t(address.concat('select label templates'))}
             next={() => {
                sachetOrderDispatch({
                   type: 'SELECT_TEMPLATE_OPTIONS',
@@ -65,7 +63,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
          <List>
             <ListSearch
                onChange={value => setSearch(value)}
-               placeholder={t(address.concat("type what you’re looking for"))}
+               placeholder={t(address.concat('type what you’re looking for'))}
             />
             {selected.length > 0 && (
                <TagGroup style={{ margin: '8px 0' }}>
