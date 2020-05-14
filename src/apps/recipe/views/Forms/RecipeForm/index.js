@@ -12,7 +12,13 @@ import {
 
 import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
 
-import { Information, Procedures, Servings, Ingredients } from './components'
+import {
+   Information,
+   Procedures,
+   Servings,
+   Ingredients,
+   Photo,
+} from './components'
 import {
    InformationTunnel,
    ProceduresTunnel,
@@ -21,6 +27,7 @@ import {
    ProcessingsTunnel,
    ConfigureIngredientTunnel,
    SachetTunnel,
+   PhotoTunnel,
 } from './tunnels'
 import { UPDATE_RECIPE, S_RECIPE, S_INGREDIENTS } from '../../../graphql'
 
@@ -153,6 +160,9 @@ const RecipeForm = () => {
                      }
                   />
                </Tunnel>
+               <Tunnel layer={8}>
+                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
             </Tunnels>
             {/* View */}
             <StyledHeader>
@@ -169,7 +179,7 @@ const RecipeForm = () => {
             </StyledHeader>
             <StyledWrapper width="980">
                <Information state={state} openTunnel={openTunnel} />
-               {/* Photo component */}
+               <Photo state={state} openTunnel={openTunnel} />
                <Servings state={state} openTunnel={openTunnel} />
                <Ingredients state={state} openTunnel={openTunnel} />
                <Procedures state={state} openTunnel={openTunnel} />

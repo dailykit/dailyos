@@ -99,6 +99,7 @@ export const S_RECIPE = gql`
       simpleRecipe(id: $id) {
          id
          name
+         image
          author
          type
          description
