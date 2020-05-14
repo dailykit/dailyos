@@ -46,7 +46,11 @@ const useAssets = type => {
       })
       if (Object.keys(data).length > 0 && data.constructor === Object) {
          clearSelected()
-         return data.Location
+         return {
+            url: data.Location,
+            ...(title && { title }),
+            ...(description && { description }),
+         }
       }
    }
 

@@ -26,13 +26,13 @@ const Upload = ({ onAssetUpload }) => {
    }
 
    const handleSubmit = async () => {
-      const url = await upload({
+      const data = await upload({
          clearSelected,
          file: file.raw,
          title: file.title,
          description: file.description,
       })
-      onAssetUpload(url)
+      onAssetUpload(data)
    }
 
    const handleMetaChange = e => {
