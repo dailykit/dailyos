@@ -1,18 +1,10 @@
+import { IconButton, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import React from 'react'
-
-// Components
-import { IconButton, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
-
-import { Context } from '../../../context/tabs'
-
-// Styled
-import { StyledWrapper, StyledHeader } from '../styled'
-
-// Icons
-import { AddIcon } from '../../../assets/icons'
-import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
-
 import { useTranslation } from 'react-i18next'
+
+import { AddIcon } from '../../../assets/icons'
+import { StyledHeader, StyledWrapper } from '../styled'
+import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
 
 const address = 'apps.inventory.views.listings.workorders.'
 

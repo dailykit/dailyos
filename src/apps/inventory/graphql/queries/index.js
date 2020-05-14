@@ -82,19 +82,6 @@ export const STATIONS = gql`
    }
 `
 
-export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
-   subscription SupplierItems {
-      supplierItems {
-         id
-         name
-         supplier {
-            name
-            contactPerson
-         }
-      }
-   }
-`
-
 export const SACHET_ITEMS = gql`
    query SachetItems($bulkItemId: Int!) {
       sachetItems(where: { bulkItemId: { _eq: $bulkItemId } }) {
