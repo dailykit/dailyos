@@ -24,6 +24,7 @@ export const S_INGREDIENT = gql`
       ingredient(id: $id) {
          id
          name
+         image
          ingredientProcessings {
             id
             processingName

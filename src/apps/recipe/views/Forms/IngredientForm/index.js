@@ -35,6 +35,7 @@ import {
    PackagingTunnel,
    ProcessingsTunnel,
    SachetTunnel,
+   PhotoTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 
@@ -297,6 +298,9 @@ const IngredientForm = () => {
                </Tunnel>
                <Tunnel layer={13}>
                   <NutritionTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={14}>
+                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
                </Tunnel>
             </Tunnels>
             <StyledHeader>
