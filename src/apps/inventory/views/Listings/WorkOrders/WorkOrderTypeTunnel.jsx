@@ -1,12 +1,10 @@
-import React from 'react'
-import styled from 'styled-components'
 import { Text } from '@dailykit/ui'
+import React from 'react'
+import { Trans, useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
+import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
 import { Context } from '../../../context/tabs'
-
-import { TunnelContainer, TunnelHeader, Spacer } from '../../../components'
-
-import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
@@ -20,7 +18,7 @@ export default function WorkOrderTypeTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("select type of work order"))}
+            title={t(address.concat('select type of work order'))}
             close={() => {
                close(1)
             }}
@@ -34,7 +32,8 @@ export default function WorkOrderTypeTunnel({ close }) {
             <Text as="h1">{t(address.concat('bulk work order'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('bulk subtitle 1')}>
-                  Bulk Work Order is to create bulk items with changing processing
+                  Bulk Work Order is to create bulk items with changing
+                  processing
                </Trans>
             </Text>
          </SolidTile>

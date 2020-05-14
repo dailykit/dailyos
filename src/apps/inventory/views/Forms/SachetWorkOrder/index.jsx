@@ -22,6 +22,7 @@ import {
    PACKAGINGS,
    UPDATE_SACHET_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,
+   SACHET_WORK_ORDER,
 } from '../../../graphql'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
@@ -32,6 +33,7 @@ import {
    SachetOrderContext,
    state as initialState,
 } from '../../../context/sachetOrder'
+import { Context } from '../../../context/tabs'
 import {
    FlexContainer,
    FormActions,
@@ -50,12 +52,15 @@ const address = 'apps.inventory.views.forms.sachetworkorder.'
 
 export default function SachetWorkOrder() {
    const { t } = useTranslation()
+   const { state } = useContext(Context)
    const [sachetOrderState, sachetOrderDispatch] = useReducer(
       reducers,
       initialState
    )
 
-   const [status, setStatus] = useState(sachetOrderState.status || '')
+   const [status, setStatus] = useState(
+      sachetOrderState.status || state.sachetWorkOrder?.status || ''
+   )
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
 
@@ -74,8 +79,27 @@ export default function SachetWorkOrder() {
       }
    )
 
+   const { data: sachetWorkOrderData, loading: orderLoading } = useQuery(
+      SACHET_WORK_ORDER,
+      {
+         variables: { id: state.sachetWorkOrder?.id },
+      }
+   )
+
    const [createSachetWorkOrder] = useMutation(CREATE_SACHET_WORK_ORDER)
    const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER)
+
+   React.useEffect(() => {
+      if (state.sachetWorkOrder?.id) {
+         sachetOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: state.sachetWorkOrder?.id,
+               status: state.sachetWorkOrder?.status,
+            },
+         })
+      }
+   }, [state.sachetWorkOrder?.id])
 
    const checkForm = () => {
       if (!sachetOrderState.supplierItem?.id) {
@@ -150,6 +174,7 @@ export default function SachetWorkOrder() {
    }
 
    if (supplierItemLoading) return <Loader />
+   if (orderLoading) return <Loader />
 
    if (
       sachetOrderState.outputSachet?.processingName &&
@@ -236,9 +261,15 @@ export default function SachetWorkOrder() {
                <Text as="title">
                   {t(address.concat('select supplier item'))}
                </Text>
-               {sachetOrderState.supplierItem?.name ? (
+               {sachetOrderState.supplierItem?.name ||
+               sachetWorkOrderData?.sachetWorkOrder?.bulkItem?.supplierItem
+                  .name ? (
                   <ItemCard
-                     title={sachetOrderState.supplierItem.name}
+                     title={
+                        sachetOrderState.supplierItem.name ||
+                        sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                           ?.supplierItem.name
+                     }
                      edit={() => openTunnel(1)}
                   />
                ) : (
@@ -252,62 +283,91 @@ export default function SachetWorkOrder() {
 
                <br />
 
-               {sachetOrderState.supplierItem?.name && (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('input bulk item'))}
-                     </Text>
-                     {sachetOrderState.inputItemProcessing?.processingName ? (
-                        <ItemCard
-                           title={
-                              sachetOrderState.inputItemProcessing
-                                 .processingName
-                           }
-                           onHand={sachetOrderState.inputItemProcessing.onHand}
-                           shelfLife={
-                              sachetOrderState.inputItemProcessing.shelfLife
-                           }
-                           edit={() => openTunnel(5)}
-                        />
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select input bulk item'))}
-                           onClick={() => openTunnel(5)}
-                        />
-                     )}
-                  </>
-               )}
+               {sachetOrderState.supplierItem?.name ||
+                  (sachetWorkOrderData?.sachetWorkOrder?.bulkItem?.supplierItem
+                     .name && (
+                     <>
+                        <Text as="title">
+                           {t(address.concat('input bulk item'))}
+                        </Text>
+                        {sachetOrderState.inputItemProcessing?.processingName ||
+                        sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                           ?.processingName ? (
+                           <ItemCard
+                              title={
+                                 sachetOrderState.inputItemProcessing
+                                    .processingName ||
+                                 sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                                    ?.processingName
+                              }
+                              onHand={
+                                 sachetOrderState.inputItemProcessing.onHand ||
+                                 sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                                    ?.onHand
+                              }
+                              shelfLife={
+                                 sachetOrderState.inputItemProcessing
+                                    .shelfLife ||
+                                 sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                                    ?.shelfLife
+                              }
+                              edit={() => openTunnel(5)}
+                           />
+                        ) : (
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(address.concat('select input bulk item'))}
+                              onClick={() => openTunnel(5)}
+                           />
+                        )}
+                     </>
+                  ))}
 
                <Spacer />
 
-               {sachetOrderState.inputItemProcessing?.id && (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('output sachet item'))}
-                     </Text>
-                     {sachetOrderState.outputSachet?.unitSize ? (
-                        <ItemCard
-                           title={`${sachetOrderState.outputSachet.unitSize} ${sachetOrderState.outputSachet.unit}`}
-                           onHand={sachetOrderState.outputSachet.onHand}
-                           par={sachetOrderState.outputSachet.parLevel}
-                           edit={() => {
-                              openTunnel(2)
-                           }}
-                        />
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select output sachet item'))}
-                           onClick={() => {
-                              openTunnel(2)
-                           }}
-                        />
-                     )}
-                  </>
-               )}
+               {sachetOrderState.inputItemProcessing?.id ||
+                  (sachetWorkOrderData?.sachetWorkOrder?.bulkItem?.id && (
+                     <>
+                        <Text as="title">
+                           {t(address.concat('output sachet item'))}
+                        </Text>
+                        {sachetOrderState.outputSachet?.unitSize ||
+                        sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem
+                           ?.unitSize ? (
+                           <ItemCard
+                              title={
+                                 `${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unitSize} ${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unit}` ||
+                                 `${sachetOrderState.outputSachet.unitSize} ${sachetOrderState.outputSachet.unit}`
+                              }
+                              onHand={
+                                 sachetOrderState.outputSachet.onHand ||
+                                 sachetWorkOrderData?.sachetWorkOrder
+                                    ?.outputSachetItem.onHand
+                              }
+                              par={
+                                 sachetOrderState.outputSachet.parLevel ||
+                                 sachetWorkOrderData?.sachetWorkOrder
+                                    ?.outputSachetItem.parLevel
+                              }
+                              edit={() => {
+                                 openTunnel(2)
+                              }}
+                           />
+                        ) : (
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(
+                                 address.concat('select output sachet item')
+                              )}
+                              onClick={() => {
+                                 openTunnel(2)
+                              }}
+                           />
+                        )}
+                     </>
+                  ))}
 
                {sachetOrderState.outputSachet?.id && (
                   <Configurator open={openTunnel} />

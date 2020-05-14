@@ -104,3 +104,69 @@ export const PACKAGINGS = gql`
       }
    }
 `
+
+export const BULK_WORK_ORDER = gql`
+   query BuulkWorkOrder($id: Int!) {
+      bulkWorkOrder(id: $id) {
+         status
+         station {
+            name
+            id
+         }
+         user {
+            lastName
+            firstName
+         }
+         scheduledOn
+         outputBulkItem {
+            yield
+            processingName
+            onHand
+            shelfLife
+            supplierItem {
+               name
+            }
+         }
+         outputQuantity
+         inputBulkItem {
+            processingName
+            onHand
+            shelfLife
+         }
+      }
+   }
+`
+
+export const SACHET_WORK_ORDER = gql`
+   query SachetWorkOrder($id: Int!) {
+      sachetWorkOrder(id: $id) {
+         status
+         station {
+            name
+            id
+         }
+         user {
+            lastName
+            firstName
+         }
+         scheduledOn
+         outputSachetItem {
+            id
+            onHand
+            parLevel
+            unitSize
+            unit
+         }
+
+         bulkItem {
+            id
+            processingName
+            onHand
+            shelfLife
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`

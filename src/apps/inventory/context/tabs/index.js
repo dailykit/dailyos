@@ -7,6 +7,8 @@ const state = {
    forms: [],
    current: {},
    supplierId: '',
+   sachetWorkOrder: {},
+   bulkWorkOrder: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -104,6 +106,12 @@ const reducers = (state, { type, payload }) => {
 
       case 'ADD_SUPPLIER_ID':
          return { ...state, supplierId: payload }
+
+      case 'SET_SACHET_WORK_ORDER':
+         return { ...state, sachetWorkOrder: { ...payload } }
+
+      case 'SET_BULK_WORK_ORDER':
+         return { ...state, bulkWorkOrder: { ...payload } }
       default:
          return state
    }
