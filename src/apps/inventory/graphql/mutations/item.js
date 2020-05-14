@@ -83,9 +83,17 @@ export const CREATE_SACHET_ITEM = gql`
       $unitSize: numeric!
       $bulkItemId: Int!
       $unit: String!
+      $par: numeric!
+      $maxLevel: numeric!
    ) {
       createSachetItem(
-         objects: { unitSize: $unitSize, bulkItemId: $bulkItemId, unit: $unit }
+         objects: {
+            unitSize: $unitSize
+            bulkItemId: $bulkItemId
+            unit: $unit
+            maxLevel: $maxLevel
+            parLevel: $par
+         }
       ) {
          returning {
             id

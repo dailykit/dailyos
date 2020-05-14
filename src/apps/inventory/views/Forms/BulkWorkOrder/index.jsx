@@ -10,12 +10,11 @@ import {
    useTunnel,
    Loader,
 } from '@dailykit/ui/'
-import styled from 'styled-components'
-import React, { useContext, useReducer, useState, useEffect } from 'react'
+import React, { useContext, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 
-import { ItemCard, Spacer } from '../../../components'
+import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
 import {
    BulkOrderContext,
@@ -46,14 +45,14 @@ const address = 'apps.inventory.views.forms.bulkworkorder.'
 
 export default function BulkWorkOrderForm() {
    const { t } = useTranslation()
-
-   const [status, setStatus] = useState('')
-
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
    const [bulkOrderState, bulkOrderDispatch] = useReducer(
       reducers,
       initialState
    )
+
+   const [status, setStatus] = useState(bulkOrderState.status || '')
+
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
 
    const { data: supplierItemData, loading: supplierItemLoading } = useQuery(
       SUPPLIER_ITEMS
@@ -62,6 +61,9 @@ export default function BulkWorkOrderForm() {
    const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
 
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
+   const [updateBulkWorkOrderStatus] = useMutation(
+      UPDATE_BULK_WORK_ORDER_STATUS
+   )
 
    const checkForm = () => {
       if (!bulkOrderState.supplierItem?.id) {
@@ -91,6 +93,24 @@ export default function BulkWorkOrderForm() {
       }
 
       return true
+   }
+
+   const saveStatus = async status => {
+      const response = await updateBulkWorkOrderStatus({
+         variables: { id: bulkOrderState.id, status },
+      })
+
+      if (response?.data) {
+         toast.info('Work Order updated successfully!')
+
+         bulkOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: response.data.updateBulkWorkOrder.returning[0].id,
+               status: response.data.updateBulkWorkOrder.returning[0].status,
+            },
+         })
+      }
    }
 
    const handlePublish = async () => {
@@ -190,7 +210,7 @@ export default function BulkWorkOrderForm() {
 
                <FormActions>
                   {status ? (
-                     <StatusSwitch currentStatus={status} />
+                     <StatusSwitch currentStatus={status} onSave={saveStatus} />
                   ) : (
                      <TextButton onClick={handlePublish} type="solid">
                         {t(address.concat('publish'))}
@@ -445,64 +465,5 @@ function Configurator({ open }) {
          </>
          <br />
       </>
-   )
-}
-
-const StyledStatusSwitch = styled.select`
-   padding: 10px 20px;
-   color: #fff;
-   background-color: #e6c02a;
-   border: none;
-
-   &:hover {
-      cursor: pointer;
-   }
-`
-
-function StatusSwitch({ currentStatus }) {
-   const [status, setStatus] = useState(currentStatus)
-   const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
-
-   const [updateBulkWorkOrderStatus] = useMutation(
-      UPDATE_BULK_WORK_ORDER_STATUS
-   )
-
-   const saveStatus = async status => {
-      const response = await updateBulkWorkOrderStatus({
-         variables: { id: bulkOrderState.id, status },
-      })
-
-      if (response?.data) {
-         toast.info('Work Order updated successfully!')
-
-         bulkOrderDispatch({
-            type: 'SET_META',
-            payload: {
-               id: response.data.updateBulkWorkOrder.returning[0].id,
-               status: response.data.updateBulkWorkOrder.returning[0].status,
-            },
-         })
-      }
-   }
-
-   return (
-      <StyledStatusSwitch
-         value={status}
-         onChange={e => {
-            setStatus(e.target.value)
-            saveStatus(e.target.value)
-         }}
-      >
-         <option value={status} disabled>
-            {status}
-         </option>
-         {status !== 'PENDING' && <option value="PENDING">PENDING</option>}
-         {status !== 'COMPLETED' && (
-            <option value="COMPLETED">COMPLETED</option>
-         )}
-         {status !== 'CANCELLED' && (
-            <option value="CANCELLED">CANCELLED</option>
-         )}
-      </StyledStatusSwitch>
    )
 }

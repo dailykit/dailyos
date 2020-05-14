@@ -1,60 +1,53 @@
-import React, { useContext } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-
 import {
-   Input,
-   TextButton,
-   IconButton,
-   Text,
    ButtonTile,
-   Tunnels,
-   Tunnel,
-   useTunnel,
+   IconButton,
    Loader,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
+import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import {
-   SUPPLIERS,
-   MASTER_PROCESSINGS,
-   MASTER_ALLERGENS,
-} from '../../../graphql'
-
-// Tunnels
-import {
-   SuppliersTunnel,
-   InfoTunnel,
-   ProcessingTunnel,
-   ConfigTunnel,
-   AllergensTunnel,
-   SelectDerivedProcessingTunnel,
-   ConfigureDerivedProcessingTunnel,
-   AllergensTunnelForDerivedProcessing,
-   ConfigureSachetTunnel,
-   NutritionTunnel,
-} from './tunnels'
-
-// Styled
-import { StyledWrapper, FlexContainer, Flexible } from '../styled'
-import {
-   StyledHeader,
-   StyledGrid,
-   StyledMain,
-   StyledInfo,
-   StyledSupplier,
-   ProcessingButton,
-   TabContainer,
-   ItemTab,
-} from './styled'
-
+import AddIcon from '../../../../../shared/assets/icons/Add'
+import { CaseIcon, ClockIcon, ItemIcon, TruckIcon } from '../../../assets/icons'
 import {
    ItemContext,
-   state as initialState,
    reducer,
+   state as initialState,
 } from '../../../context/item'
-import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
-import AddIcon from '../../../../../shared/assets/icons/Add'
-
-import { useTranslation } from 'react-i18next'
+import {
+   MASTER_ALLERGENS,
+   MASTER_PROCESSINGS,
+   SUPPLIERS,
+} from '../../../graphql'
+// Styled
+import { FlexContainer, Flexible, StyledWrapper } from '../styled'
+import {
+   ItemTab,
+   ProcessingButton,
+   StyledGrid,
+   StyledHeader,
+   StyledInfo,
+   StyledMain,
+   StyledSupplier,
+   TabContainer,
+} from './styled'
+// Tunnels
+import {
+   AllergensTunnel,
+   AllergensTunnelForDerivedProcessing,
+   ConfigTunnel,
+   ConfigureDerivedProcessingTunnel,
+   ConfigureSachetTunnel,
+   InfoTunnel,
+   NutritionTunnel,
+   ProcessingTunnel,
+   SelectDerivedProcessingTunnel,
+   SuppliersTunnel,
+} from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
