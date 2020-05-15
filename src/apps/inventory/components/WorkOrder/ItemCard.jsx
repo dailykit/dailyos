@@ -63,11 +63,13 @@ export default function ItemCard({
             </div>
          </div>
 
-         <div>
-            <IconButton type="ghost" onClick={() => edit()}>
-               <EditIcon />
-            </IconButton>
-         </div>
+         {edit && (
+            <div>
+               <IconButton type="ghost" onClick={() => edit()}>
+                  <EditIcon />
+               </IconButton>
+            </div>
+         )}
       </StyledCard>
    )
 }

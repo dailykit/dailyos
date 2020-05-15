@@ -8,7 +8,7 @@ import {
    useTunnel,
    Loader,
 } from '@dailykit/ui/'
-import React, { useReducer, useState } from 'react'
+import React, { useReducer, useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { useQuery, useMutation } from '@apollo/react-hooks'
@@ -20,6 +20,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../context/purchaseOrder'
+import { Context } from '../../../context/tabs'
 import { FormActions, StyledForm, StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 
@@ -27,6 +28,7 @@ import {
    SUPPLIER_ITEMS,
    CREATE_PURCHASE_ORDER,
    UPDATE_PURCHASE_ORDER,
+   PURCHASE_ORDERS,
 } from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.purchaseorders.'
@@ -38,12 +40,34 @@ export default function PurchaseOrderForm() {
       reducers,
       initialState
    )
-   const [orderQuantity, setOrderQuantity] = useState('')
-   const [status, setStatus] = useState(purchaseOrderState.status || '')
+   const { state } = useContext(Context)
+   const [status, setStatus] = useState(
+      state.purchaseOrder.status || purchaseOrderState.status || ''
+   )
 
    const { data: supplierItemsData, loading } = useQuery(SUPPLIER_ITEMS)
+   const {
+      data: purchaseItemsData,
+      loading: orderLoading,
+   } = useQuery(PURCHASE_ORDERS, { variables: { id: state.purchaseOrder?.id } })
    const [createPurchaseOrder] = useMutation(CREATE_PURCHASE_ORDER)
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER)
+
+   const [orderQuantity, setOrderQuantity] = useState(
+      purchaseItemsData?.purchaseOrderItem?.orderQuantity || ''
+   )
+
+   React.useEffect(() => {
+      if (state.purchaseOrder?.id) {
+         purchaseOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: state.purchaseOrder.id,
+               status: state.purchaseOrder.status,
+            },
+         })
+      }
+   }, [state.purchaseOrder.id])
 
    const saveStatus = async status => {
       const response = await updatePurchaseOrder({
@@ -63,45 +87,62 @@ export default function PurchaseOrderForm() {
       }
    }
 
+   const checkForm = () => {
+      if (!purchaseOrderState.supplierItem?.id) {
+         toast.error('No Supplier Item selecetd!')
+         return false
+      }
+      if (!orderQuantity) {
+         toast.error('Please provide orde quantity!')
+         return false
+      }
+
+      return true
+   }
+
    const handleSubmit = async () => {
-      const {
-         id: supplierItemId,
-         bulkItemAsShippedId: bulkItemId,
-         bulkItemAsShipped: { unit },
-         supplier: { id: supplierId },
-      } = purchaseOrderState.supplierItem
+      const isValid = checkForm()
+      if (isValid) {
+         const {
+            id: supplierItemId,
+            bulkItemAsShippedId: bulkItemId,
+            bulkItemAsShipped: { unit },
+            supplier: { id: supplierId },
+         } = purchaseOrderState.supplierItem
 
-      const resp = await createPurchaseOrder({
-         variables: {
-            object: {
-               bulkItemId,
-               orderQuantity,
-               status: 'PENDING',
-               supplierId,
-               supplierItemId,
-               unit,
+         const resp = await createPurchaseOrder({
+            variables: {
+               object: {
+                  bulkItemId,
+                  orderQuantity,
+                  status: 'PENDING',
+                  supplierId,
+                  supplierItemId,
+                  unit,
+               },
             },
-         },
-      })
-
-      if (resp?.data?.createPurchaseOrderItem) {
-         toast.success('Purchase Order created successfully!')
-
-         const fetchedStatus =
-            resp?.data?.createPurchaseOrderItem.returning[0].status
-
-         const fetchedId = resp?.data?.createPurchaseOrderItem.returning[0].id
-
-         setStatus(fetchedStatus)
-
-         purchaseOrderDispatch({
-            type: 'SET_META',
-            payload: { id: fetchedId, status: fetchedStatus },
          })
+
+         if (resp?.data?.createPurchaseOrderItem) {
+            toast.success('Purchase Order created successfully!')
+
+            const fetchedStatus =
+               resp?.data?.createPurchaseOrderItem.returning[0].status
+
+            const fetchedId =
+               resp?.data?.createPurchaseOrderItem.returning[0].id
+
+            setStatus(fetchedStatus)
+
+            purchaseOrderDispatch({
+               type: 'SET_META',
+               payload: { id: fetchedId, status: fetchedStatus },
+            })
+         }
       }
    }
 
-   if (loading) return <Loader />
+   if (loading || orderLoading) return <Loader />
 
    return (
       <>
@@ -142,16 +183,35 @@ export default function PurchaseOrderForm() {
 
                <StyledForm style={{ padding: '0px 60px' }}>
                   <Text as="title">{t(address.concat('supplier item'))}</Text>
-                  {purchaseOrderState.supplierItem?.name ? (
+                  {purchaseOrderState.supplierItem?.name ||
+                  purchaseItemsData?.purchaseOrderItem?.supplierItem?.id ? (
                      <>
-                        <ItemCard
-                           title={purchaseOrderState.supplierItem.name}
-                           onHand={
-                              purchaseOrderState.supplierItem.bulkItemAsShipped
-                                 .onHand
-                           }
-                           edit={() => openTunnel(1)}
-                        />
+                        {status ? (
+                           <ItemCard
+                              title={
+                                 purchaseOrderState.supplierItem.name ||
+                                 purchaseItemsData?.purchaseOrderItem
+                                    ?.supplierItem?.name
+                              }
+                              onHand={
+                                 purchaseOrderState.supplierItem
+                                    ?.bulkItemAsShipped?.onHand
+                              }
+                           />
+                        ) : (
+                           <ItemCard
+                              title={
+                                 purchaseOrderState.supplierItem.name ||
+                                 purchaseItemsData?.purchaseOrderItem
+                                    ?.supplierItem?.name
+                              }
+                              onHand={
+                                 purchaseOrderState.supplierItem
+                                    ?.bulkItemAsShipped?.onHand
+                              }
+                              edit={() => openTunnel(1)}
+                           />
+                        )}
                         <Spacer />
 
                         <div
@@ -164,6 +224,7 @@ export default function PurchaseOrderForm() {
                         >
                            <div style={{ width: '60%' }}>
                               <Input
+                                 disabled={!!status}
                                  type="text"
                                  placeholder={t(
                                     address.concat('enter order quantity')
@@ -180,10 +241,9 @@ export default function PurchaseOrderForm() {
 
                            <Text as="title">
                               (in{' '}
-                              {
+                              {purchaseItemsData?.purchaseOrderItem?.unit ||
                                  purchaseOrderState.supplierItem
-                                    .bulkItemAsShipped.unit
-                              }
+                                    ?.bulkItemAsShipped?.unit}
                               )
                            </Text>
                         </div>

@@ -174,3 +174,18 @@ export const SACHET_WORK_ORDER = gql`
       }
    }
 `
+
+export const PURCHASE_ORDERS = gql`
+   query PurchaseOrderItem($id: Int!) {
+      purchaseOrderItem(id: $id) {
+         id
+         supplierItem {
+            id
+            name
+         }
+         status
+         orderQuantity
+         unit
+      }
+   }
+`
