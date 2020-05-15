@@ -28,6 +28,15 @@ export const InputWrapper = styled.div`
    width: ${props => props.width};
 `
 
+export const MasterSettings = styled.div`
+   display: flex;
+   align-items: center;
+
+   svg {
+      margin-right: 8px;
+   }
+`
+
 export const StyledForm = styled.div`
    padding: 40px 0;
 `

@@ -1,8 +1,8 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Input, Tunnel, Tunnels, useTunnel, Loader } from '@dailykit/ui'
-
+import { Input, Tunnel, Tunnels, useTunnel, Loader, Text } from '@dailykit/ui'
+import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
    state as initialState,
@@ -10,7 +10,12 @@ import {
    RecipeContext,
 } from '../../../context/recipee'
 
-import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
+import {
+   StyledWrapper,
+   StyledHeader,
+   InputWrapper,
+   MasterSettings,
+} from '../styled'
 
 import {
    Information,
@@ -176,6 +181,19 @@ const RecipeForm = () => {
                      onBlur={updateName}
                   />
                </InputWrapper>
+               <MasterSettings>
+                  {state.isValid?.status ? (
+                     <React.Fragment>
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </React.Fragment>
+                  ) : (
+                     <React.Fragment>
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </React.Fragment>
+                  )}
+               </MasterSettings>
             </StyledHeader>
             <StyledWrapper width="980">
                <Information state={state} openTunnel={openTunnel} />
