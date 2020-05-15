@@ -12,3 +12,17 @@ export const CREATE_PURCHASE_ORDER = gql`
       }
    }
 `
+
+export const UPDATE_PURCHASE_ORDER = gql`
+   mutation UpdateSachetOrderItem($id: Int!, $status: String!) {
+      updatePurchaseOrderItem(
+         where: { id: { _eq: $id } }
+         _set: { status: $status }
+      ) {
+         returning {
+            id
+            status
+         }
+      }
+   }
+`

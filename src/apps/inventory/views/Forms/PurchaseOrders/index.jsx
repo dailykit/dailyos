@@ -10,6 +10,7 @@ import {
 } from '@dailykit/ui/'
 import React, { useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
@@ -22,7 +23,11 @@ import {
 import { FormActions, StyledForm, StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 
-import { SUPPLIER_ITEMS, CREATE_PURCHASE_ORDER } from '../../../graphql'
+import {
+   SUPPLIER_ITEMS,
+   CREATE_PURCHASE_ORDER,
+   UPDATE_PURCHASE_ORDER,
+} from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.purchaseorders.'
 
@@ -38,8 +43,25 @@ export default function PurchaseOrderForm() {
 
    const { data: supplierItemsData, loading } = useQuery(SUPPLIER_ITEMS)
    const [createPurchaseOrder] = useMutation(CREATE_PURCHASE_ORDER)
+   const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER)
 
-   const saveStatus = () => {}
+   const saveStatus = async status => {
+      const response = await updatePurchaseOrder({
+         variables: { id: purchaseOrderState.id, status },
+      })
+
+      if (response?.data) {
+         toast.info('Work Order updated successfully!')
+
+         purchaseOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: response.data.updatePurchaseOrder?.returning[0]?.id,
+               status: response.data.updatePurchaseOrder?.returning[0]?.status,
+            },
+         })
+      }
+   }
 
    const handleSubmit = async () => {
       const {
@@ -63,6 +85,8 @@ export default function PurchaseOrderForm() {
       })
 
       if (resp?.data?.createPurchaseOrderItem) {
+         toast.success('Purchase Order created successfully!')
+
          const fetchedStatus =
             resp?.data?.createPurchaseOrderItem.returning[0].status
 
