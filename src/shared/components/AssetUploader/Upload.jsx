@@ -2,7 +2,7 @@ import React from 'react'
 import styled, { css } from 'styled-components'
 import useAssets from './useAssets'
 
-const Upload = () => {
+const Upload = ({ onAssetUpload }) => {
    const { upload } = useAssets()
    const inputRef = React.useRef(null)
    const [file, setFile] = React.useState({
@@ -25,13 +25,14 @@ const Upload = () => {
       inputRef.current.value = null
    }
 
-   const handleSubmit = () => {
-      upload({
+   const handleSubmit = async () => {
+      const data = await upload({
          clearSelected,
          file: file.raw,
          title: file.title,
          description: file.description,
       })
+      onAssetUpload(data)
    }
 
    const handleMetaChange = e => {
