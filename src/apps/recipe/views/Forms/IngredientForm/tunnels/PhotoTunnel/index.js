@@ -20,6 +20,7 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
    })
 
    const addImage = image => {
+      console.log(image)
       updateIngredient({
          variables: {
             id: state.id,
@@ -41,7 +42,10 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
             </div>
          </TunnelHeader>
          <TunnelBody>
-            <AssetUploader onImageSelect={image => addImage(image)} />
+            <AssetUploader
+               onImageSelect={image => addImage(image)}
+               onAssetUpload={url => addImage(url)}
+            />
          </TunnelBody>
       </React.Fragment>
    )

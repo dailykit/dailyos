@@ -41,7 +41,10 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
             </div>
          </TunnelHeader>
          <TunnelBody>
-            <AssetUploader onImageSelect={image => addImage(image)} />
+            <AssetUploader
+               onImageSelect={image => addImage(image)}
+               onAssetUpload={url => addImage(url)}
+            />
          </TunnelBody>
       </React.Fragment>
    )
