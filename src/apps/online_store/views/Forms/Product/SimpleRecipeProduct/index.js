@@ -1,7 +1,8 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { Input, Loader, Tunnel, Tunnels, useTunnel, Text } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import { TickIcon, CloseIcon } from '../../../../assets/icons'
 import { toast } from 'react-toastify'
 import {
    reducers,
@@ -16,7 +17,7 @@ import {
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../graphql'
-import { StyledWrapper } from '../../styled'
+import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 import { Description, Recipe } from './components'
 import {
@@ -203,6 +204,19 @@ export default function SimpleRecipeProduct() {
                      onBlur={updateProduct}
                   />
                </div>
+               <MasterSettings>
+                  {state.isValid?.status ? (
+                     <React.Fragment>
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </React.Fragment>
+                  ) : (
+                     <React.Fragment>
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </React.Fragment>
+                  )}
+               </MasterSettings>
             </StyledHeader>
             <StyledBody>
                <StyledMeta>

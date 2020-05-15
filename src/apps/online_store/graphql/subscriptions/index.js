@@ -17,6 +17,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
       simpleRecipeProduct(id: $id) {
          id
          name
+         isValid
          accompaniments
          tags
          description
@@ -54,6 +55,7 @@ export const S_INVENTORY_PRODUCT = gql`
          id
          name
          accompaniments
+         isValid
          tags
          description
          supplierItem {
@@ -125,6 +127,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          id
          name
          default
+         isValid
          description
          tags
          customizableProductOptions {
@@ -177,6 +180,7 @@ export const S_COMBO_PRODUCT = gql`
          name
          description
          tags
+         isValid
          comboProductComponents {
             id
             label
@@ -217,6 +221,7 @@ export const S_COLLECTION = gql`
       menuCollection(id: $id) {
          id
          name
+         isValid
          active
          availability
          categories
