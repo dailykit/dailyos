@@ -30,6 +30,11 @@ const Settings = Loadable({
    loading: Loader,
 })
 
+const Order = Loadable({
+   loader: () => import('./apps/order'),
+   loading: Loader,
+})
+
 const App = () => {
    return (
       <>
@@ -48,11 +53,15 @@ const App = () => {
                   <Link to="/settings">
                      <Trans i18nKey="settings">Settings</Trans>
                   </Link>
+                  <Link to="/order">
+                     <Trans i18nKey="order">Order</Trans>
+                  </Link>
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/recipe" component={Recipe} />
                <Route path="/online-store" component={OnlineStore} />
                <Route path="/settings" component={Settings} />
+               <Route path="/order" component={Order} />
             </Switch>
          </Router>
          <Lang />
