@@ -1,9 +1,9 @@
+import { IconButton, Text } from '@dailykit/ui'
 import React from 'react'
-import styled from 'styled-components'
-import { Text, IconButton } from '@dailykit/ui'
-import EditIcon from '../../assets/icons/Edit'
-
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import EditIcon from '../../assets/icons/Edit'
 
 const address = 'apps.inventory.components.workorder.'
 

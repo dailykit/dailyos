@@ -48,6 +48,10 @@ export const SUPPLIER_ITEMS = gql`
       supplierItems {
          id
          name
+         bulkItemAsShippedId
+         supplier {
+            id
+         }
          bulkItems {
             id
             processingName
