@@ -1,21 +1,17 @@
 import React from 'react'
 import { ButtonTile } from '@dailykit/ui'
 import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
-import {
-   ImageContainer,
-   PhotoTileWrapper,
-   StyledContainer,
-   StyledStat,
-   StyledStatsContainer,
-} from './styled'
+import { ImageContainer, PhotoTileWrapper } from './styled'
 import { useMutation } from '@apollo/react-hooks'
-import { UPDATE_INGREDIENT } from '../../../../../graphql'
+import { UPDATE_RECIPE } from '../../../../../graphql'
 import { toast } from 'react-toastify'
+import { Container } from '../styled'
 
-const Stats = ({ state, openTunnel }) => {
-   const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
+const Photo = ({ state, openTunnel }) => {
+   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
-         toast.success('Image removed!')
+         toast.success('Image added!')
+         // close tunnel
       },
       onError: error => {
          console.log(error)
@@ -23,9 +19,9 @@ const Stats = ({ state, openTunnel }) => {
       },
    })
 
-   //Handlers
+   // Handler
    const removeImage = () => {
-      updateIngredient({
+      updateRecipe({
          variables: {
             id: state.id,
             set: {
@@ -36,42 +32,32 @@ const Stats = ({ state, openTunnel }) => {
    }
 
    return (
-      <StyledContainer>
-         <StyledStatsContainer>
-            <StyledStat>
-               <h2>{state.ingredientProcessings?.length}</h2>
-               <p>Processings</p>
-            </StyledStat>
-            <StyledStat>
-               <h2>{state.ingredientSachets?.length}</h2>
-               <p>Sachets</p>
-            </StyledStat>
-         </StyledStatsContainer>
+      <Container top="32" paddingX="32">
          {state.image ? (
             <ImageContainer>
                <div>
-                  <span onClick={() => openTunnel(14)}>
+                  <span onClick={() => openTunnel(8)}>
                      <EditIcon />
                   </span>
                   <span onClick={removeImage}>
                      <DeleteIcon />
                   </span>
                </div>
-               <img src={state.image} alt="Ingredient" />
+               <img src={state.image} alt="Recipe" />
             </ImageContainer>
          ) : (
             <PhotoTileWrapper>
                <ButtonTile
                   type="primary"
                   size="sm"
-                  text="Add Photo to your Ingredient"
+                  text="Add Photo to your Recipe"
                   helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => openTunnel(14)}
+                  onClick={() => openTunnel(8)}
                />
             </PhotoTileWrapper>
          )}
-      </StyledContainer>
+      </Container>
    )
 }
 
-export default Stats
+export default Photo

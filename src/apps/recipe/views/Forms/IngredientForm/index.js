@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { Input, Loader, Tunnel, Tunnels, useTunnel, Text } from '@dailykit/ui'
+import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { toast } from 'react-toastify'
 import {
    IngredientContext,
@@ -19,7 +20,7 @@ import {
    S_SACHET_ITEMS,
    UPDATE_INGREDIENT,
 } from '../../../graphql'
-import { InputWrapper, StyledHeader } from '../styled'
+import { InputWrapper, StyledHeader, MasterSettings } from '../styled'
 import { Processings, Stats } from './components'
 import { StyledMain } from './styled'
 import {
@@ -35,6 +36,7 @@ import {
    PackagingTunnel,
    ProcessingsTunnel,
    SachetTunnel,
+   PhotoTunnel,
 } from './tunnels'
 import StationTunnel from './tunnels/StationTunnel'
 
@@ -298,6 +300,9 @@ const IngredientForm = () => {
                <Tunnel layer={13}>
                   <NutritionTunnel state={state} closeTunnel={closeTunnel} />
                </Tunnel>
+               <Tunnel layer={14}>
+                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
             </Tunnels>
             <StyledHeader>
                <InputWrapper>
@@ -310,6 +315,19 @@ const IngredientForm = () => {
                      onBlur={updateIngredient}
                   />
                </InputWrapper>
+               <MasterSettings>
+                  {state.isValid?.status ? (
+                     <React.Fragment>
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </React.Fragment>
+                  ) : (
+                     <React.Fragment>
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </React.Fragment>
+                  )}
+               </MasterSettings>
             </StyledHeader>
             <StyledMain>
                <Stats state={state} openTunnel={openTunnel} />

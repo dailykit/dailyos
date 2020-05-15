@@ -10,6 +10,7 @@ import EditItemTunnel from './EditItemTunnel'
 import EditPackagingTunnel from './EditPackagingTunnel'
 import EditLabelTemplateTunnel from './EditLabelTemplateTunnel'
 import NutritionTunnel from './NutritionTunnel'
+import PhotoTunnel from './PhotoTunnel'
 
 export {
    ProcessingsTunnel,
@@ -24,4 +25,5 @@ export {
    EditPackagingTunnel,
    EditLabelTemplateTunnel,
    NutritionTunnel,
+   PhotoTunnel,
 }

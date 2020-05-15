@@ -24,6 +24,8 @@ export const S_INGREDIENT = gql`
       ingredient(id: $id) {
          id
          name
+         image
+         isValid
          ingredientProcessings {
             id
             processingName
@@ -98,6 +100,8 @@ export const S_RECIPE = gql`
       simpleRecipe(id: $id) {
          id
          name
+         image
+         isValid
          author
          type
          description

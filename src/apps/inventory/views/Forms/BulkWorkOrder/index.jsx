@@ -21,6 +21,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../context/bulkOrder'
+import { Context } from '../../../context/tabs'
 import {
    FlexContainer,
    FormActions,
@@ -39,6 +40,7 @@ import {
    STATIONS,
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
+   BULK_WORK_ORDER,
 } from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.'
@@ -49,8 +51,11 @@ export default function BulkWorkOrderForm() {
       reducers,
       initialState
    )
+   const { state } = useContext(Context)
 
-   const [status, setStatus] = useState(bulkOrderState.status || '')
+   const [status, setStatus] = useState(
+      bulkOrderState.status || state.bulkWorkOrder.status || ''
+   )
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
 
@@ -60,10 +65,27 @@ export default function BulkWorkOrderForm() {
    const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
    const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
 
+   const {
+      data: bulkWorkOrderData,
+      loading: orderLoading,
+   } = useQuery(BULK_WORK_ORDER, { variables: { id: state.bulkWorkOrder.id } })
+
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
    const [updateBulkWorkOrderStatus] = useMutation(
       UPDATE_BULK_WORK_ORDER_STATUS
    )
+
+   React.useEffect(() => {
+      if (state.bulkWorkOrder?.id) {
+         bulkOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: state.bulkWorkOrder.id,
+               status: state.bulkWorkOrder.status,
+            },
+         })
+      }
+   }, [state.bulkWorkOrder.id])
 
    const checkForm = () => {
       if (!bulkOrderState.supplierItem?.id) {
@@ -150,6 +172,7 @@ export default function BulkWorkOrderForm() {
    }
 
    if (supplierItemLoading) return <Loader />
+   if (orderLoading) return <Loader />
 
    if (bulkOrderState.outputItemProcessing?.processingName && userLoading)
       return <Loader />
@@ -223,9 +246,15 @@ export default function BulkWorkOrderForm() {
                <Text as="title">
                   {t(address.concat('select supplier item'))}
                </Text>
-               {bulkOrderState.supplierItem?.name ? (
+               {bulkOrderState.supplierItem?.name ||
+               bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem?.supplierItem
+                  .name ? (
                   <ItemCard
-                     title={bulkOrderState.supplierItem.name}
+                     title={
+                        bulkOrderState.supplierItem.name ||
+                        bulkWorkOrderData.bulkWorkOrder.outputBulkItem
+                           .supplierItem.name
+                     }
                      edit={() => openTunnel(1)}
                   />
                ) : (
@@ -239,79 +268,117 @@ export default function BulkWorkOrderForm() {
 
                <br />
 
-               {bulkOrderState.supplierItem?.name && (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('input bulk item'))}
-                     </Text>
-                     {bulkOrderState.inputItemProcessing?.processingName ? (
-                        <ItemCard
-                           title={
-                              bulkOrderState.inputItemProcessing.processingName
-                           }
-                           onHand={bulkOrderState.inputItemProcessing.onHand}
-                           shelfLife={
-                              bulkOrderState.inputItemProcessing.shelfLife
-                           }
-                           edit={() => openTunnel(2)}
-                        />
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select input bulk item'))}
-                           onClick={() => openTunnel(5)}
-                        />
-                     )}
-                  </>
-               )}
+               {bulkOrderState.supplierItem?.name ||
+                  (bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
+                     ?.supplierItem.name && (
+                     <>
+                        <Text as="title">
+                           {t(address.concat('input bulk item'))}
+                        </Text>
+                        {bulkOrderState.inputItemProcessing?.processingName ||
+                        bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
+                           .processingName ? (
+                           <ItemCard
+                              title={
+                                 bulkOrderState.inputItemProcessing
+                                    .processingName ||
+                                 bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
+                                    .processingName
+                              }
+                              onHand={
+                                 bulkOrderState.inputItemProcessing.onHand ||
+                                 bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
+                                    .onHand
+                              }
+                              shelfLife={
+                                 bulkOrderState.inputItemProcessing.shelfLife ||
+                                 bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
+                                    .shelfLife
+                              }
+                              edit={() => openTunnel(2)}
+                           />
+                        ) : (
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(address.concat('select input bulk item'))}
+                              onClick={() => openTunnel(5)}
+                           />
+                        )}
+                     </>
+                  ))}
 
                <Spacer />
 
-               {bulkOrderState.supplierItem?.name && (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('output bulk item'))}
-                     </Text>
-                     {bulkOrderState.outputItemProcessing?.processingName ? (
-                        <ItemCard
-                           title={
-                              bulkOrderState.outputItemProcessing.processingName
-                           }
-                           onHand={bulkOrderState.outputItemProcessing.onHand}
-                           shelfLife={
-                              bulkOrderState.outputItemProcessing.shelfLife
-                           }
-                           edit={() => openTunnel(2)}
-                        />
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select output bulk item'))}
-                           onClick={e => openTunnel(2)}
-                        />
-                     )}
-                  </>
-               )}
+               {bulkOrderState.supplierItem?.name ||
+                  (bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
+                     ?.supplierItem.name && (
+                     <>
+                        <Text as="title">
+                           {t(address.concat('output bulk item'))}
+                        </Text>
+                        {bulkOrderState.outputItemProcessing?.processingName ||
+                        bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
+                           ?.processingName ? (
+                           <ItemCard
+                              title={
+                                 bulkOrderState.outputItemProcessing
+                                    .processingName ||
+                                 bulkWorkOrderData?.bulkWorkOrder
+                                    ?.outputBulkItem?.processingName
+                              }
+                              onHand={
+                                 bulkOrderState.outputItemProcessing.onHand ||
+                                 bulkWorkOrderData?.bulkWorkOrder
+                                    ?.outputBulkItem?.onHand
+                              }
+                              shelfLife={
+                                 bulkOrderState.outputItemProcessing
+                                    .shelfLife ||
+                                 bulkWorkOrderData?.bulkWorkOrder
+                                    ?.outputBulkItem?.shelfLife
+                              }
+                              edit={() => openTunnel(2)}
+                           />
+                        ) : (
+                           <ButtonTile
+                              noIcon
+                              type="secondary"
+                              text={t(
+                                 address.concat('select output bulk item')
+                              )}
+                              onClick={e => openTunnel(2)}
+                           />
+                        )}
+                     </>
+                  ))}
 
-               {bulkOrderState.outputItemProcessing?.processingName && (
-                  <Configurator open={openTunnel} />
-               )}
+               {bulkOrderState.outputItemProcessing?.processingName ||
+                  (bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
+                     ?.processingName && (
+                     <Configurator
+                        open={openTunnel}
+                        bulkWorkOrder={bulkWorkOrderData?.bulkWorkOrder}
+                     />
+                  ))}
             </StyledForm>
          </StyledWrapper>
       </BulkOrderContext.Provider>
    )
 }
 
-function Configurator({ open }) {
+function Configurator({ open, bulkWorkOrder }) {
    const { t } = useTranslation()
    const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
    const [yieldPercentage, setYieldPercentage] = useState(
-      bulkOrderState.outputItemProcessing.yield || ''
+      bulkOrderState.outputItemProcessing.yield ||
+         bulkWorkOrder?.outputBulkItem?.yield ||
+         ''
    )
    const [outputQuantity, setOutputQuantity] = useState('')
-   const [assignedDate, setAssignedDate] = useState('')
+   const [assignedDate, setAssignedDate] = useState(
+      bulkWorkOrder?.scheduledOn || ''
+   )
 
    return (
       <>
@@ -328,6 +395,7 @@ function Configurator({ open }) {
                type="text"
                placeholder={t(address.concat('yield percentage'))}
                name="yield"
+               disabled={bulkWorkOrder?.outputBulkItem?.yield}
                value={yieldPercentage}
                onChange={e => {
                   const value = parseInt(e.target.value)
@@ -400,9 +468,13 @@ function Configurator({ open }) {
          <br />
 
          <>
-            {bulkOrderState.assignedUser?.name ? (
+            {bulkOrderState.assignedUser?.name ||
+            bulkWorkOrder?.user?.firstName ? (
                <ItemCard
-                  title={bulkOrderState.assignedUser.name}
+                  title={
+                     bulkOrderState.assignedUser.name ||
+                     `${bulkWorkOrder?.user?.firstName} ${bulkWorkOrder?.user?.lastName}`
+                  }
                   edit={() => open(3)}
                />
             ) : (
@@ -447,9 +519,13 @@ function Configurator({ open }) {
          <>
             <Text as="title">{t(address.concat('station assigned'))}</Text>
 
-            {bulkOrderState.selectedStation?.name ? (
+            {bulkOrderState.selectedStation?.name ||
+            bulkWorkOrder?.station?.name ? (
                <ItemCard
-                  title={bulkOrderState.selectedStation.name}
+                  title={
+                     bulkOrderState.selectedStation.name ||
+                     bulkWorkOrder?.station?.name
+                  }
                   edit={() => open(4)}
                />
             ) : (

@@ -1,8 +1,8 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Input, Tunnel, Tunnels, useTunnel, Loader } from '@dailykit/ui'
-
+import { Input, Tunnel, Tunnels, useTunnel, Loader, Text } from '@dailykit/ui'
+import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
    state as initialState,
@@ -10,9 +10,20 @@ import {
    RecipeContext,
 } from '../../../context/recipee'
 
-import { StyledWrapper, StyledHeader, InputWrapper } from '../styled'
+import {
+   StyledWrapper,
+   StyledHeader,
+   InputWrapper,
+   MasterSettings,
+} from '../styled'
 
-import { Information, Procedures, Servings, Ingredients } from './components'
+import {
+   Information,
+   Procedures,
+   Servings,
+   Ingredients,
+   Photo,
+} from './components'
 import {
    InformationTunnel,
    ProceduresTunnel,
@@ -21,6 +32,7 @@ import {
    ProcessingsTunnel,
    ConfigureIngredientTunnel,
    SachetTunnel,
+   PhotoTunnel,
 } from './tunnels'
 import { UPDATE_RECIPE, S_RECIPE, S_INGREDIENTS } from '../../../graphql'
 
@@ -153,6 +165,9 @@ const RecipeForm = () => {
                      }
                   />
                </Tunnel>
+               <Tunnel layer={8}>
+                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
             </Tunnels>
             {/* View */}
             <StyledHeader>
@@ -166,10 +181,23 @@ const RecipeForm = () => {
                      onBlur={updateName}
                   />
                </InputWrapper>
+               <MasterSettings>
+                  {state.isValid?.status ? (
+                     <React.Fragment>
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </React.Fragment>
+                  ) : (
+                     <React.Fragment>
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </React.Fragment>
+                  )}
+               </MasterSettings>
             </StyledHeader>
             <StyledWrapper width="980">
                <Information state={state} openTunnel={openTunnel} />
-               {/* Photo component */}
+               <Photo state={state} openTunnel={openTunnel} />
                <Servings state={state} openTunnel={openTunnel} />
                <Ingredients state={state} openTunnel={openTunnel} />
                <Procedures state={state} openTunnel={openTunnel} />

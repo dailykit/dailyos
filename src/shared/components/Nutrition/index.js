@@ -16,7 +16,7 @@ const Nutrition = ({ data, vertical = false }) => {
                   <h6>% Daily Value</h6>
                </Header>
                <Rule />
-               <Row>
+               <Row hidden={!data.totalFat}>
                   <h5>
                      Total Fat <span>{data.totalFat}g</span>
                   </h5>
@@ -24,7 +24,7 @@ const Nutrition = ({ data, vertical = false }) => {
                      {Math.round((parseInt(data.totalFat, 10) / 78) * 100)}%
                   </h5>
                </Row>
-               <Row inset>
+               <Row inset hidden={!(data.totalFat && data.saturatedFat)}>
                   <span>
                      Saturated Fat <span>{data.saturatedFat}g</span>
                   </span>
@@ -32,12 +32,12 @@ const Nutrition = ({ data, vertical = false }) => {
                      {Math.round((parseInt(data.saturatedFat, 10) / 20) * 100)}%
                   </h5>
                </Row>
-               <Row inset>
+               <Row inset hidden={!(data.totalFat && data.transFat)}>
                   <span>
                      Trans Fat <span>{data.transFat}g</span>
                   </span>
                </Row>
-               <Row>
+               <Row hidden={!data.cholesterol}>
                   <h5>
                      Cholesterol <span>{data.cholesterol}mg</span>
                   </h5>
@@ -45,7 +45,7 @@ const Nutrition = ({ data, vertical = false }) => {
                      {Math.round((parseInt(data.cholesterol, 10) / 300) * 100)}%
                   </h5>
                </Row>
-               <Row>
+               <Row hidden={!data.sodium}>
                   <h5>
                      Sodium <span>{data.sodium}mg</span>
                   </h5>
@@ -61,13 +61,16 @@ const Nutrition = ({ data, vertical = false }) => {
                   <h6>% Daily Value</h6>
                </Header>
                <Rule vertical={vertical} />
-               <Row>
+               <Row hidden={!data.totalCarbohydrates}>
                   <h5>
                      Total Carbohydrate <span>{data.totalCarbohydrates}g</span>
                   </h5>
                   <h5>5%</h5>
                </Row>
-               <Row inset>
+               <Row
+                  inset
+                  hidden={!(data.totalCarbohydrates && data.dietaryFibre)}
+               >
                   <span>
                      Dietary Fiber <span>{data.dietaryFibre}g</span>
                   </span>
@@ -75,12 +78,12 @@ const Nutrition = ({ data, vertical = false }) => {
                      {Math.round((parseInt(data.dietaryFibre, 10) / 28) * 100)}%
                   </h5>
                </Row>
-               <Row inset>
+               <Row inset hidden={!(data.totalCarbohydrates && data.sugars)}>
                   <span>
                      Sugars <span>{data.sugars}g</span>
                   </span>
                </Row>
-               <Row>
+               <Row hidden={!data.protein}>
                   <h5>
                      Protein <span>{data.protein}g</span>
                   </h5>
