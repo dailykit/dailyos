@@ -17,6 +17,7 @@ export const StyledHeader = styled.div`
    align-items: center;
    justify-content: space-between;
    border-bottom: 1px solid #d8d8d8;
+   padding: 0 32px;
 `
 
 export const MasterSettings = styled.div`
@@ -28,77 +29,31 @@ export const MasterSettings = styled.div`
    }
 `
 
-export const StyledForm = styled.div`
-   padding: 40px 0;
+export const StyledBody = styled.div`
+   padding: 32px;
 `
 
-export const StyledRow = styled.div`
+export const Grid = styled.div`
+   display: grid;
+   grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
+   grid-gap: ${props => props.gap || 8}px;
+`
+
+export const Container = styled.div`
+   margin-top: ${props => props.top || 0}px;
+   margin-bottom: ${props => props.bottom || 0}px;
+   margin-left: ${props => props.left || 0}px;
+   margin-right: ${props => props.right || 0}px;
+   padding-left: ${props => props.paddingX || 0}px;
+   padding-right: ${props => props.paddingX || 0}px;
+   padding-top: ${props => props.paddingY || 0}px;
+   padding-bottom: ${props => props.paddingY || 0}px;
+   position: relative;
+`
+
+export const Flex = styled.div`
    display: flex;
-   > div {
-      width: 280px;
-      margin-right: 24px;
-      margin-bottom: 24px;
-      input {
-         font-weight: 400 !important;
-      }
-   }
-`
-
-export const StyledHeading = styled.h3`
-   color: #888d9d;
-   font-size: 16px;
-   font-weight: 400;
-`
-
-export const StyledSection = styled.div`
-   margin-top: 48px;
-`
-
-export const StyledTunnelHeader = styled.div`
-   padding: 24px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   > div {
-      display: flex;
-      align-items: center;
-   }
-   h1 {
-      color: #888d9d;
-      font-size: 18px;
-      font-weight: 400;
-      margin-left: 12px;
-   }
-`
-
-export const StyledTunnelMain = styled.div`
-   padding: 0 24px 24px 24px;
-`
-
-export const FormActions = styled.div`
-   width: 100%;
-   text-align: right;
-`
-
-export const MainFormArea = styled.div`
-   width: 100%;
-   min-height: 80vh;
-   background-color: #e5e5e5;
-   padding: 20px;
-`
-
-export const Stats = styled.div`
-   display: flex;
-   justify-content: space-between;
-   span {
-      margin-bottom: 5px;
-   }
-
-   h4 {
-      color: #555b6e;
-   }
-`
-
-export const Message = styled.div`
-   text-align: center;
+   direction: ${props => props.direction || 'column'};
+   justify-content: ${props => props.justify || 'space-between'};
+   align-items: ${props => props.align || 'flex-start'};
 `

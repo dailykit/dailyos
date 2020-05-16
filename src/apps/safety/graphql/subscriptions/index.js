@@ -11,3 +11,15 @@ export const SAFETY_CHECKS = gql`
       }
    }
 `
+
+export const SAFETY_CHECK = gql`
+   subscription SafetyCheck($id: Int!) {
+      safety_safetyCheck(where: { id: { _eq: $id } }) {
+         id
+         created_at
+         SafetyCheckPerUsers {
+            id
+         }
+      }
+   }
+`

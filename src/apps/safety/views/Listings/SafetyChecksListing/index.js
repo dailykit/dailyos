@@ -10,6 +10,7 @@ import {
    TableHead,
    TableRow,
 } from '@dailykit/ui'
+import * as moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 
@@ -39,7 +40,7 @@ const SafetyChecksListing = () => {
    const [createSafetyCheck] = useMutation(CREATE_SAFETY_CHECK, {
       onCompleted: data => {
          addTab(
-            'Safety Check',
+            'Check',
             'check',
             data.insert_safety_safetyCheck.returning[0].id
          )
@@ -70,14 +71,16 @@ const SafetyChecksListing = () => {
                </TableRow>
             </TableHead>
             <TableBody>
-               {data?.safety_safetyCheck.map((row, index) => (
+               {data?.safety_safetyCheck.map(row => (
                   <TableRow
                      key={row.id}
                      onClick={() => {
-                        addTab(row.time, 'check', row.id)
+                        addTab('Check', 'check', row.id)
                      }}
                   >
-                     <TableCell>{row.created_at}</TableCell>
+                     <TableCell>
+                        {moment(row.created_at).format('LLL')}
+                     </TableCell>
                      <TableCell>
                         {row.SafetyCheckPerUsers?.length || 0}
                      </TableCell>
