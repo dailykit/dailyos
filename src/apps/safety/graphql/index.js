@@ -1,4 +1,8 @@
-import { CREATE_SAFETY_CHECK, CREATE_CHECKUP } from './mutations/'
+import {
+   CREATE_SAFETY_CHECK,
+   CREATE_CHECKUP,
+   DELETE_CHECKUP,
+} from './mutations/'
 import { SAFETY_CHECKS, SAFETY_CHECK, USERS } from './subscriptions'
 
 export {
@@ -7,4 +11,5 @@ export {
    SAFETY_CHECK,
    USERS,
    CREATE_CHECKUP,
+   DELETE_CHECKUP,
 }

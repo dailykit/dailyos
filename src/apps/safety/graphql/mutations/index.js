@@ -18,3 +18,13 @@ export const CREATE_CHECKUP = gql`
       }
    }
 `
+
+export const DELETE_CHECKUP = gql`
+   mutation DeleteCheckup($id: Int!) {
+      delete_safety_safetyCheckPerUser(where: { id: { _eq: $id } }) {
+         returning {
+            id
+         }
+      }
+   }
+`

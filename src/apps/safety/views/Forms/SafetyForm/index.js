@@ -24,7 +24,7 @@ import {
    state as initialState,
 } from '../../../context/check'
 
-import { SAFETY_CHECK, USERS } from '../../../graphql'
+import { SAFETY_CHECK, USERS, DELETE_CHECKUP } from '../../../graphql'
 import { StyledWrapper, MasterSettings, Container } from '../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 import { UserTunnel, CheckTunnel } from './tunnels'
@@ -59,6 +59,17 @@ export default function SimpleRecipeProduct() {
             title: user.firstName + ' ' + user.lastName,
          }))
          setUsers(users)
+      },
+   })
+
+   // Mutation
+   const [deleteCheckup] = useMutation(DELETE_CHECKUP, {
+      onCompleted: () => {
+         toast.success('Check deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
       },
    })
 
@@ -127,8 +138,16 @@ export default function SimpleRecipeProduct() {
                                     {check.temperature} &deg;F
                                  </TableCell>
                                  <TableCell>
-                                    <span onClick={() => console.log(check.id)}>
-                                       <DeleteIcon />
+                                    <span
+                                       onClick={() =>
+                                          deleteCheckup({
+                                             variables: {
+                                                id: check.id,
+                                             },
+                                          })
+                                       }
+                                    >
+                                       <DeleteIcon color="#ff0000" />
                                     </span>
                                  </TableCell>
                               </TableRow>
