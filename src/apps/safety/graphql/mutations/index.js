@@ -10,3 +10,11 @@ export const CREATE_SAFETY_CHECK = gql`
       }
    }
 `
+
+export const CREATE_CHECKUP = gql`
+   mutation CreateCheckup($object: safety_safetyCheckPerUser_insert_input!) {
+      insert_safety_safetyCheckPerUser_one(object: $object) {
+         id
+      }
+   }
+`

@@ -106,14 +106,26 @@ export default function SimpleRecipeProduct() {
                         <TableBody>
                            {state.SafetyCheckPerUsers?.map(check => (
                               <TableRow key={check.id}>
-                                 <TableCell>"Hello"</TableCell>
                                  <TableCell>
-                                    <Checkbox checked={check.usesMask} />
+                                    {check.user.firstName +
+                                       ' ' +
+                                       check.user.lastName}
                                  </TableCell>
                                  <TableCell>
-                                    <Checkbox checked={check.usesSanitizer} />
+                                    <Checkbox
+                                       checked={check.usesMask}
+                                       onChange={() => console.log()}
+                                    />
                                  </TableCell>
-                                 <TableCell>{check.temprature}</TableCell>
+                                 <TableCell>
+                                    <Checkbox
+                                       checked={check.usesSanitizer}
+                                       onChange={() => console.log()}
+                                    />
+                                 </TableCell>
+                                 <TableCell>
+                                    {check.temperature} &deg;F
+                                 </TableCell>
                                  <TableCell>
                                     <span onClick={() => console.log(check.id)}>
                                        <DeleteIcon />

@@ -29,6 +29,13 @@ export const SAFETY_CHECK = gql`
          created_at
          SafetyCheckPerUsers {
             id
+            temperature
+            usesMask
+            usesSanitizer
+            user {
+               firstName
+               lastName
+            }
          }
       }
    }
