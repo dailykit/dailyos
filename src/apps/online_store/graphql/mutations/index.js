@@ -245,8 +245,10 @@ export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
 `
 
 export const CREATE_COLLECTION = gql`
-   mutation CreateCollection($name: String!) {
-      createMenuCollection(objects: { name: $name }) {
+   mutation CreateCollection($name: String!, $availability: jsonb) {
+      createMenuCollection(
+         objects: { name: $name, availability: $availability }
+      ) {
          returning {
             id
          }

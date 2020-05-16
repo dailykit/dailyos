@@ -42,6 +42,13 @@ const CollectionsListing = () => {
    const [createCollection] = useMutation(CREATE_COLLECTION, {
       variables: {
          name: 'collection-' + randomSuffix(),
+         availability: {
+            rule: 'RRULE:FREQ=DAILY;COUNT=30;INTERVAL=1;WKST=MO',
+            time: {
+               end: '23:59',
+               start: '00:00',
+            },
+         },
       },
       onCompleted: data => {
          addTab(
