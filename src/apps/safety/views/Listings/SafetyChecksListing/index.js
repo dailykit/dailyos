@@ -18,7 +18,11 @@ import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
-import { CREATE_SAFETY_CHECK, SAFETY_CHECKS } from '../../../graphql'
+import {
+   CREATE_SAFETY_CHECK,
+   SAFETY_CHECKS,
+   DELETE_SAFETY_CHECK,
+} from '../../../graphql'
 // Styled
 import { StyledHeader, StyledWrapper } from '../styled'
 
@@ -49,6 +53,15 @@ const SafetyChecksListing = () => {
       onError: error => {
          console.log(error)
          toast.error('Some error occurred!')
+      },
+   })
+   const [deleteSafetyCheck] = useMutation(DELETE_SAFETY_CHECK, {
+      onCompleted: () => {
+         toast.success('Safety check deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
       },
    })
 
@@ -86,7 +99,18 @@ const SafetyChecksListing = () => {
                      </TableCell>
                      <TableCell align="right">
                         <IconButton>
-                           <DeleteIcon color="#FF5A52" />
+                           <span
+                              onClick={e => {
+                                 e.stopPropagation()
+                                 deleteSafetyCheck({
+                                    variables: {
+                                       id: row.id,
+                                    },
+                                 })
+                              }}
+                           >
+                              <DeleteIcon color="#FF5A52" />
+                           </span>
                         </IconButton>
                      </TableCell>
                   </TableRow>

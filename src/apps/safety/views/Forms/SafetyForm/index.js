@@ -147,7 +147,7 @@ export default function SimpleRecipeProduct() {
                                           })
                                        }
                                     >
-                                       <DeleteIcon color="#ff0000" />
+                                       <DeleteIcon color="#FF5A52" />
                                     </span>
                                  </TableCell>
                               </TableRow>
