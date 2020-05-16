@@ -110,7 +110,7 @@ function DataTable({ data }) {
             </TableHead>
             <TableBody>
                {data?.map(workOrder => (
-                  <TableRow>
+                  <TableRow key={workOrder.id}>
                      <TableCell>{workOrder.status}</TableCell>
                      <TableCell>
                         {moment(workOrder.scheduledOn).format('MMM Do YY')}

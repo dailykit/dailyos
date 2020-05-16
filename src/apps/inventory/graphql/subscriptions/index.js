@@ -46,3 +46,15 @@ export const SACHET_WORK_ORDERS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
+   subscription PurchaseOrderItems {
+      purchaseOrderItems {
+         id
+         supplierItem {
+            name
+         }
+         status
+      }
+   }
+`
