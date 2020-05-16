@@ -12,11 +12,14 @@ const Loader = () => (
    </StyledLoader>
 )
 
+const Safety = Loadable({
+   loader: () => import('./apps/safety'),
+   loading: Loader,
+})
 const Inventory = Loadable({
    loader: () => import('./apps/inventory'),
    loading: Loader,
 })
-
 const Recipe = Loadable({
    loader: () => import('./apps/recipe'),
    loading: Loader,
@@ -36,6 +39,9 @@ const App = () => {
          <Router>
             <Switch>
                <Route path="/" exact>
+                  <Link to="/safety">
+                     <Trans i18nKey="safety">Safety</Trans>
+                  </Link>
                   <Link to="/inventory">
                      <Trans i18nKey="inventory">Inventory</Trans>
                   </Link>
@@ -50,6 +56,7 @@ const App = () => {
                   </Link>
                </Route>
                <Route path="/inventory" component={Inventory} />
+               <Route path="/safety" component={Safety} />
                <Route path="/recipe" component={Recipe} />
                <Route path="/online-store" component={OnlineStore} />
                <Route path="/settings" component={Settings} />
