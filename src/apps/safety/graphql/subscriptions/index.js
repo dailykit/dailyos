@@ -12,6 +12,16 @@ export const SAFETY_CHECKS = gql`
    }
 `
 
+export const USERS = gql`
+   {
+      settings_user {
+         id
+         firstName
+         lastName
+      }
+   }
+`
+
 export const SAFETY_CHECK = gql`
    subscription SafetyCheck($id: Int!) {
       safety_safetyCheck(where: { id: { _eq: $id } }) {

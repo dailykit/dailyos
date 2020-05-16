@@ -24,7 +24,7 @@ import {
    state as initialState,
 } from '../../../context/check'
 
-import { SAFETY_CHECK } from '../../../graphql'
+import { SAFETY_CHECK, USERS } from '../../../graphql'
 import { StyledWrapper, MasterSettings, Container } from '../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 import { UserTunnel, CheckTunnel } from './tunnels'
@@ -51,8 +51,14 @@ export default function SimpleRecipeProduct() {
          console.log(data)
          setState(data.subscriptionData.data.safety_safetyCheck[0])
       },
-      onError: error => {
-         console.log(error)
+   })
+   useSubscription(USERS, {
+      onSubscriptionData: data => {
+         const users = data.subscriptionData.data.settings_user.map(user => ({
+            id: user.id,
+            title: user.firstName + ' ' + user.lastName,
+         }))
+         setUsers(users)
       },
    })
 
@@ -64,12 +70,12 @@ export default function SimpleRecipeProduct() {
             <Tunnel layer={1}>
                <UserTunnel
                   openTunnel={openTunnel}
-                  close={closeTunnel}
+                  closeTunnel={closeTunnel}
                   users={users}
                />
             </Tunnel>
             <Tunnel layer={2}>
-               <CheckTunnel state={state} close={closeTunnel} />
+               <CheckTunnel state={state} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
