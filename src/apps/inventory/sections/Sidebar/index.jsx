@@ -1,17 +1,13 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
-// State
 import { Context } from '../../context/tabs'
-
-// Styled
 import {
-   StyledSidebar,
+   StyledHeading,
    StyledList,
    StyledListItem,
-   StyledHeading,
+   StyledSidebar,
 } from './styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.sections.sidebar.'
 
@@ -31,6 +27,14 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             </StyledListItem>
             <StyledListItem onClick={() => addTab('Items', 'items')}>
                {t(address.concat('supplier items'))}
+            </StyledListItem>
+            <StyledListItem onClick={() => addTab('Work Orders', 'orders')}>
+               Work Orders
+            </StyledListItem>
+            <StyledListItem
+               onClick={() => addTab('Purchase Orders', 'purchaseOrders')}
+            >
+               Purchase Orders
             </StyledListItem>
          </StyledList>
       </StyledSidebar>
