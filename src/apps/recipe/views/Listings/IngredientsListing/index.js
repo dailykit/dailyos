@@ -18,7 +18,11 @@ import { randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
-import { CREATE_INGREDIENT, S_INGREDIENTS } from '../../../graphql'
+import {
+   CREATE_INGREDIENT,
+   S_INGREDIENTS,
+   DELETE_INGREDIENTS,
+} from '../../../graphql'
 // Styled
 import {
    GridContainer,
@@ -61,6 +65,15 @@ const IngredientsListing = () => {
          toast.error('Error')
       },
    })
+   const [deleteIngredients] = useMutation(DELETE_INGREDIENTS, {
+      onCompleted: data => {
+         toast.success('Ingredient deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Cannot delete!')
+      },
+   })
 
    // Effects
    React.useEffect(() => {
@@ -76,10 +89,23 @@ const IngredientsListing = () => {
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
-
    const createIngredientHandler = async () => {
       let name = 'ingredient-' + randomSuffix()
       createIngredient({ variables: { name } })
+   }
+   const deleteIngredientHandler = (e, ingredient) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete ingredient - ${ingredient.name}?`
+         )
+      ) {
+         deleteIngredients({
+            variables: {
+               ids: [ingredient.id],
+            },
+         })
+      }
    }
 
    if (loading) return <Loader />
@@ -146,7 +172,11 @@ const IngredientsListing = () => {
                            </TableCell>
                            <TableCell>
                               <GridContainer>
-                                 <IconButton>
+                                 <IconButton
+                                    onClick={e =>
+                                       deleteIngredientHandler(e, ingredient)
+                                    }
+                                 >
                                     <DeleteIcon color="#FF5A52" />
                                  </IconButton>
                               </GridContainer>

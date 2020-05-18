@@ -11,6 +11,16 @@ export const CREATE_INGREDIENT = gql`
    }
 `
 
+export const DELETE_INGREDIENTS = gql`
+   mutation DeleteIngredients($ids: [Int!]!) {
+      deleteIngredient(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const UPDATE_INGREDIENT = gql`
    mutation UpdateIngredient($id: Int!, $set: ingredient_ingredient_set_input) {
       updateIngredient(where: { id: { _eq: $id } }, _set: $set) {
