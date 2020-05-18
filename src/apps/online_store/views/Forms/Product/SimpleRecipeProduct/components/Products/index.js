@@ -55,18 +55,20 @@ const Products = ({ state, openTunnel, view }) => {
 
    // Handlers
    const updateDiscount = () => {
-      const accompaniments = state.accompaniments
-      accompaniments[productState.meta.accompanimentTabIndex].products[
-         current
-      ].discount = discount
-      updateProduct({
-         variables: {
-            id: state.id,
-            set: {
-               accompaniments,
+      if (discount.value && !isNaN(discount.value)) {
+         const accompaniments = state.accompaniments
+         accompaniments[productState.meta.accompanimentTabIndex].products[
+            current
+         ].discount = discount
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  accompaniments,
+               },
             },
-         },
-      })
+         })
+      }
    }
    const deleteProduct = product => {
       if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
