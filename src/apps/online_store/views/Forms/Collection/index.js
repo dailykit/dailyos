@@ -199,14 +199,16 @@ const CollectionForm = () => {
    }
 
    const updateName = () => {
-      updateCollection({
-         variables: {
-            id: state.id,
-            set: {
-               name: title,
+      if (title) {
+         updateCollection({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
             },
-         },
-      })
+         })
+      }
    }
 
    if (loading) return <Loader />

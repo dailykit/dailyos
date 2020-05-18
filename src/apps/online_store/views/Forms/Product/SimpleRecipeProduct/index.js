@@ -137,12 +137,6 @@ export default function SimpleRecipeProduct() {
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
-      variables: {
-         id: state.id,
-         set: {
-            name: title,
-         },
-      },
       onCompleted: () => {
          toast.success('Name updated!')
          dispatch({
@@ -155,6 +149,20 @@ export default function SimpleRecipeProduct() {
          toast.error('Error!')
       },
    })
+
+   //Handlers
+   const updateName = () => {
+      if (title) {
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
+            },
+         })
+      }
+   }
 
    if (loading) return <Loader />
 
@@ -201,7 +209,7 @@ export default function SimpleRecipeProduct() {
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={updateProduct}
+                     onBlur={updateName}
                   />
                </div>
                <MasterSettings>

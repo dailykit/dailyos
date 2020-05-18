@@ -101,13 +101,7 @@ export default function CustomizableProduct() {
    })
 
    // Mutation
-   const [updatedProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
-      variables: {
-         id: state.id,
-         set: {
-            name: title,
-         },
-      },
+   const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
       onCompleted: () => {
          toast.success('Name updated!')
          dispatch({
@@ -123,6 +117,20 @@ export default function CustomizableProduct() {
          toast.error('Error')
       },
    })
+
+   //Handlers
+   const updateName = () => {
+      if (title) {
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
+            },
+         })
+      }
+   }
 
    if (loading) return <Loader />
 
@@ -154,7 +162,7 @@ export default function CustomizableProduct() {
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={updatedProduct}
+                     onBlur={updateName}
                   />
                </div>
                <MasterSettings>
