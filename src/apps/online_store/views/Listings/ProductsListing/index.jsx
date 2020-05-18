@@ -18,7 +18,7 @@ import {
    InventoryProducts,
    SimpleRecipeProducts,
 } from './components'
-import SelectProductTunnel from './SelectProductTunnel'
+import { ProductTypeTunnel } from './tunnels'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -53,7 +53,7 @@ const ProductsListing = () => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <SelectProductTunnel close={closeTunnel} />
+               <ProductTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
