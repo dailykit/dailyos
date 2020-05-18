@@ -29,13 +29,13 @@ const Home = () => {
          <StyledCardList>
             <DashboardTile
                title={t(address.concat('recipes'))}
-               count={recipeData?.simpleRecipes.length || 0}
+               count={recipeData?.simpleRecipes.length || '...'}
                conf="All available"
                onClick={() => addTab('Recipes', 'recipes')}
             />
             <DashboardTile
                title={t(address.concat('ingredients'))}
-               count={ingredientsData?.ingredients.length || 0}
+               count={ingredientsData?.ingredients.length || '...'}
                conf="All available"
                onClick={() => addTab('Ingredients', 'ingredients')}
             />

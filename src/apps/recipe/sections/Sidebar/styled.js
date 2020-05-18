@@ -10,6 +10,7 @@ export const StyledSidebar = styled.aside(
       left: 0;
       transition: 0.3s ease-in-out;
       transform: translateX(${visible ? '0' : '-240px'});
+      z-index: 100;
    `
 )
 
