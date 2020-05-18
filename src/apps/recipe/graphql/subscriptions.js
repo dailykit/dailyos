@@ -5,12 +5,15 @@ export const S_INGREDIENTS = gql`
       ingredients {
          id
          name
+         isValid
+         isPublished
          createdAt
          ingredientProcessings {
             id
             processingName
             ingredientSachets {
                id
+               isValid
                quantity
                unit
             }

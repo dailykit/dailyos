@@ -26,10 +26,12 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
    // State for search input
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(
-      sachets.map(sachet => ({
-         ...sachet,
-         title: sachet.quantity + ' ' + sachet.unit,
-      }))
+      sachets
+         .filter(sachet => sachet.isValid.status)
+         .map(sachet => ({
+            ...sachet,
+            title: sachet.quantity + ' ' + sachet.unit,
+         }))
    )
 
    // Mutation

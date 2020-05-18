@@ -68,7 +68,10 @@ const RecipeForm = () => {
    })
    useSubscription(S_INGREDIENTS, {
       onSubscriptionData: data => {
-         setIngredients(data.subscriptionData.data.ingredients)
+         const ingredients = data.subscriptionData.data.ingredients.filter(
+            ing => ing.isValid.status && ing.isPublished
+         )
+         setIngredients(ingredients)
       },
       onError: error => {
          console.log(error)
