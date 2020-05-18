@@ -50,9 +50,17 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
 
    // Handler
    const save = () => {
-      if (busy) return
-      setBusy(true)
-      updateSachet()
+      try {
+         if (busy) return
+         setBusy(true)
+         if (isNaN(quantity) || parseInt(quantity) === 0) {
+            throw Error('Invalid Quantity!')
+         }
+         updateSachet()
+      } catch (e) {
+         toast.error(e.message)
+         setBusy(false)
+      }
    }
 
    return (

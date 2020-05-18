@@ -36,24 +36,35 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
 
    // Handlers
    const save = () => {
-      if (busy) return
-      setBusy(true)
-      //fire mutation
-      updateMode({
-         variables: {
-            id: ingredientState.editMode.id,
-            set: {
-               priority: parseInt(ingredientState.editMode.priority),
-               stationId: ingredientState.editMode.station?.id || null,
-               accuracy: ingredientState.editMode.accuracy,
-               bulkItemId: ingredientState.editMode.bulkItem?.id || null,
-               sachetItemId: ingredientState.editMode.sachetItem?.id || null,
-               packagingId: ingredientState.editMode.packaging?.id || null,
-               labelTemplateId:
-                  ingredientState.editMode.labelTemplate?.id || null,
+      try {
+         if (busy) return
+         setBusy(true)
+         if (
+            !ingredientState.editMode.priority ||
+            isNaN(ingredientState.editMode.priority) ||
+            parseInt(ingredientState.editMode.priority) === 0
+         ) {
+            throw Error('Invalid Priority!')
+         }
+         updateMode({
+            variables: {
+               id: ingredientState.editMode.id,
+               set: {
+                  priority: parseInt(ingredientState.editMode.priority),
+                  stationId: ingredientState.editMode.station?.id || null,
+                  accuracy: ingredientState.editMode.accuracy,
+                  bulkItemId: ingredientState.editMode.bulkItem?.id || null,
+                  sachetItemId: ingredientState.editMode.sachetItem?.id || null,
+                  packagingId: ingredientState.editMode.packaging?.id || null,
+                  labelTemplateId:
+                     ingredientState.editMode.labelTemplate?.id || null,
+               },
             },
-         },
-      })
+         })
+      } catch (e) {
+         toast.error(e.message)
+         setBusy(false)
+      }
    }
    const close = () => {
       closeTunnel(8)

@@ -59,54 +59,76 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
       closeTunnel(2)
    }
    const add = () => {
-      if (busy) return
-      setBusy(true)
-      console.log(ingredientState.realTime.bulkItem)
-      console.log(ingredientState.plannedLot.sachetItem)
-      const object = {
-         ingredientId: state.id,
-         ingredientProcessingId:
-            state.ingredientProcessings[ingredientState.processingIndex].id,
-         quantity,
-         unit,
-         tracking,
-         modeOfFulfillments: {
-            data: [
-               {
-                  type: 'realTime',
-                  stationId: ingredientState.realTime.station?.id || null,
-                  isPublished: ingredientState.realTime.isPublished,
-                  isLive: ingredientState.realTime.isLive,
-                  priority: parseInt(ingredientState.realTime.priority),
-                  bulkItemId: ingredientState.realTime.bulkItem?.id || null,
-                  sachetItemId: null,
-                  accuracy: ingredientState.realTime.accuracy,
-                  packagingId: ingredientState.realTime.packaging?.id || null,
-                  labelTemplateId:
-                     ingredientState.realTime.labelTemplate?.id || null,
-               },
-               {
-                  type: 'plannedLot',
-                  stationId: ingredientState.plannedLot.station?.id || null,
-                  isPublished: ingredientState.plannedLot.isPublished,
-                  isLive: ingredientState.plannedLot.isLive,
-                  priority: parseInt(ingredientState.plannedLot.priority),
-                  bulkItemId: null,
-                  sachetItemId:
-                     ingredientState.plannedLot.sachetItem?.id || null,
-                  accuracy: ingredientState.plannedLot.accuracy,
-                  packagingId: ingredientState.plannedLot.packaging?.id || null,
-                  labelTemplateId:
-                     ingredientState.plannedLot.labelTemplate?.id || null,
-               },
-            ],
-         },
+      try {
+         if (busy) return
+         setBusy(true)
+         if (!quantity || isNaN(quantity) || parseInt(quantity) === 0) {
+            throw Error('Invalid Quantity!')
+         }
+         if (
+            !ingredientState.realTime.priority ||
+            isNaN(ingredientState.realTime.priority) ||
+            parseInt(ingredientState.realTime.priority) === 0
+         ) {
+            throw Error('Invalid Priority!')
+         }
+         if (
+            !ingredientState.plannedLot.priority ||
+            isNaN(ingredientState.plannedLot.priority) ||
+            parseInt(ingredientState.plannedLot.priority) === 0
+         ) {
+            throw Error('Invalid Priority!')
+         }
+         const object = {
+            ingredientId: state.id,
+            ingredientProcessingId:
+               state.ingredientProcessings[ingredientState.processingIndex].id,
+            quantity,
+            unit,
+            tracking,
+            modeOfFulfillments: {
+               data: [
+                  {
+                     type: 'realTime',
+                     stationId: ingredientState.realTime.station?.id || null,
+                     isPublished: ingredientState.realTime.isPublished,
+                     isLive: ingredientState.realTime.isLive,
+                     priority: parseInt(ingredientState.realTime.priority),
+                     bulkItemId: ingredientState.realTime.bulkItem?.id || null,
+                     sachetItemId: null,
+                     accuracy: ingredientState.realTime.accuracy,
+                     packagingId:
+                        ingredientState.realTime.packaging?.id || null,
+                     labelTemplateId:
+                        ingredientState.realTime.labelTemplate?.id || null,
+                  },
+                  {
+                     type: 'plannedLot',
+                     stationId: ingredientState.plannedLot.station?.id || null,
+                     isPublished: ingredientState.plannedLot.isPublished,
+                     isLive: ingredientState.plannedLot.isLive,
+                     priority: parseInt(ingredientState.plannedLot.priority),
+                     bulkItemId: null,
+                     sachetItemId:
+                        ingredientState.plannedLot.sachetItem?.id || null,
+                     accuracy: ingredientState.plannedLot.accuracy,
+                     packagingId:
+                        ingredientState.plannedLot.packaging?.id || null,
+                     labelTemplateId:
+                        ingredientState.plannedLot.labelTemplate?.id || null,
+                  },
+               ],
+            },
+         }
+         createSachet({
+            variables: {
+               objects: [object],
+            },
+         })
+      } catch (e) {
+         toast.error(e.message)
+         setBusy(false)
       }
-      createSachet({
-         variables: {
-            objects: [object],
-         },
-      })
    }
    const propagate = (type, val) => {
       if (
