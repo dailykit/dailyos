@@ -80,10 +80,28 @@ const PricingTunnel = ({ state, close }) => {
 
    // Handlers
    const save = () => {
-      if (busy) return
-      setBusy(true)
-      if (productState.updating) updateOption()
-      else createOption()
+      try {
+         if (busy) return
+         setBusy(true)
+         if (!_state.label) {
+            throw Error('Invalid label!')
+         }
+         if (
+            !_state.price.value ||
+            isNaN(_state.price.value) ||
+            parseFloat(_state.price.value) === 0
+         ) {
+            throw Error('Invalid price!')
+         }
+         if (!_state.price.discount || isNaN(_state.price.discount)) {
+            throw Error('Invalid discount!')
+         }
+         if (productState.updating) updateOption()
+         else createOption()
+      } catch (e) {
+         toast.error(e.message)
+         setBusy(false)
+      }
    }
 
    return (
