@@ -48,6 +48,7 @@ const CollectionForm = () => {
 
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
+   const [busy, setBusy] = React.useState(false)
 
    const [products, setProducts] = React.useState({
       simple: [],
@@ -151,6 +152,7 @@ const CollectionForm = () => {
    // Mutations
    const [updateCollection] = useMutation(UPDATE_COLLECTION, {
       onCompleted: data => {
+         setBusy(false)
          toast.success('Updated!')
          dispatch({
             type: 'SET_TITLE',
@@ -163,11 +165,14 @@ const CollectionForm = () => {
       onError: error => {
          console.log(error)
          toast.error('Error')
+         setBusy(false)
       },
    })
 
    // Handlers
    const save = () => {
+      if (busy) return
+      setBusy(true)
       const updateCategories = collectionState.categories.map(category => {
          const cat = {
             name: category.title,
@@ -273,7 +278,9 @@ const CollectionForm = () => {
             </FormHeaderInputs>
             <FormHeaderActions>
                <TextButton type="outline" onClick={save}>
-                  {t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
                <TextButton
                   type="solid"
