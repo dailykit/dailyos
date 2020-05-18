@@ -17,7 +17,11 @@ import { randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
-import { CREATE_SIMPLE_RECIPE, S_RECIPES } from '../../../graphql'
+import {
+   CREATE_SIMPLE_RECIPE,
+   S_RECIPES,
+   DELETE_SIMPLE_RECIPES,
+} from '../../../graphql'
 // Styled
 import {
    StyledContent,
@@ -36,11 +40,7 @@ const RecipesListing = () => {
    const [search, setSearch] = React.useState('')
 
    // Queries and Mutations
-   const { loading, error, data } = useSubscription(S_RECIPES, {
-      onSubscriptionData: data => {
-         setRecipes(data.subscriptionData.data.simpleRecipes)
-      },
-   })
+   const { loading, data } = useSubscription(S_RECIPES)
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: data => {
          addTab(
@@ -55,6 +55,15 @@ const RecipesListing = () => {
          toast.error('Cannot create recipe!')
       },
    })
+   const [deleteRecipes] = useMutation(DELETE_SIMPLE_RECIPES, {
+      onCompleted: () => {
+         toast.success('Recipe deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Failed to delete!')
+      },
+   })
 
    // Effects
    React.useEffect(() => {
@@ -64,7 +73,7 @@ const RecipesListing = () => {
                rec.name.toLowerCase().includes(search.toLowerCase())
             )
          )
-   }, [search])
+   }, [search, data])
 
    // Handlers
    const addTab = (title, view, id) => {
@@ -76,6 +85,20 @@ const RecipesListing = () => {
    const createRecipeHandler = () => {
       let name = 'recipe-' + randomSuffix()
       createRecipe({ variables: { name } })
+   }
+   const deleteRecipeHandler = (e, recipe) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete recipe - ${recipe.name}?`
+         )
+      ) {
+         deleteRecipes({
+            variables: {
+               ids: [recipe.id],
+            },
+         })
+      }
    }
 
    if (loading) return <Loader />
@@ -127,7 +150,9 @@ const RecipesListing = () => {
                            {recipe.cookingTime} {t('units.mins')}.
                         </TableCell>
                         <TableCell>
-                           <IconButton>
+                           <IconButton
+                              onClick={e => deleteRecipeHandler(e, recipe)}
+                           >
                               <DeleteIcon color="#FF5A52" />
                            </IconButton>
                         </TableCell>

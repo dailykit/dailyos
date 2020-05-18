@@ -110,6 +110,15 @@ export const CREATE_SIMPLE_RECIPE = gql`
       }
    }
 `
+export const DELETE_SIMPLE_RECIPES = gql`
+   mutation DeleteRecipes($ids: [Int!]!) {
+      deleteSimpleRecipe(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
 
 export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
    mutation CreateSimpleRecipeYields(

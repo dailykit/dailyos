@@ -71,7 +71,7 @@ const IngredientsListing = () => {
       },
       onError: error => {
          console.log(error)
-         toast.error('Cannot delete!')
+         toast.error('Failed to delete!')
       },
    })
 
