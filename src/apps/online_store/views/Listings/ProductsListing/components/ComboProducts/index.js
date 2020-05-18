@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    IconButton,
    Loader,
@@ -14,8 +14,9 @@ import {
 import { useTranslation } from 'react-i18next'
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { Context } from '../../../../../context/tabs'
-import { S_COMBO_PRODUCTS } from '../../../../../graphql'
+import { S_COMBO_PRODUCTS, DELETE_COMBO_PRODUCTS } from '../../../../../graphql'
 import { GridContainer } from '../../../styled'
+import { toast } from 'react-toastify'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -27,6 +28,32 @@ const ComboProducts = () => {
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
+   }
+
+   const [deleteProducts] = useMutation(DELETE_COMBO_PRODUCTS, {
+      onCompleted: () => {
+         toast.success('Product deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
+   // Handler
+   const deleteHandler = (e, product) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete product - ${product.name}?`
+         )
+      ) {
+         deleteProducts({
+            variables: {
+               ids: [product.id],
+            },
+         })
+      }
    }
 
    if (loading) return <Loader />
@@ -57,7 +84,7 @@ const ComboProducts = () => {
                   </TableCell>
                   <TableCell align="right">
                      <GridContainer>
-                        <IconButton>
+                        <IconButton onClick={e => deleteHandler(e, product)}>
                            <DeleteIcon color="#FF5A52" />
                         </IconButton>
                      </GridContainer>

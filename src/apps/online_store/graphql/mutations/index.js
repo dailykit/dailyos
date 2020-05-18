@@ -24,6 +24,16 @@ export const CREATE_INVENTORY_PRODUCT = gql`
    }
 `
 
+export const DELETE_INVENTORY_PRODUCTS = gql`
+   mutation DeleteInventoryProducts($ids: [Int!]!) {
+      deleteInventoryProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const UPDATE_INVENTORY_PRODUCT = gql`
    mutation UpdateInventoryProduct(
       $id: Int!
@@ -80,6 +90,16 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
          returning {
             id
             name
+         }
+      }
+   }
+`
+
+export const DELETE_SIMPLE_RECIPE_PRODUCTS = gql`
+   mutation DeleteSimpleRecipeProducts($ids: [Int!]!) {
+      deleteSimpleRecipeProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
          }
       }
    }
@@ -146,6 +166,16 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
    }
 `
 
+export const DELETE_CUSTOMIZABLE_PRODUCTS = gql`
+   mutation DeleteCustomizableProducts($ids: [Int!]!) {
+      deleteCustomizableProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const UPDATE_CUSTOMIZABLE_PRODUCT = gql`
    mutation UpdateCustomizableProduct(
       $id: Int
@@ -189,6 +219,16 @@ export const CREATE_COMBO_PRODUCT = gql`
          returning {
             id
             name
+         }
+      }
+   }
+`
+
+export const DELETE_COMBO_PRODUCTS = gql`
+   mutation DeleteComboProducts($ids: [Int!]!) {
+      deleteComboProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
          }
       }
    }
