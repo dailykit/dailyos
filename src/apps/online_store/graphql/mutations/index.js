@@ -1,16 +1,5 @@
 import gql from 'graphql-tag'
 
-export const CREATE_PRODUCT = gql`
-   mutation CreateProduct($title: String!) {
-      createProduct(title: $title) {
-         success
-         product {
-            id
-         }
-      }
-   }
-`
-
 export const CREATE_INVENTORY_PRODUCT = gql`
    mutation CreateInventoryProduct(
       $objects: [onlineStore_inventoryProduct_insert_input!]!
@@ -296,14 +285,11 @@ export const CREATE_COLLECTION = gql`
    }
 `
 
-// Not in use
-export const UPDATE_PRODUCT = gql`
-   mutation UpdateProduct($input: UpdateProductInput) {
-      updateProduct(input: $input) {
-         success
-         product {
+export const DELETE_COLLECTIONS = gql`
+   mutation DeleteCollections($ids: [Int!]!) {
+      deleteMenuCollection(where: { id: { _in: $ids } }) {
+         returning {
             id
-            title
          }
       }
    }
