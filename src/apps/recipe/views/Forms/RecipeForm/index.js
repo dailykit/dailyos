@@ -80,12 +80,6 @@ const RecipeForm = () => {
 
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
-      variables: {
-         id: state.id,
-         set: {
-            name: title,
-         },
-      },
       onCompleted: () => {
          toast.success('Name updated!')
          dispatch({
@@ -101,7 +95,16 @@ const RecipeForm = () => {
 
    // Handlers
    const updateName = () => {
-      updateRecipe()
+      if (title) {
+         updateRecipe({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
+            },
+         })
+      }
    }
 
    if (loading) return <Loader />

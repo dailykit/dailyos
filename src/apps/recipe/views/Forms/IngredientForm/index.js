@@ -186,12 +186,6 @@ const IngredientForm = () => {
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
-      variables: {
-         id: state.id,
-         set: {
-            name: title,
-         },
-      },
       onCompleted: () => {
          toast.success('Name updated!')
          dispatch({
@@ -209,6 +203,18 @@ const IngredientForm = () => {
    })
 
    // Handlers
+   const updateName = () => {
+      if (title) {
+         updateIngredient({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
+            },
+         })
+      }
+   }
 
    if (loading) return <Loader />
 
@@ -312,7 +318,7 @@ const IngredientForm = () => {
                      name="title"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={updateIngredient}
+                     onBlur={updateName}
                   />
                </InputWrapper>
                <MasterSettings>
