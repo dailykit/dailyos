@@ -11,11 +11,11 @@ import {
 } from '../../../../context/product/simpleProduct'
 import { Context } from '../../../../context/tabs'
 import {
-   INVENTORY_PRODUCTS,
    RECIPES,
-   SIMPLE_RECIPE_PRODUCTS,
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
+   S_INVENTORY_PRODUCTS,
+   S_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
@@ -86,26 +86,27 @@ export default function SimpleRecipeProduct() {
    useSubscription(RECIPES, {
       onSubscriptionData: data => {
          const { simpleRecipes } = data.subscriptionData.data
-         const updatedRecipes = simpleRecipes.map(item => {
-            item.title = item.name
-            return item
-         })
-         console.log(updatedRecipes)
+         const updatedRecipes = simpleRecipes
+            .filter(item => item.isValid.status && item.isPublished)
+            .map(item => {
+               item.title = item.name
+               return item
+            })
          setRecipes(updatedRecipes)
       },
    })
 
    // Subscription for fetching products
-   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+   useSubscription(S_SIMPLE_RECIPE_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             simple: updatedProducts,
@@ -115,16 +116,16 @@ export default function SimpleRecipeProduct() {
          console.log(error)
       },
    })
-   useSubscription(INVENTORY_PRODUCTS, {
+   useSubscription(S_INVENTORY_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             inventory: updatedProducts,

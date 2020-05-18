@@ -11,12 +11,12 @@ import {
 } from '../../../../context/product/inventoryProduct'
 import { Context } from '../../../../context/tabs'
 import {
-   INVENTORY_PRODUCTS,
-   SIMPLE_RECIPE_PRODUCTS,
    S_INVENTORY_PRODUCT,
    S_SACHET_ITEMS,
    S_SUPPLIER_ITEMS,
    UPDATE_INVENTORY_PRODUCT,
+   S_SIMPLE_RECIPE_PRODUCTS,
+   S_INVENTORY_PRODUCTS,
 } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
@@ -135,16 +135,16 @@ export default function InventoryProduct() {
    })
 
    // Subscription for fetching products
-   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+   useSubscription(S_SIMPLE_RECIPE_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             simple: updatedProducts,
@@ -154,16 +154,16 @@ export default function InventoryProduct() {
          console.log(error)
       },
    })
-   useSubscription(INVENTORY_PRODUCTS, {
+   useSubscription(S_INVENTORY_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             inventory: updatedProducts,
