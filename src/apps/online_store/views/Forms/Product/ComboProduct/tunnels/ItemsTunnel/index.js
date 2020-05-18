@@ -39,21 +39,29 @@ export default function ItemTunnel({ state, close }) {
 
    // Handlers
    const save = () => {
-      if (busy) return
-      setBusy(true)
-      const objects = labels
-         .filter(label => label.length)
-         .map(label => {
-            return {
-               comboProductId: state.id,
-               label,
-            }
+      try {
+         if (busy) return
+         setBusy(true)
+         const objects = labels
+            .filter(label => label.length)
+            .map(label => {
+               return {
+                  comboProductId: state.id,
+                  label,
+               }
+            })
+         if (!objects.length) {
+            throw Error('No labels added!')
+         }
+         createComboProductComponent({
+            variables: {
+               objects,
+            },
          })
-      createComboProductComponent({
-         variables: {
-            objects,
-         },
-      })
+      } catch (e) {
+         toast.error(e.message)
+         setBusy(false)
+      }
    }
 
    const updatedLabel = (index, value) => {

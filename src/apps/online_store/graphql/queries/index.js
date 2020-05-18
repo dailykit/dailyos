@@ -5,6 +5,8 @@ export const RECIPES = gql`
       simpleRecipes {
          id
          name
+         isValid
+         isPublished
          simpleRecipeYields {
             id
             yield

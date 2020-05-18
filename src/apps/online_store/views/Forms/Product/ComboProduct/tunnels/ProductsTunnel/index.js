@@ -69,7 +69,7 @@ const ProductsTunnel = ({ close, products }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(3)}>
+               <span onClick={() => close(4)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <Text as="title">

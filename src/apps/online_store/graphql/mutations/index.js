@@ -1,16 +1,5 @@
 import gql from 'graphql-tag'
 
-export const CREATE_PRODUCT = gql`
-   mutation CreateProduct($title: String!) {
-      createProduct(title: $title) {
-         success
-         product {
-            id
-         }
-      }
-   }
-`
-
 export const CREATE_INVENTORY_PRODUCT = gql`
    mutation CreateInventoryProduct(
       $objects: [onlineStore_inventoryProduct_insert_input!]!
@@ -19,6 +8,16 @@ export const CREATE_INVENTORY_PRODUCT = gql`
          returning {
             id
             name
+         }
+      }
+   }
+`
+
+export const DELETE_INVENTORY_PRODUCTS = gql`
+   mutation DeleteInventoryProducts($ids: [Int!]!) {
+      deleteInventoryProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
          }
       }
    }
@@ -85,6 +84,16 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
    }
 `
 
+export const DELETE_SIMPLE_RECIPE_PRODUCTS = gql`
+   mutation DeleteSimpleRecipeProducts($ids: [Int!]!) {
+      deleteSimpleRecipeProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const UPDATE_SIMPLE_RECIPE_PRODUCT = gql`
    mutation UpdateSimpleRecipeProduct(
       $id: Int!
@@ -146,6 +155,16 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
    }
 `
 
+export const DELETE_CUSTOMIZABLE_PRODUCTS = gql`
+   mutation DeleteCustomizableProducts($ids: [Int!]!) {
+      deleteCustomizableProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const UPDATE_CUSTOMIZABLE_PRODUCT = gql`
    mutation UpdateCustomizableProduct(
       $id: Int
@@ -189,6 +208,16 @@ export const CREATE_COMBO_PRODUCT = gql`
          returning {
             id
             name
+         }
+      }
+   }
+`
+
+export const DELETE_COMBO_PRODUCTS = gql`
+   mutation DeleteComboProducts($ids: [Int!]!) {
+      deleteComboProduct(where: { id: { _in: $ids } }) {
+         returning {
+            id
          }
       }
    }
@@ -256,14 +285,11 @@ export const CREATE_COLLECTION = gql`
    }
 `
 
-// Not in use
-export const UPDATE_PRODUCT = gql`
-   mutation UpdateProduct($input: UpdateProductInput) {
-      updateProduct(input: $input) {
-         success
-         product {
+export const DELETE_COLLECTIONS = gql`
+   mutation DeleteCollections($ids: [Int!]!) {
+      deleteMenuCollection(where: { id: { _in: $ids } }) {
+         returning {
             id
-            title
          }
       }
    }

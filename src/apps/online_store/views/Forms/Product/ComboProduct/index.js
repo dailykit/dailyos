@@ -18,7 +18,12 @@ import {
    SIMPLE_RECIPE_PRODUCTS,
    UPDATE_COMBO_PRODUCT,
 } from '../../../../graphql'
-import { S_COMBO_PRODUCT } from '../../../../graphql/subscriptions'
+import {
+   S_COMBO_PRODUCT,
+   S_CUSTOMIZABLE_PRODUCTS,
+   S_SIMPLE_RECIPE_PRODUCTS,
+   S_INVENTORY_PRODUCTS,
+} from '../../../../graphql'
 // styles
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
@@ -67,16 +72,18 @@ export default function ComboProduct() {
          console.log(error)
       },
    })
-   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+
+   // Subscription for fetching products
+   useSubscription(S_SIMPLE_RECIPE_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             simple: updatedProducts,
@@ -86,16 +93,16 @@ export default function ComboProduct() {
          console.log(error)
       },
    })
-   useSubscription(INVENTORY_PRODUCTS, {
+   useSubscription(S_INVENTORY_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             inventory: updatedProducts,
@@ -105,16 +112,16 @@ export default function ComboProduct() {
          console.log(error)
       },
    })
-   useSubscription(CUSTOMIZABLE_PRODUCTS, {
+   useSubscription(S_CUSTOMIZABLE_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.customizableProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.customizableProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             customizable: updatedProducts,
@@ -126,13 +133,7 @@ export default function ComboProduct() {
    })
 
    //Mutations
-   const [updatedProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
-      variables: {
-         id: state.id,
-         set: {
-            name: title,
-         },
-      },
+   const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
       onCompleted: data => {
          toast.success('Name updated!')
          dispatch({
@@ -148,6 +149,20 @@ export default function ComboProduct() {
          toast.error('Error')
       },
    })
+
+   //Handlers
+   const updateName = () => {
+      if (title) {
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
+            },
+         })
+      }
+   }
 
    if (loading) return <Loader />
 
@@ -180,7 +195,7 @@ export default function ComboProduct() {
                      name="name"
                      value={title}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={updatedProduct}
+                     onBlur={updateName}
                   />
                </div>
                <MasterSettings>

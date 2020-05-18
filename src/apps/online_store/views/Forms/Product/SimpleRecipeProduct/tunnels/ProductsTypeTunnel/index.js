@@ -24,7 +24,7 @@ const ProductsTypeTunnel = ({ close, open }) => {
       <React.Fragment>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(5)}>
+               <span onClick={() => close(4)}>
                   <CloseIcon color="#888D9D" />
                </span>
                <Text as="title">

@@ -18,12 +18,12 @@ import {
 } from '../../../context/collection'
 import { Context } from '../../../context/tabs'
 import {
-   COMBO_PRODUCTS,
-   CUSTOMIZABLE_PRODUCTS,
-   INVENTORY_PRODUCTS,
-   SIMPLE_RECIPE_PRODUCTS,
    S_COLLECTION,
    UPDATE_COLLECTION,
+   S_COMBO_PRODUCTS,
+   S_CUSTOMIZABLE_PRODUCTS,
+   S_INVENTORY_PRODUCTS,
+   S_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../graphql'
 import { Categories, Configuration } from './components'
 import {
@@ -48,6 +48,7 @@ const CollectionForm = () => {
 
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
+   const [busy, setBusy] = React.useState(false)
 
    const [products, setProducts] = React.useState({
       simple: [],
@@ -72,64 +73,75 @@ const CollectionForm = () => {
          })
       },
    })
-   useSubscription(SIMPLE_RECIPE_PRODUCTS, {
+
+   // Subscription for fetching products
+   useSubscription(S_SIMPLE_RECIPE_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             simple: updatedProducts,
          })
       },
+      onError: error => {
+         console.log(error)
+      },
    })
-   useSubscription(INVENTORY_PRODUCTS, {
+   useSubscription(S_INVENTORY_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.inventoryProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.inventoryProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             inventory: updatedProducts,
          })
       },
+      onError: error => {
+         console.log(error)
+      },
    })
-   useSubscription(CUSTOMIZABLE_PRODUCTS, {
+   useSubscription(S_CUSTOMIZABLE_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.customizableProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.customizableProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             customizable: updatedProducts,
          })
       },
+      onError: error => {
+         console.log(error)
+      },
    })
-   useSubscription(COMBO_PRODUCTS, {
+   useSubscription(S_COMBO_PRODUCTS, {
       onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.comboProducts.map(
-            pdct => {
+         const updatedProducts = data.subscriptionData.data.comboProducts
+            .filter(pdct => pdct.isValid.status && pdct.isPublished)
+            .map(pdct => {
                return {
                   ...pdct,
                   title: pdct.name,
                }
-            }
-         )
+            })
          setProducts({
             ...products,
             combo: updatedProducts,
@@ -140,6 +152,7 @@ const CollectionForm = () => {
    // Mutations
    const [updateCollection] = useMutation(UPDATE_COLLECTION, {
       onCompleted: data => {
+         setBusy(false)
          toast.success('Updated!')
          dispatch({
             type: 'SET_TITLE',
@@ -152,11 +165,14 @@ const CollectionForm = () => {
       onError: error => {
          console.log(error)
          toast.error('Error')
+         setBusy(false)
       },
    })
 
    // Handlers
    const save = () => {
+      if (busy) return
+      setBusy(true)
       const updateCategories = collectionState.categories.map(category => {
          const cat = {
             name: category.title,
@@ -199,14 +215,16 @@ const CollectionForm = () => {
    }
 
    const updateName = () => {
-      updateCollection({
-         variables: {
-            id: state.id,
-            set: {
-               name: title,
+      if (title) {
+         updateCollection({
+            variables: {
+               id: state.id,
+               set: {
+                  name: title,
+               },
             },
-         },
-      })
+         })
+      }
    }
 
    if (loading) return <Loader />
@@ -260,7 +278,9 @@ const CollectionForm = () => {
             </FormHeaderInputs>
             <FormHeaderActions>
                <TextButton type="outline" onClick={save}>
-                  {t(address.concat('save'))}
+                  {busy
+                     ? t(address.concat('saving'))
+                     : t(address.concat('save'))}
                </TextButton>
                <TextButton
                   type="solid"

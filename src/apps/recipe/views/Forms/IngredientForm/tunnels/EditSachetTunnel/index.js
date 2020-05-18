@@ -53,7 +53,7 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
       try {
          if (busy) return
          setBusy(true)
-         if (isNaN(quantity) || parseInt(quantity) === 0) {
+         if (!quantity || isNaN(quantity) || parseInt(quantity) === 0) {
             throw Error('Invalid Quantity!')
          }
          updateSachet()

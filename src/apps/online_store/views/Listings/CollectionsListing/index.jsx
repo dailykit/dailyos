@@ -18,7 +18,11 @@ import { randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
-import { COLLECTIONS, CREATE_COLLECTION } from '../../../graphql'
+import {
+   COLLECTIONS,
+   CREATE_COLLECTION,
+   DELETE_COLLECTIONS,
+} from '../../../graphql'
 // Styled
 import { StyledHeader, StyledWrapper } from '../styled'
 
@@ -64,6 +68,32 @@ const CollectionsListing = () => {
       },
    })
 
+   const [deleteCollections] = useMutation(DELETE_COLLECTIONS, {
+      onCompleted: () => {
+         toast.success('Collection deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
+   // Handler
+   const deleteHandler = (e, collection) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete collection - ${collection.name}?`
+         )
+      ) {
+         deleteCollections({
+            variables: {
+               ids: [collection.id],
+            },
+         })
+      }
+   }
+
    if (loading) return <Loader />
 
    return (
@@ -99,7 +129,7 @@ const CollectionsListing = () => {
                         ).toText()}
                      </TableCell>
                      <TableCell align="right">
-                        <IconButton>
+                        <IconButton onClick={e => deleteHandler(e, row)}>
                            <DeleteIcon color="#FF5A52" />
                         </IconButton>
                      </TableCell>
