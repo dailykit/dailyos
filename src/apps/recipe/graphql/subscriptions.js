@@ -95,6 +95,8 @@ export const S_RECIPES = gql`
          name
          author
          cookingTime
+         isValid
+         isPublished
          simpleRecipeYields {
             id
          }

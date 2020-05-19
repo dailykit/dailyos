@@ -1,7 +1,15 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Input, Tunnel, Tunnels, useTunnel, Loader, Text } from '@dailykit/ui'
+import {
+   Input,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   Loader,
+   Text,
+   Toggle,
+} from '@dailykit/ui'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
@@ -87,11 +95,7 @@ const RecipeForm = () => {
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
-         toast.success('Name updated!')
-         dispatch({
-            type: 'SET_TITLE',
-            payload: { oldTitle: tabs.current.title, title },
-         })
+         toast.success('Updated!')
       },
       onError: error => {
          console.log(error)
@@ -100,9 +104,9 @@ const RecipeForm = () => {
    })
 
    // Handlers
-   const updateName = () => {
+   const updateName = async () => {
       if (title) {
-         updateRecipe({
+         const { data } = await updateRecipe({
             variables: {
                id: state.id,
                set: {
@@ -110,7 +114,26 @@ const RecipeForm = () => {
                },
             },
          })
+         if (data) {
+            dispatch({
+               type: 'SET_TITLE',
+               payload: { oldTitle: tabs.current.title, title },
+            })
+         }
       }
+   }
+   const togglePublish = val => {
+      if (val && !state.isValid.status) {
+         return toast.error('Recipe should be valid!')
+      }
+      updateRecipe({
+         variables: {
+            id: state.id,
+            set: {
+               isPublished: val,
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />
@@ -198,17 +221,26 @@ const RecipeForm = () => {
                   />
                </InputWrapper>
                <MasterSettings>
-                  {state.isValid?.status ? (
-                     <React.Fragment>
-                        <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p">All good!</Text>
-                     </React.Fragment>
-                  ) : (
-                     <React.Fragment>
-                        <CloseIcon color="#ff0000" />
-                        <Text as="p">{state.isValid?.error}</Text>
-                     </React.Fragment>
-                  )}
+                  <div>
+                     {state.isValid?.status ? (
+                        <React.Fragment>
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p">All good!</Text>
+                        </React.Fragment>
+                     ) : (
+                        <React.Fragment>
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isValid?.error}</Text>
+                        </React.Fragment>
+                     )}
+                  </div>
+                  <div>
+                     <Toggle
+                        checked={state.isPublished}
+                        setChecked={togglePublish}
+                        label="Published"
+                     />
+                  </div>
                </MasterSettings>
             </StyledHeader>
             <StyledWrapper width="980">

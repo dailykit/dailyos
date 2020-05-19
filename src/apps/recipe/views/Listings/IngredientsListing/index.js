@@ -8,6 +8,7 @@ import {
    TableCell,
    TableHead,
    TableRow,
+   Toggle,
 } from '@dailykit/ui'
 import * as moment from 'moment'
 import React from 'react'
@@ -22,6 +23,7 @@ import {
    CREATE_INGREDIENT,
    S_INGREDIENTS,
    DELETE_INGREDIENTS,
+   UPDATE_INGREDIENT,
 } from '../../../graphql'
 // Styled
 import {
@@ -74,6 +76,15 @@ const IngredientsListing = () => {
          toast.error('Failed to delete!')
       },
    })
+   const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
 
    // Effects
    React.useEffect(() => {
@@ -106,6 +117,20 @@ const IngredientsListing = () => {
             },
          })
       }
+   }
+   const togglePublish = (e, ingredient) => {
+      e.stopPropagation()
+      if (!ingredient.isPublished && !ingredient.isValid.status) {
+         return toast.error('Ingredient should be valid!')
+      }
+      updateIngredient({
+         variables: {
+            id: ingredient.id,
+            set: {
+               isPublished: !ingredient.isPublished,
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />
@@ -141,9 +166,10 @@ const IngredientsListing = () => {
             <Table>
                <TableHead>
                   <TableRow>
-                     <TableCell> {t(address.concat('name'))} </TableCell>
-                     <TableCell>{t(address.concat('processings'))}</TableCell>
-                     <TableCell>{t(address.concat('created at'))}</TableCell>
+                     <TableCell>Name</TableCell>
+                     <TableCell>Processings</TableCell>
+                     <TableCell>Created At</TableCell>
+                     {/* <TableCell>Published</TableCell> */}
                      <TableCell> </TableCell>
                   </TableRow>
                </TableHead>
@@ -170,6 +196,12 @@ const IngredientsListing = () => {
                                  ? moment(ingredient.createdAt).calendar()
                                  : 'NA'}
                            </TableCell>
+                           {/* <TableCell>
+                              <Toggle
+                                 checked={ingredient.isPublished}
+                                 setChecked={e => togglePublish(e, ingredient)}
+                              />
+                           </TableCell> */}
                            <TableCell>
                               <GridContainer>
                                  <IconButton
