@@ -1,6 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
 import Loadable from 'react-loadable'
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
 // Toasts
 import { ToastContainer } from 'react-toastify'
@@ -15,12 +17,14 @@ import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
-// i18next
-import './i18next'
+import Backend from 'i18next-http-backend'
+import LanguageDetector from 'i18next-browser-languagedetector'
 
 import './global.css'
 
 import { StyledLoader } from './styled'
+
+const languages = ['en', 'fr', 'es', 'he', 'de', 'el', 'hi', 'it']
 
 const Loader = () => (
    <StyledLoader>
@@ -61,20 +65,38 @@ const client = new ApolloClient({
    cache: new InMemoryCache(),
 })
 
-render(
-   <ApolloProvider client={client}>
-      <ToastContainer
-         position="top-right"
-         autoClose={3000}
-         hideProgressBar={false}
-         newestOnTop={false}
-         closeOnClick
-         rtl={false}
-         pauseOnFocusLoss
-         draggable
-         pauseOnHover
-      />
-      <App />
-   </ApolloProvider>,
-   document.getElementById('root')
-)
+i18n
+   .use(Backend)
+   .use(LanguageDetector)
+   .use(initReactI18next)
+   .init({
+      fallbackLng: false,
+      debug: false,
+      whitelist: languages,
+      interpolation: {
+         escapeValue: false,
+      },
+      react: {
+         wait: true,
+         useSuspense: false,
+      },
+   })
+   .then(() =>
+      render(
+         <ApolloProvider client={client}>
+            <ToastContainer
+               position="top-right"
+               autoClose={3000}
+               hideProgressBar={false}
+               newestOnTop={false}
+               closeOnClick
+               rtl={false}
+               pauseOnFocusLoss
+               draggable
+               pauseOnHover
+            />
+            <App />
+         </ApolloProvider>,
+         document.getElementById('root')
+      )
+   )
