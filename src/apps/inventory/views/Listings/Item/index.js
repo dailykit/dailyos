@@ -1,5 +1,4 @@
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import {
    IconButton,
@@ -32,6 +31,8 @@ import {
    StyledTableActions,
    StyledTableHeader,
    StyledWrapper,
+   CellColumnContainer,
+   OnHandData,
 } from '../styled'
 
 const address = 'apps.inventory.views.listings.item.'
@@ -212,17 +213,3 @@ export default function ItemListing() {
          </StyledWrapper>
       )
 }
-
-const CellColumnContainer = styled.div`
-   width: 100%;
-   display: flex;
-   flex-direction: column;
-`
-
-const OnHandData = styled.span`
-   color: ${({ alert, alertAndSuccess }) => {
-      if (alert) return '#FF5A52'
-      if (alertAndSuccess) return '#53C22B'
-      return '#888D9D'
-   }};
-`
