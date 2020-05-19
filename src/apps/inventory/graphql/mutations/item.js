@@ -101,3 +101,14 @@ export const CREATE_SACHET_ITEM = gql`
       }
    }
 `
+
+export const UPDATE_BULK_ITEM_AVAILABILITY = gql`
+   mutation UpdateBulkItem($id: Int!, $availability: Boolean!) {
+      updateBulkItem(
+         where: { id: { _eq: $id } }
+         _set: { isAvailable: $availability }
+      ) {
+         affected_rows
+      }
+   }
+`
