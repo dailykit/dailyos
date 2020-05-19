@@ -77,6 +77,7 @@ const RecipeForm = () => {
          const ingredients = data.subscriptionData.data.ingredients.filter(
             ing => ing.isValid.status && ing.isPublished
          )
+         console.log(ingredients)
          setIngredients(ingredients)
       },
       onError: error => {

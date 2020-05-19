@@ -41,6 +41,8 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
             {
                ingredientSachetId: current.id,
                recipeYieldId: recipeState.serving.id,
+               isVisible: true,
+               slipName: current.ingredient?.name,
             },
          ],
       },
@@ -76,6 +78,7 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
       if (busy) return
       setBusy(true)
       console.log(recipeState)
+      console.log(current)
       if (recipeState.updating) updateSachet()
       else createSachet()
    }

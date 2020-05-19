@@ -16,6 +16,9 @@ export const S_INGREDIENTS = gql`
                isValid
                quantity
                unit
+               ingredient {
+                  name
+               }
             }
          }
       }
