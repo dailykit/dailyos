@@ -22,7 +22,7 @@ export const ContainerAction = styled.span`
 
 export const Flex = styled.div`
    display: flex;
-   direction: ${props => props.direction || 'column'};
+   flex-direction: ${props => props.direction || 'row'};
    justify-content: ${props => props.justify || 'space-between'};
    align-items: ${props => props.align || 'flex-start'};
 `

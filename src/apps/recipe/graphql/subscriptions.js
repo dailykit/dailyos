@@ -120,6 +120,8 @@ export const S_RECIPE = gql`
             id
             yield
             ingredientSachets {
+               isVisible
+               slipName
                ingredientSachet {
                   id
                   quantity

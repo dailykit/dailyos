@@ -68,9 +68,6 @@ const RecipeForm = () => {
          setState(data.subscriptionData.data.simpleRecipe)
          setTitle(data.subscriptionData.data.simpleRecipe.name)
       },
-      onError: error => {
-         console.log(error)
-      },
    })
    useSubscription(S_INGREDIENTS, {
       onSubscriptionData: data => {
@@ -79,9 +76,6 @@ const RecipeForm = () => {
          )
          console.log(ingredients)
          setIngredients(ingredients)
-      },
-      onError: error => {
-         console.log(error)
       },
    })
    useSubscription(CUISINES, {

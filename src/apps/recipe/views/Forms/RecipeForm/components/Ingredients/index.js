@@ -10,20 +10,18 @@ import {
    TableHead,
    TableRow,
    Text,
+   Toggle,
+   Input,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import {
-   DeleteIcon,
-   EditIcon,
-   EyeIcon,
-   UserIcon,
-} from '../../../../../assets/icons'
+import { DeleteIcon, EditIcon, UserIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
 import {
    DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
    UPDATE_RECIPE,
+   UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
 } from '../../../../../graphql'
-import { Container, Grid } from '../styled'
+import { Container, Grid, Flex } from '../styled'
 
 const Ingredients = ({ state, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
@@ -71,7 +69,6 @@ const Ingredients = ({ state, openTunnel }) => {
    }
 
    const deleteSachets = ing => {
-      console.log(ing)
       const servingIds = state.simpleRecipeYields.map(serving => serving.id)
       const sachetIds = state.simpleRecipeYields
          .flatMap(serving => {
@@ -166,48 +163,11 @@ const Ingredients = ({ state, openTunnel }) => {
                                                 ingredient.ingredientProcessing
                                                    .id
                                        ) ? (
-                                          <React.Fragment>
-                                             <span>
-                                                {serving.ingredientSachets
-                                                   ?.find(
-                                                      sachet =>
-                                                         sachet.ingredientSachet
-                                                            .ingredient?.id ===
-                                                            ingredient.id &&
-                                                         sachet.ingredientSachet
-                                                            .ingredientProcessing
-                                                            .id ===
-                                                            ingredient
-                                                               .ingredientProcessing
-                                                               .id
-                                                   )
-                                                   ?.ingredientSachet.quantity.toString()}{' '}
-                                                {
-                                                   serving.ingredientSachets?.find(
-                                                      sachet =>
-                                                         sachet.ingredientSachet
-                                                            .ingredient?.id ===
-                                                            ingredient.id &&
-                                                         sachet.ingredientSachet
-                                                            .ingredientProcessing
-                                                            .id ===
-                                                            ingredient
-                                                               .ingredientProcessing
-                                                               .id
-                                                   )?.ingredientSachet.unit
-                                                }
-                                             </span>
-                                             <span
-                                                onClick={() =>
-                                                   editSachet(
-                                                      ingredient,
-                                                      serving
-                                                   )
-                                                }
-                                             >
-                                                <EditIcon color="#00A7E1" />
-                                             </span>
-                                          </React.Fragment>
+                                          <Sachet
+                                             ingredient={ingredient}
+                                             serving={serving}
+                                             editSachet={editSachet}
+                                          />
                                        ) : (
                                           <span
                                              onClick={() =>
@@ -248,3 +208,101 @@ const Ingredients = ({ state, openTunnel }) => {
 }
 
 export default Ingredients
+
+const Sachet = ({ ingredient, serving, editSachet }) => {
+   // States
+   const [sachet, setSachet] = React.useState(
+      serving.ingredientSachets?.find(
+         sachet =>
+            sachet.ingredientSachet.ingredient?.id === ingredient.id &&
+            sachet.ingredientSachet.ingredientProcessing.id ===
+               ingredient.ingredientProcessing.id
+      )
+   )
+   const [slipName, setSlipName] = React.useState(sachet.slipName || '')
+
+   // Effects
+   React.useEffect(() => {
+      setSachet(
+         serving.ingredientSachets?.find(
+            sachet =>
+               sachet.ingredientSachet.ingredient?.id === ingredient.id &&
+               sachet.ingredientSachet.ingredientProcessing.id ===
+                  ingredient.ingredientProcessing.id
+         )
+      )
+   }, [serving])
+   React.useEffect(() => {
+      setSlipName(sachet.slipName)
+   }, [sachet])
+
+   // Mutation
+   const [updateSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
+      onCompleted: () => {
+         toast.success('Sachet updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error()
+      },
+   })
+
+   // Handler
+   const updateVisibility = val => {
+      updateSachet({
+         variables: {
+            sachetId: sachet.ingredientSachet.id,
+            yieldId: serving.id,
+            set: {
+               isVisible: val,
+            },
+         },
+      })
+   }
+   const updateSlipName = () => {
+      if (slipName) {
+         updateSachet({
+            variables: {
+               sachetId: sachet.ingredientSachet.id,
+               yieldId: serving.id,
+               set: {
+                  slipName,
+               },
+            },
+         })
+      }
+   }
+
+   return (
+      <Flex direction="column">
+         <Container top="8">
+            <Flex>
+               <span>
+                  {sachet?.ingredientSachet.quantity.toString()}{' '}
+                  {sachet?.ingredientSachet.unit}
+               </span>
+               <span onClick={() => editSachet(ingredient, serving)}>
+                  <EditIcon color="#00A7E1" />
+               </span>
+            </Flex>
+         </Container>
+         <Container top="10">
+            <Toggle
+               checked={sachet.isVisible}
+               label="Visibility"
+               setChecked={updateVisibility}
+            />
+         </Container>
+         <Container top="12">
+            <Input
+               type="text"
+               label="Slip Name"
+               name="slip-name"
+               value={slipName}
+               onChange={e => setSlipName(e.target.value)}
+               onBlur={updateSlipName}
+            />
+         </Container>
+      </Flex>
+   )
+}
