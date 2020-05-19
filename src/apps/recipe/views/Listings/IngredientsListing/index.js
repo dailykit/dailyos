@@ -125,7 +125,7 @@ const IngredientsListing = () => {
             </StyledPagination>
          </StyledHeader>
          <StyledTableHeader>
-            <p>{t(address.concat('filters'))}</p>
+            <p></p>
             <StyledTableActions>
                <SearchBox
                   placeholder={t(address.concat('search'))}
