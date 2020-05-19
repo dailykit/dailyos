@@ -32,6 +32,7 @@ export const S_INGREDIENT = gql`
          name
          image
          isValid
+         isPublished
          ingredientProcessings {
             id
             processingName
@@ -108,6 +109,7 @@ export const S_RECIPE = gql`
          name
          image
          isValid
+         isPublished
          author
          type
          description
