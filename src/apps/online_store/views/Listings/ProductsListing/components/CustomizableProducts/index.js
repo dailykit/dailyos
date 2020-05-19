@@ -59,7 +59,10 @@ const CustomizableProducts = () => {
    }
 
    if (loading) return <Loader />
-   if (error) return <Text as="p">{t(address.concat('error'))}</Text>
+   if (error) {
+      console.log(error)
+      return <Text as="p">Error: Could'nt fetch products!</Text>
+   }
 
    return (
       <Table>
