@@ -51,14 +51,6 @@ const Ingredients = ({ state, openTunnel }) => {
    )
 
    //Handlers
-   const edit = ingredient => {
-      recipeDispatch({
-         type: 'EDIT_INGREDIENT',
-         payload: ingredient,
-      })
-      openTunnel(6)
-   }
-
    const remove = ingredient => {
       const ingredients = state.ingredients
       const index = state.ingredients.findIndex(
@@ -150,8 +142,6 @@ const Ingredients = ({ state, openTunnel }) => {
                                     {serving.yield.serving}
                                  </TableCell>
                               ))}
-                              <TableCell>Visibility</TableCell>
-                              <TableCell>Slip Name</TableCell>
                               <TableCell>Actions</TableCell>
                            </TableRow>
                         </TableHead>
@@ -229,21 +219,8 @@ const Ingredients = ({ state, openTunnel }) => {
                                        )}
                                     </TableCell>
                                  ))}
-                                 <TableCell align="center">
-                                    {ingredient.isVisible ? (
-                                       <EyeIcon color="#00A7E1" />
-                                    ) : (
-                                       ''
-                                    )}
-                                 </TableCell>
-                                 <TableCell>{ingredient.slipName}</TableCell>
                                  <TableCell>
                                     <Grid>
-                                       <IconButton
-                                          onClick={() => edit(ingredient)}
-                                       >
-                                          <EditIcon color="#00A7E1" />
-                                       </IconButton>
                                        <IconButton
                                           onClick={() => remove(ingredient)}
                                        >
