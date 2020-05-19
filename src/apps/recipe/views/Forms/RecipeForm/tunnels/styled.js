@@ -64,7 +64,7 @@ export const Container = styled.div`
 
 export const Flex = styled.div`
    display: flex;
-   direction: ${props => props.direction || 'column'};
+   flex-direction: ${props => props.direction || 'column'};
    justify-content: ${props => props.justify || 'space-between'};
    align-items: ${props => props.align || 'flex-start'};
 `
@@ -86,4 +86,14 @@ export const InputWrapper = styled.div`
          margin-left: 8px;
       }
    }
+`
+
+export const StyledSelect = styled.select`
+   height: 32px;
+   min-width: 200px;
+`
+
+export const StyledLabel = styled.label`
+   color: #888d9d;
+   font-size: 14px;
 `
