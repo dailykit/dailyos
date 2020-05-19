@@ -34,7 +34,12 @@ import {
    SachetTunnel,
    PhotoTunnel,
 } from './tunnels'
-import { UPDATE_RECIPE, S_RECIPE, S_INGREDIENTS } from '../../../graphql'
+import {
+   UPDATE_RECIPE,
+   S_RECIPE,
+   S_INGREDIENTS,
+   CUISINES,
+} from '../../../graphql'
 
 const RecipeForm = () => {
    // Context
@@ -48,6 +53,7 @@ const RecipeForm = () => {
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
    const [ingredients, setIngredients] = React.useState([])
+   const [cuisines, setCuisines] = React.useState([])
 
    // Tunnels
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -75,6 +81,11 @@ const RecipeForm = () => {
       },
       onError: error => {
          console.log(error)
+      },
+   })
+   useSubscription(CUISINES, {
+      onSubscriptionData: data => {
+         setCuisines(data.subscriptionData.data.cuisineNames)
       },
    })
 
@@ -115,7 +126,11 @@ const RecipeForm = () => {
             {/* Tunnels */}
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1}>
-                  <InformationTunnel state={state} closeTunnel={closeTunnel} />
+                  <InformationTunnel
+                     state={state}
+                     closeTunnel={closeTunnel}
+                     cuisines={cuisines}
+                  />
                </Tunnel>
                <Tunnel layer={2}>
                   <ProceduresTunnel state={state} closeTunnel={closeTunnel} />

@@ -13,6 +13,15 @@ export const INGREDIENTS = gql`
    }
 `
 
+export const CUISINES = gql`
+   {
+      cuisineNames {
+         id
+         name
+      }
+   }
+`
+
 // Issue: It should take ID, but is asking for Int
 export const INGREDIENT = gql`
    query Ingredient($ID: Int!) {

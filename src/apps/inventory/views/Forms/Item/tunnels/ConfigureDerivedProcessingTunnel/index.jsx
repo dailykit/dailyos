@@ -110,7 +110,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat('set par level'))}
+                     placeholder={t(address.concat('set par level'))}
                      name="par_level"
                      value={par}
                      onChange={e => {
@@ -123,7 +123,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat('max inventory level'))}
+                     placeholder={t(address.concat('max inventory level'))}
                      name="max_inventory_level"
                      value={maxInventoryLevel}
                      onChange={e => {
@@ -171,7 +171,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat('labor time per 100gm'))}
+                     placeholder={t(address.concat('labor time per 100gm'))}
                      name="labor_time"
                      value={laborTime}
                      onChange={e => {
@@ -193,7 +193,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat('percentage of yield'))}
+                     placeholder={t(address.concat('percentage of yield'))}
                      name="yield"
                      value={yieldPercentage}
                      onChange={e => {
@@ -211,7 +211,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat('shelf life'))}
+                     placeholder={t(address.concat('shelf life'))}
                      name="shelf_life"
                      value={shelfLife}
                      onChange={e => {
@@ -232,7 +232,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                <InputWrapper>
                   <Input
                      type="text"
-                     label={t(address.concat('bulk density'))}
+                     placeholder={t(address.concat('bulk density'))}
                      name="bulk_density"
                      value={bulkDensity}
                      onChange={e => {

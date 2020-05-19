@@ -4,14 +4,22 @@ import { HelperText, Input, RadioGroup, Text, TextButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { CloseIcon } from '../../../../../assets/icons'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { Container, Grid, TunnelBody, TunnelHeader } from '../styled'
+import {
+   Container,
+   Grid,
+   TunnelBody,
+   TunnelHeader,
+   StyledSelect,
+   Flex,
+   StyledLabel,
+} from '../styled'
 
-const InformationTunnel = ({ state, closeTunnel }) => {
+const InformationTunnel = ({ state, closeTunnel, cuisines }) => {
    // State
    const [busy, setBusy] = React.useState(false)
    const [_state, _setState] = React.useState({
       type: state.type || 'Vegetarian',
-      cuisine: state.cuisine || '',
+      cuisine: state.cuisine || cuisines[0].name,
       cookingTime: state.cookingTime || '',
       author: state.author || '',
       utensils: state.utensils?.join(',') || '',
@@ -85,24 +93,21 @@ const InformationTunnel = ({ state, closeTunnel }) => {
             </Container>
             <Container bottom="32">
                <Grid gap="16">
-                  <Input
-                     type="text"
-                     label="Cuisine"
-                     name="cuisine"
-                     value={_state.cuisine}
-                     onChange={e =>
-                        _setState({ ..._state, cuisine: e.target.value })
-                     }
-                  />
-                  <Input
-                     type="text"
-                     label="Cooking Time(mins.)"
-                     name="time"
-                     value={_state.cookingTime}
-                     onChange={e =>
-                        _setState({ ..._state, cookingTime: e.target.value })
-                     }
-                  />
+                  <Flex direction="row" align="center">
+                     <StyledLabel>Cuisine</StyledLabel>
+                     <StyledSelect
+                        value={_state.cuisine}
+                        onChange={e =>
+                           _setState({ ..._state, cuisine: e.target.value })
+                        }
+                     >
+                        {cuisines.map(cuisine => (
+                           <option key={cuisine.id} value={cuisine.name}>
+                              {cuisine.name}
+                           </option>
+                        ))}
+                     </StyledSelect>
+                  </Flex>
                </Grid>
             </Container>
             <Container bottom="32">
@@ -114,6 +119,15 @@ const InformationTunnel = ({ state, closeTunnel }) => {
                      value={_state.author}
                      onChange={e =>
                         _setState({ ..._state, author: e.target.value })
+                     }
+                  />
+                  <Input
+                     type="text"
+                     label="Cooking Time(mins.)"
+                     name="time"
+                     value={_state.cookingTime}
+                     onChange={e =>
+                        _setState({ ..._state, cookingTime: e.target.value })
                      }
                   />
                </Grid>

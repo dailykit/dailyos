@@ -147,7 +147,9 @@ const RecipesListing = () => {
                            {recipe.simpleRecipeYields.length}
                         </TableCell>
                         <TableCell>
-                           {recipe.cookingTime} {t('units.mins')}.
+                           {recipe.cookingTime
+                              ? recipe.cookingTime + ' ' + t('units.mins') + '.'
+                              : 'NA'}
                         </TableCell>
                         <TableCell>
                            <IconButton
