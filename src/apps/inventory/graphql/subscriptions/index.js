@@ -5,9 +5,21 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
       supplierItems {
          id
          name
+         bulkItemAsShippedId
          supplier {
             name
             contactPerson
+         }
+         bulkItems {
+            id
+            processingName
+            awaiting
+            onHand
+            committed
+            parLevel
+            maxLevel
+            isAvailable
+            unit
          }
       }
    }

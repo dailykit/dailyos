@@ -1,34 +1,39 @@
-import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
-   SearchBox,
    IconButton,
    Loader,
+   SearchBox,
    Table,
-   TableHead,
    TableBody,
-   TableRow,
    TableCell,
+   TableHead,
+   TableRow,
+   Toggle,
 } from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
-
-import {
-   StyledWrapper,
-   StyledTableHeader,
-   StyledTableActions,
-   StyledHeader,
-   StyledContent,
-   StyledPagination,
-} from '../styled'
 
 import {
    AddIcon,
    ChevronLeftIcon,
    ChevronRightIcon,
 } from '../../../assets/icons'
-
 import { Context } from '../../../context/tabs'
+import {
+   SUPPLIER_ITEMS_SUBSCRIPTION,
+   UPDATE_BULK_ITEM_AVAILABILITY,
+} from '../../../graphql'
+import {
+   StyledContent,
+   StyledHeader,
+   StyledPagination,
+   StyledTableActions,
+   StyledTableHeader,
+   StyledWrapper,
+   CellColumnContainer,
+   OnHandData,
+} from '../styled'
 
 const address = 'apps.inventory.views.listings.item.'
 
@@ -36,16 +41,20 @@ export default function ItemListing() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const [search, setSearch] = React.useState('')
+   const [loading, setLoading] = React.useState(false)
 
-   const { loading, data, error } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
+   const { loading: itemsLoading, data, error } = useSubscription(
+      SUPPLIER_ITEMS_SUBSCRIPTION
+   )
+   const [updateBulkItem] = useMutation(UPDATE_BULK_ITEM_AVAILABILITY)
 
    const addTab = (title, view) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
    }
 
-   if (error) return <p>Error! I messed Up :(</p>
+   if (error) return <p>Errr! I messed Up :(</p>
 
-   if (loading) return <Loader />
+   if (loading || itemsLoading) return <Loader />
 
    if (data)
       return (
@@ -84,15 +93,117 @@ export default function ItemListing() {
                      <TableRow>
                         <TableCell>Supplier Item</TableCell>
                         <TableCell>Supplier</TableCell>
+                        <TableCell>Processings</TableCell>
+                        <TableCell align="center">On Hand</TableCell>
+                        <TableCell>Awaiting</TableCell>
+                        <TableCell>Committed</TableCell>
+                        <TableCell>Availability</TableCell>
                      </TableRow>
                   </TableHead>
                   <TableBody>
                      {data.supplierItems.reverse().map(item => (
                         <TableRow key={item.id}>
                            <TableCell>{item.name}</TableCell>
+                           <TableCell>{item.supplier.name}</TableCell>
                            <TableCell>
-                              {item.supplier.name} (
-                              {item.supplier.contactPerson?.email})
+                              <CellColumnContainer>
+                                 {item.bulkItems?.map(processing => (
+                                    <div style={{ padding: '5px' }}>
+                                       {processing.processingName}
+                                    </div>
+                                 ))}
+                              </CellColumnContainer>
+                           </TableCell>
+                           <TableCell style={{ width: '15%' }}>
+                              {item.bulkItems?.map(processing => (
+                                 <CellColumnContainer>
+                                    <div
+                                       style={{
+                                          padding: '5px 0',
+                                          display: 'flex',
+                                       }}
+                                    >
+                                       <OnHandData
+                                          alert={
+                                             processing.onHand <
+                                             processing.parLevel
+                                          }
+                                       >
+                                          {processing.parLevel}
+                                       </OnHandData>
+                                       <span style={{ width: '10px' }} />
+
+                                       <span
+                                          style={{ color: '#888D9D' }}
+                                       >{`{`}</span>
+                                       <OnHandData
+                                          style={{
+                                             padding: '0 30px',
+                                             textAlign: 'center',
+                                          }}
+                                          alertAndSuccess={
+                                             processing.onHand >
+                                             processing.parLevel
+                                          }
+                                       >
+                                          {processing.onHand}
+                                       </OnHandData>
+                                       <span
+                                          style={{ color: '#888D9D' }}
+                                       >{`}`}</span>
+
+                                       <span style={{ width: '10px' }} />
+                                       <OnHandData>
+                                          {processing.maxLevel}
+                                       </OnHandData>
+                                    </div>
+                                 </CellColumnContainer>
+                              ))}
+                           </TableCell>
+                           <TableCell>
+                              <CellColumnContainer>
+                                 {item.bulkItems?.map(processing => (
+                                    <div style={{ padding: '5px' }}>
+                                       {processing.awaiting} {processing.unit}
+                                    </div>
+                                 ))}
+                              </CellColumnContainer>
+                           </TableCell>
+                           <TableCell>
+                              <CellColumnContainer>
+                                 {item.bulkItems?.map(processing => (
+                                    <div style={{ padding: '5px' }}>
+                                       {processing.committed} {processing.unit}
+                                    </div>
+                                 ))}
+                              </CellColumnContainer>
+                           </TableCell>
+                           <TableCell>
+                              <CellColumnContainer>
+                                 {item.bulkItems?.map(processing => (
+                                    <div style={{ padding: '5px' }}>
+                                       <Toggle
+                                          checked={processing.isAvailable}
+                                          setChecked={async () => {
+                                             setLoading(true)
+                                             const resp = await updateBulkItem({
+                                                variables: {
+                                                   id: processing.id,
+                                                   availability: !processing.isAvailable,
+                                                },
+                                             })
+
+                                             if (resp?.data?.updateBulkItem) {
+                                                setLoading(false)
+                                                toast.info(
+                                                   'Updated Successfully !'
+                                                )
+                                             }
+                                          }}
+                                       />
+                                    </div>
+                                 ))}
+                              </CellColumnContainer>
                            </TableCell>
                         </TableRow>
                      ))}

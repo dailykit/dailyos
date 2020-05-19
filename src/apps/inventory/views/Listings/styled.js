@@ -56,3 +56,17 @@ export const StyledPagination = styled.div`
       cursor: pointer;
    }
 `
+
+export const CellColumnContainer = styled.div`
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+`
+
+export const OnHandData = styled.span`
+   color: ${({ alert, alertAndSuccess }) => {
+      if (alert) return '#FF5A52'
+      if (alertAndSuccess) return '#53C22B'
+      return '#888D9D'
+   }};
+`
