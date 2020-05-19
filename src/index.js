@@ -18,7 +18,6 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
 import Backend from 'i18next-http-backend'
-import LanguageDetector from 'i18next-browser-languagedetector'
 
 import './global.css'
 
@@ -67,9 +66,9 @@ const client = new ApolloClient({
 
 i18n
    .use(Backend)
-   .use(LanguageDetector)
    .use(initReactI18next)
    .init({
+      lng: 'en',
       fallbackLng: false,
       debug: false,
       whitelist: languages,
