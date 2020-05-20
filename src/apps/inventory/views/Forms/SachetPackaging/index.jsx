@@ -8,7 +8,7 @@ import {
    SachetPackagingContext,
 } from '../../../context'
 import { StyledWrapper } from '../styled'
-import { SuppliersTunnel } from './Tunnels'
+import { SuppliersTunnel, ItemInformationTunnel } from './Tunnels'
 
 import { SUPPLIERS } from '../../../graphql'
 
@@ -25,19 +25,25 @@ export default function SachetPackaging() {
    return (
       <>
          <SachetPackagingContext.Provider
-            value={(sachetPackagingState, sachetPackagingDispatch)}
+            value={{ sachetPackagingState, sachetPackagingDispatch }}
          >
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1}>
                   <SuppliersTunnel
                      close={closeTunnel}
-                     open={openTunnel}
+                     next={openTunnel}
                      suppliers={supplierData?.suppliers?.map(supplier => ({
                         id: supplier.id,
                         title: supplier.name,
                         description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
                      }))}
                      rawSuppliers={supplierData.suppliers}
+                  />
+               </Tunnel>
+               <Tunnel layer={2}>
+                  <ItemInformationTunnel
+                     close={closeTunnel}
+                     next={openTunnel}
                   />
                </Tunnel>
             </Tunnels>

@@ -1,3 +1,4 @@
 import SuppliersTunnel from './SuppliersTunnel'
+import ItemInformationTunnel from './ItemInformationTunnel'
 
-export { SuppliersTunnel }
+export { SuppliersTunnel, ItemInformationTunnel }

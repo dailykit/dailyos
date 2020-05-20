@@ -20,7 +20,7 @@ const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 export default function SuppliersTunnel({
    close,
    suppliers,
-   open,
+   next,
    rawSuppliers,
 }) {
    const { t } = useTranslation()
@@ -39,7 +39,7 @@ export default function SuppliersTunnel({
                   )
                   sachetPackagingDispatch({ type: 'SET_SUPPLIER', payload })
                   close(1)
-                  open(2)
+                  next(2)
                }}
                close={() => close(1)}
                nextAction="Next"
