@@ -91,7 +91,14 @@ const Sachets = ({ state, openTunnel }) => {
                            </span>
                         </Actions>
                         <h3>{sachet.quantity + ' ' + sachet.unit}</h3>
-                        <p>Active: {sachet.liveMOF || 'NA'}</p>
+                        <p>
+                           Active:{' '}
+                           {sachet.liveModeOfFulfillment
+                              ? sachet.liveModeOfFulfillment.type === 'realTime'
+                                 ? 'Real Time'
+                                 : 'Planned Lot'
+                              : 'NA'}
+                        </p>
                         <p>Available: NA</p>
                      </StyledListingTile>
                   ))}

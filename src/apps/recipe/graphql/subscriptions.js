@@ -42,6 +42,10 @@ export const S_INGREDIENT = gql`
                unit
                quantity
                defaultNutritionalValues
+               liveModeOfFulfillment {
+                  id
+                  type
+               }
                modeOfFulfillments {
                   id
                   accuracy
