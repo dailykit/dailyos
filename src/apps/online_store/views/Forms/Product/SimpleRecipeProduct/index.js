@@ -24,6 +24,7 @@ import {
    UPDATE_SIMPLE_RECIPE_PRODUCT,
    S_INVENTORY_PRODUCTS,
    S_SIMPLE_RECIPE_PRODUCTS,
+   S_ACCOMPANIMENT_TYPES,
 } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
@@ -52,28 +53,13 @@ export default function SimpleRecipeProduct() {
    const [state, setState] = React.useState({})
 
    const [recipes, setRecipes] = React.useState([])
-   const [accompanimentTypes, setAccompanimentTypes] = React.useState([
-      { id: 1, title: 'Beverages' },
-      { id: 2, title: 'Salads' },
-      { id: 3, title: 'Sweets' },
-   ])
+   const [accompanimentTypes, setAccompanimentTypes] = React.useState([])
    const [products, setProducts] = React.useState({
       inventory: [],
       simple: [],
    })
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-
-   // useQuery(ACCOMPANIMENT_TYPES, {
-   //    onCompleted: data => {
-   //       const { accompanimentTypes } = data
-   //       const updatedAccompanimentTypes = accompanimentTypes.map(item => {
-   //          item.title = item.name
-   //          return item
-   //       })
-   //       setAccompanimentTypes(updatedAccompanimentTypes)
-   //    },
-   // })
 
    // Subscription
    const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
@@ -141,6 +127,19 @@ export default function SimpleRecipeProduct() {
       },
       onError: error => {
          console.log(error)
+      },
+   })
+
+   useSubscription(S_ACCOMPANIMENT_TYPES, {
+      onSubscriptionData: data => {
+         const { master_accompanimentType } = data.subscriptionData.data
+         const updatedAccompanimentTypes = master_accompanimentType.map(
+            item => {
+               item.title = item.name
+               return item
+            }
+         )
+         setAccompanimentTypes(updatedAccompanimentTypes)
       },
    })
 

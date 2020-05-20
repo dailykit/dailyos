@@ -1,5 +1,14 @@
 import gql from 'graphql-tag'
 
+export const S_ACCOMPANIMENT_TYPES = gql`
+   {
+      master_accompanimentType {
+         id
+         name
+      }
+   }
+`
+
 export const S_SIMPLE_RECIPE_PRODUCTS = gql`
    {
       simpleRecipeProducts {
@@ -8,6 +17,7 @@ export const S_SIMPLE_RECIPE_PRODUCTS = gql`
          isValid
          isPublished
          simpleRecipe {
+            id
             name
          }
       }
