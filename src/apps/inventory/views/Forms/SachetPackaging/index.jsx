@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react'
+import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 
 import {
    sachetPackagingInitialState,
@@ -13,14 +14,21 @@ export default function SachetPackaging() {
       sachetPackagingReducers,
       sachetPackagingInitialState
    )
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    return (
       <>
          <SachetPackagingContext.Provider
             value={(sachetPackagingState, sachetPackagingDispatch)}
          >
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1}>
+                  <h2>Tunnel 1</h2>
+               </Tunnel>
+            </Tunnels>
+
             <StyledWrapper>
-               <h1>Hellow Sachets</h1>
+               <h1>Hellow sachets</h1>
             </StyledWrapper>
          </SachetPackagingContext.Provider>
       </>
