@@ -20,6 +20,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
          id
          name
          isValid
+         isPublished
          accompaniments
          tags
          description
@@ -60,6 +61,7 @@ export const S_INVENTORY_PRODUCT = gql`
          name
          accompaniments
          isValid
+         isPublished
          tags
          description
          supplierItem {
@@ -134,6 +136,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          name
          default
          isValid
+         isPublished
          description
          tags
          customizableProductOptions {
@@ -189,6 +192,7 @@ export const S_COMBO_PRODUCT = gql`
          description
          tags
          isValid
+         isPublished
          comboProductComponents {
             id
             label
