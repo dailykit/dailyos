@@ -956,14 +956,14 @@
                   "labels": "Etiqueta",
                   "recipe": "Receta",
                   "select type of product": "Seleccione el tipo de producto",
-                  "inventory product": "Producto de Inventario",
+                  "inventory product": "Inventory Product",
                   "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                   "simple recipe product": "Producto receta simple",
-                  "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer",
+                  "subtitle 2": "Simple Recipe product is only one recipes, sold as Meal Kits as well as Ready to Eat",
                   "customizable product": "Producto personalizable",
-                  "subtitle 3": " Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer",
+                  "subtitle 3": "Customizable product has recipe options with one recipe as default",
                   "combo product": "Producto de Combo",
-                  "subtitle 4": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer"
+                  "subtitle 4": "Combo product is a combination of multiple products"
                }
             }
          }
