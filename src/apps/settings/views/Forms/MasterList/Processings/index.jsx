@@ -28,9 +28,9 @@ import { AddTypesTunnel } from './tunnels'
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.settings.views.forms.cuisines.'
+const address = 'apps.settings.views.forms.processings.'
 
-const CuisineForm = () => {
+const ProcessingsForm = () => {
    const { t } = useTranslation()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -38,11 +38,11 @@ const CuisineForm = () => {
    const data = [
       {
          id: 1,
-         name: 'Mexican',
+         name: 'Mashed',
       },
       {
          id: 2,
-         name: 'Italian',
+         name: 'Boiled',
       },
    ]
 
@@ -56,7 +56,7 @@ const CuisineForm = () => {
          <Layout>
             <Card>
                <div>
-                  <Text as="title">{t(address.concat('cuisines'))}</Text>
+                  <Text as="title">{t(address.concat('processings'))}</Text>
                </div>
                <div>
                   <Text as="title">{data.length}</Text>
@@ -68,7 +68,7 @@ const CuisineForm = () => {
             <Listing>
                <ListingHeader>
                   <Text as="p">
-                     {t(address.concat('cuisines'))} ({data.length})
+                     {t(address.concat('processings'))} ({data.length})
                   </Text>
                </ListingHeader>
                <Table>
@@ -78,9 +78,9 @@ const CuisineForm = () => {
                      </TableRow>
                   </TableHead>
                   <TableBody>
-                     {data.map(allergen => (
-                        <TableRow key={allergen.id}>
-                           <TableCell>{allergen.name}</TableCell>
+                     {data.map(processing => (
+                        <TableRow key={processing.id}>
+                           <TableCell>{processing.name}</TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
@@ -91,4 +91,4 @@ const CuisineForm = () => {
    )
 }
 
-export default CuisineForm
+export default ProcessingsForm

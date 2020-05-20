@@ -1080,6 +1080,18 @@
                         "enter a type name": "Enter a type name"
                      }
                   }
+               },
+               "processings": {
+                  "processings": "Processings",
+                  "name": "Name",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
                }
             },
             "home": {

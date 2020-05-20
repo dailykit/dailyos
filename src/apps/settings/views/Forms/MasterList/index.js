@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import AccompanimentTypesForm from './AccompanimentTypes'
 import CuisineForm from './Cuisine'
 import AllergensForm from './Allergens'
+import ProcessingsForm from './Processings'
 
 const MasterListForm = () => {
    const { list } = useParams()
@@ -17,6 +18,9 @@ const MasterListForm = () => {
       }
       case 'allergens': {
          return <AllergensForm />
+      }
+      case 'processings': {
+         return <ProcessingsForm />
       }
       default: {
          return <AccompanimentTypesForm />
