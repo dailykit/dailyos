@@ -24,7 +24,7 @@ const address = 'apps.settings.views.listings.masterlist.'
 const MasterList = () => {
    const { t } = useTranslation()
    const history = useHistory()
-   const { tabs } = useTabs()
+   const { tabs, addTab } = useTabs()
 
    React.useEffect(() => {
       const tab =
@@ -48,20 +48,39 @@ const MasterList = () => {
             </TableHead>
             <TableBody>
                <TableRow>
-                  <TableCell>
+                  <TableCell
+                     onClick={() =>
+                        addTab(
+                           'Accompaniment Types',
+                           '/settings/master-lists/accompaniment-types'
+                        )
+                     }
+                  >
                      {t(address.concat('accompaniment types'))}
                   </TableCell>
                   <TableCell>20</TableCell>
                </TableRow>
-               <TableRow>
+               <TableRow
+                  onClick={() =>
+                     addTab('Allergens', '/settings/master-lists/allergens')
+                  }
+               >
                   <TableCell>{t(address.concat('allergens'))}</TableCell>
                   <TableCell>20</TableCell>
                </TableRow>
-               <TableRow>
+               <TableRow
+                  onClick={() =>
+                     addTab('Cuisines', '/settings/master-lists/cuisines')
+                  }
+               >
                   <TableCell>{t(address.concat('cuisines'))}</TableCell>
                   <TableCell>20</TableCell>
                </TableRow>
-               <TableRow>
+               <TableRow
+                  onClick={() =>
+                     addTab('Processings', '/settings/master-lists/processings')
+                  }
+               >
                   <TableCell>{t(address.concat('processings'))}</TableCell>
                   <TableCell>20</TableCell>
                </TableRow>

@@ -11,6 +11,7 @@ import {
    UserForm,
    RoleForm,
    DeviceForm,
+   MasterListForm,
    StationsListing,
    StationForm,
    MasterList,
@@ -52,6 +53,9 @@ const Main = () => {
             </Route>
             <Route path="/settings/master-lists" exact>
                <MasterList />
+            </Route>
+            <Route path="/settings/master-lists/:list">
+               <MasterListForm />
             </Route>
          </Switch>
       </main>

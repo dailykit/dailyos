@@ -8,7 +8,13 @@ import {
    MasterList,
 } from './Listings'
 
-import { UserForm, RoleForm, DeviceForm, StationForm } from './Forms'
+import {
+   UserForm,
+   RoleForm,
+   DeviceForm,
+   StationForm,
+   MasterListForm,
+} from './Forms'
 
 export {
    Home,
@@ -22,4 +28,5 @@ export {
    RoleForm,
    DeviceForm,
    StationForm,
+   MasterListForm,
 }
