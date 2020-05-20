@@ -1,13 +1,16 @@
 import React, { useReducer } from 'react'
-import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { useQuery } from '@apollo/react-hooks'
+import { Tunnels, Tunnel, useTunnel, ButtonTile, Loader } from '@dailykit/ui'
 
 import {
    sachetPackagingInitialState,
    sachetPackagingReducers,
    SachetPackagingContext,
 } from '../../../context'
-
 import { StyledWrapper } from '../styled'
+import { SuppliersTunnel } from './Tunnels'
+
+import { SUPPLIERS } from '../../../graphql'
 
 export default function SachetPackaging() {
    const [sachetPackagingState, sachetPackagingDispatch] = useReducer(
@@ -15,6 +18,9 @@ export default function SachetPackaging() {
       sachetPackagingInitialState
    )
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+
+   if (supplierLoading) return <Loader />
 
    return (
       <>
@@ -23,12 +29,27 @@ export default function SachetPackaging() {
          >
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1}>
-                  <h2>Tunnel 1</h2>
+                  <SuppliersTunnel
+                     close={closeTunnel}
+                     open={openTunnel}
+                     suppliers={supplierData?.suppliers?.map(supplier => ({
+                        id: supplier.id,
+                        title: supplier.name,
+                        description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
+                     }))}
+                     rawSuppliers={supplierData.suppliers}
+                  />
                </Tunnel>
             </Tunnels>
 
             <StyledWrapper>
-               <h1>Hellow sachets</h1>
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text="Select Supplier"
+                  onClick={() => openTunnel(1)}
+                  style={{ margin: '20px 0' }}
+               />
             </StyledWrapper>
          </SachetPackagingContext.Provider>
       </>
