@@ -8,7 +8,11 @@ import {
    SachetPackagingContext,
 } from '../../../context'
 import { StyledWrapper } from '../styled'
-import { SuppliersTunnel, ItemInformationTunnel } from './Tunnels'
+import {
+   SuppliersTunnel,
+   ItemInformationTunnel,
+   MoreItemInfoTunnel,
+} from './Tunnels'
 
 import { SUPPLIERS } from '../../../graphql'
 
@@ -17,7 +21,7 @@ export default function SachetPackaging() {
       sachetPackagingReducers,
       sachetPackagingInitialState
    )
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
 
    if (supplierLoading) return <Loader />
@@ -45,6 +49,9 @@ export default function SachetPackaging() {
                      close={closeTunnel}
                      next={openTunnel}
                   />
+               </Tunnel>
+               <Tunnel layer={3}>
+                  <MoreItemInfoTunnel close={closeTunnel} />
                </Tunnel>
             </Tunnels>
 

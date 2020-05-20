@@ -13,7 +13,7 @@ const reducers = (state, { type, payload }) => {
          return { ...state, supplier: payload }
 
       case 'ADD_ITEM_INFO':
-         return { ...state, info: payload }
+         return { ...state, info: { ...state.info, ...payload } }
       default:
          return state
    }
