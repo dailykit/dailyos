@@ -1052,7 +1052,8 @@
                "roles": "Roles",
                "apps": "Apps",
                "devices": "Devices",
-               "stations": "Stations"
+               "stations": "Stations",
+               "master lists": "Master Lists"
             },
             "listings": {
                "appslisting": {
@@ -1083,6 +1084,15 @@
                   "apps configured": "Apps Configured",
                   "devices assigned": "Devices Assigned",
                   "actions": "Actions"
+               },
+               "masterlist": {
+                  "master lists": "Master Lists",
+                  "list name": "List name",
+                  "total inputs": "Total inputs",
+                  "allergens": "Allergens",
+                  "cuisines": "Cuisines",
+                  "processings": "Processings",
+                  "accompaniment types": "Accompaniment Types"
                }
             }
          }

@@ -13,6 +13,7 @@ import {
    DeviceForm,
    StationsListing,
    StationForm,
+   MasterList,
 } from '../../views'
 
 const Main = () => {
@@ -48,6 +49,9 @@ const Main = () => {
             </Route>
             <Route path="/settings/stations/:name">
                <StationForm />
+            </Route>
+            <Route path="/settings/master-lists" exact>
+               <MasterList />
             </Route>
          </Switch>
       </main>
