@@ -27,6 +27,11 @@ export const StyledHeader = styled.div`
 export const InputWrapper = styled.div`
    width: ${props => props.width};
 `
+export const InputGroup = styled.div`
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   grid-gap: 40px;
+`
 
 export const MasterSettings = styled.div`
    display: flex;
@@ -101,4 +106,10 @@ export const StyledSelect = styled.select`
    line-height: 16px;
    color: #555b6e;
    outline: none;
+`
+
+export const StyledMain = styled.div`
+   position: relative;
+   min-height: calc(100% - 120px);
+   background: #f3f3f3;
 `

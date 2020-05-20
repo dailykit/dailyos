@@ -118,8 +118,7 @@ const IngredientsListing = () => {
          })
       }
    }
-   const togglePublish = (e, ingredient) => {
-      e.stopPropagation()
+   const togglePublish = (val, ingredient) => {
       if (!ingredient.isPublished && !ingredient.isValid.status) {
          return toast.error('Ingredient should be valid!')
       }
@@ -193,13 +192,15 @@ const IngredientsListing = () => {
                            </TableCell>
                            <TableCell>
                               {ingredient.createdAt
-                                 ? moment(ingredient.createdAt).calendar()
+                                 ? moment(ingredient.createdAt).format('LLL')
                                  : 'NA'}
                            </TableCell>
                            {/* <TableCell>
                               <Toggle
                                  checked={ingredient.isPublished}
-                                 setChecked={e => togglePublish(e, ingredient)}
+                                 setChecked={val =>
+                                    togglePublish(val, ingredient)
+                                 }
                               />
                            </TableCell> */}
                            <TableCell>

@@ -118,7 +118,13 @@ const Sachet = ({ state, openTunnel }) => {
                <Flex align="center">
                   <Flex justify="start" align="baseline">
                      <Text as="subtitle">Active:</Text>{' '}
-                     <Text as="title">{sachet.liveMOF || 'NA'}</Text>
+                     <Text as="title">
+                        {sachet.liveModeOfFulfillment
+                           ? sachet.liveModeOfFulfillment.type === 'realTime'
+                              ? 'Real Time'
+                              : 'Planned Lot'
+                           : 'NA'}
+                     </Text>
                   </Flex>
                   <IconButton onClick={() => openTunnel(7)}>
                      <EditIcon color="#00A7E1" />

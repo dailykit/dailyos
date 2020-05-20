@@ -30,6 +30,7 @@ export const S_INGREDIENT = gql`
       ingredient(id: $id) {
          id
          name
+         category
          image
          isValid
          isPublished
@@ -42,6 +43,10 @@ export const S_INGREDIENT = gql`
                unit
                quantity
                defaultNutritionalValues
+               liveModeOfFulfillment {
+                  id
+                  type
+               }
                modeOfFulfillments {
                   id
                   accuracy

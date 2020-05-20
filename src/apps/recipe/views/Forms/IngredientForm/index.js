@@ -28,9 +28,14 @@ import {
    S_SACHET_ITEMS,
    UPDATE_INGREDIENT,
 } from '../../../graphql'
-import { InputWrapper, StyledHeader, MasterSettings } from '../styled'
+import {
+   InputWrapper,
+   StyledHeader,
+   MasterSettings,
+   InputGroup,
+   StyledMain,
+} from '../styled'
 import { Processings, Stats } from './components'
-import { StyledMain } from './styled'
 import {
    EditItemTunnel,
    EditLabelTemplateTunnel,
@@ -58,6 +63,7 @@ const IngredientForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    const [title, setTitle] = React.useState('')
+   const [category, setCategory] = React.useState('')
    const [state, setState] = React.useState({})
 
    const [processings, setProcessings] = React.useState([])
@@ -76,9 +82,9 @@ const IngredientForm = () => {
          id: tabs.current.id,
       },
       onSubscriptionData: data => {
-         console.log(data)
          setState(data.subscriptionData.data.ingredient)
          setTitle(data.subscriptionData.data.ingredient.name)
+         setCategory(data.subscriptionData.data.ingredient.category || '')
       },
       onError: error => {
          console.log(error)
@@ -225,6 +231,18 @@ const IngredientForm = () => {
          }
       }
    }
+   const updateCategory = () => {
+      if (category) {
+         updateIngredient({
+            variables: {
+               id: state.id,
+               set: {
+                  category,
+               },
+            },
+         })
+      }
+   }
    const togglePublish = val => {
       if (val && !state.isValid.status) {
          return toast.error('Ingredient should be valid!')
@@ -334,16 +352,28 @@ const IngredientForm = () => {
                </Tunnel>
             </Tunnels>
             <StyledHeader>
-               <InputWrapper>
-                  <Input
-                     type="text"
-                     label="Ingredient Name"
-                     name="title"
-                     value={title}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
-                  />
-               </InputWrapper>
+               <InputGroup>
+                  <InputWrapper>
+                     <Input
+                        type="text"
+                        label="Ingredient Name"
+                        name="title"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        onBlur={updateName}
+                     />
+                  </InputWrapper>
+                  <InputWrapper>
+                     <Input
+                        type="text"
+                        label="Ingredient Category"
+                        name="category"
+                        value={category}
+                        onChange={e => setCategory(e.target.value)}
+                        onBlur={updateCategory}
+                     />
+                  </InputWrapper>
+               </InputGroup>
                <MasterSettings>
                   <div>
                      {state.isValid?.status ? (
