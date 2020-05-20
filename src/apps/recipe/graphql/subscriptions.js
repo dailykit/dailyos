@@ -30,6 +30,7 @@ export const S_INGREDIENT = gql`
       ingredient(id: $id) {
          id
          name
+         category
          image
          isValid
          isPublished
