@@ -1043,6 +1043,57 @@
                   "save": "Guardar",
                   "roles for role": "Rayos para el rol",
                   "select devices for the user": "Seleccionar dispositivos para el usuario"
+               },
+               "accompanimenttypes": {
+                  "accompaniment types": "Accompaniment Types",
+                  "type": "Type",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
+               },
+               "cuisines": {
+                  "cuisines": "Cuisines",
+                  "name": "Name",
+                  "# of recipes": "# of Recipes",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
+               },
+               "allergens": {
+                  "allergens": "Allergens",
+                  "name": "Name",
+                  "description": "Description",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
+               },
+               "processings": {
+                  "processings": "Processings",
+                  "name": "Name",
+                  "reference count": "Reference Count",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
                }
             },
             "home": {
@@ -1051,7 +1102,8 @@
                "roles": "Roles",
                "apps": "Aplicaciones",
                "devices": "Dispositivos",
-               "stations": "Emisora"
+               "stations": "Emisora",
+               "master lists": "Master Lists"
             },
             "listings": {
                "appslisting": {
@@ -1082,6 +1134,15 @@
                   "apps configured": "Aplicaciones configuradas",
                   "devices assigned": "Dispositivos asignados",
                   "actions": "Acciones"
+               },
+               "masterlist": {
+                  "master lists": "Master Lists",
+                  "list name": "List name",
+                  "total inputs": "Total inputs",
+                  "allergens": "Allergens",
+                  "cuisines": "Cuisines",
+                  "processings": "Processings",
+                  "accompaniment types": "Accompaniment Types"
                }
             }
          }
