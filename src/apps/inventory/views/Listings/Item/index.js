@@ -35,6 +35,8 @@ import {
    OnHandData,
 } from '../styled'
 
+import EditIcon from '../../../../recipe/assets/icons/Edit'
+
 const address = 'apps.inventory.views.listings.item.'
 
 export default function ItemListing() {
@@ -98,6 +100,7 @@ export default function ItemListing() {
                         <TableCell>Awaiting</TableCell>
                         <TableCell>Committed</TableCell>
                         <TableCell>Availability</TableCell>
+                        <TableCell />
                      </TableRow>
                   </TableHead>
                   <TableBody>
@@ -204,6 +207,21 @@ export default function ItemListing() {
                                     </div>
                                  ))}
                               </CellColumnContainer>
+                           </TableCell>
+                           <TableCell>
+                              <IconButton
+                                 onClick={() => {
+                                    dispatch({
+                                       type: 'SET_ITEM_ID',
+                                       payload: item.id,
+                                    })
+
+                                    addTab('Edit Item', 'items')
+                                 }}
+                                 type="outline"
+                              >
+                                 <EditIcon />
+                              </IconButton>
                            </TableCell>
                         </TableRow>
                      ))}

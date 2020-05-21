@@ -10,6 +10,7 @@ const state = {
    sachetWorkOrder: {},
    bulkWorkOrder: {},
    purchaseOrder: {},
+   itemId: '',
 }
 
 const reducers = (state, { type, payload }) => {
@@ -39,17 +40,16 @@ const reducers = (state, { type, payload }) => {
 
          if (alreadyExists) {
             return { ...state, current: { ...payload } }
-         } else {
-            return {
-               ...state,
-               current: { ...payload },
-               [payload.type]: [...state[payload.type], { ...payload }],
-            }
+         }
+         return {
+            ...state,
+            current: { ...payload },
+            [payload.type]: [...state[payload.type], { ...payload }],
          }
       }
       // Delete Tab
       case 'DELETE_TAB': {
-         const type = payload.type
+         const { type } = payload
          const tabs = state[type].filter(
             (tab, index) =>
                tab.title !== payload.title && index !== payload.index
@@ -116,6 +116,9 @@ const reducers = (state, { type, payload }) => {
 
       case 'SET_PURCHASE_WORK_ORDER':
          return { ...state, purchaseOrder: { ...payload } }
+
+      case 'SET_ITEM_ID':
+         return { ...state, itemId: payload }
       default:
          return state
    }
