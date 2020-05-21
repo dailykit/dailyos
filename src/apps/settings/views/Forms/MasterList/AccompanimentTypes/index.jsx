@@ -101,6 +101,9 @@ const AccompanimentTypesForm = () => {
                      {t(address.concat('accompaniment types'))} (
                      {data.master_accompanimentType.length})
                   </Text>
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                     <AddIcon size={24} />
+                  </IconButton>
                </ListingHeader>
                <Table>
                   <TableHead>

@@ -96,6 +96,9 @@ const ProcessingsForm = () => {
                      {t(address.concat('processings'))} (
                      {data.masterProcessings.length})
                   </Text>
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                     <AddIcon size={24} />
+                  </IconButton>
                </ListingHeader>
                <Table>
                   <TableHead>

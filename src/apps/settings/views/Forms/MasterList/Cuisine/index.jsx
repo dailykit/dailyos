@@ -96,6 +96,9 @@ const CuisineForm = () => {
                      {t(address.concat('cuisines'))} ({data.cuisineNames.length}
                      )
                   </Text>
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                     <AddIcon size={24} />
+                  </IconButton>
                </ListingHeader>
                <Table>
                   <TableHead>
