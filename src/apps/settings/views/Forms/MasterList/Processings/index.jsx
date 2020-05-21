@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
@@ -13,6 +13,7 @@ import {
    Tunnels,
    useTunnel,
    Loader,
+   IconButton,
 } from '@dailykit/ui'
 
 // Styled
@@ -29,7 +30,8 @@ import {
 import { AddTypesTunnel } from './tunnels'
 
 import { useTranslation } from 'react-i18next'
-import { PROCESSINGS } from '../../../../graphql'
+import { PROCESSINGS, DELETE_PROCESSINGS } from '../../../../graphql'
+import { toast } from 'react-toastify'
 
 const address = 'apps.settings.views.forms.processings.'
 
@@ -40,6 +42,29 @@ const ProcessingsForm = () => {
 
    // subscription
    const { loading, data, error } = useSubscription(PROCESSINGS)
+
+   // Mutation
+   const [deleteElement] = useMutation(DELETE_PROCESSINGS, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = (e, el) => {
+      e.stopPropagation()
+      if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
+         deleteElement({
+            variables: {
+               ids: [el.id],
+            },
+         })
+      }
+   }
 
    if (error) {
       console.log(error)
@@ -79,6 +104,7 @@ const ProcessingsForm = () => {
                         <TableCell>
                            {t(address.concat('reference count'))}
                         </TableCell>
+                        <TableCell></TableCell>
                      </TableRow>
                   </TableHead>
                   <TableBody>
@@ -87,6 +113,13 @@ const ProcessingsForm = () => {
                            <TableCell>{processing.name}</TableCell>
                            <TableCell>
                               {processing.ingredientProcessings.length}
+                           </TableCell>
+                           <TableCell>
+                              <IconButton
+                                 onClick={e => deleteHandler(e, processing)}
+                              >
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
                            </TableCell>
                         </TableRow>
                      ))}

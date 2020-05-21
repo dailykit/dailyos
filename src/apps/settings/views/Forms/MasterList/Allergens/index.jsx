@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
@@ -13,6 +13,7 @@ import {
    Tunnels,
    useTunnel,
    Loader,
+   IconButton,
 } from '@dailykit/ui'
 
 // Styled
@@ -29,7 +30,8 @@ import {
 import { AddTypesTunnel } from './tunnels'
 
 import { useTranslation } from 'react-i18next'
-import { ALLERGENS } from '../../../../graphql'
+import { ALLERGENS, DELETE_ALLERGENS } from '../../../../graphql'
+import { toast } from 'react-toastify'
 
 const address = 'apps.settings.views.forms.allergens.'
 
@@ -40,6 +42,29 @@ const AllergensForm = () => {
 
    // subscription
    const { loading, data, error } = useSubscription(ALLERGENS)
+
+   // Mutation
+   const [deleteElement] = useMutation(DELETE_ALLERGENS, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = (e, el) => {
+      e.stopPropagation()
+      if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
+         deleteElement({
+            variables: {
+               ids: [el.id],
+            },
+         })
+      }
+   }
 
    if (error) {
       console.log(error)
@@ -79,6 +104,7 @@ const AllergensForm = () => {
                         <TableCell>
                            {t(address.concat('description'))}
                         </TableCell>
+                        <TableCell></TableCell>
                      </TableRow>
                   </TableHead>
                   <TableBody>
@@ -86,6 +112,13 @@ const AllergensForm = () => {
                         <TableRow key={allergen.id}>
                            <TableCell>{allergen.name}</TableCell>
                            <TableCell>{allergen.description || 'NA'}</TableCell>
+                           <TableCell>
+                              <IconButton
+                                 onClick={e => deleteHandler(e, allergen)}
+                              >
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
+                           </TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
