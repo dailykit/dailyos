@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 
 // Components
 import {
@@ -11,6 +12,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Loader,
 } from '@dailykit/ui'
 
 // Styled
@@ -27,6 +29,7 @@ import {
 import { AddTypesTunnel } from './tunnels'
 
 import { useTranslation } from 'react-i18next'
+import { ACCOMPANIMENT_TYPES } from '../../../../graphql'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
@@ -35,16 +38,13 @@ const AccompanimentTypesForm = () => {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   const data = [
-      {
-         id: 1,
-         name: 'Salads',
-      },
-      {
-         id: 2,
-         name: 'Beverages',
-      },
-   ]
+   // subscription
+   const { loading, data, error } = useSubscription(ACCOMPANIMENT_TYPES)
+
+   if (error) {
+      console.log(error)
+   }
+   if (loading) return <Loader />
 
    return (
       <React.Fragment>
@@ -61,7 +61,7 @@ const AccompanimentTypesForm = () => {
                   </Text>
                </div>
                <div>
-                  <Text as="title">{data.length}</Text>
+                  <Text as="title">{data.master_accompanimentType.length}</Text>
                   <span onClick={() => openTunnel(1)}>
                      <AddIcon color="#00A7E1" size={24} />
                   </span>
@@ -70,7 +70,8 @@ const AccompanimentTypesForm = () => {
             <Listing>
                <ListingHeader>
                   <Text as="p">
-                     {t(address.concat('accompaniment types'))} ({data.length})
+                     {t(address.concat('accompaniment types'))} (
+                     {data.master_accompanimentType.length})
                   </Text>
                </ListingHeader>
                <Table>
@@ -80,7 +81,7 @@ const AccompanimentTypesForm = () => {
                      </TableRow>
                   </TableHead>
                   <TableBody>
-                     {data.map(type => (
+                     {data.master_accompanimentType.map(type => (
                         <TableRow key={type.id}>
                            <TableCell>{type.name}</TableCell>
                         </TableRow>

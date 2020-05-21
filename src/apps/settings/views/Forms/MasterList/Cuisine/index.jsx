@@ -11,6 +11,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Loader,
 } from '@dailykit/ui'
 
 // Styled
@@ -27,6 +28,8 @@ import {
 import { AddTypesTunnel } from './tunnels'
 
 import { useTranslation } from 'react-i18next'
+import { CUISINES } from '../../../../graphql'
+import { useSubscription } from '@apollo/react-hooks'
 
 const address = 'apps.settings.views.forms.cuisines.'
 
@@ -35,16 +38,13 @@ const CuisineForm = () => {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
-   const data = [
-      {
-         id: 1,
-         name: 'Mexican',
-      },
-      {
-         id: 2,
-         name: 'Italian',
-      },
-   ]
+   // subscription
+   const { loading, data, error } = useSubscription(CUISINES)
+
+   if (error) {
+      console.log(error)
+   }
+   if (loading) return <Loader />
 
    return (
       <React.Fragment>
@@ -59,7 +59,7 @@ const CuisineForm = () => {
                   <Text as="title">{t(address.concat('cuisines'))}</Text>
                </div>
                <div>
-                  <Text as="title">{data.length}</Text>
+                  <Text as="title">{data.cuisineNames.length}</Text>
                   <span onClick={() => openTunnel(1)}>
                      <AddIcon color="#00A7E1" size={24} />
                   </span>
@@ -68,19 +68,24 @@ const CuisineForm = () => {
             <Listing>
                <ListingHeader>
                   <Text as="p">
-                     {t(address.concat('cuisines'))} ({data.length})
+                     {t(address.concat('cuisines'))} ({data.cuisineNames.length}
+                     )
                   </Text>
                </ListingHeader>
                <Table>
                   <TableHead>
                      <TableRow>
                         <TableCell>{t(address.concat('name'))}</TableCell>
+                        <TableCell>
+                           {t(address.concat('# of recipes'))}
+                        </TableCell>
                      </TableRow>
                   </TableHead>
                   <TableBody>
-                     {data.map(allergen => (
-                        <TableRow key={allergen.id}>
-                           <TableCell>{allergen.name}</TableCell>
+                     {data.cuisineNames.map(cuisine => (
+                        <TableRow key={cuisine.id}>
+                           <TableCell>{cuisine.name}</TableCell>
+                           <TableCell>{cuisine.simpleRecipes.length}</TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
