@@ -85,7 +85,7 @@ const AllergensForm = () => {
                      {data.masterAllergens.map(allergen => (
                         <TableRow key={allergen.id}>
                            <TableCell>{allergen.name}</TableCell>
-                           <TableCell>{allergen.description}</TableCell>
+                           <TableCell>{allergen.description || 'NA'}</TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
