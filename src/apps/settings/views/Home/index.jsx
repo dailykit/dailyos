@@ -50,7 +50,7 @@ const Home = () => {
             />
             <DashboardTile
                title={t(address.concat('master lists'))}
-               count="..."
+               count="4"
                conf="All active"
                onClick={() => addTab('Master Lists', '/settings/master-lists')}
             />

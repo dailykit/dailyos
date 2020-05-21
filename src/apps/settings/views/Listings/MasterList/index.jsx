@@ -18,6 +18,13 @@ import { useTabs } from '../../../context'
 import { StyledWrapper, StyledHeader } from '../styled'
 
 import { useTranslation } from 'react-i18next'
+import { useSubscription } from '@apollo/react-hooks'
+import {
+   ACCOMPANIMENT_TYPES,
+   PROCESSINGS,
+   ALLERGENS,
+   CUISINES,
+} from '../../../graphql'
 
 const address = 'apps.settings.views.listings.masterlist.'
 
@@ -25,6 +32,12 @@ const MasterList = () => {
    const { t } = useTranslation()
    const history = useHistory()
    const { tabs, addTab } = useTabs()
+
+   // subscription
+   const { data: accompaniments } = useSubscription(ACCOMPANIMENT_TYPES)
+   const { data: processings } = useSubscription(PROCESSINGS)
+   const { data: allergens } = useSubscription(ALLERGENS)
+   const { data: cuisines } = useSubscription(CUISINES)
 
    React.useEffect(() => {
       const tab =
@@ -58,7 +71,9 @@ const MasterList = () => {
                   >
                      {t(address.concat('accompaniment types'))}
                   </TableCell>
-                  <TableCell>20</TableCell>
+                  <TableCell>
+                     {accompaniments?.master_accompanimentType.length || '...'}
+                  </TableCell>
                </TableRow>
                <TableRow
                   onClick={() =>
@@ -66,7 +81,9 @@ const MasterList = () => {
                   }
                >
                   <TableCell>{t(address.concat('allergens'))}</TableCell>
-                  <TableCell>20</TableCell>
+                  <TableCell>
+                     {allergens?.masterAllergens.length || '...'}
+                  </TableCell>
                </TableRow>
                <TableRow
                   onClick={() =>
@@ -74,7 +91,9 @@ const MasterList = () => {
                   }
                >
                   <TableCell>{t(address.concat('cuisines'))}</TableCell>
-                  <TableCell>20</TableCell>
+                  <TableCell>
+                     {cuisines?.cuisineNames.length || '...'}
+                  </TableCell>
                </TableRow>
                <TableRow
                   onClick={() =>
@@ -82,7 +101,9 @@ const MasterList = () => {
                   }
                >
                   <TableCell>{t(address.concat('processings'))}</TableCell>
-                  <TableCell>20</TableCell>
+                  <TableCell>
+                     {processings?.masterProcessings.length || '...'}
+                  </TableCell>
                </TableRow>
             </TableBody>
          </Table>
