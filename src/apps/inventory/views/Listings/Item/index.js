@@ -83,7 +83,14 @@ export default function ItemListing() {
                   />
                   <IconButton
                      type="solid"
-                     onClick={() => addTab('Add Item', 'items')}
+                     onClick={() => {
+                        dispatch({
+                           type: 'SET_ITEM_ID',
+                           payload: '',
+                        })
+
+                        addTab('Add Item', 'items')
+                     }}
                   >
                      <AddIcon color="#fff" size={24} />
                   </IconButton>

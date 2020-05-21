@@ -289,68 +289,68 @@ export const reducer = (state, { type, payload }) => {
             configurable: { ...state.configurable, allergens: payload },
          }
 
-      case 'CONFIGURE_NEW_SACHET':
-         if (state.activeProcessing.shipped) {
-            const sachets = [...state.processing.sachets]
-            const index = sachets.findIndex(
-               sachet => sachet.quantity === payload.quantity
-            )
-            if (index >= 0) {
-               sachets.splice(index, 1, {
-                  id: payload.id,
-                  quantity: payload.quantity,
-                  parLevel: payload.par,
-                  maxInventoryLevel: payload.maxInventoryLevel,
-               })
-            } else {
-               sachets.push({
-                  id: payload.id,
-                  quantity: payload.quantity,
-                  parLevel: payload.par,
-                  maxInventoryLevel: payload.maxInventoryLevel,
-               })
-            }
-            return {
-               ...state,
-               processing: { ...state.processing, sachets },
-               activeProcessing: { ...state.processing, sachets },
-            }
-         }
-         const derivedProcessings = [...state.derivedProcessings]
-         const indexOfActiveProcessing = derivedProcessings.findIndex(
-            proc => proc.id === state.activeProcessing.id
-         )
+      // case 'CONFIGURE_NEW_SACHET':
+      //    if (state.activeProcessing.shipped) {
+      //       const sachets = [...state.processing.sachets]
+      //       const index = sachets.findIndex(
+      //          sachet => sachet.quantity === payload.quantity
+      //       )
+      //       if (index >= 0) {
+      //          sachets.splice(index, 1, {
+      //             id: payload.id,
+      //             quantity: payload.quantity,
+      //             parLevel: payload.par,
+      //             maxInventoryLevel: payload.maxInventoryLevel,
+      //          })
+      //       } else {
+      //          sachets.push({
+      //             id: payload.id,
+      //             quantity: payload.quantity,
+      //             parLevel: payload.par,
+      //             maxInventoryLevel: payload.maxInventoryLevel,
+      //          })
+      //       }
+      //       return {
+      //          ...state,
+      //          processing: { ...state.processing, sachets },
+      //          activeProcessing: { ...state.processing, sachets },
+      //       }
+      //    }
+      //    const derivedProcessings = [...state.derivedProcessings]
+      //    const indexOfActiveProcessing = derivedProcessings.findIndex(
+      //       proc => proc.id === state.activeProcessing.id
+      //    )
 
-         const newSachetsList = [
-            ...derivedProcessings[indexOfActiveProcessing].sachets,
-         ]
+      //    const newSachetsList = [
+      //       ...derivedProcessings[indexOfActiveProcessing]?.sachets,
+      //    ]
 
-         const sachetIndex = newSachetsList.findIndex(
-            sachet => sachet.quantity === payload.quantity
-         )
-         if (sachetIndex >= 0) {
-            newSachetsList.splice(sachetIndex, 1, {
-               id: payload.id,
-               quantity: payload.quantity,
-               parLevel: payload.par,
-               maxInventoryLevel: payload.maxInventoryLevel,
-            })
-         } else {
-            newSachetsList.push({
-               id: payload.id,
-               quantity: payload.quantity,
-               parLevel: payload.par,
-               maxInventoryLevel: payload.maxInventoryLevel,
-            })
-         }
+      //    const sachetIndex = newSachetsList.findIndex(
+      //       sachet => sachet.quantity === payload.quantity
+      //    )
+      //    if (sachetIndex >= 0) {
+      //       newSachetsList.splice(sachetIndex, 1, {
+      //          id: payload.id,
+      //          quantity: payload.quantity,
+      //          parLevel: payload.par,
+      //          maxInventoryLevel: payload.maxInventoryLevel,
+      //       })
+      //    } else {
+      //       newSachetsList.push({
+      //          id: payload.id,
+      //          quantity: payload.quantity,
+      //          parLevel: payload.par,
+      //          maxInventoryLevel: payload.maxInventoryLevel,
+      //       })
+      //    }
 
-         derivedProcessings[indexOfActiveProcessing].sachets = newSachetsList
+      //    derivedProcessings[indexOfActiveProcessing].sachets = newSachetsList
 
-         return {
-            ...state,
-            derivedProcessings,
-            activeProcessing: derivedProcessings[indexOfActiveProcessing],
-         }
+      //    return {
+      //       ...state,
+      //       derivedProcessings,
+      //       activeProcessing: derivedProcessings[indexOfActiveProcessing],
+      //    }
 
       case 'SET_ACTIVE_SACHET':
          return { ...state, activeSachet: payload }
@@ -402,6 +402,8 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: { ...state.processing, unit: payload.value },
          }
+      case 'SET_UNIT_QUANTITY':
+         return { ...state, unit_quantity: payload }
       default:
          return state
    }
