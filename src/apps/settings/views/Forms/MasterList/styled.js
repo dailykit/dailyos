@@ -32,4 +32,6 @@ export const Listing = styled.div`
 
 export const ListingHeader = styled.div`
    margin-bottom: 16px;
+   display: flex;
+   justify-content: space-between;
 `

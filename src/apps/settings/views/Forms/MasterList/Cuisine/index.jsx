@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
@@ -12,6 +13,7 @@ import {
    Tunnels,
    useTunnel,
    Loader,
+   IconButton,
 } from '@dailykit/ui'
 
 // Styled
@@ -28,8 +30,8 @@ import {
 import { AddTypesTunnel } from './tunnels'
 
 import { useTranslation } from 'react-i18next'
-import { CUISINES } from '../../../../graphql'
-import { useSubscription } from '@apollo/react-hooks'
+import { CUISINES, DELETE_CUISINES } from '../../../../graphql'
+import { toast } from 'react-toastify'
 
 const address = 'apps.settings.views.forms.cuisines.'
 
@@ -40,6 +42,29 @@ const CuisineForm = () => {
 
    // subscription
    const { loading, data, error } = useSubscription(CUISINES)
+
+   // Mutation
+   const [deleteElement] = useMutation(DELETE_CUISINES, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = (e, el) => {
+      e.stopPropagation()
+      if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
+         deleteElement({
+            variables: {
+               ids: [el.id],
+            },
+         })
+      }
+   }
 
    if (error) {
       console.log(error)
@@ -71,6 +96,9 @@ const CuisineForm = () => {
                      {t(address.concat('cuisines'))} ({data.cuisineNames.length}
                      )
                   </Text>
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                     <AddIcon size={24} />
+                  </IconButton>
                </ListingHeader>
                <Table>
                   <TableHead>
@@ -79,6 +107,7 @@ const CuisineForm = () => {
                         <TableCell>
                            {t(address.concat('# of recipes'))}
                         </TableCell>
+                        <TableCell></TableCell>
                      </TableRow>
                   </TableHead>
                   <TableBody>
@@ -86,6 +115,13 @@ const CuisineForm = () => {
                         <TableRow key={cuisine.id}>
                            <TableCell>{cuisine.name}</TableCell>
                            <TableCell>{cuisine.simpleRecipes.length}</TableCell>
+                           <TableCell>
+                              <IconButton
+                                 onClick={e => deleteHandler(e, cuisine)}
+                              >
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
+                           </TableCell>
                         </TableRow>
                      ))}
                   </TableBody>
