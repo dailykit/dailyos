@@ -1043,6 +1043,57 @@
                   "save": "Αποθήκευση",
                   "roles for role": "Ρόλοι για ρόλο",
                   "select devices for the user": "Ρόλοι για ρόλο"
+               },
+               "accompanimenttypes": {
+                  "accompaniment types": "Accompaniment Types",
+                  "type": "Type",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
+               },
+               "cuisines": {
+                  "cuisines": "Cuisines",
+                  "name": "Name",
+                  "# of recipes": "# of Recipes",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
+               },
+               "allergens": {
+                  "allergens": "Allergens",
+                  "name": "Name",
+                  "description": "Description",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
+               },
+               "processings": {
+                  "processings": "Processings",
+                  "name": "Name",
+                  "reference count": "Reference Count",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
                }
             },
             "home": {
@@ -1051,7 +1102,8 @@
                "roles": "Ρόλοι",
                "apps": "Εφαρμογές",
                "devices": "Σσκευές",
-               "stations": "Σταθμοί"
+               "stations": "Σταθμοί",
+               "master lists": "Master Lists"
             },
             "listings": {
                "appslisting": {
@@ -1082,6 +1134,15 @@
                   "apps configured": "Οι εφαρμογές διαμορφώθηκαν",
                   "devices assigned": "Ανατέθηκαν συσκευές",
                   "actions": "Ενέργειες"
+               },
+               "masterlist": {
+                  "master lists": "Master Lists",
+                  "list name": "List name",
+                  "total inputs": "Total inputs",
+                  "allergens": "Allergens",
+                  "cuisines": "Cuisines",
+                  "processings": "Processings",
+                  "accompaniment types": "Accompaniment Types"
                }
             }
          }
