@@ -564,15 +564,15 @@ function RealTimeView({ formState }) {
       <FlexContainer style={{ flexWrap: 'wrap' }}>
          <DataCard
             title={t(address.concat('awaiting'))}
-            quantity={active.awaiting}
+            quantity={`${active.awaiting} ${active.unit}`}
          />
          <DataCard
             title={t(address.concat('committed'))}
-            quantity={active.committed}
+            quantity={`${active.committed} ${active.unit}`}
          />
          <DataCard
             title={t(address.concat('consumed'))}
-            quantity={active.consumed}
+            quantity={`${active.consumed} ${active.unit}`}
          />
       </FlexContainer>
    )
