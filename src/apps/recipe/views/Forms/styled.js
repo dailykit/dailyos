@@ -113,3 +113,25 @@ export const StyledMain = styled.div`
    min-height: calc(100% - 120px);
    background: #f3f3f3;
 `
+
+export const Flex = styled.div`
+   display: flex;
+   flex-direction: ${props => props.direction || 'column'};
+   justify-content: ${props => props.justify || 'space-between'};
+   align-items: ${props => props.align || 'flex-start'};
+`
+
+export const BreadcrumbGroup = styled.div`
+   margin-top: 8px;
+   height: 20px;
+   display: flex;
+   align-items: center;
+`
+
+export const Breadcrumb = styled.span`
+   font-weight: 500;
+   font-size: 14px;
+   line-height: 16px;
+   color: ${props => (props.active ? '#00A7E1' : '#888D9D')};
+   cursor: pointer;
+`

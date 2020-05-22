@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 
 export const RecipeContext = React.createContext()
 
@@ -8,11 +9,11 @@ export const state = {
    serving: undefined,
    sachet: undefined,
    updating: false,
+   stage: 0,
+   preview: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
-   console.log('reducer -> type', type)
-   console.log('reducer -> payload', payload)
    switch (type) {
       case 'ADD_INGREDIENT': {
          return {
@@ -42,6 +43,21 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             updating: payload,
+         }
+      }
+      case 'STAGE': {
+         return {
+            ...state,
+            stage: payload,
+         }
+      }
+      case 'PREVIEW': {
+         return {
+            ...state,
+            preview: {
+               title: payload.title,
+               img: payload.img,
+            },
          }
       }
       default:

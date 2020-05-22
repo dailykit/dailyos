@@ -34,8 +34,10 @@ import {
    UPDATE_RECIPE,
 } from './mutations'
 import {
+   INGREDIENTS_COUNT,
    S_INGREDIENTS,
    S_INGREDIENT,
+   RECIPES_COUNT,
    S_RECIPES,
    S_RECIPE,
    S_BULK_ITEMS,
@@ -43,6 +45,7 @@ import {
 } from './subscriptions'
 
 export {
+   INGREDIENTS_COUNT,
    S_INGREDIENTS,
    S_INGREDIENT,
    INGREDIENTS,
@@ -66,6 +69,7 @@ export {
    DELETE_SACHET,
    DELETE_PROCESSING,
    RECIPES,
+   RECIPES_COUNT,
    S_RECIPES,
    RECIPE,
    S_RECIPE,

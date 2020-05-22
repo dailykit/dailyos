@@ -29,8 +29,10 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             <StyledListItem onClick={() => addTab('Products', 'products')}>
                {t(address.concat('products'))}
             </StyledListItem>
-            <StyledListItem onClick={() => addTab('Menus', 'menus')}>
-               {t(address.concat('menus'))}
+            <StyledListItem
+               onClick={() => addTab('Collections', 'collections')}
+            >
+               {t(address.concat('collections'))}
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

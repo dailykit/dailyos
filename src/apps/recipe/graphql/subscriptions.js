@@ -1,5 +1,15 @@
 import gql from 'graphql-tag'
 
+export const INGREDIENTS_COUNT = gql`
+   subscription IngredientsCount {
+      ingredientsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
       ingredients {
@@ -88,6 +98,16 @@ export const S_INGREDIENT = gql`
          }
          ingredientSachets {
             id
+         }
+      }
+   }
+`
+
+export const RECIPES_COUNT = gql`
+   subscription RecipesCount {
+      simpleRecipesAggregate {
+         aggregate {
+            count
          }
       }
    }

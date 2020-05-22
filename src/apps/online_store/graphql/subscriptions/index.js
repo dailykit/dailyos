@@ -9,6 +9,16 @@ export const S_ACCOMPANIMENT_TYPES = gql`
    }
 `
 
+export const SRP_COUNT = gql`
+   {
+      simpleRecipeProductsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
 export const S_SIMPLE_RECIPE_PRODUCTS = gql`
    {
       simpleRecipeProducts {
@@ -48,6 +58,16 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
                id
                yield
             }
+         }
+      }
+   }
+`
+
+export const IP_COUNT = gql`
+   {
+      inventoryProductsAggregate {
+         aggregate {
+            count
          }
       }
    }
@@ -128,6 +148,16 @@ export const S_SUPPLIER_ITEMS = gql`
    }
 `
 
+export const CUP_COUNT = gql`
+   {
+      customizableProductsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
 export const S_CUSTOMIZABLE_PRODUCTS = gql`
    {
       customizableProducts {
@@ -174,6 +204,16 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
                   type
                }
             }
+         }
+      }
+   }
+`
+
+export const COP_COUNT = gql`
+   {
+      comboProductsAggregate {
+         aggregate {
+            count
          }
       }
    }
@@ -233,6 +273,16 @@ export const S_COMBO_PRODUCT = gql`
                   }
                }
             }
+         }
+      }
+   }
+`
+
+export const COLLECTIONS_COUNT = gql`
+   subscription CollectionsCount {
+      menuCollectionsAggregate {
+         aggregate {
+            count
          }
       }
    }

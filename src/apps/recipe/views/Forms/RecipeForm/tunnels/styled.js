@@ -97,3 +97,12 @@ export const StyledLabel = styled.label`
    color: #888d9d;
    font-size: 14px;
 `
+
+export const ImageContainer = styled.div`
+   overflow: hidden;
+
+   img {
+      width: ${props => (props.width ? props.width + 'px' : '100%')};
+      height: auto;
+   }
+`

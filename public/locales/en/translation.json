@@ -510,7 +510,7 @@
             "sidebar": {
                "listings": "Listings",
                "products": "Products",
-               "menus": "Menus"
+               "collections": "Collections"
             }
          },
          "views": {

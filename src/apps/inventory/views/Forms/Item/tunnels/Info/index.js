@@ -33,12 +33,7 @@ export default function InfoTunnel({ close, next }) {
    const handleNext = async () => {
       setLoading(true)
 
-      if (
-         !state.title ||
-         !state.supplier.id ||
-         !state.unit_quantity.value ||
-         !state.unit_quantity.unit
-      )
+      if (!state.title || !state.supplier.id || !state.unit_quantity.value)
          return setLoading(false)
 
       const res = await createSupplierItem({
