@@ -1,4 +1,5 @@
 import React, { useReducer, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { Tunnels, Tunnel, useTunnel, ButtonTile, Loader } from '@dailykit/ui'
 
@@ -14,7 +15,17 @@ import {
    MoreItemInfoTunnel,
 } from './Tunnels'
 
+import {
+   StyledHeader,
+   StyledInfo,
+   StyledSupplier,
+   StyledGrid,
+} from '../Item/styled'
+
 import { SUPPLIERS, PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
+import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
+
+const address = 'apps.inventory.views.forms.item.'
 
 export default function SachetPackaging() {
    const [sachetPackagingState, sachetPackagingDispatch] = useReducer(
@@ -28,7 +39,7 @@ export default function SachetPackaging() {
    const { loading } = useSubscription(PACKAGINGS_SUBSCRIPTION, {
       variables: { id: sachetPackagingState.id },
       onSubscriptionData: async data => {
-         setFormState(data.subscriptionData.data.packagings)
+         setFormState(data.subscriptionData.data.packaging)
       },
    })
 
@@ -64,15 +75,93 @@ export default function SachetPackaging() {
             </Tunnels>
 
             <StyledWrapper>
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text="Select Supplier"
-                  onClick={() => openTunnel(1)}
-                  style={{ margin: '20px 0' }}
-               />
+               {formState.id ? (
+                  <FormView state={formState} open={openTunnel} />
+               ) : (
+                  <ButtonTile
+                     type="primary"
+                     size="lg"
+                     text="Select Supplier"
+                     onClick={() => openTunnel(1)}
+                     style={{ margin: '20px 0' }}
+                  />
+               )}
             </StyledWrapper>
          </SachetPackagingContext.Provider>
+      </>
+   )
+}
+
+function FormView({ state, open }) {
+   const { t } = useTranslation()
+   return (
+      <>
+         <StyledHeader>
+            {state.name && (
+               <>
+                  <StyledInfo>
+                     <h1>{state.title || state.name}</h1>
+                     <span> {state.sku} </span>
+                  </StyledInfo>
+                  <StyledSupplier>
+                     <span>{state.supplier?.name}</span>
+                     <span>
+                        {`${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})` ||
+                           ''}
+                     </span>
+                  </StyledSupplier>
+               </>
+            )}
+         </StyledHeader>
+         <StyledGrid onClick={() => open(2)}>
+            <div>
+               <div>
+                  <ItemIcon />
+               </div>
+               <div>
+                  <span>{t(address.concat('unit qty'))}</span>
+                  <div>
+                     <span>{state.unitQuantity}</span>
+                     <span>${state.unitPrice}</span>
+                  </div>
+               </div>
+            </div>
+            <div>
+               <div>
+                  <CaseIcon />
+               </div>
+               <div>
+                  <span>{t(address.concat('case qty'))}</span>
+                  <div>
+                     <span>{state.caseQuantity}</span>
+                     <span>${+state.unitPrice * +state.caseQuantity}</span>
+                  </div>
+               </div>
+            </div>
+            <div>
+               <div>
+                  <TruckIcon />
+               </div>
+               <div>
+                  <span>{t(address.concat('min order value'))}</span>
+                  <div>
+                     <span>{state.minOrderValue}</span>
+                     <span>${+state.unitPrice * +state.minOrderValue}</span>
+                  </div>
+               </div>
+            </div>
+            <div>
+               <div>
+                  <ClockIcon />
+               </div>
+               <div>
+                  <span>{t(address.concat('lead time'))}</span>
+                  <div>
+                     <span>{state.leadTime?.value + state.leadTime?.unit}</span>
+                  </div>
+               </div>
+            </div>
+         </StyledGrid>
       </>
    )
 }

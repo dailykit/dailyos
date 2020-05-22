@@ -30,6 +30,11 @@ export default function MoreItemInfoTunnel({ close }) {
    const [createPackaging] = useMutation(CREATE_PACKAGING)
 
    const handleNext = async () => {
+      if (sachetPackagingState.id) {
+         //update the item info
+         return
+      }
+
       setLoading(true)
       try {
          const resp = await createPackaging({

@@ -127,6 +127,11 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
          unitPrice
          minOrderValue
          leadTime
+         supplier {
+            id
+            name
+            contactPerson
+         }
       }
    }
 `
