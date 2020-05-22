@@ -45,6 +45,7 @@ import {
    ConfigureIngredientTunnel,
    SachetTunnel,
    PhotoTunnel,
+   CardPreviewTunnel,
 } from './tunnels'
 import {
    UPDATE_RECIPE,
@@ -210,6 +211,9 @@ const RecipeForm = () => {
                </Tunnel>
                <Tunnel layer={8}>
                   <PhotoTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={9} size="lg">
+                  <CardPreviewTunnel closeTunnel={closeTunnel} />
                </Tunnel>
             </Tunnels>
             {/* View */}

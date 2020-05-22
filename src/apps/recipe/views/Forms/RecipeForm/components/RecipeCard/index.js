@@ -3,8 +3,23 @@ import { Text, Checkbox, ComboButton } from '@dailykit/ui'
 import { Container, Flex } from '../styled'
 import { StyledTable, Preview, Pill } from './styled'
 import { EyeIcon } from '../../../../../assets/icons'
+import { RecipeContext } from '../../../../../context/recipee'
 
 const RecipeCard = ({ state, openTunnel }) => {
+   const { recipeDispatch } = React.useContext(RecipeContext)
+
+   // Handlers
+   const preview = () => {
+      recipeDispatch({
+         type: 'PREVIEW',
+         payload: {
+            title: 'Moonlight',
+            img: 'https://source.unsplash.com/1600x900/?paper',
+         },
+      })
+      openTunnel(9)
+   }
+
    return (
       <Container top="32" bottom="32">
          <Text as="title">Select Recipe Card Template</Text>
@@ -56,7 +71,7 @@ const RecipeCard = ({ state, openTunnel }) => {
                         </Flex>
                      </td>
                      <td>
-                        <ComboButton type="ghost" onClick={() => openTunnel(9)}>
+                        <ComboButton type="ghost" onClick={() => preview()}>
                            <EyeIcon />
                            Preview
                         </ComboButton>

@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 
 export const RecipeContext = React.createContext()
 
@@ -9,6 +10,7 @@ export const state = {
    sachet: undefined,
    updating: false,
    stage: 0,
+   preview: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -47,6 +49,15 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             stage: payload,
+         }
+      }
+      case 'PREVIEW': {
+         return {
+            ...state,
+            preview: {
+               title: payload.title,
+               img: payload.img,
+            },
          }
       }
       default:
