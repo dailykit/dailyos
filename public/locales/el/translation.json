@@ -509,7 +509,7 @@
             "sidebar": {
                "listings": "Κατάλογος",
                "products": "Προϊόντα",
-               "menus": "Μενού"
+               "collections": "Collections"
             }
          },
          "views": {
