@@ -9,7 +9,7 @@ import { StyledHome, StyledCardList } from './styled'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-import { S_INGREDIENTS, S_RECIPES } from '../../graphql'
+import { INGREDIENTS_COUNT, RECIPES_COUNT } from '../../graphql'
 
 const address = 'apps.recipe.views.home.'
 
@@ -20,8 +20,8 @@ const Home = () => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
    }
 
-   const { data: ingredientsData } = useSubscription(S_INGREDIENTS)
-   const { data: recipeData } = useSubscription(S_RECIPES)
+   const { data: ingredientsData } = useSubscription(INGREDIENTS_COUNT)
+   const { data: recipeData } = useSubscription(RECIPES_COUNT)
 
    return (
       <StyledHome>
@@ -29,13 +29,17 @@ const Home = () => {
          <StyledCardList>
             <DashboardTile
                title={t(address.concat('recipes'))}
-               count={recipeData?.simpleRecipes.length || '...'}
+               count={
+                  recipeData?.simpleRecipesAggregate.aggregate.count || '...'
+               }
                conf="All available"
                onClick={() => addTab('Recipes', 'recipes')}
             />
             <DashboardTile
                title={t(address.concat('ingredients'))}
-               count={ingredientsData?.ingredients.length || '...'}
+               count={
+                  ingredientsData?.ingredientsAggregate.aggregate.count || '...'
+               }
                conf="All available"
                onClick={() => addTab('Ingredients', 'ingredients')}
             />

@@ -9,7 +9,13 @@ import { StyledHome, StyledCardList, StyledCard } from './styled'
 
 import { useTranslation, Trans } from 'react-i18next'
 
-import { COLLECTIONS } from '../../graphql'
+import {
+   COLLECTIONS_COUNT,
+   SRP_COUNT,
+   IP_COUNT,
+   COP_COUNT,
+   CUP_COUNT,
+} from '../../graphql'
 
 const address = 'apps.online_store.views.home.'
 
@@ -20,7 +26,11 @@ const Home = () => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
    }
 
-   const { data: collectionsData } = useSubscription(COLLECTIONS)
+   const { data: collectionsData } = useSubscription(COLLECTIONS_COUNT)
+   const { data: simpleRecipeProductData } = useSubscription(SRP_COUNT)
+   const { data: inventoryProductData } = useSubscription(IP_COUNT)
+   const { data: comboProductData } = useSubscription(COP_COUNT)
+   const { data: customizableProductData } = useSubscription(CUP_COUNT)
 
    return (
       <StyledHome>
@@ -28,13 +38,25 @@ const Home = () => {
          <StyledCardList>
             <DashboardTile
                title={t(address.concat('collections'))}
-               count={collectionsData?.menuCollections.length || '...'}
+               count={
+                  collectionsData?.menuCollectionsAggregate.aggregate.count ||
+                  '...'
+               }
                conf="All available"
                onClick={() => addTab('Collections', 'collections')}
             />
             <DashboardTile
                title={t(address.concat('products'))}
-               count={'...'}
+               count={
+                  simpleRecipeProductData?.simpleRecipeProductsAggregate
+                     .aggregate.count +
+                     inventoryProductData?.inventoryProductsAggregate.aggregate
+                        .count +
+                     customizableProductData?.customizableProductsAggregate
+                        .aggregate.count +
+                     comboProductData?.comboProductsAggregate.aggregate.count ||
+                  '...'
+               }
                conf="All available"
                onClick={() => addTab('Products', 'products')}
             />
