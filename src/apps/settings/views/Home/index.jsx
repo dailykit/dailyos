@@ -19,34 +19,40 @@ const Home = () => {
          <Text as="h1">{t(address.concat('settings app'))}</Text>
          <StyledCardList>
             <DashboardTile
-               title={t(address.concat("users"))}
+               title={t(address.concat('users'))}
                count="23"
                conf="All available"
                onClick={() => addTab('Users', '/settings/users')}
             />
             <DashboardTile
-               title={t(address.concat("roles"))}
+               title={t(address.concat('roles'))}
                count="4"
                conf="All available"
                onClick={() => addTab('Roles', '/settings/roles')}
             />
             <DashboardTile
-               title={t(address.concat("apps"))}
+               title={t(address.concat('apps'))}
                count="6"
                conf="All available"
                onClick={() => addTab('Apps', '/settings/apps')}
             />
             <DashboardTile
-               title={t(address.concat("devices"))}
+               title={t(address.concat('devices'))}
                count="4"
                conf="All active"
                onClick={() => addTab('Devices', '/settings/devices')}
             />
             <DashboardTile
-               title={t(address.concat("stations"))}
+               title={t(address.concat('stations'))}
                count="4"
                conf="All active"
                onClick={() => addTab('Stations', '/settings/stations')}
+            />
+            <DashboardTile
+               title={t(address.concat('master lists'))}
+               count="4"
+               conf="All active"
+               onClick={() => addTab('Master Lists', '/settings/master-lists')}
             />
          </StyledCardList>
       </StyledHome>
