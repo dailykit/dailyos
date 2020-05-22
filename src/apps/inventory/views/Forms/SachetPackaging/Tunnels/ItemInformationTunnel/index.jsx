@@ -28,7 +28,7 @@ export default function ItemInformationTunnel({ close, next }) {
       <>
          <TunnelContainer>
             <TunnelHeader
-               title={t(address.concat('select supplier'))}
+               title="Item Information"
                next={() => {
                   sachetPackagingDispatch({
                      type: 'ADD_ITEM_INFO',

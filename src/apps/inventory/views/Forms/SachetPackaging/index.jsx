@@ -1,5 +1,5 @@
-import React, { useReducer } from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import React, { useReducer, useState } from 'react'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { Tunnels, Tunnel, useTunnel, ButtonTile, Loader } from '@dailykit/ui'
 
 import {
@@ -14,7 +14,7 @@ import {
    MoreItemInfoTunnel,
 } from './Tunnels'
 
-import { SUPPLIERS } from '../../../graphql'
+import { SUPPLIERS, PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
 
 export default function SachetPackaging() {
    const [sachetPackagingState, sachetPackagingDispatch] = useReducer(
@@ -22,9 +22,17 @@ export default function SachetPackaging() {
       sachetPackagingInitialState
    )
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+   const [formState, setFormState] = useState({})
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
 
-   if (supplierLoading) return <Loader />
+   const { loading } = useSubscription(PACKAGINGS_SUBSCRIPTION, {
+      variables: { id: sachetPackagingState.id },
+      onSubscriptionData: async data => {
+         setFormState(data.subscriptionData.data.packagings)
+      },
+   })
+
+   if (supplierLoading || loading) return <Loader />
 
    return (
       <>

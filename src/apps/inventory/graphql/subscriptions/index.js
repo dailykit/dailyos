@@ -70,3 +70,22 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const PACKAGINGS_SUBSCRIPTION = gql`
+   subscription Packagings($id: Int!) {
+      packaging(id: $id) {
+         id
+         name
+         unitPrice
+         dimensions
+         sku
+         parLevel
+         maxLevel
+         unitQuantity
+         caseQuantity
+         unitPrice
+         minOrderValue
+         leadTime
+      }
+   }
+`

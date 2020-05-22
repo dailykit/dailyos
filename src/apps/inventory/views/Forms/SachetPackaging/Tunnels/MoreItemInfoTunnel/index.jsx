@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
-import { Input, Text } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { Input, Loader } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 
 import {
    Spacer,
@@ -10,12 +11,12 @@ import {
 import { FlexContainer, StyledSelect } from '../../../styled'
 import { PaddedInputGroup } from './styled'
 import { SachetPackagingContext } from '../../../../../context'
+import { CREATE_PACKAGING } from '../../../../../graphql'
 
-const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
-
-export default function MoreItemInfoTunnel({ close, next }) {
-   const { t } = useTranslation()
-   const { sachetPackagingDispatch } = useContext(SachetPackagingContext)
+export default function MoreItemInfoTunnel({ close }) {
+   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
+      SachetPackagingContext
+   )
 
    const [unitQuantity, setUnitQuantity] = useState('')
    const [unitPrice, setUnitPrice] = useState('')
@@ -24,24 +25,61 @@ export default function MoreItemInfoTunnel({ close, next }) {
    const [leadTime, setLeadTime] = useState('')
    const [leadTimeUnit, setLeadTimeUnit] = useState('hours')
 
+   const [loading, setLoading] = useState(false)
+
+   const [createPackaging] = useMutation(CREATE_PACKAGING)
+
+   const handleNext = async () => {
+      setLoading(true)
+      try {
+         const resp = await createPackaging({
+            variables: {
+               object: {
+                  onHand: 0,
+                  supplierId: sachetPackagingState.supplier.id,
+                  name: sachetPackagingState.info.itemName,
+                  sku: sachetPackagingState.info.itemSku,
+                  dimensions: {
+                     width: sachetPackagingState.info.itemWidth,
+                     height: sachetPackagingState.info.itemHeight,
+                     depth: sachetPackagingState.info.itemDepth,
+                  },
+                  parLevel: sachetPackagingState.info.itemPar,
+                  maxLevel: sachetPackagingState.info.itemMaxValue,
+                  unitPrice,
+                  unitQuantity,
+                  caseQuantity,
+                  minOrderValue,
+                  leadTime: { unit: leadTimeUnit, value: leadTime },
+               },
+            },
+         })
+
+         if (resp?.data?.createPackaging) {
+            // success
+            setLoading(false)
+            toast.success('Packaging Created :)')
+            sachetPackagingDispatch({
+               type: 'ADD_ID',
+               payload: resp.data.createPackaging.returning[0].id,
+            })
+            close(3)
+         }
+      } catch (error) {
+         setLoading(false)
+         toast.error('Err! I messed something up :(')
+         close(3)
+      }
+   }
+
+   if (loading) return <Loader />
+
    return (
       <>
          <TunnelContainer>
             <TunnelHeader
-               title={t(address.concat('select supplier'))}
-               next={() => {
-                  sachetPackagingDispatch({
-                     type: 'ADD_ITEM_INFO',
-                     payload: {
-                        unitQuantity,
-                        unitPrice,
-                        caseQuantity,
-                        minOrderValue,
-                        leadTime,
-                     },
-                  })
-                  close(3)
-               }}
+               title="Item Information"
+               next={handleNext}
                close={() => close(3)}
                nextAction="Next"
             />
