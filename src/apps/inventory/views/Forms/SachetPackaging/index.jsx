@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react'
+import React, { useReducer, useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { Tunnels, Tunnel, useTunnel, ButtonTile, Loader } from '@dailykit/ui'
@@ -8,6 +8,8 @@ import {
    sachetPackagingReducers,
    SachetPackagingContext,
 } from '../../../context'
+import { Context } from '../../../context/tabs'
+
 import { StyledWrapper } from '../styled'
 import {
    SuppliersTunnel,
@@ -22,7 +24,7 @@ import {
    StyledGrid,
 } from '../Item/styled'
 
-import { SUPPLIERS, PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
+import { SUPPLIERS, PACKAGING_SUBSCRIPTION } from '../../../graphql'
 import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
 
 const address = 'apps.inventory.views.forms.item.'
@@ -32,16 +34,23 @@ export default function SachetPackaging() {
       sachetPackagingReducers,
       sachetPackagingInitialState
    )
+   const { state } = useContext(Context)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [formState, setFormState] = useState({})
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
 
-   const { loading } = useSubscription(PACKAGINGS_SUBSCRIPTION, {
+   const { loading } = useSubscription(PACKAGING_SUBSCRIPTION, {
       variables: { id: sachetPackagingState.id },
       onSubscriptionData: async data => {
          setFormState(data.subscriptionData.data.packaging)
       },
    })
+
+   React.useEffect(() => {
+      if (state.packagingId) {
+         sachetPackagingDispatch({ type: 'ADD_ID', payload: state.packagingId })
+      }
+   }, [state.packagingId])
 
    if (supplierLoading || loading) return <Loader />
 

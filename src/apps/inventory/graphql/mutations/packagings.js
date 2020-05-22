@@ -20,3 +20,10 @@ export const CREATE_PACKAGING = gql`
       }
    }
 `
+export const UPDATE_PACKAGING = gql`
+   mutation UpdatePackaging($id: Int!, $object: packaging_packaging_set_input) {
+      updatePackaging(where: { id: { _eq: $id } }, _set: $object) {
+         affected_rows
+      }
+   }
+`

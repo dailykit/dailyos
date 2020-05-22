@@ -112,7 +112,7 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
    }
 `
 
-export const PACKAGINGS_SUBSCRIPTION = gql`
+export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packagings($id: Int!) {
       packaging(id: $id) {
          id
@@ -127,6 +127,35 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
          unitPrice
          minOrderValue
          leadTime
+         supplier {
+            id
+            name
+            contactPerson
+         }
+      }
+   }
+`
+
+export const PACKAGINGS_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
+         unitPrice
+         dimensions
+         sku
+         parLevel
+         maxLevel
+         unitQuantity
+         caseQuantity
+         unitPrice
+         isAvailable
+         minOrderValue
+         awaiting
+         onHand
+         committed
+         leadTime
+         type
          supplier {
             id
             name
