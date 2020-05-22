@@ -10,7 +10,7 @@ import {
    Text,
    Toggle,
 } from '@dailykit/ui'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { CloseIcon, TickIcon, ChevronRightIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
    state as initialState,
@@ -23,6 +23,9 @@ import {
    StyledHeader,
    InputWrapper,
    MasterSettings,
+   Flex,
+   Breadcrumb,
+   BreadcrumbGroup,
 } from '../styled'
 
 import {
@@ -31,6 +34,7 @@ import {
    Servings,
    Ingredients,
    Photo,
+   RecipeCard,
 } from './components'
 import {
    InformationTunnel,
@@ -210,16 +214,37 @@ const RecipeForm = () => {
             </Tunnels>
             {/* View */}
             <StyledHeader>
-               <InputWrapper>
-                  <Input
-                     type="text"
-                     label="Recipe Title"
-                     name="title"
-                     value={title}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
-                  />
-               </InputWrapper>
+               <Flex>
+                  <InputWrapper>
+                     <Input
+                        type="text"
+                        label="Recipe Title"
+                        name="title"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        onBlur={updateName}
+                     />
+                  </InputWrapper>
+                  <BreadcrumbGroup>
+                     <Breadcrumb
+                        active={recipeState.stage >= 0}
+                        onClick={() =>
+                           recipeDispatch({ type: 'STAGE', payload: 0 })
+                        }
+                     >
+                        Add Recipe
+                     </Breadcrumb>
+                     <ChevronRightIcon color=" #00a7e1" size={16} />
+                     <Breadcrumb
+                        active={recipeState.stage >= 1}
+                        onClick={() =>
+                           recipeDispatch({ type: 'STAGE', payload: 1 })
+                        }
+                     >
+                        Recipe Card
+                     </Breadcrumb>
+                  </BreadcrumbGroup>
+               </Flex>
                <MasterSettings>
                   <div>
                      {state.isValid?.status ? (
@@ -244,11 +269,17 @@ const RecipeForm = () => {
                </MasterSettings>
             </StyledHeader>
             <StyledWrapper width="980">
-               <Information state={state} openTunnel={openTunnel} />
-               <Photo state={state} openTunnel={openTunnel} />
-               <Servings state={state} openTunnel={openTunnel} />
-               <Ingredients state={state} openTunnel={openTunnel} />
-               <Procedures state={state} openTunnel={openTunnel} />
+               {recipeState.stage === 0 ? (
+                  <React.Fragment>
+                     <Information state={state} openTunnel={openTunnel} />
+                     <Photo state={state} openTunnel={openTunnel} />
+                     <Servings state={state} openTunnel={openTunnel} />
+                     <Ingredients state={state} openTunnel={openTunnel} />
+                     <Procedures state={state} openTunnel={openTunnel} />
+                  </React.Fragment>
+               ) : (
+                  <RecipeCard state={state} openTunnel={openTunnel} />
+               )}
             </StyledWrapper>
          </React.Fragment>
       </RecipeContext.Provider>

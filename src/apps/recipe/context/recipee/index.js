@@ -8,11 +8,10 @@ export const state = {
    serving: undefined,
    sachet: undefined,
    updating: false,
+   stage: 0,
 }
 
 export const reducers = (state, { type, payload }) => {
-   console.log('reducer -> type', type)
-   console.log('reducer -> payload', payload)
    switch (type) {
       case 'ADD_INGREDIENT': {
          return {
@@ -42,6 +41,12 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             updating: payload,
+         }
+      }
+      case 'STAGE': {
+         return {
+            ...state,
+            stage: payload,
          }
       }
       default:
