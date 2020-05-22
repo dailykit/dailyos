@@ -509,7 +509,7 @@
             "sidebar": {
                "listings": "Annonces",
                "products": "Articles",
-               "menus": "Menus"
+               "collections": "Collections"
             }
          },
          "views": {
