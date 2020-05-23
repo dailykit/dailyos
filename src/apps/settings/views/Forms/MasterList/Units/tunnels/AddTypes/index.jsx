@@ -10,11 +10,11 @@ import { TunnelHeader, TunnelBody } from '../styled'
 import { CloseIcon } from '../../../../../../../../shared/assets/icons'
 
 import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
+import { CREATE_UNITS } from '../../../../../../graphql'
 import { useMutation } from '@apollo/react-hooks'
-import { CREATE_CUISINES } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
 
-const address = 'apps.settings.views.forms.cuisines.tunnels.addnew.'
+const address = 'apps.settings.views.forms.units.tunnels.addnew.'
 
 const AddTypesTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()
@@ -23,9 +23,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_CUISINES, {
+   const [addType] = useMutation(CREATE_UNITS, {
       onCompleted: () => {
-         toast.success('Cuisines added.')
+         toast.success('Units added.')
          closeTunnel(1)
       },
       onError: error => {

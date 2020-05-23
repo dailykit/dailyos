@@ -14,7 +14,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { CREATE_ALLERGENS } from '../../../../../../graphql'
 
-const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
+const address = 'apps.settings.views.forms.allergens.tunnels.addnew.'
 
 const AddTypesTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()

@@ -24,6 +24,7 @@ import {
    PROCESSINGS,
    ALLERGENS,
    CUISINES,
+   UNITS_COUNT,
 } from '../../../graphql'
 
 const address = 'apps.settings.views.listings.masterlist.'
@@ -38,6 +39,7 @@ const MasterList = () => {
    const { data: processings } = useSubscription(PROCESSINGS)
    const { data: allergens } = useSubscription(ALLERGENS)
    const { data: cuisines } = useSubscription(CUISINES)
+   const { data: units } = useSubscription(UNITS_COUNT)
 
    React.useEffect(() => {
       const tab =
@@ -103,6 +105,16 @@ const MasterList = () => {
                   <TableCell>{t(address.concat('processings'))}</TableCell>
                   <TableCell>
                      {processings?.masterProcessings.length || '...'}
+                  </TableCell>
+               </TableRow>
+               <TableRow
+                  onClick={() =>
+                     addTab('Units', '/settings/master-lists/units')
+                  }
+               >
+                  <TableCell>{t(address.concat('units'))}</TableCell>
+                  <TableCell>
+                     {units?.unitsAggregate.aggregate.count || '...'}
                   </TableCell>
                </TableRow>
             </TableBody>

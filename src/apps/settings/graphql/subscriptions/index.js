@@ -42,3 +42,22 @@ export const ALLERGENS = gql`
       }
    }
 `
+
+export const UNITS_COUNT = gql`
+   subscription UnitsCount {
+      unitsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const UNITS = gql`
+   subscription Units {
+      units {
+         id
+         name
+      }
+   }
+`

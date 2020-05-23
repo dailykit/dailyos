@@ -88,3 +88,23 @@ export const DELETE_ALLERGENS = gql`
       }
    }
 `
+
+export const CREATE_UNITS = gql`
+   mutation CreateUnits($objects: [unit_unit_insert_input!]!) {
+      createUnit(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_UNITS = gql`
+   mutation DeleteUnits($ids: [Int!]!) {
+      deleteUnit(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
+      }
+   }
+`
