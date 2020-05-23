@@ -24,7 +24,16 @@ export default function WorkOrderTypeTunnel({ close }) {
             nextAction="Save"
          />
          <Spacer />
-         <SolidTile onClick={() => addTab('New Packaging', 'sachetPackaging')}>
+         <SolidTile
+            onClick={() => {
+               dispatch({
+                  type: 'SET_PACKAGING_ID',
+                  payload: '',
+               })
+
+               addTab('New Packaging', 'sachetPackaging')
+            }}
+         >
             <Text as="h1">Sachets</Text>
             <Text as="subtitle">
                Sachets are used for packaging ingredients for a meal kit.

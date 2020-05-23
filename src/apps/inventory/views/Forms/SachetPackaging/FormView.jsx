@@ -17,7 +17,7 @@ export default function FormView({ state, open }) {
                   <StyledSupplier>
                      <span>{state.supplier?.name}</span>
                      <span>
-                        {`${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})` ||
+                        {`${state.supplier.contactPerson?.firstName} ${state.supplier.contactPerson?.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})` ||
                            ''}
                      </span>
                   </StyledSupplier>

@@ -34,7 +34,7 @@ export default function OpacityTypeTunnel({ close }) {
             variables: {
                id: sachetPackagingState.id,
                object: {
-                  compressableFrom: {
+                  packOpacity: {
                      bottom,
                      side1,
                      side2,
