@@ -133,6 +133,8 @@ export const PACKAGING_SUBSCRIPTION = gql`
          fdaComp
          innGreaseRes
          outGreaseRes
+         leakResistance
+         packOpacity
          committed
          unitQuantity
          caseQuantity

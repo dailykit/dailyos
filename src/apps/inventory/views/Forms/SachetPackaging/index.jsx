@@ -96,7 +96,7 @@ export default function SachetPackaging() {
                <Tunnel layer={4}>
                   <LeakResistanceTunnel close={closeTunnel} />
                </Tunnel>
-               <Tunnel layer={5}>
+               <Tunnel style={{ overflowY: 'auto' }} layer={5}>
                   <OpacityTypeTunnel close={closeTunnel} />
                </Tunnel>
                <Tunnel layer={6}>
