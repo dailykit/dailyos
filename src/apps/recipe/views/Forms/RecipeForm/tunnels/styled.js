@@ -89,13 +89,18 @@ export const InputWrapper = styled.div`
 `
 
 export const StyledSelect = styled.select`
-   height: 32px;
-   min-width: 200px;
+   padding: 8px;
+   border: 1px solid #ccc;
+   font-weight: 500;
+   color: #555b6e;
+   outline: none;
+   font-size: 14px;
 `
 
 export const StyledLabel = styled.label`
    color: #888d9d;
    font-size: 14px;
+   margin-right: 12px;
 `
 
 export const ImageContainer = styled.div`

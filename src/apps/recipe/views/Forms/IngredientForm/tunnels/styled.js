@@ -87,3 +87,12 @@ export const InputWrapper = styled.div`
       }
    }
 `
+
+export const StyledSelect = styled.select`
+   padding: 8px;
+   border: none;
+   font-weight: 500;
+   color: #555b6e;
+   outline: none;
+   font-size: 14px;
+`
