@@ -280,6 +280,7 @@ export const CREATE_COLLECTION = gql`
       ) {
          returning {
             id
+            name
          }
       }
    }
