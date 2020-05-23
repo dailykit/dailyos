@@ -254,13 +254,117 @@ export default function PackagingStats({ state, open }) {
                   <div style={{ margin: '20px 0' }}>
                      <Text as="title">Compressable From</Text>
                      <br />
-                     <ButtonTile
-                        noIcon
-                        type="secondary"
-                        text="Select Compressability"
-                        onClick={() => open(6)}
-                        style={{ margin: '20px 0' }}
-                     />
+                     {state.compressableFrom ? (
+                        <>
+                           <div
+                              style={{
+                                 width: '70%',
+                                 display: 'flex',
+                                 justifyContent: 'space-between',
+                                 margin: '10px 0',
+                              }}
+                           >
+                              <div>
+                                 {state.compressableFrom.top ? (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {tickGreenSvg}
+                                    </span>
+                                 ) : (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {crossRedSvg}
+                                    </span>
+                                 )}
+                                 <span>Top</span>
+                              </div>
+                              <div>
+                                 {state.compressableFrom.bottom ? (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {tickGreenSvg}
+                                    </span>
+                                 ) : (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {crossRedSvg}
+                                    </span>
+                                 )}
+                                 <span>Bottom</span>
+                              </div>
+                           </div>
+                           <div
+                              style={{
+                                 width: '70%',
+                                 display: 'flex',
+                                 justifyContent: 'space-between',
+                                 margin: '10px 0',
+                              }}
+                           >
+                              <div>
+                                 {state.compressableFrom.side1 ? (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {tickGreenSvg}
+                                    </span>
+                                 ) : (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {crossRedSvg}
+                                    </span>
+                                 )}
+                                 <span>Side 1</span>
+                              </div>
+                              <div>
+                                 {state.compressableFrom.side2 ? (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {tickGreenSvg}
+                                    </span>
+                                 ) : (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {crossRedSvg}
+                                    </span>
+                                 )}
+                                 <span>Side 2</span>
+                              </div>
+                           </div>
+                           <div
+                              style={{
+                                 width: '70%',
+                                 display: 'flex',
+                                 justifyContent: 'space-between',
+                                 margin: '10px 0',
+                              }}
+                           >
+                              <div>
+                                 {state.compressableFrom.side3 ? (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {tickGreenSvg}
+                                    </span>
+                                 ) : (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {crossRedSvg}
+                                    </span>
+                                 )}
+                                 <span>Side 3</span>
+                              </div>
+                              <div>
+                                 {state.compressableFrom.side4 ? (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {tickGreenSvg}
+                                    </span>
+                                 ) : (
+                                    <span style={{ marginRight: '5px' }}>
+                                       {crossRedSvg}
+                                    </span>
+                                 )}
+                                 <span>Side 4</span>
+                              </div>
+                           </div>
+                        </>
+                     ) : (
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text="Select Compressability"
+                           onClick={() => open(6)}
+                           style={{ margin: '20px 0' }}
+                        />
+                     )}
                   </div>
                </ShadowCard>
             </Flexible>

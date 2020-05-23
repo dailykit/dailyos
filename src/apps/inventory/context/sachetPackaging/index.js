@@ -7,6 +7,8 @@ const state = {
    supplier: {},
    info: {},
    leakResistance: {},
+   compressableFrom: {},
+   packOpacity: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -25,6 +27,9 @@ const reducers = (state, { type, payload }) => {
 
       case 'ADD_OPACITY_INFO':
          return { ...state, packOpacity: payload }
+
+      case 'ADD_COMPRESSABILITY_INFO':
+         return { ...state, compressableFrom: payload }
       default:
          return state
    }

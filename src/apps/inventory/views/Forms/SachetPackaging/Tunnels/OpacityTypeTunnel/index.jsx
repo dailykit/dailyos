@@ -34,7 +34,7 @@ export default function OpacityTypeTunnel({ close }) {
             variables: {
                id: sachetPackagingState.id,
                object: {
-                  packOpacity: {
+                  compressableFrom: {
                      bottom,
                      side1,
                      side2,
@@ -49,7 +49,7 @@ export default function OpacityTypeTunnel({ close }) {
          if (resp?.data?.updatePackaging) {
             // succcess updating
             sachetPackagingDispatch({
-               type: 'ADD_OPACITY_INFO',
+               type: 'ADD_COMPRESSABILITY_INFO',
                payload: {
                   bottom,
                   side1,
@@ -119,7 +119,7 @@ export default function OpacityTypeTunnel({ close }) {
                   <Toggle
                      checked={side1}
                      label={side1 ? 'Transparent' : 'Opaque'}
-                     setChecked={() => setSide1(!top)}
+                     setChecked={() => setSide1(!side1)}
                   />
                </div>
                <div style={{ marginBottom: '30px' }}>

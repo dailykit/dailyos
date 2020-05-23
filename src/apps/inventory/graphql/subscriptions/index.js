@@ -134,6 +134,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          innGreaseRes
          outGreaseRes
          leakResistance
+         compressableFrom
          packOpacity
          committed
          unitQuantity
