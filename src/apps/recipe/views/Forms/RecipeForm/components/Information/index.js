@@ -34,7 +34,11 @@ const Information = ({ state, openTunnel }) => {
                      </div>
                      <div>
                         <Text as="subtitle">Cooking Time</Text>
-                        <Text as="title">{state.cookingTime} mins.</Text>
+                        <Text as="title">
+                           {state.cookingTime
+                              ? state.cookingTime + ' ' + 'mins.'
+                              : 'NA'}
+                        </Text>
                      </div>
                   </Flex>
                </Container>
