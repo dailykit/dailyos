@@ -14,7 +14,7 @@ import { CREATE_PROCESSINGS } from '../../../../../../graphql'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
-const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
+const address = 'apps.settings.views.forms.processings.tunnels.addnew.'
 
 const AddTypesTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()

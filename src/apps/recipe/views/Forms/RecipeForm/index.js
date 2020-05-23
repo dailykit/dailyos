@@ -229,7 +229,7 @@ const RecipeForm = () => {
                         onBlur={updateName}
                      />
                   </InputWrapper>
-                  <BreadcrumbGroup>
+                  {/* <BreadcrumbGroup>
                      <Breadcrumb
                         active={recipeState.stage >= 0}
                         onClick={() =>
@@ -247,7 +247,7 @@ const RecipeForm = () => {
                      >
                         Recipe Card
                      </Breadcrumb>
-                  </BreadcrumbGroup>
+                  </BreadcrumbGroup> */}
                </Flex>
                <MasterSettings>
                   <div>

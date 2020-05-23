@@ -5,6 +5,7 @@ import AccompanimentTypesForm from './AccompanimentTypes'
 import CuisineForm from './Cuisine'
 import AllergensForm from './Allergens'
 import ProcessingsForm from './Processings'
+import UnitsForm from './Units'
 
 const MasterListForm = () => {
    const { list } = useParams()
@@ -21,6 +22,9 @@ const MasterListForm = () => {
       }
       case 'processings': {
          return <ProcessingsForm />
+      }
+      case 'units': {
+         return <UnitsForm />
       }
       default: {
          return <AccompanimentTypesForm />

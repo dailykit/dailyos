@@ -294,6 +294,7 @@ export const S_COLLECTION = gql`
          id
          name
          isValid
+         isPublished
          active
          availability
          categories

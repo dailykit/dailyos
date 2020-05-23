@@ -18,6 +18,7 @@ import {
    StyledRow,
    TunnelBody,
    TunnelHeader,
+   StyledSelect,
 } from '../styled'
 import { StyledTable } from './styled'
 
@@ -189,13 +190,13 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                      value={quantity}
                      onChange={e => setQuantity(e.target.value)}
                   />
-                  <select onChange={e => setUnit(e.target.value)}>
+                  <StyledSelect onChange={e => setUnit(e.target.value)}>
                      {units.map(unit => (
                         <option key={unit.id} value={unit.title}>
                            {unit.title}
                         </option>
                      ))}
-                  </select>
+                  </StyledSelect>
                </StyledInputWrapper>
             </StyledRow>
             <StyledRow>

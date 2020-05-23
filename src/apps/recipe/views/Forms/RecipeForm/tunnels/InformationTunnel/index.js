@@ -93,7 +93,7 @@ const InformationTunnel = ({ state, closeTunnel, cuisines }) => {
             </Container>
             <Container bottom="32">
                <Grid gap="16">
-                  <Flex direction="row" align="center">
+                  <Flex direction="row" align="center" justify="flex-start">
                      <StyledLabel>Cuisine</StyledLabel>
                      <StyledSelect
                         value={_state.cuisine}

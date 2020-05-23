@@ -10,6 +10,7 @@ import {
    StyledInputWrapper,
    TunnelBody,
    TunnelHeader,
+   StyledSelect,
 } from '../styled'
 
 const EditSachetTunnel = ({ state, units, closeTunnel }) => {
@@ -96,13 +97,16 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
                      value={quantity}
                      onChange={e => setQuantity(e.target.value)}
                   />
-                  <select value={unit} onChange={e => setUnit(e.target.value)}>
+                  <StyledSelect
+                     value={unit}
+                     onChange={e => setUnit(e.target.value)}
+                  >
                      {units.map(unit => (
                         <option key={unit.id} value={unit.title}>
                            {unit.title}
                         </option>
                      ))}
-                  </select>
+                  </StyledSelect>
                </StyledInputWrapper>
             </Container>
          </TunnelBody>
