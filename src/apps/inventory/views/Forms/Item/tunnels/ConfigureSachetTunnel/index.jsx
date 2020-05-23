@@ -36,15 +36,15 @@ export default function ConfigureSachetTunnel({ open, close }) {
       })
 
       if (res?.data?.createSachetItem?.returning[0]?.id) {
-         dispatch({
-            type: 'CONFIGURE_NEW_SACHET',
-            payload: {
-               id: res?.data?.createSachetItem?.returning[0]?.id,
-               quantity,
-               par,
-               maxInventoryLevel,
-            },
-         })
+         // dispatch({
+         //    type: 'CONFIGURE_NEW_SACHET',
+         //    payload: {
+         //       id: res?.data?.createSachetItem?.returning[0]?.id,
+         //       quantity,
+         //       par,
+         //       maxInventoryLevel,
+         //    },
+         // })
          close(9)
       }
    }

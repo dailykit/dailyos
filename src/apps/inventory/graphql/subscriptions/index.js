@@ -25,6 +25,47 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
    }
 `
 
+export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
+   subscription SupplierItem($id: Int!) {
+      supplierItem(id: $id) {
+         id
+         name
+         bulkItemAsShippedId
+         unit
+         unitSize
+         leadTime
+         supplier {
+            name
+            contactPerson
+         }
+         bulkItems {
+            id
+            processingName
+            awaiting
+            onHand
+            committed
+            parLevel
+            maxLevel
+            isAvailable
+            shelfLife
+            unit
+            consumed
+
+            sachetItems {
+               id
+               onHand
+               awaiting
+               consumed
+               unit
+               unitSize
+               parLevel
+               committed
+            }
+         }
+      }
+   }
+`
+
 export const BULK_WORK_ORDERS_SUBSCRIPTION = gql`
    subscription BulkWorkOrders {
       bulkWorkOrders {

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    IconButton,
@@ -12,16 +12,18 @@ import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import { CaseIcon, ClockIcon, ItemIcon, TruckIcon } from '../../../assets/icons'
+import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import {
    ItemContext,
    reducer,
    state as initialState,
 } from '../../../context/item'
+import { Context } from '../../../context/tabs'
 import {
    MASTER_ALLERGENS,
    MASTER_PROCESSINGS,
    SUPPLIERS,
+   SUPPLIER_ITEM_SUBSCRIPTION,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -53,10 +55,33 @@ const address = 'apps.inventory.views.forms.item.'
 
 export default function ItemForm() {
    const { t } = useTranslation()
+   const { state: tabState } = useContext(Context)
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
+   const [formState, setFormState] = React.useState({})
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
+
+   const { loading: itemDetailLoading } = useSubscription(
+      SUPPLIER_ITEM_SUBSCRIPTION,
+      {
+         variables: { id: state.id || tabState.itemId },
+         onSubscriptionData: input => {
+            const data = input.subscriptionData.data.supplierItem
+            const bulkItemAsShipped = data.bulkItems?.find(
+               item => item.id === data.bulkItemAsShippedId
+            )
+            const normalisedData = {
+               ...data,
+               bulkItemAsShipped: {
+                  ...bulkItemAsShipped,
+                  name: bulkItemAsShipped?.processingName,
+               },
+            }
+            setFormState(normalisedData)
+         },
+      }
+   )
 
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
 
@@ -68,7 +93,18 @@ export default function ItemForm() {
       MASTER_ALLERGENS
    )
 
-   if (supplierLoading || processingsLoading || allergensLoading)
+   React.useEffect(() => {
+      if (tabState.itemId) {
+         dispatch({ type: 'ADD_ITEM_ID', payload: tabState.itemId })
+      }
+   }, [tabState.itemId])
+
+   if (
+      supplierLoading ||
+      processingsLoading ||
+      allergensLoading ||
+      itemDetailLoading
+   )
       return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
@@ -155,16 +191,17 @@ export default function ItemForm() {
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-               {state.title && (
+               {formState.name && (
                   <>
                      <StyledInfo>
-                        <h1> {state.title} </h1>
+                        <h1>{state.title || formState.name}</h1>
                         <span> {state.sku} </span>
                      </StyledInfo>
                      <StyledSupplier>
-                        <span>{state.supplier.name} </span>
+                        <span>{formState.supplier?.name}</span>
                         <span>
-                           {`${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})`}
+                           {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
+                              ''}
                         </span>
                      </StyledSupplier>
                   </>
@@ -172,7 +209,7 @@ export default function ItemForm() {
             </StyledHeader>
          </StyledWrapper>
          <StyledMain>
-            {!state.title ? (
+            {!formState.id && !state.title ? (
                <StyledWrapper>
                   <ButtonTile
                      type="primary"
@@ -193,13 +230,20 @@ export default function ItemForm() {
                            <div>
                               <span>
                                  {state.unit_quantity.value +
-                                    state.unit_quantity.unit}
+                                    state.unit_quantity.unit ||
+                                    formState.unitSize + formState.unit}
                               </span>
-                              <span>${state.unit_price.value || 0}</span>
+                              <span>
+                                 $
+                                 {state.unit_price.value ||
+                                    (formState.prices?.length &&
+                                       formState.prices[0]?.unitPrice?.value) ||
+                                    0}
+                              </span>
                            </div>
                         </div>
                      </div>
-                     <div>
+                     {/* <div>
                         <div>
                            <CaseIcon />
                         </div>
@@ -208,7 +252,8 @@ export default function ItemForm() {
                            <div>
                               <span>
                                  {state.case_quantity.value +
-                                    state.case_quantity.unit}
+                                    state.case_quantity.unit || formState?.supplierItem?.unitSize +
+                                    supplierItemData?.supplierItem?.unit}
                               </span>
                               <span>
                                  $
@@ -217,8 +262,8 @@ export default function ItemForm() {
                               </span>
                            </div>
                         </div>
-                     </div>
-                     <div>
+                     </div> */}
+                     {/* <div>
                         <div>
                            <TruckIcon />
                         </div>
@@ -236,7 +281,7 @@ export default function ItemForm() {
                               </span>
                            </div>
                         </div>
-                     </div>
+                     </div> */}
                      <div>
                         <div>
                            <ClockIcon />
@@ -245,7 +290,10 @@ export default function ItemForm() {
                            <span>{t(address.concat('lead time'))}</span>
                            <div>
                               <span>
-                                 {state.lead_time.value + state.lead_time.unit}
+                                 {state.lead_time.value +
+                                    state.lead_time.unit ||
+                                    formState.leadTime?.value +
+                                       formState.leadTime?.unit}
                               </span>
                            </div>
                         </div>
@@ -273,7 +321,8 @@ export default function ItemForm() {
                            </IconButton>
                         </FlexContainer>
 
-                        {state.processing?.name && (
+                        {(state.processing?.name ||
+                           formState.bulkItemAsShipped?.name) && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -286,27 +335,42 @@ export default function ItemForm() {
                               <ProcessingButton
                                  active={active}
                                  onClick={() => {
+                                    const payload = formState.bulkItemAsShipped
+                                       ? formState.bulkItemAsShipped
+                                       : state.processing
                                     setActive(true)
                                     dispatch({
                                        type: 'SET_ACTIVE_PROCESSING',
-                                       payload: state.processing,
+                                       payload,
                                     })
                                  }}
                               >
-                                 <h3>{state.processing.name}</h3>
+                                 <h3>
+                                    {state.processing.name ||
+                                       formState.bulkItemAsShipped?.name}
+                                 </h3>
                                  <Text as="subtitle">
-                                    {t(address.concat('on hand'))}: 0{' '}
-                                    {t('units.gm')}
+                                    {t(address.concat('on hand'))}:{' '}
+                                    {formState.bulkItemAsShipped?.onHand}
                                  </Text>
                                  <Text as="subtitle">
                                     {t(address.concat('shelf life'))}:{' '}
-                                    {`${state.processing?.shelf_life?.value} ${state.processing?.shelf_life?.unit}`}
+                                    {`${
+                                       state.processing?.shelf_life?.value ||
+                                       formState.bulkItemAsShipped?.shelfLife
+                                          ?.value
+                                    } ${
+                                       state.processing?.shelf_life?.unit ||
+                                       formState.bulkItemAsShipped?.shelfLife
+                                          ?.unit
+                                    }`}
                                  </Text>
                               </ProcessingButton>
                            </>
                         )}
 
-                        {state.derivedProcessings.length > 0 && (
+                        {(state.derivedProcessings.length ||
+                           formState.bulkItems?.length) && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -317,34 +381,74 @@ export default function ItemForm() {
                                  )}
                               </Text>
 
-                              {state.derivedProcessings.map(procs => (
-                                 <ProcessingButton
-                                    key={procs.id}
-                                    active={
-                                       state.activeProcessing.id === procs.id
-                                    }
-                                    onClick={() => {
-                                       setActive(false)
-                                       dispatch({
-                                          type: 'SET_ACTIVE_PROCESSING',
-                                          payload: {
-                                             ...procs,
-                                             name: procs.title,
-                                          },
-                                       })
-                                    }}
-                                 >
-                                    <h3>{procs.title}</h3>
-                                    <Text as="subtitle">
-                                       {t(address.concat('on hand'))}: 0{' '}
-                                       {t('units.gm')}
-                                    </Text>
-                                    <Text as="subtitle">
-                                       {t(address.concat('shelf life'))}:{' '}
-                                       {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
-                                    </Text>
-                                 </ProcessingButton>
-                              ))}
+                              {formState.bulkItems?.length
+                                 ? formState.bulkItems?.map(procs => {
+                                      if (
+                                         procs.id ===
+                                         formState.bulkItemAsShippedId
+                                      )
+                                         return null
+                                      return (
+                                         <ProcessingButton
+                                            key={procs.id}
+                                            active={
+                                               state.activeProcessing.id ===
+                                               procs.id
+                                            }
+                                            onClick={() => {
+                                               setActive(false)
+                                               dispatch({
+                                                  type: 'SET_ACTIVE_PROCESSING',
+                                                  payload: {
+                                                     ...procs,
+                                                     name: procs.processingName,
+                                                  },
+                                               })
+                                            }}
+                                         >
+                                            <h3>{procs.processingName}</h3>
+                                            <Text as="subtitle">
+                                               {t(address.concat('on hand'))}:{' '}
+                                               {procs.onHand}
+                                               {t('units.gm')}
+                                            </Text>
+                                            <Text as="subtitle">
+                                               {t(address.concat('shelf life'))}
+                                               :{' '}
+                                               {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
+                                            </Text>
+                                         </ProcessingButton>
+                                      )
+                                   })
+                                 : state.derivedProcessings?.map(procs => (
+                                      <ProcessingButton
+                                         key={procs.id}
+                                         active={
+                                            state.activeProcessing.id ===
+                                            procs.id
+                                         }
+                                         onClick={() => {
+                                            setActive(false)
+                                            dispatch({
+                                               type: 'SET_ACTIVE_PROCESSING',
+                                               payload: {
+                                                  ...procs,
+                                                  name: procs.title,
+                                               },
+                                            })
+                                         }}
+                                      >
+                                         <h3>{procs.title}</h3>
+                                         <Text as="subtitle">
+                                            {t(address.concat('on hand'))}: 0{' '}
+                                            {t('units.gm')}
+                                         </Text>
+                                         <Text as="subtitle">
+                                            {t(address.concat('shelf life'))}:{' '}
+                                            {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
+                                         </Text>
+                                      </ProcessingButton>
+                                   ))}
                            </>
                         )}
                      </Flexible>
@@ -357,7 +461,10 @@ export default function ItemForm() {
                            }}
                         >
                            {state.activeProcessing?.name ? (
-                              <ProcessingView open={openTunnel} />
+                              <ProcessingView
+                                 open={openTunnel}
+                                 formState={formState}
+                              />
                            ) : (
                               <Text as="title">
                                  {t(
@@ -379,20 +486,21 @@ export default function ItemForm() {
    )
 }
 
-function ProcessingView({ open }) {
+function ProcessingView({ open, formState }) {
    const { t } = useTranslation()
    const [activeView, setActiveView] = React.useState('realtime') // realtime | plannedLot
+
    return (
       <>
          <TabContainer>
             <ItemTab
-               active={activeView === 'realtime' ? true : false}
+               active={activeView === 'realtime'}
                onClick={() => setActiveView('realtime')}
             >
                <Text as="title">{t(address.concat('real-time'))}</Text>
             </ItemTab>
             <ItemTab
-               active={activeView === 'plannedLot' ? true : false}
+               active={activeView === 'plannedLot'}
                onClick={() => setActiveView('plannedLot')}
             >
                <Text as="title">{t(address.concat('planned-lot'))}</Text>
@@ -403,16 +511,16 @@ function ProcessingView({ open }) {
             <>
                <FlexContainer>
                   <Flexible width="4">
-                     <RealTimeView />
+                     <RealTimeView formState={formState} />
                   </Flexible>
-                  <Flexible width="1"></Flexible>
+                  <Flexible width="1" />
                </FlexContainer>
             </>
          )}
 
          {activeView === 'plannedLot' && (
             <>
-               <PlannedLotView open={open} />
+               <PlannedLotView open={open} formState={formState} />
             </>
          )}
       </>
@@ -433,37 +541,44 @@ function DataCard({ title, quantity, actionText }) {
 
          <Text as="h2">{quantity}</Text>
          <hr style={{ border: '1px solid #f3f3f3' }} />
-         <span style={{ color: '#00A7E1', marginTop: '5px' }}>
-            {actionText}
-         </span>
+         {actionText && (
+            <span style={{ color: '#00A7E1', marginTop: '5px' }}>
+               {actionText}
+            </span>
+         )}
       </div>
    )
 }
 
-function RealTimeView() {
+function RealTimeView({ formState }) {
    const { t } = useTranslation()
+
+   const {
+      state: { activeProcessing },
+   } = useContext(ItemContext)
+   const active = formState.bulkItems.find(
+      item => item.id === activeProcessing.id
+   )
+
    return (
       <FlexContainer style={{ flexWrap: 'wrap' }}>
          <DataCard
             title={t(address.concat('awaiting'))}
-            quantity="0gm"
-            actionText="1 active purchase order"
+            quantity={`${active.awaiting} ${active.unit}`}
          />
          <DataCard
-            title={t(address.concat('commited'))}
-            quantity="0gm"
-            actionText="1 active purchase order"
+            title={t(address.concat('committed'))}
+            quantity={`${active.committed} ${active.unit}`}
          />
          <DataCard
             title={t(address.concat('consumed'))}
-            quantity="0gm"
-            actionText="1 active purchase order"
+            quantity={`${active.consumed} ${active.unit}`}
          />
       </FlexContainer>
    )
 }
 
-function PlannedLotView({ open }) {
+function PlannedLotView({ open, formState }) {
    const { t } = useTranslation()
    const {
       state: { activeProcessing },
@@ -471,56 +586,93 @@ function PlannedLotView({ open }) {
       dispatch,
    } = useContext(ItemContext)
 
+   const active = formState.bulkItems.find(
+      item => item.id === activeProcessing.id
+   )
+
+   const activeSachet = active.sachetItems.find(
+      item => item.id === state.activeSachet.id
+   )
+
    return (
       <>
          <FlexContainer>
             <Flexible width="1">
                <Text as="h2">{t(address.concat('sachets'))}</Text>
 
-               {activeProcessing.sachets.map(sachet => (
-                  <ProcessingButton
-                     active={sachet.id === state.activeSachet.id}
-                     onClick={() =>
-                        dispatch({ type: 'SET_ACTIVE_SACHET', payload: sachet })
-                     }
-                  >
-                     <h3>
-                        {sachet.quantity} {state.unit_quantity.unit}
-                     </h3>
+               {formState.name
+                  ? active.sachetItems.map(sachet => {
+                       return (
+                          <ProcessingButton
+                             active={sachet.id === state.activeSachet.id}
+                             onClick={() =>
+                                dispatch({
+                                   type: 'SET_ACTIVE_SACHET',
+                                   payload: sachet,
+                                })
+                             }
+                          >
+                             <h3>
+                                {sachet.unitSize} {sachet.unit}
+                             </h3>
 
-                     <Text as="subtitle">
-                        {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                        {state.unit_quantity.unit}
-                     </Text>
-                  </ProcessingButton>
-               ))}
+                             <Text as="subtitle">
+                                {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                                {sachet.unit}
+                             </Text>
+                          </ProcessingButton>
+                       )
+                    })
+                  : activeProcessing.sachets.map(sachet => (
+                       <ProcessingButton
+                          active={sachet.id === state.activeSachet.id}
+                          onClick={() =>
+                             dispatch({
+                                type: 'SET_ACTIVE_SACHET',
+                                payload: sachet,
+                             })
+                          }
+                       >
+                          <h3>
+                             {sachet.quantity} {state.unit_quantity.unit}
+                          </h3>
+
+                          <Text as="subtitle">
+                             {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                             {state.unit_quantity.unit}
+                          </Text>
+                       </ProcessingButton>
+                    ))}
 
                <div style={{ width: '90%', marginTop: '10px' }}>
                   <ButtonTile
                      type="primary"
                      size="lg"
                      text={t(address.concat('add sachets'))}
-                     onClick={e => open(9)}
+                     onClick={() => {
+                        dispatch({
+                           type: 'SET_UNIT_QUANTITY',
+                           payload: { unit: active.unit },
+                        })
+                        open(9)
+                     }}
                   />
                </div>
             </Flexible>
             <Flexible width="4">
-               {state.activeSachet?.quantity && (
+               {(activeSachet?.id || state.activeSachet?.quantity) && (
                   <FlexContainer style={{ flexWrap: 'wrap' }}>
                      <DataCard
                         title={t(address.concat('awaiting'))}
-                        quantity="0gm"
-                        actionText="1 active purchase order"
+                        quantity={`${activeSachet.awaiting || 0} pkt`}
                      />
                      <DataCard
-                        title={t(address.concat('commited'))}
-                        quantity="0gm"
-                        actionText="1 active purchase order"
+                        title={t(address.concat('committed'))}
+                        quantity={`${activeSachet.committed || 0} pkt`}
                      />
                      <DataCard
                         title={t(address.concat('consumed'))}
-                        quantity="0gm"
-                        actionText="1 active purchase order"
+                        quantity={`${activeSachet.consumed || 0} pkt`}
                      />
                   </FlexContainer>
                )}
