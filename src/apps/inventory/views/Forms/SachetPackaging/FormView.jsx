@@ -28,7 +28,7 @@ export default function FormView({ state, open }) {
          <InfoBar open={open} state={state} />
          <br />
 
-         <PackagingStats state={state} />
+         <PackagingStats state={state} open={open} />
       </>
    )
 }

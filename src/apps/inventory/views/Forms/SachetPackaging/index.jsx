@@ -14,6 +14,9 @@ import {
    SuppliersTunnel,
    ItemInformationTunnel,
    MoreItemInfoTunnel,
+   LeakResistanceTunnel,
+   OpacityTypeTunnel,
+   CompressibilityTunnel,
 } from './Tunnels'
 import FormView from './FormView'
 
@@ -25,7 +28,7 @@ export default function SachetPackaging() {
       sachetPackagingInitialState
    )
    const { state } = useContext(Context)
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(6)
    const [formState, setFormState] = useState({})
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
 
@@ -89,6 +92,15 @@ export default function SachetPackaging() {
                </Tunnel>
                <Tunnel layer={3}>
                   <MoreItemInfoTunnel close={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={4}>
+                  <LeakResistanceTunnel close={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={5}>
+                  <OpacityTypeTunnel close={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={6}>
+                  <CompressibilityTunnel close={closeTunnel} />
                </Tunnel>
             </Tunnels>
 
