@@ -123,7 +123,7 @@ export const StyledGrid = styled.div`
    border-top: 1px solid #dddddd;
 
    &:hover {
-      filter: brightness(1.5);
+      background-color: #ededed;
       cursor: pointer;
    }
 

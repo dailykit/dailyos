@@ -41,8 +41,27 @@ export default function SachetPackaging() {
 
    const { loading } = useSubscription(PACKAGING_SUBSCRIPTION, {
       variables: { id: sachetPackagingState.id },
-      onSubscriptionData: async data => {
-         setFormState(data.subscriptionData.data.packaging)
+      onSubscriptionData: async input => {
+         const data = input.subscriptionData.data.packaging
+         sachetPackagingDispatch({
+            type: 'ADD_ITEM_INFO',
+            payload: {
+               itemName: data.name,
+               itemSku: data.sku,
+               itemWidth: data.dimensions.width,
+               itemHeight: data.dimensions.height,
+               itemDepth: data.dimensions.depth,
+               itemPar: data.parLevel,
+               itemMaxValue: data.maxLevel,
+               unitPrice: data.unitPrice,
+               caseQuantity: data.caseQuantity,
+               minOrderValue: data.minOrderValue,
+               leadTime: data.leadTime.value,
+               leadTimeUnit: data.leadTime.unit,
+               unitQuantity: data.unitQuantity,
+            },
+         })
+         setFormState(data)
       },
    })
 

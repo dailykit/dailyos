@@ -14,15 +14,31 @@ const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
 export default function ItemInformationTunnel({ close, next }) {
    const { t } = useTranslation()
-   const { sachetPackagingDispatch } = useContext(SachetPackagingContext)
+   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
+      SachetPackagingContext
+   )
 
-   const [itemName, setItemName] = useState('')
-   const [itemSku, setItemSku] = useState('')
-   const [itemWidth, setItemWidth] = useState('')
-   const [itemHeight, setItemHeight] = useState('')
-   const [itemDepth, setItemDepth] = useState('')
-   const [itemPar, setItemPar] = useState('')
-   const [itemMaxValue, setItemMaxValue] = useState('')
+   const [itemName, setItemName] = useState(
+      sachetPackagingState.info.itemName || ''
+   )
+   const [itemSku, setItemSku] = useState(
+      sachetPackagingState.info.itemSku || ''
+   )
+   const [itemWidth, setItemWidth] = useState(
+      sachetPackagingState.info.itemWidth || ''
+   )
+   const [itemHeight, setItemHeight] = useState(
+      sachetPackagingState.info.itemHeight || ''
+   )
+   const [itemDepth, setItemDepth] = useState(
+      sachetPackagingState.info.itemDepth || ''
+   )
+   const [itemPar, setItemPar] = useState(
+      sachetPackagingState.info.itemPar || ''
+   )
+   const [itemMaxValue, setItemMaxValue] = useState(
+      sachetPackagingState.info.itemMaxValue || ''
+   )
 
    return (
       <>

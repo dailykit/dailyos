@@ -11,32 +11,75 @@ import {
 import { FlexContainer, StyledSelect } from '../../../styled'
 import { PaddedInputGroup } from './styled'
 import { SachetPackagingContext } from '../../../../../context'
-import { CREATE_PACKAGING } from '../../../../../graphql'
+import { CREATE_PACKAGING, UPDATE_PACKAGING } from '../../../../../graphql'
 
 export default function MoreItemInfoTunnel({ close }) {
    const { sachetPackagingState, sachetPackagingDispatch } = useContext(
       SachetPackagingContext
    )
 
-   const [unitQuantity, setUnitQuantity] = useState('')
-   const [unitPrice, setUnitPrice] = useState('')
-   const [caseQuantity, setCaseQuantity] = useState('')
-   const [minOrderValue, setMinOrderValue] = useState('')
-   const [leadTime, setLeadTime] = useState('')
-   const [leadTimeUnit, setLeadTimeUnit] = useState('hours')
+   const [unitQuantity, setUnitQuantity] = useState(
+      sachetPackagingState.info.unitQuantity || ''
+   )
+   const [unitPrice, setUnitPrice] = useState(
+      sachetPackagingState.info.unitPrice || ''
+   )
+   const [caseQuantity, setCaseQuantity] = useState(
+      sachetPackagingState.info.caseQuantity || ''
+   )
+   const [minOrderValue, setMinOrderValue] = useState(
+      sachetPackagingState.info.minOrderValue || ''
+   )
+   const [leadTime, setLeadTime] = useState(
+      sachetPackagingState.info.leadTime || ''
+   )
+   const [leadTimeUnit, setLeadTimeUnit] = useState(
+      sachetPackagingState.info.leadTimeUnit || 'hours'
+   )
 
    const [loading, setLoading] = useState(false)
 
    const [createPackaging] = useMutation(CREATE_PACKAGING)
+   const [updatePackaging] = useMutation(UPDATE_PACKAGING)
 
    const handleNext = async () => {
-      if (sachetPackagingState.id) {
-         //update the item info
-         return
-      }
-
-      setLoading(true)
       try {
+         if (sachetPackagingState.id) {
+            // update the item info
+            setLoading(true)
+            const resp = await updatePackaging({
+               variables: {
+                  id: sachetPackagingState.id,
+                  object: {
+                     supplierId: sachetPackagingState.supplier.id,
+                     name: sachetPackagingState.info.itemName,
+                     sku: sachetPackagingState.info.itemSku,
+                     dimensions: {
+                        width: sachetPackagingState.info.itemWidth,
+                        height: sachetPackagingState.info.itemHeight,
+                        depth: sachetPackagingState.info.itemDepth,
+                     },
+                     parLevel: sachetPackagingState.info.itemPar,
+                     maxLevel: sachetPackagingState.info.itemMaxValue,
+                     unitPrice,
+                     unitQuantity,
+                     caseQuantity,
+                     minOrderValue,
+                     leadTime: { unit: leadTimeUnit, value: leadTime },
+                  },
+               },
+            })
+
+            if (resp?.data?.updatePackaging) {
+               // success
+               setLoading(false)
+               close(3)
+               return toast.info('updated successfully!')
+            }
+         }
+
+         setLoading(true)
+
          const resp = await createPackaging({
             variables: {
                object: {
