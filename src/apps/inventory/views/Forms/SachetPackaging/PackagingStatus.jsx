@@ -137,7 +137,14 @@ export default function PackagingStats({ state, open }) {
                   </div>
 
                   <div style={{ margin: '20px 0' }}>
-                     <Text as="title">Opacity Type</Text>
+                     <FlexContainer style={{ alignItems: 'center' }}>
+                        <Text as="title">Opacity Type</Text>
+                        {state.packOpacity && (
+                           <IconButton type="ghost" onClick={() => open(5)}>
+                              <EditIcon />
+                           </IconButton>
+                        )}
+                     </FlexContainer>
                      <br />
                      {state.packOpacity ? (
                         <>
@@ -252,7 +259,15 @@ export default function PackagingStats({ state, open }) {
                      )}
                   </div>
                   <div style={{ margin: '20px 0' }}>
-                     <Text as="title">Compressable From</Text>
+                     <FlexContainer style={{ alignItems: 'center' }}>
+                        <Text as="title">Compressable From</Text>
+
+                        {state.compressableFrom && (
+                           <IconButton type="ghost" onClick={() => open(6)}>
+                              <EditIcon />
+                           </IconButton>
+                        )}
+                     </FlexContainer>
                      <br />
                      {state.compressableFrom ? (
                         <>
