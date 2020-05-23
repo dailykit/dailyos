@@ -113,7 +113,7 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
 `
 
 export const PACKAGING_SUBSCRIPTION = gql`
-   subscription Packagings($id: Int!) {
+   subscription Packaging($id: Int!) {
       packaging(id: $id) {
          id
          name
@@ -122,6 +122,18 @@ export const PACKAGING_SUBSCRIPTION = gql`
          sku
          parLevel
          maxLevel
+         awaiting
+         onHand
+         consumed
+         innWaterRes
+         heatSafe
+         outWaterRes
+         recyclable
+         compostable
+         fdaComp
+         innGreaseRes
+         outGreaseRes
+         committed
          unitQuantity
          caseQuantity
          unitPrice
