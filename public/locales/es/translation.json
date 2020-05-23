@@ -1094,6 +1094,19 @@
                         "enter a type name": "Enter a type name"
                      }
                   }
+               },
+               "units": {
+                  "units": "Units",
+                  "name": "Name",
+                  "reference count": "Reference Count",
+                  "tunnels": {
+                     "addnew": {
+                        "add new types": "Add New Types",
+                        "add": "Add",
+                        "adding": "Adding...",
+                        "enter a type name": "Enter a type name"
+                     }
+                  }
                }
             },
             "home": {
@@ -1142,7 +1155,8 @@
                   "allergens": "Allergens",
                   "cuisines": "Cuisines",
                   "processings": "Processings",
-                  "accompaniment types": "Accompaniment Types"
+                  "accompaniment types": "Accompaniment Types",
+                  "units": "Units"
                }
             }
          }
