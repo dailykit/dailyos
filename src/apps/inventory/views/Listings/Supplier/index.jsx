@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import { DELETE_SUPPLIER, SUPPLIERS_SUBSCRIPTION } from '../../../graphql'
@@ -99,32 +98,24 @@ export default function SupplierListing() {
                      </TableHead>
                      <TableBody>
                         {formState.map(supplier => (
-                           <TableRow key={supplier?.id}>
+                           <TableRow
+                              onClick={() => handleSupplierEdit(supplier?.id)}
+                              key={supplier?.id}
+                           >
                               <TableCell>{supplier?.name}</TableCell>
                               <TableCell>{`${supplier?.contactPerson?.firstName} ${supplier?.contactPerson?.lastName} (${supplier?.contactPerson?.countryCode} ${supplier?.contactPerson?.phoneNumber})`}</TableCell>
                               <TableCell>
                                  <ShowAvailability supplier={supplier} />
                               </TableCell>
                               <TableCell align="right">
-                                 <div style={{ display: 'flex' }}>
-                                    <IconButton
-                                       onClick={() =>
-                                          handleSupplierEdit(supplier?.id)
-                                       }
-                                       type="outline"
-                                    >
-                                       <EditIcon />
-                                    </IconButton>
-                                    <span style={{ width: '5px' }} />
-                                    <IconButton
-                                       onClick={() =>
-                                          handleSupplierDelete(supplier?.id)
-                                       }
-                                       type="ghost"
-                                    >
-                                       <DeleteIcon />
-                                    </IconButton>
-                                 </div>
+                                 <IconButton
+                                    onClick={() =>
+                                       handleSupplierDelete(supplier?.id)
+                                    }
+                                    type="ghost"
+                                 >
+                                    <DeleteIcon />
+                                 </IconButton>
                               </TableCell>
                            </TableRow>
                         ))}
