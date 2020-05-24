@@ -111,3 +111,17 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const SUPPLIER_SUBSCRIPTION = gql`
+   subscription Supplier($id: Int!) {
+      supplier(id: $id) {
+         id
+         name
+         contactPerson
+         available
+         address
+         paymentTerms
+         shippingTerms
+      }
+   }
+`
