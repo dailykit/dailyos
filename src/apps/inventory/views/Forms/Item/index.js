@@ -80,6 +80,20 @@ export default function ItemForm() {
                },
             }
             setFormState(normalisedData)
+            console.log(normalisedData)
+            dispatch({
+               type: 'SET_SUB_DATA',
+               payload: {
+                  title: normalisedData.name,
+                  sku: normalisedData.sku,
+
+                  unit: normalisedData.unit,
+                  unitSize: normalisedData.unitSize,
+
+                  unit_price: normalisedData.prices[0].unitPrice,
+                  leadTime: normalisedData.leadTime,
+               },
+            })
          },
       }
    )
@@ -221,7 +235,7 @@ export default function ItemForm() {
                </StyledWrapper>
             ) : (
                <>
-                  <StyledGrid>
+                  <StyledGrid onClick={() => openTunnel(2)}>
                      <div>
                         <div>
                            <ItemIcon />
@@ -229,16 +243,11 @@ export default function ItemForm() {
                         <div>
                            <span>{t(address.concat('unit qty'))}</span>
                            <div>
-                              <span>
-                                 {state.unit_quantity.value +
-                                    state.unit_quantity.unit ||
-                                    formState.unitSize + formState.unit}
-                              </span>
+                              <span>{formState.unitSize + formState.unit}</span>
                               <span>
                                  $
-                                 {state.unit_price.value ||
-                                    (formState.prices?.length &&
-                                       formState.prices[0]?.unitPrice?.value) ||
+                                 {(formState.prices?.length &&
+                                    formState.prices[0]?.unitPrice?.value) ||
                                     0}
                               </span>
                            </div>
@@ -291,10 +300,8 @@ export default function ItemForm() {
                            <span>{t(address.concat('lead time'))}</span>
                            <div>
                               <span>
-                                 {state.lead_time.value +
-                                    state.lead_time.unit ||
-                                    formState.leadTime?.value +
-                                       formState.leadTime?.unit}
+                                 {formState.leadTime?.value +
+                                    formState.leadTime?.unit}
                               </span>
                            </div>
                         </div>
@@ -346,10 +353,7 @@ export default function ItemForm() {
                                     })
                                  }}
                               >
-                                 <h3>
-                                    {state.processing.name ||
-                                       formState.bulkItemAsShipped?.name}
-                                 </h3>
+                                 <h3>{formState.bulkItemAsShipped?.name}</h3>
                                  <Text as="subtitle">
                                     {t(address.concat('on hand'))}:{' '}
                                     {formState.bulkItemAsShipped?.onHand}
@@ -370,8 +374,7 @@ export default function ItemForm() {
                            </>
                         )}
 
-                        {(state.derivedProcessings.length ||
-                           formState.bulkItems?.length) && (
+                        {formState.bulkItems?.length && (
                            <>
                               <br />
                               <Text as="subtitle">
