@@ -11,6 +11,7 @@ import {
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
@@ -24,8 +25,9 @@ const address = 'apps.inventory.views.listings.supplier.'
 export default function SupplierListing() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
+   const [loading, setLoading] = useState(false)
    const [formState, setFormState] = useState([])
-   const { loading } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
+   const { loading: listLoading } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.suppliers
          setFormState(data)
@@ -39,22 +41,33 @@ export default function SupplierListing() {
    const [deleteSupplier] = useMutation(DELETE_SUPPLIER)
 
    const handleSupplierDelete = async id => {
-      const res = await deleteSupplier({ variables: { id } })
-      const {
-         data: {
-            deleteSupplier: { affected_rows: deleteCount },
-         },
-      } = res
+      setLoading(true)
+      try {
+         const res = await deleteSupplier({ variables: { id } })
+         const {
+            data: {
+               deleteSupplier: { affected_rows: deleteCount },
+            },
+         } = res
 
-      // if (deleteCount) {
-      //    await refetch()
-      // }
+         if (deleteCount) {
+            setLoading(false)
+            toast.info('Supplier deleted!')
+         }
+      } catch (error) {
+         setLoading(false)
+         toast.error(
+            'Supplier is linked with items, hence can not be removed. To delete the supplier, remove those items first'
+         )
+      }
    }
 
    const handleSupplierEdit = id => {
       dispatch({ type: 'ADD_SUPPLIER_ID', payload: id })
       addTab('Add Supplier', 'suppliers')
    }
+
+   if (loading) return <Loader />
 
    return (
       <>
@@ -70,7 +83,7 @@ export default function SupplierListing() {
             </StyledHeader>
 
             <div style={{ margin: '0 auto', width: '80%' }}>
-               {loading ? (
+               {listLoading ? (
                   <Loader />
                ) : (
                   <Table>
