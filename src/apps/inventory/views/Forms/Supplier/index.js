@@ -9,6 +9,7 @@ import {
    Tunnels,
    useTunnel,
    Loader,
+   Toggle,
 } from '@dailykit/ui/'
 import { toast } from 'react-toastify'
 import React, { useContext, useEffect, useReducer, useState } from 'react'
@@ -164,16 +165,20 @@ export default function SupplierForm() {
                      />
                   </div>
 
-                  <FormActions>
-                     <TextButton
-                        onClick={() => handleSave()}
-                        type="ghost"
-                        style={{ margin: '0px 10px' }}
-                     >
-                        {supplierState?.id
-                           ? t(address.concat('update'))
-                           : t(address.concat('save'))}
-                     </TextButton>
+                  <FormActions style={{ width: '25%' }}>
+                     <FlexContainer>
+                        <ShowAvailability formState={formState} />
+                        <span style={{ width: '20px' }} />
+                        <TextButton
+                           onClick={() => handleSave()}
+                           type="ghost"
+                           style={{ margin: '0px 10px' }}
+                        >
+                           {supplierState?.id
+                              ? t(address.concat('update'))
+                              : t(address.concat('save'))}
+                        </TextButton>
+                     </FlexContainer>
                   </FormActions>
                </FormHeading>
                <Container>
@@ -316,5 +321,39 @@ export default function SupplierForm() {
             </StyledWrapper>
          </SupplierContext.Provider>
       </>
+   )
+}
+
+function ShowAvailability({ formState }) {
+   const [loading, setLoading] = useState(false)
+
+   const [updateSupplier] = useMutation(UPDATE_SUPPLIER)
+
+   if (loading) return <Loader />
+
+   return (
+      <Toggle
+         checked={formState.available}
+         label={formState.available ? 'Available' : 'Unavailable'}
+         setChecked={async () => {
+            try {
+               setLoading(true)
+               const res = await updateSupplier({
+                  variables: {
+                     id: formState.id,
+                     object: { available: !formState.available },
+                  },
+               })
+
+               if (res?.data?.updateSupplier) {
+                  setLoading(false)
+                  toast.success('Updated availability!')
+               }
+            } catch (error) {
+               setLoading(false)
+               toast.error('Errr! I messed something up :(')
+            }
+         }}
+      />
    )
 }

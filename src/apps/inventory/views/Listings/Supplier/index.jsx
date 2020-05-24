@@ -107,9 +107,7 @@ export default function SupplierListing() {
                            >
                               <TableCell>{supplier?.name}</TableCell>
                               <TableCell>{`${supplier?.contactPerson?.firstName} ${supplier?.contactPerson?.lastName} (${supplier?.contactPerson?.countryCode} ${supplier?.contactPerson?.phoneNumber})`}</TableCell>
-                              <TableCell>
-                                 <ShowAvailability supplier={supplier} />
-                              </TableCell>
+
                               <TableCell align="right">
                                  <IconButton
                                     onClick={e => {
@@ -130,10 +128,4 @@ export default function SupplierListing() {
          </StyledWrapper>
       </>
    )
-}
-
-function ShowAvailability({ supplier }) {
-   const [available, setAvailable] = useState(supplier?.available || false)
-
-   return <Toggle checked={available} setChecked={setAvailable} />
 }
