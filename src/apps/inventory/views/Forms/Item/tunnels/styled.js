@@ -47,13 +47,6 @@ export const InputWrapper = styled.div`
    grid-gap: 8px;
 `
 
-export const StyledSelect = styled.select`
-   font-weight: 500;
-   font-size: 14px;
-   color: #555b6e;
-   border: none;
-`
-
 export const Highlight = styled.div`
    border: 1px solid #ededed;
    padding: 16px;

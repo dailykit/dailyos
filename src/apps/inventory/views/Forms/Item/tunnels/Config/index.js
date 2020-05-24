@@ -28,9 +28,9 @@ import {
    StyledInputGroup,
    Highlight,
    InputWrapper,
-   StyledSelect,
    StyledLabel,
 } from '../styled'
+import { StyledSelect } from '../../../styled'
 
 import { useTranslation } from 'react-i18next'
 

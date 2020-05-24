@@ -102,3 +102,10 @@ export const FlexContainer = styled.div`
 export const Flexible = styled.div`
    flex: ${({ width }) => width};
 `
+export const ShadowCard = styled(FlexContainer)`
+   padding: 12px 20px;
+   border: 1px dashed #f3f3f3;
+   box-sizing: border-box;
+   box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.13);
+   flex-wrap: wrap;
+`

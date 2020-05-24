@@ -125,3 +125,82 @@ export const SUPPLIER_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const SUPPLIERS_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliers {
+         id
+         name
+         contactPerson
+         available
+      }
+   }
+`
+
+export const PACKAGING_SUBSCRIPTION = gql`
+   subscription Packaging($id: Int!) {
+      packaging(id: $id) {
+         id
+         name
+         unitPrice
+         dimensions
+         sku
+         parLevel
+         maxLevel
+         awaiting
+         onHand
+         consumed
+         innWaterRes
+         heatSafe
+         outWaterRes
+         recyclable
+         compostable
+         fdaComp
+         innGreaseRes
+         outGreaseRes
+         leakResistance
+         compressableFrom
+         packOpacity
+         committed
+         unitQuantity
+         caseQuantity
+         unitPrice
+         minOrderValue
+         leadTime
+         supplier {
+            id
+            name
+            contactPerson
+         }
+      }
+   }
+`
+
+export const PACKAGINGS_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
+         unitPrice
+         dimensions
+         sku
+         parLevel
+         maxLevel
+         unitQuantity
+         caseQuantity
+         unitPrice
+         isAvailable
+         minOrderValue
+         awaiting
+         onHand
+         committed
+         leadTime
+         type
+         supplier {
+            id
+            name
+            contactPerson
+         }
+      }
+   }
+`

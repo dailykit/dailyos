@@ -18,8 +18,8 @@ import {
    StyledInputGroup,
    Highlight,
    InputWrapper,
-   StyledSelect,
 } from '../styled'
+import { StyledSelect } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
