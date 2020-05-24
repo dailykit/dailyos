@@ -112,6 +112,17 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
    }
 `
 
+export const SUPPLIERS_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliers {
+         id
+         name
+         contactPerson
+         available
+      }
+   }
+`
+
 export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packaging($id: Int!) {
       packaging(id: $id) {
