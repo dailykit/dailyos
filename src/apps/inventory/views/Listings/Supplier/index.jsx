@@ -75,7 +75,10 @@ export default function SupplierListing() {
                <h1>{t(address.concat('suppliers'))}</h1>
                <IconButton
                   type="solid"
-                  onClick={() => addTab('Add Supplier', 'suppliers')}
+                  onClick={() => {
+                     dispatch({ type: 'ADD_SUPPLIER_ID', payload: '' })
+                     addTab('Add Supplier', 'suppliers')
+                  }}
                >
                   <AddIcon color="#fff" size={24} />
                </IconButton>
