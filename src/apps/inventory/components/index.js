@@ -6,6 +6,7 @@ import ItemCard from './WorkOrder/ItemCard'
 import { ContactCard, AddressCard } from './Card'
 import FormHeading from './FormHeading/index'
 import StatusSwitch from './WorkOrder/StatusSwitch/index'
+import DataCard from './DataCard'
 
 export {
    Tabs,
@@ -17,4 +18,5 @@ export {
    AddressCard,
    ItemCard,
    StatusSwitch,
+   DataCard,
 }

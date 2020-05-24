@@ -122,6 +122,11 @@ export const StyledGrid = styled.div`
    border-bottom: 1px solid #dddddd;
    border-top: 1px solid #dddddd;
 
+   &:hover {
+      background-color: #ededed;
+      cursor: pointer;
+   }
+
    > div {
       &:not(:last-child) {
          border-right: 1px solid #dddddd;

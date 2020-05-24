@@ -1,10 +1,10 @@
 import { Text } from '@dailykit/ui'
 import React from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
 import { Context } from '../../../context/tabs'
+import { SolidTile } from '../styled'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
@@ -50,18 +50,3 @@ export default function WorkOrderTypeTunnel({ close }) {
       </TunnelContainer>
    )
 }
-
-const SolidTile = styled.button`
-   width: 70%;
-   display: block;
-   margin: 0 auto;
-   border: 1px solid #cecece;
-   padding: 10px 20px;
-   border-radius: 2px;
-   background-color: #fff;
-
-   &:hover {
-      background-color: #f3f3f3;
-      cursor: pointer;
-   }
-`

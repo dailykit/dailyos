@@ -12,6 +12,7 @@ import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
+import { DataCard } from '../../../components'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import {
    ItemContext,
@@ -524,29 +525,6 @@ function ProcessingView({ open, formState }) {
             </>
          )}
       </>
-   )
-}
-
-function DataCard({ title, quantity, actionText }) {
-   return (
-      <div
-         style={{
-            margin: '0 20px',
-            border: '1px solid #f3f3f3',
-            padding: '10px',
-            borderRadius: '4px',
-         }}
-      >
-         <Text as="title">{title}</Text>
-
-         <Text as="h2">{quantity}</Text>
-         <hr style={{ border: '1px solid #f3f3f3' }} />
-         {actionText && (
-            <span style={{ color: '#00A7E1', marginTop: '5px' }}>
-               {actionText}
-            </span>
-         )}
-      </div>
    )
 }
 
