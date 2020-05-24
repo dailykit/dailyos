@@ -95,6 +95,28 @@ function DataTable({ data }) {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
    }
 
+   const handleClick = workOrder => {
+      if (workOrder.type === 'bulk') {
+         dispatch({
+            type: 'SET_BULK_WORK_ORDER',
+            payload: {
+               id: workOrder.id,
+               status: workOrder.status,
+            },
+         })
+         addTab('Edit Bulk Work Order', 'bulkOrder')
+      } else {
+         dispatch({
+            type: 'SET_SACHET_WORK_ORDER',
+            payload: {
+               id: workOrder.id,
+               status: workOrder.status,
+            },
+         })
+         addTab('Edit Sachet Work Order', 'sachetOrder')
+      }
+   }
+
    return (
       <div style={{ width: '95%', margin: '0 auto' }}>
          <Table>
@@ -105,12 +127,11 @@ function DataTable({ data }) {
                   <TableCell>user</TableCell>
                   <TableCell>station</TableCell>
                   <TableCell>Type</TableCell>
-                  <TableCell align="right" />
                </TableRow>
             </TableHead>
             <TableBody>
-               {data?.map(workOrder => (
-                  <TableRow key={workOrder.id}>
+               {data?.map((workOrder, idx) => (
+                  <TableRow key={idx} onClick={() => handleClick(workOrder)}>
                      <TableCell>{workOrder.status}</TableCell>
                      <TableCell>
                         {moment(workOrder.scheduledOn).format('MMM Do YY')}
@@ -123,34 +144,6 @@ function DataTable({ data }) {
                         {workOrder.type === 'bulk'
                            ? 'Bulk Work Order'
                            : 'Sachet Work Order'}
-                     </TableCell>
-                     <TableCell align="right">
-                        <IconButton
-                           type="outline"
-                           onClick={() => {
-                              if (workOrder.type === 'bulk') {
-                                 dispatch({
-                                    type: 'SET_BULK_WORK_ORDER',
-                                    payload: {
-                                       id: workOrder.id,
-                                       status: workOrder.status,
-                                    },
-                                 })
-                                 addTab('Edit Bulk Work Order', 'bulkOrder')
-                              } else {
-                                 dispatch({
-                                    type: 'SET_SACHET_WORK_ORDER',
-                                    payload: {
-                                       id: workOrder.id,
-                                       status: workOrder.status,
-                                    },
-                                 })
-                                 addTab('Edit Sachet Work Order', 'sachetOrder')
-                              }
-                           }}
-                        >
-                           <EditIcon />
-                        </IconButton>
                      </TableCell>
                   </TableRow>
                ))}
