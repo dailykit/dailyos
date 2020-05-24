@@ -264,14 +264,26 @@ export default function SachetWorkOrder() {
                {sachetOrderState.supplierItem?.name ||
                sachetWorkOrderData?.sachetWorkOrder?.bulkItem?.supplierItem
                   .name ? (
-                  <ItemCard
-                     title={
-                        sachetOrderState.supplierItem.name ||
-                        sachetWorkOrderData?.sachetWorkOrder?.bulkItem
-                           ?.supplierItem.name
-                     }
-                     edit={() => openTunnel(1)}
-                  />
+                  <>
+                     {status ? (
+                        <ItemCard
+                           title={
+                              sachetOrderState.supplierItem.name ||
+                              sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                                 ?.supplierItem.name
+                           }
+                        />
+                     ) : (
+                        <ItemCard
+                           title={
+                              sachetOrderState.supplierItem.name ||
+                              sachetWorkOrderData?.sachetWorkOrder?.bulkItem
+                                 ?.supplierItem.name
+                           }
+                           edit={() => openTunnel(1)}
+                        />
+                     )}
+                  </>
                ) : (
                   <ButtonTile
                      noIcon
@@ -293,26 +305,52 @@ export default function SachetWorkOrder() {
                         {sachetOrderState.inputItemProcessing?.processingName ||
                         sachetWorkOrderData?.sachetWorkOrder?.bulkItem
                            ?.processingName ? (
-                           <ItemCard
-                              title={
-                                 sachetOrderState.inputItemProcessing
-                                    .processingName ||
-                                 sachetWorkOrderData?.sachetWorkOrder?.bulkItem
-                                    ?.processingName
-                              }
-                              onHand={
-                                 sachetOrderState.inputItemProcessing.onHand ||
-                                 sachetWorkOrderData?.sachetWorkOrder?.bulkItem
-                                    ?.onHand
-                              }
-                              shelfLife={
-                                 sachetOrderState.inputItemProcessing
-                                    .shelfLife ||
-                                 sachetWorkOrderData?.sachetWorkOrder?.bulkItem
-                                    ?.shelfLife
-                              }
-                              edit={() => openTunnel(5)}
-                           />
+                           <>
+                              {status ? (
+                                 <ItemCard
+                                    title={
+                                       sachetOrderState.inputItemProcessing
+                                          .processingName ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.bulkItem?.processingName
+                                    }
+                                    onHand={
+                                       sachetOrderState.inputItemProcessing
+                                          .onHand ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.bulkItem?.onHand
+                                    }
+                                    shelfLife={
+                                       sachetOrderState.inputItemProcessing
+                                          .shelfLife ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.bulkItem?.shelfLife
+                                    }
+                                 />
+                              ) : (
+                                 <ItemCard
+                                    title={
+                                       sachetOrderState.inputItemProcessing
+                                          .processingName ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.bulkItem?.processingName
+                                    }
+                                    onHand={
+                                       sachetOrderState.inputItemProcessing
+                                          .onHand ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.bulkItem?.onHand
+                                    }
+                                    shelfLife={
+                                       sachetOrderState.inputItemProcessing
+                                          .shelfLife ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.bulkItem?.shelfLife
+                                    }
+                                    edit={() => openTunnel(5)}
+                                 />
+                              )}
+                           </>
                         ) : (
                            <ButtonTile
                               noIcon
@@ -335,25 +373,46 @@ export default function SachetWorkOrder() {
                         {sachetOrderState.outputSachet?.unitSize ||
                         sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem
                            ?.unitSize ? (
-                           <ItemCard
-                              title={
-                                 `${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unitSize} ${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unit}` ||
-                                 `${sachetOrderState.outputSachet.unitSize} ${sachetOrderState.outputSachet.unit}`
-                              }
-                              onHand={
-                                 sachetOrderState.outputSachet.onHand ||
-                                 sachetWorkOrderData?.sachetWorkOrder
-                                    ?.outputSachetItem.onHand
-                              }
-                              par={
-                                 sachetOrderState.outputSachet.parLevel ||
-                                 sachetWorkOrderData?.sachetWorkOrder
-                                    ?.outputSachetItem.parLevel
-                              }
-                              edit={() => {
-                                 openTunnel(2)
-                              }}
-                           />
+                           <>
+                              {status ? (
+                                 <ItemCard
+                                    title={
+                                       `${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unitSize} ${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unit}` ||
+                                       `${sachetOrderState.outputSachet.unitSize} ${sachetOrderState.outputSachet.unit}`
+                                    }
+                                    onHand={
+                                       sachetOrderState.outputSachet.onHand ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.outputSachetItem.onHand
+                                    }
+                                    par={
+                                       sachetOrderState.outputSachet.parLevel ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.outputSachetItem.parLevel
+                                    }
+                                 />
+                              ) : (
+                                 <ItemCard
+                                    title={
+                                       `${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unitSize} ${sachetWorkOrderData?.sachetWorkOrder?.outputSachetItem.unit}` ||
+                                       `${sachetOrderState.outputSachet.unitSize} ${sachetOrderState.outputSachet.unit}`
+                                    }
+                                    onHand={
+                                       sachetOrderState.outputSachet.onHand ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.outputSachetItem.onHand
+                                    }
+                                    par={
+                                       sachetOrderState.outputSachet.parLevel ||
+                                       sachetWorkOrderData?.sachetWorkOrder
+                                          ?.outputSachetItem.parLevel
+                                    }
+                                    edit={() => {
+                                       openTunnel(2)
+                                    }}
+                                 />
+                              )}
+                           </>
                         ) : (
                            <ButtonTile
                               noIcon
