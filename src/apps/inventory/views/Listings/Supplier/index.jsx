@@ -109,9 +109,10 @@ export default function SupplierListing() {
                               </TableCell>
                               <TableCell align="right">
                                  <IconButton
-                                    onClick={() =>
+                                    onClick={e => {
+                                       e.stopPropagation()
                                        handleSupplierDelete(supplier?.id)
-                                    }
+                                    }}
                                     type="ghost"
                                  >
                                     <DeleteIcon />
