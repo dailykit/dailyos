@@ -11,6 +11,7 @@ const state = {
    bulkWorkOrder: {},
    purchaseOrder: {},
    itemId: '',
+   packagingId: '',
 }
 
 const reducers = (state, { type, payload }) => {
@@ -119,6 +120,9 @@ const reducers = (state, { type, payload }) => {
 
       case 'SET_ITEM_ID':
          return { ...state, itemId: payload }
+
+      case 'SET_PACKAGING_ID':
+         return { ...state, packagingId: payload }
       default:
          return state
    }

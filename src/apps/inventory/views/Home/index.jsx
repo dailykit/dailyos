@@ -22,28 +22,34 @@ const Home = () => {
          <h1>{t(address.concat('inventory app'))}</h1>
          <StyledTileContainer>
             <DashboardTile
-               title={t(address.concat("suppliers"))}
+               title={t(address.concat('suppliers'))}
                count="29"
                conf="All available"
                onClick={() => addTab('Suppliers', 'suppliers')}
             />
             <DashboardTile
-               title={t(address.concat("items"))}
+               title={t(address.concat('items'))}
                count="29"
                conf="All available"
                onClick={() => addTab('Supplier Items', 'items')}
             />
             <DashboardTile
-               title={t(address.concat("work orders"))}
+               title={t(address.concat('work orders'))}
                count="29"
                conf="All available"
                onClick={() => addTab('Work Orders', 'orders')}
             />
             <DashboardTile
-               title={t(address.concat("purchase orders"))}
+               title={t(address.concat('purchase orders'))}
                count="29"
                conf="All available"
                onClick={() => addTab('Purchase Orders', 'purchaseOrders')}
+            />
+            <DashboardTile
+               title="Packagings"
+               count="29"
+               conf="All available"
+               onClick={() => addTab('Packagings', 'packagings')}
             />
          </StyledTileContainer>
       </StyledHome>
