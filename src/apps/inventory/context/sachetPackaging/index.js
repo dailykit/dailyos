@@ -5,7 +5,10 @@ const SachetPackagingContext = React.createContext()
 const state = {
    id: '',
    supplier: {},
-   info: {},
+   info: {
+      packagingType: '',
+      sealingType: '',
+   },
    leakResistance: {},
    compressableFrom: {},
    packOpacity: {},
@@ -33,6 +36,10 @@ const reducers = (state, { type, payload }) => {
          return { ...state, compressableFrom: payload }
       case 'ADD_TYPE':
          return { ...state, type: payload }
+      case 'ADD_PACKAGING_TYPE':
+         return { ...state, info: { ...state.info, packagingType: payload } }
+      case 'ADD_SEALING_TYPE':
+         return { ...state, info: { ...state.info, sealingType: payload } }
       default:
          return state
    }

@@ -160,6 +160,8 @@ export const PACKAGING_SUBSCRIPTION = gql`
          compostable
          fdaComp
          type
+         packagingType
+         sealingType
          innGreaseRes
          outGreaseRes
          leakResistance

@@ -16,7 +16,9 @@ import {
    MoreItemInfoTunnel,
    LeakResistanceTunnel,
    OpacityTypeTunnel,
+   PackagingTypeTunnel,
    CompressibilityTunnel,
+   SealingTypeTunnel,
 } from './Tunnels'
 import FormView from './FormView'
 
@@ -53,6 +55,8 @@ export default function SachetPackaging() {
                leadTimeUnit: data.leadTime.unit,
                unitQuantity: data.unitQuantity,
                type: data.type,
+               packagingType: data.packagingType,
+               sealingType: data.sealingType,
             },
          })
          setFormState(data)
@@ -109,6 +113,12 @@ export default function SachetPackaging() {
                </Tunnel>
                <Tunnel layer={6}>
                   <CompressibilityTunnel close={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={7}>
+                  <PackagingTypeTunnel close={closeTunnel} />
+               </Tunnel>
+               <Tunnel layer={8}>
+                  <SealingTypeTunnel close={closeTunnel} />
                </Tunnel>
             </Tunnels>
 

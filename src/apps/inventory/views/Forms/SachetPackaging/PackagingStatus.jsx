@@ -83,6 +83,86 @@ export default function PackagingStats({ state, open }) {
                <ShadowCard style={{ flexDirection: 'column' }}>
                   <div style={{ margin: '20px 0' }}>
                      <FlexContainer style={{ alignItems: 'center' }}>
+                        <Text as="title">Packaging type</Text>
+                        {state.packagingType && (
+                           <IconButton type="ghost" onClick={() => open(7)}>
+                              <EditIcon />
+                           </IconButton>
+                        )}
+                     </FlexContainer>
+                     <br />
+                     {state.packagingType ? (
+                        <div
+                           style={{
+                              width: '70%',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              margin: '10px 0',
+                           }}
+                        >
+                           <div
+                              style={{
+                                 padding: '10px 80px',
+                                 backgroundColor: '#ededed',
+                                 borderRadius: '5px',
+                              }}
+                           >
+                              {state.packagingType}
+                           </div>
+                        </div>
+                     ) : (
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text="Select Packaging Material"
+                           onClick={() => open(7)}
+                           style={{ margin: '20px 0' }}
+                        />
+                     )}
+                  </div>
+
+                  <div style={{ margin: '20px 0' }}>
+                     <FlexContainer style={{ alignItems: 'center' }}>
+                        <Text as="title">Sealing type</Text>
+                        {state.sealingType && (
+                           <IconButton type="ghost" onClick={() => open(8)}>
+                              <EditIcon />
+                           </IconButton>
+                        )}
+                     </FlexContainer>
+                     <br />
+                     {state.sealingType ? (
+                        <div
+                           style={{
+                              width: '70%',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              margin: '10px 0',
+                           }}
+                        >
+                           <div
+                              style={{
+                                 padding: '10px 80px',
+                                 backgroundColor: '#ededed',
+                                 borderRadius: '5px',
+                              }}
+                           >
+                              {state.sealingType}
+                           </div>
+                        </div>
+                     ) : (
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text="Select Sealing type"
+                           onClick={() => open(8)}
+                           style={{ margin: '20px 0' }}
+                        />
+                     )}
+                  </div>
+
+                  <div style={{ margin: '20px 0' }}>
+                     <FlexContainer style={{ alignItems: 'center' }}>
                         <Text as="title">Leak Resistance</Text>
                         {state.leakResistance && (
                            <IconButton type="ghost" onClick={() => open(4)}>

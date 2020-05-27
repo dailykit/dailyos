@@ -4,6 +4,8 @@ import MoreItemInfoTunnel from './MoreItemInfoTunnel'
 import LeakResistanceTunnel from './LeakResistanceTunnel'
 import OpacityTypeTunnel from './OpacityTypeTunnel'
 import CompressibilityTunnel from './CompressibilityTunnel'
+import PackagingTypeTunnel from './PackagingMaterial/index'
+import SealingTypeTunnel from './SealingType/index'
 
 export {
    SuppliersTunnel,
@@ -12,4 +14,6 @@ export {
    LeakResistanceTunnel,
    OpacityTypeTunnel,
    CompressibilityTunnel,
+   PackagingTypeTunnel,
+   SealingTypeTunnel,
 }
