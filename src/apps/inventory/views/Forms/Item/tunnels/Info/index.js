@@ -42,6 +42,7 @@ export default function InfoTunnel({ close, next }) {
             supplierId: state.supplier.id,
             unit: state.unit_quantity.unit,
             unitSize: +state.unit_quantity.value,
+            sku: state.sku,
 
             prices: [
                {

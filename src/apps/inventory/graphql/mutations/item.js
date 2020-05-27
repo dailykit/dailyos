@@ -8,6 +8,7 @@ export const CREATE_SUPPLIER_ITEM = gql`
       $unitSize: Int!
       $leadTime: jsonb!
       $prices: jsonb!
+      $sku: String!
    ) {
       createSupplierItem(
          objects: {
