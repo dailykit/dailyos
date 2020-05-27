@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { OrderListItem, OrderSummary } from '../../components'
+import { OrderListItem, OrderSummary, Loader } from '../../components'
 
 import { useTabs } from '../../context/tabs'
 
@@ -23,18 +23,26 @@ const Orders = () => {
       }
    }, [history, tabs])
 
-   if (loading) return <div>Loading...</div>
+   if (loading)
+      return (
+         <Wrapper>
+            <OrderSummary />
+            <div>
+               <Loader />
+            </div>
+         </Wrapper>
+      )
    if (error) return <div>{error.message}</div>
    return (
       <Wrapper>
          <OrderSummary />
          <div>
-            {loading ? (
-               <div>Loading...</div>
-            ) : (
+            {orders.length > 0 ? (
                orders.map(order => (
                   <OrderListItem order={order} key={order.id} />
                ))
+            ) : (
+               <div>No orders yet!</div>
             )}
          </div>
       </Wrapper>
