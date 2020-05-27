@@ -59,15 +59,15 @@ const OrderListItem = ({ order, setDetails }) => {
          <section>
             <StyledOrderId>ORD{order.id}</StyledOrderId>
             {deliveryInfo?.dropoff &&
-               Object.keys(deliveryInfo.dropoff).length > 0 && (
+               Object.keys(deliveryInfo?.dropoff).length > 0 && (
                   <StyledConsumer>
                      <StyledConsumerName>
-                        {deliveryInfo.dropoff.dropoffInfo.customerFirstName}
-                        {deliveryInfo.dropoff.dropoffInfo.customerLastName}
+                        {deliveryInfo?.dropoff?.dropoffInfo?.customerFirstName}
+                        {deliveryInfo?.dropoff?.dropoffInfo?.customerLastName}
                      </StyledConsumerName>
                      <StyledConsumerAddress>
                         {normalize(
-                           deliveryInfo.dropoff.dropoffInfo.customerAddress
+                           deliveryInfo?.dropoff?.dropoffInfo?.customerAddress
                         )}
                      </StyledConsumerAddress>
                      <StyledConsumerContact>
@@ -75,7 +75,7 @@ const OrderListItem = ({ order, setDetails }) => {
                            <PhoneIcon size={14} color="#718096" />
                         </span>
                         <span>
-                           {deliveryInfo.dropoff.dropoffInfo.customerPhone}
+                           {deliveryInfo?.dropoff?.dropoffInfo?.customerPhone}
                         </span>
                      </StyledConsumerContact>
                      <StyledConsumerContact>
@@ -84,9 +84,12 @@ const OrderListItem = ({ order, setDetails }) => {
                         </span>
                         <span>
                            <a
-                              href={`mailto:${deliveryInfo.dropoff.dropoffInfo.customerEmail}`}
+                              href={`mailto:${deliveryInfo?.dropoff?.dropoffInfo?.customerEmail}`}
                            >
-                              {deliveryInfo.dropoff.dropoffInfo.customerEmail}
+                              {
+                                 deliveryInfo?.dropoff?.dropoffInfo
+                                    ?.customerEmail
+                              }
                            </a>
                         </span>
                      </StyledConsumerContact>
@@ -111,9 +114,9 @@ const OrderListItem = ({ order, setDetails }) => {
                   <StyledProductItem key={inventory.id}>
                      <div>
                         <StyledProductTitle>
-                           {inventory.inventoryProduct.name}&nbsp;-&nbsp;
-                           {inventory.comboProduct.name}(
-                           {inventory.comboProductComponent.label})
+                           {inventory?.inventoryProduct?.name}&nbsp;-&nbsp;
+                           {inventory?.comboProduct?.name}(
+                           {inventory?.comboProductComponent?.label})
                         </StyledProductTitle>
                      </div>
                      <StyledServings>
@@ -121,9 +124,9 @@ const OrderListItem = ({ order, setDetails }) => {
                            <UserIcon size={16} color="#555B6E" />
                         </span>
                         <span>
-                           {inventory.inventoryProductOption.quantity}
+                           {inventory?.inventoryProductOption?.quantity}
                            &nbsp;-&nbsp;
-                           {inventory.inventoryProductOption.label}
+                           {inventory?.inventoryProductOption?.label}
                         </span>
                      </StyledServings>
                      <span>
@@ -140,9 +143,9 @@ const OrderListItem = ({ order, setDetails }) => {
                   <StyledProductItem key={mealkit.id}>
                      <div>
                         <StyledProductTitle>
-                           {mealkit.simpleRecipeProduct.name}&nbsp;-&nbsp;
-                           {mealkit.comboProduct.name}(
-                           {mealkit.comboProductComponent.label})
+                           {mealkit?.simpleRecipeProduct?.name}&nbsp;-&nbsp;
+                           {mealkit?.comboProduct?.name}(
+                           {mealkit?.comboProductComponent?.label})
                         </StyledProductTitle>
                      </div>
                      <StyledServings>
@@ -151,25 +154,25 @@ const OrderListItem = ({ order, setDetails }) => {
                         </span>
                         <span>
                            {
-                              mealkit.simpleRecipeProductOption
-                                 .simpleRecipeYield.yield.serving
+                              mealkit?.simpleRecipeProductOption
+                                 ?.simpleRecipeYield?.yield?.serving
                            }
                            &nbsp; Servings
                         </span>
                      </StyledServings>
                      <span>
                         {
-                           mealkit.orderSachets.filter(
+                           mealkit?.orderSachets.filter(
                               sachet => sachet.isAssembled
                            ).length
                         }
                         &nbsp;/&nbsp;
                         {
-                           mealkit.orderSachets.filter(
+                           mealkit?.orderSachets.filter(
                               sachet => sachet.status === 'COMPLETED'
                            ).length
                         }
-                        &nbsp; / {mealkit.orderSachets.length}
+                        &nbsp; / {mealkit?.orderSachets?.length}
                      </span>
                   </StyledProductItem>
                ))}
@@ -182,9 +185,9 @@ const OrderListItem = ({ order, setDetails }) => {
                   <StyledProductItem key={readytoeat.id}>
                      <div>
                         <StyledProductTitle>
-                           {readytoeat.comboProduct.name}&nbsp;-&nbsp;
-                           {readytoeat.comboProduct.name}(
-                           {readytoeat.comboProductComponent.label})
+                           {readytoeat?.comboProduct?.name}&nbsp;-&nbsp;
+                           {readytoeat?.comboProduct?.name}(
+                           {readytoeat?.comboProductComponent?.label})
                         </StyledProductTitle>
                      </div>
                      <StyledServings>
@@ -193,14 +196,14 @@ const OrderListItem = ({ order, setDetails }) => {
                         </span>
                         <span>
                            {
-                              readytoeat.simpleRecipeProductOption
-                                 .simpleRecipeYield.yield.serving
+                              readytoeat?.simpleRecipeProductOption
+                                 ?.simpleRecipeYield?.yield?.serving
                            }
                            &nbsp; Servings
                         </span>
                      </StyledServings>
                      <span>
-                        {readytoeat.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
+                        {readytoeat?.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
                      </span>
                   </StyledProductItem>
                ))}
@@ -212,23 +215,23 @@ const OrderListItem = ({ order, setDetails }) => {
                <span>{formatDate(order?.created_at)}</span>
             </StyledStatus>
             {deliveryInfo?.pickup &&
-               Object.keys(deliveryInfo.pickup).length > 0 && (
+               Object.keys(deliveryInfo?.pickup).length > 0 && (
                   <StyledStatus>
                      <span>Expected Dispatch</span>
                      <span>
                         {formatDate(
-                           deliveryInfo.pickup.window.approved.startsAt
+                           deliveryInfo?.pickup?.window?.approved?.startsAt
                         )}
                      </span>
                   </StyledStatus>
                )}
             {deliveryInfo?.dropoff &&
-               Object.keys(deliveryInfo.dropoff).length > 0 && (
+               Object.keys(deliveryInfo?.dropoff).length > 0 && (
                   <StyledStatus>
                      <span>Delivery On</span>
                      <span>
                         {formatDate(
-                           deliveryInfo.dropoff.window.approved.startsAt
+                           deliveryInfo?.dropoff?.window?.approved?.startsAt
                         )}
                      </span>
                   </StyledStatus>
