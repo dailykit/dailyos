@@ -33,6 +33,9 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          bulkItemAsShippedId
          unit
          unitSize
+         prices
+         sku
+
          leadTime
          supplier {
             name

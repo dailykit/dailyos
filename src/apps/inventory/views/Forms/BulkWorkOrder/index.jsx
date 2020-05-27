@@ -249,14 +249,26 @@ export default function BulkWorkOrderForm() {
                {bulkOrderState.supplierItem?.name ||
                bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem?.supplierItem
                   .name ? (
-                  <ItemCard
-                     title={
-                        bulkOrderState.supplierItem.name ||
-                        bulkWorkOrderData.bulkWorkOrder.outputBulkItem
-                           .supplierItem.name
-                     }
-                     edit={() => openTunnel(1)}
-                  />
+                  <>
+                     {status ? (
+                        <ItemCard
+                           title={
+                              bulkOrderState.supplierItem.name ||
+                              bulkWorkOrderData.bulkWorkOrder.outputBulkItem
+                                 .supplierItem.name
+                           }
+                        />
+                     ) : (
+                        <ItemCard
+                           title={
+                              bulkOrderState.supplierItem.name ||
+                              bulkWorkOrderData.bulkWorkOrder.outputBulkItem
+                                 .supplierItem.name
+                           }
+                           edit={() => openTunnel(1)}
+                        />
+                     )}
+                  </>
                ) : (
                   <ButtonTile
                      noIcon
@@ -278,25 +290,52 @@ export default function BulkWorkOrderForm() {
                         {bulkOrderState.inputItemProcessing?.processingName ||
                         bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
                            .processingName ? (
-                           <ItemCard
-                              title={
-                                 bulkOrderState.inputItemProcessing
-                                    .processingName ||
-                                 bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
-                                    .processingName
-                              }
-                              onHand={
-                                 bulkOrderState.inputItemProcessing.onHand ||
-                                 bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
-                                    .onHand
-                              }
-                              shelfLife={
-                                 bulkOrderState.inputItemProcessing.shelfLife ||
-                                 bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
-                                    .shelfLife
-                              }
-                              edit={() => openTunnel(2)}
-                           />
+                           <>
+                              {status ? (
+                                 <ItemCard
+                                    title={
+                                       bulkOrderState.inputItemProcessing
+                                          .processingName ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.inputBulkItem.processingName
+                                    }
+                                    onHand={
+                                       bulkOrderState.inputItemProcessing
+                                          .onHand ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.inputBulkItem.onHand
+                                    }
+                                    shelfLife={
+                                       bulkOrderState.inputItemProcessing
+                                          .shelfLife ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.inputBulkItem.shelfLife
+                                    }
+                                 />
+                              ) : (
+                                 <ItemCard
+                                    title={
+                                       bulkOrderState.inputItemProcessing
+                                          .processingName ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.inputBulkItem.processingName
+                                    }
+                                    onHand={
+                                       bulkOrderState.inputItemProcessing
+                                          .onHand ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.inputBulkItem.onHand
+                                    }
+                                    shelfLife={
+                                       bulkOrderState.inputItemProcessing
+                                          .shelfLife ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.inputBulkItem.shelfLife
+                                    }
+                                    edit={() => openTunnel(2)}
+                                 />
+                              )}
+                           </>
                         ) : (
                            <ButtonTile
                               noIcon
@@ -320,26 +359,52 @@ export default function BulkWorkOrderForm() {
                         {bulkOrderState.outputItemProcessing?.processingName ||
                         bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
                            ?.processingName ? (
-                           <ItemCard
-                              title={
-                                 bulkOrderState.outputItemProcessing
-                                    .processingName ||
-                                 bulkWorkOrderData?.bulkWorkOrder
-                                    ?.outputBulkItem?.processingName
-                              }
-                              onHand={
-                                 bulkOrderState.outputItemProcessing.onHand ||
-                                 bulkWorkOrderData?.bulkWorkOrder
-                                    ?.outputBulkItem?.onHand
-                              }
-                              shelfLife={
-                                 bulkOrderState.outputItemProcessing
-                                    .shelfLife ||
-                                 bulkWorkOrderData?.bulkWorkOrder
-                                    ?.outputBulkItem?.shelfLife
-                              }
-                              edit={() => openTunnel(2)}
-                           />
+                           <>
+                              {status ? (
+                                 <ItemCard
+                                    title={
+                                       bulkOrderState.outputItemProcessing
+                                          .processingName ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.outputBulkItem?.processingName
+                                    }
+                                    onHand={
+                                       bulkOrderState.outputItemProcessing
+                                          .onHand ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.outputBulkItem?.onHand
+                                    }
+                                    shelfLife={
+                                       bulkOrderState.outputItemProcessing
+                                          .shelfLife ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.outputBulkItem?.shelfLife
+                                    }
+                                 />
+                              ) : (
+                                 <ItemCard
+                                    title={
+                                       bulkOrderState.outputItemProcessing
+                                          .processingName ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.outputBulkItem?.processingName
+                                    }
+                                    onHand={
+                                       bulkOrderState.outputItemProcessing
+                                          .onHand ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.outputBulkItem?.onHand
+                                    }
+                                    shelfLife={
+                                       bulkOrderState.outputItemProcessing
+                                          .shelfLife ||
+                                       bulkWorkOrderData?.bulkWorkOrder
+                                          ?.outputBulkItem?.shelfLife
+                                    }
+                                    edit={() => openTunnel(2)}
+                                 />
+                              )}
+                           </>
                         ) : (
                            <ButtonTile
                               noIcon
@@ -353,14 +418,12 @@ export default function BulkWorkOrderForm() {
                      </>
                   ))}
 
-               {bulkOrderState.outputItemProcessing?.processingName ||
-                  (bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
-                     ?.processingName && (
-                     <Configurator
-                        open={openTunnel}
-                        bulkWorkOrder={bulkWorkOrderData?.bulkWorkOrder}
-                     />
-                  ))}
+               {bulkOrderState.outputItemProcessing?.processingName && (
+                  <Configurator
+                     open={openTunnel}
+                     bulkWorkOrder={bulkWorkOrderData?.bulkWorkOrder}
+                  />
+               )}
             </StyledForm>
          </StyledWrapper>
       </BulkOrderContext.Provider>

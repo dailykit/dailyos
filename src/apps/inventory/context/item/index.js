@@ -12,7 +12,7 @@ export const state = {
    sku: '',
    unit_quantity: {
       value: '',
-      unit: '',
+      unit: 'gram',
    },
    unit_price: {
       unit: '$',
@@ -27,13 +27,13 @@ export const state = {
       value: '',
    },
    lead_time: {
-      unit: '',
+      unit: 'hours',
       value: '',
    },
    processing: {
       id: null,
       name: '',
-      unit: '',
+      unit: 'gram',
       par_level: {
          value: '',
          unit: '',
@@ -44,12 +44,12 @@ export const state = {
       },
       labor_time: {
          value: '',
-         unit: '',
+         unit: 'hours',
       },
       yield: '',
       shelf_life: {
          value: '',
-         unit: '',
+         unit: 'hours',
       },
       bulk_density: '',
       allergens: [],
@@ -404,6 +404,19 @@ export const reducer = (state, { type, payload }) => {
          }
       case 'SET_UNIT_QUANTITY':
          return { ...state, unit_quantity: payload }
+
+      case 'SET_SUB_DATA':
+         return {
+            ...state,
+            title: payload.title,
+            sku: payload.sku,
+            unit_quantity: {
+               unit: payload.unit,
+               value: payload.unitSize,
+            },
+            unit_price: payload.unit_price,
+            lead_time: payload.leadTime,
+         }
       default:
          return state
    }

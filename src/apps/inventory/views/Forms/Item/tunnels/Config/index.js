@@ -45,35 +45,44 @@ export default function ConfigTunnel({ close, open }) {
    const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
 
    const handleSave = async () => {
-      setLoading(true)
-      const res = await createBulkItem({
-         variables: {
-            processingName: state.processing.name,
-            itemId: state.id,
-            unit: state.processing.unit, // string
-            yield: { value: state.processing.yield },
-            shelfLife: state.processing.shelf_life,
-            parLevel: +state.processing.par_level.value,
-            nutritionInfo: state.processing.nutrients || {},
-            maxLevel: +state.processing.max_inventory_level.value,
-            labor: state.processing.labor_time,
-            bulkDensity: +state.processing.bulk_density,
-            allergens: state.processing.allergens,
-         },
-      })
-
-      if (res?.data?.createBulkItem) {
-         const bulkItemAsShippedId = res?.data?.createBulkItem?.returning[0].id
-         const result = await addBulkItem({
-            variables: { itemId: state.id, bulkItemAsShippedId },
+      try {
+         setLoading(true)
+         const res = await createBulkItem({
+            variables: {
+               processingName: state.processing.name,
+               itemId: state.id,
+               unit: state.processing.unit, // string
+               yield: { value: state.processing.yield },
+               shelfLife: state.processing.shelf_life,
+               parLevel: +state.processing.par_level.value,
+               nutritionInfo: state.processing.nutrients || {},
+               maxLevel: +state.processing.max_inventory_level.value,
+               labor: state.processing.labor_time,
+               bulkDensity: +state.processing.bulk_density,
+               allergens: state.processing.allergens,
+            },
          })
 
-         if (result?.data) {
-            dispatch({ type: 'ADD_PROCESSING', payload: bulkItemAsShippedId })
-            close(4)
-            setLoading(false)
-            toast.success('Bulk Item Added!')
+         if (res?.data?.createBulkItem) {
+            const bulkItemAsShippedId =
+               res?.data?.createBulkItem?.returning[0].id
+            const result = await addBulkItem({
+               variables: { itemId: state.id, bulkItemAsShippedId },
+            })
+
+            if (result?.data) {
+               dispatch({
+                  type: 'ADD_PROCESSING',
+                  payload: bulkItemAsShippedId,
+               })
+               close(4)
+               setLoading(false)
+               toast.success('Bulk Item Added!')
+            }
          }
+      } catch (error) {
+         setLoading(false)
+         toast.error('Err! make sure you have filled the form properly')
       }
    }
 
