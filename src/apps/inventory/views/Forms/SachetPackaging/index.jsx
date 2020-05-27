@@ -52,6 +52,7 @@ export default function SachetPackaging() {
                leadTime: data.leadTime.value,
                leadTimeUnit: data.leadTime.unit,
                unitQuantity: data.unitQuantity,
+               type: data.type,
             },
          })
          setFormState(data)
@@ -62,7 +63,14 @@ export default function SachetPackaging() {
       if (state.packagingId) {
          sachetPackagingDispatch({ type: 'ADD_ID', payload: state.packagingId })
       }
-   }, [state.packagingId])
+
+      if (state.packagingType) {
+         sachetPackagingDispatch({
+            type: 'ADD_TYPE',
+            payload: state.packagingType,
+         })
+      }
+   }, [state.packagingId, state.packagingType])
 
    if (supplierLoading || loading) return <Loader />
 

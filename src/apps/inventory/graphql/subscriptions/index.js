@@ -159,6 +159,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          recyclable
          compostable
          fdaComp
+         type
          innGreaseRes
          outGreaseRes
          leakResistance

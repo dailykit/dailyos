@@ -9,6 +9,7 @@ const state = {
    leakResistance: {},
    compressableFrom: {},
    packOpacity: {},
+   type: '',
 }
 
 const reducers = (state, { type, payload }) => {
@@ -30,6 +31,8 @@ const reducers = (state, { type, payload }) => {
 
       case 'ADD_COMPRESSABILITY_INFO':
          return { ...state, compressableFrom: payload }
+      case 'ADD_TYPE':
+         return { ...state, type: payload }
       default:
          return state
    }

@@ -98,6 +98,7 @@ export default function MoreItemInfoTunnel({ close }) {
                   unitQuantity,
                   caseQuantity,
                   minOrderValue,
+                  type: sachetPackagingState.type,
                   leadTime: { unit: leadTimeUnit, value: leadTime },
                },
             },

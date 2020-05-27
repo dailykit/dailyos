@@ -31,6 +31,11 @@ export default function WorkOrderTypeTunnel({ close }) {
                   payload: '',
                })
 
+               dispatch({
+                  type: 'SET_PACKAGING_TYPE',
+                  payload: 'SACHET_PACKAGE',
+               })
+
                addTab('New Packaging', 'sachetPackaging')
             }}
          >
@@ -41,7 +46,18 @@ export default function WorkOrderTypeTunnel({ close }) {
          </SolidTile>
          <br />
          <SolidTile
-            onClick={() => addTab('New Packaging', 'assemblyPackaging')}
+            onClick={() => {
+               dispatch({
+                  type: 'SET_PACKAGING_ID',
+                  payload: '',
+               })
+               dispatch({
+                  type: 'SET_PACKAGING_TYPE',
+                  payload: 'ASSEMBLY_PACKAGE',
+               })
+
+               addTab('New Packaging', 'sachetPackaging')
+            }}
          >
             <Text as="h1">Assembly Packet</Text>
             <Text as="subtitle">

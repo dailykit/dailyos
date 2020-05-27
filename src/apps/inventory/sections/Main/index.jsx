@@ -16,7 +16,6 @@ import {
    PurchaseOrderForm,
    SachetOrderForm,
    Packagings,
-   AssemblyPackaging,
    SachetPackaging,
 } from '../../views'
 
@@ -38,7 +37,7 @@ const renderComponent = (type, view) => {
    if (type === 'forms' && view === 'sachetPackaging')
       return <SachetPackaging />
    if (type === 'forms' && view === 'assemblyPackaging')
-      return <AssemblyPackaging />
+      return <SachetPackaging />
 }
 
 const Main = () => {
