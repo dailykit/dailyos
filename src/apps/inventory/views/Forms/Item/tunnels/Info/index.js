@@ -26,7 +26,7 @@ import { StyledSelect } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({ close, next }) {
+export default function InfoTunnel({ close, next, units }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [loading, setLoading] = useState(false)
@@ -200,8 +200,11 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="gram">{t('units.gram')}</option>
-                           <option value="loaf">{t('units.loaf')}</option>
+                           {units.map(unit => (
+                              <option key={unit.id} value={unit.name}>
+                                 {unit.name}
+                              </option>
+                           ))}
                         </StyledSelect>
                      </InputWrapper>
                      <Input

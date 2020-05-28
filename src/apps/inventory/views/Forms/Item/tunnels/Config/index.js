@@ -1,42 +1,36 @@
-import React, { useState } from 'react'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-
 import {
-   TextButton,
-   Input,
    ButtonTile,
+   IconButton,
+   Input,
+   Loader,
    Tag,
    TagGroup,
    Text,
-   IconButton,
-   Loader,
+   TextButton,
 } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
-// Mutations
-import { CREATE_BULK_ITEM, ADD_BULK_ITEM } from '../../../../../graphql'
-
-import { CloseIcon } from '../../../../../assets/icons'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
-
+import { CloseIcon } from '../../../../../assets/icons'
 import { ItemContext } from '../../../../../context/item'
-
+import { ADD_BULK_ITEM, CREATE_BULK_ITEM } from '../../../../../graphql'
+import { StyledSelect } from '../../../styled'
 import {
-   TunnelHeader,
-   TunnelBody,
-   StyledRow,
-   StyledInputGroup,
    Highlight,
    InputWrapper,
+   StyledInputGroup,
    StyledLabel,
+   StyledRow,
+   TunnelBody,
+   TunnelHeader,
 } from '../styled'
-import { StyledSelect } from '../../../styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, open }) {
+export default function ConfigTunnel({ close, open, units }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [loading, setLoading] = useState(false)
@@ -156,8 +150,11 @@ export default function ConfigTunnel({ close, open }) {
                         })
                      }
                   >
-                     <option value="gram">{t('units.gram')}</option>
-                     <option value="loaf">{t('units.loaf')}</option>
+                     {units.map(unit => (
+                        <option key={unit.id} value={unit.name}>
+                           {unit.name}
+                        </option>
+                     ))}
                   </StyledSelect>
                </div>
             </StyledRow>
@@ -264,8 +261,11 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      >
-                        <option value="hours">{t('units.hours')}</option>
-                        <option value="days">{t('units.days')}</option>
+                        {units.map(unit => (
+                           <option key={unit.id} value={unit.name}>
+                              {unit.name}
+                           </option>
+                        ))}
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>

@@ -277,3 +277,11 @@ export const PACKAGINGS_COUNT_SUBSCRIPTION = gql`
       }
    }
 `
+export const UNITS_SUBSCRIPTION = gql`
+   query Units {
+      units {
+         id
+         name
+      }
+   }
+`

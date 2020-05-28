@@ -189,11 +189,3 @@ export const PURCHASE_ORDERS = gql`
       }
    }
 `
-export const UNITS = gql`
-   query Units {
-      units {
-         id
-         name
-      }
-   }
-`

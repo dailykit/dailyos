@@ -25,6 +25,7 @@ import {
    MASTER_PROCESSINGS,
    SUPPLIERS,
    SUPPLIER_ITEM_SUBSCRIPTION,
+   UNITS_SUBSCRIPTION,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -60,6 +61,7 @@ export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
+   const [units, setUnits] = React.useState([])
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
@@ -99,6 +101,12 @@ export default function ItemForm() {
    )
 
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const data = input.subscriptionData.data.units
+         setUnits(data)
+      },
+   })
 
    const { loading: processingsLoading, data: processingData } = useQuery(
       MASTER_PROCESSINGS
@@ -118,7 +126,8 @@ export default function ItemForm() {
       supplierLoading ||
       processingsLoading ||
       allergensLoading ||
-      itemDetailLoading
+      itemDetailLoading ||
+      unitsLoading
    )
       return <Loader />
    return (
@@ -138,6 +147,7 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel layer={2}>
                <InfoTunnel
+                  units={units}
                   close={() => closeTunnel(2)}
                   next={() => openTunnel(3)}
                />
@@ -156,7 +166,11 @@ export default function ItemForm() {
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
-               <ConfigTunnel close={closeTunnel} open={openTunnel} />
+               <ConfigTunnel
+                  units={units}
+                  close={closeTunnel}
+                  open={openTunnel}
+               />
             </Tunnel>
             <Tunnel layer={5}>
                <AllergensTunnel
@@ -182,6 +196,7 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
                <ConfigureDerivedProcessingTunnel
+                  units={units}
                   open={openTunnel}
                   close={closeTunnel}
                />
@@ -314,7 +329,11 @@ export default function ItemForm() {
                   </StyledGrid>
 
                   <FlexContainer
-                     style={{ marginTop: '30px', padding: '0 30px' }}
+                     style={{
+                        marginTop: '30px',
+                        padding: '0 30px',
+                        backgroundColor: '#f3f3f3',
+                     }}
                   >
                      <Flexible width="1">
                         <FlexContainer
