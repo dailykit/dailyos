@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const SUPPLIERS = gql`
    query {
-      suppliers {
+      suppliers(where: { available: { _eq: true } }) {
          id
          name
          contactPerson
