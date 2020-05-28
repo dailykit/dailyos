@@ -80,7 +80,7 @@ export default function ItemForm() {
                },
             }
             setFormState(normalisedData)
-            console.log(normalisedData)
+
             dispatch({
                type: 'SET_SUB_DATA',
                payload: {
@@ -340,7 +340,7 @@ export default function ItemForm() {
                               <br />
                               <Text as="subtitle">
                                  {t(
-                                    address.concat('as received from supplier')
+                                    address.concat('as recieved from supplier')
                                  )}
                                  .
                               </Text>
@@ -385,7 +385,7 @@ export default function ItemForm() {
                               <Text as="subtitle">
                                  {t(
                                     address.concat(
-                                       'derived from received processing'
+                                       'derived from recieved processing'
                                     )
                                  )}
                               </Text>
@@ -553,7 +553,7 @@ function RealTimeView({ formState }) {
             quantity={`${active.awaiting} ${active.unit}`}
          />
          <DataCard
-            title={t(address.concat('committed'))}
+            title={t(address.concat('commited'))}
             quantity={`${active.committed} ${active.unit}`}
          />
          <DataCard
@@ -657,7 +657,7 @@ function PlannedLotView({ open, formState }) {
                         quantity={`${activeSachet.awaiting || 0} pkt`}
                      />
                      <DataCard
-                        title={t(address.concat('committed'))}
+                        title={t(address.concat('commited'))}
                         quantity={`${activeSachet.committed || 0} pkt`}
                      />
                      <DataCard

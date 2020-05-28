@@ -184,7 +184,7 @@ export default function ConfigTunnel({ close, open }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label={t(address.concat('labor time per 100gm'))}
+                           label={t(address.concat('labour time per 100gm'))}
                            name="labor_time"
                            value={state.processing.labor_time.value}
                            onChange={e =>
@@ -271,7 +271,7 @@ export default function ConfigTunnel({ close, open }) {
                   <InputWrapper>
                      <Input
                         type="text"
-                        label={t(address.concat('bulk density'))}
+                        label={t(address.concat('bulk dnesity'))}
                         name="bulk_density"
                         value={state.processing.bulk_density}
                         onChange={e =>
