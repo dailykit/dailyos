@@ -167,8 +167,12 @@ export default function SupplierForm() {
 
                   <FormActions style={{ width: '25%' }}>
                      <FlexContainer>
-                        <ShowAvailability formState={formState} />
-                        <span style={{ width: '20px' }} />
+                        {formState.id && (
+                           <>
+                              <ShowAvailability formState={formState} />
+                              <span style={{ width: '20px' }} />
+                           </>
+                        )}
                         <TextButton
                            onClick={() => handleSave()}
                            type="ghost"
