@@ -48,11 +48,30 @@ export const StyledOrderItem = styled.div(
    `
 )
 
-export const StyledOrderId = styled.h4`
-   color: #a3a8b7;
-   font-size: 14px;
-   font-weight: 400;
+export const StyledOrderId = styled.div`
+   display: flex;
+   align-items: center;
    margin-bottom: 16px;
+   padding-right: 16px;
+   justify-content: space-between;
+   h2 {
+      color: #a3a8b7;
+      font-size: 14px;
+      font-weight: 400;
+   }
+   button {
+      height: 28px;
+      padding: 0 8px;
+      color: #787d91;
+      cursor: pointer;
+      font-weight: 500;
+      background: white;
+      border: 1px solid #c5dae2;
+      text-transform: uppercase;
+      :hover {
+         background: #f1f2fb;
+      }
+   }
 `
 
 export const StyledConsumer = styled.div`

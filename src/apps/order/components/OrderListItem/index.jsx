@@ -22,6 +22,7 @@ import { PhoneIcon, EmailIcon, UserIcon, RightIcon } from '../../assets/icons'
 import { formatDate } from '../../utils'
 
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
+import { useTabs } from '../../context'
 
 const normalize = address =>
    `${address.line1}, ${address.line2 ? `${address.line2}, ` : ''} ${
@@ -29,6 +30,7 @@ const normalize = address =>
    }, ${address.state}, ${address.zipcode}`
 
 const OrderListItem = ({ order, setDetails }) => {
+   const { addTab } = useTabs()
    const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
@@ -54,10 +56,20 @@ const OrderListItem = ({ order, setDetails }) => {
          })
       }
    }
+
+   const createTab = orderId => {
+      addTab(`ORD${orderId}`, `/order/orders/${orderId}`)
+   }
+
    return (
       <StyledOrderItem status={orderStatus}>
          <section>
-            <StyledOrderId>ORD{order.id}</StyledOrderId>
+            <StyledOrderId>
+               <h2>ORD{order.id}</h2>
+               <button type="button" onClick={() => createTab(id)}>
+                  View Order
+               </button>
+            </StyledOrderId>
             {deliveryInfo?.dropoff &&
                Object.keys(deliveryInfo?.dropoff).length > 0 && (
                   <StyledConsumer>
