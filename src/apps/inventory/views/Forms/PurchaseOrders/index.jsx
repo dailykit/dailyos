@@ -11,7 +11,7 @@ import {
 import React, { useReducer, useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
@@ -46,10 +46,12 @@ export default function PurchaseOrderForm() {
    )
 
    const { data: supplierItemsData, loading } = useQuery(SUPPLIER_ITEMS)
-   const {
-      data: purchaseItemsData,
-      loading: orderLoading,
-   } = useQuery(PURCHASE_ORDERS, { variables: { id: state.purchaseOrder?.id } })
+   const { data: purchaseItemsData, loading: orderLoading } = useSubscription(
+      PURCHASE_ORDERS,
+      {
+         variables: { id: state.purchaseOrder?.id },
+      }
+   )
    const [createPurchaseOrder] = useMutation(CREATE_PURCHASE_ORDER)
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER)
 

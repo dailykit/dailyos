@@ -176,7 +176,7 @@ export const SACHET_WORK_ORDER = gql`
 `
 
 export const PURCHASE_ORDERS = gql`
-   query PurchaseOrderItem($id: Int!) {
+   subscription PurchaseOrderItem($id: Int!) {
       purchaseOrderItem(id: $id) {
          id
          supplierItem {
