@@ -29,7 +29,10 @@ export const ORDER_STATUSES = gql`
 
 export const ORDERS = gql`
    subscription orders {
-      orders(order_by: { updated_at: desc }) {
+      orders(
+         order_by: { updated_at: desc }
+         where: { orderStatus: { _neq: "DELIVERED" } }
+      ) {
          id
          created_at
          deliveryInfo
