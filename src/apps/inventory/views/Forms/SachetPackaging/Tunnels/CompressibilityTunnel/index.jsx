@@ -66,6 +66,7 @@ export default function CompressibilityTunnel({ close }) {
       } catch (error) {
          close(6)
          setLoading(false)
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }

@@ -114,6 +114,7 @@ export default function InfoTunnel({ close, next }) {
       } catch (error) {
          setLoading(false)
          close()
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }

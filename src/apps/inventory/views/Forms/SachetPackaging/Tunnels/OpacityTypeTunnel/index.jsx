@@ -66,6 +66,7 @@ export default function OpacityTypeTunnel({ close }) {
       } catch (error) {
          close(5)
          setLoading(false)
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }

@@ -58,6 +58,7 @@ export default function LeakResistanceTunnel({ close }) {
       } catch (error) {
          close(4)
          setLoading(false)
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }

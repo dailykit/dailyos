@@ -117,6 +117,7 @@ export default function SupplierForm() {
                supplierDispatch({ type: 'SET_ID', payload: result[0]?.id })
          }
       } catch (error) {
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }
@@ -355,6 +356,7 @@ function ShowAvailability({ formState }) {
                }
             } catch (error) {
                setLoading(false)
+               console.log(error)
                toast.error('Errr! I messed something up :(')
             }
          }}
