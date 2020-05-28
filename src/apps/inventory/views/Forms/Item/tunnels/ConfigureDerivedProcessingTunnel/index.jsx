@@ -37,7 +37,11 @@ import { useTranslation } from 'react-i18next'
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
 
-export default function ConfigureDerivedProcessingTunnel({ close, open }) {
+export default function ConfigureDerivedProcessingTunnel({
+   close,
+   open,
+   units,
+}) {
    const { t } = useTranslation()
    const {
       state: { configurable },
@@ -160,8 +164,11 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                   defaultValue={unit}
                   onChange={e => setUnit(e.target.value)}
                >
-                  <option value="gram">{t('units.gram')}</option>
-                  <option value="loaf">{t('units.loaf')}</option>
+                  {units.map(unit => (
+                     <option key={unit.id} value={unit.name}>
+                        {unit.name}
+                     </option>
+                  ))}
                </StyledSelect>
             </div>
          </StyledRow>

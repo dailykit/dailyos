@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 
 // State
 import { Context } from '../../context/tabs'
@@ -40,10 +41,18 @@ const renderComponent = (type, view) => {
       return <SachetPackaging />
 }
 
+const MainWrapper = styled.main`
+   overflow-x: auto;
+`
+
 const Main = () => {
    const { state } = React.useContext(Context)
    if (state.listings.length === 0 && state.forms.length === 0) return <Home />
-   return <main>{renderComponent(state.current.type, state.current.view)}</main>
+   return (
+      <MainWrapper>
+         {renderComponent(state.current.type, state.current.view)}
+      </MainWrapper>
+   )
 }
 
 export default Main

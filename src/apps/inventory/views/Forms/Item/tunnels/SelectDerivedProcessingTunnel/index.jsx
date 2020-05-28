@@ -1,23 +1,22 @@
-import React, { useState, useContext } from 'react'
 import {
    List,
    ListItem,
-   ListSearch,
    ListOptions,
+   ListSearch,
    useSingleList,
 } from '@dailykit/ui'
-
-import { ItemContext } from '../../../../../context/item'
+import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import {
+   Spacer,
    TunnelContainer,
    TunnelHeader,
-   Spacer,
 } from '../../../../../components'
+import { ItemContext } from '../../../../../context/item'
 
-import { useTranslation, Trans } from 'react-i18next'
-
-const address = 'apps.inventory.views.forms.item.tunnels.selectderivedprocessingtunnel.'
+const address =
+   'apps.inventory.views.forms.item.tunnels.selectderivedprocessingtunnel.'
 
 export default function SelectDerivedProcessingTunnel({
    close,
@@ -34,7 +33,7 @@ export default function SelectDerivedProcessingTunnel({
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("select processing"))}
+            title={t(address.concat('select processing'))}
             next={() => {
                const payload = rawProcessings.find(
                   processing => processing.id === current.id
@@ -57,11 +56,13 @@ export default function SelectDerivedProcessingTunnel({
             {Object.keys(current).length > 0 ? (
                <ListItem type="SSL1" title={current.title} />
             ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(address.concat("type what you’re looking for"))}
-                  />
-               )}
+               <ListSearch
+                  onChange={value => setSearch(value)}
+                  placeholder={t(
+                     address.concat("type what you're looking for")
+                  )}
+               />
+            )}
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))

@@ -116,6 +116,7 @@ export default function MoreItemInfoTunnel({ close }) {
          }
       } catch (error) {
          setLoading(false)
+         console.log(error)
          toast.error('Err! I messed something up :(')
          close(3)
       }

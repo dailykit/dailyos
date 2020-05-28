@@ -117,6 +117,7 @@ export default function SupplierForm() {
                supplierDispatch({ type: 'SET_ID', payload: result[0]?.id })
          }
       } catch (error) {
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }
@@ -167,8 +168,12 @@ export default function SupplierForm() {
 
                   <FormActions style={{ width: '25%' }}>
                      <FlexContainer>
-                        <ShowAvailability formState={formState} />
-                        <span style={{ width: '20px' }} />
+                        {formState.id && (
+                           <>
+                              <ShowAvailability formState={formState} />
+                              <span style={{ width: '20px' }} />
+                           </>
+                        )}
                         <TextButton
                            onClick={() => handleSave()}
                            type="ghost"
@@ -351,6 +356,7 @@ function ShowAvailability({ formState }) {
                }
             } catch (error) {
                setLoading(false)
+               console.log(error)
                toast.error('Errr! I messed something up :(')
             }
          }}

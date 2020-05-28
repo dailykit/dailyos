@@ -131,6 +131,7 @@ function DataTable({ data }) {
                               }
                            } catch (error) {
                               setLoading(false)
+                              console.log(error)
                               toast.error('Internal Error')
                            }
                         }}
