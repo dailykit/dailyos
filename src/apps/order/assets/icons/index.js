@@ -10,6 +10,7 @@ import MenuIcon from './Menu'
 import RightIcon from './Right'
 import ArrowUpIcon from './ArrowUp'
 import ArrowDownIcon from './ArrowDown'
+import HomeIcon from './Home'
 
 export {
    PhoneIcon,
@@ -18,6 +19,7 @@ export {
    CloseIcon,
    AddIcon,
    DeleteIcon,
+   HomeIcon,
    EditIcon,
    LeftIcon,
    MenuIcon,

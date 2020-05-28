@@ -6,8 +6,6 @@ import { OrderListItem, OrderSummary, Loader } from '../../components'
 
 import { useTabs } from '../../context/tabs'
 
-import { Wrapper } from './styled'
-
 import { ORDERS } from '../../graphql'
 
 const Orders = () => {
@@ -25,27 +23,19 @@ const Orders = () => {
 
    if (loading)
       return (
-         <Wrapper>
-            <OrderSummary />
-            <div>
-               <Loader />
-            </div>
-         </Wrapper>
+         <div>
+            <Loader />
+         </div>
       )
    if (error) return <div>{error.message}</div>
    return (
-      <Wrapper>
-         <OrderSummary />
-         <div>
-            {orders.length > 0 ? (
-               orders.map(order => (
-                  <OrderListItem order={order} key={order.id} />
-               ))
-            ) : (
-               <div>No orders yet!</div>
-            )}
-         </div>
-      </Wrapper>
+      <div>
+         {orders.length > 0 ? (
+            orders.map(order => <OrderListItem order={order} key={order.id} />)
+         ) : (
+            <div>No orders yet!</div>
+         )}
+      </div>
    )
 }
 

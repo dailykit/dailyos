@@ -6,7 +6,7 @@ import { Home, Orders, Order } from '../../views'
 
 const Main = () => {
    return (
-      <main>
+      <main style={{ overflowY: 'auto', height: 'calc(100vh - 40px)' }}>
          <Switch>
             <Route path="/order" exact>
                <Home />

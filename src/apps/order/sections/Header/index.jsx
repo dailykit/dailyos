@@ -8,9 +8,9 @@ import { Tabs } from '../../components'
 import { StyledHeader, StyledMenu, StyledNav } from './styled'
 
 // Icons
-import { MenuIcon, LeftIcon, RightIcon } from '../../assets/icons'
+import { LeftIcon, RightIcon, HomeIcon } from '../../assets/icons'
 
-const Header = ({ toggleSidebar }) => {
+const Header = () => {
    const history = useHistory()
    return (
       <StyledHeader>
@@ -18,12 +18,10 @@ const Header = ({ toggleSidebar }) => {
             title="Menu"
             tabIndex="0"
             role="button"
-            onClick={() => toggleSidebar(visible => !visible)}
-            onKeyPress={e =>
-               e.charCode === 32 && toggleSidebar(visible => !visible)
-            }
+            onClick={() => history.push('/order')}
+            onKeyPress={e => e.charCode === 32 && history.push('/order')}
          >
-            <MenuIcon color="#000" size="24" />
+            <HomeIcon color="#000" size="20" />
          </StyledMenu>
          <StyledNav>
             <button

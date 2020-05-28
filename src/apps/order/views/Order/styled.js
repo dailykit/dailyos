@@ -2,9 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.div`
    margin: 0 auto;
-   padding-top: 24px;
-   width: calc(100vw - 40px);
-   height: calc(100vh - 40px);
+   padding: 24px;
    > section {
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
    }
