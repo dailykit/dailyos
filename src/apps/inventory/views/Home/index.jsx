@@ -1,13 +1,10 @@
-import React from 'react'
-
 import { DashboardTile } from '@dailykit/ui'
-
-// State
-import { Context } from '../../context/tabs'
-
-import { StyledHome, StyledTileContainer } from './styled'
-
+import React from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
+
+import { Context } from '../../context/tabs'
+import { StyledHome, StyledTileContainer } from './styled'
 
 const address = 'apps.inventory.views.home.'
 

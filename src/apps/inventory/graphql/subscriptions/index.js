@@ -210,3 +210,70 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliersAggregate(where: { available: { _eq: true } }) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const SUPPLIERS_COUNT_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliersAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const SUPPLIER_ITEMS_COUNT_SUBSCRIPTION = gql`
+   subscription SupplierItems {
+      supplierItemsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const BULK_WORK_ORDERS_COUNT_SUBSCRIPTION = gql`
+   subscription BulkWorkOrders {
+      bulkWorkOrdersAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const SACHET_WORK_ORDERS_COUNT_SUBSCRIPTION = gql`
+   subscription SachetWorkOrders {
+      sachetWorkOrdersAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const PURCHASE_ORDERS_COUNT_SUBSCRIPTION = gql`
+   subscription PurchaseOrders {
+      purchaseOrderItemsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const PACKAGINGS_COUNT_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagingAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
