@@ -214,10 +214,15 @@ export default function ItemForm() {
                      </StyledInfo>
                      <StyledSupplier>
                         <span>{formState.supplier?.name}</span>
-                        <span>
-                           {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
-                              ''}
-                        </span>
+                        {formState.supplier?.contatcPerson &&
+                           formState.supplier?.contactPerson.lastName &&
+                           formState.supplier?.contactPerson.countryCode &&
+                           formState.supplier?.contactPerson.phoneNumber && (
+                              <span>
+                                 {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
+                                    ''}
+                              </span>
+                           )}
                      </StyledSupplier>
                   </>
                )}
