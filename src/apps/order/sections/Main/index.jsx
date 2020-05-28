@@ -2,7 +2,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Orders } from '../../views'
+import { Home, Orders, Order } from '../../views'
 
 const Main = () => {
    return (
@@ -13,6 +13,9 @@ const Main = () => {
             </Route>
             <Route path="/order/orders" exact>
                <Orders />
+            </Route>
+            <Route path="/order/orders/:id" exact>
+               <Order />
             </Route>
          </Switch>
       </main>

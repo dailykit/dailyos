@@ -8,6 +8,8 @@ import EditIcon from './Edit'
 import LeftIcon from './Left'
 import MenuIcon from './Menu'
 import RightIcon from './Right'
+import ArrowUpIcon from './ArrowUp'
+import ArrowDownIcon from './ArrowDown'
 
 export {
    PhoneIcon,
@@ -20,4 +22,6 @@ export {
    LeftIcon,
    MenuIcon,
    RightIcon,
+   ArrowUpIcon,
+   ArrowDownIcon,
 }
