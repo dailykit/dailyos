@@ -560,6 +560,10 @@ function RealTimeView({ formState }) {
             title={t(address.concat('consumed'))}
             quantity={`${active.consumed} ${active.unit}`}
          />
+         <DataCard
+            title={t(address.concat('on hand'))}
+            quantity={`${active.onHand} ${active.unit}`}
+         />
       </FlexContainer>
    )
 }
