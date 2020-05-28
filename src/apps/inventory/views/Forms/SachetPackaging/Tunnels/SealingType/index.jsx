@@ -47,6 +47,7 @@ export default function SealingTypeTunnel({ close }) {
       } catch (error) {
          close(8)
          setLoading(false)
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }

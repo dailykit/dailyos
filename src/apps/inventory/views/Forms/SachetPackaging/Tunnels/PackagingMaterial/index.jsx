@@ -47,6 +47,7 @@ export default function PackagingTypeTunnel({ close }) {
       } catch (error) {
          close(7)
          setLoading(false)
+         console.log(error)
          toast.error('Errr! I messed something up :(')
       }
    }

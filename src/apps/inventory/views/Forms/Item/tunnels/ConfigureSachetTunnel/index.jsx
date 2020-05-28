@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Input } from '@dailykit/ui'
+import { Input, Loader } from '@dailykit/ui'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,7 +15,7 @@ import { FlexContainer } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ open, close }) {
+export default function ConfigureSachetTunnel({ close }) {
    const { t } = useTranslation()
    const { state } = useContext(ItemContext)
 
@@ -48,9 +48,12 @@ export default function ConfigureSachetTunnel({ open, close }) {
       } catch (error) {
          close(9)
          setLoading(false)
+         console.log(error)
          toast.error('Err! I messed something up :(')
       }
    }
+
+   if (loading) return <Loader />
 
    return (
       <TunnelContainer>
