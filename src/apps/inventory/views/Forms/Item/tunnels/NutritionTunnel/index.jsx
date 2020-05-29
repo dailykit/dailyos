@@ -49,7 +49,7 @@ export default function NutritionTunnel({ close }) {
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("add nutrition values"))}
+            title={t(address.concat('add nutrition values'))}
             next={() => {
                if (nutriTarget === 'processing') {
                   dispatch({
@@ -131,7 +131,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("calories"))}
+                     placeholder={t(address.concat('calories'))}
                      name="cal"
                      value={cal || ''}
                      onChange={e => {
@@ -157,7 +157,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("total fat"))}
+                     placeholder={t(address.concat('total fat'))}
                      name="fat"
                      value={fat || ''}
                      onChange={e => {
@@ -185,7 +185,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("saturated fat"))}
+                     placeholder={t(address.concat('saturated fat'))}
                      name="saturatedFat"
                      value={saturatedFat || ''}
                      onChange={e => {
@@ -215,7 +215,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("trans fat"))}
+                     placeholder={t(address.concat('trans fat'))}
                      name="transFat"
                      value={transFat || ''}
                      onChange={e => {
@@ -243,7 +243,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("cholestrol"))}
+                     placeholder={t(address.concat('cholestrol'))}
                      name="cholestrol"
                      value={cholestrol || ''}
                      onChange={e => {
@@ -271,7 +271,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("sodium"))}
+                     placeholder={t(address.concat('sodium'))}
                      name="sodium"
                      value={sodium || ''}
                      onChange={e => {
@@ -299,7 +299,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("total carbohydrate"))}
+                     placeholder={t(address.concat('total carbohydrate'))}
                      name="totalCarbs"
                      value={carbs || ''}
                      onChange={e => {
@@ -328,7 +328,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("dietry fibre"))}
+                     placeholder={t(address.concat('dietry fibre'))}
                      name="dietryFibre"
                      value={dietryFibre || ''}
                      onChange={e => {
@@ -358,7 +358,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("sugar"))}
+                     placeholder={t(address.concat('sugar'))}
                      name="sugar"
                      value={sugar || ''}
                      onChange={e => {
@@ -386,7 +386,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("protein"))}
+                     placeholder={t(address.concat('protein'))}
                      name="protein"
                      value={protein || ''}
                      onChange={e => {
@@ -414,7 +414,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("vitamin A"))}
+                     placeholder={t(address.concat('vitamin A'))}
                      name="vitaminA"
                      value={vitA || ''}
                      onChange={e => {
@@ -442,7 +442,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("vitamin C"))}
+                     placeholder={t(address.concat('vitamin C'))}
                      name="vitC"
                      value={vitC || ''}
                      onChange={e => {
@@ -470,7 +470,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("calcium"))}
+                     placeholder={t(address.concat('calcium'))}
                      name="calcium"
                      value={calcium || ''}
                      onChange={e => {
@@ -498,7 +498,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat("iron"))}
+                     placeholder={t(address.concat('iron'))}
                      name="iron"
                      value={iron || ''}
                      onChange={e => {

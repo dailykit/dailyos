@@ -684,16 +684,9 @@ function PlannedLotView({ open, formState }) {
 }
 
 function ContactPerson({ formState }) {
-   if (
-      formState.supplier?.contatcPerson &&
-      formState.supplier?.contactPerson.lastName &&
-      formState.supplier?.contactPerson.countryCode &&
-      formState.supplier?.contactPerson.phoneNumber
+   return (
+      <span>
+         {`${formState.supplier?.contactPerson?.firstName} ${formState.supplier?.contactPerson?.lastName} ${formState.supplier?.contactPerson?.countryCode} ${formState.supplier?.contactPerson?.phoneNumber}`}
+      </span>
    )
-      return (
-         <span>
-            {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
-               ''}
-         </span>
-      )
 }
