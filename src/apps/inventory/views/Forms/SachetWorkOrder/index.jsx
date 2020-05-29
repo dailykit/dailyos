@@ -194,11 +194,12 @@ export default function SachetWorkOrder() {
       }
    }
 
-   if (supplierItemLoading || orderLoading || loading) return <Loader />
+   if (supplierItemLoading || orderLoading || loading || sachetItemLoading)
+      return <Loader />
 
    if (
       sachetOrderState.outputSachet?.processingName &&
-      (userLoading || stationsLoading || packagingsLoading || sachetItemLoading)
+      (userLoading || stationsLoading || packagingsLoading)
    ) {
       return <Loader />
    }
@@ -451,7 +452,7 @@ function Configurator({ open }) {
       <>
          <Spacer />
 
-         <Text as="title">{t(address.concat('enter number of sachets'))}</Text>
+         <Text as="title">{t(address.concat('enter number of sachtes'))}</Text>
          <br />
          <FlexContainer
             style={{ width: '50%', justifyContent: 'space-between' }}
