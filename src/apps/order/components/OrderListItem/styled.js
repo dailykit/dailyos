@@ -187,6 +187,26 @@ export const StyledServings = styled.div`
    }
 `
 
+export const StyledStat = styled.div`
+   display: flex;
+   margin-bottom: 4px;
+   align-items: center;
+   justify-content: space-between;
+   span {
+      :first-child {
+         color: #a7a8a6;
+         display: block;
+         font-size: 14px;
+         font-weight: 500;
+      }
+      :last-child {
+         display: block;
+         font-size: 14px;
+         font-weight: 500;
+      }
+   }
+`
+
 export const StyledStatus = styled.div`
    display: flex;
    margin-right: 16px;

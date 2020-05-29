@@ -22,6 +22,7 @@ import {
    StyledTabPanels,
    StyledTabPanel,
    StyledHeader,
+   StyledStat,
 } from './styled'
 
 import {
@@ -58,6 +59,7 @@ const OrderListItem = ({ order }) => {
       orderInventoryProducts: inventories,
       orderReadyToEatProducts: readytoeats,
       deliveryInfo = {},
+      ...rest
    } = order
 
    const updateStatus = () => {
@@ -107,6 +109,34 @@ const OrderListItem = ({ order }) => {
                            />
                         </StyledConsumer>
                      )}
+               </main>
+            </ListBodyItem>
+            <ListBodyItem isOpen={currentPanel === 'billing'}>
+               <header>
+                  <span>Billing Info</span>
+                  <ToggleButton
+                     type="billing"
+                     current={currentPanel}
+                     toggle={setCurrentPanel}
+                  />
+               </header>
+               <main>
+                  <StyledStat>
+                     <span>Tax</span>
+                     <span>{rest.tax}</span>
+                  </StyledStat>
+                  <StyledStat>
+                     <span>Discount</span>
+                     <span>{rest.discount}</span>
+                  </StyledStat>
+                  <StyledStat>
+                     <span>Delivery Price</span>
+                     <span>{rest.deliveryPrice}</span>
+                  </StyledStat>
+                  <StyledStat>
+                     <span>Item Total</span>
+                     <span>{rest.itemTotal}</span>
+                  </StyledStat>
                </main>
             </ListBodyItem>
          </section>
