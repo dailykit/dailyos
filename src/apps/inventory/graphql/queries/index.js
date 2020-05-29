@@ -30,18 +30,18 @@ export const MASTER_ALLERGENS = gql`
    }
 `
 
-export const SUPPLIER = gql`
-   query Supplier($id: Int!) {
-      supplier(id: $id) {
-         id
-         name
-         contactPerson
-         available
-         shippingTerms
-         paymentTerms
-      }
-   }
-`
+// export const SUPPLIER = gql`
+//    query Supplier($id: Int!) {
+//       supplier(id: $id) {
+//          id
+//          name
+//          contactPerson
+//          available
+//          shippingTerms
+//          paymentTerms
+//       }
+//    }
+// `
 
 export const SUPPLIER_ITEMS = gql`
    query {
