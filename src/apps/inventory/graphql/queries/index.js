@@ -78,7 +78,7 @@ export const SACHET_ITEMS = gql`
 
 export const PACKAGINGS = gql`
    query {
-      packaging_packaging {
+      packagings {
          id
          name
       }

@@ -14,6 +14,7 @@ const state = {
    assignedDate: '',
    packaging: {},
    labelTemplates: [],
+   inputQuantity: 1,
 }
 
 const reducers = (state, { type, payload }) => {
