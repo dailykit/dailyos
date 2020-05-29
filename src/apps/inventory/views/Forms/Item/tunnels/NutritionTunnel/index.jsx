@@ -299,7 +299,7 @@ export default function NutritionTunnel({ close }) {
                >
                   <Input
                      type="text"
-                     placeholder={t(address.concat('total carbohydrate'))}
+                     placeholder={t(address.concat('total carbohydrates'))}
                      name="totalCarbs"
                      value={carbs || ''}
                      onChange={e => {
