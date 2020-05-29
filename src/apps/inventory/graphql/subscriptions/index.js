@@ -131,7 +131,7 @@ export const SUPPLIER_SUBSCRIPTION = gql`
 
 export const SUPPLIERS_SUBSCRIPTION = gql`
    subscription Suppliers {
-      suppliers {
+      suppliers(where: { available: { _eq: true } }) {
          id
          name
          contactPerson

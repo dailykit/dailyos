@@ -1,16 +1,5 @@
 import gql from 'graphql-tag'
 
-export const SUPPLIERS = gql`
-   query {
-      suppliers(where: { available: { _eq: true } }) {
-         id
-         name
-         contactPerson
-         available
-      }
-   }
-`
-
 export const MASTER_PROCESSINGS = gql`
    query {
       masterProcessings {
@@ -29,19 +18,6 @@ export const MASTER_ALLERGENS = gql`
       }
    }
 `
-
-// export const SUPPLIER = gql`
-//    query Supplier($id: Int!) {
-//       supplier(id: $id) {
-//          id
-//          name
-//          contactPerson
-//          available
-//          shippingTerms
-//          paymentTerms
-//       }
-//    }
-// `
 
 export const SUPPLIER_ITEMS = gql`
    query {

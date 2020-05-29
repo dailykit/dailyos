@@ -23,7 +23,7 @@ import { Context } from '../../../context/tabs'
 import {
    MASTER_ALLERGENS,
    MASTER_PROCESSINGS,
-   SUPPLIERS,
+   SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
 } from '../../../graphql'
@@ -100,7 +100,9 @@ export default function ItemForm() {
       }
    )
 
-   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+   const { loading: supplierLoading, data: supplierData } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION
+   )
    const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.units
