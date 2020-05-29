@@ -193,7 +193,7 @@ export default function ConfigureDerivedProcessingTunnel({
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('labor time per 100gm'))}
+                     placeholder={t(address.concat('labour time per 100gm'))}
                      name="labor_time"
                      value={laborTime}
                      onChange={e => {
