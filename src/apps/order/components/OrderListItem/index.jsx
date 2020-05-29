@@ -3,7 +3,7 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
    StyledOrderItem,
-   StyledOrderId,
+   StyledViewOrder,
    StyledConsumer,
    StyledConsumerName,
    StyledConsumerAddress,
@@ -11,13 +11,28 @@ import {
    StyledCount,
    StyledProductItem,
    StyledProductTitle,
-   StyledProductTypeTitle,
+   StyledProducts,
    StyledServings,
    StyledStatus,
    StyledStatusBadge,
+   ListBodyItem,
+   StyledTabs,
+   StyledTab,
+   StyledTabList,
+   StyledTabPanels,
+   StyledTabPanel,
+   StyledHeader,
 } from './styled'
 
-import { PhoneIcon, EmailIcon, UserIcon, RightIcon } from '../../assets/icons'
+import {
+   PhoneIcon,
+   EmailIcon,
+   UserIcon,
+   RightIcon,
+   ArrowDownIcon,
+   ArrowUpIcon,
+   NewTabIcon,
+} from '../../assets/icons'
 
 import { formatDate } from '../../utils'
 
@@ -29,8 +44,9 @@ const normalize = address =>
       address.city
    }, ${address.state}, ${address.zipcode}`
 
-const OrderListItem = ({ order, setDetails }) => {
+const OrderListItem = ({ order }) => {
    const { addTab } = useTabs()
+   const [currentPanel, setCurrentPanel] = React.useState('customer')
    const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
@@ -64,200 +80,294 @@ const OrderListItem = ({ order, setDetails }) => {
    return (
       <StyledOrderItem status={orderStatus}>
          <section>
-            <StyledOrderId>
-               <h2>ORD{order.id}</h2>
-               <button type="button" onClick={() => createTab(id)}>
-                  View Order
-               </button>
-            </StyledOrderId>
-            {deliveryInfo?.dropoff &&
-               Object.keys(deliveryInfo?.dropoff).length > 0 && (
-                  <StyledConsumer>
-                     <StyledConsumerName>
-                        {deliveryInfo?.dropoff?.dropoffInfo?.customerFirstName}
-                        {deliveryInfo?.dropoff?.dropoffInfo?.customerLastName}
-                     </StyledConsumerName>
-                     <StyledConsumerAddress>
-                        {normalize(
-                           deliveryInfo?.dropoff?.dropoffInfo?.customerAddress
-                        )}
-                     </StyledConsumerAddress>
-                     <StyledConsumerContact>
-                        <span>
-                           <PhoneIcon size={14} color="#718096" />
-                        </span>
-                        <span>
-                           {deliveryInfo?.dropoff?.dropoffInfo?.customerPhone}
-                        </span>
-                     </StyledConsumerContact>
-                     <StyledConsumerContact>
-                        <span>
-                           <EmailIcon size={14} color="#718096" />
-                        </span>
-                        <span>
-                           <a
-                              href={`mailto:${deliveryInfo?.dropoff?.dropoffInfo?.customerEmail}`}
-                           >
-                              {
-                                 deliveryInfo?.dropoff?.dropoffInfo
-                                    ?.customerEmail
-                              }
-                           </a>
-                        </span>
-                     </StyledConsumerContact>
-                  </StyledConsumer>
-               )}
+            <ListBodyItem isOpen={currentPanel === 'customer'}>
+               <header>
+                  <span>Customer Info</span>
+                  <ToggleButton
+                     type="customer"
+                     current={currentPanel}
+                     toggle={setCurrentPanel}
+                  />
+               </header>
+               <main>
+                  {deliveryInfo?.dropoff &&
+                     Object.keys(deliveryInfo?.dropoff).length > 0 && (
+                        <StyledConsumer>
+                           <CustomerName
+                              data={deliveryInfo?.dropoff?.dropoffInfo}
+                           />
+                           <CustomerAddress
+                              data={deliveryInfo?.dropoff?.dropoffInfo}
+                           />
+                           <CustomerPhone
+                              data={deliveryInfo?.dropoff?.dropoffInfo}
+                           />
+                           <CustomerEmail
+                              data={deliveryInfo?.dropoff?.dropoffInfo}
+                           />
+                        </StyledConsumer>
+                     )}
+               </main>
+            </ListBodyItem>
          </section>
-         <section>
-            <header>
-               <StyledCount>
-                  0 /{' '}
-                  {inventories.length + mealkits.length + readytoeats.length}{' '}
-                  items
-               </StyledCount>
-            </header>
+         <StyledProducts>
+            <StyledHeader>
+               <StyledViewOrder type="button" onClick={() => createTab(id)}>
+                  ORD{order.id}
+                  <NewTabIcon size={14} />
+               </StyledViewOrder>
+               <span>Total: ${order.itemTotal}</span>
+               <section>
+                  <StyledStatus>
+                     <span>Ordered On:&nbsp;</span>
+                     <span>{formatDate(order?.created_at)}</span>
+                  </StyledStatus>
+                  &nbsp;|&nbsp;
+                  <ExpectedDelivery data={deliveryInfo?.pickup} />
+                  &nbsp;|&nbsp;
+                  <DeliveryOn data={deliveryInfo?.dropoff} />
+               </section>
+            </StyledHeader>
             <main>
-               {inventories.length > 0 && (
-                  <StyledProductTypeTitle>
-                     Inventory ({inventories.length})
-                  </StyledProductTypeTitle>
-               )}
-               {inventories.map(inventory => (
-                  <StyledProductItem key={inventory.id}>
-                     <div>
-                        <StyledProductTitle>
-                           {inventory?.inventoryProduct?.name}&nbsp;-&nbsp;
-                           {inventory?.comboProduct?.name}(
-                           {inventory?.comboProductComponent?.label})
-                        </StyledProductTitle>
-                     </div>
-                     <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {inventory?.inventoryProductOption?.quantity}
-                           &nbsp;-&nbsp;
-                           {inventory?.inventoryProductOption?.label}
-                        </span>
-                     </StyledServings>
-                     <span>
-                        {inventory.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
-                     </span>
-                  </StyledProductItem>
-               ))}
-               {mealkits.length > 0 && (
-                  <StyledProductTypeTitle>
-                     Meal Kits ({mealkits.length})
-                  </StyledProductTypeTitle>
-               )}
-               {mealkits.map(mealkit => (
-                  <StyledProductItem key={mealkit.id}>
-                     <div>
-                        <StyledProductTitle>
-                           {mealkit?.simpleRecipeProduct?.name}&nbsp;-&nbsp;
-                           {mealkit?.comboProduct?.name}(
-                           {mealkit?.comboProductComponent?.label})
-                        </StyledProductTitle>
-                     </div>
-                     <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {
-                              mealkit?.simpleRecipeProductOption
-                                 ?.simpleRecipeYield?.yield?.serving
-                           }
-                           &nbsp; Servings
-                        </span>
-                     </StyledServings>
-                     <span>
-                        {
-                           mealkit?.orderSachets.filter(
-                              sachet => sachet.isAssembled
-                           ).length
-                        }
-                        &nbsp;/&nbsp;
-                        {
-                           mealkit?.orderSachets.filter(
-                              sachet => sachet.status === 'COMPLETED'
-                           ).length
-                        }
-                        &nbsp; / {mealkit?.orderSachets?.length}
-                     </span>
-                  </StyledProductItem>
-               ))}
-               {readytoeats.length > 0 && (
-                  <StyledProductTypeTitle>
-                     Ready to Eats ({readytoeats.length})
-                  </StyledProductTypeTitle>
-               )}
-               {readytoeats.map(readytoeat => (
-                  <StyledProductItem key={readytoeat.id}>
-                     <div>
-                        <StyledProductTitle>
-                           {readytoeat?.comboProduct?.name}&nbsp;-&nbsp;
-                           {readytoeat?.comboProduct?.name}(
-                           {readytoeat?.comboProductComponent?.label})
-                        </StyledProductTitle>
-                     </div>
-                     <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {
-                              readytoeat?.simpleRecipeProductOption
-                                 ?.simpleRecipeYield?.yield?.serving
-                           }
-                           &nbsp; Servings
-                        </span>
-                     </StyledServings>
-                     <span>
-                        {readytoeat?.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
-                     </span>
-                  </StyledProductItem>
-               ))}
+               <StyledTabs>
+                  <StyledTabList>
+                     <StyledTab>
+                        All{' '}
+                        <StyledCount>
+                           0 /&nbsp;
+                           {inventories.length +
+                              mealkits.length +
+                              readytoeats.length}
+                           &nbsp;
+                        </StyledCount>
+                     </StyledTab>
+                     <StyledTab>
+                        Inventory{' '}
+                        <StyledCount>{inventories.length || 0}</StyledCount>
+                     </StyledTab>
+                     <StyledTab>
+                        Meal Kits{' '}
+                        <StyledCount>{mealkits.length || 0}</StyledCount>
+                     </StyledTab>
+                     <StyledTab>
+                        Ready to Eats{' '}
+                        <StyledCount>{readytoeats.length}</StyledCount>
+                     </StyledTab>
+                  </StyledTabList>
+                  <StyledTabPanels>
+                     <StyledTabPanel>
+                        {inventories.map(inventory => (
+                           <StyledProductItem key={inventory.id}>
+                              <div>
+                                 <ProductTitle
+                                    data={inventory}
+                                    product={inventory?.inventoryProduct}
+                                 />
+                              </div>
+                              <StyledServings>
+                                 <span>
+                                    <UserIcon size={16} color="#555B6E" />
+                                 </span>
+                                 <span>
+                                    {
+                                       inventory?.inventoryProductOption
+                                          ?.quantity
+                                    }
+                                    &nbsp;-&nbsp;
+                                    {inventory?.inventoryProductOption?.label}
+                                 </span>
+                              </StyledServings>
+                              <span>
+                                 {inventory.assemblyStatus === 'ASSEMBLED'
+                                    ? 1
+                                    : 0}{' '}
+                                 / 1
+                              </span>
+                           </StyledProductItem>
+                        ))}
+                        {mealkits.map(mealkit => (
+                           <StyledProductItem key={mealkit.id}>
+                              <div>
+                                 <ProductTitle
+                                    data={mealkit}
+                                    product={mealkit?.simpleRecipeProduct}
+                                 />
+                              </div>
+                              <StyledServings>
+                                 <span>
+                                    <UserIcon size={16} color="#555B6E" />
+                                 </span>
+                                 <span>
+                                    {
+                                       mealkit?.simpleRecipeProductOption
+                                          ?.simpleRecipeYield?.yield?.serving
+                                    }
+                                    &nbsp; Servings
+                                 </span>
+                              </StyledServings>
+                              <span>
+                                 {
+                                    mealkit?.orderSachets.filter(
+                                       sachet => sachet.isAssembled
+                                    ).length
+                                 }
+                                 &nbsp;/&nbsp;
+                                 {
+                                    mealkit?.orderSachets.filter(
+                                       sachet => sachet.status === 'COMPLETED'
+                                    ).length
+                                 }
+                                 &nbsp; / {mealkit?.orderSachets?.length}
+                              </span>
+                           </StyledProductItem>
+                        ))}
+                        {readytoeats.map(readytoeat => (
+                           <StyledProductItem key={readytoeat.id}>
+                              <div>
+                                 <ProductTitle
+                                    data={readytoeat}
+                                    product={readytoeat?.comboProduct}
+                                 />
+                              </div>
+                              <StyledServings>
+                                 <span>
+                                    <UserIcon size={16} color="#555B6E" />
+                                 </span>
+                                 <span>
+                                    {
+                                       readytoeat?.simpleRecipeProductOption
+                                          ?.simpleRecipeYield?.yield?.serving
+                                    }
+                                    &nbsp; Servings
+                                 </span>
+                              </StyledServings>
+                              <span>
+                                 {readytoeat?.assemblyStatus === 'ASSEMBLED'
+                                    ? 1
+                                    : 0}{' '}
+                                 / 1
+                              </span>
+                           </StyledProductItem>
+                        ))}
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        {inventories.length > 0
+                           ? inventories.map(inventory => (
+                                <StyledProductItem key={inventory.id}>
+                                   <div>
+                                      <ProductTitle
+                                         data={inventory}
+                                         product={inventory?.inventoryProduct}
+                                      />
+                                   </div>
+                                   <StyledServings>
+                                      <span>
+                                         <UserIcon size={16} color="#555B6E" />
+                                      </span>
+                                      <span>
+                                         {
+                                            inventory?.inventoryProductOption
+                                               ?.quantity
+                                         }
+                                         &nbsp;-&nbsp;
+                                         {
+                                            inventory?.inventoryProductOption
+                                               ?.label
+                                         }
+                                      </span>
+                                   </StyledServings>
+                                   <span>
+                                      {inventory.assemblyStatus === 'ASSEMBLED'
+                                         ? 1
+                                         : 0}{' '}
+                                      / 1
+                                   </span>
+                                </StyledProductItem>
+                             ))
+                           : 'No inventories'}
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        {mealkits.length > 0
+                           ? mealkits.map(mealkit => (
+                                <StyledProductItem key={mealkit.id}>
+                                   <div>
+                                      <ProductTitle
+                                         data={mealkit}
+                                         product={mealkit?.simpleRecipeProduct}
+                                      />
+                                   </div>
+                                   <StyledServings>
+                                      <span>
+                                         <UserIcon size={16} color="#555B6E" />
+                                      </span>
+                                      <span>
+                                         {
+                                            mealkit?.simpleRecipeProductOption
+                                               ?.simpleRecipeYield?.yield
+                                               ?.serving
+                                         }
+                                         &nbsp; Servings
+                                      </span>
+                                   </StyledServings>
+                                   <span>
+                                      {
+                                         mealkit?.orderSachets.filter(
+                                            sachet => sachet.isAssembled
+                                         ).length
+                                      }
+                                      &nbsp;/&nbsp;
+                                      {
+                                         mealkit?.orderSachets.filter(
+                                            sachet =>
+                                               sachet.status === 'COMPLETED'
+                                         ).length
+                                      }
+                                      &nbsp; / {mealkit?.orderSachets?.length}
+                                   </span>
+                                </StyledProductItem>
+                             ))
+                           : 'No Meal Kits'}
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        {readytoeats.length > 0
+                           ? readytoeats.map(readytoeat => (
+                                <StyledProductItem key={readytoeat.id}>
+                                   <div>
+                                      <ProductTitle
+                                         data={readytoeat}
+                                         product={readytoeat?.comboProduct}
+                                      />
+                                   </div>
+                                   <StyledServings>
+                                      <span>
+                                         <UserIcon size={16} color="#555B6E" />
+                                      </span>
+                                      <span>
+                                         {
+                                            readytoeat
+                                               ?.simpleRecipeProductOption
+                                               ?.simpleRecipeYield?.yield
+                                               ?.serving
+                                         }
+                                         &nbsp; Servings
+                                      </span>
+                                   </StyledServings>
+                                   <span>
+                                      {readytoeat?.assemblyStatus ===
+                                      'ASSEMBLED'
+                                         ? 1
+                                         : 0}{' '}
+                                      / 1
+                                   </span>
+                                </StyledProductItem>
+                             ))
+                           : 'No Ready to Eats'}
+                     </StyledTabPanel>
+                  </StyledTabPanels>
+               </StyledTabs>
             </main>
-         </section>
-         <section>
-            <StyledStatus>
-               <span>Ordered On</span>
-               <span>{formatDate(order?.created_at)}</span>
-            </StyledStatus>
-            {deliveryInfo?.pickup &&
-               Object.keys(deliveryInfo?.pickup).length > 0 && (
-                  <StyledStatus>
-                     <span>Expected Dispatch</span>
-                     <span>
-                        {formatDate(
-                           deliveryInfo?.pickup?.window?.approved?.startsAt
-                        )}
-                     </span>
-                  </StyledStatus>
-               )}
-            {deliveryInfo?.dropoff &&
-               Object.keys(deliveryInfo?.dropoff).length > 0 && (
-                  <StyledStatus>
-                     <span>Delivery On</span>
-                     <span>
-                        {formatDate(
-                           deliveryInfo?.dropoff?.window?.approved?.startsAt
-                        )}
-                     </span>
-                  </StyledStatus>
-               )}
-            {/* <Button
-               mr={12}
-               bg="blue"
-               type="solid"
-               onClick={() => setDetails(order)}
-            >
-               View Order
-            </Button>
-            */}
-         </section>
+         </StyledProducts>
+
          <StyledStatusBadge status={orderStatus} onClick={() => updateStatus()}>
             {orderStatus.split('_').join(' ')}
             <span>
@@ -269,3 +379,97 @@ const OrderListItem = ({ order, setDetails }) => {
 }
 
 export default OrderListItem
+
+const CustomerName = ({ data }) => {
+   return (
+      <StyledConsumerName>
+         {data?.customerFirstName}
+         &nbsp;
+         {data?.customerLastName}
+      </StyledConsumerName>
+   )
+}
+
+const CustomerAddress = ({ data }) => {
+   return (
+      <StyledConsumerAddress>
+         {normalize(data?.customerAddress)}
+      </StyledConsumerAddress>
+   )
+}
+
+const CustomerPhone = ({ data }) => {
+   return (
+      <StyledConsumerContact>
+         <span>
+            <PhoneIcon size={14} color="#718096" />
+         </span>
+         <span>{data?.customerPhone}</span>
+      </StyledConsumerContact>
+   )
+}
+
+const CustomerEmail = ({ data }) => {
+   return (
+      <StyledConsumerContact>
+         <span>
+            <EmailIcon size={14} color="#718096" />
+         </span>
+         <span>
+            <a
+               target="__blank"
+               rel="noopener roreferrer"
+               href={`mailto:${data?.customerEmail}`}
+            >
+               {data?.customerEmail}
+            </a>
+         </span>
+      </StyledConsumerContact>
+   )
+}
+
+const ToggleButton = ({ type, current, toggle }) => {
+   return (
+      <button
+         type="button"
+         onClick={() => toggle(current === type ? '' : type)}
+      >
+         {current === type ? <ArrowDownIcon /> : <ArrowUpIcon />}
+      </button>
+   )
+}
+
+const ExpectedDelivery = ({ data = {} }) => {
+   return (
+      <StyledStatus>
+         <span>Expected Dispatch:&nbsp;</span>
+         <span>
+            {data?.window?.approved?.startsAt
+               ? formatDate(data?.window?.approved?.startsAt)
+               : 'N/A'}
+         </span>
+      </StyledStatus>
+   )
+}
+
+const DeliveryOn = ({ data = {} }) => {
+   return (
+      <StyledStatus>
+         <span>Delivery On:&nbsp;</span>
+         <span>
+            {data.window?.approved?.startsAt
+               ? formatDate(data.window?.approved?.startsAt)
+               : 'N/A'}
+         </span>
+      </StyledStatus>
+   )
+}
+
+const ProductTitle = ({ data, product }) => {
+   return (
+      <StyledProductTitle>
+         {product?.name}&nbsp;-&nbsp;
+         {data?.comboProduct?.name}({data?.comboProductComponent?.label})
+      </StyledProductTitle>
+   )
+}

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { Tab, Tabs, TabList, TabPanel, TabPanels } from '@reach/tabs'
 
 const selectColor = variant => {
    switch (variant) {
@@ -21,25 +22,54 @@ const selectColor = variant => {
    }
 }
 
+export const ListBodyItem = styled.div(
+   ({ isOpen }) => css`
+      background: #fff;
+      header {
+         margin: 0;
+         padding: 0;
+         height: 28px;
+         display: grid;
+         grid-gap: 16px;
+         font-size: 14px;
+         line-height: 28px;
+         grid-template-columns: 1fr 28px;
+         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+         button {
+            border: none;
+            display: flex;
+            cursor: pointer;
+            align-items: center;
+            background: transparent;
+            justify-content: center;
+            :hover {
+               background: rgba(0, 0, 0, 0.05);
+            }
+         }
+      }
+      main {
+         padding: 4px 0;
+         border-top: 1px solid #dddada;
+         display: ${isOpen ? 'block' : 'none'};
+      }
+   `
+)
+
 export const StyledOrderItem = styled.div(
    ({ status }) => css`
-      padding: 20px;
+      padding: 16px;
+      height: 240px;
       display: grid;
       border-bottom: 1px solid #ececec;
-      grid-template-columns: 320px 1fr 320px;
+      grid-template-columns: 280px 1fr;
       border: 3px solid ${selectColor(status)};
       border-left-width: 8px;
       border-right-width: 8px;
       position: relative;
       margin-bottom: 16px;
       > section {
-         :nth-child(2) {
-            border-left: 1px solid #ececec;
-            border-right: 1px solid #ececec;
-         }
-         header {
-            padding: 0 12px;
-            margin-bottom: 12px;
+         :first-child {
+            padding-right: 16px;
          }
          :last-child {
             padding-left: 16px;
@@ -48,29 +78,32 @@ export const StyledOrderItem = styled.div(
    `
 )
 
-export const StyledOrderId = styled.div`
+export const StyledHeader = styled.header`
    display: flex;
    align-items: center;
-   margin-bottom: 16px;
-   padding-right: 16px;
-   justify-content: space-between;
-   h2 {
-      color: #a3a8b7;
-      font-size: 14px;
-      font-weight: 400;
+   section {
+      flex: 1;
+      display: flex;
+      margin-left: 16px;
+      align-items: center;
    }
-   button {
-      height: 28px;
-      padding: 0 8px;
-      color: #787d91;
-      cursor: pointer;
-      font-weight: 500;
-      background: white;
-      border: 1px solid #c5dae2;
-      text-transform: uppercase;
-      :hover {
-         background: #f1f2fb;
-      }
+`
+
+export const StyledViewOrder = styled.button`
+   height: 28px;
+   display: flex;
+   padding: 0 8px;
+   color: #787d91;
+   cursor: pointer;
+   background: #fff;
+   font-weight: 500;
+   background: white;
+   margin-right: 14px;
+   align-items: center;
+   text-transform: uppercase;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+   svg {
+      margin-left: 2px;
    }
 `
 
@@ -79,7 +112,7 @@ export const StyledConsumer = styled.div`
 `
 
 export const StyledConsumerName = styled.h4`
-   font-size: 18px;
+   font-size: 16px;
    font-weight: 500;
 `
 
@@ -110,6 +143,7 @@ export const StyledConsumerContact = styled.span`
 `
 
 export const StyledCount = styled.span`
+   float: right;
    color: #555b6e;
    font-weight: 500;
 `
@@ -120,7 +154,7 @@ export const StyledProductItem = styled.div`
    padding: 0 12px;
    margin-bottom: 4px;
    align-items: center;
-   background: #fbfbfb;
+   background: #f3f3f3;
    justify-content: space-between;
    > div {
       display: flex;
@@ -154,16 +188,20 @@ export const StyledServings = styled.div`
 `
 
 export const StyledStatus = styled.div`
-   margin-bottom: 16px;
-   padding-left: 16px;
+   display: flex;
+   margin-right: 16px;
+   align-items: center;
    span {
       :first-child {
          color: #a7a8a6;
          display: block;
-         font-size: 13px;
+         font-size: 14px;
          font-weight: 500;
-         margin-bottom: 6px;
-         text-transform: uppercase;
+      }
+      :last-child {
+         display: block;
+         font-size: 14px;
+         font-weight: 500;
       }
    }
 `
@@ -178,8 +216,8 @@ export const StyledProductTypeTitle = styled.h4`
 
 export const StyledStatusBadge = styled.div(
    ({ status }) => css`
+      top: 0;
       right: 0;
-      bottom: 0;
       color: #fff;
       cursor: pointer;
       position: absolute;
@@ -197,6 +235,67 @@ export const StyledStatusBadge = styled.div(
          align-items: center;
          display: inline-flex;
          justify-content: center;
+      }
+   `
+)
+
+export const StyledTabs = styled(Tabs)(
+   () => css`
+      display: grid;
+      grid-template-columns: 180px 1fr;
+   `
+)
+
+export const StyledTabList = styled(TabList)(
+   () => css`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      [data-selected] {
+         background: #ebebeb;
+      }
+   `
+)
+
+export const StyledTab = styled(Tab)(
+   () => css`
+      width: 100%;
+      color: #000;
+      border: none;
+      height: 40px;
+      padding: 0 12px;
+      text-align: left;
+      background: #fff;
+      border-bottom: 1px solid #cac7c7;
+      :focus {
+         outline: none;
+         background: #ebebeb;
+      }
+   `
+)
+
+export const StyledTabPanels = styled(TabPanels)(
+   () => css`
+      height: 100%;
+      overflow-y: auto;
+   `
+)
+
+export const StyledTabPanel = styled(TabPanel)(() => css``)
+
+export const StyledProducts = styled.section(
+   () => css`
+      height: 202px;
+      display: grid;
+      padding: 0 16px;
+      grid-row-gap: 14px;
+      grid-template-rows: auto 1fr;
+      border-right: 1px solid #ececec;
+      main {
+         height: 160px;
+         > div {
+            height: calc(100% - 16px);
+         }
       }
    `
 )

@@ -11,6 +11,7 @@ import RightIcon from './Right'
 import ArrowUpIcon from './ArrowUp'
 import ArrowDownIcon from './ArrowDown'
 import HomeIcon from './Home'
+import NewTabIcon from './NewTab'
 
 export {
    PhoneIcon,
@@ -26,4 +27,5 @@ export {
    RightIcon,
    ArrowUpIcon,
    ArrowDownIcon,
+   NewTabIcon,
 }

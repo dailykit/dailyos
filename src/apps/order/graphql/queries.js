@@ -132,6 +132,7 @@ export const ORDER = gql`
          orderMealKitProducts {
             id
             assemblyStatus
+            recipeCardUri
             assemblyStation {
                name
             }
@@ -141,14 +142,45 @@ export const ORDER = gql`
             comboProductComponent {
                label
             }
-            recipeCardUri
-            orderSachets {
-               status
-               isAssembled
-            }
             simpleRecipeProductOption {
                simpleRecipeYield {
                   yield
+               }
+            }
+            orderSachets {
+               id
+               status
+               labelUri
+               quantity
+               isAssembled
+               ingredientName
+               processingName
+               packaging {
+                  name
+               }
+               sachetItemId
+               sachetItem {
+                  id
+                  bulkItem {
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItem {
+                        name
+                     }
+                  }
+               }
+               bulkItemId
+               bulkItem {
+                  id
+                  sop
+                  yield
+                  shelfLife
+                  bulkDensity
+                  supplierItem {
+                     name
+                  }
                }
             }
          }
