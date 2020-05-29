@@ -229,15 +229,7 @@ export default function ItemForm() {
                      </StyledInfo>
                      <StyledSupplier>
                         <span>{formState.supplier?.name}</span>
-                        {formState.supplier?.contatcPerson &&
-                           formState.supplier?.contactPerson.lastName &&
-                           formState.supplier?.contactPerson.countryCode &&
-                           formState.supplier?.contactPerson.phoneNumber && (
-                              <span>
-                                 {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
-                                    ''}
-                              </span>
-                           )}
+                        <ContactPerson formState={formState} />
                      </StyledSupplier>
                   </>
                )}
@@ -689,4 +681,19 @@ function PlannedLotView({ open, formState }) {
          </FlexContainer>
       </>
    )
+}
+
+function ContactPerson({ formState }) {
+   if (
+      formState.supplier?.contatcPerson &&
+      formState.supplier?.contactPerson.lastName &&
+      formState.supplier?.contactPerson.countryCode &&
+      formState.supplier?.contactPerson.phoneNumber
+   )
+      return (
+         <span>
+            {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
+               ''}
+         </span>
+      )
 }
