@@ -41,7 +41,7 @@ export const ORDERS = gql`
          tax
          discount
          itemTotal
-         deliveryCost
+         deliveryPrice
          transactionId
          orderMealKitProducts {
             id
@@ -127,7 +127,7 @@ export const ORDER = gql`
          tax
          discount
          itemTotal
-         deliveryCost
+         deliveryPrice
          transactionId
          orderMealKitProducts {
             id
