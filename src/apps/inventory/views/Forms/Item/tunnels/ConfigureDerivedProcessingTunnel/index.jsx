@@ -32,6 +32,7 @@ import {
 } from '../styled'
 
 import { StyledSelect } from '../../../styled'
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
@@ -289,26 +290,24 @@ export default function ConfigureDerivedProcessingTunnel({
             </StyledLabel>
             {state.configurable.nutrients?.fat ||
             state.configurable.nutrients?.cal ? (
-               <>
-                  <div
-                     style={{
-                        width: '70%',
-                        minHeight: '100px',
-                        backgroundColor: '#F3F3F3',
-                        padding: '20px',
-                     }}
-                  >
-                     <Text as="title">
-                        <strong>{t(address.concat('calories'))}: </strong>
-                        {state.configurable.nutrients?.cal}
-                     </Text>
-
-                     <Text as="title">
-                        <strong>{t(address.concat('total fat'))}: </strong>
-                        {state.configurable.nutrients?.fat}
-                     </Text>
-                  </div>
-               </>
+               <Nutrition
+                  data={{
+                     calories: state.configurable.nutrients.cal,
+                     totalFat: state.configurable.nutrients.fat,
+                     transFat: state.configurable.nutrients.transFat,
+                     saturatedFat: state.configurable.nutrients.saturatedFat,
+                     cholesterol: state.configurable.nutrients.cholestrol,
+                     sodium: state.configurable.nutrients.sodium,
+                     totalCarbohydrates: state.configurable.nutrients.carbs,
+                     dietaryFibre: state.configurable.nutrients.dietryFiber,
+                     sugars: state.configurable.nutrients.sugar,
+                     protein: state.configurable.nutrients.protein,
+                     vitaminA: state.configurable.nutrients.vitA,
+                     vitaminC: state.configurable.nutrients.vitC,
+                     iron: state.configurable.nutrients.iron,
+                     calcium: state.configurable.nutrients.calcium,
+                  }}
+               />
             ) : (
                <ButtonTile
                   type="secondary"

@@ -27,6 +27,7 @@ import {
    TunnelBody,
    TunnelHeader,
 } from '../styled'
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
@@ -304,26 +305,24 @@ export default function ConfigTunnel({ close, open, units }) {
                </StyledLabel>
                {state.processing.nutrients?.fat ||
                state.processing.nutrients?.cal ? (
-                  <>
-                     <div
-                        style={{
-                           width: '70%',
-                           minHeight: '100px',
-                           backgroundColor: '#F3F3F3',
-                           padding: '20px',
-                        }}
-                     >
-                        <Text as="title">
-                           <strong>{t(address.concat('calories'))}: </strong>
-                           {state.processing.nutrients?.cal}
-                        </Text>
-
-                        <Text as="title">
-                           <strong>{t(address.concat('total fat'))}: </strong>
-                           {state.processing.nutrients?.fat}
-                        </Text>
-                     </div>
-                  </>
+                  <Nutrition
+                     data={{
+                        calories: state.processing.nutrients.cal,
+                        totalFat: state.processing.nutrients.fat,
+                        transFat: state.processing.nutrients.transFat,
+                        saturatedFat: state.processing.nutrients.saturatedFat,
+                        cholesterol: state.processing.nutrients.cholestrol,
+                        sodium: state.processing.nutrients.sodium,
+                        totalCarbohydrates: state.processing.nutrients.carbs,
+                        dietaryFibre: state.processing.nutrients.dietryFiber,
+                        sugars: state.processing.nutrients.sugar,
+                        protein: state.processing.nutrients.protein,
+                        vitaminA: state.processing.nutrients.vitA,
+                        vitaminC: state.processing.nutrients.vitC,
+                        iron: state.processing.nutrients.iron,
+                        calcium: state.processing.nutrients.calcium,
+                     }}
+                  />
                ) : (
                   <ButtonTile
                      type="secondary"
