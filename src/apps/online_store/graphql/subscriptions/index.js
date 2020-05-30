@@ -39,6 +39,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
       simpleRecipeProduct(id: $id) {
          id
          name
+         assets
          isValid
          isPublished
          accompaniments
@@ -89,6 +90,7 @@ export const S_INVENTORY_PRODUCT = gql`
       inventoryProduct(id: $id) {
          id
          name
+         assets
          accompaniments
          isValid
          isPublished

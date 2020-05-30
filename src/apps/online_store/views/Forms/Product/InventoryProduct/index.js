@@ -29,7 +29,7 @@ import {
 } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
-import { Description, Item } from './components'
+import { Description, Item, Assets } from './components'
 import {
    AccompanimentTypeTunnel,
    DescriptionTunnel,
@@ -38,6 +38,7 @@ import {
    PricingTunnel,
    ProductsTunnel,
    ProductsTypeTunnel,
+   AssetsTunnel,
 } from './tunnels'
 
 const address = 'apps.online_store.views.forms.product.inventoryproduct.'
@@ -265,6 +266,9 @@ export default function InventoryProduct() {
             <Tunnel layer={7}>
                <PricingTunnel state={state} close={closeTunnel} />
             </Tunnel>
+            <Tunnel layer={8}>
+               <AssetsTunnel state={state} closeTunnel={closeTunnel} />
+            </Tunnel>
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
@@ -306,7 +310,9 @@ export default function InventoryProduct() {
                   <div>
                      <Description state={state} openTunnel={openTunnel} />
                   </div>
-                  <div></div>
+                  <div>
+                     <Assets state={state} openTunnel={openTunnel} />
+                  </div>
                </StyledMeta>
                <StyledRule />
                <Item state={state} openTunnel={openTunnel} />
