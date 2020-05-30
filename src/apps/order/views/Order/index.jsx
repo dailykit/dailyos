@@ -1,5 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { useOrder } from '../../context'
@@ -21,7 +22,6 @@ import {
    ListBodyItem,
    Legend,
 } from './styled'
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.order.views.order.'
 const Order = () => {
@@ -91,11 +91,14 @@ const Order = () => {
             <Loader />
          </Wrapper>
       )
-   if (error) return <Wrapper>{t(address.concat('something went wrong!'))}</Wrapper>
+   if (error)
+      return <Wrapper>{t(address.concat('something went wrong!'))}</Wrapper>
    return (
       <Wrapper>
          <Header>
-            <h3>{t(address.concat('order no'))}: ORD{order.id}</h3>
+            <h3>
+               {t(address.concat('order no'))}: ORD{order.id}
+            </h3>
             <section>
                <section>
                   <span>{t(address.concat('ordered'))}</span>
@@ -284,7 +287,7 @@ const ProductDetails = ({ product }) => {
    return (
       <List>
          <ListHead>
-            <span>{t(address.concat('ingredient'))}</span>
+            <span>{t(address.concat('ingredients'))}</span>
             <span>{t(address.concat('supplier item'))}</span>
             <span>{t(address.concat('processing'))}</span>
             <span>{t(address.concat('quantity'))}</span>
@@ -324,8 +327,8 @@ const ProductDetails = ({ product }) => {
                         {currentPanel === item.id ? (
                            <ArrowDownIcon />
                         ) : (
-                              <ArrowUpIcon />
-                           )}
+                           <ArrowUpIcon />
+                        )}
                      </button>
                   </header>
                   <main>
@@ -345,8 +348,8 @@ const ProductDetails = ({ product }) => {
                                  {t(address.concat('link'))}
                               </a>
                            ) : (
-                                 'N/A'
-                              )}
+                              'N/A'
+                           )}
                         </span>
                      </section>
                      <section>
@@ -377,7 +380,7 @@ const ProductDetails = ({ product }) => {
                               ? `${item?.bulkItem?.shelfLife.value} ${item?.bulkItem?.shelfLife.unit}`
                               : ''}
                            {item.sachetItemId &&
-                              item?.sachetItem?.bulkItem?.shelfLife
+                           item?.sachetItem?.bulkItem?.shelfLife
                               ? `${item?.sachetItem?.bulkItem?.shelfLife.value} ${item?.sachetItem?.bulkItem?.shelfLife.unit}`
                               : ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
