@@ -3,7 +3,6 @@ import { toast } from 'react-toastify'
 import {
    IconButton,
    Loader,
-   SearchBox,
    Table,
    TableBody,
    TableCell,
@@ -14,11 +13,7 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import {
-   AddIcon,
-   ChevronLeftIcon,
-   ChevronRightIcon,
-} from '../../../assets/icons'
+import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
@@ -26,8 +21,6 @@ import {
 } from '../../../graphql'
 import {
    StyledContent,
-   StyledHeader,
-   StyledPagination,
    StyledTableActions,
    StyledTableHeader,
    StyledWrapper,
@@ -42,7 +35,6 @@ const address = 'apps.inventory.views.listings.item.'
 export default function ItemListing() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const [search, setSearch] = React.useState('')
    const [loading, setLoading] = React.useState(false)
 
    const { loading: itemsLoading, data, error } = useSubscription(
@@ -86,7 +78,9 @@ export default function ItemListing() {
                         <TableCell>Supplier Item</TableCell>
                         <TableCell>Supplier</TableCell>
                         <TableCell>Processings</TableCell>
-                        <TableCell align="center">On Hand</TableCell>
+                        <TableCell>Par Level</TableCell>
+                        <TableCell>On Hand</TableCell>
+                        <TableCell>Max Level</TableCell>
                         <TableCell>Awaiting</TableCell>
                         <TableCell>Committed</TableCell>
                         <TableCell>Availability</TableCell>
@@ -107,7 +101,7 @@ export default function ItemListing() {
                                  ))}
                               </CellColumnContainer>
                            </TableCell>
-                           <TableCell style={{ width: '15%' }}>
+                           <TableCell>
                               {item.bulkItems?.map(processing => (
                                  <CellColumnContainer>
                                     <div
@@ -124,16 +118,20 @@ export default function ItemListing() {
                                        >
                                           {processing.parLevel}
                                        </OnHandData>
-                                       <span style={{ width: '10px' }} />
-
-                                       <span
-                                          style={{ color: '#888D9D' }}
-                                       >{`{`}</span>
+                                    </div>
+                                 </CellColumnContainer>
+                              ))}
+                           </TableCell>
+                           <TableCell>
+                              {item.bulkItems?.map(processing => (
+                                 <CellColumnContainer>
+                                    <div
+                                       style={{
+                                          padding: '5px 0',
+                                          display: 'flex',
+                                       }}
+                                    >
                                        <OnHandData
-                                          style={{
-                                             padding: '0 30px',
-                                             textAlign: 'center',
-                                          }}
                                           alertAndSuccess={
                                              processing.onHand >
                                              processing.parLevel
@@ -141,11 +139,19 @@ export default function ItemListing() {
                                        >
                                           {processing.onHand}
                                        </OnHandData>
-                                       <span
-                                          style={{ color: '#888D9D' }}
-                                       >{`}`}</span>
-
-                                       <span style={{ width: '10px' }} />
+                                    </div>
+                                 </CellColumnContainer>
+                              ))}
+                           </TableCell>
+                           <TableCell>
+                              {item.bulkItems?.map(processing => (
+                                 <CellColumnContainer>
+                                    <div
+                                       style={{
+                                          padding: '5px 0',
+                                          display: 'flex',
+                                       }}
+                                    >
                                        <OnHandData>
                                           {processing.maxLevel}
                                        </OnHandData>
