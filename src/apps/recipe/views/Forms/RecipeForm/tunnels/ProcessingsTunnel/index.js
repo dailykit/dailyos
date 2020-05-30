@@ -47,8 +47,7 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
       ingredients.push({
          id: recipeState.newIngredient.id,
          name: recipeState.newIngredient.name,
-         slipName: recipeState.newIngredient.name,
-         isVisible: true,
+         image: recipeState.newIngredient.image,
          ingredientProcessing: {
             id: current.id,
             processingName: current.title,

@@ -28,7 +28,7 @@ import {
 } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
-import { Description, Recipe } from './components'
+import { Description, Recipe, Assets } from './components'
 import {
    AccompanimentTypeTunnel,
    DescriptionTunnel,
@@ -36,6 +36,7 @@ import {
    ProductsTunnel,
    ProductsTypeTunnel,
    RecipeTunnel,
+   AssetsTunnel,
 } from './tunnels'
 
 const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
@@ -222,6 +223,9 @@ export default function SimpleRecipeProduct() {
             <Tunnel layer={6}>
                <PriceConfigurationTunnel state={state} close={closeTunnel} />
             </Tunnel>
+            <Tunnel layer={7}>
+               <AssetsTunnel state={state} closeTunnel={closeTunnel} />
+            </Tunnel>
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
@@ -263,7 +267,9 @@ export default function SimpleRecipeProduct() {
                   <div>
                      <Description state={state} openTunnel={openTunnel} />
                   </div>
-                  <div></div>
+                  <div>
+                     <Assets state={state} openTunnel={openTunnel} />
+                  </div>
                </StyledMeta>
                <StyledRule />
                <Recipe state={state} openTunnel={openTunnel} />
