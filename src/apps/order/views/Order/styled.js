@@ -50,10 +50,11 @@ export const OrderItems = styled.ul(
 )
 
 export const OrderItem = styled.li(
-   () => css`
+   ({ isActive }) => css`
       padding: 8px;
       list-style: none;
-      background: #f3f3f3;
+      ${isActive && `color: #fff`};
+      background: ${isActive ? '#353244' : '#f3f3f3'};
       h3 {
          font-size: 14px;
          font-weight: 500;
@@ -117,13 +118,13 @@ export const ListBody = styled.div(() => css``)
 const selectBg = (arg1, arg2) => {
    const args = [arg1, arg2]
    if (args.every(item => item === true)) {
-      return '#53C22B'
+      return '#79df54'
    }
    if (args.every(item => item === false)) {
-      return '#3C91E6'
+      return '#65c6ff'
    }
    if (args.some(item => item === false)) {
-      return '#FBB13C'
+      return '#f9daa8'
    }
    return ''
 }
@@ -150,12 +151,71 @@ export const ListBodyItem = styled.div(
             :hover {
                background: rgba(0, 0, 0, 0.05);
             }
+            :focus {
+               outline: none;
+               background: rgba(0, 0, 0, 0.1);
+            }
          }
       }
       main {
          padding: 16px;
-         border-top: 1px solid #dddada;
-         display: ${isOpen ? 'block' : 'none'};
+         grid-gap: 24px;
+         display: ${isOpen ? 'grid' : 'none'};
+         border-top: 1px solid rgba(0, 0, 0, 0.2);
+         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+         > section {
+            display: flex;
+            flex-direction: column;
+            span:first-child {
+               font-size: 13px;
+               font-weight: 500;
+               padding-bottom: 6px;
+            }
+            span:last-child {
+               font-size: 18px;
+            }
+         }
       }
    `
 )
+
+export const Legend = styled.div`
+   display: flex;
+   margin: 16px 0;
+   align-items: center;
+   h2 {
+      font-size: 18px;
+      font-weight: 400;
+      margin-right: 24px;
+   }
+   section {
+      margin-right: 24px;
+      align-items: center;
+      display: inline-flex;
+      span:first-child {
+         height: 8px;
+         width: 20px;
+         margin-right: 8px;
+         border-radius: 8px;
+         display: inline-block;
+      }
+   }
+   section {
+      :nth-of-type(1) {
+         span:first-child {
+            background: #f9daa8;
+         }
+      }
+      :nth-of-type(2) {
+         span:first-child {
+            background: #65c6ff;
+         }
+      }
+      :nth-of-type(3) {
+         span:first-child {
+            background: #79df54;
+         }
+      }
+   }
+`
