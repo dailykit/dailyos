@@ -360,7 +360,7 @@ export default function ConfigTunnel({ close, open, units }) {
                   />
                )}
             </StyledRow>
-            {!state.form_meta.shipped && (
+            {/* {!state.form_meta.shipped && (
                <>
                   <StyledRow>
                      <StyledLabel>
@@ -382,7 +382,7 @@ export default function ConfigTunnel({ close, open, units }) {
                      <Highlight></Highlight>
                   </StyledRow>
                </>
-            )}
+            )} */}
          </TunnelBody>
       </>
    )
