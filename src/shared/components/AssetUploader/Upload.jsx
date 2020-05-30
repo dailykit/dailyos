@@ -1,8 +1,10 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import useAssets from './useAssets'
-
+import { useTranslation } from 'react-i18next'
+const address = 'shared.components.assetuploader.'
 const Upload = ({ onAssetUpload }) => {
+   const { t } = useTranslation()
    const { upload } = useAssets()
    const inputRef = React.useRef(null)
    const [file, setFile] = React.useState({
@@ -48,27 +50,27 @@ const Upload = ({ onAssetUpload }) => {
       <div>
          <StyledForm>
             <fieldset>
-               <legend>Title</legend>
+               <legend>{t(address.concat('title'))}</legend>
                <input
                   type="text"
                   name="title"
                   value={file.title}
-                  placeholder="Enter the title"
+                  placeholder={t(address.concat("enter the title"))}
                   onChange={e => handleMetaChange(e)}
                />
             </fieldset>
             <fieldset>
-               <legend>Description</legend>
+               <legend>{t(address.concat('description'))}</legend>
                <textarea
                   row="4"
                   name="description"
                   value={file.description}
-                  placeholder="Enter the description"
+                  placeholder={t(address.concat("enter the description"))}
                   onChange={e => handleMetaChange(e)}
                />
             </fieldset>
             <fieldset>
-               <legend>Select Image</legend>
+               <legend>{t(address.concat('select image'))}</legend>
                <input
                   type="file"
                   ref={inputRef}
@@ -77,7 +79,7 @@ const Upload = ({ onAssetUpload }) => {
                />
             </fieldset>
             <button type="button" onClick={() => handleSubmit()}>
-               Upload
+               {t(address.concat('upload'))}
             </button>
          </StyledForm>
          {file.preview && (
