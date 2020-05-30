@@ -153,6 +153,8 @@ export const ORDER = gql`
                labelUri
                quantity
                isAssembled
+               isLabelled
+               isPortioned
                ingredientName
                processingName
                packaging {
@@ -162,6 +164,7 @@ export const ORDER = gql`
                sachetItem {
                   id
                   bulkItem {
+                     id
                      sop
                      yield
                      shelfLife
