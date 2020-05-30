@@ -3,7 +3,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import Loader from '../Loader'
 import { useOrder } from '../../context/order'
-import { FETCH_ORDER_MEALKIT } from '../../graphql'
+import { FETCH_ORDER_SACHET } from '../../graphql'
 import {
    Wrapper,
    StyledHeader,
@@ -12,24 +12,25 @@ import {
    StyledStatus,
    StyledWeigh,
    StyledPackaging,
+   StyledSOP,
 } from './styled'
 
 import { WeighIcon } from '../../assets/icons'
 
-export const ProcessOrder = ({ id }) => {
+export const ProcessOrder = () => {
    const {
-      state: { current_view },
+      state: { current_view, product },
       switchView,
    } = useOrder()
-   const [order, setOrder] = React.useState(null)
-   const { loading, error } = useSubscription(FETCH_ORDER_MEALKIT, {
+   const [sachet, setSachet] = React.useState(null)
+   const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
       variables: {
-         id,
+         id: product.sachet_id,
       },
       onSubscriptionData: async ({
-         subscriptionData: { data: { orderMealKitProduct = {} } = {} },
+         subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
-         setOrder(orderMealKitProduct)
+         setSachet(orderSachet)
       },
    })
 
@@ -37,12 +38,13 @@ export const ProcessOrder = ({ id }) => {
       switchView(view)
    }
 
-   if (!id) {
+   if (!product.sachet_id) {
       return (
          <Wrapper>
             <StyledMode>
                <label htmlFor="mode">Mode</label>
                <select
+                  id="mode"
                   name="mode"
                   value={current_view}
                   onChange={e => changeView(e.target.value)}
@@ -55,7 +57,7 @@ export const ProcessOrder = ({ id }) => {
          </Wrapper>
       )
    }
-   if (loading || !order)
+   if (loading || !sachet)
       return (
          <Wrapper>
             <Loader />
@@ -67,6 +69,7 @@ export const ProcessOrder = ({ id }) => {
             <StyledMode>
                <label htmlFor="mode">Mode</label>
                <select
+                  id="mode"
                   name="mode"
                   value={current_view}
                   onChange={e => changeView(e.target.value)}
@@ -83,6 +86,7 @@ export const ProcessOrder = ({ id }) => {
          <StyledMode>
             <label htmlFor="mode">Mode</label>
             <select
+               id="mode"
                name="mode"
                value={current_view}
                onChange={e => changeView(e.target.value)}
@@ -92,33 +96,67 @@ export const ProcessOrder = ({ id }) => {
             </select>
          </StyledMode>
          <StyledHeader>
-            <h3>{order?.simpleRecipeProduct?.name}</h3>
+            <h3>{product?.name}</h3>
          </StyledHeader>
          <StyledMain>
             <section>
-               <h4>Salt</h4>
+               <h4>{sachet.ingredientName}</h4>
                <StyledStatus>Under Processing</StyledStatus>
             </section>
             <section>
-               <span>Tata Salt</span>
-               <span>Portioned</span>
-               <span>25gm</span>
+               <span>
+                  {(sachet.bulkItemId &&
+                     sachet?.bulkItem?.supplierItem?.name) ||
+                     ''}
+                  {(sachet.sachetItemId &&
+                     sachet?.sachetItem?.bulkItem?.supplierItem?.name) ||
+                     ''}
+                  {!sachet?.bulkItemId && !sachet?.sachetItemId && 'NA'}
+               </span>
+               <span>{sachet.processingName}</span>
+               <span>{sachet.quantity}gm</span>
             </section>
             <StyledWeigh>
                <span>
                   <WeighIcon />
                </span>
-               <h1>45gm</h1>
-               <span>Reduce 20gm</span>
+               <h2>Weighing scale is not active!</h2>
+               <span />
             </StyledWeigh>
          </StyledMain>
          <StyledPackaging>
             <h3>Packaging</h3>
-            <span>2x2 ziplock</span>
-            <div>
-               <img src="#" alt="2x2 ziplock" />
+            <span>{sachet?.packging?.name || 'N/A'}</span>
+            <div title={sachet?.packging?.name || 'N/A'}>
+               {sachet?.packging?.assets?.images[0] && (
+                  <img
+                     src={sachet?.packging?.assets?.images[0].url}
+                     alt={sachet?.packging?.name || 'N/A'}
+                     title={sachet?.packging?.name || 'N/A'}
+                  />
+               )}
             </div>
          </StyledPackaging>
+         <StyledSOP>
+            <h3>SOP</h3>
+            <div>
+               {sachet.bulkItemId &&
+                  Object.keys(sachet?.bulkItem?.sop?.images).length > 0 && (
+                     <img
+                        src={sachet?.bulkItem?.sop?.images[0].url}
+                        alt="SOP"
+                     />
+                  )}
+               {sachet.sachetItemId &&
+                  Object.keys(sachet?.sachetItem?.bulkItem?.sop?.images)
+                     .length > 0 && (
+                     <img
+                        src={sachet?.sachetItem?.bulkItem?.sop?.images[0].url}
+                        alt="SOP"
+                     />
+                  )}
+            </div>
+         </StyledSOP>
       </Wrapper>
    )
 }

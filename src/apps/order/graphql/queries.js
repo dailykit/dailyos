@@ -314,3 +314,47 @@ export const FETCH_ORDER_MEALKIT = gql`
       }
    }
 `
+
+export const FETCH_ORDER_SACHET = gql`
+   subscription orderSachet($id: Int!) {
+      orderSachet(id: $id) {
+         id
+         status
+         labelUri
+         quantity
+         isAssembled
+         ingredientName
+         processingName
+         isLabelled
+         isPortioned
+         packaging {
+            name
+         }
+         sachetItemId
+         sachetItem {
+            id
+            bulkItem {
+               id
+               sop
+               yield
+               shelfLife
+               bulkDensity
+               supplierItem {
+                  name
+               }
+            }
+         }
+         bulkItemId
+         bulkItem {
+            id
+            sop
+            yield
+            shelfLife
+            bulkDensity
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`

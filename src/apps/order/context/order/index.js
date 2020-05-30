@@ -4,8 +4,9 @@ const Context = React.createContext()
 
 const initialState = {
    current_view: 'SUMMARY',
-   order: {
-      id: null,
+   product: {
+      name: null,
+      sachet_id: null,
    },
 }
 
@@ -16,16 +17,18 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             current_view: 'WEIGHING',
-            order: {
-               id: payload,
+            product: {
+               name: payload.name,
+               sachet_id: payload.id,
             },
          }
       case 'SWITCH_VIEW': {
          return {
             ...state,
             current_view: payload.view,
-            order: {
-               id: null,
+            product: {
+               name: null,
+               sachet_id: null,
             },
          }
       }
@@ -47,12 +50,13 @@ export const OrderProvider = ({ children }) => {
 export const useOrder = () => {
    const { state, dispatch } = React.useContext(Context)
 
-   const selectOrder = id => {
+   const selectOrder = (id, name) => {
       dispatch({
          type: 'SELECT_ORDER',
-         payload: id,
+         payload: { id, name },
       })
    }
+
    const switchView = view => {
       dispatch({
          type: 'SWITCH_VIEW',

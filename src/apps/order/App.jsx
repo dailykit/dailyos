@@ -17,9 +17,7 @@ const App = () => {
    return (
       <StyledWrapper>
          {state.current_view === 'SUMMARY' && <OrderSummary />}
-         {state.current_view === 'WEIGHING' && (
-            <ProcessOrder id={state?.order?.id?.toString() || null} />
-         )}
+         {state.current_view === 'WEIGHING' && <ProcessOrder />}
          <Router>
             <div>
                <Header />

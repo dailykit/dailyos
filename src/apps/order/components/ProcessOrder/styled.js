@@ -49,9 +49,10 @@ export const StyledWeigh = styled.section`
       display: flex;
       align-items: center;
    }
-   h1 {
+   h2 {
       color: #fff;
-      font-size: 40px;
+      font-size: 32px;
+      font-weight: 300;
    }
 `
 
@@ -67,12 +68,21 @@ export const StyledPackaging = styled.section`
       grid-area: heading;
       font-size: 18px;
       color: #555b6e;
+      font-weight: 400;
    }
    span:nth-child(2) {
       grid-area: value;
    }
    div {
+      overflow: hidden;
       grid-area: image;
+      border-radius: 6px;
+      background: #d2dded;
+      img {
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+      }
    }
 `
 
@@ -86,5 +96,30 @@ export const StyledHeader = styled.header`
       font-size: 14px;
       line-height: 14px;
       color: #555b6e;
+   }
+`
+
+export const StyledSOP = styled.section`
+   margin-top: 16px;
+   h3 {
+      font-size: 18px;
+      font-weight: 400;
+      color: #555b6e;
+   }
+   div {
+      width: 100%;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 6px;
+      background: #d2dded;
+      padding-top: 56.26%;
+      position: relative;
+      img {
+         top: 0;
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+         position: absolute;
+      }
    }
 `

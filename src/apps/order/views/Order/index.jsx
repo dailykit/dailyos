@@ -36,32 +36,37 @@ const Order = () => {
       },
       onSubscriptionData: async ({ subscriptionData: { data } }) => {
          const {
-            orderMealKitProducts,
-            orderInventoryProducts,
-            orderReadyToEatProducts,
+            orderMealKitProducts: mealkits,
+            orderInventoryProducts: inventories,
+            orderReadyToEatProducts: readytoeats,
             ...rest
          } = data.order
          await setOrder({
             ...rest,
-            mealkits: orderMealKitProducts,
-            inventories: orderInventoryProducts,
-            readtoeats: orderReadyToEatProducts,
+            mealkits,
+            inventories,
+            readytoeats,
          })
-         if (orderMealKitProducts.length > 0) {
+         if (mealkits.length > 0) {
             setCurrentProduct({
-               id: orderMealKitProducts[0].id,
+               id: mealkits[0].id,
                type: 'Meal Kit',
             })
-            selectOrder(orderMealKitProducts[0].id)
-         } else if (orderInventoryProducts.length > 0) {
+            if (mealkits[0].orderSachets.length > 0) {
+               selectOrder(
+                  mealkits[0].orderSachets[0].id,
+                  mealkits[0].simpleRecipeProduct.name
+               )
+            }
+         } else if (inventories.length > 0) {
             setCurrentProduct({
-               id: orderInventoryProducts[0].id,
+               id: inventories[0].id,
                type: 'Inventory',
             })
             switchView('SUMMARY')
-         } else if (orderReadyToEatProducts.length > 0) {
+         } else if (readytoeats.length > 0) {
             setCurrentProduct({
-               id: orderReadyToEatProducts[0].id,
+               id: readytoeats[0].id,
                type: 'Ready to Eat',
             })
             switchView('SUMMARY')
@@ -79,7 +84,13 @@ const Order = () => {
          type,
       })
       if (type === 'Meal Kit') {
-         selectOrder(id)
+         const product = order.mealkits.find(mealkit => id === mealkit.id)
+         if (product.orderSachets.length > 0) {
+            selectOrder(
+               product.orderSachets[0].id,
+               product.simpleRecipeProduct.name
+            )
+         }
       } else {
          switchView('SUMMARY')
       }
@@ -119,7 +130,7 @@ const Order = () => {
                0 /{' '}
                {order.inventories.length +
                   order.mealkits.length +
-                  order.readtoeats.length}
+                  order.readytoeats.length}
                &nbsp;{t(address.concat('items'))}
             </StyledCount>
             <OrderItems>
@@ -277,6 +288,7 @@ const Order = () => {
 export default Order
 
 const ProductDetails = ({ product }) => {
+   const { selectOrder } = useOrder()
    const { t } = useTranslation()
    const [currentPanel, setCurrentPanel] = React.useState(null)
    React.useEffect(() => {
@@ -284,6 +296,12 @@ const ProductDetails = ({ product }) => {
          setCurrentPanel(product?.orderSachets[0]?.id)
       }
    }, [product])
+
+   const selectSachet = id => {
+      selectOrder(id, product.simpleRecipeProduct.name)
+      setCurrentPanel(currentPanel === id ? '' : id)
+   }
+
    return (
       <List>
          <ListHead>
@@ -297,6 +315,7 @@ const ProductDetails = ({ product }) => {
             {product.orderSachets.map(item => (
                <ListBodyItem
                   key={item.id}
+                  onClick={() => selectSachet(item.id)}
                   isOpen={currentPanel === item.id}
                   variant={{
                      isLabelled: item.isLabelled,
@@ -318,11 +337,7 @@ const ProductDetails = ({ product }) => {
                      <span>{item.quantity}</span>
                      <button
                         type="button"
-                        onClick={() =>
-                           setCurrentPanel(
-                              currentPanel === item.id ? '' : item.id
-                           )
-                        }
+                        onClick={() => selectSachet(item.id)}
                      >
                         {currentPanel === item.id ? (
                            <ArrowDownIcon />

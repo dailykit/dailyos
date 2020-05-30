@@ -7,6 +7,6 @@ export const StyledWrapper = styled.div`
    grid-template-columns: 340px 1fr;
    > div {
       height: 100vh;
-      overflow: hidden;
+      overflow-y: auto;
    }
 `
