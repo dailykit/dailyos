@@ -158,32 +158,34 @@ const Order = () => {
                               {mealkit?.comboProductComponent?.label})
                            </StyledProductTitle>
                         </div>
-                        <StyledServings>
-                           <span>
-                              <UserIcon size={16} color="#555B6E" />
-                           </span>
+                        <section>
                            <span>
                               {
-                                 mealkit?.simpleRecipeProductOption
-                                    ?.simpleRecipeYield?.yield?.serving
+                                 mealkit?.orderSachets.filter(
+                                    sachet => sachet.isAssembled
+                                 ).length
                               }
-                              &nbsp; Servings
+                              &nbsp;/&nbsp;
+                              {
+                                 mealkit?.orderSachets.filter(
+                                    sachet => sachet.status === 'COMPLETED'
+                                 ).length
+                              }
+                              &nbsp; / {mealkit?.orderSachets?.length}
                            </span>
-                        </StyledServings>
-                        <span>
-                           {
-                              mealkit?.orderSachets.filter(
-                                 sachet => sachet.isAssembled
-                              ).length
-                           }
-                           &nbsp;/&nbsp;
-                           {
-                              mealkit?.orderSachets.filter(
-                                 sachet => sachet.status === 'COMPLETED'
-                              ).length
-                           }
-                           &nbsp; / {mealkit?.orderSachets?.length}
-                        </span>
+                           <StyledServings>
+                              <span>
+                                 <UserIcon size={16} color="#555B6E" />
+                              </span>
+                              <span>
+                                 {
+                                    mealkit?.simpleRecipeProductOption
+                                       ?.simpleRecipeYield?.yield?.serving
+                                 }
+                                 &nbsp; Servings
+                              </span>
+                           </StyledServings>
+                        </section>
                      </OrderItem>
                   ))}
                {order.readytoeats &&
@@ -208,22 +210,26 @@ const Order = () => {
                               {readytoeat?.comboProductComponent?.label})
                            </StyledProductTitle>
                         </div>
-                        <StyledServings>
+                        <section>
                            <span>
-                              <UserIcon size={16} color="#555B6E" />
+                              {readytoeat?.assemblyStatus === 'ASSEMBLED'
+                                 ? 1
+                                 : 0}{' '}
+                              / 1
                            </span>
-                           <span>
-                              {
-                                 readytoeat?.simpleRecipeProductOption
-                                    ?.simpleRecipeYield?.yield?.serving
-                              }
-                              &nbsp; Servings
-                           </span>
-                        </StyledServings>
-                        <span>
-                           {readytoeat?.assemblyStatus === 'ASSEMBLED' ? 1 : 0}{' '}
-                           / 1
-                        </span>
+                           <StyledServings>
+                              <span>
+                                 <UserIcon size={16} color="#555B6E" />
+                              </span>
+                              <span>
+                                 {
+                                    readytoeat?.simpleRecipeProductOption
+                                       ?.simpleRecipeYield?.yield?.serving
+                                 }
+                                 &nbsp; Servings
+                              </span>
+                           </StyledServings>
+                        </section>
                      </OrderItem>
                   ))}
             </OrderItems>
