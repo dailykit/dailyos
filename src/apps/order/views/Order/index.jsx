@@ -2,6 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 
+import { useOrder } from '../../context'
 import { ORDER } from '../../graphql'
 import { Loader } from '../../components'
 import { UserIcon, ArrowUpIcon, ArrowDownIcon } from '../../assets/icons'
@@ -26,6 +27,7 @@ const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
+   const { selectOrder, switchView } = useOrder()
    const [order, setOrder] = React.useState(null)
    const [currentProduct, setCurrentProduct] = React.useState(null)
    const { loading, error } = useSubscription(ORDER, {
@@ -50,19 +52,38 @@ const Order = () => {
                id: orderMealKitProducts[0].id,
                type: 'Meal Kit',
             })
+            selectOrder(orderMealKitProducts[0].id)
          } else if (orderInventoryProducts.length > 0) {
             setCurrentProduct({
                id: orderInventoryProducts[0].id,
                type: 'Inventory',
             })
+            switchView('SUMMARY')
          } else if (orderReadyToEatProducts.length > 0) {
             setCurrentProduct({
                id: orderReadyToEatProducts[0].id,
                type: 'Ready to Eat',
             })
+            switchView('SUMMARY')
          }
       },
    })
+
+   React.useEffect(() => {
+      return () => switchView('SUMMARY')
+   }, [])
+
+   const selectProduct = (id, type) => {
+      setCurrentProduct({
+         id,
+         type,
+      })
+      if (type === 'Meal Kit') {
+         selectOrder(id)
+      } else {
+         switchView('SUMMARY')
+      }
+   }
 
    if (loading || !order)
       return (
@@ -103,12 +124,7 @@ const Order = () => {
                   order.inventories.map(inventory => (
                      <OrderItem
                         key={inventory.id}
-                        onClick={() =>
-                           setCurrentProduct({
-                              id: inventory.id,
-                              type: 'Inventory',
-                           })
-                        }
+                        onClick={() => selectProduct(inventory.id, 'Inventory')}
                         isActive={
                            currentProduct?.id === inventory.id &&
                            currentProduct?.type === 'Inventory'
@@ -142,12 +158,7 @@ const Order = () => {
                   order.mealkits.map(mealkit => (
                      <OrderItem
                         key={mealkit.id}
-                        onClick={() =>
-                           setCurrentProduct({
-                              id: mealkit.id,
-                              type: 'Meal Kit',
-                           })
-                        }
+                        onClick={() => selectProduct(mealkit.id, 'Meal Kit')}
                         isActive={
                            currentProduct?.id === mealkit.id &&
                            currentProduct?.type === 'Meal Kit'
@@ -196,10 +207,7 @@ const Order = () => {
                      <OrderItem
                         key={readytoeat.id}
                         onClick={() =>
-                           setCurrentProduct({
-                              id: readytoeat.id,
-                              type: 'Ready to Eat',
-                           })
+                           selectProduct(readytoeat.id, 'Ready to Eat')
                         }
                         isActive={
                            currentProduct?.id === readytoeat.id &&

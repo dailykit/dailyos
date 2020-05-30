@@ -28,6 +28,7 @@ const renderComponent = (type, view) => {
    if (type === 'listings' && view === 'purchaseOrders')
       return <PurchaseOrdersListing />
    if (type === 'listings' && view === 'packagings') return <Packagings />
+   if (type === 'listings' && view === 'home') return <Home />
    // Forms
    if (type === 'forms' && view === 'suppliers') return <SupplierForm />
    if (type === 'forms' && view === 'items') return <ItemForm />

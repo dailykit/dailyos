@@ -44,7 +44,9 @@ export default function SelectSupplierTunnel({ close, supplierItems }) {
             ) : (
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
+                  placeholder={t(
+                     address.concat("type what you're looking for")
+                  )}
                />
             )}
             <ListOptions>

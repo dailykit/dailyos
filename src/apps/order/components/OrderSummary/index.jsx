@@ -1,31 +1,48 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { ORDERS_SUMMARY, ORDER_STATUSES } from '../../graphql'
+import { SUMMARY, ORDER_STATUSES } from '../../graphql'
 import { MetricItem } from '../MetricItem'
-import { Wrapper } from './styled'
-import { useTranslation } from 'react-i18next'
+import { Wrapper, StyledMode } from './styled'
+import { useOrder } from '../../context/order'
 
-const address = 'apps.order.components.ordersummary.'
-export const OrderSummary = ({ onStatusSelect }) => {
-   const { t } = useTranslation()
+export const OrderSummary = () => {
+   const {
+      state: { current_view },
+      switchView,
+   } = useOrder()
    const { loading, error, data: { orders = [] } = {} } = useSubscription(
-      ORDERS_SUMMARY
+      SUMMARY
    )
 
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
    } = useSubscription(ORDER_STATUSES)
 
-   if (loading) return <div>{t(address.concat('loading'))}...</div>
+   const changeView = view => {
+      switchView(view)
+   }
+
+   if (loading) return <div>Loading...</div>
    if (error) return <div>{error.message}</div>
    return (
       <Wrapper>
-         <h4>{t(address.concat('quick info'))}</h4>
+         <StyledMode>
+            <label htmlFor="mode">Mode</label>
+            <select
+               name="mode"
+               value={current_view}
+               onChange={e => changeView(e.target.value)}
+            >
+               <option value="SUMMARY">Summary</option>
+               <option value="WEIGHING">Weighing</option>
+            </select>
+         </StyledMode>
+         <h4>Quick Info</h4>
          {orders.length > 0 && Object.keys(orders[0]).length > 0 ? (
             <ul>
                <MetricItem
-                  title={t(address.concat("all orders"))}
+                  title="ALL ORDERS"
                   currency={orders[0].currency}
                   count={Object.keys(orders[0].summary.count).reduce(
                      (sum, key) =>
@@ -52,8 +69,8 @@ export const OrderSummary = ({ onStatusSelect }) => {
                ))}
             </ul>
          ) : (
-               <div>No orders yet!</div>
-            )}
+            <div>No orders yet!</div>
+         )}
       </Wrapper>
    )
 }

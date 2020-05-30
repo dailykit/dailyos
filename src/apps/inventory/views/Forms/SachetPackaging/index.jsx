@@ -22,7 +22,10 @@ import {
 } from './Tunnels'
 import FormView from './FormView'
 
-import { SUPPLIERS, PACKAGING_SUBSCRIPTION } from '../../../graphql'
+import {
+   SUPPLIERS_SUBSCRIPTION,
+   PACKAGING_SUBSCRIPTION,
+} from '../../../graphql'
 
 export default function SachetPackaging() {
    const [sachetPackagingState, sachetPackagingDispatch] = useReducer(
@@ -32,7 +35,9 @@ export default function SachetPackaging() {
    const { state } = useContext(Context)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(6)
    const [formState, setFormState] = useState({})
-   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+   const { loading: supplierLoading, data: supplierData } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION
+   )
 
    const { loading } = useSubscription(PACKAGING_SUBSCRIPTION, {
       variables: { id: sachetPackagingState.id },

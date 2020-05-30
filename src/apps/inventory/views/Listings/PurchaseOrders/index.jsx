@@ -14,7 +14,6 @@ import { useSubscription } from '@apollo/react-hooks'
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import { StyledHeader, StyledWrapper } from '../styled'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
@@ -56,35 +55,26 @@ export default function PurchaseOrders() {
                      <TableRow>
                         <TableCell>Status</TableCell>
                         <TableCell>Supplier Item</TableCell>
-                        <TableCell align="right" />
                      </TableRow>
                   </TableHead>
                   <TableBody>
                      {formState?.map(purchaseOrder => (
-                        <TableRow key={purchaseOrder.id}>
+                        <TableRow
+                           key={purchaseOrder.id}
+                           onClick={() => {
+                              dispatch({
+                                 type: 'SET_PURCHASE_WORK_ORDER',
+                                 payload: {
+                                    id: purchaseOrder.id,
+                                    status: purchaseOrder.status,
+                                 },
+                              })
+                              addTab('Update Purchase Order', 'purchaseOrder')
+                           }}
+                        >
                            <TableCell>{purchaseOrder.status}</TableCell>
                            <TableCell>
                               {purchaseOrder.supplierItem.name}
-                           </TableCell>
-                           <TableCell align="right">
-                              <IconButton
-                                 type="outline"
-                                 onClick={() => {
-                                    dispatch({
-                                       type: 'SET_PURCHASE_WORK_ORDER',
-                                       payload: {
-                                          id: purchaseOrder.id,
-                                          status: purchaseOrder.status,
-                                       },
-                                    })
-                                    addTab(
-                                       'Update Purchase Order',
-                                       'purchaseOrder'
-                                    )
-                                 }}
-                              >
-                                 <EditIcon />
-                              </IconButton>
                            </TableCell>
                         </TableRow>
                      ))}

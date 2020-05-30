@@ -13,7 +13,7 @@ const address = 'apps.inventory.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { state, dispatch } = React.useContext(Context)
    const addTab = (title, view) => {
       toggleSidebar(visible => !visible)
       dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
@@ -22,6 +22,11 @@ const Sidebar = ({ visible, toggleSidebar }) => {
       <StyledSidebar visible={visible}>
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
+            {state.current.view && (
+               <StyledListItem onClick={() => addTab('Home', 'home')}>
+                  Home
+               </StyledListItem>
+            )}
             <StyledListItem onClick={() => addTab('Suppliers', 'suppliers')}>
                {t(address.concat('suppliers'))}
             </StyledListItem>
