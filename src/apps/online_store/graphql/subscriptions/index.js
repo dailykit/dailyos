@@ -89,6 +89,7 @@ export const S_INVENTORY_PRODUCT = gql`
       inventoryProduct(id: $id) {
          id
          name
+         assets
          accompaniments
          isValid
          isPublished
