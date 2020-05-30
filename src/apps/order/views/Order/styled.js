@@ -117,13 +117,13 @@ export const ListBody = styled.div(() => css``)
 const selectBg = (arg1, arg2) => {
    const args = [arg1, arg2]
    if (args.every(item => item === true)) {
-      return '#88df5c'
+      return '#53C22B'
    }
    if (args.every(item => item === false)) {
-      return '#FFF2C0'
+      return '#3C91E6'
    }
    if (args.some(item => item === false)) {
-      return '#9BDCFF'
+      return '#FBB13C'
    }
    return ''
 }
