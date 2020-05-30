@@ -13,7 +13,7 @@ import {
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.sections.sidebar.'
+const address = 'apps.safety.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()

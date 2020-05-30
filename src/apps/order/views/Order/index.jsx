@@ -20,8 +20,11 @@ import {
    ListBodyItem,
    Legend,
 } from './styled'
+import { useTranslation } from 'react-i18next'
 
+const address = 'apps.order.views.order.'
 const Order = () => {
+   const { t } = useTranslation()
    const params = useParams()
    const [order, setOrder] = React.useState(null)
    const [currentProduct, setCurrentProduct] = React.useState(null)
@@ -67,22 +70,22 @@ const Order = () => {
             <Loader />
          </Wrapper>
       )
-   if (error) return <Wrapper>Something went wrong!</Wrapper>
+   if (error) return <Wrapper>{t(address.concat('something went wrong!'))}</Wrapper>
    return (
       <Wrapper>
          <Header>
-            <h3>Order no.: ORD{order.id}</h3>
+            <h3>{t(address.concat('order no'))}: ORD{order.id}</h3>
             <section>
                <section>
-                  <span>Ordered</span>
+                  <span>{t(address.concat('ordered'))}</span>
                   <span>Feb 12, 2020</span>
                </section>
                <section>
-                  <span>Expected dispatch</span>
+                  <span>{t(address.concat('expected dispatch'))}</span>
                   <span>Feb 12, 2020</span>
                </section>
                <section>
-                  <span>Delivery</span>
+                  <span>{t(address.concat('delivery'))}</span>
                   <span>Feb 12, 2020</span>
                </section>
             </section>
@@ -93,7 +96,7 @@ const Order = () => {
                {order.inventories.length +
                   order.mealkits.length +
                   order.readtoeats.length}
-               &nbsp;items
+               &nbsp;{t(address.concat('items'))}
             </StyledCount>
             <OrderItems>
                {order.inventories &&
@@ -182,7 +185,7 @@ const Order = () => {
                                     mealkit?.simpleRecipeProductOption
                                        ?.simpleRecipeYield?.yield?.serving
                                  }
-                                 &nbsp; Servings
+                                 &nbsp; {t(address.concat('servings'))}
                               </span>
                            </StyledServings>
                         </section>
@@ -226,7 +229,7 @@ const Order = () => {
                                     readytoeat?.simpleRecipeProductOption
                                        ?.simpleRecipeYield?.yield?.serving
                                  }
-                                 &nbsp; Servings
+                                 &nbsp; {t(address.concat('servings'))}
                               </span>
                            </StyledServings>
                         </section>
@@ -235,18 +238,18 @@ const Order = () => {
             </OrderItems>
          </section>
          <Legend>
-            <h2>Legends</h2>
+            <h2>{t(address.concat('legends'))}</h2>
             <section>
                <span />
-               <span>Pending</span>
+               <span>{t(address.concat('pending'))}</span>
             </section>
             <section>
                <span />
-               <span>Processing</span>
+               <span>{t(address.concat('processing'))}</span>
             </section>
             <section>
                <span />
-               <span>Done</span>
+               <span>{t(address.concat('done'))}</span>
             </section>
          </Legend>
          {currentProduct?.type === 'Meal Kit' && (
@@ -263,6 +266,7 @@ const Order = () => {
 export default Order
 
 const ProductDetails = ({ product }) => {
+   const { t } = useTranslation()
    const [currentPanel, setCurrentPanel] = React.useState(null)
    React.useEffect(() => {
       if ('id' in product && product.orderSachets.length > 0) {
@@ -272,10 +276,10 @@ const ProductDetails = ({ product }) => {
    return (
       <List>
          <ListHead>
-            <span>Ingredient</span>
-            <span>Supplier Item</span>
-            <span>Processing</span>
-            <span>Quantity</span>
+            <span>{t(address.concat('ingredient'))}</span>
+            <span>{t(address.concat('supplier item'))}</span>
+            <span>{t(address.concat('processing'))}</span>
+            <span>{t(address.concat('quantity'))}</span>
             <span />
          </ListHead>
          <ListBody>
@@ -312,29 +316,29 @@ const ProductDetails = ({ product }) => {
                         {currentPanel === item.id ? (
                            <ArrowDownIcon />
                         ) : (
-                           <ArrowUpIcon />
-                        )}
+                              <ArrowUpIcon />
+                           )}
                      </button>
                   </header>
                   <main>
                      <section>
-                        <span>Sachet Id</span>
+                        <span>{t(address.concat('sachet id'))}</span>
                         <span>{item.id}</span>
                      </section>
                      <section>
-                        <span>Packaging Name</span>
+                        <span>{t(address.concat('packaging name'))}</span>
                         <span>{item?.packaging?.name || 'N/A'}</span>
                      </section>
                      <section>
-                        <span>Label Template</span>
+                        <span>{t(address.concat('label template'))}</span>
                         <span>
                            {item?.labelUri ? (
                               <a href={item.labelUri} title="Label URI">
-                                 Link
+                                 {t(address.concat('link'))}
                               </a>
                            ) : (
-                              'N/A'
-                           )}
+                                 'N/A'
+                              )}
                         </span>
                      </section>
                      <section>
@@ -348,7 +352,7 @@ const ProductDetails = ({ product }) => {
                         </span>
                      </section>
                      <section>
-                        <span>Bulk Density</span>
+                        <span>{t(address.concat('bulk density'))}</span>
                         <span>
                            {(item.bulkItemId && item?.bulkItem?.bulkDensity) ||
                               ''}
@@ -359,20 +363,20 @@ const ProductDetails = ({ product }) => {
                         </span>
                      </section>
                      <section>
-                        <span>Shelf Life</span>
+                        <span>{t(address.concat('shelf life'))}</span>
                         <span>
                            {item.bulkItemId && item?.bulkItem?.shelfLife
                               ? `${item?.bulkItem?.shelfLife.value} ${item?.bulkItem?.shelfLife.unit}`
                               : ''}
                            {item.sachetItemId &&
-                           item?.sachetItem?.bulkItem?.shelfLife
+                              item?.sachetItem?.bulkItem?.shelfLife
                               ? `${item?.sachetItem?.bulkItem?.shelfLife.value} ${item?.sachetItem?.bulkItem?.shelfLife.unit}`
                               : ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
                         </span>
                      </section>
                      <section>
-                        <span>Yield</span>
+                        <span>{t(address.concat('yield'))}</span>
                         <span>
                            {(item.bulkItemId && item?.bulkItem?.yield?.value) ||
                               ''}

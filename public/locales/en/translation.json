@@ -179,7 +179,6 @@
                      },
                      "suppliers": {
                         "select supplier": "Select Supplier",
-
                         "type what you’re looking for": "type what you're looking for..."
                      }
                   },
@@ -1160,6 +1159,183 @@
                   "units": "Units"
                }
             }
+         }
+      },
+      "order": {
+         "components": {
+            "button": {},
+            "loader": {},
+            "metricitem": {},
+            "orderlistitem": {
+               "customer info": "Customer Info",
+               "items": "Items",
+               "inventory": "Inventory",
+               "servings": "Servings",
+               "ready to eat": "Ready to eat",
+               "ordered on": "Ordered On",
+               "expected dispatch": "Expected Dispatch",
+               "delivery on": "Delivery On",
+               "billing info": "Billing Info",
+               "tax": "Tax",
+               "discount": "Discount",
+               "delivery price": "Delivery Price",
+               "item total": "Item Total",
+               "total": "Total",
+               "all": "All",
+               "meal kits": "Meal Kits",
+               "no inventories": "No Inventories",
+               "no meal kits": "No Meal Kits",
+               "no ready to eat": "No Ready to Eat"
+            },
+            "ordersummary": {
+               "loading": "loading",
+               "quick info": "Quick Info",
+               "all orders": "ALL ORDERS",
+               "no orders yet!": "No Orders Yet!"
+            },
+            "tabs": {
+               "close tab": "Close Tab"
+            }
+         },
+         "sections": {
+            "main": {},
+            "header": {
+               "menu": "Menu",
+               "go back": "Go Back",
+               "go forward": "Go Forward"
+            },
+            "sidebar": {
+               "listings": "Listings",
+               "orders": "Orders"
+            }
+         },
+         "utils": {},
+         "views": {
+            "home": {
+               "order app": "Order App",
+               "orders": "Orders"
+            },
+            "orders": {
+               "no orders yet!": "No Orders Yet!"
+            },
+            "order": {
+               "something went wrong!": "Something Went Wrong!",
+               "order no": "Order no.",
+               "ordered": "Ordered",
+               "expected dispatch": "Expected Dispatch",
+               "delivery": "Delivery",
+               "items": "Items",
+               "servings": "Servings",
+               "legends": "Legends",
+               "pending": "Pending",
+               "processing": "Processing",
+               "done": "Done",
+               "ingredients": "Ingredients",
+               "supplier item": "Supplier Item",
+               "quantity": "Quantity",
+               "sachet id": "Sachet Id",
+               "packaging name": "Packaging Name",
+               "label template": "Label Template",
+               "link": "Link",
+               "bulk density": "Bulk density",
+               "shelf life": "Shelf Life",
+               "yield": "Yield"
+            }
+         }
+      },
+      "safety": {
+         "components": {
+            "formheading": {},
+            "tabs": {
+               "close tab": "Close Tab"
+            }
+         },
+         "sections": {
+            "main": {},
+            "header": {},
+            "sidebar": {
+               "listings": "Listings",
+               "products": "Products",
+               "menus": "Menus"
+            }
+         },
+         "views": {
+            "forms": {
+               "safetyform": {
+                  "tunnels": {
+                     "checktunnel": {
+                        "checkup added!": "Checkup Added!",
+                        "error": "Error",
+                        "enter checkup details for": "Enter Checkup details for",
+                        "saving": "Saving...",
+                        "save": "Save",
+                        "uses mask": "Uses Mask",
+                        "uses sanitizer": "Uses Sanitizer",
+                        "temprature": "temprature"
+                     },
+                     "usertunnel": {
+                        "select user": "Select User",
+                        "type what you’re looking for": "type what you're looking for..."
+                     }
+                  },
+                  "check deleted!": "Check Deleted!",
+                  "error": "Error",
+                  "users": "Users",
+                  "name": "Name",
+                  "uses mask": "Uses Mask",
+                  "uses sanitizer": "Uses Sanitizer",
+                  "temprature": "temprature",
+                  "add user": "Add User"
+               }
+            },
+            "home": {
+               "safety and precautions app": "Safety and Precautions App",
+               "safety checks": "Safety Checks"
+            },
+            "listings": {
+               "safetycheckslisting": {
+                  "initiated!": "Initiated!",
+                  "some error occured!": "Some error occured!",
+                  "safety check deleted!": "Safety check deleted!",
+                  "error": "Error",
+                  "safety checks": "Safety Checks",
+                  "time": "Time",
+                  "users tested": "Users Tested"
+               }
+            }
+         }
+      }
+   },
+   "shared": {
+      "components": {
+         "assetuploader": {
+            "loading": "loading...",
+            "upload": "Upload",
+            "images": "Images",
+            "title": "Title",
+            "enter the title": "Enter the title",
+            "description": "Description",
+            "enter the discription": "Enter the Discription",
+            "select image": "Select Image"
+         },
+         "nutrition": {
+            "calories": "Calories",
+            "amount": "Amount",
+            "serving": "Serving",
+            "daily value": "Daily value",
+            "total fat": "Total Fat",
+            "saturated fat": "Saturated Fat",
+            "trans fat": "Trans Fat",
+            "cholestrol": "Cholestrol",
+            "sodium": "Sodium",
+            "total carbohydrates": "Total Carbohydrates",
+            "dietry fibre": "Dietry Fibre",
+            "sugars": "Sugars",
+            "protein": "Protein",
+            "vitamin A": "Vitamin A",
+            "vitamin C": "Vitamin C",
+            "calcium": "Calcium",
+            "iron": "Iron"
          }
       }
    }

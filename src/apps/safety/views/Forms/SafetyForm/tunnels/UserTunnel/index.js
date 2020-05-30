@@ -13,6 +13,7 @@ import { CloseIcon } from '../../../../../assets/icons'
 import { TunnelBody, TunnelHeader } from '../styled'
 import { SafetyCheckContext } from '../../../../../context/check'
 
+const address = 'apps.safety.views.forms.safetyform.tunnels.usertunnel.'
 const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
    const { t } = useTranslation()
    const { checkDispatch } = React.useContext(SafetyCheckContext)
@@ -38,7 +39,7 @@ const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
                <span onClick={() => closeTunnel(1)}>
                   <CloseIcon color="#888D9D" />
                </span>
-               <Text as="title">Select User</Text>
+               <Text as="title">{t(address.concat('select user'))}</Text>
             </div>
          </TunnelHeader>
          <TunnelBody>
@@ -46,11 +47,11 @@ const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(address.concat("type what you’re looking for"))}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

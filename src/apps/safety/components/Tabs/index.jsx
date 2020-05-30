@@ -11,7 +11,7 @@ import { CloseIcon } from '../../assets/icons'
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.components.tabs.'
+const address = 'apps.safety.components.tabs.'
 
 const Tabs = () => {
    const { t } = useTranslation()
