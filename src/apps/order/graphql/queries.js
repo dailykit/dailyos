@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const ORDERS_SUMMARY = gql`
+export const SUMMARY = gql`
    subscription ordersSummary {
       orders(limit: 1) {
          summary
@@ -60,6 +60,9 @@ export const ORDERS = gql`
                status
                isAssembled
             }
+            simpleRecipeProduct {
+               name
+            }
             simpleRecipeProductOption {
                simpleRecipeYield {
                   yield
@@ -82,6 +85,9 @@ export const ORDERS = gql`
             comboProductComponent {
                id
                label
+            }
+            simpleRecipeProduct {
+               name
             }
             simpleRecipeProductOption {
                simpleRecipeYield {
@@ -141,6 +147,9 @@ export const ORDER = gql`
             }
             comboProductComponent {
                label
+            }
+            simpleRecipeProduct {
+               name
             }
             simpleRecipeProductOption {
                simpleRecipeYield {
@@ -204,6 +213,9 @@ export const ORDER = gql`
                id
                label
             }
+            simpleRecipeProduct {
+               name
+            }
             simpleRecipeProductOption {
                simpleRecipeYield {
                   yield
@@ -231,6 +243,72 @@ export const ORDER = gql`
             inventoryProductOption {
                quantity
                label
+            }
+         }
+      }
+   }
+`
+
+export const FETCH_ORDER_MEALKIT = gql`
+   subscription orderMealKitProduct($id: Int!) {
+      orderMealKitProduct(id: $id) {
+         id
+         assemblyStatus
+         recipeCardUri
+         assemblyStation {
+            name
+         }
+         comboProduct {
+            name
+         }
+         comboProductComponent {
+            label
+         }
+         simpleRecipeProduct {
+            name
+         }
+         simpleRecipeProductOption {
+            simpleRecipeYield {
+               yield
+            }
+         }
+         orderSachets {
+            id
+            status
+            labelUri
+            quantity
+            isAssembled
+            ingredientName
+            processingName
+            isLabelled
+            isPortioned
+            packaging {
+               name
+            }
+            sachetItemId
+            sachetItem {
+               id
+               bulkItem {
+                  id
+                  sop
+                  yield
+                  shelfLife
+                  bulkDensity
+                  supplierItem {
+                     name
+                  }
+               }
+            }
+            bulkItemId
+            bulkItem {
+               id
+               sop
+               yield
+               shelfLife
+               bulkDensity
+               supplierItem {
+                  name
+               }
             }
          }
       }
