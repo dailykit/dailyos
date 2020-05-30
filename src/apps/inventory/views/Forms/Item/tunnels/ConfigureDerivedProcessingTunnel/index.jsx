@@ -10,6 +10,7 @@ import {
    Text,
    Loader,
 } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 
 import { CREATE_BULK_ITEM } from '../../../../../graphql'
 
@@ -31,8 +32,6 @@ import {
 } from '../styled'
 
 import { StyledSelect } from '../../../styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'

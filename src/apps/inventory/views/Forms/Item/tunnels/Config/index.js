@@ -207,12 +207,8 @@ export default function ConfigTunnel({ close, open, units }) {
                               })
                            }
                         >
-                           <option value="hours">
-                              {t(address.concat('hours'))}
-                           </option>
-                           <option value="minutes">
-                              {t(address.concat('minutes'))}
-                           </option>
+                           <option value="hours">{t('units.hours')}</option>
+                           <option value="minutes">{t('units.minutes')}</option>
                         </StyledSelect>
                      </InputWrapper>
                   )}
