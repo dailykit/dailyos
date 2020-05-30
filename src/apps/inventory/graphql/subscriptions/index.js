@@ -285,3 +285,22 @@ export const UNITS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
+   subscription {
+      masterProcessings {
+         id
+         name
+         description
+      }
+   }
+`
+export const MASTER_ALLERGENS_SUBSCRIPTION = gql`
+   subscription {
+      masterAllergens {
+         id
+         name
+         description
+      }
+   }
+`

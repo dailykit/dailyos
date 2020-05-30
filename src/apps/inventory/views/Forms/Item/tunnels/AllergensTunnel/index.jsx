@@ -55,7 +55,9 @@ export default function AllergensTunnelForDerivedProcessing({
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
-                  placeholder={t(address.concat("type what you’re looking for"))}
+                  placeholder={t(
+                     address.concat("type what you're looking for")
+                  )}
                />
                {selected.length > 0 && (
                   <TagGroup style={{ margin: '8px 0' }}>

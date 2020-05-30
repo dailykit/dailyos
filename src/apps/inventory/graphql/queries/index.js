@@ -1,24 +1,5 @@
 import gql from 'graphql-tag'
 
-export const MASTER_PROCESSINGS = gql`
-   query {
-      masterProcessings {
-         id
-         name
-         description
-      }
-   }
-`
-export const MASTER_ALLERGENS = gql`
-   query {
-      masterAllergens {
-         id
-         name
-         description
-      }
-   }
-`
-
 export const SUPPLIER_ITEMS = gql`
    query {
       supplierItems {

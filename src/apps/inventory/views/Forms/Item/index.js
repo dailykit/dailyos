@@ -21,8 +21,8 @@ import {
 } from '../../../context/item'
 import { Context } from '../../../context/tabs'
 import {
-   MASTER_ALLERGENS,
-   MASTER_PROCESSINGS,
+   MASTER_ALLERGENS_SUBSCRIPTION,
+   MASTER_PROCESSINGS_SUBSCRIPTION,
    SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
@@ -110,12 +110,13 @@ export default function ItemForm() {
       },
    })
 
-   const { loading: processingsLoading, data: processingData } = useQuery(
-      MASTER_PROCESSINGS
-   )
+   const {
+      loading: processingsLoading,
+      data: processingData,
+   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
 
-   const { loading: allergensLoading, data: allergensData } = useQuery(
-      MASTER_ALLERGENS
+   const { loading: allergensLoading, data: allergensData } = useSubscription(
+      MASTER_ALLERGENS_SUBSCRIPTION
    )
 
    React.useEffect(() => {
