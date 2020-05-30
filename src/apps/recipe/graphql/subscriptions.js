@@ -15,6 +15,7 @@ export const S_INGREDIENTS = gql`
       ingredients {
          id
          name
+         image
          isValid
          isPublished
          createdAt
