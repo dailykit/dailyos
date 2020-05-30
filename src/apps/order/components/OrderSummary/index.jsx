@@ -1,10 +1,11 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { SUMMARY, ORDER_STATUSES } from '../../graphql'
+import Loader from '../Loader'
 import { MetricItem } from '../MetricItem'
 import { Wrapper, StyledMode } from './styled'
 import { useOrder } from '../../context/order'
+import { SUMMARY, ORDER_STATUSES } from '../../graphql'
 
 export const OrderSummary = () => {
    const {
@@ -23,8 +24,13 @@ export const OrderSummary = () => {
       switchView(view)
    }
 
-   if (loading) return <div>Loading...</div>
-   if (error) return <div>{error.message}</div>
+   if (loading)
+      return (
+         <Wrapper>
+            <Loader />
+         </Wrapper>
+      )
+   if (error) return <Wrapper>{error.message}</Wrapper>
    return (
       <Wrapper>
          <StyledMode>
