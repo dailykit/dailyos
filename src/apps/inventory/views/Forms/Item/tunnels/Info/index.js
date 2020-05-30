@@ -113,9 +113,8 @@ export default function InfoTunnel({ close, next, units }) {
          }
       } catch (error) {
          setLoading(false)
-         close()
          console.log(error)
-         toast.error('Errr! I messed something up :(')
+         toast.error('Err! make sure you have filled the form properly')
       }
    }
 
@@ -171,7 +170,7 @@ export default function InfoTunnel({ close, next, units }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           placeholder={
+                           label={
                               t(address.concat('unit qty').concat(':')) ||
                               'unit qty'
                            }
