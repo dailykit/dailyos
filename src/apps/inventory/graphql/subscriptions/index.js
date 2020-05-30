@@ -33,6 +33,9 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          bulkItemAsShippedId
          unit
          unitSize
+         prices
+         sku
+
          leadTime
          supplier {
             name
@@ -108,6 +111,177 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
             name
          }
          status
+      }
+   }
+`
+
+export const SUPPLIER_SUBSCRIPTION = gql`
+   subscription Supplier($id: Int!) {
+      supplier(id: $id) {
+         id
+         name
+         contactPerson
+         available
+         address
+         paymentTerms
+         shippingTerms
+      }
+   }
+`
+
+export const SUPPLIERS_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliers {
+         id
+         name
+         contactPerson
+         available
+      }
+   }
+`
+
+export const PACKAGING_SUBSCRIPTION = gql`
+   subscription Packaging($id: Int!) {
+      packaging(id: $id) {
+         id
+         name
+         unitPrice
+         dimensions
+         sku
+         parLevel
+         maxLevel
+         awaiting
+         onHand
+         consumed
+         innWaterRes
+         heatSafe
+         outWaterRes
+         recyclable
+         compostable
+         fdaComp
+         type
+         packagingType
+         sealingType
+         innGreaseRes
+         outGreaseRes
+         leakResistance
+         compressableFrom
+         packOpacity
+         committed
+         unitQuantity
+         caseQuantity
+         unitPrice
+         minOrderValue
+         leadTime
+         supplier {
+            id
+            name
+            contactPerson
+         }
+      }
+   }
+`
+
+export const PACKAGINGS_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
+         unitPrice
+         dimensions
+         sku
+         parLevel
+         maxLevel
+         unitQuantity
+         caseQuantity
+         unitPrice
+         isAvailable
+         minOrderValue
+         awaiting
+         onHand
+         committed
+         leadTime
+         type
+         supplier {
+            id
+            name
+            contactPerson
+         }
+      }
+   }
+`
+
+export const ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliersAggregate(where: { available: { _eq: true } }) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const SUPPLIERS_COUNT_SUBSCRIPTION = gql`
+   subscription Suppliers {
+      suppliersAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const SUPPLIER_ITEMS_COUNT_SUBSCRIPTION = gql`
+   subscription SupplierItems {
+      supplierItemsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const BULK_WORK_ORDERS_COUNT_SUBSCRIPTION = gql`
+   subscription BulkWorkOrders {
+      bulkWorkOrdersAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const SACHET_WORK_ORDERS_COUNT_SUBSCRIPTION = gql`
+   subscription SachetWorkOrders {
+      sachetWorkOrdersAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const PURCHASE_ORDERS_COUNT_SUBSCRIPTION = gql`
+   subscription PurchaseOrders {
+      purchaseOrderItemsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const PACKAGINGS_COUNT_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagingAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const UNITS_SUBSCRIPTION = gql`
+   query Units {
+      units {
+         id
+         name
       }
    }
 `

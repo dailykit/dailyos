@@ -12,6 +12,7 @@ import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
+import { DataCard } from '../../../components'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import {
    ItemContext,
@@ -24,6 +25,7 @@ import {
    MASTER_PROCESSINGS,
    SUPPLIERS,
    SUPPLIER_ITEM_SUBSCRIPTION,
+   UNITS_SUBSCRIPTION,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -59,6 +61,7 @@ export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
+   const [units, setUnits] = React.useState([])
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
@@ -79,11 +82,31 @@ export default function ItemForm() {
                },
             }
             setFormState(normalisedData)
+
+            dispatch({
+               type: 'SET_SUB_DATA',
+               payload: {
+                  title: normalisedData.name,
+                  sku: normalisedData.sku,
+
+                  unit: normalisedData.unit,
+                  unitSize: normalisedData.unitSize,
+
+                  unit_price: normalisedData.prices[0].unitPrice,
+                  leadTime: normalisedData.leadTime,
+               },
+            })
          },
       }
    )
 
    const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const data = input.subscriptionData.data.units
+         setUnits(data)
+      },
+   })
 
    const { loading: processingsLoading, data: processingData } = useQuery(
       MASTER_PROCESSINGS
@@ -103,7 +126,8 @@ export default function ItemForm() {
       supplierLoading ||
       processingsLoading ||
       allergensLoading ||
-      itemDetailLoading
+      itemDetailLoading ||
+      unitsLoading
    )
       return <Loader />
    return (
@@ -123,6 +147,7 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel layer={2}>
                <InfoTunnel
+                  units={units}
                   close={() => closeTunnel(2)}
                   next={() => openTunnel(3)}
                />
@@ -141,7 +166,11 @@ export default function ItemForm() {
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
-               <ConfigTunnel close={closeTunnel} open={openTunnel} />
+               <ConfigTunnel
+                  units={units}
+                  close={closeTunnel}
+                  open={openTunnel}
+               />
             </Tunnel>
             <Tunnel layer={5}>
                <AllergensTunnel
@@ -167,6 +196,7 @@ export default function ItemForm() {
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
                <ConfigureDerivedProcessingTunnel
+                  units={units}
                   open={openTunnel}
                   close={closeTunnel}
                />
@@ -199,10 +229,15 @@ export default function ItemForm() {
                      </StyledInfo>
                      <StyledSupplier>
                         <span>{formState.supplier?.name}</span>
-                        <span>
-                           {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
-                              ''}
-                        </span>
+                        {formState.supplier?.contatcPerson &&
+                           formState.supplier?.contactPerson.lastName &&
+                           formState.supplier?.contactPerson.countryCode &&
+                           formState.supplier?.contactPerson.phoneNumber && (
+                              <span>
+                                 {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
+                                    ''}
+                              </span>
+                           )}
                      </StyledSupplier>
                   </>
                )}
@@ -220,7 +255,7 @@ export default function ItemForm() {
                </StyledWrapper>
             ) : (
                <>
-                  <StyledGrid>
+                  <StyledGrid onClick={() => openTunnel(2)}>
                      <div>
                         <div>
                            <ItemIcon />
@@ -228,16 +263,11 @@ export default function ItemForm() {
                         <div>
                            <span>{t(address.concat('unit qty'))}</span>
                            <div>
-                              <span>
-                                 {state.unit_quantity.value +
-                                    state.unit_quantity.unit ||
-                                    formState.unitSize + formState.unit}
-                              </span>
+                              <span>{formState.unitSize + formState.unit}</span>
                               <span>
                                  $
-                                 {state.unit_price.value ||
-                                    (formState.prices?.length &&
-                                       formState.prices[0]?.unitPrice?.value) ||
+                                 {(formState.prices?.length &&
+                                    formState.prices[0]?.unitPrice?.value) ||
                                     0}
                               </span>
                            </div>
@@ -290,10 +320,8 @@ export default function ItemForm() {
                            <span>{t(address.concat('lead time'))}</span>
                            <div>
                               <span>
-                                 {state.lead_time.value +
-                                    state.lead_time.unit ||
-                                    formState.leadTime?.value +
-                                       formState.leadTime?.unit}
+                                 {formState.leadTime?.value +
+                                    formState.leadTime?.unit}
                               </span>
                            </div>
                         </div>
@@ -301,7 +329,11 @@ export default function ItemForm() {
                   </StyledGrid>
 
                   <FlexContainer
-                     style={{ marginTop: '30px', padding: '0 30px' }}
+                     style={{
+                        marginTop: '30px',
+                        padding: '0 30px',
+                        backgroundColor: '#f3f3f3',
+                     }}
                   >
                      <Flexible width="1">
                         <FlexContainer
@@ -327,7 +359,7 @@ export default function ItemForm() {
                               <br />
                               <Text as="subtitle">
                                  {t(
-                                    address.concat('as received from supplier')
+                                    address.concat('as recieved from supplier')
                                  )}
                                  .
                               </Text>
@@ -345,10 +377,7 @@ export default function ItemForm() {
                                     })
                                  }}
                               >
-                                 <h3>
-                                    {state.processing.name ||
-                                       formState.bulkItemAsShipped?.name}
-                                 </h3>
+                                 <h3>{formState.bulkItemAsShipped?.name}</h3>
                                  <Text as="subtitle">
                                     {t(address.concat('on hand'))}:{' '}
                                     {formState.bulkItemAsShipped?.onHand}
@@ -369,14 +398,13 @@ export default function ItemForm() {
                            </>
                         )}
 
-                        {(state.derivedProcessings.length ||
-                           formState.bulkItems?.length) && (
+                        {formState.bulkItems?.length && (
                            <>
                               <br />
                               <Text as="subtitle">
                                  {t(
                                     address.concat(
-                                       'derived from received processing'
+                                       'derived from recieved processing'
                                     )
                                  )}
                               </Text>
@@ -527,29 +555,6 @@ function ProcessingView({ open, formState }) {
    )
 }
 
-function DataCard({ title, quantity, actionText }) {
-   return (
-      <div
-         style={{
-            margin: '0 20px',
-            border: '1px solid #f3f3f3',
-            padding: '10px',
-            borderRadius: '4px',
-         }}
-      >
-         <Text as="title">{title}</Text>
-
-         <Text as="h2">{quantity}</Text>
-         <hr style={{ border: '1px solid #f3f3f3' }} />
-         {actionText && (
-            <span style={{ color: '#00A7E1', marginTop: '5px' }}>
-               {actionText}
-            </span>
-         )}
-      </div>
-   )
-}
-
 function RealTimeView({ formState }) {
    const { t } = useTranslation()
 
@@ -567,12 +572,16 @@ function RealTimeView({ formState }) {
             quantity={`${active.awaiting} ${active.unit}`}
          />
          <DataCard
-            title={t(address.concat('committed'))}
+            title={t(address.concat('commited'))}
             quantity={`${active.committed} ${active.unit}`}
          />
          <DataCard
             title={t(address.concat('consumed'))}
             quantity={`${active.consumed} ${active.unit}`}
+         />
+         <DataCard
+            title={t(address.concat('on hand'))}
+            quantity={`${active.onHand} ${active.unit}`}
          />
       </FlexContainer>
    )
@@ -667,7 +676,7 @@ function PlannedLotView({ open, formState }) {
                         quantity={`${activeSachet.awaiting || 0} pkt`}
                      />
                      <DataCard
-                        title={t(address.concat('committed'))}
+                        title={t(address.concat('commited'))}
                         quantity={`${activeSachet.committed || 0} pkt`}
                      />
                      <DataCard

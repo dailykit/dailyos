@@ -9,14 +9,14 @@ export default function ContactCard({ name, image }) {
    return (
       <StyledCard>
          <FlexContainer style={{ alignItems: 'center' }}>
-            <StyledImage src={image} alt='person' />
-            <Text as='subtitle'>{name}</Text>
+            <StyledImage src={image} alt="person" />
+            <Text as="subtitle">{name}</Text>
          </FlexContainer>
-         <FlexContainer style={{ alignItems: 'center' }}>
+         {/* <FlexContainer style={{ alignItems: 'center' }}>
             <MessageBlue size='24' color='#D9E9F1' />
             <span style={{ width: '10px' }} />
             <Call size='24' color='#D9E9F1' />
-         </FlexContainer>
+         </FlexContainer> */}
       </StyledCard>
    )
 }

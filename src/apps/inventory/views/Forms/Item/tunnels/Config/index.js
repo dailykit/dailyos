@@ -1,42 +1,36 @@
-import React, { useState } from 'react'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-
 import {
-   TextButton,
-   Input,
    ButtonTile,
+   IconButton,
+   Input,
+   Loader,
    Tag,
    TagGroup,
    Text,
-   IconButton,
-   Loader,
+   TextButton,
 } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
-// Mutations
-import { CREATE_BULK_ITEM, ADD_BULK_ITEM } from '../../../../../graphql'
-
-import { CloseIcon } from '../../../../../assets/icons'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
-
+import { CloseIcon } from '../../../../../assets/icons'
 import { ItemContext } from '../../../../../context/item'
-
+import { ADD_BULK_ITEM, CREATE_BULK_ITEM } from '../../../../../graphql'
+import { StyledSelect } from '../../../styled'
 import {
-   TunnelHeader,
-   TunnelBody,
-   StyledRow,
-   StyledInputGroup,
    Highlight,
    InputWrapper,
-   StyledSelect,
+   StyledInputGroup,
    StyledLabel,
+   StyledRow,
+   TunnelBody,
+   TunnelHeader,
 } from '../styled'
-
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, open }) {
+export default function ConfigTunnel({ close, open, units }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [loading, setLoading] = useState(false)
@@ -45,35 +39,44 @@ export default function ConfigTunnel({ close, open }) {
    const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
 
    const handleSave = async () => {
-      setLoading(true)
-      const res = await createBulkItem({
-         variables: {
-            processingName: state.processing.name,
-            itemId: state.id,
-            unit: state.processing.unit, // string
-            yield: { value: state.processing.yield },
-            shelfLife: state.processing.shelf_life,
-            parLevel: +state.processing.par_level.value,
-            nutritionInfo: state.processing.nutrients || {},
-            maxLevel: +state.processing.max_inventory_level.value,
-            labor: state.processing.labor_time,
-            bulkDensity: +state.processing.bulk_density,
-            allergens: state.processing.allergens,
-         },
-      })
-
-      if (res?.data?.createBulkItem) {
-         const bulkItemAsShippedId = res?.data?.createBulkItem?.returning[0].id
-         const result = await addBulkItem({
-            variables: { itemId: state.id, bulkItemAsShippedId },
+      try {
+         setLoading(true)
+         const res = await createBulkItem({
+            variables: {
+               processingName: state.processing.name,
+               itemId: state.id,
+               unit: state.processing.unit, // string
+               yield: { value: state.processing.yield },
+               shelfLife: state.processing.shelf_life,
+               parLevel: +state.processing.par_level.value,
+               nutritionInfo: state.processing.nutrients || {},
+               maxLevel: +state.processing.max_inventory_level.value,
+               labor: state.processing.labor_time,
+               bulkDensity: +state.processing.bulk_density,
+               allergens: state.processing.allergens,
+            },
          })
 
-         if (result?.data) {
-            dispatch({ type: 'ADD_PROCESSING', payload: bulkItemAsShippedId })
-            close(4)
-            setLoading(false)
-            toast.success('Bulk Item Added!')
+         if (res?.data?.createBulkItem) {
+            const bulkItemAsShippedId =
+               res?.data?.createBulkItem?.returning[0].id
+            const result = await addBulkItem({
+               variables: { itemId: state.id, bulkItemAsShippedId },
+            })
+
+            if (result?.data) {
+               dispatch({
+                  type: 'ADD_PROCESSING',
+                  payload: bulkItemAsShippedId,
+               })
+               close(4)
+               setLoading(false)
+               toast.success('Bulk Item Added!')
+            }
          }
+      } catch (error) {
+         setLoading(false)
+         toast.error('Err! make sure you have filled the form properly')
       }
    }
 
@@ -147,8 +150,11 @@ export default function ConfigTunnel({ close, open }) {
                         })
                      }
                   >
-                     <option value="gram">{t('units.gram')}</option>
-                     <option value="loaf">{t('units.loaf')}</option>
+                     {units.map(unit => (
+                        <option key={unit.id} value={unit.name}>
+                           {unit.name}
+                        </option>
+                     ))}
                   </StyledSelect>
                </div>
             </StyledRow>
@@ -175,7 +181,7 @@ export default function ConfigTunnel({ close, open }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label={t(address.concat('labor time per 100gm'))}
+                           label={t(address.concat('labour time per 100gm'))}
                            name="labor_time"
                            value={state.processing.labor_time.value}
                            onChange={e =>
@@ -255,14 +261,17 @@ export default function ConfigTunnel({ close, open }) {
                            })
                         }
                      >
-                        <option value="hours">{t('units.hours')}</option>
-                        <option value="days">{t('units.days')}</option>
+                        {units.map(unit => (
+                           <option key={unit.id} value={unit.name}>
+                              {unit.name}
+                           </option>
+                        ))}
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>
                      <Input
                         type="text"
-                        label={t(address.concat('bulk density'))}
+                        label={t(address.concat('bulk dnesity'))}
                         name="bulk_density"
                         value={state.processing.bulk_density}
                         onChange={e =>

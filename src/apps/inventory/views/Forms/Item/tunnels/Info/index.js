@@ -5,7 +5,10 @@ import { useMutation } from '@apollo/react-hooks'
 import { TextButton, Input, Loader } from '@dailykit/ui'
 
 // Mutations
-import { CREATE_SUPPLIER_ITEM } from '../../../../../graphql'
+import {
+   CREATE_SUPPLIER_ITEM,
+   UPDATE_SUPPLIER_ITEM,
+} from '../../../../../graphql'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
@@ -18,56 +21,101 @@ import {
    StyledInputGroup,
    Highlight,
    InputWrapper,
-   StyledSelect,
 } from '../styled'
+import { StyledSelect } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({ close, next }) {
+export default function InfoTunnel({ close, next, units }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [loading, setLoading] = useState(false)
 
    const [createSupplierItem] = useMutation(CREATE_SUPPLIER_ITEM)
+   const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM)
 
    const handleNext = async () => {
-      setLoading(true)
+      try {
+         setLoading(true)
 
-      if (!state.title || !state.supplier.id || !state.unit_quantity.value)
-         return setLoading(false)
+         if (!state.title || !state.unit_quantity.value) {
+            setLoading(false)
+            return toast.error('Please fill the form properly')
+         }
 
-      const res = await createSupplierItem({
-         variables: {
-            name: state.title,
-            supplierId: state.supplier.id,
-            unit: state.unit_quantity.unit,
-            unitSize: +state.unit_quantity.value,
+         if (state.id) {
+            // update
+            const resp = await updateSupplierItem({
+               variables: {
+                  id: state.id,
+                  object: {
+                     name: state.title,
+                     unit: state.unit_quantity.unit,
+                     unitSize: +state.unit_quantity.value,
+                     sku: state.sku,
+                     prices: [
+                        {
+                           unitPrice: {
+                              value: state.unit_price.value,
+                              unit: state.unit_price.unit,
+                           },
+                        },
+                     ],
 
-            prices: [
-               {
-                  unitPrice: {
-                     value: state.unit_price.value,
-                     unit: state.unit_price.unit,
+                     leadTime: {
+                        unit: state.lead_time.unit,
+                        value: state.lead_time.value,
+                     },
                   },
                },
-            ],
+            })
 
-            leadTime: {
-               unit: state.lead_time.unit,
-               value: state.lead_time.value,
+            if (resp?.data?.updateSupplierItem) {
+               setLoading(false)
+               toast.success('Updated successfully :)')
+               return close()
+            }
+         }
+
+         const res = await createSupplierItem({
+            variables: {
+               name: state.title,
+               supplierId: state.supplier.id,
+               unit: state.unit_quantity.unit,
+               unitSize: +state.unit_quantity.value,
+               sku: state.sku,
+
+               prices: [
+                  {
+                     unitPrice: {
+                        value: state.unit_price.value,
+                        unit: state.unit_price.unit,
+                     },
+                  },
+               ],
+
+               leadTime: {
+                  unit: state.lead_time.unit,
+                  value: state.lead_time.value,
+               },
             },
-         },
-      })
-
-      if (res?.data?.createSupplierItem) {
-         setLoading(false)
-         dispatch({
-            type: 'ADD_ITEM_ID',
-            payload: res?.data?.createSupplierItem?.returning[0]?.id,
          })
+
+         if (res?.data?.createSupplierItem) {
+            setLoading(false)
+            dispatch({
+               type: 'ADD_ITEM_ID',
+               payload: res?.data?.createSupplierItem?.returning[0]?.id,
+            })
+            close()
+            next()
+            toast.success('Item created!')
+         }
+      } catch (error) {
+         setLoading(false)
          close()
-         next()
-         toast.success('Item created!')
+         console.log(error)
+         toast.error('Errr! I messed something up :(')
       }
    }
 
@@ -123,7 +171,7 @@ export default function InfoTunnel({ close, next }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label={
+                           placeholder={
                               t(address.concat('unit qty').concat(':')) ||
                               'unit qty'
                            }
@@ -152,8 +200,11 @@ export default function InfoTunnel({ close, next }) {
                               })
                            }
                         >
-                           <option value="gram">{t('units.gram')}</option>
-                           <option value="loaf">{t('units.loaf')}</option>
+                           {units.map(unit => (
+                              <option key={unit.id} value={unit.name}>
+                                 {unit.name}
+                              </option>
+                           ))}
                         </StyledSelect>
                      </InputWrapper>
                      <Input

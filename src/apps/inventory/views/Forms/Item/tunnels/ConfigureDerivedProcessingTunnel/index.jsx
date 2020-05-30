@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react'
+import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 import {
    Input,
@@ -7,6 +8,7 @@ import {
    Tag,
    IconButton,
    Text,
+   Loader,
 } from '@dailykit/ui'
 
 import { CREATE_BULK_ITEM } from '../../../../../graphql'
@@ -25,16 +27,21 @@ import {
    StyledInputGroup,
    Highlight,
    InputWrapper,
-   StyledSelect,
    StyledLabel,
 } from '../styled'
+
+import { StyledSelect } from '../../../styled'
 
 import { useTranslation } from 'react-i18next'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
 
-export default function ConfigureDerivedProcessingTunnel({ close, open }) {
+export default function ConfigureDerivedProcessingTunnel({
+   close,
+   open,
+   units,
+}) {
    const { t } = useTranslation()
    const {
       state: { configurable },
@@ -56,43 +63,55 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
    const [shelfLifeUnit, setShelfLifeUnit] = useState('hours')
    const [bulkDensity, setBulkDensity] = useState('')
 
+   const [loading, setLoading] = useState(false)
+
    const handleNext = async () => {
-      const res = await createBulkItem({
-         variables: {
-            processingName: state.configurable.title,
-            itemId: state.id,
-            unit,
-            yield: { value: yieldPercentage },
-            shelfLife: { unit: shelfLifeUnit, value: shelfLife },
-            parLevel: +par,
-            nutritionInfo: state.configurable.nutrients,
-            maxLevel: +maxInventoryLevel,
-            labor: { unit: laborUnit, value: laborTime },
-            bulkDensity: +bulkDensity,
-            allergens: state.configurable.allergens,
-         },
-      })
-
-      if (res?.data?.createBulkItem) {
-         dispatch({
-            type: 'CONFIGURE_DERIVED_PROCESSING',
-            payload: {
-               id: res?.data?.createBulkItem?.returning[0].id,
-               par,
+      try {
+         setLoading(true)
+         const res = await createBulkItem({
+            variables: {
+               processingName: state.configurable.title,
+               itemId: state.id,
                unit,
-               maxInventoryLevel,
-
-               laborTime,
-               laborUnit,
-               yieldPercentage,
-               shelfLife,
-               shelfLifeUnit,
-               bulkDensity,
+               yield: { value: yieldPercentage },
+               shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+               parLevel: +par,
+               nutritionInfo: state.configurable.nutrients,
+               maxLevel: +maxInventoryLevel,
+               labor: { unit: laborUnit, value: laborTime },
+               bulkDensity: +bulkDensity,
+               allergens: state.configurable.allergens,
             },
          })
+
+         if (res?.data?.createBulkItem) {
+            setLoading(false)
+            dispatch({
+               type: 'CONFIGURE_DERIVED_PROCESSING',
+               payload: {
+                  id: res?.data?.createBulkItem?.returning[0].id,
+                  par,
+                  unit,
+                  maxInventoryLevel,
+
+                  laborTime,
+                  laborUnit,
+                  yieldPercentage,
+                  shelfLife,
+                  shelfLifeUnit,
+                  bulkDensity,
+               },
+            })
+         }
+         close(7)
+         toast.success('Bulk Item Created!')
+      } catch (error) {
+         setLoading(false)
+         toast.error('Err! make sure you have filled the form properly')
       }
-      close(7)
    }
+
+   if (loading) return <Loader />
 
    return (
       <TunnelContainer>
@@ -145,8 +164,11 @@ export default function ConfigureDerivedProcessingTunnel({ close, open }) {
                   defaultValue={unit}
                   onChange={e => setUnit(e.target.value)}
                >
-                  <option value="gram">{t('units.gram')}</option>
-                  <option value="loaf">{t('units.loaf')}</option>
+                  {units.map(unit => (
+                     <option key={unit.id} value={unit.name}>
+                        {unit.name}
+                     </option>
+                  ))}
                </StyledSelect>
             </div>
          </StyledRow>

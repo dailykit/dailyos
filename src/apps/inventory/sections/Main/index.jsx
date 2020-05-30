@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 
 // State
 import { Context } from '../../context/tabs'
@@ -15,6 +16,8 @@ import {
    PurchaseOrdersListing,
    PurchaseOrderForm,
    SachetOrderForm,
+   Packagings,
+   SachetPackaging,
 } from '../../views'
 
 const renderComponent = (type, view) => {
@@ -24,6 +27,7 @@ const renderComponent = (type, view) => {
    if (type === 'listings' && view === 'orders') return <WorkOrdersListing />
    if (type === 'listings' && view === 'purchaseOrders')
       return <PurchaseOrdersListing />
+   if (type === 'listings' && view === 'packagings') return <Packagings />
    // Forms
    if (type === 'forms' && view === 'suppliers') return <SupplierForm />
    if (type === 'forms' && view === 'items') return <ItemForm />
@@ -31,12 +35,24 @@ const renderComponent = (type, view) => {
    if (type === 'forms' && view === 'purchaseOrder')
       return <PurchaseOrderForm />
    if (type === 'forms' && view === 'sachetOrder') return <SachetOrderForm />
+   if (type === 'forms' && view === 'sachetPackaging')
+      return <SachetPackaging />
+   if (type === 'forms' && view === 'assemblyPackaging')
+      return <SachetPackaging />
 }
+
+const MainWrapper = styled.main`
+   overflow-x: auto;
+`
 
 const Main = () => {
    const { state } = React.useContext(Context)
    if (state.listings.length === 0 && state.forms.length === 0) return <Home />
-   return <main>{renderComponent(state.current.type, state.current.view)}</main>
+   return (
+      <MainWrapper>
+         {renderComponent(state.current.type, state.current.view)}
+      </MainWrapper>
+   )
 }
 
 export default Main

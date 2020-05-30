@@ -8,6 +8,7 @@ export const CREATE_SUPPLIER_ITEM = gql`
       $unitSize: Int!
       $leadTime: jsonb!
       $prices: jsonb!
+      $sku: String!
    ) {
       createSupplierItem(
          objects: {
@@ -17,6 +18,7 @@ export const CREATE_SUPPLIER_ITEM = gql`
             unitSize: $unitSize
             leadTime: $leadTime
             prices: $prices
+            sku: $sku
          }
       ) {
          returning {
@@ -108,6 +110,17 @@ export const UPDATE_BULK_ITEM_AVAILABILITY = gql`
          where: { id: { _eq: $id } }
          _set: { isAvailable: $availability }
       ) {
+         affected_rows
+      }
+   }
+`
+
+export const UPDATE_SUPPLIER_ITEM = gql`
+   mutation UpdateSupplierItem(
+      $id: Int!
+      $object: inventory_supplierItem_set_input!
+   ) {
+      updateSupplierItem(where: { id: { _eq: $id } }, _set: $object) {
          affected_rows
       }
    }

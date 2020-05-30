@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Input } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { Input, Loader } from '@dailykit/ui'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -14,40 +15,45 @@ import { FlexContainer } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ open, close }) {
+export default function ConfigureSachetTunnel({ close }) {
    const { t } = useTranslation()
-   const { state, dispatch } = useContext(ItemContext)
+   const { state } = useContext(ItemContext)
 
    const [quantity, setQuantity] = useState('')
    const [par, setPar] = useState('')
    const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
 
+   const [loading, setLoading] = useState(false)
+
    const [creatSachetItem] = useMutation(CREATE_SACHET_ITEM)
 
    const handleNext = async () => {
-      const res = await creatSachetItem({
-         variables: {
-            unitSize: quantity,
-            bulkItemId: state.activeProcessing.id,
-            unit: state.unit_quantity.unit,
-            par,
-            maxLevel: maxInventoryLevel,
-         },
-      })
+      try {
+         setLoading(true)
+         const res = await creatSachetItem({
+            variables: {
+               unitSize: quantity,
+               bulkItemId: state.activeProcessing.id,
+               unit: state.unit_quantity.unit,
+               par,
+               maxLevel: maxInventoryLevel,
+            },
+         })
 
-      if (res?.data?.createSachetItem?.returning[0]?.id) {
-         // dispatch({
-         //    type: 'CONFIGURE_NEW_SACHET',
-         //    payload: {
-         //       id: res?.data?.createSachetItem?.returning[0]?.id,
-         //       quantity,
-         //       par,
-         //       maxInventoryLevel,
-         //    },
-         // })
+         if (res?.data?.createSachetItem?.returning[0]?.id) {
+            close(9)
+            setLoading(false)
+            toast.info('Sachet added!')
+         }
+      } catch (error) {
          close(9)
+         setLoading(false)
+         console.log(error)
+         toast.error('Err! I messed something up :(')
       }
    }
+
+   if (loading) return <Loader />
 
    return (
       <TunnelContainer>
