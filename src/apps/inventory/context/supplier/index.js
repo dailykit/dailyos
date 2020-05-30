@@ -5,7 +5,13 @@ const SupplierContext = React.createContext()
 const state = {
    name: '',
    address: {},
-   contact: {},
+   contact: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      countryCode: '',
+      phoneNumber: '',
+   },
    terms: { paymentTerms: '', shippingTerms: '' },
 }
 

@@ -46,7 +46,7 @@ export default function SelectOutputBulkItem({ close, bulkItems }) {
                <ListSearch
                   onChange={value => setSearch(value)}
                   placeholder={t(
-                     address.concat('type what you’re looking for')
+                     address.concat("type what you're looking for")
                   )}
                />
             )}

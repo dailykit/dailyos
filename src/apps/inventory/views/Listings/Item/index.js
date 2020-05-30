@@ -61,26 +61,9 @@ export default function ItemListing() {
    if (data)
       return (
          <StyledWrapper>
-            <StyledHeader>
-               <h1>{t(address.concat('supplier items'))}</h1>
-               <StyledPagination>
-                  {29}
-                  <span disabled>
-                     <ChevronLeftIcon />
-                  </span>
-                  <span>
-                     <ChevronRightIcon />
-                  </span>
-               </StyledPagination>
-            </StyledHeader>
-            <StyledTableHeader>
-               <p>{t(address.concat('filters'))}</p>
+            <StyledTableHeader style={{ marginTop: '30px' }}>
+               <div />
                <StyledTableActions>
-                  <SearchBox
-                     placeholder={t(address.concat('search'))}
-                     value={search}
-                     onChange={e => setSearch(e.target.value)}
-                  />
                   <IconButton
                      type="solid"
                      onClick={() => {

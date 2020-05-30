@@ -106,7 +106,7 @@ export default function SupplierListing() {
                               key={supplier?.id}
                            >
                               <TableCell>{supplier?.name}</TableCell>
-                              <TableCell>{`${supplier?.contactPerson?.firstName} ${supplier?.contactPerson?.lastName} (${supplier?.contactPerson?.countryCode} ${supplier?.contactPerson?.phoneNumber})`}</TableCell>
+                              <TableCell>{`${supplier?.contactPerson?.firstName} ${supplier?.contactPerson?.lastName} ${supplier?.contactPerson?.countryCode} ${supplier?.contactPerson?.phoneNumber}`}</TableCell>
 
                               <TableCell align="right">
                                  <IconButton

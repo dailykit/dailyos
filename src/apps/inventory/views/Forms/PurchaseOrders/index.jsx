@@ -11,7 +11,7 @@ import {
 import React, { useReducer, useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
@@ -25,10 +25,10 @@ import { FormActions, StyledForm, StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 
 import {
-   SUPPLIER_ITEMS,
+   SUPPLIER_ITEMS_SUBSCRIPTION,
    CREATE_PURCHASE_ORDER,
    UPDATE_PURCHASE_ORDER,
-   PURCHASE_ORDERS,
+   PURCHASE_ORDER_SUBSCRIPTION,
 } from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.purchaseorders.'
@@ -45,9 +45,11 @@ export default function PurchaseOrderForm() {
       state.purchaseOrder.status || purchaseOrderState.status || ''
    )
 
-   const { data: supplierItemsData, loading } = useQuery(SUPPLIER_ITEMS)
+   const { data: supplierItemsData, loading } = useSubscription(
+      SUPPLIER_ITEMS_SUBSCRIPTION
+   )
    const { data: purchaseItemsData, loading: orderLoading } = useSubscription(
-      PURCHASE_ORDERS,
+      PURCHASE_ORDER_SUBSCRIPTION,
       {
          variables: { id: state.purchaseOrder?.id },
       }

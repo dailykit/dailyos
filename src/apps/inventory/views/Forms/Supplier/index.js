@@ -157,7 +157,7 @@ export default function SupplierForm() {
                <FormHeading>
                   <div>
                      <Input
-                        label={t(address.concat('untitled supplier'))}
+                        label="Supplier Name"
                         type="text"
                         name="supplierName"
                         value={name}

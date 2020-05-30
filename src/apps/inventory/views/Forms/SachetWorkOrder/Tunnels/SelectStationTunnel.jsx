@@ -42,7 +42,7 @@ export default function SelectStationTunnel({ close, stations }) {
                <ListSearch
                   onChange={value => setSearch(value)}
                   placeholder={t(
-                     address.concat('type what you’re looking for')
+                     address.concat("type what you're looking for")
                   )}
                />
             )}

@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
    ButtonTile,
@@ -35,12 +35,12 @@ import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
 import {
-   SUPPLIER_ITEMS,
-   SETTINGS_USERS,
-   STATIONS,
+   SUPPLIER_ITEMS_SUBSCRIPTION,
+   SETTINGS_USERS_SUBSCRIPTION,
+   STATIONS_SUBSCRIPTION,
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
-   BULK_WORK_ORDER,
+   BULK_WORK_ORDER_SUBSCRIPTION,
 } from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.'
@@ -57,18 +57,27 @@ export default function BulkWorkOrderForm() {
       bulkOrderState.status || state.bulkWorkOrder.status || ''
    )
 
+   const [loading, setLoading] = useState(false)
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
 
-   const { data: supplierItemData, loading: supplierItemLoading } = useQuery(
-      SUPPLIER_ITEMS
+   const {
+      data: supplierItemData,
+      loading: supplierItemLoading,
+   } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
+   const { data: userData, loading: userLoading } = useSubscription(
+      SETTINGS_USERS_SUBSCRIPTION
    )
-   const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
-   const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
+   const { data: stationsData, loading: stationsLoading } = useSubscription(
+      STATIONS_SUBSCRIPTION
+   )
 
    const {
       data: bulkWorkOrderData,
       loading: orderLoading,
-   } = useQuery(BULK_WORK_ORDER, { variables: { id: state.bulkWorkOrder.id } })
+   } = useSubscription(BULK_WORK_ORDER_SUBSCRIPTION, {
+      variables: { id: state.bulkWorkOrder.id },
+   })
 
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
    const [updateBulkWorkOrderStatus] = useMutation(
@@ -118,61 +127,77 @@ export default function BulkWorkOrderForm() {
    }
 
    const saveStatus = async status => {
-      const response = await updateBulkWorkOrderStatus({
-         variables: { id: bulkOrderState.id, status },
-      })
-
-      if (response?.data) {
-         toast.info('Work Order updated successfully!')
-
-         bulkOrderDispatch({
-            type: 'SET_META',
-            payload: {
-               id: response.data.updateBulkWorkOrder.returning[0].id,
-               status: response.data.updateBulkWorkOrder.returning[0].status,
-            },
+      try {
+         setLoading(true)
+         const response = await updateBulkWorkOrderStatus({
+            variables: { id: bulkOrderState.id, status },
          })
+
+         if (response?.data) {
+            setLoading(false)
+            toast.info('Work Order updated successfully!')
+
+            bulkOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: response.data.updateBulkWorkOrder.returning[0].id,
+                  status: response.data.updateBulkWorkOrder.returning[0].status,
+               },
+            })
+         }
+      } catch (error) {
+         setLoading(false)
+         toast.error('Errr! internal server error')
       }
    }
 
    const handlePublish = async () => {
-      const isValid = checkForm()
+      try {
+         setLoading(true)
+         const isValid = checkForm()
 
-      if (isValid) {
-         // create work order
-         const response = await createBulkWorkOrder({
-            variables: {
-               object: {
-                  status: 'PENDING',
-                  inputQuantity: bulkOrderState.inputQuantity,
-                  inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
-                  outputQuantity:
-                     bulkOrderState.outputItemProcessing.outputQuantity,
-                  inputBulkItemId: bulkOrderState.inputItemProcessing.id,
-                  outputBulkItemId: bulkOrderState.outputItemProcessing.id,
-                  userId: bulkOrderState.assignedUser.id,
-                  stationId: bulkOrderState.selectedStation.id,
-                  scheduledOn: bulkOrderState.assignedDate,
-               },
-            },
-         })
-
-         if (response?.data) {
-            toast.success('Work Order created successfully!')
-            setStatus(response.data.createBulkWorkOrder.returning[0].status)
-            bulkOrderDispatch({
-               type: 'SET_META',
-               payload: {
-                  id: response.data.createBulkWorkOrder.returning[0].id,
-                  status: response.data.createBulkWorkOrder.returning[0].status,
+         if (isValid) {
+            // create work order
+            const response = await createBulkWorkOrder({
+               variables: {
+                  object: {
+                     status: 'PENDING',
+                     inputQuantity: bulkOrderState.inputQuantity,
+                     inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
+                     outputQuantity:
+                        bulkOrderState.outputItemProcessing.outputQuantity,
+                     inputBulkItemId: bulkOrderState.inputItemProcessing.id,
+                     outputBulkItemId: bulkOrderState.outputItemProcessing.id,
+                     userId: bulkOrderState.assignedUser.id,
+                     stationId: bulkOrderState.selectedStation.id,
+                     scheduledOn: bulkOrderState.assignedDate,
+                  },
                },
             })
+
+            if (response?.data) {
+               setLoading(false)
+               toast.success('Work Order created successfully!')
+               setStatus(response.data.createBulkWorkOrder.returning[0].status)
+               bulkOrderDispatch({
+                  type: 'SET_META',
+                  payload: {
+                     id: response.data.createBulkWorkOrder.returning[0].id,
+                     status:
+                        response.data.createBulkWorkOrder.returning[0].status,
+                  },
+               })
+            }
+         } else {
+            setLoading(false)
          }
+      } catch (error) {
+         setLoading(false)
+         toast.error('Errr! internal server error')
       }
    }
 
-   if (supplierItemLoading) return <Loader />
-   if (orderLoading) return <Loader />
+   if (supplierItemLoading || orderLoading || loading) return <Loader />
 
    if (bulkOrderState.outputItemProcessing?.processingName && userLoading)
       return <Loader />
@@ -280,143 +305,139 @@ export default function BulkWorkOrderForm() {
 
                <br />
 
-               {bulkOrderState.supplierItem?.name ||
-                  (bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
-                     ?.supplierItem.name && (
-                     <>
-                        <Text as="title">
-                           {t(address.concat('input bulk item'))}
-                        </Text>
-                        {bulkOrderState.inputItemProcessing?.processingName ||
-                        bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
-                           .processingName ? (
-                           <>
-                              {status ? (
-                                 <ItemCard
-                                    title={
-                                       bulkOrderState.inputItemProcessing
-                                          .processingName ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.inputBulkItem.processingName
-                                    }
-                                    onHand={
-                                       bulkOrderState.inputItemProcessing
-                                          .onHand ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.inputBulkItem.onHand
-                                    }
-                                    shelfLife={
-                                       bulkOrderState.inputItemProcessing
-                                          .shelfLife ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.inputBulkItem.shelfLife
-                                    }
-                                 />
-                              ) : (
-                                 <ItemCard
-                                    title={
-                                       bulkOrderState.inputItemProcessing
-                                          .processingName ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.inputBulkItem.processingName
-                                    }
-                                    onHand={
-                                       bulkOrderState.inputItemProcessing
-                                          .onHand ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.inputBulkItem.onHand
-                                    }
-                                    shelfLife={
-                                       bulkOrderState.inputItemProcessing
-                                          .shelfLife ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.inputBulkItem.shelfLife
-                                    }
-                                    edit={() => openTunnel(2)}
-                                 />
-                              )}
-                           </>
-                        ) : (
-                           <ButtonTile
-                              noIcon
-                              type="secondary"
-                              text={t(address.concat('select input bulk item'))}
-                              onClick={() => openTunnel(5)}
-                           />
-                        )}
-                     </>
-                  ))}
+               {(bulkOrderState.supplierItem?.name ||
+                  bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem?.supplierItem
+                     .name) && (
+                  <>
+                     <Text as="title">
+                        {t(address.concat('input bulk item'))}
+                     </Text>
+                     {bulkOrderState.inputItemProcessing?.processingName ||
+                     bulkWorkOrderData?.bulkWorkOrder?.inputBulkItem
+                        .processingName ? (
+                        <>
+                           {status ? (
+                              <ItemCard
+                                 title={
+                                    bulkOrderState.inputItemProcessing
+                                       .processingName ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.inputBulkItem.processingName
+                                 }
+                                 onHand={
+                                    bulkOrderState.inputItemProcessing.onHand ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.inputBulkItem.onHand
+                                 }
+                                 shelfLife={
+                                    bulkOrderState.inputItemProcessing
+                                       .shelfLife ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.inputBulkItem.shelfLife
+                                 }
+                              />
+                           ) : (
+                              <ItemCard
+                                 title={
+                                    bulkOrderState.inputItemProcessing
+                                       .processingName ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.inputBulkItem.processingName
+                                 }
+                                 onHand={
+                                    bulkOrderState.inputItemProcessing.onHand ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.inputBulkItem.onHand
+                                 }
+                                 shelfLife={
+                                    bulkOrderState.inputItemProcessing
+                                       .shelfLife ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.inputBulkItem.shelfLife
+                                 }
+                                 edit={() => openTunnel(2)}
+                              />
+                           )}
+                        </>
+                     ) : (
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text={t(address.concat('select input bulk item'))}
+                           onClick={() => openTunnel(5)}
+                        />
+                     )}
+                  </>
+               )}
 
                <Spacer />
 
-               {bulkOrderState.supplierItem?.name ||
-                  (bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
-                     ?.supplierItem.name && (
-                     <>
-                        <Text as="title">
-                           {t(address.concat('output bulk item'))}
-                        </Text>
-                        {bulkOrderState.outputItemProcessing?.processingName ||
-                        bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
-                           ?.processingName ? (
-                           <>
-                              {status ? (
-                                 <ItemCard
-                                    title={
-                                       bulkOrderState.outputItemProcessing
-                                          .processingName ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.outputBulkItem?.processingName
-                                    }
-                                    onHand={
-                                       bulkOrderState.outputItemProcessing
-                                          .onHand ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.outputBulkItem?.onHand
-                                    }
-                                    shelfLife={
-                                       bulkOrderState.outputItemProcessing
-                                          .shelfLife ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.outputBulkItem?.shelfLife
-                                    }
-                                 />
-                              ) : (
-                                 <ItemCard
-                                    title={
-                                       bulkOrderState.outputItemProcessing
-                                          .processingName ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.outputBulkItem?.processingName
-                                    }
-                                    onHand={
-                                       bulkOrderState.outputItemProcessing
-                                          .onHand ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.outputBulkItem?.onHand
-                                    }
-                                    shelfLife={
-                                       bulkOrderState.outputItemProcessing
-                                          .shelfLife ||
-                                       bulkWorkOrderData?.bulkWorkOrder
-                                          ?.outputBulkItem?.shelfLife
-                                    }
-                                    edit={() => openTunnel(2)}
-                                 />
-                              )}
-                           </>
-                        ) : (
-                           <ButtonTile
-                              noIcon
-                              type="secondary"
-                              text={t(
-                                 address.concat('select output bulk item')
-                              )}
-                              onClick={e => openTunnel(2)}
-                           />
-                        )}
-                     </>
-                  ))}
+               {(bulkOrderState.supplierItem?.name ||
+                  bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem?.supplierItem
+                     .name) && (
+                  <>
+                     <Text as="title">
+                        {t(address.concat('output bulk item'))}
+                     </Text>
+                     {bulkOrderState.outputItemProcessing?.processingName ||
+                     bulkWorkOrderData?.bulkWorkOrder?.outputBulkItem
+                        ?.processingName ? (
+                        <>
+                           {status ? (
+                              <ItemCard
+                                 title={
+                                    bulkOrderState.outputItemProcessing
+                                       .processingName ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.outputBulkItem?.processingName
+                                 }
+                                 onHand={
+                                    bulkOrderState.outputItemProcessing
+                                       .onHand ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.outputBulkItem?.onHand
+                                 }
+                                 shelfLife={
+                                    bulkOrderState.outputItemProcessing
+                                       .shelfLife ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.outputBulkItem?.shelfLife
+                                 }
+                              />
+                           ) : (
+                              <ItemCard
+                                 title={
+                                    bulkOrderState.outputItemProcessing
+                                       .processingName ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.outputBulkItem?.processingName
+                                 }
+                                 onHand={
+                                    bulkOrderState.outputItemProcessing
+                                       .onHand ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.outputBulkItem?.onHand
+                                 }
+                                 shelfLife={
+                                    bulkOrderState.outputItemProcessing
+                                       .shelfLife ||
+                                    bulkWorkOrderData?.bulkWorkOrder
+                                       ?.outputBulkItem?.shelfLife
+                                 }
+                                 edit={() => openTunnel(2)}
+                              />
+                           )}
+                        </>
+                     ) : (
+                        <ButtonTile
+                           noIcon
+                           type="secondary"
+                           text={t(address.concat('select output bulk item'))}
+                           onClick={e => openTunnel(2)}
+                        />
+                     )}
+                  </>
+               )}
 
                {bulkOrderState.outputItemProcessing?.processingName && (
                   <Configurator

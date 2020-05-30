@@ -131,7 +131,7 @@ export const SUPPLIER_SUBSCRIPTION = gql`
 
 export const SUPPLIERS_SUBSCRIPTION = gql`
    subscription Suppliers {
-      suppliers {
+      suppliers(where: { available: { _eq: true } }) {
          id
          name
          contactPerson
@@ -278,10 +278,146 @@ export const PACKAGINGS_COUNT_SUBSCRIPTION = gql`
    }
 `
 export const UNITS_SUBSCRIPTION = gql`
-   query Units {
+   subscription Units {
       units {
          id
          name
+      }
+   }
+`
+
+export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
+   subscription {
+      masterProcessings {
+         id
+         name
+         description
+      }
+   }
+`
+export const MASTER_ALLERGENS_SUBSCRIPTION = gql`
+   subscription {
+      masterAllergens {
+         id
+         name
+         description
+      }
+   }
+`
+
+export const SETTINGS_USERS_SUBSCRIPTION = gql`
+   subscription {
+      settings_user {
+         lastName
+         firstName
+         id
+      }
+   }
+`
+
+export const STATIONS_SUBSCRIPTION = gql`
+   subscription {
+      stations {
+         id
+         name
+         bulkWorkOrders {
+            id
+         }
+      }
+   }
+`
+
+export const SACHET_ITEMS_SUBSCRIPTION = gql`
+   subscription SachetItems($bulkItemId: Int!) {
+      sachetItems(where: { bulkItemId: { _eq: $bulkItemId } }) {
+         id
+         parLevel
+         unitSize
+         unit
+         onHand
+         committed
+         consumed
+      }
+   }
+`
+
+export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
+   subscription BulkWorkOrder($id: Int!) {
+      bulkWorkOrder(id: $id) {
+         status
+         station {
+            name
+            id
+         }
+         user {
+            lastName
+            firstName
+         }
+         scheduledOn
+         outputBulkItem {
+            yield
+            processingName
+            onHand
+            shelfLife
+            supplierItem {
+               name
+            }
+         }
+         outputQuantity
+         inputBulkItem {
+            processingName
+            onHand
+            shelfLife
+         }
+      }
+   }
+`
+
+export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
+   subscription SachetWorkOrder($id: Int!) {
+      sachetWorkOrder(id: $id) {
+         status
+         station {
+            name
+            id
+         }
+         user {
+            lastName
+            firstName
+         }
+         scheduledOn
+         outputSachetItem {
+            id
+            onHand
+            parLevel
+            unitSize
+            unit
+         }
+
+         bulkItem {
+            id
+            processingName
+            onHand
+            shelfLife
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`
+
+export const PURCHASE_ORDER_SUBSCRIPTION = gql`
+   subscription PurchaseOrderItem($id: Int!) {
+      purchaseOrderItem(id: $id) {
+         id
+         supplierItem {
+            id
+            name
+         }
+         status
+         orderQuantity
+         unit
       }
    }
 `

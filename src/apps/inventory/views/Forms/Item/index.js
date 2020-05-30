@@ -21,9 +21,9 @@ import {
 } from '../../../context/item'
 import { Context } from '../../../context/tabs'
 import {
-   MASTER_ALLERGENS,
-   MASTER_PROCESSINGS,
-   SUPPLIERS,
+   MASTER_ALLERGENS_SUBSCRIPTION,
+   MASTER_PROCESSINGS_SUBSCRIPTION,
+   SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
 } from '../../../graphql'
@@ -100,7 +100,9 @@ export default function ItemForm() {
       }
    )
 
-   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+   const { loading: supplierLoading, data: supplierData } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION
+   )
    const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.units
@@ -108,12 +110,13 @@ export default function ItemForm() {
       },
    })
 
-   const { loading: processingsLoading, data: processingData } = useQuery(
-      MASTER_PROCESSINGS
-   )
+   const {
+      loading: processingsLoading,
+      data: processingData,
+   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
 
-   const { loading: allergensLoading, data: allergensData } = useQuery(
-      MASTER_ALLERGENS
+   const { loading: allergensLoading, data: allergensData } = useSubscription(
+      MASTER_ALLERGENS_SUBSCRIPTION
    )
 
    React.useEffect(() => {
@@ -229,15 +232,7 @@ export default function ItemForm() {
                      </StyledInfo>
                      <StyledSupplier>
                         <span>{formState.supplier?.name}</span>
-                        {formState.supplier?.contatcPerson &&
-                           formState.supplier?.contactPerson.lastName &&
-                           formState.supplier?.contactPerson.countryCode &&
-                           formState.supplier?.contactPerson.phoneNumber && (
-                              <span>
-                                 {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
-                                    ''}
-                              </span>
-                           )}
+                        <ContactPerson formState={formState} />
                      </StyledSupplier>
                   </>
                )}
@@ -688,5 +683,13 @@ function PlannedLotView({ open, formState }) {
             </Flexible>
          </FlexContainer>
       </>
+   )
+}
+
+function ContactPerson({ formState }) {
+   return (
+      <span>
+         {`${formState.supplier?.contactPerson?.firstName} ${formState.supplier?.contactPerson?.lastName} ${formState.supplier?.contactPerson?.countryCode} ${formState.supplier?.contactPerson?.phoneNumber}`}
+      </span>
    )
 }
