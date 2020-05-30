@@ -355,20 +355,23 @@ const ProductDetails = ({ product }) => {
                      <section>
                         <span>Shelf Life</span>
                         <span>
-                           {(item.bulkItemId && item?.bulkItem?.shelfLife) ||
-                              ''}
-                           {(item.sachetItemId &&
-                              item?.sachetItem?.bulkItem?.shelfLife) ||
-                              ''}
+                           {item.bulkItemId && item?.bulkItem?.shelfLife
+                              ? `${item?.bulkItem?.shelfLife.value} ${item?.bulkItem?.shelfLife.unit}`
+                              : ''}
+                           {item.sachetItemId &&
+                           item?.sachetItem?.bulkItem?.shelfLife
+                              ? `${item?.sachetItem?.bulkItem?.shelfLife.value} ${item?.sachetItem?.bulkItem?.shelfLife.unit}`
+                              : ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
                         </span>
                      </section>
                      <section>
                         <span>Yield</span>
                         <span>
-                           {(item.bulkItemId && item?.bulkItem?.yield) || ''}
+                           {(item.bulkItemId && item?.bulkItem?.yield?.value) ||
+                              ''}
                            {(item.sachetItemId &&
-                              item?.sachetItem?.bulkItem?.yield) ||
+                              item?.sachetItem?.bulkItem?.yield?.value) ||
                               ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
                         </span>
