@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
    ButtonTile,
@@ -35,12 +35,12 @@ import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
 import {
-   SUPPLIER_ITEMS,
-   SETTINGS_USERS,
-   STATIONS,
+   SUPPLIER_ITEMS_SUBSCRIPTION,
+   SETTINGS_USERS_SUBSCRIPTION,
+   STATIONS_SUBSCRIPTION,
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
-   BULK_WORK_ORDER,
+   BULK_WORK_ORDER_SUBSCRIPTION,
 } from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.'
@@ -61,16 +61,23 @@ export default function BulkWorkOrderForm() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
 
-   const { data: supplierItemData, loading: supplierItemLoading } = useQuery(
-      SUPPLIER_ITEMS
+   const {
+      data: supplierItemData,
+      loading: supplierItemLoading,
+   } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
+   const { data: userData, loading: userLoading } = useSubscription(
+      SETTINGS_USERS_SUBSCRIPTION
    )
-   const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
-   const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
+   const { data: stationsData, loading: stationsLoading } = useSubscription(
+      STATIONS_SUBSCRIPTION
+   )
 
    const {
       data: bulkWorkOrderData,
       loading: orderLoading,
-   } = useQuery(BULK_WORK_ORDER, { variables: { id: state.bulkWorkOrder.id } })
+   } = useSubscription(BULK_WORK_ORDER_SUBSCRIPTION, {
+      variables: { id: state.bulkWorkOrder.id },
+   })
 
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
    const [updateBulkWorkOrderStatus] = useMutation(

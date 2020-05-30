@@ -12,17 +12,17 @@ import {
 import React, { useContext, useReducer, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
-   SUPPLIER_ITEMS,
-   SETTINGS_USERS,
-   STATIONS,
-   SACHET_ITEMS,
-   PACKAGINGS,
+   SUPPLIER_ITEMS_SUBSCRIPTION,
+   SETTINGS_USERS_SUBSCRIPTION,
+   STATIONS_SUBSCRIPTION,
+   SACHET_ITEMS_SUBSCRIPTION,
+   PACKAGINGS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,
-   SACHET_WORK_ORDER,
+   SACHET_WORK_ORDER_SUBSCRIPTION,
 } from '../../../graphql'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
@@ -65,23 +65,28 @@ export default function SachetWorkOrder() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
 
-   const { data: supplierItemData, loading: supplierItemLoading } = useQuery(
-      SUPPLIER_ITEMS
+   const {
+      data: supplierItemData,
+      loading: supplierItemLoading,
+   } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
+   const { data: userData, loading: userLoading } = useSubscription(
+      SETTINGS_USERS_SUBSCRIPTION
    )
-   const { data: userData, loading: userLoading } = useQuery(SETTINGS_USERS)
-   const { data: stationsData, loading: stationsLoading } = useQuery(STATIONS)
-   const { data: packagingData, loading: packagingsLoading } = useQuery(
-      PACKAGINGS
+   const { data: stationsData, loading: stationsLoading } = useSubscription(
+      STATIONS_SUBSCRIPTION
    )
-   const { data: sachetItemsData, loading: sachetItemLoading } = useQuery(
-      SACHET_ITEMS,
-      {
-         variables: { bulkItemId: sachetOrderState.inputItemProcessing?.id },
-      }
+   const { data: packagingData, loading: packagingsLoading } = useSubscription(
+      PACKAGINGS_SUBSCRIPTION
    )
+   const {
+      data: sachetItemsData,
+      loading: sachetItemLoading,
+   } = useSubscription(SACHET_ITEMS_SUBSCRIPTION, {
+      variables: { bulkItemId: sachetOrderState.inputItemProcessing?.id },
+   })
 
-   const { data: sachetWorkOrderData, loading: orderLoading } = useQuery(
-      SACHET_WORK_ORDER,
+   const { data: sachetWorkOrderData, loading: orderLoading } = useSubscription(
+      SACHET_WORK_ORDER_SUBSCRIPTION,
       {
          variables: { id: state.sachetWorkOrder?.id },
       }
