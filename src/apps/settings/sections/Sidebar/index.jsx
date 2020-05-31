@@ -41,6 +41,13 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             >
                {t(address.concat('station'))}
             </StyledListItem>
+            <StyledListItem
+               onClick={() =>
+                  addTab('Store Settings', '/settings/store-settings')
+               }
+            >
+               {t(address.concat('store settings'))}
+            </StyledListItem>
          </StyledList>
       </StyledSidebar>
    )

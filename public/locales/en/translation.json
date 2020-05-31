@@ -1000,7 +1000,8 @@
                "devices": "Devices",
                "roles": "Roles",
                "apps": "Apps",
-               "station": "Station"
+               "station": "Station",
+               "store settings": "Store Settings"
             }
          },
          "views": {

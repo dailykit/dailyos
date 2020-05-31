@@ -14,6 +14,7 @@ import {
    DeviceForm,
    StationForm,
    MasterListForm,
+   StoreSettingsForm,
 } from './Forms'
 
 export {
@@ -29,4 +30,5 @@ export {
    DeviceForm,
    StationForm,
    MasterListForm,
+   StoreSettingsForm,
 }
