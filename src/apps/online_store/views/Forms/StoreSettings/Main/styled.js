@@ -3,11 +3,13 @@ import styled from 'styled-components'
 export const Fixed = styled.div``
 
 export const ImageContainer = styled.div`
-   height: 200px;
+   height: ${props => props.height || 'auto'};
+   width: ${props => props.width || 'auto'};
    position: relative;
    img {
-      width: auto;
-      height: 100%;
+      width: ${props => props.width || 'auto'};
+      height: ${props => props.height || 'auto'};
+      object-fit: cover;
    }
    div {
       position: absolute;

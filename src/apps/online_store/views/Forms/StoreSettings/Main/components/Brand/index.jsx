@@ -67,7 +67,7 @@ const BrandSettings = () => {
    if (loading) return <Loader />
 
    return (
-      <React.Fragment>
+      <Container bottom="80">
          <Text as="h2">Brand</Text>
          <Container top="32" bottom="32" width="500">
             <Flex direction="row">
@@ -95,14 +95,17 @@ const BrandSettings = () => {
          </Container>
          <Container bottom="32" width="500">
             {logo ? (
-               <ImageContainer>
-                  <div>
-                     <span onClick={() => console.log('Photo')}>
-                        <EditIcon />
-                     </span>
-                  </div>
-                  <img src={logo} alt="Brand Logo" />
-               </ImageContainer>
+               <React.Fragment>
+                  <Text as="subtitle">Logo</Text>
+                  <ImageContainer width="300px" height="300px">
+                     <div>
+                        <span onClick={() => console.log('Photo')}>
+                           <EditIcon />
+                        </span>
+                     </div>
+                     <img src={logo} alt="Brand Logo" />
+                  </ImageContainer>
+               </React.Fragment>
             ) : (
                <ButtonTile
                   type="primary"
@@ -113,7 +116,7 @@ const BrandSettings = () => {
                />
             )}
          </Container>
-      </React.Fragment>
+      </Container>
    )
 }
 

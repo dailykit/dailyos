@@ -1,3 +1,4 @@
 import BrandSettings from './Brand'
+import VisualSettings from './Visual'
 
-export { BrandSettings }
+export { BrandSettings, VisualSettings }
