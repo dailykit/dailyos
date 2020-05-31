@@ -778,9 +778,9 @@
                         "itemtypetunnel": {
                            "select item type": "Select Item Type",
                            "inventory item": "Inventory Item",
-                           "subtitle 1": "blah....",
+                           "subtitle 1": "Items bought directly from a supplier",
                            "sachet item": "Sachet Item",
-                           "subtitle 2": "blah ..."
+                           "subtitle 2": "Items processed and packaged from a supplier item"
                         },
                         "productstunnel": {
                            "select products to add": "Select Products to Add",
