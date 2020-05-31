@@ -1,7 +1,10 @@
 import React from 'react'
-import { Text, Input, TextButton, Loader } from '@dailykit/ui'
+import { Text, Input, TextButton, Loader, ButtonTile } from '@dailykit/ui'
+
+import { EditIcon } from '../../../../../../assets/icons'
 
 import { Container, Flex } from '../../../styled'
+import { ImageContainer } from '../../styled'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
@@ -36,6 +39,7 @@ const BrandSettings = () => {
          console.log(error)
          toast.error(error.message)
       },
+      fetchPolicy: 'cache-and-network',
    })
 
    // Mutation
@@ -85,9 +89,29 @@ const BrandSettings = () => {
                      })
                   }
                >
-                  Save
+                  Update
                </TextButton>
             </Flex>
+         </Container>
+         <Container bottom="32" width="500">
+            {logo ? (
+               <ImageContainer>
+                  <div>
+                     <span onClick={() => console.log('Photo')}>
+                        <EditIcon />
+                     </span>
+                  </div>
+                  <img src={logo} alt="Brand Logo" />
+               </ImageContainer>
+            ) : (
+               <ButtonTile
+                  type="primary"
+                  size="sm"
+                  text="Add a Logo"
+                  helper="upto 1MB - only JPG, PNG, PDF allowed"
+                  onClick={() => console.log('Photo')}
+               />
+            )}
          </Container>
       </React.Fragment>
    )
