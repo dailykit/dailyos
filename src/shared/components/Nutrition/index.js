@@ -1,24 +1,26 @@
 import React from 'react'
 
 import { Container, Grid, Row, Wrapper, Header, Rule, Major } from './styled'
-
+import { useTranslation } from 'react-i18next'
+const address = 'shared.components.nutrition.'
 const Nutrition = ({ data, vertical = false }) => {
+   const { t } = useTranslation()
    return (
       <Container>
          <Major>
-            <h4>Calories</h4>
+            <h4>{t(address.concat('calories'))}</h4>
             <h3>{data.calories}</h3>
          </Major>
          <Grid vertical={vertical}>
             <Wrapper>
                <Header>
-                  <h6>Amount/Serving</h6>
-                  <h6>% Daily Value</h6>
+                  <h6>{t(address.concat('amount'))}/{t(address.concat('serving'))}</h6>
+                  <h6>% {t(address.concat('daily value'))}</h6>
                </Header>
                <Rule />
                <Row hidden={!data.totalFat}>
                   <h5>
-                     Total Fat <span>{data.totalFat}g</span>
+                     {t(address.concat('total fat'))} <span>{data.totalFat}g</span>
                   </h5>
                   <h5>
                      {Math.round((parseInt(data.totalFat, 10) / 78) * 100)}%
@@ -26,7 +28,7 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row inset hidden={!(data.totalFat && data.saturatedFat)}>
                   <span>
-                     Saturated Fat <span>{data.saturatedFat}g</span>
+                     {t(address.concat('saturated fat'))} <span>{data.saturatedFat}g</span>
                   </span>
                   <h5>
                      {Math.round((parseInt(data.saturatedFat, 10) / 20) * 100)}%
@@ -34,12 +36,12 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row inset hidden={!(data.totalFat && data.transFat)}>
                   <span>
-                     Trans Fat <span>{data.transFat}g</span>
+                     {t(address.concat('trans fat'))} <span>{data.transFat}g</span>
                   </span>
                </Row>
                <Row hidden={!data.cholesterol}>
                   <h5>
-                     Cholesterol <span>{data.cholesterol}mg</span>
+                     {t(address.concat('cholesterol'))} <span>{data.cholesterol}mg</span>
                   </h5>
                   <h5>
                      {Math.round((parseInt(data.cholesterol, 10) / 300) * 100)}%
@@ -47,7 +49,7 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row hidden={!data.sodium}>
                   <h5>
-                     Sodium <span>{data.sodium}mg</span>
+                     {t(address.concat('sodium'))} <span>{data.sodium}mg</span>
                   </h5>
                   <h5>
                      {Math.round((parseInt(data.sodium, 10) / 2300) * 100)}%
@@ -57,13 +59,13 @@ const Nutrition = ({ data, vertical = false }) => {
             </Wrapper>
             <Wrapper>
                <Header vertical={vertical}>
-                  <h6>Amount/Serving</h6>
-                  <h6>% Daily Value</h6>
+                  <h6>{t(address.concat('amount'))}/{t(address.concat('serving'))}</h6>
+                  <h6>% {t(address.concat('daily value'))}</h6>
                </Header>
                <Rule vertical={vertical} />
                <Row hidden={!data.totalCarbohydrates}>
                   <h5>
-                     Total Carbohydrate <span>{data.totalCarbohydrates}g</span>
+                     {t(address.concat('total carbohydrate'))} <span>{data.totalCarbohydrates}g</span>
                   </h5>
                   <h5>5%</h5>
                </Row>
@@ -72,7 +74,7 @@ const Nutrition = ({ data, vertical = false }) => {
                   hidden={!(data.totalCarbohydrates && data.dietaryFibre)}
                >
                   <span>
-                     Dietary Fiber <span>{data.dietaryFibre}g</span>
+                     {t(address.concat('dietary fiber'))} <span>{data.dietaryFibre}g</span>
                   </span>
                   <h5>
                      {Math.round((parseInt(data.dietaryFibre, 10) / 28) * 100)}%
@@ -80,25 +82,25 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row inset hidden={!(data.totalCarbohydrates && data.sugars)}>
                   <span>
-                     Sugars <span>{data.sugars}g</span>
+                     {t(address.concat('sugars'))} <span>{data.sugars}g</span>
                   </span>
                </Row>
                <Row hidden={!data.protein}>
                   <h5>
-                     Protein <span>{data.protein}g</span>
+                     {t(address.concat('protein'))} <span>{data.protein}g</span>
                   </h5>
                </Row>
                <Rule />
             </Wrapper>
          </Grid>
          <Row>
-            <span>Vitamin A {data.vitaminA}%</span>
+            <span>{t(address.concat('vitamin A'))} {data.vitaminA}%</span>
             <span>&bull;</span>
-            <span>Vitamin C {data.vitaminC}%</span>
+            <span>{t(address.concat('vitamin C'))} {data.vitaminC}%</span>
             <span>&bull;</span>
-            <span>Calcium {data.calcium}%</span>
+            <span>{t(address.concat('calcium'))} {data.calcium}%</span>
             <span>&bull;</span>
-            <span>Iron {data.iron}%</span>
+            <span>{t(address.concat('iron'))} {data.iron}%</span>
          </Row>
       </Container>
    )

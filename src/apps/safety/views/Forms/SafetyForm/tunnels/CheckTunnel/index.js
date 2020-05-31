@@ -9,6 +9,8 @@ import { Grid, Container } from '../../../styled'
 import { CREATE_CHECKUP } from '../../../../../graphql'
 import { toast } from 'react-toastify'
 
+const address = 'apps.safety.views.forms.safetyform.tunnels.checktunnel.'
+
 const CheckTunnel = ({ state, closeTunnel }) => {
    const { t } = useTranslation()
    const { checkState } = React.useContext(SafetyCheckContext)
@@ -31,13 +33,13 @@ const CheckTunnel = ({ state, closeTunnel }) => {
          },
       },
       onCompleted: () => {
-         toast.success('Checkup added!')
+         toast.success(t(address.concat('checkup added!')))
          closeTunnel(2)
          closeTunnel(1)
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
          setBusy(false)
       },
    })
@@ -57,29 +59,29 @@ const CheckTunnel = ({ state, closeTunnel }) => {
                   <CloseIcon color="#888D9D" />
                </span>
                <Text as="title">
-                  Enter Checkup Details for: {checkState.user.title}
+                  {t(address.concat('enter checkup details for'))}: {checkState.user.title}
                </Text>
             </div>
             <div>
                <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
+                  {busy ? t(address.concat('saving...')) : t(address.concat('save'))}
                </TextButton>
             </div>
          </TunnelHeader>
          <TunnelBody>
             <Grid>
                <Checkbox checked={mask} onChange={setMask}>
-                  Uses Mask
+                  {t(address.concat('uses mask'))}
                </Checkbox>
                <Checkbox checked={sanitizer} onChange={setSanitizer}>
-                  Uses Sanitizer
+                  {t(address.concat('uses sanitizer'))}
                </Checkbox>
             </Grid>
             <Container top="32">
                <StyledInputWrapper width="120">
                   <Input
                      type="text"
-                     label="Temprature"
+                     label={t(address.concat("temprature"))}
                      name="temp"
                      value={temp}
                      onChange={e => setTemp(e.target.value)}

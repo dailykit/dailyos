@@ -25,7 +25,7 @@ import {
 } from '../../../graphql'
 // Styled
 import { StyledHeader, StyledWrapper } from '../styled'
-
+const address = 'apps.safety.views.listings.safetycheckslisting.'
 const SafetyChecksListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
@@ -70,7 +70,7 @@ const SafetyChecksListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <h1>Safety Checks</h1>
+            <h1>{t(address.concat('safety checks'))}</h1>
             <IconButton type="solid" onClick={createSafetyCheck}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
@@ -78,8 +78,8 @@ const SafetyChecksListing = () => {
          <Table>
             <TableHead>
                <TableRow>
-                  <TableCell>Time</TableCell>
-                  <TableCell>Users Tested</TableCell>
+                  <TableCell>{t(address.concat('time'))}</TableCell>
+                  <TableCell>{t(address.concat('users tested'))}</TableCell>
                   <TableCell></TableCell>
                </TableRow>
             </TableHead>

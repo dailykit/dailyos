@@ -7,8 +7,11 @@ import { OrderListItem, OrderSummary, Loader } from '../../components'
 import { useTabs } from '../../context/tabs'
 
 import { ORDERS } from '../../graphql'
+import { useTranslation } from 'react-i18next'
 
+const address = 'apps.order.views.orders.'
 const Orders = () => {
+   const { t } = useTranslation()
    const history = useHistory()
    const { tabs } = useTabs()
    const { loading, error, data: { orders = [] } = {} } = useSubscription(
@@ -33,8 +36,8 @@ const Orders = () => {
          {orders.length > 0 ? (
             orders.map(order => <OrderListItem order={order} key={order.id} />)
          ) : (
-            <div>No orders yet!</div>
-         )}
+               <div>{t(address.concat('no orders yet!'))}</div>
+            )}
       </div>
    )
 }

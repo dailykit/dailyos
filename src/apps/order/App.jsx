@@ -1,18 +1,23 @@
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
+// Context
+import { useOrder } from './context'
+
 // Sections
 import Header from './sections/Header'
 import Main from './sections/Main'
 
 // Styled
 import { StyledWrapper } from './styled'
-import { OrderSummary } from './components'
+import { OrderSummary, ProcessOrder } from './components'
 
 const App = () => {
+   const { state } = useOrder()
    return (
       <StyledWrapper>
-         <OrderSummary />
+         {state.current_view === 'SUMMARY' && <OrderSummary />}
+         {state.current_view === 'WEIGHING' && <ProcessOrder />}
          <Router>
             <div>
                <Header />

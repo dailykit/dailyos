@@ -2,10 +2,12 @@ import React from 'react'
 import styled, { css } from 'styled-components'
 
 import useAssets from './useAssets'
-
+import { useTranslation } from 'react-i18next'
+const address = 'shared.components.assetuploader.'
 const Images = ({ onImageSelect }) => {
+   const { t } = useTranslation()
    const { images, status, error, remove } = useAssets('images')
-   if (status === 'LOADING') return <div>Loading...</div>
+   if (status === 'LOADING') return <div>{t(address.concat('loading'))}</div>
    if (status === 'ERROR') return <div>{error}</div>
    return (
       <div>

@@ -1,7 +1,9 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 
+import { useOrder } from '../../context'
 import { ORDER } from '../../graphql'
 import { Loader } from '../../components'
 import { UserIcon, ArrowUpIcon, ArrowDownIcon } from '../../assets/icons'
@@ -21,8 +23,11 @@ import {
    Legend,
 } from './styled'
 
+const address = 'apps.order.views.order.'
 const Order = () => {
+   const { t } = useTranslation()
    const params = useParams()
+   const { selectOrder, switchView } = useOrder()
    const [order, setOrder] = React.useState(null)
    const [currentProduct, setCurrentProduct] = React.useState(null)
    const { loading, error } = useSubscription(ORDER, {
@@ -31,35 +36,65 @@ const Order = () => {
       },
       onSubscriptionData: async ({ subscriptionData: { data } }) => {
          const {
-            orderMealKitProducts,
-            orderInventoryProducts,
-            orderReadyToEatProducts,
+            orderMealKitProducts: mealkits,
+            orderInventoryProducts: inventories,
+            orderReadyToEatProducts: readytoeats,
             ...rest
          } = data.order
          await setOrder({
             ...rest,
-            mealkits: orderMealKitProducts,
-            inventories: orderInventoryProducts,
-            readtoeats: orderReadyToEatProducts,
+            mealkits,
+            inventories,
+            readytoeats,
          })
-         if (orderMealKitProducts.length > 0) {
+         if (mealkits.length > 0) {
             setCurrentProduct({
-               id: orderMealKitProducts[0].id,
+               id: mealkits[0].id,
                type: 'Meal Kit',
             })
-         } else if (orderInventoryProducts.length > 0) {
+            if (mealkits[0].orderSachets.length > 0) {
+               selectOrder(
+                  mealkits[0].orderSachets[0].id,
+                  mealkits[0].simpleRecipeProduct.name
+               )
+            }
+         } else if (inventories.length > 0) {
             setCurrentProduct({
-               id: orderInventoryProducts[0].id,
+               id: inventories[0].id,
                type: 'Inventory',
             })
-         } else if (orderReadyToEatProducts.length > 0) {
+            switchView('SUMMARY')
+         } else if (readytoeats.length > 0) {
             setCurrentProduct({
-               id: orderReadyToEatProducts[0].id,
+               id: readytoeats[0].id,
                type: 'Ready to Eat',
             })
+            switchView('SUMMARY')
          }
       },
    })
+
+   React.useEffect(() => {
+      return () => switchView('SUMMARY')
+   }, [])
+
+   const selectProduct = (id, type) => {
+      setCurrentProduct({
+         id,
+         type,
+      })
+      if (type === 'Meal Kit') {
+         const product = order.mealkits.find(mealkit => id === mealkit.id)
+         if (product.orderSachets.length > 0) {
+            selectOrder(
+               product.orderSachets[0].id,
+               product.simpleRecipeProduct.name
+            )
+         }
+      } else {
+         switchView('SUMMARY')
+      }
+   }
 
    if (loading || !order)
       return (
@@ -67,22 +102,25 @@ const Order = () => {
             <Loader />
          </Wrapper>
       )
-   if (error) return <Wrapper>Something went wrong!</Wrapper>
+   if (error)
+      return <Wrapper>{t(address.concat('something went wrong!'))}</Wrapper>
    return (
       <Wrapper>
          <Header>
-            <h3>Order no.: ORD{order.id}</h3>
+            <h3>
+               {t(address.concat('order no'))}: ORD{order.id}
+            </h3>
             <section>
                <section>
-                  <span>Ordered</span>
+                  <span>{t(address.concat('ordered'))}</span>
                   <span>Feb 12, 2020</span>
                </section>
                <section>
-                  <span>Expected dispatch</span>
+                  <span>{t(address.concat('expected dispatch'))}</span>
                   <span>Feb 12, 2020</span>
                </section>
                <section>
-                  <span>Delivery</span>
+                  <span>{t(address.concat('delivery'))}</span>
                   <span>Feb 12, 2020</span>
                </section>
             </section>
@@ -92,20 +130,15 @@ const Order = () => {
                0 /{' '}
                {order.inventories.length +
                   order.mealkits.length +
-                  order.readtoeats.length}
-               &nbsp;items
+                  order.readytoeats.length}
+               &nbsp;{t(address.concat('items'))}
             </StyledCount>
             <OrderItems>
                {order.inventories &&
                   order.inventories.map(inventory => (
                      <OrderItem
                         key={inventory.id}
-                        onClick={() =>
-                           setCurrentProduct({
-                              id: inventory.id,
-                              type: 'Inventory',
-                           })
-                        }
+                        onClick={() => selectProduct(inventory.id, 'Inventory')}
                         isActive={
                            currentProduct?.id === inventory.id &&
                            currentProduct?.type === 'Inventory'
@@ -139,12 +172,7 @@ const Order = () => {
                   order.mealkits.map(mealkit => (
                      <OrderItem
                         key={mealkit.id}
-                        onClick={() =>
-                           setCurrentProduct({
-                              id: mealkit.id,
-                              type: 'Meal Kit',
-                           })
-                        }
+                        onClick={() => selectProduct(mealkit.id, 'Meal Kit')}
                         isActive={
                            currentProduct?.id === mealkit.id &&
                            currentProduct?.type === 'Meal Kit'
@@ -182,7 +210,7 @@ const Order = () => {
                                     mealkit?.simpleRecipeProductOption
                                        ?.simpleRecipeYield?.yield?.serving
                                  }
-                                 &nbsp; Servings
+                                 &nbsp; {t(address.concat('servings'))}
                               </span>
                            </StyledServings>
                         </section>
@@ -193,10 +221,7 @@ const Order = () => {
                      <OrderItem
                         key={readytoeat.id}
                         onClick={() =>
-                           setCurrentProduct({
-                              id: readytoeat.id,
-                              type: 'Ready to Eat',
-                           })
+                           selectProduct(readytoeat.id, 'Ready to Eat')
                         }
                         isActive={
                            currentProduct?.id === readytoeat.id &&
@@ -226,7 +251,7 @@ const Order = () => {
                                     readytoeat?.simpleRecipeProductOption
                                        ?.simpleRecipeYield?.yield?.serving
                                  }
-                                 &nbsp; Servings
+                                 &nbsp; {t(address.concat('servings'))}
                               </span>
                            </StyledServings>
                         </section>
@@ -235,18 +260,18 @@ const Order = () => {
             </OrderItems>
          </section>
          <Legend>
-            <h2>Legends</h2>
+            <h2>{t(address.concat('legends'))}</h2>
             <section>
                <span />
-               <span>Pending</span>
+               <span>{t(address.concat('pending'))}</span>
             </section>
             <section>
                <span />
-               <span>Processing</span>
+               <span>{t(address.concat('processing'))}</span>
             </section>
             <section>
                <span />
-               <span>Done</span>
+               <span>{t(address.concat('done'))}</span>
             </section>
          </Legend>
          {currentProduct?.type === 'Meal Kit' && (
@@ -263,25 +288,34 @@ const Order = () => {
 export default Order
 
 const ProductDetails = ({ product }) => {
+   const { selectOrder } = useOrder()
+   const { t } = useTranslation()
    const [currentPanel, setCurrentPanel] = React.useState(null)
    React.useEffect(() => {
       if ('id' in product && product.orderSachets.length > 0) {
          setCurrentPanel(product?.orderSachets[0]?.id)
       }
    }, [product])
+
+   const selectSachet = id => {
+      selectOrder(id, product.simpleRecipeProduct.name)
+      setCurrentPanel(currentPanel === id ? '' : id)
+   }
+
    return (
       <List>
          <ListHead>
-            <span>Ingredient</span>
-            <span>Supplier Item</span>
-            <span>Processing</span>
-            <span>Quantity</span>
+            <span>{t(address.concat('ingredients'))}</span>
+            <span>{t(address.concat('supplier item'))}</span>
+            <span>{t(address.concat('processing'))}</span>
+            <span>{t(address.concat('quantity'))}</span>
             <span />
          </ListHead>
          <ListBody>
             {product.orderSachets.map(item => (
                <ListBodyItem
                   key={item.id}
+                  onClick={() => selectSachet(item.id)}
                   isOpen={currentPanel === item.id}
                   variant={{
                      isLabelled: item.isLabelled,
@@ -303,11 +337,7 @@ const ProductDetails = ({ product }) => {
                      <span>{item.quantity}</span>
                      <button
                         type="button"
-                        onClick={() =>
-                           setCurrentPanel(
-                              currentPanel === item.id ? '' : item.id
-                           )
-                        }
+                        onClick={() => selectSachet(item.id)}
                      >
                         {currentPanel === item.id ? (
                            <ArrowDownIcon />
@@ -318,19 +348,19 @@ const ProductDetails = ({ product }) => {
                   </header>
                   <main>
                      <section>
-                        <span>Sachet Id</span>
+                        <span>{t(address.concat('sachet id'))}</span>
                         <span>{item.id}</span>
                      </section>
                      <section>
-                        <span>Packaging Name</span>
+                        <span>{t(address.concat('packaging name'))}</span>
                         <span>{item?.packaging?.name || 'N/A'}</span>
                      </section>
                      <section>
-                        <span>Label Template</span>
+                        <span>{t(address.concat('label template'))}</span>
                         <span>
                            {item?.labelUri ? (
                               <a href={item.labelUri} title="Label URI">
-                                 Link
+                                 {t(address.concat('link'))}
                               </a>
                            ) : (
                               'N/A'
@@ -348,7 +378,7 @@ const ProductDetails = ({ product }) => {
                         </span>
                      </section>
                      <section>
-                        <span>Bulk Density</span>
+                        <span>{t(address.concat('bulk density'))}</span>
                         <span>
                            {(item.bulkItemId && item?.bulkItem?.bulkDensity) ||
                               ''}
@@ -359,7 +389,7 @@ const ProductDetails = ({ product }) => {
                         </span>
                      </section>
                      <section>
-                        <span>Shelf Life</span>
+                        <span>{t(address.concat('shelf life'))}</span>
                         <span>
                            {item.bulkItemId && item?.bulkItem?.shelfLife
                               ? `${item?.bulkItem?.shelfLife.value} ${item?.bulkItem?.shelfLife.unit}`
@@ -372,7 +402,7 @@ const ProductDetails = ({ product }) => {
                         </span>
                      </section>
                      <section>
-                        <span>Yield</span>
+                        <span>{t(address.concat('yield'))}</span>
                         <span>
                            {(item.bulkItemId && item?.bulkItem?.yield?.value) ||
                               ''}
