@@ -1269,8 +1269,7 @@
             "header": {},
             "sidebar": {
                "listings": "Listings",
-               "products": "Products",
-               "menus": "Menus"
+               "Safety Checks": "Safety Checks"
             }
          },
          "views": {
