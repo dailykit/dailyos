@@ -54,10 +54,10 @@ const BrandSettings = () => {
    })
 
    // Handlers
-   const save = ({ type, identifier, value }) => {
+   const save = ({ identifier, value }) => {
       updateSetting({
          variables: {
-            type,
+            type: 'brand',
             identifier,
             value,
          },
@@ -69,7 +69,7 @@ const BrandSettings = () => {
    return (
       <Container bottom="80">
          <Text as="h2">Brand</Text>
-         <Container top="32" bottom="32" width="500">
+         <Container top="32" bottom="32" maxWidth="600">
             <Flex direction="row">
                <Input
                   style={{ width: '350px' }}
@@ -83,7 +83,6 @@ const BrandSettings = () => {
                   type="solid"
                   onClick={e =>
                      save({
-                        type: 'brand',
                         identifier: 'Brand Name',
                         value: { name },
                      })
@@ -93,7 +92,7 @@ const BrandSettings = () => {
                </TextButton>
             </Flex>
          </Container>
-         <Container bottom="32" width="500">
+         <Container bottom="32" maxWidth="600">
             {logo ? (
                <React.Fragment>
                   <Text as="subtitle">Logo</Text>

@@ -22,6 +22,7 @@ export const Container = styled.div`
    padding-bottom: ${props => props.paddingY || 0}px;
    width: ${props => (props.width ? props.width + 'px' : 'auto')};
    height: ${props => (props.height ? props.height + 'px' : 'auto')};
+   max-width: ${props => (props.maxWidth ? props.maxWidth + 'px' : '100%')};
    position: relative;
 `
 

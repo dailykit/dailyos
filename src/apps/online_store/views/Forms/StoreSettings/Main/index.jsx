@@ -4,7 +4,11 @@ import { Text } from '@dailykit/ui'
 import { Container } from '../styled'
 import { Fixed } from './styled'
 
-import { BrandSettings, VisualSettings } from './components'
+import {
+   BrandSettings,
+   VisualSettings,
+   AvailabilitySettings,
+} from './components'
 
 const Main = () => {
    return (
@@ -15,6 +19,7 @@ const Main = () => {
          <Container top="32" bottom="32">
             <BrandSettings />
             <VisualSettings />
+            <AvailabilitySettings />
          </Container>
       </Container>
    )

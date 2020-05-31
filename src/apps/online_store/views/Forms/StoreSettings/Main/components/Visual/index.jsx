@@ -77,7 +77,7 @@ const VisualSettings = () => {
    return (
       <Container bottom="80">
          <Text as="h2">Visual</Text>
-         <Container top="32" bottom="32" width="500">
+         <Container top="32" bottom="32" maxWidth="600">
             <Flex direction="row">
                <Input
                   style={{ width: '350px' }}
@@ -100,7 +100,7 @@ const VisualSettings = () => {
                </TextButton>
             </Flex>
          </Container>
-         <Container bottom="32" width="500">
+         <Container bottom="32" maxWidth="600">
             {favicon ? (
                <React.Fragment>
                   <Text as="subtitle">Favicon</Text>
@@ -123,11 +123,11 @@ const VisualSettings = () => {
                />
             )}
          </Container>
-         <Container bottom="32" width="700">
+         <Container bottom="32" maxWidth="600">
             {cover ? (
                <React.Fragment>
                   <Text as="subtitle">Cover</Text>
-                  <ImageContainer width="500px" height="250px">
+                  <ImageContainer width="600px" height="250px">
                      <div>
                         <span onClick={() => console.log('Photo')}>
                            <EditIcon />
@@ -146,7 +146,7 @@ const VisualSettings = () => {
                />
             )}
          </Container>
-         <Container bottom="32" width="500">
+         <Container bottom="32" maxWidth="600">
             <Flex direction="row">
                <Container width="300">
                   <Text as="subtitle">Primary Color</Text>
