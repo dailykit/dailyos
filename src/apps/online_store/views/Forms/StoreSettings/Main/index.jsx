@@ -1,13 +1,20 @@
 import React from 'react'
 import { Text } from '@dailykit/ui'
 
-import { Container } from './styled'
+import { Container } from '../styled'
+import { Fixed } from './styled'
+
+import { BrandSettings } from './components'
 
 const Main = () => {
    return (
-      <Container paddingX="32">
-         <Text as="h1">Store Settings</Text>
-         <Container top="32" bottom="32"></Container>
+      <Container paddingX="32" left="300">
+         <Fixed>
+            <Text as="h1">Store Settings</Text>
+         </Fixed>
+         <Container top="32" bottom="32">
+            <BrandSettings />
+         </Container>
       </Container>
    )
 }
