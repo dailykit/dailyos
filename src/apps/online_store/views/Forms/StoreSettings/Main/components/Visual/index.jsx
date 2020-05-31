@@ -9,7 +9,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
-const VisualSettings = () => {
+const VisualSettings = ({ setUpdating, openTunnel }) => {
    const [title, setTitle] = React.useState('')
    const [primaryColor, setPrimaryColor] = React.useState('')
    const [favicon, setFavicon] = React.useState('')
@@ -106,7 +106,15 @@ const VisualSettings = () => {
                   <Text as="subtitle">Favicon</Text>
                   <ImageContainer width="80px" height="80px">
                      <div>
-                        <span onClick={() => console.log('Photo')}>
+                        <span
+                           onClick={() => {
+                              setUpdating({
+                                 type: 'visual',
+                                 identifier: 'Favicon',
+                              })
+                              openTunnel(1)
+                           }}
+                        >
                            <EditIcon />
                         </span>
                      </div>
@@ -119,7 +127,13 @@ const VisualSettings = () => {
                   size="sm"
                   text="Add a Favicon"
                   helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => console.log('Photo')}
+                  onClick={() => {
+                     setUpdating({
+                        type: 'visual',
+                        identifier: 'Favicon',
+                     })
+                     openTunnel(1)
+                  }}
                />
             )}
          </Container>
@@ -129,7 +143,15 @@ const VisualSettings = () => {
                   <Text as="subtitle">Cover</Text>
                   <ImageContainer width="600px" height="250px">
                      <div>
-                        <span onClick={() => console.log('Photo')}>
+                        <span
+                           onClick={() => {
+                              setUpdating({
+                                 type: 'visual',
+                                 identifier: 'Cover',
+                              })
+                              openTunnel(1)
+                           }}
+                        >
                            <EditIcon />
                         </span>
                      </div>
@@ -142,7 +164,13 @@ const VisualSettings = () => {
                   size="sm"
                   text="Add a Cover"
                   helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => console.log('Photo')}
+                  onClick={() => {
+                     setUpdating({
+                        type: 'visual',
+                        identifier: 'Cover',
+                     })
+                     openTunnel(1)
+                  }}
                />
             )}
          </Container>

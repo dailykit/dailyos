@@ -9,7 +9,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
-const BrandSettings = () => {
+const BrandSettings = ({ setUpdating, openTunnel }) => {
    const [name, setName] = React.useState('')
    const [logo, setLogo] = React.useState('')
 
@@ -98,7 +98,15 @@ const BrandSettings = () => {
                   <Text as="subtitle">Logo</Text>
                   <ImageContainer width="300px" height="300px">
                      <div>
-                        <span onClick={() => console.log('Photo')}>
+                        <span
+                           onClick={() => {
+                              setUpdating({
+                                 type: 'brand',
+                                 identifier: 'Brand Logo',
+                              })
+                              openTunnel(1)
+                           }}
+                        >
                            <EditIcon />
                         </span>
                      </div>
@@ -111,7 +119,13 @@ const BrandSettings = () => {
                   size="sm"
                   text="Add a Logo"
                   helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => console.log('Photo')}
+                  onClick={() => {
+                     setUpdating({
+                        type: 'brand',
+                        identifier: 'Brand Logo',
+                     })
+                     openTunnel(1)
+                  }}
                />
             )}
          </Container>
