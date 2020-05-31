@@ -6,8 +6,10 @@ import { MetricItem } from '../MetricItem'
 import { Wrapper, StyledMode } from './styled'
 import { useOrder } from '../../context/order'
 import { SUMMARY, ORDER_STATUSES } from '../../graphql'
-
+import { useTranslation } from 'react-i18next'
+const address = 'apps.order.components.ordersummary.'
 export const OrderSummary = () => {
+   const { t } = useTranslation()
    const {
       state: { current_view },
       switchView,
@@ -34,21 +36,21 @@ export const OrderSummary = () => {
    return (
       <Wrapper>
          <StyledMode>
-            <label htmlFor="mode">Mode</label>
+            <label htmlFor="mode">{t(address.concat('mode'))}</label>
             <select
                name="mode"
                value={current_view}
                onChange={e => changeView(e.target.value)}
             >
-               <option value="SUMMARY">Summary</option>
-               <option value="WEIGHING">Weighing</option>
+               <option value="SUMMARY">{t(address.concat('summary'))}</option>
+               <option value="WEIGHING">{t(address.concat('weighing'))}</option>
             </select>
          </StyledMode>
-         <h4>Quick Info</h4>
+         <h4>{t(address.concat('quick info'))}</h4>
          {orders.length > 0 && Object.keys(orders[0]).length > 0 ? (
             <ul>
                <MetricItem
-                  title="ALL ORDERS"
+                  title={t(address.concat("all orders"))}
                   currency={orders[0].currency}
                   count={Object.keys(orders[0].summary.count).reduce(
                      (sum, key) =>
@@ -75,8 +77,8 @@ export const OrderSummary = () => {
                ))}
             </ul>
          ) : (
-            <div>No orders yet!</div>
-         )}
+               <div>{t(address.concat('no orders yet!'))}</div>
+            )}
       </Wrapper>
    )
 }

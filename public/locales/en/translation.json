@@ -559,7 +559,13 @@
                         "sep": "Sep",
                         "oct": "Oct",
                         "nov": "Nov",
-                        "dec": "Dec"
+                        "dec": "Dec",
+                        "freq": "freq",
+                        "dtstart": "dtstart",
+                        "until": "until",
+                        "wkst": "wkst",
+                        "byweekday": "byweekday",
+                        "bymonth": "bymonth"
                      }
                   },
                   "tunnels": {
@@ -608,7 +614,12 @@
                            "discount": "Discount",
                            "discounted price": "Discounted Price",
                            "meal kit": "Meal Kit",
-                           "ready to eat": "Ready to eat"
+                           "ready to eat": "Ready to eat",
+                           "label removed!": "Label Removed!",
+                           "error": "Error",
+                           "are you sure you want to remove label": "Are you sure you want to remove label",
+                           "are you sure you want to remove product from": "Are you sure you want to remove product from",
+                           "cannot display pricing for a customizable product": "Cannot Display pricing for Customizable Product"
                         }
                      },
                      "tunnels": {
@@ -1191,7 +1202,10 @@
                "loading": "loading",
                "quick info": "Quick Info",
                "all orders": "ALL ORDERS",
-               "no orders yet!": "No Orders Yet!"
+               "no orders yet!": "No Orders Yet!",
+               "mode": "Mode",
+               "summary": "Summary",
+               "weighing": "Weighing"
             },
             "tabs": {
                "close tab": "Close Tab"
