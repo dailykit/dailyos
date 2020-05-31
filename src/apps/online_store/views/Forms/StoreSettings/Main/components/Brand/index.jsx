@@ -63,7 +63,7 @@ const BrandSettings = ({ setUpdating, openTunnel }) => {
    if (loading) return <Loader />
 
    return (
-      <Container bottom="80">
+      <Container bottom="80" id="brand">
          <Text as="h2">Brand</Text>
          <Container top="32" bottom="32" maxWidth="600">
             <Flex direction="row">

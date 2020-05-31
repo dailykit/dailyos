@@ -64,7 +64,7 @@ const AvailabilitySettings = () => {
    if (loading) return <Loader />
 
    return (
-      <Container bottom="80">
+      <Container bottom="80" id="availability">
          <Text as="h2">Availability</Text>
          <Container top="32" bottom="32" maxWidth="600">
             <Text as="p">Store</Text>

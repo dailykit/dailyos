@@ -71,7 +71,7 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
    if (loading) return <Loader />
 
    return (
-      <Container bottom="80">
+      <Container bottom="80" id="visual">
          <Text as="h2">Visual</Text>
          <Container top="32" bottom="32" maxWidth="600">
             <Flex direction="row">

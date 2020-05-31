@@ -19,8 +19,6 @@ export const TunnelBody = styled.div`
    overflow: auto;
 `
 
-export const Fixed = styled.div``
-
 export const ImageContainer = styled.div`
    height: ${props => props.height || 'auto'};
    width: ${props => props.width || 'auto'};

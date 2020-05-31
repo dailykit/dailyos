@@ -4,7 +4,7 @@ import { Text, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { CloseIcon } from '../../../../assets/icons'
 
 import { Container } from '../styled'
-import { Fixed, TunnelBody, TunnelHeader } from './styled'
+import { TunnelBody, TunnelHeader } from './styled'
 
 import {
    BrandSettings,
@@ -69,10 +69,8 @@ const Main = () => {
             </Tunnel>
          </Tunnels>
          <Container paddingX="32" left="300">
-            <Fixed>
-               <Text as="h1">Store Settings</Text>
-            </Fixed>
-            <Container top="32" bottom="32">
+            <Text as="h1">Store Settings</Text>
+            <Container paddingY="60" bottom="32">
                <BrandSettings
                   setUpdating={setUpdating}
                   openTunnel={openTunnel}
