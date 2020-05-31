@@ -8,7 +8,7 @@ import { UPDATE_CUSTOMIZABLE_PRODUCT } from '../../../../../../graphql'
 import { StyledRow, TunnelBody, TunnelHeader } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.descriptiontunnel.'
+   'apps.online_store.views.forms.product.customizable.tunnels.descriptiontunnel.'
 
 export default function DescriptionTunnel({ state, close }) {
    const { t } = useTranslation()
@@ -29,12 +29,12 @@ export default function DescriptionTunnel({ state, close }) {
          },
       },
       onCompleted: () => {
-         toast.success('Updated!')
+         toast.success(t(address.concat('updated!')))
          close(1)
       },
       onError: error => {
          console.log(error)
-         toast.error('Error!')
+         toast.error(t(address.concat('error!')))
          setBusy(false)
       },
    })

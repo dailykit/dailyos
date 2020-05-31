@@ -112,11 +112,11 @@ export default function CustomizableProduct() {
    // Mutation
    const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
       onCompleted: () => {
-         toast.success('Updated!')
+         toast.success(t(address.concat('updated!')))
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
 
@@ -141,7 +141,7 @@ export default function CustomizableProduct() {
    }
    const togglePublish = val => {
       if (val && !state.isValid.status) {
-         return toast.error('Product should be valid!')
+         return toast.error(t(address.concat('product should be valid!')))
       }
       updateProduct({
          variables: {
@@ -191,20 +191,20 @@ export default function CustomizableProduct() {
                      {state.isValid?.status ? (
                         <React.Fragment>
                            <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
+                           <Text as="p">{t(address.concat('all good!'))}</Text>
                         </React.Fragment>
                      ) : (
-                        <React.Fragment>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isValid?.error}</Text>
-                        </React.Fragment>
-                     )}
+                           <React.Fragment>
+                              <CloseIcon color="#ff0000" />
+                              <Text as="p">{state.isValid?.error}</Text>
+                           </React.Fragment>
+                        )}
                   </div>
                   <div>
                      <Toggle
                         checked={state.isPublished}
                         setChecked={togglePublish}
-                        label="Published"
+                        label={t(address.concat("published"))}
                      />
                   </div>
                </MasterSettings>

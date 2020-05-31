@@ -5,11 +5,13 @@ import { ImageContainer, PhotoTileWrapper, Container } from './styled'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-
+import { useTranslation } from 'react-i18next'
+const address = 'apps.online_store.views.forms.product.inventoryproduct.components.assets.'
 const Assets = ({ state, openTunnel }) => {
+   const { t } = useTranslation()
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
-         toast.success('Image removed!')
+         toast.success(t(address.concat('image removed!')))
       },
       onError: error => {
          console.log(error)
@@ -47,16 +49,16 @@ const Assets = ({ state, openTunnel }) => {
                <img src={state.assets.images[0]} alt="Inventory Product" />
             </ImageContainer>
          ) : (
-            <PhotoTileWrapper>
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text="Add Photo to your Product"
-                  helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => openTunnel(8)}
-               />
-            </PhotoTileWrapper>
-         )}
+               <PhotoTileWrapper>
+                  <ButtonTile
+                     type="primary"
+                     size="sm"
+                     text={t(address.concat("add photo to your product"))}
+                     helper={t(address.concat("upto 1MB - only JPG, PNG, PDF allowed"))}
+                     onClick={() => openTunnel(8)}
+                  />
+               </PhotoTileWrapper>
+            )}
       </Container>
    )
 }

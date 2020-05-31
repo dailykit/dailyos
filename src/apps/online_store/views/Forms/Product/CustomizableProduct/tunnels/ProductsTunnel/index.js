@@ -19,7 +19,7 @@ import { CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS } from '../../../../../../graphql'
 import { TunnelBody, TunnelHeader } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.tunnels.itemstunnel.'
+   'apps.online_store.views.forms.product.customizableproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ state, close, products }) => {
    const { t } = useTranslation()
@@ -36,13 +36,13 @@ const ProductsTunnel = ({ state, close, products }) => {
       CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
       {
          onCompleted: () => {
-            toast.success('Products added!')
+            toast.success(t(address.concat('products added!')))
             close(3)
             close(2)
          },
          onError: error => {
             console.log(error)
-            toast.error('Error')
+            toast.error(t(address.concat('error')))
             setBusy(false)
          },
       }

@@ -628,7 +628,9 @@
                            "saving": "Saving...",
                            "save": "Save",
                            "tags": "Tags",
-                           "description": "Description"
+                           "description": "Description",
+                           "updated!": "Updated!",
+                           "error!": "Error!"
                         },
                         "itemstunnel": {
                            "add items": "Add Items",
@@ -636,11 +638,14 @@
                            "save": "Save",
                            "label your items to add recipes for": "Label your items to add recipes for",
                            "enter": "Enter",
-                           "add another item": "Add Another Item"
+                           "add another item": "Add Another Item",
+                           "items added!": "Items Added!",
+                           "no labels added!": "No labels added!"
                         },
                         "productstunnel": {
                            "select product to add": "Select Product to Add",
-                           "type what you're looking for": "type what you're looking for..."
+                           "type what you're looking for": "type what you're looking for...",
+                           "product added!": "Product Added!"
                         },
                         "producttypetunnel": {
                            "select product type": "Select Product Type",
@@ -654,7 +659,12 @@
                      },
                      "product name": "Product Name",
                      "save": "Save",
-                     "publish": "Publish"
+                     "publish": "Publish",
+                     "updated!": "Updated!",
+                     "error!": "Error!",
+                     "product should be valid!": "Product should be valid!",
+                     "all good!": "All Good!",
+                     "published": "Published"
                   },
                   "customizableproduct": {
                      "components": {
@@ -682,7 +692,24 @@
                         },
                         "products": {
                            "add products": "Add Products",
-                           "discount as accompaniment": "Discount as Accompaniment"
+                           "discount as accompaniment": "Discount as Accompaniment",
+                           "product deleted": "Product Deleted",
+                           "error": "Error",
+                           "default updated!": "Default Updated!",
+                           "are you sure you want to delete product": "Are you sure you want to delete product",
+                           "default": "Default",
+                           "make default": "Make Default",
+                           "pricing": "Pricing",
+                           "price": "Price",
+                           "discounted price": "Discounted Price",
+                           "accompaniments": "Accompaniments",
+                           "labels": "Labels",
+                           "servings": "Servings",
+                           "options": "Options",
+                           "discount": "Discount",
+                           "meal kit": "Meal Kit",
+                           "ready to eat": "Ready to eat",
+                           "accompanients are taken as per added on the selected product": "Accompanients are taken as per added on the selected product"
                         }
                      },
                      "tunnels": {
@@ -695,7 +722,10 @@
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
                            "tags": "Tags",
-                           "description": "Description"
+                           "updated!": "Updated!",
+                           "description": "Description",
+                           "error!": "Error!",
+                           "saving": "Saving..."
                         },
                         "itemstunnel": {
                            "select": "Select",
@@ -716,7 +746,13 @@
                         "productstunnel": {
                            "select products to add": "Select Products to Add",
                            "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
+                           "type what you're looking for": "type what you're looking for...",
+                           "product added!": "Product Added!",
+                           "error": "Error",
+                           "inventory product": "Inventroy Product",
+                           "simple recipe product": "Simple Recipe Product",
+                           "to add": "To Add",
+                           "saving": "Saving..."
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
@@ -728,7 +764,12 @@
                      },
                      "product name": "Product Name",
                      "save": "Save",
-                     "publish": "Publish"
+                     "publish": "Publish",
+                     "updated!": "Updated!",
+                     "error": "Error",
+                     "product should be valid!": "Product should be valid!",
+                     "all good!": "All Good!",
+                     "published": "Published"
                   },
                   "inventoryproduct": {
                      "components": {
@@ -748,26 +789,47 @@
                            "discount": "Discount",
                            "discounted price": "Discounted Price",
                            "add option": "Add Option",
-                           "add item": "Add Item"
+                           "add item": "Add Item",
+                           "option(s) deleted!": "Option(s) deleted!",
+                           "could not delete!": "Could not delete!",
+                           "item deleted!": "Item Deleted!",
+                           "error": "Error"
                         },
                         "products": {
                            "add products": "Add Products",
-                           "discount as accompaniment": "Discount as Accompaniment"
+                           "discount as accompaniment": "Discount as Accompaniment",
+                           "updated!": "Updated!",
+                           "error": "Error",
+                           "are you sure you want to delete ": "Are you sure you want to delete "
+                        },
+                        "assets": {
+                           "image removed!": "Image Removed!",
+                           "add photo to your product": "Add Photo to your Product",
+                           "upto 1MB - only JPG, PNG, PDF allowed": "upto 1MB - only JPG, PNG, PDF allowed"
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Select Accompaniment Type",
                            "save": "Save",
                            "saving": "Saving...",
-                           "type what you're looking for": "type what you're looking for..."
+                           "type what you're looking for": "type what you're looking for...",
+                           "accompaniment types added!": "Accompaniment types added!",
+                           "error": "Error"
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
                            "saving": "Saving...",
                            "tags": "Tags",
-                           "description": "Description"
+                           "description": "Description",
+                           "updated!": "Updated!",
+                           "error!": "Error!"
                         },
                         "itemtunnel": {
                            "select an item": "Select an Item",
