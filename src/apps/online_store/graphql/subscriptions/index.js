@@ -304,3 +304,12 @@ export const S_COLLECTION = gql`
       }
    }
 `
+
+export const STORE_SETTINGS = gql`
+   subscription StoreSettings($type: String!) {
+      storeSettings(where: { type: { _eq: $type } }) {
+         value
+         identifier
+      }
+   }
+`

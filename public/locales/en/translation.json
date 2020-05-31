@@ -509,7 +509,8 @@
             "sidebar": {
                "listings": "Listings",
                "products": "Products",
-               "collections": "Collections"
+               "collections": "Collections",
+               "store settings": "Store Settings"
             }
          },
          "views": {
@@ -713,19 +714,20 @@
                         }
                      },
                      "tunnels": {
-                        "accompanimenttypetunnel": {
-                           "select accompaniment type": "Select Accompaniment Type",
-                           "save": "Save",
-                           "type what you're looking for": "type what you're looking for..."
-                        },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
+                           "saving": "Saving...",
                            "save": "Save",
                            "tags": "Tags",
                            "updated!": "Updated!",
                            "description": "Description",
                            "error!": "Error!",
                            "saving": "Saving..."
+                        },
+                        "accompanimenttypetunnel": {
+                           "select accompaniment type": "Select Accompaniment Type",
+                           "save": "Save",
+                           "type what you're looking for": "type what you're looking for..."
                         },
                         "itemstunnel": {
                            "select": "Select",
@@ -840,9 +842,9 @@
                         "itemtypetunnel": {
                            "select item type": "Select Item Type",
                            "inventory item": "Inventory Item",
-                           "subtitle 1": "blah....",
+                           "subtitle 1": "Items bought directly from a supplier",
                            "sachet item": "Sachet Item",
-                           "subtitle 2": "blah ..."
+                           "subtitle 2": "Items processed and packaged from a supplier item"
                         },
                         "productstunnel": {
                            "select products to add": "Select Products to Add",
@@ -1062,7 +1064,8 @@
                "devices": "Devices",
                "roles": "Roles",
                "apps": "Apps",
-               "station": "Station"
+               "station": "Station",
+               "store settings": "Store Settings"
             }
          },
          "views": {
@@ -1331,8 +1334,7 @@
             "header": {},
             "sidebar": {
                "listings": "Listings",
-               "products": "Products",
-               "menus": "Menus"
+               "Safety Checks": "Safety Checks"
             }
          },
          "views": {

@@ -37,6 +37,7 @@ import {
    UPDATE_COLLECTION,
    CREATE_COLLECTION,
    DELETE_COLLECTIONS,
+   UPDATE_STORE_SETTING,
 } from './mutations/'
 
 import {
@@ -57,6 +58,7 @@ import {
    S_ACCOMPANIMENT_TYPES,
    COLLECTIONS_COUNT,
    S_COLLECTION,
+   STORE_SETTINGS,
 } from './subscriptions'
 
 export {
@@ -112,4 +114,6 @@ export {
    S_ACCOMPANIMENT_TYPES,
    COLLECTIONS_COUNT,
    S_COLLECTION,
+   UPDATE_STORE_SETTING,
+   STORE_SETTINGS,
 }
