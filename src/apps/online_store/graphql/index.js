@@ -8,6 +8,7 @@ import {
    CUSTOMIZABLE_PRODUCTS,
    COMBO_PRODUCTS,
    COMBO_PRODUCT,
+   STORE_SETTINGS,
 } from './queries'
 
 import {
@@ -114,4 +115,5 @@ export {
    COLLECTIONS_COUNT,
    S_COLLECTION,
    UPDATE_STORE_SETTING,
+   STORE_SETTINGS,
 }

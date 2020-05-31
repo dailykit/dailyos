@@ -1,13 +1,42 @@
 import React from 'react'
-import { Text, Input, TextButton } from '@dailykit/ui'
+import { Text, Input, TextButton, Loader } from '@dailykit/ui'
 
 import { Container, Flex } from '../../../styled'
-import { useMutation } from '@apollo/react-hooks'
-import { UPDATE_STORE_SETTING } from '../../../../../../graphql'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
 const BrandSettings = () => {
    const [name, setName] = React.useState('')
+   const [logo, setLogo] = React.useState('')
+
+   const populate = settings => {
+      settings.forEach(setting => {
+         switch (setting.identifier) {
+            case 'Brand Name': {
+               return setName(setting.value.name)
+            }
+            case 'Brand Logo': {
+               return setLogo(setting.value.url)
+            }
+            default: {
+               return
+            }
+         }
+      })
+   }
+
+   // Query
+   const { loading } = useQuery(STORE_SETTINGS, {
+      variables: {
+         type: 'brand',
+      },
+      onCompleted: data => populate(data.storeSettings),
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+   })
 
    // Mutation
    const [updateSetting] = useMutation(UPDATE_STORE_SETTING, {
@@ -20,6 +49,7 @@ const BrandSettings = () => {
       },
    })
 
+   // Handlers
    const save = ({ type, identifier, value }) => {
       updateSetting({
          variables: {
@@ -29,6 +59,8 @@ const BrandSettings = () => {
          },
       })
    }
+
+   if (loading) return <Loader />
 
    return (
       <React.Fragment>
