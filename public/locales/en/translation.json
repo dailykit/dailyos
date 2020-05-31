@@ -509,7 +509,8 @@
             "sidebar": {
                "listings": "Listings",
                "products": "Products",
-               "collections": "Collections"
+               "collections": "Collections",
+               "store settings": "Store Settings"
             }
          },
          "views": {

@@ -18,21 +18,28 @@ const address = 'apps.online_store.sections.sidebar.'
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
+   const addTab = (type, title, view) => {
       toggleSidebar(visible => !visible)
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
+      dispatch({ type: 'ADD_TAB', payload: { type, title, view } })
    }
    return (
       <StyledSidebar visible={visible}>
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
-            <StyledListItem onClick={() => addTab('Products', 'products')}>
+            <StyledListItem
+               onClick={() => addTab('listings', 'Products', 'products')}
+            >
                {t(address.concat('products'))}
             </StyledListItem>
             <StyledListItem
-               onClick={() => addTab('Collections', 'collections')}
+               onClick={() => addTab('listings', 'Collections', 'collections')}
             >
                {t(address.concat('collections'))}
+            </StyledListItem>
+            <StyledListItem
+               onClick={() => addTab('forms', 'Store Settings', 'settings')}
+            >
+               {t(address.concat('store settings'))}
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

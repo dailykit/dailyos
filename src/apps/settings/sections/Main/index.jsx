@@ -15,7 +15,6 @@ import {
    StationsListing,
    StationForm,
    MasterList,
-   StoreSettingsForm,
 } from '../../views'
 
 const Main = () => {
@@ -58,9 +57,9 @@ const Main = () => {
             <Route path="/settings/master-lists/:list">
                <MasterListForm />
             </Route>
-            <Route path="/settings/store-settings">
+            {/* <Route path="/settings/store-settings">
                <StoreSettingsForm />
-            </Route>
+            </Route> */}
          </Switch>
       </main>
    )
