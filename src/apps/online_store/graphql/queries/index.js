@@ -1,14 +1,5 @@
 import gql from 'graphql-tag'
 
-export const STORE_SETTINGS = gql`
-   query StoreSettings($type: String!) {
-      storeSettings(where: { type: { _eq: $type } }) {
-         value
-         identifier
-      }
-   }
-`
-
 export const RECIPES = gql`
    {
       simpleRecipes {

@@ -8,7 +8,6 @@ import {
    CUSTOMIZABLE_PRODUCTS,
    COMBO_PRODUCTS,
    COMBO_PRODUCT,
-   STORE_SETTINGS,
 } from './queries'
 
 import {
@@ -59,6 +58,7 @@ import {
    S_ACCOMPANIMENT_TYPES,
    COLLECTIONS_COUNT,
    S_COLLECTION,
+   STORE_SETTINGS,
 } from './subscriptions'
 
 export {

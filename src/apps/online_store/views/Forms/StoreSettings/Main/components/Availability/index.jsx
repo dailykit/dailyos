@@ -1,18 +1,8 @@
 import React from 'react'
-import {
-   Text,
-   Input,
-   TextButton,
-   Loader,
-   ButtonTile,
-   Checkbox,
-} from '@dailykit/ui'
-
-import { EditIcon } from '../../../../../../assets/icons'
+import { Text, Input, TextButton, Loader, Checkbox } from '@dailykit/ui'
 
 import { Container, Flex, Grid } from '../../../styled'
-import { ImageContainer } from '../../styled'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
@@ -41,16 +31,12 @@ const AvailabilitySettings = () => {
    }
 
    // Query
-   const { loading } = useQuery(STORE_SETTINGS, {
+   const { loading } = useSubscription(STORE_SETTINGS, {
       variables: {
          type: 'availability',
       },
-      onCompleted: data => populate(data.storeSettings),
-      onError: error => {
-         console.log(error)
-         toast.error(error.message)
-      },
-      fetchPolicy: 'cache-and-network',
+      onSubscriptionData: data =>
+         populate(data.subscriptionData.data.storeSettings),
    })
 
    // Mutation

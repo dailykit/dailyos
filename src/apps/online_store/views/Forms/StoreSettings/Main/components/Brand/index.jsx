@@ -5,7 +5,7 @@ import { EditIcon } from '../../../../../../assets/icons'
 
 import { Container, Flex } from '../../../styled'
 import { ImageContainer } from '../../styled'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 
@@ -30,16 +30,12 @@ const BrandSettings = ({ setUpdating, openTunnel }) => {
    }
 
    // Query
-   const { loading } = useQuery(STORE_SETTINGS, {
+   const { loading } = useSubscription(STORE_SETTINGS, {
       variables: {
          type: 'brand',
       },
-      onCompleted: data => populate(data.storeSettings),
-      onError: error => {
-         console.log(error)
-         toast.error(error.message)
-      },
-      fetchPolicy: 'cache-and-network',
+      onSubscriptionData: data =>
+         populate(data.subscriptionData.data.storeSettings),
    })
 
    // Mutation
