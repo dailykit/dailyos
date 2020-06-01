@@ -577,7 +577,7 @@
                      },
                      "producttypetunnel": {
                         "select product type": "Select Product Type",
-                        "inventory product": "Inventroy Product",
+                        "inventory product": "Inventory Product",
                         "subtitle 1": "Inventory product is just an item, supplied or bought",
                         "simple recipe product": "Simple Recipe Product",
                         "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
@@ -650,7 +650,7 @@
                         },
                         "producttypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
@@ -731,7 +731,7 @@
                         },
                         "itemstunnel": {
                            "select": "Select",
-                           "inventory products": "Inventroy Products",
+                           "inventory products": "Inventory Products",
                            "simple recipe products": "Simple Recipe Products",
                            "to add": "To Add",
                            "save": "Save",
@@ -740,7 +740,7 @@
                         },
                         "itemtypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -751,14 +751,14 @@
                            "type what you're looking for": "type what you're looking for...",
                            "product added!": "Product Added!",
                            "error": "Error",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "simple recipe product": "Simple Recipe Product",
                            "to add": "To Add",
                            "saving": "Saving..."
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -854,7 +854,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -932,7 +932,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
