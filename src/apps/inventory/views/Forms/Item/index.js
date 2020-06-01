@@ -92,7 +92,9 @@ export default function ItemForm() {
                   unit: normalisedData.unit,
                   unitSize: normalisedData.unitSize,
 
-                  unit_price: normalisedData.prices[0].unitPrice,
+                  unit_price:
+                     normalisedData.prices?.length &&
+                     normalisedData.prices[0].unitPrice,
                   leadTime: normalisedData.leadTime,
                },
             })
@@ -260,10 +262,9 @@ export default function ItemForm() {
                            <div>
                               <span>{formState.unitSize + formState.unit}</span>
                               <span>
-                                 $
                                  {(formState.prices?.length &&
-                                    formState.prices[0]?.unitPrice?.value) ||
-                                    0}
+                                    `$ ${formState.prices[0]?.unitPrice?.value}`) ||
+                                    null}
                               </span>
                            </div>
                         </div>
@@ -342,7 +343,7 @@ export default function ItemForm() {
                            </Text>
                            <IconButton
                               onClick={() => openTunnel(6)}
-                              type="ghost"
+                              type="outline"
                            >
                               <AddIcon />
                            </IconButton>
