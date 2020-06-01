@@ -746,13 +746,13 @@
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
                         },
                         "productstunnel": {
-                           "select products to add": "Select Products to Add",
+                           "select": "Select",
                            "save": "Save",
                            "type what you're looking for": "type what you're looking for...",
                            "product added!": "Product Added!",
                            "error": "Error",
-                           "inventory product": "Inventory Product",
-                           "simple recipe product": "Simple Recipe Product",
+                           "inventory products": "Inventory Products",
+                           "simple recipe products": "Simple Recipe Products",
                            "to add": "To Add",
                            "saving": "Saving..."
                         },
