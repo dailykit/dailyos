@@ -1199,12 +1199,6 @@
                   "apps": "Apps",
                   "users assigned": "Users Assigned"
                },
-               "deviceslisting": {
-                  "devices": "Devices",
-                  "stations": "Stations",
-                  "users assigned": "Users Assigned",
-                  "actions": "Actions"
-               },
                "roleslisting": {
                   "roles": "Roles",
                   "apps configured": "Apps Configured",

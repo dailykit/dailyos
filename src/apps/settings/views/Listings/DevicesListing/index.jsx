@@ -1,49 +1,43 @@
 import React from 'react'
-import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
+import { useSubscription } from '@apollo/react-hooks'
 
 // Components
 import {
-   ButtonGroup,
-   IconButton,
    Table,
    TableHead,
    TableBody,
    TableRow,
    TableCell,
-   AvatarGroup,
-   Avatar,
-   TagGroup,
-   Tag,
    Text,
+   Tag,
 } from '@dailykit/ui'
 
 // State
 import { useTabs } from '../../../context'
 
+import { DEVICES } from '../../../graphql'
+
+import { Loader } from '../../../components'
+
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
 
-// Icons
-import {
-   EditIcon,
-   DeleteIcon,
-   AddIcon,
-} from '../../../../../shared/assets/icons'
-
-import { useTranslation } from 'react-i18next'
-
-const address = 'apps.settings.views.listings.deviceslisting.'
-
 const DevicesListing = () => {
-   const { t } = useTranslation()
+   const { tabs } = useTabs()
    const history = useHistory()
-   const { tabs, addTab } = useTabs()
-
-   const createTab = () => {
-      const hash = `untitled${uuid().split('-')[0]}`
-      addTab(hash, `/settings/devices/${hash}`)
-   }
+   const [computers, setComputers] = React.useState([])
+   const [printers, setPrinters] = React.useState([])
+   const [scales, setScales] = React.useState([])
+   const { loading, error } = useSubscription(DEVICES, {
+      onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
+         setComputers(data.computers)
+         setPrinters(
+            [...data.computers.map(computer => computer.printers)].flat()
+         )
+         setScales([...data.computers.map(computer => computer.scales)].flat())
+      },
+   })
 
    React.useEffect(() => {
       const tab = tabs.find(item => item.path === `/settings/devices`) || {}
@@ -52,78 +46,106 @@ const DevicesListing = () => {
       }
    }, [history, tabs])
 
-   const data = [
-      {
-         name: 'Weighing Scale Terminal',
-         stations: ['Station 1', 'Station 2'],
-         users: [
-            { url: '', title: 'Jack' },
-            { url: '', title: 'Back Bones' },
-            { url: '', title: 'Stack Cue Stones' },
-         ],
-      },
-      {
-         name: 'Terminal',
-         stations: ['Station 2'],
-         users: [
-            { url: '', title: 'Stack Cue Stones' },
-            { url: '', title: 'Back Bones' },
-         ],
-      },
-   ]
+   if (loading)
+      return (
+         <StyledWrapper>
+            <Loader />
+         </StyledWrapper>
+      )
+   if (error) return <StyledWrapper>{error.message}</StyledWrapper>
    return (
       <StyledWrapper>
-         <StyledHeader>
-            <Text as="h2">{t(address.concat('devices'))}</Text>
-            <IconButton type="solid" onClick={() => createTab()}>
-               <AddIcon color="#fff" size={24} />
-            </IconButton>
-         </StyledHeader>
-         <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>{t(address.concat('devices'))}</TableCell>
-                  <TableCell>{t(address.concat('stations'))}</TableCell>
-                  <TableCell>{t(address.concat('users assigned'))}</TableCell>
-                  <TableCell align="right">{t(address.concat('actions'))}</TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               {data.map(row => (
-                  <TableRow key={row.name}>
-                     <TableCell>{row.name}</TableCell>
-                     <TableCell>
-                        <TagGroup>
-                           {row.stations.map(station => (
-                              <Tag key={station}>{station}</Tag>
-                           ))}
-                        </TagGroup>
-                     </TableCell>
-                     <TableCell>
-                        <AvatarGroup>
-                           {row.users.map(user => (
-                              <Avatar
-                                 url={user.url}
-                                 key={user.title}
-                                 title={user.title}
-                              />
-                           ))}
-                        </AvatarGroup>
-                     </TableCell>
-                     <TableCell align="right">
-                        <ButtonGroup align="right">
-                           <IconButton type="outline">
-                              <EditIcon />
-                           </IconButton>
-                           <IconButton type="outline">
-                              <DeleteIcon />
-                           </IconButton>
-                        </ButtonGroup>
-                     </TableCell>
-                  </TableRow>
-               ))}
-            </TableBody>
-         </Table>
+         <section>
+            <StyledHeader>
+               <Text as="h2">Computers</Text>
+            </StyledHeader>
+            {computers.length > 0 ? (
+               <Table>
+                  <TableHead>
+                     <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Host Name</TableCell>
+                        <TableCell>Total Printers</TableCell>
+                        <TableCell>Active Printers</TableCell>
+                        <TableCell>State</TableCell>
+                     </TableRow>
+                  </TableHead>
+                  <TableBody>
+                     {computers.map(computer => (
+                        <TableRow key={computer.printNodeId}>
+                           <TableCell>{computer.name}</TableCell>
+                           <TableCell>{computer.hostname}</TableCell>
+                           <TableCell>
+                              {computer.totalPrinters.aggregate.count}
+                           </TableCell>
+                           <TableCell>
+                              {computer.activePrinters.aggregate.count}
+                           </TableCell>
+                           <TableCell>
+                              <Tag>{computer.state}</Tag>
+                           </TableCell>
+                        </TableRow>
+                     ))}
+                  </TableBody>
+               </Table>
+            ) : (
+               <h4>No computers yet!</h4>
+            )}
+         </section>
+         <section>
+            <StyledHeader>
+               <Text as="h2">Printers</Text>
+            </StyledHeader>
+            {printers.length > 0 ? (
+               <Table>
+                  <TableHead>
+                     <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Computer</TableCell>
+                        <TableCell>State</TableCell>
+                     </TableRow>
+                  </TableHead>
+                  <TableBody>
+                     {printers.map(printer => (
+                        <TableRow key={printer.printNodeId}>
+                           <TableCell>{printer.name}</TableCell>
+                           <TableCell>{printer.computer.name}</TableCell>
+                           <TableCell>
+                              <Tag>{printer.state}</Tag>
+                           </TableCell>
+                        </TableRow>
+                     ))}
+                  </TableBody>
+               </Table>
+            ) : (
+               <h4>No printers yet!</h4>
+            )}
+         </section>
+         <section>
+            <StyledHeader>
+               <Text as="h2">Scales</Text>
+            </StyledHeader>
+            {scales.length > 0 ? (
+               <Table>
+                  <TableHead>
+                     <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Computer</TableCell>
+                     </TableRow>
+                  </TableHead>
+                  <TableBody>
+                     {scales.map(scale => (
+                        <TableRow key={scale.deviceNum}>
+                           <TableCell>{scale.name}</TableCell>
+                           <TableCell>{scale.computer.name}</TableCell>
+                        </TableRow>
+                     ))}
+                  </TableBody>
+               </Table>
+            ) : (
+               <h4>No scales yet!</h4>
+            )}
+         </section>
       </StyledWrapper>
    )
 }

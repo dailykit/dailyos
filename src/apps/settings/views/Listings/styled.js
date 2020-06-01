@@ -2,7 +2,8 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    margin: 0 auto;
-   max-width: 1280px;
+   max-width: 980px;
+   width: calc(100vw - 40px);
    h1 {
       color: #555b6e;
       font-size: 20px;
@@ -10,7 +11,7 @@ export const StyledWrapper = styled.div`
       line-height: 23px;
    }
    table {
-      width: 980px;
+      width: 100%;
       margin: 0 auto;
    }
 `
