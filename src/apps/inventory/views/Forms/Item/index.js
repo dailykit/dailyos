@@ -40,6 +40,7 @@ import {
    StyledSupplier,
    TabContainer,
 } from './styled'
+import EditIcon from '../../../../recipe/assets/icons/Edit'
 // Tunnels
 import {
    AllergensTunnel,
@@ -677,12 +678,19 @@ function ContactPerson({ formState, open }) {
          </TextButton>
       )
 
+   const contatctPerson =
+      formState.supplier?.contactPerson?.firstName &&
+      formState.supplier?.contactPerson?.lastName
+         ? `${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} ${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson.phoneNumber}`
+         : 'N/A'
+
    return (
       <>
          <span>{formState.supplier.name}</span>
-         <span>
-            {`${formState.supplier?.contactPerson?.firstName} ${formState.supplier?.contactPerson?.lastName} ${formState.supplier?.contactPerson?.countryCode} ${formState.supplier?.contactPerson?.phoneNumber}`}
-         </span>
+         <span>{contatctPerson}</span>
+         <IconButton type="outline" onClick={() => open(1)}>
+            <EditIcon />
+         </IconButton>
       </>
    )
 }

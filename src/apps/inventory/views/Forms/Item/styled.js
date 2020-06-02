@@ -100,6 +100,8 @@ export const StyledInfo = styled.div`
 `
 
 export const StyledSupplier = styled.div`
+   display: flex;
+   align-items: center;
    span {
       padding: 0 16px;
       font-size: 14px;
