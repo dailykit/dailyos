@@ -19,6 +19,7 @@ import { Context } from '../../../context/tabs'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_BULK_ITEM_AVAILABILITY,
+   CREATE_ITEM,
 } from '../../../graphql'
 import {
    StyledContent,
@@ -30,7 +31,7 @@ import {
 } from '../styled'
 
 import EditIcon from '../../../../recipe/assets/icons/Edit'
-import { randomSuffix, truncate } from '../../../../../shared/utils/index'
+import { randomSuffix } from '../../../../../shared/utils/index'
 
 const address = 'apps.inventory.views.listings.item.'
 
@@ -38,7 +39,14 @@ export default function ItemListing() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const { loading: itemsLoading, data, error } = useSubscription(
+   const addTab = (title, view, id) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view, id },
+      })
+   }
+
+   const { loading: itemsLoading, data, error: subError } = useSubscription(
       SUPPLIER_ITEMS_SUBSCRIPTION
    )
    const [updateBulkItem] = useMutation(UPDATE_BULK_ITEM_AVAILABILITY, {
@@ -48,13 +56,36 @@ export default function ItemListing() {
       onError: () => toast.error('Something went wrong, try again'),
    })
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const [createItem, { loading: creatItemLoading }] = useMutation(
+      CREATE_ITEM,
+      {
+         onCompleted: input => {
+            const itemData = input.createSupplierItem.returning[0]
+            addTab(itemData.name, 'items', itemData.id)
+            toast.success('Supplier Item Added!')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Something went wrong, try again')
+         },
+      }
+   )
+
+   const createItemHandler = () => {
+      // create item in DB
+      const name = `item-${randomSuffix()}`
+      createItem({
+         variables: {
+            object: {
+               name,
+            },
+         },
+      })
    }
 
-   if (itemsLoading) return <Loader />
+   if (itemsLoading || creatItemLoading) return <Loader />
 
-   if (error) return <p>{error.message}</p>
+   if (subError) return <p>{subError.message}</p>
 
    if (data)
       return (
@@ -62,17 +93,7 @@ export default function ItemListing() {
             <StyledTableHeader style={{ marginTop: '30px' }}>
                <div />
                <StyledTableActions>
-                  <IconButton
-                     type="solid"
-                     onClick={() => {
-                        dispatch({
-                           type: 'SET_ITEM_ID',
-                           payload: '',
-                        })
-
-                        addTab(`item-${randomSuffix()}`, 'items')
-                     }}
-                  >
+                  <IconButton type="solid" onClick={createItemHandler}>
                      <AddIcon color="#fff" size={24} />
                   </IconButton>
                </StyledTableActions>
@@ -98,7 +119,11 @@ export default function ItemListing() {
                         data.supplierItems.map(item => (
                            <TableRow key={item.id}>
                               <TableCell>{item.name}</TableCell>
-                              <TableCell>{item.supplier.name}</TableCell>
+                              <TableCell>
+                                 {item.supplier?.name
+                                    ? item.supplier.name
+                                    : 'N/A'}
+                              </TableCell>
                               <TableCell>
                                  <CellColumnContainer>
                                     {item.bulkItems?.map(processing => (
@@ -213,7 +238,7 @@ export default function ItemListing() {
                                           payload: item.id,
                                        })
 
-                                       addTab(item.name, 'items')
+                                       addTab(item.name, 'items', item.id)
                                     }}
                                     type="outline"
                                  >
