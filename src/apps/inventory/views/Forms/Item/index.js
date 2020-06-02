@@ -136,6 +136,7 @@ export default function ItemForm() {
                   units={units}
                   close={() => closeTunnel(2)}
                   next={() => openTunnel(3)}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -210,8 +211,17 @@ export default function ItemForm() {
                {formState.name && (
                   <>
                      <StyledInfo>
-                        <h1>{state.title || formState.name}</h1>
-                        <span> {state.sku} </span>
+                        <div style={{ marginRight: '10px' }}>
+                           <h1>{formState.name}</h1>
+                           <span> {formState.sku} </span>
+                        </div>
+
+                        <IconButton
+                           type="outline"
+                           onClick={() => openTunnel(2)}
+                        >
+                           <EditIcon />
+                        </IconButton>
                      </StyledInfo>
                      <StyledSupplier>
                         <ContactPerson

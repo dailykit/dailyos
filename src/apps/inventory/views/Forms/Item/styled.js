@@ -6,6 +6,7 @@ export const Container = styled.div`
 `
 
 export const StyledHeader = styled.div`
+   padding: 0 20px;
    height: 100px;
    display: flex;
    align-items: center;
@@ -85,6 +86,8 @@ export const ImageContainer = styled.div`
 `
 
 export const StyledInfo = styled.div`
+   display: flex;
+   align-items: center;
    h1 {
       font-weight: 500;
       font-size: 24px;
