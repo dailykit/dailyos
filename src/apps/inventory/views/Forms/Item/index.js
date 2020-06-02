@@ -7,6 +7,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   TextButton,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -68,7 +69,7 @@ export default function ItemForm() {
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
       {
-         variables: { id: state.id || tabState.itemId },
+         variables: { id: tabState.current.id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
             const bulkItemAsShipped = data.bulkItems?.find(
@@ -82,22 +83,6 @@ export default function ItemForm() {
                },
             }
             setFormState(normalisedData)
-
-            dispatch({
-               type: 'SET_SUB_DATA',
-               payload: {
-                  title: normalisedData.name,
-                  sku: normalisedData.sku,
-
-                  unit: normalisedData.unit,
-                  unitSize: normalisedData.unitSize,
-
-                  unit_price:
-                     normalisedData.prices?.length &&
-                     normalisedData.prices[0].unitPrice,
-                  leadTime: normalisedData.leadTime,
-               },
-            })
          },
       }
    )
@@ -121,12 +106,6 @@ export default function ItemForm() {
       MASTER_ALLERGENS_SUBSCRIPTION
    )
 
-   React.useEffect(() => {
-      if (tabState.itemId) {
-         dispatch({ type: 'ADD_ITEM_ID', payload: tabState.itemId })
-      }
-   }, [tabState.itemId])
-
    if (
       supplierLoading ||
       processingsLoading ||
@@ -148,6 +127,7 @@ export default function ItemForm() {
                      description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
                   }))}
                   rawSuppliers={supplierData.suppliers}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel layer={2}>
@@ -233,8 +213,10 @@ export default function ItemForm() {
                         <span> {state.sku} </span>
                      </StyledInfo>
                      <StyledSupplier>
-                        <span>{formState.supplier?.name}</span>
-                        <ContactPerson formState={formState} />
+                        <ContactPerson
+                           formState={formState}
+                           open={openTunnel}
+                        />
                      </StyledSupplier>
                   </>
                )}
@@ -687,10 +669,20 @@ function PlannedLotView({ open, formState }) {
    )
 }
 
-function ContactPerson({ formState }) {
+function ContactPerson({ formState, open }) {
+   if (!formState.supplier)
+      return (
+         <TextButton type="outline" onClick={() => open(1)}>
+            Add Supplier
+         </TextButton>
+      )
+
    return (
-      <span>
-         {`${formState.supplier?.contactPerson?.firstName} ${formState.supplier?.contactPerson?.lastName} ${formState.supplier?.contactPerson?.countryCode} ${formState.supplier?.contactPerson?.phoneNumber}`}
-      </span>
+      <>
+         <span>{formState.supplier.name}</span>
+         <span>
+            {`${formState.supplier?.contactPerson?.firstName} ${formState.supplier?.contactPerson?.lastName} ${formState.supplier?.contactPerson?.countryCode} ${formState.supplier?.contactPerson?.phoneNumber}`}
+         </span>
+      </>
    )
 }
