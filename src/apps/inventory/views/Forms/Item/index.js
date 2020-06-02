@@ -121,13 +121,11 @@ export default function ItemForm() {
             <Tunnel layer={1}>
                <SuppliersTunnel
                   close={closeTunnel}
-                  open={openTunnel}
                   suppliers={supplierData?.suppliers?.map(supplier => ({
                      id: supplier.id,
                      title: supplier.name,
                      description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
                   }))}
-                  rawSuppliers={supplierData.suppliers}
                   formState={formState}
                />
             </Tunnel>
@@ -135,7 +133,6 @@ export default function ItemForm() {
                <InfoTunnel
                   units={units}
                   close={() => closeTunnel(2)}
-                  next={() => openTunnel(3)}
                   formState={formState}
                />
             </Tunnel>

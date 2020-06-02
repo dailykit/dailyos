@@ -46,6 +46,7 @@ export default function InfoTunnel({ close, units, formState }) {
       onError: error => {
          console.log(error)
          toast.error('Error adding item information. Please try again')
+         close(2)
       },
    })
 
