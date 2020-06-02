@@ -27,7 +27,7 @@ import {
 } from './styled'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.components.items.'
+   'apps.online_store.views.forms.product.customizableproduct.components.products.'
 
 const Products = ({ state, openTunnel }) => {
    const { t } = useTranslation()
@@ -39,7 +39,7 @@ const Products = ({ state, openTunnel }) => {
    // Mutation
    const [deleteOption] = useMutation(DELETE_CUSTOMIZABLE_PRODUCT_OPTION, {
       onCompleted: () => {
-         toast.success('Product deleted')
+         toast.success(t(address.concat('product deleted')))
          productDispatch({
             type: 'PRODUCT_INDEX',
             payload: 0,
@@ -47,16 +47,16 @@ const Products = ({ state, openTunnel }) => {
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
    const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
       onCompleted: () => {
-         toast.success('Default updated!')
+         toast.success(t(address.concat('default updated!')))
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
 
@@ -64,9 +64,9 @@ const Products = ({ state, openTunnel }) => {
    const remove = product => {
       if (
          window.confirm(
-            `Are you sure you want to delete product - ${
-               product.inventoryProduct?.name ||
-               product.simpleRecipeProduct?.name
+            `t(address.concat("are you sure you want to delete product")) - ${
+            product.inventoryProduct?.name ||
+            product.simpleRecipeProduct?.name
             }?`
          )
       ) {
@@ -141,23 +141,23 @@ const Products = ({ state, openTunnel }) => {
                               productState.productIndex
                            ].inventoryProduct
                               ? addTab(
-                                   state.customizableProductOptions[
-                                      productState.productIndex
-                                   ].inventoryProduct.name,
-                                   'inventoryProduct',
-                                   state.customizableProductOptions[
-                                      productState.productIndex
-                                   ].inventoryProduct.id
-                                )
+                                 state.customizableProductOptions[
+                                    productState.productIndex
+                                 ].inventoryProduct.name,
+                                 'inventoryProduct',
+                                 state.customizableProductOptions[
+                                    productState.productIndex
+                                 ].inventoryProduct.id
+                              )
                               : addTab(
-                                   state.customizableProductOptions[
-                                      productState.productIndex
-                                   ].simpleRecipeProduct.name,
-                                   'simpleRecipeProduct',
-                                   state.customizableProductOptions[
-                                      productState.productIndex
-                                   ].simpleRecipeProduct.id
-                                )
+                                 state.customizableProductOptions[
+                                    productState.productIndex
+                                 ].simpleRecipeProduct.name,
+                                 'simpleRecipeProduct',
+                                 state.customizableProductOptions[
+                                    productState.productIndex
+                                 ].simpleRecipeProduct.id
+                              )
                         }}
                      >
                         <LinkIcon color="#00A7E1" stroke={1.5} />
@@ -215,142 +215,142 @@ const Products = ({ state, openTunnel }) => {
                            {state.customizableProductOptions[
                               productState.productIndex
                            ].simpleRecipeProduct ? (
-                              <React.Fragment>
-                                 {state.customizableProductOptions[
-                                    productState.productIndex
-                                 ].simpleRecipeProduct.simpleRecipeProductOptions
-                                    .filter(option => option.type === 'mealKit')
-                                    .filter(option => option.isActive)
-                                    .map((option, i) => (
-                                       <tr key={i}>
-                                          <td>
-                                             {i === 0 ? (
-                                                <span>
-                                                   {t(
-                                                      address.concat('meal kit')
+                                 <React.Fragment>
+                                    {state.customizableProductOptions[
+                                       productState.productIndex
+                                    ].simpleRecipeProduct.simpleRecipeProductOptions
+                                       .filter(option => option.type === 'mealKit')
+                                       .filter(option => option.isActive)
+                                       .map((option, i) => (
+                                          <tr key={i}>
+                                             <td>
+                                                {i === 0 ? (
+                                                   <span>
+                                                      {t(
+                                                         address.concat('meal kit')
+                                                      )}
+                                                   </span>
+                                                ) : (
+                                                      ''
                                                    )}
-                                                </span>
-                                             ) : (
-                                                ''
-                                             )}
-                                          </td>
-                                          <td>
-                                             {
-                                                option.simpleRecipeYield.yield
-                                                   .serving
-                                             }
-                                          </td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
+                                             </td>
+                                             <td>
+                                                {
+                                                   option.simpleRecipeYield.yield
+                                                      .serving
+                                                }
+                                             </td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>{option.price[0].discount} %</td>
+                                             <td>
+                                                $
                                              {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) -
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) *
                                                    (parseFloat(
                                                       option.price[0].discount
                                                    ) /
                                                       100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    ))}
-                                 {state.customizableProductOptions[
-                                    productState.productIndex
-                                 ].simpleRecipeProduct.simpleRecipeProductOptions
-                                    .filter(
-                                       option => option.type === 'readyToEat'
-                                    )
-                                    .filter(option => option.isActive)
-                                    .map((option, i) => (
-                                       <tr key={i}>
-                                          <td>
-                                             {i === 0 ? (
-                                                <span>
-                                                   {t(
-                                                      address.concat(
-                                                         'ready to eat'
-                                                      )
+                                                ).toFixed(2) || ''}
+                                             </td>
+                                          </tr>
+                                       ))}
+                                    {state.customizableProductOptions[
+                                       productState.productIndex
+                                    ].simpleRecipeProduct.simpleRecipeProductOptions
+                                       .filter(
+                                          option => option.type === 'readyToEat'
+                                       )
+                                       .filter(option => option.isActive)
+                                       .map((option, i) => (
+                                          <tr key={i}>
+                                             <td>
+                                                {i === 0 ? (
+                                                   <span>
+                                                      {t(
+                                                         address.concat(
+                                                            'ready to eat'
+                                                         )
+                                                      )}
+                                                   </span>
+                                                ) : (
+                                                      ''
                                                    )}
-                                                </span>
-                                             ) : (
-                                                ''
-                                             )}
-                                          </td>
-                                          <td>
-                                             {
-                                                option.simpleRecipeYield.yield
-                                                   .serving
-                                             }
-                                          </td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
+                                             </td>
+                                             <td>
+                                                {
+                                                   option.simpleRecipeYield.yield
+                                                      .serving
+                                                }
+                                             </td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>{option.price[0].discount} %</td>
+                                             <td>
+                                                $
                                              {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) -
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) *
                                                    (parseFloat(
                                                       option.price[0].discount
                                                    ) /
                                                       100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    ))}
-                              </React.Fragment>
-                           ) : (
-                              <React.Fragment>
-                                 {state.customizableProductOptions[
-                                    productState.productIndex
-                                 ].inventoryProduct.inventoryProductOptions.map(
-                                    option => (
-                                       <tr key={option.id}>
-                                          <td>{option.label}</td>
-                                          <td>{option.quantity}</td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
+                                                ).toFixed(2) || ''}
+                                             </td>
+                                          </tr>
+                                       ))}
+                                 </React.Fragment>
+                              ) : (
+                                 <React.Fragment>
+                                    {state.customizableProductOptions[
+                                       productState.productIndex
+                                    ].inventoryProduct.inventoryProductOptions.map(
+                                       option => (
+                                          <tr key={option.id}>
+                                             <td>{option.label}</td>
+                                             <td>{option.quantity}</td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>{option.price[0].discount} %</td>
+                                             <td>
+                                                $
                                              {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) -
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) *
                                                    (parseFloat(
                                                       option.price[0].discount
                                                    ) /
                                                       100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    )
-                                 )}
-                              </React.Fragment>
-                           )}
+                                                ).toFixed(2) || ''}
+                                             </td>
+                                          </tr>
+                                       )
+                                    )}
+                                 </React.Fragment>
+                              )}
                         </tbody>
                      </StyledTable>
                   </StyledTabView>
                </StyledPanel>
             </StyledLayout>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text={t(address.concat('add products'))}
-               onClick={() => openTunnel(2)}
-            />
-         )}
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat('add products'))}
+                  onClick={() => openTunnel(2)}
+               />
+            )}
       </StyledWrapper>
    )
 }

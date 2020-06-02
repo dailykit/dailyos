@@ -32,7 +32,7 @@ const ProductsTunnel = ({ close, products }) => {
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: data => {
-            toast.success('Product added!')
+            toast.success(t(address.concat('product added!')))
             close(4)
             close(3)
          },
@@ -82,13 +82,13 @@ const ProductsTunnel = ({ close, products }) => {
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-               )}
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        )}
+                     />
+                  )}
                <ListOptions>
                   {list
                      .filter(option =>

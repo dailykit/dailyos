@@ -32,7 +32,7 @@ const ProductsTypeTunnel = ({ close, open }) => {
                <Text as="h1">{t(address.concat('inventory item'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('subtitle 1')}>
-                     Bleh Bleh Bleh
+                     Items bought directly from a supplier.
                   </Trans>
                </Text>
             </SolidTile>
@@ -41,7 +41,7 @@ const ProductsTypeTunnel = ({ close, open }) => {
                <Text as="h1">{t(address.concat('sachet item'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('subtitle 2')}>
-                     Blah Blah Blah
+                     Items processed and packaged from a supplier item.
                   </Trans>
                </Text>
             </SolidTile>

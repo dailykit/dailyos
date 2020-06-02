@@ -308,3 +308,20 @@ export const UPDATE_COLLECTION = gql`
       }
    }
 `
+
+export const UPDATE_STORE_SETTING = gql`
+   mutation UpdateStoreSetting(
+      $type: String!
+      $identifier: String!
+      $value: jsonb!
+   ) {
+      updateStoreSetting(
+         where: { type: { _eq: $type }, identifier: { _eq: $identifier } }
+         _set: { value: $value }
+      ) {
+         returning {
+            value
+         }
+      }
+   }
+`

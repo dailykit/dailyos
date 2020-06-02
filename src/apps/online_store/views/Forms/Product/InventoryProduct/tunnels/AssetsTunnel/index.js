@@ -6,16 +6,18 @@ import { TunnelHeader, TunnelBody } from '../styled'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-
+import { useTranslation } from 'react-i18next'
+const address = 'apps.online_store.views.forms.product.inventoryproduct.tunnels.assetstunnel.'
 const AssetsTunnel = ({ state, closeTunnel }) => {
+   const { t } = useTranslation()
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
-         toast.success('Image added!')
+         toast.success(t(address.concat('image added!')))
          closeTunnel(8)
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
 
@@ -40,7 +42,7 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
                <span onClick={() => closeTunnel(8)}>
                   <CloseIcon color="#888D9D" size="20" />
                </span>
-               <Text as="title">Select Photo</Text>
+               <Text as="title">{t(address.concat('select photo'))}</Text>
             </div>
          </TunnelHeader>
          <TunnelBody>

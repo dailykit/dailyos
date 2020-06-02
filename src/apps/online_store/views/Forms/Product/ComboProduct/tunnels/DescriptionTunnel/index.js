@@ -29,12 +29,12 @@ export default function DescriptionTunnel({ state, close }) {
          },
       },
       onCompleted: () => {
-         toast.success('Updated!')
+         toast.success(t(address.concat('updated!')))
          close(1)
       },
       onError: error => {
          console.log(error)
-         toast.error('Error!')
+         toast.error(t(address.concat('error!')))
          setBusy(false)
       },
    })
