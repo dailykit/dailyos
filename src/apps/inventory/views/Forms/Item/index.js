@@ -154,6 +154,7 @@ export default function ItemForm() {
                   units={units}
                   close={closeTunnel}
                   open={openTunnel}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel layer={5}>
@@ -332,7 +333,13 @@ export default function ItemForm() {
                               {t(address.concat('processings'))}
                            </Text>
                            <IconButton
-                              onClick={() => openTunnel(6)}
+                              onClick={() => {
+                                 if (formState.bulkItems.length) {
+                                    openTunnel(6)
+                                 } else {
+                                    openTunnel(3)
+                                 }
+                              }}
                               type="outline"
                            >
                               <AddIcon />

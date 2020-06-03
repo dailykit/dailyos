@@ -6,6 +6,7 @@ import {
    ListSearch,
    useSingleList,
 } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 
 import { ItemContext } from '../../../../../context/item'
 
@@ -14,8 +15,6 @@ import {
    TunnelHeader,
    Spacer,
 } from '../../../../../components'
-
-import { useTranslation, Trans } from 'react-i18next'
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
 

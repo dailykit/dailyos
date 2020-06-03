@@ -19,6 +19,8 @@ import {
 } from '../styled'
 import { StyledSelect } from '../../../styled'
 
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
 export default function InfoTunnel({ close, units, formState }) {
@@ -29,11 +31,11 @@ export default function InfoTunnel({ close, units, formState }) {
    const [unitSize, setUnitSize] = useState(formState.unitSize || '')
    const [unit, setUnit] = useState(formState.unit || units[0].name)
    const [unitPrice, setUnitPrice] = useState(
-      formState.prices[0].unitPrice.value || ''
+      (formState.prices?.length && formState.prices[0].unitPrice.value) || ''
    )
-   const [leadTime, setLeadTime] = useState(formState.leadTime.value || '')
+   const [leadTime, setLeadTime] = useState(formState.leadTime?.value || '')
    const [leadTimeUnit, setLeadTimeUnit] = useState(
-      formState.leadTime.unit || 'days'
+      formState.leadTime?.unit || 'days'
    )
 
    const [errors, setErrors] = useState([])
@@ -61,45 +63,13 @@ export default function InfoTunnel({ close, units, formState }) {
                object: {
                   name: itemName,
                   sku,
-                  unitSize,
+                  unitSize: +unitSize,
                   unit,
                   prices: [{ unitPrice: { unit: '$', value: unitPrice } }],
                   leadTime: { unit: leadTimeUnit, value: leadTime },
                },
             },
          })
-      }
-   }
-
-   const handleErrors = e => {
-      if (!e.target.value.length) return
-
-      const reg = new RegExp('[0-9]+$')
-      const { value } = e.target
-
-      const match = reg.test(value)
-
-      if (match) {
-         const cleanedErrors = [...errors]
-         const index = cleanedErrors.findIndex(
-            err => err.path === e.target.name
-         )
-
-         if (index >= 0) {
-            cleanedErrors.splice(index, 1)
-         }
-         setErrors(cleanedErrors)
-      }
-
-      if (!match) {
-         toast.error(`Invalid value for field: ${e.target.name}`)
-         setErrors([
-            ...errors,
-            {
-               path: e.target.name,
-               message: `Invalid value for field: ${e.target.name}`,
-            },
-         ])
       }
    }
 
@@ -149,7 +119,9 @@ export default function InfoTunnel({ close, units, formState }) {
                            name="unit quantity"
                            value={unitSize}
                            onChange={e => setUnitSize(e.target.value)}
-                           onBlur={e => handleErrors(e)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
+                           }
                         />
                         <StyledSelect
                            name="unit"
@@ -169,7 +141,9 @@ export default function InfoTunnel({ close, units, formState }) {
                         name="Unit Price"
                         value={unitPrice}
                         onChange={e => setUnitPrice(e.target.value)}
-                        onBlur={e => handleErrors(e)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
                      />
                   </StyledInputGroup>
                </Highlight>
@@ -256,7 +230,9 @@ export default function InfoTunnel({ close, units, formState }) {
                            name="Lead Time"
                            value={leadTime}
                            onChange={e => setLeadTime(e.target.value)}
-                           onBlur={e => handleErrors(e)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
+                           }
                         />
                         <StyledSelect
                            name="unit"
