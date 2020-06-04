@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Input, Loader } from '@dailykit/ui'
+import { Input, Loader, Text } from '@dailykit/ui'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -15,7 +15,7 @@ import { FlexContainer } from '../../../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ close }) {
+export default function ConfigureSachetTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { state } = useContext(ItemContext)
 
@@ -23,34 +23,33 @@ export default function ConfigureSachetTunnel({ close }) {
    const [par, setPar] = useState('')
    const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
 
-   const [loading, setLoading] = useState(false)
-
-   const [creatSachetItem] = useMutation(CREATE_SACHET_ITEM)
-
-   const handleNext = async () => {
-      try {
-         setLoading(true)
-         const res = await creatSachetItem({
-            variables: {
-               unitSize: quantity,
-               bulkItemId: state.activeProcessing.id,
-               unit: state.unit_quantity.unit,
-               par,
-               maxLevel: maxInventoryLevel,
-            },
-         })
-
-         if (res?.data?.createSachetItem?.returning[0]?.id) {
-            close(9)
-            setLoading(false)
-            toast.info('Sachet added!')
-         }
-      } catch (error) {
+   const [creatSachetItem, { loading }] = useMutation(CREATE_SACHET_ITEM, {
+      onCompleted: () => {
          close(9)
-         setLoading(false)
+         toast.info('Sachet added!')
+      },
+      onError: error => {
+         close(9)
          console.log(error)
-         toast.error('Err! I messed something up :(')
-      }
+         toast.error('Err! creating sachets. Please try again')
+      },
+   })
+
+   const active = formState.bulkItems.find(
+      item => item.id === state.activeProcessing.id
+   )
+
+   const handleNext = () => {
+      if (!active) return toast.error('Error, Please try again.')
+      creatSachetItem({
+         variables: {
+            unitSize: quantity,
+            bulkItemId: active.id,
+            unit: active.unit,
+            par,
+            maxLevel: maxInventoryLevel,
+         },
+      })
    }
 
    if (loading) return <Loader />
@@ -68,18 +67,20 @@ export default function ConfigureSachetTunnel({ close }) {
 
          <br />
 
-         <div style={{ width: '30%' }}>
+         <div style={{ width: '30%', display: 'flex', alignItems: 'flex-end' }}>
             <Input
                type="text"
                name="quantity"
                value={quantity}
-               placeholder={`Sachet Qty (in ${state.unit_quantity.unit})`}
+               label="Sachet Quantity"
                onChange={e => {
                   const value = parseInt(e.target.value)
                   if (e.target.value.length === 0) setQuantity('')
                   if (value) setQuantity(value)
                }}
             />
+            <span style={{ width: '10px' }} />
+            <Text as="subtitle">in {active.unit}</Text>
          </div>
 
          <br />
@@ -94,7 +95,7 @@ export default function ConfigureSachetTunnel({ close }) {
                   type="text"
                   name="par"
                   value={par}
-                  placeholder={t(address.concat('set par level'))}
+                  label={t(address.concat('set par level'))}
                   onChange={e => {
                      const value = parseInt(e.target.value)
                      if (e.target.value.length === 0) setPar('')
@@ -111,7 +112,7 @@ export default function ConfigureSachetTunnel({ close }) {
                   type="text"
                   name="inventory level"
                   value={maxInventoryLevel}
-                  placeholder={t(address.concat('max inventory level'))}
+                  label={t(address.concat('max inventory level'))}
                   onChange={e => {
                      const value = parseInt(e.target.value)
                      if (e.target.value.length === 0) setMaxInventoryLevel('')

@@ -47,7 +47,7 @@ export default function AdditionalInfo({ state }) {
       } catch (error) {
          setLoading(false)
          console.log(error)
-         toast.error('Errr, I messed something up :(')
+         toast.error('Error, Please try again')
       }
    }
 

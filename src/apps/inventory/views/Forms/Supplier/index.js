@@ -118,7 +118,7 @@ export default function SupplierForm() {
          }
       } catch (error) {
          console.log(error)
-         toast.error('Errr! I messed something up :(')
+         toast.error('Error, Please try again')
       }
    }
 
@@ -357,7 +357,7 @@ function ShowAvailability({ formState }) {
             } catch (error) {
                setLoading(false)
                console.log(error)
-               toast.error('Errr! I messed something up :(')
+               toast.error('Error, Please try again')
             }
          }}
       />
