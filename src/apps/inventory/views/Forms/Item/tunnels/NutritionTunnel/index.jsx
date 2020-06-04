@@ -44,6 +44,7 @@ export default function NutritionTunnel({ close }) {
       if (!value.length) return setValid(true)
 
       if (!+value) {
+         if (value === '0') return setValid(true)
          toast.error('Invalid Input')
          setValid(false)
       }
