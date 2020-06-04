@@ -22,12 +22,21 @@ export default function SelectDerivedProcessingTunnel({
    close,
    next,
    processings,
+   formState,
 }) {
    const { t } = useTranslation()
-   const { state, dispatch } = useContext(ItemContext)
+   const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList(processings)
+   const [list, current, selectOption] = useSingleList(
+      processings.filter(proc => {
+         const match = formState.bulkItems.find(
+            item => item.processingName === proc.title
+         )
+
+         if (!match) return true
+      })
+   )
 
    return (
       <TunnelContainer>

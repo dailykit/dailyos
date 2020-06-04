@@ -18,12 +18,25 @@ import {
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
 
-export default function SupplierTunnel({ close, processings, open }) {
+export default function SupplierTunnel({
+   close,
+   processings,
+   open,
+   formState,
+}) {
    const { t } = useTranslation()
    const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList(processings)
+   const [list, current, selectOption] = useSingleList(
+      processings.filter(proc => {
+         const match = formState.bulkItems.find(
+            item => item.processingName === proc.title
+         )
+
+         if (!match) return true
+      })
+   )
 
    return (
       <>

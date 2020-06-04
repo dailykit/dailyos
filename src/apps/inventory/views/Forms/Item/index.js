@@ -149,6 +149,7 @@ export default function ItemForm() {
                         }
                      }
                   )}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
@@ -180,6 +181,7 @@ export default function ItemForm() {
                         }
                      }
                   )}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
