@@ -220,7 +220,11 @@ export default function ItemForm() {
                />
             </Tunnel>
             <Tunnel layer={9}>
-               <ConfigureSachetTunnel open={openTunnel} close={closeTunnel} />
+               <ConfigureSachetTunnel
+                  open={openTunnel}
+                  close={closeTunnel}
+                  formState={formState}
+               />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={10}>
                <NutritionTunnel open={openTunnel} close={closeTunnel} />
