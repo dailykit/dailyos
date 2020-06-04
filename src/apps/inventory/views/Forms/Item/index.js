@@ -1,4 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    ButtonTile,
    IconButton,
@@ -184,6 +185,7 @@ export default function ItemForm() {
                   units={units}
                   open={openTunnel}
                   close={closeTunnel}
+                  formState={formState}
                />
             </Tunnel>
 
@@ -334,6 +336,11 @@ export default function ItemForm() {
                            </Text>
                            <IconButton
                               onClick={() => {
+                                 if (!formState.supplier)
+                                    return toast.error(
+                                       'Select a supplier first!'
+                                    )
+
                                  if (formState.bulkItems.length) {
                                     openTunnel(6)
                                  } else {

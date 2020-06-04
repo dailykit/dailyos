@@ -28,12 +28,14 @@ import {
    TunnelHeader,
 } from '../styled'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
 export default function ConfigTunnel({ close, open, units, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
+   const [errors, setErrors] = useState([])
 
    const [parLevel, setParLevel] = useState('')
    const [maxValue, setMaxValue] = useState('')
@@ -78,21 +80,26 @@ export default function ConfigTunnel({ close, open, units, formState }) {
    )
 
    const handleSave = () => {
-      createBulkItem({
-         variables: {
-            processingName: state.processing.name,
-            itemId: formState.id,
-            unit, // string
-            yield: { value: yieldPercentage },
-            shelfLife: { unit: shelfLifeUnit, value: shelfLife },
-            parLevel: +parLevel,
-            nutritionInfo: state.processing.nutrients || {},
-            maxLevel: +maxValue,
-            labor: { value: laborTime, unit: laborTime },
-            bulkDensity: +bulkDensity,
-            allergens: state.processing.allergens,
-         },
-      })
+      if (errors.length) {
+         errors.forEach(err => toast.error(err.message))
+         toast.error(`Cannot update item information !`)
+      } else {
+         createBulkItem({
+            variables: {
+               processingName: state.processing.name,
+               itemId: formState.id,
+               unit, // string
+               yield: { value: yieldPercentage },
+               shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+               parLevel: +parLevel,
+               nutritionInfo: state.processing.nutrients || {},
+               maxLevel: +maxValue,
+               labor: { value: laborTime, unit: laborTime },
+               bulkDensity: +bulkDensity,
+               allergens: state.processing.allergens,
+            },
+         })
+      }
    }
 
    if (createBulkItemLoading) return <Loader />
@@ -122,18 +129,24 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                      <Input
                         type="text"
                         label={t(address.concat('set par level'))}
-                        name="par_level"
+                        name="par level"
                         value={parLevel}
                         onChange={e => setParLevel(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
                      />
                   </InputWrapper>
                   <InputWrapper>
                      <Input
                         type="text"
                         label={t(address.concat('max inventory level'))}
-                        name="max_inventory_level"
+                        name="max inventory level"
                         value={maxValue}
                         onChange={e => setMaxValue(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
                      />
                   </InputWrapper>
                </StyledInputGroup>
@@ -180,9 +193,12 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                         <Input
                            type="text"
                            label={t(address.concat('labour time per 100gm'))}
-                           name="labor_time"
+                           name="labor time"
                            value={laborTime}
                            onChange={e => setLaborTime(e.target.value)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
+                           }
                         />
                         <StyledSelect
                            name="unit"
@@ -201,6 +217,9 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                         name="yield"
                         value={yieldPercentage}
                         onChange={e => setYieldPercentage(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
                      />
                      <span>%</span>
                   </InputWrapper>
@@ -212,9 +231,12 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                      <Input
                         type="text"
                         label={t(address.concat('shelf life'))}
-                        name="shelf_life"
+                        name="shelf life"
                         value={shelfLife}
                         onChange={e => setShelfLife(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
                      />
                      <StyledSelect
                         name="unit"
@@ -229,9 +251,12 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                      <Input
                         type="text"
                         label={t(address.concat('bulk dnesity'))}
-                        name="bulk_density"
+                        name="bulk density"
                         value={bulkDensity}
                         onChange={e => setBulkDensity(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
                      />
                   </InputWrapper>
                </StyledInputGroup>
@@ -310,29 +335,6 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                   />
                )}
             </StyledRow>
-            {/* {!state.form_meta.shipped && (
-               <>
-                  <StyledRow>
-                     <StyledLabel>
-                        {t(
-                           address.concat('operating procedure for processing')
-                        )}
-                     </StyledLabel>
-                  </StyledRow>
-                  <StyledRow>
-                     <StyledLabel>
-                        {t(address.concat('standard operating procedure'))}
-                     </StyledLabel>
-                     <Highlight></Highlight>
-                  </StyledRow>
-                  <StyledRow>
-                     <StyledLabel>
-                        {t(address.concat('equipments needed'))}
-                     </StyledLabel>
-                     <Highlight></Highlight>
-                  </StyledRow>
-               </>
-            )} */}
          </TunnelBody>
       </>
    )
