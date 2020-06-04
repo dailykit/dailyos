@@ -473,7 +473,8 @@ export default function ItemForm() {
                               minHeight: '500px',
                            }}
                         >
-                           {state.activeProcessing?.name ? (
+                           {formState.bulkItems.length &&
+                           state.activeProcessing?.name ? (
                               <ProcessingView
                                  open={openTunnel}
                                  formState={formState}
@@ -550,6 +551,8 @@ function RealTimeView({ formState }) {
       item => item.id === activeProcessing.id
    )
 
+   if (!active) return null
+
    return (
       <FlexContainer style={{ flexWrap: 'wrap' }}>
          <DataCard
@@ -583,6 +586,8 @@ function PlannedLotView({ open, formState }) {
    const active = formState.bulkItems.find(
       item => item.id === activeProcessing.id
    )
+
+   if (!active) return null
 
    const activeSachet = active.sachetItems.find(
       item => item.id === state.activeSachet.id
