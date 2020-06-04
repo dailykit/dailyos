@@ -80,6 +80,9 @@ export default function ConfigTunnel({ close, open, units, formState }) {
    )
 
    const handleSave = () => {
+      if (!parLevel || !maxValue)
+         return toast.error('Please fill the form properly')
+
       if (errors.length) {
          errors.forEach(err => toast.error(err.message))
          toast.error(`Cannot update item information !`)

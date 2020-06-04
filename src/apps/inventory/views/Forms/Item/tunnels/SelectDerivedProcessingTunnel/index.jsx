@@ -22,7 +22,6 @@ export default function SelectDerivedProcessingTunnel({
    close,
    next,
    processings,
-   rawProcessings,
 }) {
    const { t } = useTranslation()
    const { state, dispatch } = useContext(ItemContext)
@@ -35,10 +34,7 @@ export default function SelectDerivedProcessingTunnel({
          <TunnelHeader
             title={t(address.concat('select processing'))}
             next={() => {
-               const payload = rawProcessings.find(
-                  processing => processing.id === current.id
-               )
-               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload })
+               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
                dispatch({
                   type: 'ADD_CONFIGURABLE_PROCESSING',
                   payload: current,

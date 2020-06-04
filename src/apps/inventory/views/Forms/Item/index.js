@@ -143,21 +143,12 @@ export default function ItemForm() {
                   open={openTunnel}
                   processings={processingData?.masterProcessings?.map(
                      processing => {
-                        if (
-                           formState.bulkItems.find(
-                              item =>
-                                 item.processingName ===
-                                 processing.processingName
-                           )
-                        )
-                           return null
                         return {
                            id: processing.id,
                            title: processing.name,
                         }
                      }
                   )}
-                  rawProcessings={processingData?.masterProcessings}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
@@ -183,21 +174,12 @@ export default function ItemForm() {
                   close={closeTunnel}
                   processings={processingData?.masterProcessings?.map(
                      processing => {
-                        if (
-                           formState.bulkItems.find(
-                              item =>
-                                 item.processingName ===
-                                 processing.processingName
-                           )
-                        )
-                           return null
                         return {
                            id: processing.id,
                            title: processing.name,
                         }
                      }
                   )}
-                  rawProcessings={processingData?.masterProcessings}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>

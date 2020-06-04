@@ -78,6 +78,8 @@ export default function ConfigureDerivedProcessingTunnel({
    const [bulkDensity, setBulkDensity] = useState('')
 
    const handleNext = () => {
+      if (!par || !maxInventoryLevel)
+         return toast.error('Please fill the form properly')
       if (errors.length) {
          errors.forEach(err => toast.error(err.message))
          toast.error(`Cannot update item information !`)
