@@ -142,10 +142,20 @@ export default function ItemForm() {
                   close={closeTunnel}
                   open={openTunnel}
                   processings={processingData?.masterProcessings?.map(
-                     processing => ({
-                        id: processing.id,
-                        title: processing.name,
-                     })
+                     processing => {
+                        if (
+                           formState.bulkItems.find(
+                              item =>
+                                 item.processingName ===
+                                 processing.processingName
+                           )
+                        )
+                           return null
+                        return {
+                           id: processing.id,
+                           title: processing.name,
+                        }
+                     }
                   )}
                   rawProcessings={processingData?.masterProcessings}
                />
@@ -172,10 +182,20 @@ export default function ItemForm() {
                   next={openTunnel}
                   close={closeTunnel}
                   processings={processingData?.masterProcessings?.map(
-                     processing => ({
-                        id: processing.id,
-                        title: processing.name,
-                     })
+                     processing => {
+                        if (
+                           formState.bulkItems.find(
+                              item =>
+                                 item.processingName ===
+                                 processing.processingName
+                           )
+                        )
+                           return null
+                        return {
+                           id: processing.id,
+                           title: processing.name,
+                        }
+                     }
                   )}
                   rawProcessings={processingData?.masterProcessings}
                />
@@ -409,74 +429,39 @@ export default function ItemForm() {
                                  )}
                               </Text>
 
-                              {formState.bulkItems?.length
-                                 ? formState.bulkItems?.map(procs => {
-                                      if (
-                                         procs.id ===
-                                         formState.bulkItemAsShippedId
-                                      )
-                                         return null
-                                      return (
-                                         <ProcessingButton
-                                            key={procs.id}
-                                            active={
-                                               state.activeProcessing.id ===
-                                               procs.id
-                                            }
-                                            onClick={() => {
-                                               setActive(false)
-                                               dispatch({
-                                                  type: 'SET_ACTIVE_PROCESSING',
-                                                  payload: {
-                                                     ...procs,
-                                                     name: procs.processingName,
-                                                  },
-                                               })
-                                            }}
-                                         >
-                                            <h3>{procs.processingName}</h3>
-                                            <Text as="subtitle">
-                                               {t(address.concat('on hand'))}:{' '}
-                                               {procs.onHand}
-                                               {t('units.gm')}
-                                            </Text>
-                                            <Text as="subtitle">
-                                               {t(address.concat('shelf life'))}
-                                               :{' '}
-                                               {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
-                                            </Text>
-                                         </ProcessingButton>
-                                      )
-                                   })
-                                 : state.derivedProcessings?.map(procs => (
-                                      <ProcessingButton
-                                         key={procs.id}
-                                         active={
-                                            state.activeProcessing.id ===
-                                            procs.id
-                                         }
-                                         onClick={() => {
-                                            setActive(false)
-                                            dispatch({
-                                               type: 'SET_ACTIVE_PROCESSING',
-                                               payload: {
-                                                  ...procs,
-                                                  name: procs.title,
-                                               },
-                                            })
-                                         }}
-                                      >
-                                         <h3>{procs.title}</h3>
-                                         <Text as="subtitle">
-                                            {t(address.concat('on hand'))}: 0{' '}
-                                            {t('units.gm')}
-                                         </Text>
-                                         <Text as="subtitle">
-                                            {t(address.concat('shelf life'))}:{' '}
-                                            {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
-                                         </Text>
-                                      </ProcessingButton>
-                                   ))}
+                              {formState.bulkItems?.map(procs => {
+                                 if (procs.id === formState.bulkItemAsShippedId)
+                                    return null
+                                 return (
+                                    <ProcessingButton
+                                       key={procs.id}
+                                       active={
+                                          state.activeProcessing.id === procs.id
+                                       }
+                                       onClick={() => {
+                                          setActive(false)
+                                          dispatch({
+                                             type: 'SET_ACTIVE_PROCESSING',
+                                             payload: {
+                                                ...procs,
+                                                name: procs.processingName,
+                                             },
+                                          })
+                                       }}
+                                    >
+                                       <h3>{procs.processingName}</h3>
+                                       <Text as="subtitle">
+                                          {t(address.concat('on hand'))}:{' '}
+                                          {procs.onHand}
+                                          {t('units.gm')}
+                                       </Text>
+                                       <Text as="subtitle">
+                                          {t(address.concat('shelf life'))}:{' '}
+                                          {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
+                                       </Text>
+                                    </ProcessingButton>
+                                 )
+                              })}
                            </>
                         )}
                      </Flexible>
@@ -609,49 +594,28 @@ function PlannedLotView({ open, formState }) {
             <Flexible width="1">
                <Text as="h2">{t(address.concat('sachets'))}</Text>
 
-               {formState.name
-                  ? active.sachetItems.map(sachet => {
-                       return (
-                          <ProcessingButton
-                             active={sachet.id === state.activeSachet.id}
-                             onClick={() =>
-                                dispatch({
-                                   type: 'SET_ACTIVE_SACHET',
-                                   payload: sachet,
-                                })
-                             }
-                          >
-                             <h3>
-                                {sachet.unitSize} {sachet.unit}
-                             </h3>
+               {active.sachetItems.map(sachet => {
+                  return (
+                     <ProcessingButton
+                        active={sachet.id === state.activeSachet.id}
+                        onClick={() =>
+                           dispatch({
+                              type: 'SET_ACTIVE_SACHET',
+                              payload: sachet,
+                           })
+                        }
+                     >
+                        <h3>
+                           {sachet.unitSize} {sachet.unit}
+                        </h3>
 
-                             <Text as="subtitle">
-                                {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                                {sachet.unit}
-                             </Text>
-                          </ProcessingButton>
-                       )
-                    })
-                  : activeProcessing.sachets.map(sachet => (
-                       <ProcessingButton
-                          active={sachet.id === state.activeSachet.id}
-                          onClick={() =>
-                             dispatch({
-                                type: 'SET_ACTIVE_SACHET',
-                                payload: sachet,
-                             })
-                          }
-                       >
-                          <h3>
-                             {sachet.quantity} {state.unit_quantity.unit}
-                          </h3>
-
-                          <Text as="subtitle">
-                             {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                             {state.unit_quantity.unit}
-                          </Text>
-                       </ProcessingButton>
-                    ))}
+                        <Text as="subtitle">
+                           {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                           {sachet.unit}
+                        </Text>
+                     </ProcessingButton>
+                  )
+               })}
 
                <div style={{ width: '90%', marginTop: '10px' }}>
                   <ButtonTile
