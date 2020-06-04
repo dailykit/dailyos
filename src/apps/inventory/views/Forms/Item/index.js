@@ -316,10 +316,14 @@ export default function ItemForm() {
                         <div>
                            <span>{t(address.concat('lead time'))}</span>
                            <div>
-                              <span>
-                                 {formState.leadTime?.value +
-                                    formState.leadTime?.unit}
-                              </span>
+                              {formState.leadTime?.value ? (
+                                 <span>
+                                    {formState.leadTime?.value +
+                                       formState.leadTime?.unit}
+                                 </span>
+                              ) : (
+                                 'N/A'
+                              )}
                            </div>
                         </div>
                      </div>
