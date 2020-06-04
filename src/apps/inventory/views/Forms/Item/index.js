@@ -497,8 +497,6 @@ export default function ItemForm() {
                   </FlexContainer>
                </>
             )}
-            <br />
-            <br />
          </StyledMain>
       </ItemContext.Provider>
    )
