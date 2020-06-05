@@ -1,60 +1,64 @@
-import React, { useState, useContext } from 'react'
-import { Input, Checkbox } from '@dailykit/ui'
-
-import { SupplierContext } from '../../../../context/supplier'
+import { Checkbox, Input, Loader } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 import MapView from '../../../../assets/images/mapView.png'
-
-import { TunnelContainer, TunnelHeader, Spacer } from '../../../../components'
+import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
 import { FlexContainer } from '../../styled'
-
-import { useTranslation } from 'react-i18next'
+import { UPDATE_SUPPLIER } from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.supplier.tunnels.'
 
-export default function AddressTunnel({ close }) {
+export default function AddressTunnel({ close, formState }) {
    const { t } = useTranslation()
-   const {
-      supplierState: {
-         address: {
-            address1: oldAddress1,
-            address2: oldAddress2,
-            city: oldCity,
-            zip: oldZip,
-            instructions: oldInstructions,
-            location: oldLocation,
-            isManual: oldIsManual,
-         },
-      },
-      supplierDispatch,
-   } = useContext(SupplierContext)
 
-   const [isManual, setIsManual] = useState(Boolean(oldIsManual))
-   const [location, setLocation] = useState(oldLocation || '')
-   const [address1, setAddress1] = useState(oldAddress1 || '')
-   const [address2, setAddress2] = useState(oldAddress2 || '')
-   const [city, setCity] = useState(oldCity || '')
-   const [zip, setZip] = useState(oldZip || '')
-   const [instructions, setInstructions] = useState(oldInstructions || '')
+   const [isManual, setIsManual] = useState(Boolean(formState.address.isManual))
+   const [location, setLocation] = useState(formState.address?.location || '')
+   const [address1, setAddress1] = useState(formState.address?.address1 || '')
+   const [address2, setAddress2] = useState(formState.address.address2 || '')
+   const [city, setCity] = useState(formState.address.city || '')
+   const [zip, setZip] = useState(formState.address.zip || '')
+   const [instructions, setInstructions] = useState(
+      formState.address.instructions || ''
+   )
+
+   const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
+      onCompleted: () => {
+         toast.info('Address information added!')
+         close(1)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error, Please try again')
+         close(1)
+      },
+   })
+
+   if (loading) return <Loader />
 
    return (
       <TunnelContainer>
          <TunnelHeader
-            title={t(address.concat("add address"))}
+            title={t(address.concat('add address'))}
             next={() => {
-               supplierDispatch({
-                  type: 'ADD_ADDRESS',
-                  payload: {
-                     isManual,
-                     location,
-                     address1,
-                     address2,
-                     city,
-                     zip,
-                     instructions,
+               updateSupplier({
+                  variables: {
+                     id: formState.id,
+                     object: {
+                        address: {
+                           isManual,
+                           location,
+                           address1,
+                           address2,
+                           city,
+                           zip,
+                           instructions,
+                        },
+                     },
                   },
                })
-               close(1)
             }}
             close={() => close(1)}
             nextAction="Save"
@@ -68,7 +72,7 @@ export default function AddressTunnel({ close }) {
             <div>
                <Input
                   disabled={isManual}
-                  placeholder={t(address.concat("shipping location"))}
+                  placeholder={t(address.concat('shipping location'))}
                   type="text"
                   name="location"
                   value={location}
@@ -89,7 +93,7 @@ export default function AddressTunnel({ close }) {
                   <>
                      <br />
                      <Input
-                        placeholder={t(address.concat("address line 1"))}
+                        placeholder={t(address.concat('address line 1'))}
                         type="text"
                         name="address1"
                         value={address1}
@@ -99,7 +103,7 @@ export default function AddressTunnel({ close }) {
                      />{' '}
                      <br />
                      <Input
-                        placeholder={t(address.concat("address line 2"))}
+                        placeholder={t(address.concat('address line 2'))}
                         type="text"
                         name="address2"
                         value={address2}
@@ -110,7 +114,7 @@ export default function AddressTunnel({ close }) {
                      <br />
                      <FlexContainer>
                         <Input
-                           placeholder={t(address.concat("city"))}
+                           placeholder={t(address.concat('city'))}
                            type="text"
                            name="city"
                            value={city}
@@ -118,7 +122,7 @@ export default function AddressTunnel({ close }) {
                         />
                         <div style={{ width: '10px' }} />
                         <Input
-                           placeholder={t(address.concat("zip code"))}
+                           placeholder={t(address.concat('zip code'))}
                            type="text"
                            name="zip"
                            value={zip}
@@ -127,7 +131,7 @@ export default function AddressTunnel({ close }) {
                      </FlexContainer>
                      <br />
                      <Input
-                        placeholder={t(address.concat("special instructions"))}
+                        placeholder={t(address.concat('special instructions'))}
                         type="text"
                         name="instructions"
                         value={instructions}

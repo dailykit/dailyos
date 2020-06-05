@@ -82,7 +82,7 @@ export default function SupplierForm() {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel size="lg" layer={1}>
-               <AddressTunnel close={closeTunnel} />
+               <AddressTunnel close={closeTunnel} formState={formState} />
             </Tunnel>
             <Tunnel layer={2}>
                <PersonContactTunnel close={closeTunnel} />
