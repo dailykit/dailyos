@@ -1,8 +1,10 @@
+import PhoneInput from 'react-phone-input-2'
 import { Input, Text, Loader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
+import 'react-phone-input-2/lib/style.css'
 
 import { Camera } from '../../../../assets/icons'
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
@@ -24,9 +26,6 @@ export default function PersonContactTunnel({ close, formState }) {
    const [email, setEmail] = useState(formState.contactPerson?.email || '')
    const [phoneNumber, setPhoneNumber] = useState(
       formState.contactPerson?.phoneNumber || ''
-   )
-   const [countryCode, setCountryCode] = useState(
-      formState.contactPerson?.countryCode || '+91'
    )
 
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
@@ -56,7 +55,6 @@ export default function PersonContactTunnel({ close, formState }) {
                            firstName,
                            lastName,
                            email,
-                           countryCode,
                            phoneNumber,
                         },
                      },
@@ -104,27 +102,12 @@ export default function PersonContactTunnel({ close, formState }) {
                <br />
 
                <Text as="subtitle">{t(address.concat('phone number'))}</Text>
-               <FlexContainer style={{ marginTop: '5px' }}>
-                  <select
-                     name="countryCodes"
-                     onChange={e => {
-                        setCountryCode(e.target.value)
-                     }}
-                  >
-                     <option value="+91">+91</option>
-                     <option value="+1">+1</option>
-                     <option value="+97">+97</option>
-                     <option value="+8">+8</option>
-                  </select>
-                  <div style={{ width: '10px' }} />
-                  <Input
-                     type="text"
-                     placeholder={t(address.concat('10 digit phone number'))}
-                     name="phoneNumber"
-                     value={phoneNumber}
-                     onChange={e => setPhoneNumber(e.target.value)}
-                  />
-               </FlexContainer>
+
+               <PhoneInput
+                  country="us"
+                  value={phoneNumber}
+                  onChange={phone => setPhoneNumber(phone)}
+               />
             </div>
 
             <FlexContainer
