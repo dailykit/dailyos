@@ -8,9 +8,9 @@ export default function AddressCard({ city, zip, address, image }) {
    return (
       <StyledCard>
          <FlexContainer style={{ alignItems: 'center' }}>
-            <StyledImage src={image} alt='person' />
-            <Text as='subtitle'>{address}.</Text>
-            <Text as='subtitle'>{`${city}, ${zip}`}</Text>
+            {image && <StyledImage src={image} alt="person" />}
+            {address && <Text as="subtitle">{address}.</Text>}
+            {city && zip && <Text as="subtitle">{`${city}, ${zip}`}</Text>}
          </FlexContainer>
       </StyledCard>
    )

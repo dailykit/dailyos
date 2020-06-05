@@ -53,7 +53,7 @@ export default function SupplierListing() {
       {
          onCompleted: input => {
             const supplierData = input.createSupplier.returning[0]
-            addTab(supplierData.name, 'items', supplierData.id)
+            addTab(supplierData.name, 'suppliers', supplierData.id)
             toast.success('Supplier Added!')
          },
          onError: error => {
