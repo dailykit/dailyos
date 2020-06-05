@@ -85,7 +85,7 @@ export default function SupplierForm() {
                <AddressTunnel close={closeTunnel} formState={formState} />
             </Tunnel>
             <Tunnel layer={2}>
-               <PersonContactTunnel close={closeTunnel} />
+               <PersonContactTunnel close={closeTunnel} formState={formState} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
