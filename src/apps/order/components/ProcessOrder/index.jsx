@@ -50,7 +50,7 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="WEIGHING">Weighing</option>
+                  <option value="MEALKIT">Ready to Eat</option>
                </select>
             </StyledMode>
             <span>No product selected!</span>
@@ -75,7 +75,7 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="WEIGHING">Weighing</option>
+                  <option value="MEALKIT">Ready to Eat</option>
                </select>
             </StyledMode>
             <span>{error.message}</span>
@@ -92,7 +92,7 @@ export const ProcessOrder = () => {
                onChange={e => changeView(e.target.value)}
             >
                <option value="SUMMARY">Summary</option>
-               <option value="WEIGHING">Weighing</option>
+               <option value="MEALKIT">Ready to Eat</option>
             </select>
          </StyledMode>
          <StyledHeader>

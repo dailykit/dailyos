@@ -17,7 +17,7 @@ const App = () => {
    return (
       <StyledWrapper>
          {state.current_view === 'SUMMARY' && <OrderSummary />}
-         {state.current_view === 'WEIGHING' && <ProcessOrder />}
+         {state.current_view === 'MEALKIT' && <ProcessOrder />}
          <Router>
             <div>
                <Header />

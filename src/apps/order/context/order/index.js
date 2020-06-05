@@ -16,7 +16,7 @@ const reducers = (state, { type, payload }) => {
       case 'SELECT_ORDER':
          return {
             ...state,
-            current_view: 'WEIGHING',
+            current_view: 'MEALKIT',
             product: {
                name: payload.name,
                sachet_id: payload.id,
