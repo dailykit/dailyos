@@ -14,14 +14,16 @@ const address = 'apps.inventory.views.forms.supplier.tunnels.'
 export default function AddressTunnel({ close, formState }) {
    const { t } = useTranslation()
 
-   const [isManual, setIsManual] = useState(Boolean(formState.address.isManual))
+   const [isManual, setIsManual] = useState(
+      Boolean(formState.address?.isManual)
+   )
    const [location, setLocation] = useState(formState.address?.location || '')
    const [address1, setAddress1] = useState(formState.address?.address1 || '')
-   const [address2, setAddress2] = useState(formState.address.address2 || '')
-   const [city, setCity] = useState(formState.address.city || '')
-   const [zip, setZip] = useState(formState.address.zip || '')
+   const [address2, setAddress2] = useState(formState.address?.address2 || '')
+   const [city, setCity] = useState(formState.address?.city || '')
+   const [zip, setZip] = useState(formState.address?.zip || '')
    const [instructions, setInstructions] = useState(
-      formState.address.instructions || ''
+      formState.address?.instructions || ''
    )
 
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
