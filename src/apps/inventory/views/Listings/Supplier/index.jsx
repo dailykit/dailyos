@@ -95,7 +95,7 @@ export default function SupplierListing() {
                            <TableCell>
                               {t(address.concat('person of contact'))}
                            </TableCell>
-                           <TableCell>{t(address.concat('active'))}</TableCell>
+
                            <TableCell align="right" />
                         </TableRow>
                      </TableHead>
