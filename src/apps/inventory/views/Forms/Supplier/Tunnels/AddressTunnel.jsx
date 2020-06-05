@@ -43,6 +43,8 @@ export default function AddressTunnel({ close, formState }) {
          <TunnelHeader
             title={t(address.concat('add address'))}
             next={() => {
+               if (isManual && (!address1 || !city))
+                  return toast.error('Fill the form properly')
                updateSupplier({
                   variables: {
                      id: formState.id,

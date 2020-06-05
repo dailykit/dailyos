@@ -47,6 +47,9 @@ export default function PersonContactTunnel({ close, formState }) {
          <TunnelHeader
             title={t(address.concat('add person of contact'))}
             next={() => {
+               if (!firstName || !lastName)
+                  return toast.error('Fill the form properly')
+
                updateSupplier({
                   variables: {
                      id: formState.id,
