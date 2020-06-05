@@ -49,15 +49,9 @@ const Order = () => {
          } = data.order
          setOrder(rest)
 
-         if (orderMealKitProducts.length > 0) {
-            setMealKits(orderMealKitProducts)
-         }
-         if (orderInventoryProducts.length > 0) {
-            setInventories(orderInventoryProducts)
-         }
-         if (orderReadyToEatProducts.length > 0) {
-            setReadyToEats(orderReadyToEatProducts)
-         }
+         setMealKits(orderMealKitProducts)
+         setInventories(orderInventoryProducts)
+         setReadyToEats(orderReadyToEatProducts)
       },
    })
 
@@ -101,9 +95,9 @@ const Order = () => {
             </StyledCount>
             <StyledTabs>
                <StyledTabList>
-                  <StyledTab>Meal Kits</StyledTab>
-                  <StyledTab>Inventories</StyledTab>
-                  <StyledTab>Ready To Eats</StyledTab>
+                  <StyledTab>Meal Kits ({mealkits.length})</StyledTab>
+                  <StyledTab>Inventories ({inventories.length})</StyledTab>
+                  <StyledTab>Ready To Eats ({readytoeats.length})</StyledTab>
                </StyledTabList>
                <StyledTabPanels>
                   <StyledTabPanel>
@@ -291,7 +285,7 @@ const ReadyToEats = ({ readytoeats }) => {
       }
    }, [readytoeats])
 
-   if (readytoeats.length === 0) return <div>No readytoeat products!</div>
+   if (readytoeats.length === 0) return <div>No ready to eat products!</div>
    return (
       <OrderItems>
          {readytoeats.map(readytoeat => (
