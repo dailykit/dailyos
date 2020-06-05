@@ -7,7 +7,6 @@ import {
    TableCell,
    TableHead,
    TableRow,
-   Toggle,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,7 +23,6 @@ const address = 'apps.inventory.views.listings.supplier.'
 export default function SupplierListing() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const [loading, setLoading] = useState(false)
    const [formState, setFormState] = useState([])
    const { loading: listLoading } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
       onSubscriptionData: input => {
@@ -37,29 +35,17 @@ export default function SupplierListing() {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
    }
 
-   const [deleteSupplier] = useMutation(DELETE_SUPPLIER)
-
-   const handleSupplierDelete = async id => {
-      setLoading(true)
-      try {
-         const res = await deleteSupplier({ variables: { id } })
-         const {
-            data: {
-               deleteSupplier: { affected_rows: deleteCount },
-            },
-         } = res
-
-         if (deleteCount) {
-            setLoading(false)
-            toast.info('Supplier deleted!')
-         }
-      } catch (error) {
-         setLoading(false)
+   const [deleteSupplier, { loading }] = useMutation(DELETE_SUPPLIER, {
+      onCompleted: () => {
+         toast.info('Supplier deleted!')
+      },
+      onError: error => {
+         console.log(error)
          toast.error(
             'Supplier is linked with items, hence can not be removed. To delete the supplier, remove those items first'
          )
-      }
-   }
+      },
+   })
 
    const handleSupplierEdit = id => {
       dispatch({ type: 'ADD_SUPPLIER_ID', payload: id })
@@ -112,7 +98,10 @@ export default function SupplierListing() {
                                  <IconButton
                                     onClick={e => {
                                        e.stopPropagation()
-                                       handleSupplierDelete(supplier?.id)
+
+                                       deleteSupplier({
+                                          variables: { id: supplier?.id },
+                                       })
                                     }}
                                     type="ghost"
                                  >
