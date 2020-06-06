@@ -214,7 +214,7 @@ const OrderListItem = ({ order }) => {
                                  </span>
                               </StyledServings>
                               <span>
-                                 {inventory.assemblyStatus === 'ASSEMBLED'
+                                 {inventory.assemblyStatus === 'COMPLETED'
                                     ? 1
                                     : 0}{' '}
                                  / 1
@@ -278,7 +278,7 @@ const OrderListItem = ({ order }) => {
                                  </span>
                               </StyledServings>
                               <span>
-                                 {readytoeat?.assemblyStatus === 'ASSEMBLED'
+                                 {readytoeat?.assemblyStatus === 'COMPLETED'
                                     ? 1
                                     : 0}{' '}
                                  / 1
@@ -313,7 +313,7 @@ const OrderListItem = ({ order }) => {
                                       </span>
                                    </StyledServings>
                                    <span>
-                                      {inventory.assemblyStatus === 'ASSEMBLED'
+                                      {inventory.assemblyStatus === 'COMPLETED'
                                          ? 1
                                          : 0}{' '}
                                       / 1
@@ -390,7 +390,7 @@ const OrderListItem = ({ order }) => {
                                    </StyledServings>
                                    <span>
                                       {readytoeat?.assemblyStatus ===
-                                      'ASSEMBLED'
+                                      'COMPLETED'
                                          ? 1
                                          : 0}{' '}
                                       / 1

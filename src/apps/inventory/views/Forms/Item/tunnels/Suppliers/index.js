@@ -1,51 +1,66 @@
-import React, { useContext } from 'react'
+import React from 'react'
+import { toast } from 'react-toastify'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
    useSingleList,
+   Loader,
 } from '@dailykit/ui'
-
-import { ItemContext } from '../../../../../context/item'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 
 import {
    TunnelContainer,
    TunnelHeader,
    Spacer,
 } from '../../../../../components'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { UPDATE_SUPPLIER_ITEM } from '../../../../../graphql/mutations/item'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
-export default function SupplierTunnel({
-   close,
-   suppliers,
-   open,
-   rawSuppliers,
-}) {
+export default function SupplierTunnel({ close, suppliers, formState }) {
    const { t } = useTranslation()
-   const { state, dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
    const [list, current, selectOption] = useSingleList(suppliers)
+   const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
+      onCompleted: () => {
+         // toast and close
+         toast.info('Supplier Information Added')
+         close(1)
+      },
+      onError: error => {
+         // toast and log error
+         console.log(error)
+         toast.info('Error adding the supplier. Please try again')
+         close(1)
+      },
+   })
+
+   const handleNext = () => {
+      const { id: supplierId } = current
+      updateSupplierItem({
+         variables: {
+            id: formState.id,
+            object: {
+               supplierId,
+            },
+         },
+      })
+   }
+
+   if (loading) return <Loader />
 
    return (
       <>
          <TunnelContainer>
             <TunnelHeader
-               title={t(address.concat("select supplier"))}
-               next={() => {
-                  const payload = rawSuppliers.find(
-                     supplier => supplier.id === current.id
-                  )
-                  dispatch({ type: 'SUPPLIER', payload })
-                  close(1)
-                  open(2)
-               }}
+               title={t(address.concat('select supplier'))}
+               next={handleNext}
                close={() => close(1)}
-               nextAction="Next"
+               nextAction="Save"
             />
 
             <Spacer />
@@ -60,11 +75,13 @@ export default function SupplierTunnel({
                      }}
                   />
                ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you’re looking for"))}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat('type what you’re looking for')
+                     )}
+                  />
+               )}
                <ListOptions>
                   {list
                      .filter(option =>

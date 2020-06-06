@@ -6,7 +6,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { useOrder } from '../../context'
 import { ORDER } from '../../graphql'
 import { Loader } from '../../components'
-import { UserIcon, ArrowUpIcon, ArrowDownIcon } from '../../assets/icons'
+import { UserIcon } from '../../assets/icons'
 
 import {
    Wrapper,
@@ -16,85 +16,48 @@ import {
    StyledCount,
    StyledProductTitle,
    StyledServings,
-   List,
-   ListHead,
-   ListBody,
-   ListBodyItem,
    Legend,
+   StyledTabs,
+   StyledTabList,
+   StyledTab,
+   StyledTabPanels,
+   StyledTabPanel,
 } from './styled'
+
+import MealKitProductDetails from './MealKitProductDetails'
 
 const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
-   const { selectOrder, switchView } = useOrder()
+   const { switchView } = useOrder()
    const [order, setOrder] = React.useState(null)
-   const [currentProduct, setCurrentProduct] = React.useState(null)
+   const [mealkits, setMealKits] = React.useState([])
+   const [inventories, setInventories] = React.useState([])
+   const [readytoeats, setReadyToEats] = React.useState([])
+
    const { loading, error } = useSubscription(ORDER, {
       variables: {
          id: params.id,
       },
-      onSubscriptionData: async ({ subscriptionData: { data } }) => {
+      onSubscriptionData: async ({ subscriptionData: { data = {} } }) => {
          const {
-            orderMealKitProducts: mealkits,
-            orderInventoryProducts: inventories,
-            orderReadyToEatProducts: readytoeats,
+            orderMealKitProducts,
+            orderInventoryProducts,
+            orderReadyToEatProducts,
             ...rest
          } = data.order
-         await setOrder({
-            ...rest,
-            mealkits,
-            inventories,
-            readytoeats,
-         })
-         if (mealkits.length > 0) {
-            setCurrentProduct({
-               id: mealkits[0].id,
-               type: 'Meal Kit',
-            })
-            if (mealkits[0].orderSachets.length > 0) {
-               selectOrder(
-                  mealkits[0].orderSachets[0].id,
-                  mealkits[0].simpleRecipeProduct.name
-               )
-            }
-         } else if (inventories.length > 0) {
-            setCurrentProduct({
-               id: inventories[0].id,
-               type: 'Inventory',
-            })
-            switchView('SUMMARY')
-         } else if (readytoeats.length > 0) {
-            setCurrentProduct({
-               id: readytoeats[0].id,
-               type: 'Ready to Eat',
-            })
-            switchView('SUMMARY')
-         }
+         setOrder(rest)
+
+         setMealKits(orderMealKitProducts)
+         setInventories(orderInventoryProducts)
+         setReadyToEats(orderReadyToEatProducts)
       },
    })
 
    React.useEffect(() => {
       return () => switchView('SUMMARY')
    }, [])
-
-   const selectProduct = (id, type) => {
-      setCurrentProduct({
-         id,
-         type,
-      })
-      if (type === 'Meal Kit') {
-         const product = order.mealkits.find(mealkit => id === mealkit.id)
-         if (product.orderSachets.length > 0) {
-            selectOrder(
-               product.orderSachets[0].id,
-               product.simpleRecipeProduct.name
-            )
-         }
-      } else {
-         switchView('SUMMARY')
-      }
-   }
 
    if (loading || !order)
       return (
@@ -108,157 +71,127 @@ const Order = () => {
       <Wrapper>
          <Header>
             <h3>
-               {t(address.concat('order no'))}: ORD{order.id}
+               <span>{t(address.concat('order no'))}</span>: ORD{order.id}
             </h3>
             <section>
                <section>
-                  <span>{t(address.concat('ordered'))}</span>
+                  <span>{t(address.concat('ordered'))}:&nbsp;</span>
                   <span>Feb 12, 2020</span>
                </section>
                <section>
-                  <span>{t(address.concat('expected dispatch'))}</span>
+                  <span>{t(address.concat('expected dispatch'))}:&nbsp;</span>
                   <span>Feb 12, 2020</span>
                </section>
                <section>
-                  <span>{t(address.concat('delivery'))}</span>
+                  <span>{t(address.concat('delivery'))}:&nbsp;</span>
                   <span>Feb 12, 2020</span>
                </section>
             </section>
          </Header>
          <section>
             <StyledCount>
-               0 /{' '}
-               {order.inventories.length +
-                  order.mealkits.length +
-                  order.readytoeats.length}
+               0 / {inventories.length + mealkits.length + readytoeats.length}
                &nbsp;{t(address.concat('items'))}
             </StyledCount>
-            <OrderItems>
-               {order.inventories &&
-                  order.inventories.map(inventory => (
-                     <OrderItem
-                        key={inventory.id}
-                        onClick={() => selectProduct(inventory.id, 'Inventory')}
-                        isActive={
-                           currentProduct?.id === inventory.id &&
-                           currentProduct?.type === 'Inventory'
-                        }
-                     >
-                        <StyledProductTitle>
-                           {inventory?.inventoryProduct?.name}
-                           &nbsp;-&nbsp;
-                           {inventory?.comboProduct?.name}(
-                           {inventory?.comboProductComponent?.label})
-                        </StyledProductTitle>
-                        <section>
-                           <span>
-                              {inventory.assemblyStatus === 'ASSEMBLED' ? 1 : 0}{' '}
-                              / 1
-                           </span>
-                           <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>
-                                 {inventory?.inventoryProductOption?.quantity}
-                                 &nbsp;-&nbsp;
-                                 {inventory?.inventoryProductOption?.label}
-                              </span>
-                           </StyledServings>
-                        </section>
-                     </OrderItem>
-                  ))}
-               {order.mealkits &&
-                  order.mealkits.map(mealkit => (
-                     <OrderItem
-                        key={mealkit.id}
-                        onClick={() => selectProduct(mealkit.id, 'Meal Kit')}
-                        isActive={
-                           currentProduct?.id === mealkit.id &&
-                           currentProduct?.type === 'Meal Kit'
-                        }
-                     >
-                        <div>
-                           <StyledProductTitle>
-                              {mealkit?.simpleRecipeProduct?.name}
-                              &nbsp;-&nbsp;
-                              {mealkit?.comboProduct?.name}(
-                              {mealkit?.comboProductComponent?.label})
-                           </StyledProductTitle>
-                        </div>
-                        <section>
-                           <span>
-                              {
-                                 mealkit?.orderSachets.filter(
-                                    sachet => sachet.isAssembled
-                                 ).length
-                              }
-                              &nbsp;/&nbsp;
-                              {
-                                 mealkit?.orderSachets.filter(
-                                    sachet => sachet.status === 'COMPLETED'
-                                 ).length
-                              }
-                              &nbsp; / {mealkit?.orderSachets?.length}
-                           </span>
-                           <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>
-                                 {
-                                    mealkit?.simpleRecipeProductOption
-                                       ?.simpleRecipeYield?.yield?.serving
-                                 }
-                                 &nbsp; {t(address.concat('servings'))}
-                              </span>
-                           </StyledServings>
-                        </section>
-                     </OrderItem>
-                  ))}
-               {order.readytoeats &&
-                  order.readytoeats.map(readytoeat => (
-                     <OrderItem
-                        key={readytoeat.id}
-                        onClick={() =>
-                           selectProduct(readytoeat.id, 'Ready to Eat')
-                        }
-                        isActive={
-                           currentProduct?.id === readytoeat.id &&
-                           currentProduct?.type === 'Ready to Eat'
-                        }
-                     >
-                        <div>
-                           <StyledProductTitle>
-                              {readytoeat?.comboProduct?.name}&nbsp;-&nbsp;
-                              {readytoeat?.comboProduct?.name}(
-                              {readytoeat?.comboProductComponent?.label})
-                           </StyledProductTitle>
-                        </div>
-                        <section>
-                           <span>
-                              {readytoeat?.assemblyStatus === 'ASSEMBLED'
-                                 ? 1
-                                 : 0}{' '}
-                              / 1
-                           </span>
-                           <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>
-                                 {
-                                    readytoeat?.simpleRecipeProductOption
-                                       ?.simpleRecipeYield?.yield?.serving
-                                 }
-                                 &nbsp; {t(address.concat('servings'))}
-                              </span>
-                           </StyledServings>
-                        </section>
-                     </OrderItem>
-                  ))}
-            </OrderItems>
+            <StyledTabs>
+               <StyledTabList>
+                  <StyledTab>Meal Kits ({mealkits.length})</StyledTab>
+                  <StyledTab>Inventories ({inventories.length})</StyledTab>
+                  <StyledTab>Ready To Eats ({readytoeats.length})</StyledTab>
+               </StyledTabList>
+               <StyledTabPanels>
+                  <StyledTabPanel>
+                     <MealKits mealkits={mealkits} />
+                  </StyledTabPanel>
+                  <StyledTabPanel>
+                     <Inventories inventories={inventories} />
+                  </StyledTabPanel>
+                  <StyledTabPanel>
+                     <ReadyToEats readytoeats={readytoeats} />
+                  </StyledTabPanel>
+               </StyledTabPanels>
+            </StyledTabs>
          </section>
+      </Wrapper>
+   )
+}
+
+export default Order
+
+const MealKits = ({ mealkits }) => {
+   const { t } = useTranslation()
+   const { selectMealKit, switchView } = useOrder()
+   const [current, setCurrent] = React.useState(null)
+
+   const selectProduct = id => {
+      setCurrent(id)
+      const product = mealkits.find(mealkit => id === mealkit.id)
+      if (product.orderSachets.length > 0) {
+         selectMealKit(
+            product.orderSachets[0].id,
+            product.simpleRecipeProduct.name
+         )
+      } else {
+         switchView('SUMMARY')
+      }
+   }
+
+   React.useEffect(() => {
+      if (mealkits.length > 0) {
+         const [product] = mealkits
+         selectProduct(product.id)
+      }
+   }, [mealkits])
+
+   if (mealkits.length === 0) return <div>No mealkit products!</div>
+   return (
+      <>
+         <OrderItems>
+            {mealkits.map(mealkit => (
+               <OrderItem
+                  key={mealkit.id}
+                  isActive={current === mealkit.id}
+                  onClick={() => selectProduct(mealkit.id)}
+               >
+                  <div>
+                     <StyledProductTitle>
+                        {mealkit?.simpleRecipeProduct?.name}
+                        &nbsp;-&nbsp;
+                        {mealkit?.comboProduct?.name}(
+                        {mealkit?.comboProductComponent?.label})
+                     </StyledProductTitle>
+                  </div>
+                  <section>
+                     <span>
+                        {
+                           mealkit?.orderSachets.filter(
+                              sachet => sachet.isAssembled
+                           ).length
+                        }
+                        &nbsp;/&nbsp;
+                        {
+                           mealkit?.orderSachets.filter(
+                              sachet => sachet.status === 'COMPLETED'
+                           ).length
+                        }
+                        &nbsp; / {mealkit?.orderSachets?.length}
+                     </span>
+                     <StyledServings>
+                        <span>
+                           <UserIcon size={16} color="#555B6E" />
+                        </span>
+                        <span>
+                           {
+                              mealkit?.simpleRecipeProductOption
+                                 ?.simpleRecipeYield?.yield?.serving
+                           }
+                           &nbsp; {t(address.concat('servings'))}
+                        </span>
+                     </StyledServings>
+                  </section>
+               </OrderItem>
+            ))}
+         </OrderItems>
          <Legend>
             <h2>{t(address.concat('legends'))}</h2>
             <section>
@@ -274,148 +207,129 @@ const Order = () => {
                <span>{t(address.concat('done'))}</span>
             </section>
          </Legend>
-         {currentProduct?.type === 'Meal Kit' && (
-            <ProductDetails
-               product={order.mealkits.find(
-                  ({ id }) => id === currentProduct?.id
-               )}
+         {current && (
+            <MealKitProductDetails
+               product={mealkits.find(({ id }) => id === current)}
             />
          )}
-      </Wrapper>
+      </>
    )
 }
 
-export default Order
+const Inventories = ({ inventories }) => {
+   const { switchView, selectInventory } = useOrder()
+   const [current, setCurrent] = React.useState(null)
 
-const ProductDetails = ({ product }) => {
-   const { selectOrder } = useOrder()
-   const { t } = useTranslation()
-   const [currentPanel, setCurrentPanel] = React.useState(null)
-   React.useEffect(() => {
-      if ('id' in product && product.orderSachets.length > 0) {
-         setCurrentPanel(product?.orderSachets[0]?.id)
+   const selectProduct = id => {
+      setCurrent(id)
+      const product = inventories.find(mealkit => id === mealkit.id)
+      if ('id' in product) {
+         selectInventory(product.id)
+      } else {
+         switchView('SUMMARY')
       }
-   }, [product])
-
-   const selectSachet = id => {
-      selectOrder(id, product.simpleRecipeProduct.name)
-      setCurrentPanel(currentPanel === id ? '' : id)
    }
 
+   React.useEffect(() => {
+      if (inventories.length > 0) {
+         const [product] = inventories
+         setCurrent(product.id)
+      }
+   }, [inventories])
+
+   if (inventories.length === 0) return <div>No inventories products!</div>
    return (
-      <List>
-         <ListHead>
-            <span>{t(address.concat('ingredients'))}</span>
-            <span>{t(address.concat('supplier item'))}</span>
-            <span>{t(address.concat('processing'))}</span>
-            <span>{t(address.concat('quantity'))}</span>
-            <span />
-         </ListHead>
-         <ListBody>
-            {product.orderSachets.map(item => (
-               <ListBodyItem
-                  key={item.id}
-                  onClick={() => selectSachet(item.id)}
-                  isOpen={currentPanel === item.id}
-                  variant={{
-                     isLabelled: item.isLabelled,
-                     isPortioned: item.isPortioned,
-                  }}
-               >
-                  <header>
-                     <span>{item.ingredientName}</span>
+      <OrderItems>
+         {inventories.map(inventory => (
+            <OrderItem
+               key={inventory.id}
+               isActive={current === inventory.id}
+               onClick={() => selectProduct(inventory.id)}
+            >
+               <StyledProductTitle>
+                  {inventory?.inventoryProduct?.name}
+                  &nbsp;-&nbsp;
+                  {inventory?.comboProduct?.name}(
+                  {inventory?.comboProductComponent?.label})
+               </StyledProductTitle>
+               <section>
+                  <span>
+                     {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+                  </span>
+                  <StyledServings>
                      <span>
-                        {(item.bulkItemId &&
-                           item?.bulkItem?.supplierItem?.name) ||
-                           ''}
-                        {(item.sachetItemId &&
-                           item?.sachetItem?.bulkItem?.supplierItem?.name) ||
-                           ''}
-                        {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
+                        <UserIcon size={16} color="#555B6E" />
                      </span>
-                     <span>{item.processingName}</span>
-                     <span>{item.quantity}</span>
-                     <button
-                        type="button"
-                        onClick={() => selectSachet(item.id)}
-                     >
-                        {currentPanel === item.id ? (
-                           <ArrowDownIcon />
-                        ) : (
-                           <ArrowUpIcon />
-                        )}
-                     </button>
-                  </header>
-                  <main>
-                     <section>
-                        <span>{t(address.concat('sachet id'))}</span>
-                        <span>{item.id}</span>
-                     </section>
-                     <section>
-                        <span>{t(address.concat('packaging name'))}</span>
-                        <span>{item?.packaging?.name || 'N/A'}</span>
-                     </section>
-                     <section>
-                        <span>{t(address.concat('label template'))}</span>
-                        <span>
-                           {item?.labelUri ? (
-                              <a href={item.labelUri} title="Label URI">
-                                 {t(address.concat('link'))}
-                              </a>
-                           ) : (
-                              'N/A'
-                           )}
-                        </span>
-                     </section>
-                     <section>
-                        <span>SOP</span>
-                        <span>
-                           {(item.bulkItemId && item?.bulkItem?.sop) || ''}
-                           {(item.sachetItemId &&
-                              item?.sachetItem?.bulkItem?.sop) ||
-                              ''}
-                           {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
-                     </section>
-                     <section>
-                        <span>{t(address.concat('bulk density'))}</span>
-                        <span>
-                           {(item.bulkItemId && item?.bulkItem?.bulkDensity) ||
-                              ''}
-                           {(item.sachetItemId &&
-                              item?.sachetItem?.bulkItem?.bulkDensity) ||
-                              ''}
-                           {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
-                     </section>
-                     <section>
-                        <span>{t(address.concat('shelf life'))}</span>
-                        <span>
-                           {item.bulkItemId && item?.bulkItem?.shelfLife
-                              ? `${item?.bulkItem?.shelfLife.value} ${item?.bulkItem?.shelfLife.unit}`
-                              : ''}
-                           {item.sachetItemId &&
-                           item?.sachetItem?.bulkItem?.shelfLife
-                              ? `${item?.sachetItem?.bulkItem?.shelfLife.value} ${item?.sachetItem?.bulkItem?.shelfLife.unit}`
-                              : ''}
-                           {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
-                     </section>
-                     <section>
-                        <span>{t(address.concat('yield'))}</span>
-                        <span>
-                           {(item.bulkItemId && item?.bulkItem?.yield?.value) ||
-                              ''}
-                           {(item.sachetItemId &&
-                              item?.sachetItem?.bulkItem?.yield?.value) ||
-                              ''}
-                           {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
-                     </section>
-                  </main>
-               </ListBodyItem>
-            ))}
-         </ListBody>
-      </List>
+                     <span>
+                        {inventory?.inventoryProductOption?.quantity}
+                        &nbsp;-&nbsp;
+                        {inventory?.inventoryProductOption?.label}
+                     </span>
+                  </StyledServings>
+               </section>
+            </OrderItem>
+         ))}
+      </OrderItems>
+   )
+}
+
+const ReadyToEats = ({ readytoeats }) => {
+   const { t } = useTranslation()
+   const { switchView, selectReadyToEat } = useOrder()
+   const [current, setCurrent] = React.useState(null)
+
+   const selectProduct = id => {
+      setCurrent(id)
+      const product = readytoeats.find(mealkit => id === mealkit.id)
+      if ('id' in product) {
+         selectReadyToEat(product.id)
+      } else {
+         switchView('SUMMARY')
+      }
+   }
+
+   React.useEffect(() => {
+      if (readytoeats.length > 0) {
+         const [product] = readytoeats
+         setCurrent(product.id)
+      }
+   }, [readytoeats])
+
+   if (readytoeats.length === 0) return <div>No ready to eat products!</div>
+   return (
+      <OrderItems>
+         {readytoeats.map(readytoeat => (
+            <OrderItem
+               key={readytoeat.id}
+               onClick={() => selectProduct(readytoeat.id)}
+               isActive={current === readytoeat.id}
+            >
+               <div>
+                  <StyledProductTitle>
+                     {readytoeat?.comboProduct?.name}
+                     &nbsp;(
+                     {readytoeat?.comboProductComponent?.label})
+                  </StyledProductTitle>
+               </div>
+               <section>
+                  <span>
+                     {readytoeat?.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
+                  </span>
+                  <StyledServings>
+                     <span>
+                        <UserIcon size={16} color="#555B6E" />
+                     </span>
+                     <span>
+                        {
+                           readytoeat?.simpleRecipeProductOption
+                              ?.simpleRecipeYield?.yield?.serving
+                        }
+                        &nbsp; {t(address.concat('servings'))}
+                     </span>
+                  </StyledServings>
+               </section>
+            </OrderItem>
+         ))}
+      </OrderItems>
    )
 }

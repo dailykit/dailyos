@@ -7,3 +7,5 @@ export { OrderListItem, Button, Tabs, Loader }
 export * from './MetricItem'
 export * from './OrderSummary'
 export * from './ProcessOrder'
+export * from './ProcessInventory'
+export * from './ProcessReadyToEat'

@@ -19,13 +19,13 @@ import { WeighIcon } from '../../assets/icons'
 
 export const ProcessOrder = () => {
    const {
-      state: { current_view, product },
+      state: { current_view, mealkit },
       switchView,
    } = useOrder()
    const [sachet, setSachet] = React.useState(null)
    const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
       variables: {
-         id: product.sachet_id,
+         id: mealkit.sachet_id,
       },
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
@@ -38,7 +38,7 @@ export const ProcessOrder = () => {
       switchView(view)
    }
 
-   if (!product.sachet_id) {
+   if (!mealkit.sachet_id) {
       return (
          <Wrapper>
             <StyledMode>
@@ -50,7 +50,9 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="WEIGHING">Weighing</option>
+                  <option value="MEALKIT">Meal Kit</option>
+                  <option value="INVENTORY">Inventory</option>
+                  <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
             <span>No product selected!</span>
@@ -75,7 +77,9 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="WEIGHING">Weighing</option>
+                  <option value="MEALKIT">Meal Kit</option>
+                  <option value="INVENTORY">Inventory</option>
+                  <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
             <span>{error.message}</span>
@@ -92,11 +96,13 @@ export const ProcessOrder = () => {
                onChange={e => changeView(e.target.value)}
             >
                <option value="SUMMARY">Summary</option>
-               <option value="WEIGHING">Weighing</option>
+               <option value="MEALKIT">Meal Kit</option>
+               <option value="INVENTORY">Inventory</option>
+               <option value="READYTOEAT">Ready to Eat</option>
             </select>
          </StyledMode>
          <StyledHeader>
-            <h3>{product?.name}</h3>
+            <h3>{mealkit?.name}</h3>
          </StyledHeader>
          <StyledMain>
             <section>

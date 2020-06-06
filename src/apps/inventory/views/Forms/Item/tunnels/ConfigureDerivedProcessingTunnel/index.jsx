@@ -33,6 +33,7 @@ import {
 
 import { StyledSelect } from '../../../styled'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
@@ -41,6 +42,7 @@ export default function ConfigureDerivedProcessingTunnel({
    close,
    open,
    units,
+   formState,
 }) {
    const { t } = useTranslation()
    const {
@@ -49,7 +51,19 @@ export default function ConfigureDerivedProcessingTunnel({
       dispatch,
    } = useContext(ItemContext)
 
-   const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
+   const [errors, setErrors] = useState([])
+
+   const [createBulkItem, { loading }] = useMutation(CREATE_BULK_ITEM, {
+      onCompleted: () => {
+         close(7)
+         toast.success('Bulk Item Created!')
+      },
+      onError: error => {
+         console.log(error)
+         close(7)
+         toast.error('Error! make sure you have filled the form properly')
+      },
+   })
 
    const [unit, setUnit] = useState('gram')
    const [par, setPar] = useState('')
@@ -63,15 +77,17 @@ export default function ConfigureDerivedProcessingTunnel({
    const [shelfLifeUnit, setShelfLifeUnit] = useState('hours')
    const [bulkDensity, setBulkDensity] = useState('')
 
-   const [loading, setLoading] = useState(false)
-
-   const handleNext = async () => {
-      try {
-         setLoading(true)
-         const res = await createBulkItem({
+   const handleNext = () => {
+      if (!par || !maxInventoryLevel)
+         return toast.error('Please fill the form properly')
+      if (errors.length) {
+         errors.forEach(err => toast.error(err.message))
+         toast.error(`Cannot update item information !`)
+      } else {
+         createBulkItem({
             variables: {
                processingName: state.configurable.title,
-               itemId: state.id,
+               itemId: formState.id,
                unit,
                yield: { value: yieldPercentage },
                shelfLife: { unit: shelfLifeUnit, value: shelfLife },
@@ -83,31 +99,6 @@ export default function ConfigureDerivedProcessingTunnel({
                allergens: state.configurable.allergens,
             },
          })
-
-         if (res?.data?.createBulkItem) {
-            setLoading(false)
-            dispatch({
-               type: 'CONFIGURE_DERIVED_PROCESSING',
-               payload: {
-                  id: res?.data?.createBulkItem?.returning[0].id,
-                  par,
-                  unit,
-                  maxInventoryLevel,
-
-                  laborTime,
-                  laborUnit,
-                  yieldPercentage,
-                  shelfLife,
-                  shelfLifeUnit,
-                  bulkDensity,
-               },
-            })
-         }
-         close(7)
-         toast.success('Bulk Item Created!')
-      } catch (error) {
-         setLoading(false)
-         toast.error('Err! make sure you have filled the form properly')
       }
    }
 
@@ -129,28 +120,21 @@ export default function ConfigureDerivedProcessingTunnel({
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('set par level'))}
-                     name="par_level"
+                     label={t(address.concat('set par level'))}
+                     name="par level"
                      value={par}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (e.target.value.length === 0) setPar('')
-                        if (value) setPar(value)
-                     }}
+                     onChange={e => setPar(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
                </InputWrapper>
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('max inventory level'))}
-                     name="max_inventory_level"
+                     label={t(address.concat('max inventory level'))}
+                     name="max inventory level"
                      value={maxInventoryLevel}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (e.target.value.length === 0)
-                           setMaxInventoryLevel('')
-                        if (value) setMaxInventoryLevel(value)
-                     }}
+                     onChange={e => setMaxInventoryLevel(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
                </InputWrapper>
             </StyledInputGroup>
@@ -193,14 +177,11 @@ export default function ConfigureDerivedProcessingTunnel({
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('labour time per 100gm'))}
-                     name="labor_time"
+                     label={t(address.concat('labour time per 100gm'))}
+                     name="labor time"
                      value={laborTime}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (e.target.value.length === 0) setLaborTime('')
-                        if (value) setLaborTime(value)
-                     }}
+                     onChange={e => setLaborTime(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
                   <StyledSelect
                      name="unit"
@@ -215,14 +196,11 @@ export default function ConfigureDerivedProcessingTunnel({
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('percentage of yield'))}
+                     label={t(address.concat('percentage of yield'))}
                      name="yield"
                      value={yieldPercentage}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (e.target.value.length === 0) setYieldPercentage('')
-                        if (value) setYieldPercentage(value)
-                     }}
+                     onChange={e => setYieldPercentage(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
                   <span>%</span>
                </InputWrapper>
@@ -233,14 +211,11 @@ export default function ConfigureDerivedProcessingTunnel({
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('shelf life'))}
-                     name="shelf_life"
+                     label={t(address.concat('shelf life'))}
+                     name="shelf life"
                      value={shelfLife}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (e.target.value.length === 0) setShelfLife('')
-                        if (value) setShelfLife(value)
-                     }}
+                     onChange={e => setShelfLife(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
                   <StyledSelect
                      name="unit"
@@ -254,14 +229,11 @@ export default function ConfigureDerivedProcessingTunnel({
                <InputWrapper>
                   <Input
                      type="text"
-                     placeholder={t(address.concat('bulk density'))}
-                     name="bulk_density"
+                     label={t(address.concat('bulk density'))}
+                     name="bulk density"
                      value={bulkDensity}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (e.target.value.length === 0) setBulkDensity('')
-                        if (value) setBulkDensity(value)
-                     }}
+                     onChange={e => setBulkDensity(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
                </InputWrapper>
             </StyledInputGroup>
