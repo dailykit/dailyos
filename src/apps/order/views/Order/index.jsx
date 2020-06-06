@@ -120,14 +120,14 @@ export default Order
 
 const MealKits = ({ mealkits }) => {
    const { t } = useTranslation()
-   const { selectOrder, switchView } = useOrder()
+   const { selectMealKit, switchView } = useOrder()
    const [current, setCurrent] = React.useState(null)
 
    const selectProduct = id => {
       setCurrent(id)
       const product = mealkits.find(mealkit => id === mealkit.id)
       if (product.orderSachets.length > 0) {
-         selectOrder(
+         selectMealKit(
             product.orderSachets[0].id,
             product.simpleRecipeProduct.name
          )
@@ -217,12 +217,17 @@ const MealKits = ({ mealkits }) => {
 }
 
 const Inventories = ({ inventories }) => {
-   const { switchView } = useOrder()
+   const { switchView, selectInventory } = useOrder()
    const [current, setCurrent] = React.useState(null)
 
    const selectProduct = id => {
       setCurrent(id)
-      switchView('SUMMARY')
+      const product = inventories.find(mealkit => id === mealkit.id)
+      if ('id' in product) {
+         selectInventory(product.id)
+      } else {
+         switchView('SUMMARY')
+      }
    }
 
    React.useEffect(() => {
@@ -270,12 +275,17 @@ const Inventories = ({ inventories }) => {
 
 const ReadyToEats = ({ readytoeats }) => {
    const { t } = useTranslation()
-   const { switchView } = useOrder()
+   const { switchView, selectReadyToEat } = useOrder()
    const [current, setCurrent] = React.useState(null)
 
    const selectProduct = id => {
       setCurrent(id)
-      switchView('SUMMARY')
+      const product = readytoeats.find(mealkit => id === mealkit.id)
+      if ('id' in product) {
+         selectReadyToEat(product.id)
+      } else {
+         switchView('SUMMARY')
+      }
    }
 
    React.useEffect(() => {
@@ -297,8 +307,7 @@ const ReadyToEats = ({ readytoeats }) => {
                <div>
                   <StyledProductTitle>
                      {readytoeat?.comboProduct?.name}
-                     &nbsp;-&nbsp;
-                     {readytoeat?.comboProduct?.name}(
+                     &nbsp;(
                      {readytoeat?.comboProductComponent?.label})
                   </StyledProductTitle>
                </div>

@@ -10,7 +10,12 @@ import Main from './sections/Main'
 
 // Styled
 import { StyledWrapper } from './styled'
-import { OrderSummary, ProcessOrder } from './components'
+import {
+   OrderSummary,
+   ProcessOrder,
+   ProcessInventory,
+   ProcessReadyToEat,
+} from './components'
 
 const App = () => {
    const { state } = useOrder()
@@ -18,6 +23,8 @@ const App = () => {
       <StyledWrapper>
          {state.current_view === 'SUMMARY' && <OrderSummary />}
          {state.current_view === 'MEALKIT' && <ProcessOrder />}
+         {state.current_view === 'INVENTORY' && <ProcessInventory />}
+         {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
          <Router>
             <div>
                <Header />

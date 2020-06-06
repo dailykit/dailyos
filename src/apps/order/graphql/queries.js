@@ -358,3 +358,77 @@ export const FETCH_ORDER_SACHET = gql`
       }
    }
 `
+export const FETCH_INVENTORY = gql`
+   subscription orderInventoryProduct($id: Int!) {
+      orderInventoryProduct(id: $id) {
+         id
+         quantity
+         assemblyStatus
+         inventoryProduct {
+            name
+            sachetItem {
+               id
+               unit
+               unitSize
+               onHand
+               bulkItem {
+                  processingName
+                  supplierItem {
+                     name
+                     supplier {
+                        name
+                     }
+                  }
+               }
+            }
+            supplierItem {
+               id
+               name
+               unit
+               unitSize
+               supplier {
+                  name
+               }
+               bulkItemAsShipped {
+                  processingName
+                  onHand
+               }
+            }
+         }
+         comboProduct {
+            name
+         }
+         comboProductComponent {
+            label
+         }
+         customizableProduct {
+            name
+         }
+      }
+   }
+`
+
+export const FETCH_READYTOEAT = gql`
+   subscription orderReadyToEatProduct($id: Int!) {
+      orderReadyToEatProduct(id: $id) {
+         assemblyStatus
+         comboProduct {
+            name
+         }
+         comboProductComponent {
+            label
+         }
+         customizableProduct {
+            name
+         }
+         simpleRecipeProduct {
+            name
+         }
+         simpleRecipeProductOption {
+            simpleRecipeYield {
+               yield
+            }
+         }
+      }
+   }
+`

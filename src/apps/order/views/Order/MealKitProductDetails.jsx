@@ -8,7 +8,7 @@ import { List, ListHead, ListBody, ListBodyItem } from './styled'
 const address = 'apps.order.views.order.'
 
 const ProductDetails = ({ product }) => {
-   const { selectOrder } = useOrder()
+   const { selectMealKit } = useOrder()
    const { t } = useTranslation()
    const [currentPanel, setCurrentPanel] = React.useState(null)
    React.useEffect(() => {
@@ -18,7 +18,7 @@ const ProductDetails = ({ product }) => {
    }, [product])
 
    const selectSachet = id => {
-      selectOrder(id, product.simpleRecipeProduct.name)
+      selectMealKit(id, product.simpleRecipeProduct.name)
       setCurrentPanel(currentPanel === id ? '' : id)
    }
 
