@@ -5,14 +5,9 @@ import { useMutation } from '@apollo/react-hooks'
 import { TextButton, Input, Loader } from '@dailykit/ui'
 
 // Mutations
-import {
-   CREATE_SUPPLIER_ITEM,
-   UPDATE_SUPPLIER_ITEM,
-} from '../../../../../graphql'
+import { UPDATE_SUPPLIER_ITEM } from '../../../../../graphql'
 
 import { CloseIcon } from '../../../../../assets/icons'
-
-import { ItemContext } from '../../../../../context/item'
 
 import {
    TunnelHeader,
@@ -24,97 +19,57 @@ import {
 } from '../styled'
 import { StyledSelect } from '../../../styled'
 
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({ close, next, units }) {
+export default function InfoTunnel({ close, units, formState }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(ItemContext)
-   const [loading, setLoading] = useState(false)
 
-   const [createSupplierItem] = useMutation(CREATE_SUPPLIER_ITEM)
-   const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM)
+   const [itemName, setItemName] = useState(formState.name || '')
+   const [sku, setSku] = useState(formState.sku || '')
+   const [unitSize, setUnitSize] = useState(formState.unitSize || '')
+   const [unit, setUnit] = useState(formState.unit || units[0].name)
+   const [unitPrice, setUnitPrice] = useState(
+      (formState.prices?.length && formState.prices[0].unitPrice.value) || ''
+   )
+   const [leadTime, setLeadTime] = useState(formState.leadTime?.value || '')
+   const [leadTimeUnit, setLeadTimeUnit] = useState(
+      formState.leadTime?.unit || 'days'
+   )
 
-   const handleNext = async () => {
-      try {
-         setLoading(true)
+   const [errors, setErrors] = useState([])
 
-         if (!state.title || !state.unit_quantity.value) {
-            setLoading(false)
-            return toast.error('Please fill the form properly')
-         }
+   const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
+      onCompleted: () => {
+         close(2)
+         toast.info('Item information updated')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error adding item information. Please try again')
+         close(2)
+      },
+   })
 
-         if (state.id) {
-            // update
-            const resp = await updateSupplierItem({
-               variables: {
-                  id: state.id,
-                  object: {
-                     name: state.title,
-                     unit: state.unit_quantity.unit,
-                     unitSize: +state.unit_quantity.value,
-                     sku: state.sku,
-                     prices: [
-                        {
-                           unitPrice: {
-                              value: state.unit_price.value,
-                              unit: state.unit_price.unit,
-                           },
-                        },
-                     ],
-
-                     leadTime: {
-                        unit: state.lead_time.unit,
-                        value: state.lead_time.value,
-                     },
-                  },
-               },
-            })
-
-            if (resp?.data?.updateSupplierItem) {
-               setLoading(false)
-               toast.success('Updated successfully :)')
-               return close()
-            }
-         }
-
-         const res = await createSupplierItem({
+   const handleNext = () => {
+      if (errors.length) {
+         errors.forEach(err => toast.error(err.message))
+         toast.error(`Cannot update item information !`)
+      } else {
+         updateSupplierItem({
             variables: {
-               name: state.title,
-               supplierId: state.supplier.id,
-               unit: state.unit_quantity.unit,
-               unitSize: +state.unit_quantity.value,
-               sku: state.sku,
-
-               prices: [
-                  {
-                     unitPrice: {
-                        value: state.unit_price.value,
-                        unit: state.unit_price.unit,
-                     },
-                  },
-               ],
-
-               leadTime: {
-                  unit: state.lead_time.unit,
-                  value: state.lead_time.value,
+               id: formState.id,
+               object: {
+                  name: itemName,
+                  sku,
+                  unitSize: +unitSize,
+                  unit,
+                  prices: [{ unitPrice: { unit: '$', value: unitPrice } }],
+                  leadTime: { unit: leadTimeUnit, value: leadTime },
                },
             },
          })
-
-         if (res?.data?.createSupplierItem) {
-            setLoading(false)
-            dispatch({
-               type: 'ADD_ITEM_ID',
-               payload: res?.data?.createSupplierItem?.returning[0]?.id,
-            })
-            close()
-            next()
-            toast.success('Item created!')
-         }
-      } catch (error) {
-         setLoading(false)
-         console.log(error)
-         toast.error('Err! make sure you have filled the form properly')
       }
    }
 
@@ -142,25 +97,15 @@ export default function InfoTunnel({ close, next, units }) {
                      type="text"
                      label={t(address.concat('item name'))}
                      name="title"
-                     value={state.title}
-                     onChange={e =>
-                        dispatch({
-                           type: 'TITLE',
-                           payload: { title: e.target.value },
-                        })
-                     }
+                     value={itemName}
+                     onChange={e => setItemName(e.target.value)}
                   />
                   <Input
                      type="text"
                      label={t(address.concat('item sku'))}
                      name="sku"
-                     value={state.sku}
-                     onChange={e =>
-                        dispatch({
-                           type: 'SKU',
-                           payload: { sku: e.target.value },
-                        })
-                     }
+                     value={sku}
+                     onChange={e => setSku(e.target.value)}
                   />
                </StyledInputGroup>
             </StyledRow>
@@ -170,34 +115,18 @@ export default function InfoTunnel({ close, next, units }) {
                      <InputWrapper>
                         <Input
                            type="text"
-                           label={
-                              t(address.concat('unit qty').concat(':')) ||
-                              'unit qty'
-                           }
-                           name="unit_quantity"
-                           value={state.unit_quantity.value}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'QUANTITY',
-                                 payload: {
-                                    name: 'value',
-                                    value: e.target.value,
-                                 },
-                              })
+                           label={t(address.concat('unit qty'))}
+                           name="unit quantity"
+                           value={unitSize}
+                           onChange={e => setUnitSize(e.target.value)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
                            }
                         />
                         <StyledSelect
                            name="unit"
-                           defaultValue={state.unit_quantity.unit}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'QUANTITY',
-                                 payload: {
-                                    name: e.target.name,
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
+                           defaultValue={unit}
+                           onChange={e => setUnit(e.target.value)}
                         >
                            {units.map(unit => (
                               <option key={unit.id} value={unit.name}>
@@ -209,16 +138,11 @@ export default function InfoTunnel({ close, next, units }) {
                      <Input
                         type="text"
                         label={t(address.concat('unit price')).concat(':')}
-                        name="unit_price"
-                        value={state.unit_price.unit + state.unit_price.value}
-                        onChange={e =>
-                           dispatch({
-                              type: 'PRICE',
-                              payload: {
-                                 name: 'value',
-                                 value: e.target.value.substring(1),
-                              },
-                           })
+                        name="Unit Price"
+                        value={unitPrice}
+                        onChange={e => setUnitPrice(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
                   </StyledInputGroup>
@@ -303,30 +227,17 @@ export default function InfoTunnel({ close, next, units }) {
                         <Input
                            type="text"
                            label={t(address.concat('lead time')).concat(':')}
-                           name="lead_time"
-                           value={state.lead_time.value}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'LEAD_TIME',
-                                 payload: {
-                                    name: 'value',
-                                    value: e.target.value,
-                                 },
-                              })
+                           name="Lead Time"
+                           value={leadTime}
+                           onChange={e => setLeadTime(e.target.value)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
                            }
                         />
                         <StyledSelect
                            name="unit"
-                           defaultValue={state.lead_time.unit}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'LEAD_TIME',
-                                 payload: {
-                                    name: e.target.name,
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
+                           defaultValue={leadTimeUnit}
+                           onChange={e => setLeadTimeUnit(e.target.value)}
                         >
                            <option value="days">
                               {t(address.concat('days'))}
