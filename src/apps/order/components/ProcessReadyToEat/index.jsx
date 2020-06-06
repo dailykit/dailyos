@@ -1,16 +1,23 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import Loader from '../Loader'
 import { useOrder } from '../../context/order'
-import { FETCH_READYTOEAT } from '../../graphql'
-import { Wrapper, StyledHeader, StyledMode } from './styled'
+import { FETCH_READYTOEAT, UPDATE_READYTOEAT } from '../../graphql'
+import {
+   Wrapper,
+   StyledMode,
+   StyledStat,
+   StyledHeader,
+   StyledButton,
+} from './styled'
 
 export const ProcessReadyToEat = () => {
    const {
       state: { current_view, readytoeat },
       switchView,
    } = useOrder()
+   const [updateProduct] = useMutation(UPDATE_READYTOEAT)
 
    const {
       loading,
@@ -93,6 +100,27 @@ export const ProcessReadyToEat = () => {
                {product?.comboProductComponent?.label})
             </h3>
          </StyledHeader>
+         <main>
+            <StyledStat status={product.assemblyStatus}>
+               <span>Assembly</span>
+               <span>{product.assemblyStatus}</span>
+            </StyledStat>
+            {product.assemblyStatus === 'PENDING' && (
+               <StyledButton
+                  type="button"
+                  onClick={() =>
+                     updateProduct({
+                        variables: {
+                           id: readytoeat.id,
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     })
+                  }
+               >
+                  Mark Done
+               </StyledButton>
+            )}
+         </main>
       </Wrapper>
    )
 }
