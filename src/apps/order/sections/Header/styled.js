@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const StyledHeader = styled.header`
    background: #d9e9f1;
@@ -18,21 +18,27 @@ export const StyledMenu = styled.div`
    }
 `
 
-export const StyledNav = styled.div`
-   display: flex;
-   border-left: 1px solid #b4d5e6;
-   button {
-      width: 40px;
-      height: 40px;
-      border: none;
-      cursor: pointer;
-      background: transparent;
-      :hover,
-      :focus {
-         background: #fff;
+export const StyledNav = styled.div(
+   ({ align }) => css`
+      display: flex;
+      ${align === 'right' &&
+      css`
+         margin-left: auto;
+      `}
+      border-left: 1px solid #b4d5e6;
+      button {
+         width: 40px;
+         height: 40px;
+         border: none;
+         cursor: pointer;
+         background: transparent;
+         :hover,
+         :focus {
+            background: #fff;
+         }
+         svg {
+            display: unset;
+         }
       }
-      svg {
-         display: unset;
-      }
-   }
-`
+   `
+)

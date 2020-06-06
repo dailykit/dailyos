@@ -19,18 +19,34 @@ import {
 
 const App = () => {
    const { state } = useOrder()
+   const [position, setPosition] = React.useState('left')
+   if (position === 'left')
+      return (
+         <StyledWrapper position={position}>
+            {state.current_view === 'SUMMARY' && <OrderSummary />}
+            {state.current_view === 'MEALKIT' && <ProcessOrder />}
+            {state.current_view === 'INVENTORY' && <ProcessInventory />}
+            {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
+            <Router>
+               <div>
+                  <Header setPosition={setPosition} />
+                  <Main />
+               </div>
+            </Router>
+         </StyledWrapper>
+      )
    return (
-      <StyledWrapper>
+      <StyledWrapper position={position}>
+         <Router>
+            <div>
+               <Header setPosition={setPosition} />
+               <Main />
+            </div>
+         </Router>
          {state.current_view === 'SUMMARY' && <OrderSummary />}
          {state.current_view === 'MEALKIT' && <ProcessOrder />}
          {state.current_view === 'INVENTORY' && <ProcessInventory />}
          {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
-         <Router>
-            <div>
-               <Header />
-               <Main />
-            </div>
-         </Router>
       </StyledWrapper>
    )
 }
