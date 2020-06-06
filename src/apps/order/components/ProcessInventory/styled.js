@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.div`
    height: 100%;
@@ -26,3 +26,38 @@ export const StyledHeader = styled.header`
       color: #555b6e;
    }
 `
+
+export const StyledButton = styled.button`
+   color: #fff;
+   height: 32px;
+   border: none;
+   padding: 0 12px;
+   border-radius: 6px;
+   background: #53c22b;
+`
+
+export const StyledStat = styled.div(
+   ({ status }) => css`
+      display: flex;
+      margin: 12px 0;
+      align-items: center;
+      justify-content: space-between;
+      span {
+         :first-child {
+            color: #a7a8a6;
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+         }
+         :last-child {
+            color: #fff;
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 3px 6px;
+            border-radius: 3px;
+            background: ${status === 'PENDING' ? '#FF5A52' : '#53C22B'};
+         }
+      }
+   `
+)

@@ -10,3 +10,27 @@ export const UPDATE_ORDER_STATUS = gql`
       }
    }
 `
+
+export const UPDATE_INVENTORY_PRODUCT = gql`
+   mutation updateOrderInventoryProduct($id: Int!, $assemblyStatus: String!) {
+      updateOrderInventoryProduct(
+         pk_columns: { id: $id }
+         _set: { assemblyStatus: $assemblyStatus }
+      ) {
+         id
+         assemblyStatus
+      }
+   }
+`
+
+export const UPDATE_READYTOEAT = gql`
+   mutation updateOrderReadyToEatProduct($id: Int!, $assemblyStatus: String!) {
+      updateOrderReadyToEatProduct(
+         pk_columns: { id: $id }
+         _set: { assemblyStatus: $assemblyStatus }
+      ) {
+         id
+         assemblyStatus
+      }
+   }
+`

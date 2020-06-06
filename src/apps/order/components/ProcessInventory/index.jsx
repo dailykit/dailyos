@@ -1,16 +1,23 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import Loader from '../Loader'
 import { useOrder } from '../../context/order'
-import { FETCH_INVENTORY } from '../../graphql'
-import { Wrapper, StyledHeader, StyledMode } from './styled'
+import { FETCH_INVENTORY, UPDATE_INVENTORY_PRODUCT } from '../../graphql'
+import {
+   Wrapper,
+   StyledStat,
+   StyledMode,
+   StyledHeader,
+   StyledButton,
+} from './styled'
 
 export const ProcessInventory = () => {
    const {
       state: { current_view, inventory },
       switchView,
    } = useOrder()
+   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT)
 
    const {
       loading,
@@ -89,6 +96,27 @@ export const ProcessInventory = () => {
          <StyledHeader>
             <h3>{product?.inventoryProduct?.name}</h3>
          </StyledHeader>
+         <main>
+            <StyledStat status={product.assemblyStatus}>
+               <span>Assembly</span>
+               <span>{product.assemblyStatus}</span>
+            </StyledStat>
+            {product.assemblyStatus === 'PENDING' && (
+               <StyledButton
+                  type="button"
+                  onClick={() =>
+                     updateProduct({
+                        variables: {
+                           id: inventory.id,
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     })
+                  }
+               >
+                  Mark Done
+               </StyledButton>
+            )}
+         </main>
       </Wrapper>
    )
 }

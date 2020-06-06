@@ -254,7 +254,7 @@ const Inventories = ({ inventories }) => {
                </StyledProductTitle>
                <section>
                   <span>
-                     {inventory.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
+                     {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
                   </span>
                   <StyledServings>
                      <span>
