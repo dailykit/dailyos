@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const SAFETY_CHECKS = gql`
-   {
+   subscription {
       safety_safetyCheck {
          id
          created_at
@@ -13,7 +13,7 @@ export const SAFETY_CHECKS = gql`
 `
 
 export const USERS = gql`
-   {
+   subscription {
       settings_user {
          id
          firstName

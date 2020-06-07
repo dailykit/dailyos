@@ -115,7 +115,7 @@ export const RECIPES_COUNT = gql`
 `
 
 export const S_RECIPES = gql`
-   {
+   subscription {
       simpleRecipes {
          id
          name
