@@ -4,7 +4,7 @@ import { Link, animateScroll as scroll } from 'react-scroll'
 import { Container } from '../styled'
 import { StyledContainer, List } from './styled'
 
-const SideNav = () => {
+const SideNav = ({ recurrences }) => {
    return (
       <StyledContainer>
          <Container paddingY="32" paddingX="32">

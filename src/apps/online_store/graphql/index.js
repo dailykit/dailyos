@@ -59,6 +59,7 @@ import {
    COLLECTIONS_COUNT,
    S_COLLECTION,
    STORE_SETTINGS,
+   RECURRENCES,
 } from './subscriptions'
 
 export {
@@ -116,4 +117,5 @@ export {
    S_COLLECTION,
    UPDATE_STORE_SETTING,
    STORE_SETTINGS,
+   RECURRENCES,
 }

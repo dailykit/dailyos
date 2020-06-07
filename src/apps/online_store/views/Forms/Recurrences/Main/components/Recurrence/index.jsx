@@ -1,4 +1,5 @@
 import React from 'react'
+import { RRule, RRuleSet, rrulestr } from 'rrule'
 
 import { Text, Tag } from '@dailykit/ui'
 
@@ -6,41 +7,16 @@ import { Container } from '../../../styled'
 
 import { TimeSlots } from '../'
 
-const Recurrence = () => {
-   const timeSlots = [
-      {
-         id: 1,
-         from: '09:00:00+00',
-         to: '19:00:00+00',
-         mileRanges: [
-            {
-               id: 1,
-               from: 0,
-               to: 3,
-               leadTime: null,
-               prepTime: 30,
-               charges: [
-                  {
-                     id: 1,
-                     orderValueFrom: 0,
-                     orderValueUpto: 25,
-                     charge: 5,
-                  },
-               ],
-            },
-         ],
-      },
-   ]
-
+const Recurrence = ({ recurrence, index }) => {
    return (
       <>
          <Container bottom="8">
-            <Text as="subtitle">Recurrence 1</Text>
+            <Text as="subtitle">Recurrence {index + 1} </Text>
          </Container>
          <Container bottom="32">
-            <Tag as="title">Every Monday and Tuesday</Tag>
+            <Tag as="title">{rrulestr(recurrence.rrule).toText()}</Tag>
          </Container>
-         <TimeSlots timeSlots={timeSlots} />
+         <TimeSlots timeSlots={recurrence.timeSlots} />
       </>
    )
 }

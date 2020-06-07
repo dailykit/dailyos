@@ -313,3 +313,35 @@ export const STORE_SETTINGS = gql`
       }
    }
 `
+
+export const RECURRENCES = gql`
+   subscription Recurrence($time: String!, $type: String!) {
+      recurrences(
+         where: {
+            fulfillmentTime: { _eq: $time }
+            fulfillmentType: { _eq: $type }
+         }
+      ) {
+         id
+         rrule
+         timeSlots {
+            id
+            from
+            to
+            mileRanges {
+               id
+               from
+               to
+               leadTime
+               prepTime
+               charges {
+                  id
+                  orderValueFrom
+                  orderValueUpto
+                  charge
+               }
+            }
+         }
+      }
+   }
+`
