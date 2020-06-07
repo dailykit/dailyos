@@ -1,5 +1,36 @@
 import gql from 'graphql-tag'
 
+export const NEW_NOTIF = gql`
+   subscription displayNotifications {
+      displayNotifications(where: { type: { app: { _eq: "Order" } } }) {
+         type {
+            audioUrl
+         }
+      }
+   }
+`
+
+export const NOTIFICATIONS = gql`
+   subscription displayNotifications {
+      displayNotifications(
+         order_by: { created_at: desc }
+         where: { type: { app: { _eq: "Order" } } }
+      ) {
+         id
+         action
+         content
+         created_at
+         updated_at
+         type {
+            isGlobal
+            isLocal
+            playAudio
+            audioUrl
+         }
+      }
+   }
+`
+
 export const SUMMARY = gql`
    subscription ordersSummary {
       orders(limit: 1) {
