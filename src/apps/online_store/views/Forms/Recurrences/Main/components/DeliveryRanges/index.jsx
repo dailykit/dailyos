@@ -13,7 +13,7 @@ const DeliveryRanges = ({ mileRanges, openTunnel }) => {
                <div>
                   {mileRange.from} - {mileRange.to} miles
                </div>
-               <div>{mileRange.leadTime || mileRange.prepTime}</div>
+               <div>{mileRange.leadTime || mileRange.prepTime} hours</div>
                <div>
                   <DeliveryCharges
                      charges={mileRange.charges}
@@ -23,6 +23,7 @@ const DeliveryRanges = ({ mileRanges, openTunnel }) => {
             </TableRecord>
          ))}
          <ButtonTile
+            noIcon
             type="secondary"
             text="Add Mile Ranges"
             onClick={e => console.log('Tile clicked')}

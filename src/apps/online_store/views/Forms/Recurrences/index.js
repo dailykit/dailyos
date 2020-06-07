@@ -16,7 +16,6 @@ const RecurrencesForm = () => {
          type: 'DELIVERY',
       },
       onSubscriptionData: data => {
-         console.log(data)
          setRecurrences(data.subscriptionData.data.recurrences)
       },
    })

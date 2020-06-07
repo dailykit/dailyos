@@ -15,6 +15,7 @@ const DeliveryCharges = ({ charges, openTunnel }) => {
             </TableRecord>
          ))}
          <ButtonTile
+            noIcon
             type="secondary"
             text="Add Delivery Charge"
             onClick={e => console.log('Tile clicked')}

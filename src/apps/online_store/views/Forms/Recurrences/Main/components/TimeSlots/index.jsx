@@ -33,6 +33,7 @@ const TimeSlots = ({ timeSlots, openTunnel }) => {
             </>
          )}
          <ButtonTile
+            noIcon
             type="secondary"
             text="Add Time Slot"
             onClick={e => console.log('Tile clicked')}

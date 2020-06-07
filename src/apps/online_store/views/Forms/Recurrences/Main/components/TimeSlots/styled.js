@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const TableHeader = styled.div`
    display: grid;
-   grid-template-columns: 300px repeat(2, 250px) repeat(2, 200px);
+   grid-template-columns: repeat(5, 200px);
    font-weight: 500;
    font-size: 14px;
    line-height: 19px;
@@ -12,7 +12,7 @@ export const TableHeader = styled.div`
 
 export const TableRecord = styled.div`
    display: grid;
-   grid-template-columns: 300px 1fr;
+   grid-template-columns: 200px 1fr;
    font-weight: 500;
    font-size: 16px;
    line-height: 19px;

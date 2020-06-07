@@ -1,5 +1,5 @@
 import React from 'react'
-import { RRule, RRuleSet, rrulestr } from 'rrule'
+import { rrulestr } from 'rrule'
 
 import { Text, Tag } from '@dailykit/ui'
 
@@ -9,7 +9,7 @@ import { TimeSlots } from '../'
 
 const Recurrence = ({ recurrence, index }) => {
    return (
-      <>
+      <Container bottom="32" id={`recurrence-${recurrence.id}`}>
          <Container bottom="8">
             <Text as="subtitle">Recurrence {index + 1} </Text>
          </Container>
@@ -17,7 +17,7 @@ const Recurrence = ({ recurrence, index }) => {
             <Tag as="title">{rrulestr(recurrence.rrule).toText()}</Tag>
          </Container>
          <TimeSlots timeSlots={recurrence.timeSlots} />
-      </>
+      </Container>
    )
 }
 
