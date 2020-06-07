@@ -17,6 +17,7 @@ import {
    UPDATE_PACKAGING,
    UPDATE_SUPPLIER_ITEM,
    CREATE_ITEM,
+   UPDATE_BULK_ITEM,
 } from './mutations'
 
 import {
@@ -91,4 +92,5 @@ export {
    SETTINGS_USERS_SUBSCRIPTION,
    STATIONS_SUBSCRIPTION,
    CREATE_ITEM,
+   UPDATE_BULK_ITEM,
 }

@@ -143,8 +143,7 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               name: payload.name,
-               processingId: payload.id,
+               ...payload,
                sachets: [],
                shipped: true,
             },

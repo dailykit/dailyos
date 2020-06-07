@@ -40,6 +40,7 @@ import {
    StyledMain,
    StyledSupplier,
    TabContainer,
+   TransparentIconButton,
 } from './styled'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
 // Tunnels
@@ -119,7 +120,7 @@ export default function ItemForm() {
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
                   close={closeTunnel}
                   suppliers={supplierData?.suppliers?.map(supplier => ({
@@ -137,7 +138,7 @@ export default function ItemForm() {
                   formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={3}>
+            <Tunnel layer={3} style={{ overflowY: 'auto' }}>
                <ProcessingTunnel
                   close={closeTunnel}
                   open={openTunnel}
@@ -160,7 +161,7 @@ export default function ItemForm() {
                   formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={5}>
+            <Tunnel layer={5} style={{ overflowY: 'auto' }}>
                <AllergensTunnel
                   close={() => closeTunnel(5)}
                   allergens={allergensData?.masterAllergens?.map(allergen => ({
@@ -169,7 +170,7 @@ export default function ItemForm() {
                   }))}
                />
             </Tunnel>
-            <Tunnel layer={6}>
+            <Tunnel layer={6} style={{ overflowY: 'auto' }}>
                <SelectDerivedProcessingTunnel
                   next={openTunnel}
                   close={closeTunnel}
@@ -365,8 +366,7 @@ export default function ItemForm() {
                            </IconButton>
                         </FlexContainer>
 
-                        {(state.processing?.name ||
-                           formState.bulkItemAsShipped?.name) && (
+                        {formState.bulkItemAsShipped?.name && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -388,24 +388,37 @@ export default function ItemForm() {
                                        payload,
                                     })
                                  }}
+                                 style={{ justifyContent: 'space-between' }}
                               >
-                                 <h3>{formState.bulkItemAsShipped?.name}</h3>
-                                 <Text as="subtitle">
-                                    {t(address.concat('on hand'))}:{' '}
-                                    {formState.bulkItemAsShipped?.onHand}
-                                 </Text>
-                                 <Text as="subtitle">
-                                    {t(address.concat('shelf life'))}:{' '}
-                                    {`${
-                                       state.processing?.shelf_life?.value ||
-                                       formState.bulkItemAsShipped?.shelfLife
-                                          ?.value
-                                    } ${
-                                       state.processing?.shelf_life?.unit ||
-                                       formState.bulkItemAsShipped?.shelfLife
-                                          ?.unit
-                                    }`}
-                                 </Text>
+                                 <div style={{ textAlign: 'left' }}>
+                                    <h3 style={{ marginBottom: '5px' }}>
+                                       {formState.bulkItemAsShipped?.name}
+                                    </h3>
+                                    <Text as="subtitle">
+                                       {t(address.concat('on hand'))}:{' '}
+                                       {formState.bulkItemAsShipped?.onHand}
+                                    </Text>
+                                    <Text as="subtitle">
+                                       {t(address.concat('shelf life'))}:{' '}
+                                       {`${
+                                          state.processing?.shelf_life?.value ||
+                                          formState.bulkItemAsShipped?.shelfLife
+                                             ?.value
+                                       } ${
+                                          state.processing?.shelf_life?.unit ||
+                                          formState.bulkItemAsShipped?.shelfLife
+                                             ?.unit
+                                       }`}
+                                    </Text>
+                                 </div>
+                                 <FlexContainer>
+                                    <TransparentIconButton
+                                       onClick={() => openTunnel(4)}
+                                       type="button"
+                                    >
+                                       <EditIcon />
+                                    </TransparentIconButton>
+                                 </FlexContainer>
                               </ProcessingButton>
                            </>
                         )}
