@@ -2,15 +2,15 @@ import React from 'react'
 
 import { StyledLayout } from './styled'
 
-import Sidebar from './Sidebar'
+import SideNav from './SideNav'
 import Main from './Main'
 
 const RecurrencesForm = () => {
    return (
-      <StyledLayout>
-         <Sidebar />
+      <>
+         <SideNav />
          <Main />
-      </StyledLayout>
+      </>
    )
 }
 

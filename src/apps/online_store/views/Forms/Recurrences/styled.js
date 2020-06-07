@@ -1,10 +1,5 @@
 import styled from 'styled-components'
 
-export const StyledLayout = styled.div`
-   display: grid;
-   grid-template-columns: 300px 1fr;
-`
-
 export const Grid = styled.div`
    display: grid;
    grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
@@ -23,7 +18,8 @@ export const Container = styled.div`
    width: ${props => (props.width ? props.width + 'px' : 'auto')};
    height: ${props => (props.height ? props.height + 'px' : 'auto')};
    max-width: ${props => (props.maxWidth ? props.maxWidth + 'px' : '100%')};
-   position: relative;
+   position: ${props => props.position || 'relative'};
+   background: ${props => props.bg || 'transparent'};
 `
 
 export const Flex = styled.div`
