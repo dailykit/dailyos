@@ -1,5 +1,16 @@
 import gql from 'graphql-tag'
 
+export const CREATE_ITEM = gql`
+   mutation CreateSupplierItem($object: inventory_supplierItem_insert_input!) {
+      createSupplierItem(objects: [$object]) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`
+
 export const CREATE_SUPPLIER_ITEM = gql`
    mutation CreateSupplierItem(
       $name: String!

@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Input, Loader } from '@dailykit/ui'
+import { Input, Loader, Text } from '@dailykit/ui'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -12,44 +12,50 @@ import {
 import { ItemContext } from '../../../../../context/item'
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { FlexContainer } from '../../../styled'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ close }) {
+export default function ConfigureSachetTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { state } = useContext(ItemContext)
+   const [errors, setErrors] = useState([])
 
    const [quantity, setQuantity] = useState('')
    const [par, setPar] = useState('')
    const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
 
-   const [loading, setLoading] = useState(false)
+   const [creatSachetItem, { loading }] = useMutation(CREATE_SACHET_ITEM, {
+      onCompleted: () => {
+         close(9)
+         toast.info('Sachet added!')
+      },
+      onError: error => {
+         close(9)
+         console.log(error)
+         toast.error('Err! creating sachets. Please try again')
+      },
+   })
 
-   const [creatSachetItem] = useMutation(CREATE_SACHET_ITEM)
+   const active = formState.bulkItems.find(
+      item => item.id === state.activeProcessing.id
+   )
 
-   const handleNext = async () => {
-      try {
-         setLoading(true)
-         const res = await creatSachetItem({
+   const handleNext = () => {
+      if (!active) return toast.error('Error, Please try again.')
+      if (errors.length) {
+         errors.forEach(err => toast.error(err.message))
+         toast.error(`Cannot add sachets !`)
+      } else {
+         creatSachetItem({
             variables: {
                unitSize: quantity,
-               bulkItemId: state.activeProcessing.id,
-               unit: state.unit_quantity.unit,
+               bulkItemId: active.id,
+               unit: active.unit,
                par,
                maxLevel: maxInventoryLevel,
             },
          })
-
-         if (res?.data?.createSachetItem?.returning[0]?.id) {
-            close(9)
-            setLoading(false)
-            toast.info('Sachet added!')
-         }
-      } catch (error) {
-         close(9)
-         setLoading(false)
-         console.log(error)
-         toast.error('Err! I messed something up :(')
       }
    }
 
@@ -68,18 +74,19 @@ export default function ConfigureSachetTunnel({ close }) {
 
          <br />
 
-         <div style={{ width: '30%' }}>
-            <Input
-               type="text"
-               name="quantity"
-               value={quantity}
-               placeholder={`Sachet Qty (in ${state.unit_quantity.unit})`}
-               onChange={e => {
-                  const value = parseInt(e.target.value)
-                  if (e.target.value.length === 0) setQuantity('')
-                  if (value) setQuantity(value)
-               }}
-            />
+         <div style={{ width: '45%', display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ width: '70%' }}>
+               <Input
+                  type="text"
+                  name="quantity"
+                  value={quantity}
+                  label="Sachet Quantity"
+                  onChange={e => setQuantity(e.target.value)}
+                  onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
+               />
+            </div>
+            <span style={{ width: '10px' }} />
+            <Text as="subtitle">in {active.unit}</Text>
          </div>
 
          <br />
@@ -94,12 +101,9 @@ export default function ConfigureSachetTunnel({ close }) {
                   type="text"
                   name="par"
                   value={par}
-                  placeholder={t(address.concat('set par level'))}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (e.target.value.length === 0) setPar('')
-                     if (value) setPar(value)
-                  }}
+                  label={t(address.concat('set par level'))}
+                  onChange={e => setPar(e.target.value)}
+                  onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                />
                <span style={{ marginLeft: '5px' }}>
                   {t(address.concat('pkt'))}
@@ -111,12 +115,9 @@ export default function ConfigureSachetTunnel({ close }) {
                   type="text"
                   name="inventory level"
                   value={maxInventoryLevel}
-                  placeholder={t(address.concat('max inventory level'))}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (e.target.value.length === 0) setMaxInventoryLevel('')
-                     if (value) setMaxInventoryLevel(value)
-                  }}
+                  label={t(address.concat('max inventory level'))}
+                  onChange={e => setMaxInventoryLevel(e.target.value)}
+                  onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                />
                <span style={{ marginLeft: '5px' }}>
                   {t(address.concat('pkt'))}

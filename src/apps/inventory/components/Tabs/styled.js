@@ -17,6 +17,10 @@ export const StyledTab = styled.li(
       border-right: 1px solid #b4d5e6;
       span {
          padding-left: 12px;
+         min-width: 0px;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
       }
       div {
          height: 40px;

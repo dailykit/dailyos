@@ -61,3 +61,43 @@ export const UNITS = gql`
       }
    }
 `
+
+export const DEVICES = gql`
+   subscription computers {
+      computers {
+         name
+         state
+         hostname
+         created_at
+         updated_at
+         printNodeId
+         activePrinters: printers_aggregate(
+            where: { state: { _eq: "online" } }
+         ) {
+            aggregate {
+               count
+            }
+         }
+         totalPrinters: printers_aggregate {
+            aggregate {
+               count
+            }
+         }
+         printers {
+            name
+            state
+            printNodeId
+            computer {
+               name
+            }
+         }
+         scales {
+            deviceNum
+            deviceName
+            computer {
+               name
+            }
+         }
+      }
+   }
+`

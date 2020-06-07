@@ -577,7 +577,7 @@
                      },
                      "producttypetunnel": {
                         "select product type": "Select Product Type",
-                        "inventory product": "Inventroy Product",
+                        "inventory product": "Inventory Product",
                         "subtitle 1": "Inventory product is just an item, supplied or bought",
                         "simple recipe product": "Simple Recipe Product",
                         "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
@@ -650,7 +650,7 @@
                         },
                         "producttypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat",
@@ -730,7 +730,7 @@
                         },
                         "itemstunnel": {
                            "select": "Select",
-                           "inventory products": "Inventroy Products",
+                           "inventory products": "Inventory Products",
                            "simple recipe products": "Simple Recipe Products",
                            "to add": "To Add",
                            "save": "Save",
@@ -739,7 +739,7 @@
                         },
                         "itemtypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -757,7 +757,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -853,7 +853,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -931,7 +931,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Select Product Type",
-                           "inventory product": "Inventroy Product",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "Inventory product is just an item, supplied or bought",
                            "simple recipe product": "Simple Recipe Product",
                            "subtitle 2": "Simple Recipe Product is only one recipe, sold as Meal Kits as well as Ready to Eat"
@@ -1198,12 +1198,6 @@
                   "apps": "Apps",
                   "users assigned": "Users Assigned"
                },
-               "deviceslisting": {
-                  "devices": "Devices",
-                  "stations": "Stations",
-                  "users assigned": "Users Assigned",
-                  "actions": "Actions"
-               },
                "roleslisting": {
                   "roles": "Roles",
                   "apps configured": "Apps Configured",
@@ -1269,7 +1263,7 @@
                "no orders yet!": "No Orders Yet!",
                "mode": "Mode",
                "summary": "Summary",
-               "weighing": "Weighing"
+               "ready to eat": "Ready To Eat"
             },
             "tabs": {
                "close tab": "Close Tab"

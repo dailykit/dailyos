@@ -4,32 +4,60 @@ const Context = React.createContext()
 
 const initialState = {
    current_view: 'SUMMARY',
-   product: {
+   mealkit: {
       name: null,
       sachet_id: null,
+   },
+   inventory: {
+      id: null,
+   },
+   readytoeat: {
+      id: null,
    },
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       // Add Tab
-      case 'SELECT_ORDER':
+      case 'SELECT_MEALKIT':
          return {
             ...state,
-            current_view: 'WEIGHING',
-            product: {
+            current_view: 'MEALKIT',
+            mealkit: {
                name: payload.name,
                sachet_id: payload.id,
+            },
+         }
+      case 'SELECT_INVENTORY':
+         return {
+            ...state,
+            current_view: 'INVENTORY',
+            inventory: {
+               id: payload,
+            },
+         }
+      case 'SELECT_READYTOEAT':
+         return {
+            ...state,
+            current_view: 'READYTOEAT',
+            readytoeat: {
+               id: payload,
             },
          }
       case 'SWITCH_VIEW': {
          return {
             ...state,
-            current_view: payload.view,
-            product: {
+            inventory: {
+               id: null,
+            },
+            readytoeat: {
+               id: null,
+            },
+            mealkit: {
                name: null,
                sachet_id: null,
             },
+            current_view: payload.view,
          }
       }
       default:
@@ -50,10 +78,24 @@ export const OrderProvider = ({ children }) => {
 export const useOrder = () => {
    const { state, dispatch } = React.useContext(Context)
 
-   const selectOrder = (id, name) => {
+   const selectMealKit = (id, name) => {
       dispatch({
-         type: 'SELECT_ORDER',
+         type: 'SELECT_MEALKIT',
          payload: { id, name },
+      })
+   }
+
+   const selectInventory = id => {
+      dispatch({
+         type: 'SELECT_INVENTORY',
+         payload: id,
+      })
+   }
+
+   const selectReadyToEat = id => {
+      dispatch({
+         type: 'SELECT_READYTOEAT',
+         payload: id,
       })
    }
 
@@ -66,5 +108,12 @@ export const useOrder = () => {
       })
    }
 
-   return { state, dispatch, selectOrder, switchView }
+   return {
+      state,
+      dispatch,
+      switchView,
+      selectMealKit,
+      selectInventory,
+      selectReadyToEat,
+   }
 }

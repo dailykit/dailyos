@@ -50,7 +50,9 @@ export default function Packagings() {
                </IconButton>
             </StyledHeader>
 
-            <DataTable data={data} />
+            <div style={{ width: '90%', margin: '20px auto' }}>
+               <DataTable data={data} />
+            </div>
          </StyledWrapper>
       </>
    )
@@ -75,7 +77,9 @@ function DataTable({ data }) {
                <TableCell>Packaging item</TableCell>
                <TableCell>Supplier</TableCell>
                <TableCell>Packaging type</TableCell>
+               <TableCell>Par Level</TableCell>
                <TableCell>On hand</TableCell>
+               <TableCell>Max Level</TableCell>
                <TableCell>Awaiting</TableCell>
                <TableCell>Committed</TableCell>
                <TableCell>Availability</TableCell>
@@ -96,19 +100,9 @@ function DataTable({ data }) {
                   <TableCell>{packaging.name}</TableCell>
                   <TableCell>{packaging.supplier.name}</TableCell>
                   <TableCell>{packaging.type}</TableCell>
-                  <TableCell>
-                     <span style={{ marginRight: '5px' }}>
-                        {packaging.parLevel}
-                     </span>
-                     {'{'}
-                     <span style={{ margin: '0 10px' }}>
-                        {packaging.onHand}
-                     </span>
-                     {'}'}
-                     <span style={{ marginLeft: '5px' }}>
-                        {packaging.maxLevel}
-                     </span>
-                  </TableCell>
+                  <TableCell>{packaging.parLevel}</TableCell>
+                  <TableCell>{packaging.onHand}</TableCell>
+                  <TableCell>{packaging.maxLevel}</TableCell>
                   <TableCell>{packaging.awaiting}</TableCell>
                   <TableCell>{packaging.committed}</TableCell>
                   <TableCell>

@@ -117,7 +117,7 @@ export default function MoreItemInfoTunnel({ close }) {
       } catch (error) {
          setLoading(false)
          console.log(error)
-         toast.error('Err! I messed something up :(')
+         toast.error('Error, Please try again')
          close(3)
       }
    }
