@@ -41,6 +41,11 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             >
                {t(address.concat('store settings'))}
             </StyledListItem>
+            <StyledListItem
+               onClick={() => addTab('forms', 'Recurrences', 'recurrences')}
+            >
+               Recurrences
+            </StyledListItem>
          </StyledList>
       </StyledSidebar>
    )
