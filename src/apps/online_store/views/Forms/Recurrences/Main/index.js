@@ -147,7 +147,12 @@ const Main = () => {
                         <span>Time Slots</span>
                         <span>Availability</span>
                         <span>Delivery Range</span>
-                        <span>Lead Time</span>
+                        <span>
+                           {current.fulfillment.includes('PREORDER')
+                              ? 'Lead'
+                              : 'Prep'}{' '}
+                           Time
+                        </span>
                         <span>Availability</span>
                         <span>Order Value</span>
                         <span>Charges</span>
