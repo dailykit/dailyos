@@ -41,6 +41,7 @@ import {
    CREATE_RECURRENCE,
    CREATE_TIME_SLOTS,
    CREATE_MILE_RANGES,
+   CREATE_CHARGES,
 } from './mutations/'
 
 import {
@@ -124,4 +125,5 @@ export {
    CREATE_RECURRENCE,
    CREATE_TIME_SLOTS,
    CREATE_MILE_RANGES,
+   CREATE_CHARGES,
 }

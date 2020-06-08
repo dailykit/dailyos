@@ -6,6 +6,7 @@ export const state = {
    recurrenceId: undefined,
    timeSlotId: undefined,
    mileRangeId: undefined,
+   charge: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -26,6 +27,12 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             mileRangeId: payload,
+         }
+      }
+      case 'CHARGE': {
+         return {
+            ...state,
+            charge: payload,
          }
       }
       default:

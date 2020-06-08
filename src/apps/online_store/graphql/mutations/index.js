@@ -353,3 +353,13 @@ export const CREATE_MILE_RANGES = gql`
       }
    }
 `
+
+export const CREATE_CHARGES = gql`
+   mutation Charges($objects: [fulfilment_charge_insert_input!]!) {
+      createCharges(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`

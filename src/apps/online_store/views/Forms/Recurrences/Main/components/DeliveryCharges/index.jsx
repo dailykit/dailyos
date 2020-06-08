@@ -2,8 +2,31 @@ import React from 'react'
 import { ButtonTile } from '@dailykit/ui'
 
 import { TableRecord } from './styled'
+import { RecurrenceContext } from '../../../../../../context/recurrence'
 
-const DeliveryCharges = ({ charges, openTunnel }) => {
+const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
+   const { recurrenceDispatch } = React.useContext(RecurrenceContext)
+
+   const addCharge = () => {
+      recurrenceDispatch({
+         type: 'CHARGE',
+         payload: undefined,
+      })
+      recurrenceDispatch({
+         type: 'MILE_RANGE',
+         payload: mileRangeId,
+      })
+      openTunnel(4)
+   }
+
+   const updateCharge = charge => {
+      recurrenceDispatch({
+         type: 'CHARGE',
+         payload: charge,
+      })
+      openTunnel(4)
+   }
+
    return (
       <>
          {charges.map(charge => (
@@ -18,7 +41,7 @@ const DeliveryCharges = ({ charges, openTunnel }) => {
             noIcon
             type="secondary"
             text="Add Delivery Charge"
-            onClick={e => console.log('Tile clicked')}
+            onClick={addCharge}
          />
       </>
    )
