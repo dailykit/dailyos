@@ -4,6 +4,7 @@ import SimpleRecipeProductForm from './Product/SimpleRecipeProduct'
 import CustomizableProductForm from './Product/CustomizableProduct'
 import ComboProductForm from './Product/ComboProduct'
 import StoreSettingsForm from './StoreSettings'
+import RecurrencesForm from './Recurrences'
 
 export {
    CollectionForm,
@@ -12,4 +13,5 @@ export {
    CustomizableProductForm,
    ComboProductForm,
    StoreSettingsForm,
+   RecurrencesForm,
 }
