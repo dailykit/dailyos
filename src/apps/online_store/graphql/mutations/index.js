@@ -325,3 +325,11 @@ export const UPDATE_STORE_SETTING = gql`
       }
    }
 `
+
+export const CREATE_RECURRENCE = gql`
+   mutation createRecurrence($object: fulfilment_recurrence_insert_input!) {
+      createRecurrence(object: $object) {
+         id
+      }
+   }
+`

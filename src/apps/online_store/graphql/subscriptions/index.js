@@ -315,13 +315,8 @@ export const STORE_SETTINGS = gql`
 `
 
 export const RECURRENCES = gql`
-   subscription Recurrence($time: String!, $type: String!) {
-      recurrences(
-         where: {
-            fulfillmentTime: { _eq: $time }
-            fulfillmentType: { _eq: $type }
-         }
-      ) {
+   subscription Recurrence($type: String!) {
+      recurrences(where: { type: { _eq: $type } }) {
          id
          rrule
          timeSlots {

@@ -18,9 +18,9 @@ const address = 'apps.online_store.sections.sidebar.'
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const addTab = (type, title, view) => {
+   const addTab = (type, title, view, fulfillment) => {
       toggleSidebar(visible => !visible)
-      dispatch({ type: 'ADD_TAB', payload: { type, title, view } })
+      dispatch({ type: 'ADD_TAB', payload: { type, title, view, fulfillment } })
    }
    return (
       <StyledSidebar visible={visible}>
@@ -42,7 +42,14 @@ const Sidebar = ({ visible, toggleSidebar }) => {
                {t(address.concat('store settings'))}
             </StyledListItem>
             <StyledListItem
-               onClick={() => addTab('forms', 'Recurrences', 'recurrences')}
+               onClick={() =>
+                  addTab(
+                     'forms',
+                     'Recurrences',
+                     'recurrences',
+                     'PREORDER_DELIVERY'
+                  )
+               }
             >
                Recurrences
             </StyledListItem>
