@@ -63,7 +63,21 @@ const AvailabilitySettings = () => {
       })
    }
    const addTab = (type, title, view, fulfillment) => {
-      dispatch({ type: 'ADD_TAB', payload: { type, title, view, fulfillment } })
+      dispatch({
+         type: 'ADD_TAB',
+         payload: {
+            type,
+            title:
+               title +
+               ' - ' +
+               fulfillment
+                  .split('_')
+                  .map(word => word[0])
+                  .join(''),
+            view,
+            fulfillment,
+         },
+      })
    }
 
    if (loading) return <Loader />
