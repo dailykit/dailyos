@@ -354,6 +354,11 @@ export default function ItemForm() {
                                        'Select a supplier first!'
                                     )
 
+                                 dispatch({
+                                    type: 'SET_DER_ACTION',
+                                    payload: '',
+                                 })
+
                                  if (formState.bulkItems.length) {
                                     openTunnel(6)
                                  } else {
@@ -379,13 +384,10 @@ export default function ItemForm() {
                               <ProcessingButton
                                  active={active}
                                  onClick={() => {
-                                    const payload = formState.bulkItemAsShipped
-                                       ? formState.bulkItemAsShipped
-                                       : state.processing
                                     setActive(true)
                                     dispatch({
                                        type: 'SET_ACTIVE_PROCESSING',
-                                       payload,
+                                       payload: formState.bulkItemAsShipped,
                                     })
                                  }}
                                  style={{ justifyContent: 'space-between' }}
@@ -453,9 +455,14 @@ export default function ItemForm() {
                                              },
                                           })
                                        }}
+                                       style={{
+                                          justifyContent: 'space-between',
+                                       }}
                                     >
                                        <div style={{ textAlign: 'left' }}>
-                                          <h3>{procs.processingName}</h3>
+                                          <h3 style={{ marginBottom: '5px' }}>
+                                             {procs.processingName}
+                                          </h3>
                                           <Text as="subtitle">
                                              {t(address.concat('on hand'))}:{' '}
                                              {procs.onHand}
@@ -466,6 +473,23 @@ export default function ItemForm() {
                                              {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
                                           </Text>
                                        </div>
+                                       {state.activeProcessing.id ===
+                                          procs.id && (
+                                          <FlexContainer>
+                                             <TransparentIconButton
+                                                onClick={() => {
+                                                   dispatch({
+                                                      type: 'SET_DER_ACTION',
+                                                      payload: 'UPDATE',
+                                                   })
+                                                   openTunnel(7)
+                                                }}
+                                                type="button"
+                                             >
+                                                <EditIcon />
+                                             </TransparentIconButton>
+                                          </FlexContainer>
+                                       )}
                                     </ProcessingButton>
                                  )
                               })}
