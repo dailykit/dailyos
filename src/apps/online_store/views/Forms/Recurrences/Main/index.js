@@ -8,6 +8,8 @@ import {
    useTunnel,
    Loader,
    Toggle,
+   PlusIcon,
+   IconButton,
 } from '@dailykit/ui'
 import { Container, Flex } from '../styled'
 import { TableHeader, TableRecord } from './styled'
@@ -30,7 +32,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../../context/recurrence'
-import { DeleteIcon } from '../../../../assets/icons'
+import { DeleteIcon, AddIcon } from '../../../../assets/icons'
 import { Context } from '../../../../context'
 import { toast } from 'react-toastify'
 
@@ -121,7 +123,12 @@ const Main = () => {
                width="100%"
                style={{ zIndex: '10' }}
             >
-               <Text as="h1">Recurrences</Text>
+               <Flex direction="row" align="center">
+                  <Text as="h1">Recurrences</Text>
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                     <PlusIcon />
+                  </IconButton>
+               </Flex>
             </Container>
             <Container top="80" paddingX="32" bottom="64">
                {Boolean(recurrences?.length) && (
