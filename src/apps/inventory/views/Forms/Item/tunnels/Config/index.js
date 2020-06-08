@@ -116,14 +116,13 @@ export default function ConfigTunnel({ close, open, units, formState }) {
             variables: {
                id: formState.bulkItemAsShippedId,
                object: {
-                  processingName: state.processing.title,
                   unit, // string
                   yield: { value: yieldPercentage },
                   shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                   parLevel: +parLevel,
                   nutritionInfo: state.processing.nutrients || {},
                   maxLevel: +maxValue,
-                  labor: { value: laborTime, unit: laborTime },
+                  labor: { value: laborTime, unit: laborUnit },
                   bulkDensity: +bulkDensity,
                   allergens: state.processing.allergens,
                },
@@ -140,7 +139,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                parLevel: +parLevel,
                nutritionInfo: state.processing.nutrients || {},
                maxLevel: +maxValue,
-               labor: { value: laborTime, unit: laborTime },
+               labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
                allergens: state.processing.allergens,
             },
