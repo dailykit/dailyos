@@ -1,13 +1,13 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
+import { useTranslation } from 'react-i18next'
 
-import { OrderListItem, OrderSummary, Loader } from '../../components'
+import { OrderListItem, Loader } from '../../components'
 
 import { useTabs } from '../../context/tabs'
 
 import { ORDERS } from '../../graphql'
-import { useTranslation } from 'react-i18next'
 
 const address = 'apps.order.views.orders.'
 const Orders = () => {
@@ -33,11 +33,12 @@ const Orders = () => {
    if (error) return <div>{error.message}</div>
    return (
       <div>
+         <h1>Orders</h1>
          {orders.length > 0 ? (
             orders.map(order => <OrderListItem order={order} key={order.id} />)
          ) : (
-               <div>{t(address.concat('no orders yet!'))}</div>
-            )}
+            <div>{t(address.concat('no orders yet!'))}</div>
+         )}
       </div>
    )
 }

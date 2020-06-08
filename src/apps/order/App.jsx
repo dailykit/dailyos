@@ -1,4 +1,5 @@
 import React from 'react'
+import usePortal from 'react-useportal'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // Context
@@ -13,6 +14,7 @@ import { StyledWrapper } from './styled'
 import {
    OrderSummary,
    ProcessOrder,
+   Notifications,
    ProcessInventory,
    ProcessReadyToEat,
 } from './components'
@@ -20,6 +22,10 @@ import {
 const App = () => {
    const { state } = useOrder()
    const [position, setPosition] = React.useState('left')
+   const { openPortal, closePortal, isOpen, Portal } = usePortal({
+      bindTo: document && document.getElementById('notifications'),
+   })
+
    if (position === 'left')
       return (
          <StyledWrapper position={position}>
@@ -29,9 +35,23 @@ const App = () => {
             {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
             <Router>
                <div>
-                  <Header setPosition={setPosition} />
+                  <Header
+                     isOpen={isOpen}
+                     openPortal={openPortal}
+                     closePortal={closePortal}
+                     setPosition={setPosition}
+                  />
                   <Main />
                </div>
+               {isOpen && (
+                  <Portal>
+                     <Notifications
+                        isOpen={isOpen}
+                        openPortal={openPortal}
+                        closePortal={closePortal}
+                     />
+                  </Portal>
+               )}
             </Router>
          </StyledWrapper>
       )
@@ -39,8 +59,22 @@ const App = () => {
       <StyledWrapper position={position}>
          <Router>
             <div>
-               <Header setPosition={setPosition} />
+               <Header
+                  isOpen={isOpen}
+                  openPortal={openPortal}
+                  closePortal={closePortal}
+                  setPosition={setPosition}
+               />
                <Main />
+               {isOpen && (
+                  <Portal>
+                     <Notifications
+                        isOpen={isOpen}
+                        openPortal={openPortal}
+                        closePortal={closePortal}
+                     />
+                  </Portal>
+               )}
             </div>
          </Router>
          {state.current_view === 'SUMMARY' && <OrderSummary />}
