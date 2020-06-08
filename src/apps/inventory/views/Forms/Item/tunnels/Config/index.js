@@ -16,7 +16,11 @@ import { toast } from 'react-toastify'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 import { CloseIcon } from '../../../../../assets/icons'
 import { ItemContext } from '../../../../../context/item'
-import { CREATE_BULK_ITEM, UPDATE_SUPPLIER_ITEM } from '../../../../../graphql'
+import {
+   CREATE_BULK_ITEM,
+   UPDATE_SUPPLIER_ITEM,
+   UPDATE_BULK_ITEM,
+} from '../../../../../graphql'
 import { StyledSelect } from '../../../styled'
 import {
    Highlight,
@@ -37,15 +41,21 @@ export default function ConfigTunnel({ close, open, units, formState }) {
    const { state, dispatch } = React.useContext(ItemContext)
    const [errors, setErrors] = useState([])
 
-   const [parLevel, setParLevel] = useState('')
-   const [maxValue, setMaxValue] = useState('')
+   const bulkItem = formState.bulkItemAsShipped
+
+   const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
+   const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
    const [unit, setUnit] = useState(units[0].name)
-   const [laborTime, setLaborTime] = useState('')
-   const [laborUnit, setLaborUnit] = useState('')
-   const [yieldPercentage, setYieldPercentage] = useState('')
-   const [shelfLife, setShelfLife] = useState('')
-   const [shelfLifeUnit, setShelfLifeUnit] = useState('')
-   const [bulkDensity, setBulkDensity] = useState('')
+   const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
+   const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || '')
+   const [yieldPercentage, setYieldPercentage] = useState(
+      bulkItem?.yield?.value || ''
+   )
+   const [shelfLife, setShelfLife] = useState(bulkItem?.shelfLife?.value || '')
+   const [shelfLifeUnit, setShelfLifeUnit] = useState(
+      bulkItem?.shelfLife?.unit || ''
+   )
+   const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
@@ -79,6 +89,21 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       }
    )
 
+   const [udpateBulkItem, { loading: updateBulkItemLoading }] = useMutation(
+      UPDATE_BULK_ITEM,
+      {
+         onCompleted: () => {
+            close(4)
+            toast.success('Bulk Item updated successfully !')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error updating bulk item as shipped. Please try again')
+            close(4)
+         },
+      }
+   )
+
    const handleSave = () => {
       if (!parLevel || !maxValue)
          return toast.error('Please fill the form properly')
@@ -86,10 +111,27 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       if (errors.length) {
          errors.forEach(err => toast.error(err.message))
          toast.error(`Cannot update item information !`)
+      } else if (formState.bulkItemAsShippedId) {
+         udpateBulkItem({
+            variables: {
+               id: formState.bulkItemAsShippedId,
+               object: {
+                  unit, // string
+                  yield: { value: yieldPercentage },
+                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+                  parLevel: +parLevel,
+                  nutritionInfo: state.processing.nutrients || {},
+                  maxLevel: +maxValue,
+                  labor: { value: laborTime, unit: laborUnit },
+                  bulkDensity: +bulkDensity,
+                  allergens: state.processing.allergens,
+               },
+            },
+         })
       } else {
          createBulkItem({
             variables: {
-               processingName: state.processing.name,
+               processingName: state.processing.title,
                itemId: formState.id,
                unit, // string
                yield: { value: yieldPercentage },
@@ -97,7 +139,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                parLevel: +parLevel,
                nutritionInfo: state.processing.nutrients || {},
                maxLevel: +maxValue,
-               labor: { value: laborTime, unit: laborTime },
+               labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
                allergens: state.processing.allergens,
             },
@@ -105,7 +147,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       }
    }
 
-   if (createBulkItemLoading) return <Loader />
+   if (createBulkItemLoading || updateBulkItemLoading) return <Loader />
 
    return (
       <>

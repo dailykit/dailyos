@@ -127,7 +127,10 @@ export default function ItemListing() {
                               <TableCell>
                                  <CellColumnContainer>
                                     {item.bulkItems?.map(processing => (
-                                       <div style={{ padding: '5px' }}>
+                                       <div
+                                          style={{ padding: '5px' }}
+                                          key={processing.id}
+                                       >
                                           {processing.processingName}
                                        </div>
                                     ))}
@@ -135,7 +138,7 @@ export default function ItemListing() {
                               </TableCell>
                               <TableCell>
                                  {item.bulkItems?.map(processing => (
-                                    <CellColumnContainer>
+                                    <CellColumnContainer key={processing.id}>
                                        <div
                                           style={{
                                              padding: '5px 0',
@@ -156,7 +159,7 @@ export default function ItemListing() {
                               </TableCell>
                               <TableCell>
                                  {item.bulkItems?.map(processing => (
-                                    <CellColumnContainer>
+                                    <CellColumnContainer key={processing.id}>
                                        <div
                                           style={{
                                              padding: '5px 0',
@@ -177,7 +180,7 @@ export default function ItemListing() {
                               </TableCell>
                               <TableCell>
                                  {item.bulkItems?.map(processing => (
-                                    <CellColumnContainer>
+                                    <CellColumnContainer key={processing.id}>
                                        <div
                                           style={{
                                              padding: '5px 0',
@@ -194,7 +197,10 @@ export default function ItemListing() {
                               <TableCell>
                                  <CellColumnContainer>
                                     {item.bulkItems?.map(processing => (
-                                       <div style={{ padding: '5px' }}>
+                                       <div
+                                          style={{ padding: '5px' }}
+                                          key={processing.id}
+                                       >
                                           {processing.awaiting}{' '}
                                           {processing.unit}
                                        </div>
@@ -204,7 +210,10 @@ export default function ItemListing() {
                               <TableCell>
                                  <CellColumnContainer>
                                     {item.bulkItems?.map(processing => (
-                                       <div style={{ padding: '5px' }}>
+                                       <div
+                                          style={{ padding: '5px' }}
+                                          key={processing.id}
+                                       >
                                           {processing.committed}{' '}
                                           {processing.unit}
                                        </div>
@@ -214,7 +223,10 @@ export default function ItemListing() {
                               <TableCell>
                                  <CellColumnContainer>
                                     {item.bulkItems?.map(processing => (
-                                       <div style={{ padding: '5px' }}>
+                                       <div
+                                          style={{ padding: '5px' }}
+                                          key={processing.id}
+                                       >
                                           <Toggle
                                              checked={processing.isAvailable}
                                              setChecked={() =>

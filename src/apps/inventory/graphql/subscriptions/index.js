@@ -18,7 +18,11 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
             committed
             parLevel
             maxLevel
+            bulkDensity
+            yield
+            shelfLife
             isAvailable
+            labor
             unit
          }
       }

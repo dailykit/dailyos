@@ -12,7 +12,7 @@ import {
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 
-import { CREATE_BULK_ITEM } from '../../../../../graphql'
+import { CREATE_BULK_ITEM, UPDATE_BULK_ITEM } from '../../../../../graphql'
 
 import { ItemContext } from '../../../../../context/item'
 
@@ -65,10 +65,27 @@ export default function ConfigureDerivedProcessingTunnel({
       },
    })
 
-   const [unit, setUnit] = useState('gram')
-   const [par, setPar] = useState('')
+   const [udpateBulkItem, { loading: updateBulkItemLoading }] = useMutation(
+      UPDATE_BULK_ITEM,
+      {
+         onCompleted: () => {
+            close(7)
+            toast.success('Bulk Item updated successfully !')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error updating bulk item. Please try again')
+            close(7)
+         },
+      }
+   )
 
-   const [maxInventoryLevel, setMaxInventoryLevel] = useState('')
+   const [unit, setUnit] = useState('gram')
+   const [par, setPar] = useState(state.activeProcessing?.parLevel || '')
+
+   const [maxInventoryLevel, setMaxInventoryLevel] = useState(
+      state.activeProcessing?.maxLevel || ''
+   )
 
    const [laborTime, setLaborTime] = useState('')
    const [laborUnit, setLaborUnit] = useState('hours')
@@ -83,6 +100,23 @@ export default function ConfigureDerivedProcessingTunnel({
       if (errors.length) {
          errors.forEach(err => toast.error(err.message))
          toast.error(`Cannot update item information !`)
+      } else if (state.derAction === 'UPDATE') {
+         udpateBulkItem({
+            variables: {
+               id: state.activeProcessing.id,
+               object: {
+                  unit, // string
+                  yield: { value: yieldPercentage },
+                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+                  parLevel: +par,
+                  nutritionInfo: state.configurable.nutrients || {},
+                  maxLevel: +maxInventoryLevel,
+                  labor: { value: laborTime, unit: laborUnit },
+                  bulkDensity: +bulkDensity,
+                  allergens: state.processing.allergens,
+               },
+            },
+         })
       } else {
          createBulkItem({
             variables: {
@@ -102,7 +136,7 @@ export default function ConfigureDerivedProcessingTunnel({
       }
    }
 
-   if (loading) return <Loader />
+   if (loading || updateBulkItemLoading) return <Loader />
 
    return (
       <TunnelContainer>
