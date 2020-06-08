@@ -40,6 +40,7 @@ import {
    UPDATE_STORE_SETTING,
    CREATE_RECURRENCE,
    CREATE_TIME_SLOTS,
+   CREATE_MILE_RANGES,
 } from './mutations/'
 
 import {
@@ -122,4 +123,5 @@ export {
    RECURRENCES,
    CREATE_RECURRENCE,
    CREATE_TIME_SLOTS,
+   CREATE_MILE_RANGES,
 }

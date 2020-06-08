@@ -12,7 +12,7 @@ import { Container } from '../styled'
 import { TableHeader, TableRecord } from './styled'
 
 import { TimeSlots } from './components'
-import { ReccurenceTunnel, TimeSlotTunnel } from './tunnels'
+import { ReccurenceTunnel, TimeSlotTunnel, MileRangeTunnel } from './tunnels'
 import { useSubscription } from '@apollo/react-hooks'
 import { RECURRENCES } from '../../../../graphql'
 import {
@@ -53,6 +53,9 @@ const Main = () => {
             </Tunnel>
             <Tunnel layer={2}>
                <TimeSlotTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <MileRangeTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Container

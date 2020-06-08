@@ -343,3 +343,13 @@ export const CREATE_TIME_SLOTS = gql`
       }
    }
 `
+
+export const CREATE_MILE_RANGES = gql`
+   mutation CreateMileRanges($objects: [fulfilment_mileRange_insert_input!]!) {
+      createMileRanges(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
