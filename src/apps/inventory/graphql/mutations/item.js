@@ -134,6 +134,14 @@ export const UPDATE_BULK_ITEM = gql`
    }
 `
 
+export const DELETE_BULK_ITEM = gql`
+   mutation DeleteBulkItem($id: Int!) {
+      deleteBulkItem(where: { id: { _eq: $id } }) {
+         affected_rows
+      }
+   }
+`
+
 export const UPDATE_SUPPLIER_ITEM = gql`
    mutation UpdateSupplierItem(
       $id: Int!

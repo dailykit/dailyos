@@ -186,8 +186,8 @@ export const ProcessingButton = styled.div`
 `
 
 export const TransparentIconButton = styled.button`
-   height: 30px;
-   width: 30px;
+   height: 20px;
+   width: 20px;
    background: transparent;
    border: 0;
    outline: none;

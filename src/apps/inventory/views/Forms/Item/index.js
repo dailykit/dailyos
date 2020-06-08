@@ -1,4 +1,4 @@
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {
    ButtonTile,
@@ -28,6 +28,7 @@ import {
    SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
+   DELETE_BULK_ITEM,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -43,6 +44,7 @@ import {
    TransparentIconButton,
 } from './styled'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
+import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 // Tunnels
 import {
    AllergensTunnel,
@@ -109,12 +111,30 @@ export default function ItemForm() {
       MASTER_ALLERGENS_SUBSCRIPTION
    )
 
+   const [deleteBulkItem, { loading: bulkItemDeleteLoading }] = useMutation(
+      DELETE_BULK_ITEM,
+      {
+         onCompleted: () => {
+            toast.info('Bulk Item deleted successfully.')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! cannot delete the bulk item. Please try again.')
+         },
+      }
+   )
+
+   const handleBulkItemDelete = id => {
+      deleteBulkItem({ variables: { id } })
+   }
+
    if (
       supplierLoading ||
       processingsLoading ||
       allergensLoading ||
       itemDetailLoading ||
-      unitsLoading
+      unitsLoading ||
+      bulkItemDeleteLoading
    )
       return <Loader />
    return (
@@ -475,20 +495,35 @@ export default function ItemForm() {
                                        </div>
                                        {state.activeProcessing.id ===
                                           procs.id && (
-                                          <FlexContainer>
-                                             <TransparentIconButton
-                                                onClick={() => {
-                                                   dispatch({
-                                                      type: 'SET_DER_ACTION',
-                                                      payload: 'UPDATE',
-                                                   })
-                                                   openTunnel(7)
-                                                }}
-                                                type="button"
-                                             >
-                                                <EditIcon />
-                                             </TransparentIconButton>
-                                          </FlexContainer>
+                                          <>
+                                             <FlexContainer>
+                                                <TransparentIconButton
+                                                   onClick={() => {
+                                                      dispatch({
+                                                         type: 'SET_DER_ACTION',
+                                                         payload: 'UPDATE',
+                                                      })
+                                                      openTunnel(7)
+                                                   }}
+                                                   type="button"
+                                                >
+                                                   <EditIcon />
+                                                </TransparentIconButton>
+                                                <span
+                                                   style={{ width: '5px' }}
+                                                />
+                                                <TransparentIconButton
+                                                   onClick={() =>
+                                                      handleBulkItemDelete(
+                                                         procs.id
+                                                      )
+                                                   }
+                                                   type="button"
+                                                >
+                                                   <DeleteIcon />
+                                                </TransparentIconButton>
+                                             </FlexContainer>
+                                          </>
                                        )}
                                     </ProcessingButton>
                                  )
