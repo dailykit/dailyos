@@ -5,9 +5,34 @@ import { TableRecord } from './styled'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { DELETE_CHARGE } from '../../../../../../graphql'
 
 const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
+
+   // Mutations
+   const [deleteCharge] = useMutation(DELETE_CHARGE, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = id => {
+      if (window.confirm('Are you sure you want to delete?')) {
+         deleteCharge({
+            variables: {
+               id,
+            },
+         })
+      }
+   }
 
    const addCharge = () => {
       recurrenceDispatch({
@@ -43,10 +68,10 @@ const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
                   className="action"
                   style={{ padding: '8px' }}
                >
-                  <span>
+                  <span onClick={() => updateCharge(charge)}>
                      <EditIcon color="#00A7E1" />
                   </span>
-                  <span>
+                  <span onClick={() => deleteHandler(charge.id)}>
                      <DeleteIcon color="#FF5A52" />
                   </span>
                </Flex>

@@ -7,9 +7,44 @@ import { DeliveryRanges } from '../'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon } from '../../../../../../assets/icons'
+import { useMutation } from '@apollo/react-hooks'
+import { UPDATE_TIME_SLOT, DELETE_TIME_SLOT } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
 
 const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
+
+   // Mutations
+   const [updateTimeSlot] = useMutation(UPDATE_TIME_SLOT, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   const [deleteTimeSlot] = useMutation(DELETE_TIME_SLOT, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = id => {
+      if (window.confirm('Are you sure you want to delete?')) {
+         deleteTimeSlot({
+            variables: {
+               id,
+            },
+         })
+      }
+   }
 
    const addTimeSlot = () => {
       recurrenceDispatch({
@@ -31,9 +66,21 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                      <Flex direction="row" style={{ padding: '16px' }}>
                         <Toggle
                            checked={timeSlot.isActive}
-                           setChecked={val => console.log(val)}
+                           setChecked={val =>
+                              updateTimeSlot({
+                                 variables: {
+                                    id: timeSlot.id,
+                                    set: {
+                                       isActive: val,
+                                    },
+                                 },
+                              })
+                           }
                         />
-                        <span className="action">
+                        <span
+                           className="action"
+                           onClick={() => deleteHandler(timeSlot.id)}
+                        >
                            <DeleteIcon color=" #FF5A52" />
                         </span>
                      </Flex>

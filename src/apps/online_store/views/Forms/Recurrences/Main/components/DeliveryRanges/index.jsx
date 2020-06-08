@@ -7,9 +7,44 @@ import { DeliveryCharges } from '../'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon } from '../../../../../../assets/icons'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { DELETE_MILE_RANGE, UPDATE_MILE_RANGE } from '../../../../../../graphql'
 
 const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
+
+   // Mutations
+   const [updateMileRange] = useMutation(UPDATE_MILE_RANGE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   const [deleteMileRange] = useMutation(DELETE_MILE_RANGE, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = id => {
+      if (window.confirm('Are you sure you want to delete?')) {
+         deleteMileRange({
+            variables: {
+               id,
+            },
+         })
+      }
+   }
 
    const addMileRange = () => {
       recurrenceDispatch({
@@ -32,9 +67,21 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                <Flex direction="row" style={{ padding: '16px' }}>
                   <Toggle
                      checked={mileRange.isActive}
-                     setChecked={val => console.log(val)}
+                     setChecked={val =>
+                        updateMileRange({
+                           variables: {
+                              id: mileRange.id,
+                              set: {
+                                 isActive: val,
+                              },
+                           },
+                        })
+                     }
                   />
-                  <span className="action">
+                  <span
+                     className="action"
+                     onClick={() => deleteHandler(mileRange.id)}
+                  >
                      <DeleteIcon color=" #FF5A52" />
                   </span>
                </Flex>

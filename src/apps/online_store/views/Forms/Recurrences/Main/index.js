@@ -19,17 +19,26 @@ import {
    MileRangeTunnel,
    ChargesTunnel,
 } from './tunnels'
-import { useSubscription } from '@apollo/react-hooks'
-import { RECURRENCES } from '../../../../graphql'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import {
+   RECURRENCES,
+   UPDATE_RECURRENCE,
+   DELETE_RECURRENCE,
+} from '../../../../graphql'
 import {
    RecurrenceContext,
    reducers,
    state as initialState,
 } from '../../../../context/recurrence'
 import { DeleteIcon } from '../../../../assets/icons'
+import { Context } from '../../../../context'
+import { toast } from 'react-toastify'
 
 const Main = () => {
    const [recurrences, setRecurrences] = React.useState(undefined)
+   const {
+      state: { current },
+   } = React.useContext(Context)
    const [recurrenceState, recurrenceDispatch] = React.useReducer(
       reducers,
       initialState
@@ -37,14 +46,46 @@ const Main = () => {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
+   // Subscription
    const { loading, error } = useSubscription(RECURRENCES, {
       variables: {
-         type: 'PREORDER_DELIVERY',
+         type: current.fulfillment,
       },
       onSubscriptionData: data => {
          setRecurrences(data.subscriptionData.data.recurrences)
       },
    })
+
+   // Mutations
+   const [updateRecurrence] = useMutation(UPDATE_RECURRENCE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+   const [deleteRecurrence] = useMutation(DELETE_RECURRENCE, {
+      onCompleted: () => {
+         toast.success('Deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
+      },
+   })
+
+   // Handlers
+   const deleteHandler = id => {
+      if (window.confirm('Are you sure you want to delete?')) {
+         deleteRecurrence({
+            variables: {
+               id,
+            },
+         })
+      }
+   }
 
    if (loading) return <Loader />
 
@@ -104,9 +145,21 @@ const Main = () => {
                            <Flex direction="row" style={{ padding: '16px' }}>
                               <Toggle
                                  checked={recurrence.isActive}
-                                 setChecked={val => console.log(val)}
+                                 setChecked={val =>
+                                    updateRecurrence({
+                                       variables: {
+                                          id: recurrence.id,
+                                          set: {
+                                             isActive: val,
+                                          },
+                                       },
+                                    })
+                                 }
                               />
-                              <span className="action">
+                              <span
+                                 className="action"
+                                 onClick={() => deleteHandler(recurrence.id)}
+                              >
                                  <DeleteIcon color=" #FF5A52" />
                               </span>
                            </Flex>
