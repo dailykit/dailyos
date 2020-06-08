@@ -333,3 +333,13 @@ export const CREATE_RECURRENCE = gql`
       }
    }
 `
+
+export const CREATE_TIME_SLOTS = gql`
+   mutation createTimeSlot($objects: [fulfilment_timeSlot_insert_input!]!) {
+      createTimeSlots(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`

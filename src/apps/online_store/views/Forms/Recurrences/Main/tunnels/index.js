@@ -1,3 +1,4 @@
 import ReccurenceTunnel from './ReccurenceTunnel'
+import TimeSlotTunnel from './TimeSlotTunnel'
 
-export { ReccurenceTunnel }
+export { ReccurenceTunnel, TimeSlotTunnel }

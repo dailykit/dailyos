@@ -9,7 +9,7 @@ import { Context } from '../../../../../../context/tabs'
 import { Container, Flex } from '../../../styled'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { CREATE_RECURRENCE } from '../../../../../../graphql/mutations'
+import { CREATE_RECURRENCE } from '../../../../../../graphql'
 
 const ReccurenceTunnel = ({ closeTunnel }) => {
    const { state: tabs } = React.useContext(Context)

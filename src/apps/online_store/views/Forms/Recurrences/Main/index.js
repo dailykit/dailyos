@@ -12,12 +12,22 @@ import { Container } from '../styled'
 import { TableHeader, TableRecord } from './styled'
 
 import { TimeSlots } from './components'
-import { ReccurenceTunnel } from './tunnels'
+import { ReccurenceTunnel, TimeSlotTunnel } from './tunnels'
 import { useSubscription } from '@apollo/react-hooks'
 import { RECURRENCES } from '../../../../graphql'
+import {
+   RecurrenceContext,
+   reducers,
+   state as initialState,
+} from '../../../../context/recurrence'
 
 const Main = () => {
    const [recurrences, setRecurrences] = React.useState(undefined)
+   const [recurrenceState, recurrenceDispatch] = React.useReducer(
+      reducers,
+      initialState
+   )
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    const { loading, error } = useSubscription(RECURRENCES, {
@@ -34,10 +44,15 @@ const Main = () => {
    if (error) return <Text as="p">Some error occured!</Text>
 
    return (
-      <>
+      <RecurrenceContext.Provider
+         value={{ recurrenceState, recurrenceDispatch }}
+      >
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <ReccurenceTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <TimeSlotTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Container
@@ -71,7 +86,11 @@ const Main = () => {
                               {rrulestr(recurrence.rrule).toText()}
                            </div>
                            <div>
-                              <TimeSlots timeSlots={recurrence.timeSlots} />
+                              <TimeSlots
+                                 recurrenceId={recurrence.id}
+                                 timeSlots={recurrence.timeSlots}
+                                 openTunnel={openTunnel}
+                              />
                            </div>
                         </TableRecord>
                      ))}
@@ -85,7 +104,7 @@ const Main = () => {
                />
             </Container>
          </Container>
-      </>
+      </RecurrenceContext.Provider>
    )
 }
 

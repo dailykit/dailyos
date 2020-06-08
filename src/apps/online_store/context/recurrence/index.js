@@ -3,22 +3,29 @@ import React from 'react'
 export const RecurrenceContext = React.createContext()
 
 export const state = {
-   fulfillmentTime: 'PRE ORDER',
-   fulfillmentType: 'DELIVERY',
+   recurrenceId: undefined,
+   timeSlotId: undefined,
+   mileRangeId: undefined,
 }
 
 export const reducers = (state, { type, payload }) => {
    switch (type) {
-      case 'TIME': {
+      case 'RECURRENCE': {
          return {
             ...state,
-            fulfillmentTime: payload,
+            recurrenceId: payload,
          }
       }
-      case 'TYPE': {
+      case 'TIME_SLOT': {
          return {
             ...state,
-            fulfillmentType: payload,
+            timeSlotId: payload,
+         }
+      }
+      case 'MILE_RANGE': {
+         return {
+            ...state,
+            mileRangeId: payload,
          }
       }
       default:
