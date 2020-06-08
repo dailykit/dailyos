@@ -1,17 +1,17 @@
 import React from 'react'
-
-import { Text } from '@dailykit/ui'
+import { rrulestr } from 'rrule'
+import { Text, ButtonTile } from '@dailykit/ui'
 import { Container } from '../styled'
+import { TableHeader, TableRecord } from './styled'
 
-import { Recurrence } from './components'
+import { TimeSlots } from './components'
 
 const Main = ({ recurrences }) => {
    return (
       <Container
-         left="250"
          position="fixed"
          height="100vh"
-         style={{ overflowY: 'scroll', width: 'calc(100% - 250px)' }}
+         style={{ overflowY: 'scroll', width: '100%' }}
       >
          <Container
             paddingX="32"
@@ -22,14 +22,35 @@ const Main = ({ recurrences }) => {
          >
             <Text as="h1">Recurrences</Text>
          </Container>
-         <Container paddingX="32" top="80" bottom="64">
-            {recurrences?.map((recurrence, index) => (
-               <Recurrence
-                  key={recurrence.id}
-                  recurrence={recurrence}
-                  index={index}
-               />
-            ))}
+         <Container top="80" paddingX="32">
+            {Boolean(recurrences?.length) && (
+               <>
+                  <TableHeader>
+                     <span>Recurrences</span>
+                     <span>Time Slots</span>
+                     <span>Delivery Range</span>
+                     <span>Lead Time</span>
+                     <span>Order Value</span>
+                     <span>Charges</span>
+                  </TableHeader>
+                  {recurrences.map(recurrence => (
+                     <TableRecord key={recurrence.id}>
+                        <div style={{ padding: '16px' }}>
+                           {rrulestr(recurrence.rrule).toText()}
+                        </div>
+                        <div>
+                           <TimeSlots timeSlots={recurrence.timeSlots} />
+                        </div>
+                     </TableRecord>
+                  ))}
+               </>
+            )}
+            <ButtonTile
+               noIcon
+               type="secondary"
+               text="Add Recurrence"
+               onClick={e => console.log('Tile clicked')}
+            />
          </Container>
       </Container>
    )

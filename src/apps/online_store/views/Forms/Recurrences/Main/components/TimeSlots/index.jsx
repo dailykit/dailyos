@@ -10,16 +10,9 @@ const TimeSlots = ({ timeSlots, openTunnel }) => {
       <>
          {Boolean(timeSlots.length) && (
             <>
-               <TableHeader>
-                  <span>Time Slots</span>
-                  <span>Delivery Range</span>
-                  <span>Lead Time</span>
-                  <span>Order Value</span>
-                  <span>Charges</span>
-               </TableHeader>
                {timeSlots.map(timeSlot => (
                   <TableRecord key={timeSlot.id}>
-                     <div>
+                     <div style={{ padding: '16px' }}>
                         {timeSlot.from} - {timeSlot.to}
                      </div>
                      <div>

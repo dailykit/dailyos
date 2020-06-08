@@ -8,10 +8,10 @@ const DeliveryCharges = ({ charges, openTunnel }) => {
       <>
          {charges.map(charge => (
             <TableRecord key={charge.id}>
-               <div>
+               <div style={{ padding: '8px' }}>
                   ${charge.orderValueFrom} - ${charge.orderValueUpto}
                </div>
-               <div>${charge.charge}</div>
+               <div style={{ padding: '8px' }}>${charge.charge}</div>
             </TableRecord>
          ))}
          <ButtonTile

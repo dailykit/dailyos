@@ -26,7 +26,6 @@ const RecurrencesForm = () => {
 
    return (
       <>
-         <SideNav recurrences={recurrences} />
          <Main recurrences={recurrences} />
       </>
    )

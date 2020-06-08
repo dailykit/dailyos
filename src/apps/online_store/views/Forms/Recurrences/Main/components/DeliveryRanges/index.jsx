@@ -10,10 +10,12 @@ const DeliveryRanges = ({ mileRanges, openTunnel }) => {
       <>
          {mileRanges.map(mileRange => (
             <TableRecord key={mileRange.id}>
-               <div>
+               <div style={{ padding: '8px' }}>
                   {mileRange.from} - {mileRange.to} miles
                </div>
-               <div>{mileRange.leadTime || mileRange.prepTime} hours</div>
+               <div style={{ padding: '8px' }}>
+                  {mileRange.leadTime || mileRange.prepTime} hours
+               </div>
                <div>
                   <DeliveryCharges
                      charges={mileRange.charges}
