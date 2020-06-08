@@ -419,6 +419,9 @@ export const reducer = (state, { type, payload }) => {
          }
       case 'SET_DER_ACTION':
          return { ...state, derAction: payload }
+
+      case 'CLEAR_STATE':
+         return { ...state, activeProcessing: {}, derAction: '' }
       default:
          return state
    }

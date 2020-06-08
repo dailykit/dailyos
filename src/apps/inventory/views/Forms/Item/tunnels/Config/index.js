@@ -47,13 +47,13 @@ export default function ConfigTunnel({ close, open, units, formState }) {
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
    const [unit, setUnit] = useState(units[0].name)
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
-   const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || '')
+   const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(
       bulkItem?.yield?.value || ''
    )
    const [shelfLife, setShelfLife] = useState(bulkItem?.shelfLife?.value || '')
    const [shelfLifeUnit, setShelfLifeUnit] = useState(
-      bulkItem?.shelfLife?.unit || ''
+      bulkItem?.shelfLife?.unit || 'hours'
    )
    const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
 

@@ -375,8 +375,7 @@ export default function ItemForm() {
                                     )
 
                                  dispatch({
-                                    type: 'SET_DER_ACTION',
-                                    payload: '',
+                                    type: 'CLEAR_STATE',
                                  })
 
                                  if (formState.bulkItems.length) {
