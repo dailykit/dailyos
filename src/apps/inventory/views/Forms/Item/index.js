@@ -454,16 +454,18 @@ export default function ItemForm() {
                                           })
                                        }}
                                     >
-                                       <h3>{procs.processingName}</h3>
-                                       <Text as="subtitle">
-                                          {t(address.concat('on hand'))}:{' '}
-                                          {procs.onHand}
-                                          {t('units.gm')}
-                                       </Text>
-                                       <Text as="subtitle">
-                                          {t(address.concat('shelf life'))}:{' '}
-                                          {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
-                                       </Text>
+                                       <div style={{ textAlign: 'left' }}>
+                                          <h3>{procs.processingName}</h3>
+                                          <Text as="subtitle">
+                                             {t(address.concat('on hand'))}:{' '}
+                                             {procs.onHand}
+                                             {t('units.gm')}
+                                          </Text>
+                                          <Text as="subtitle">
+                                             {t(address.concat('shelf life'))}:{' '}
+                                             {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
+                                          </Text>
+                                       </div>
                                     </ProcessingButton>
                                  )
                               })}
@@ -613,14 +615,16 @@ function PlannedLotView({ open, formState }) {
                            })
                         }
                      >
-                        <h3>
-                           {sachet.unitSize} {sachet.unit}
-                        </h3>
+                        <div style={{ textAlign: 'left' }}>
+                           <h3>
+                              {sachet.unitSize} {sachet.unit}
+                           </h3>
 
-                        <Text as="subtitle">
-                           {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                           {sachet.unit}
-                        </Text>
+                           <Text as="subtitle">
+                              {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                              {sachet.unit}
+                           </Text>
+                        </div>
                      </ProcessingButton>
                   )
                })}
