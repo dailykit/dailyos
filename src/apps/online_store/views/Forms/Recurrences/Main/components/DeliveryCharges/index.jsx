@@ -3,6 +3,8 @@ import { ButtonTile } from '@dailykit/ui'
 
 import { TableRecord } from './styled'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
+import { Flex } from '../../../styled'
+import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
 
 const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -35,6 +37,19 @@ const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
                   ${charge.orderValueFrom} - ${charge.orderValueUpto}
                </div>
                <div style={{ padding: '8px' }}>${charge.charge}</div>
+               <Flex
+                  direction="row"
+                  justify="flex-start"
+                  className="action"
+                  style={{ padding: '8px' }}
+               >
+                  <span>
+                     <EditIcon color="#00A7E1" />
+                  </span>
+                  <span>
+                     <DeleteIcon color="#FF5A52" />
+                  </span>
+               </Flex>
             </TableRecord>
          ))}
          <ButtonTile

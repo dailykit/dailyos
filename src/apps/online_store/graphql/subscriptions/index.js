@@ -319,16 +319,20 @@ export const RECURRENCES = gql`
       recurrences(where: { type: { _eq: $type } }) {
          id
          rrule
+         type
+         isActive
          timeSlots {
             id
             from
             to
+            isActive
             mileRanges {
                id
                from
                to
                leadTime
                prepTime
+               isActive
                charges {
                   id
                   orderValueFrom

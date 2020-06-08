@@ -7,8 +7,9 @@ import {
    Tunnels,
    useTunnel,
    Loader,
+   Toggle,
 } from '@dailykit/ui'
-import { Container } from '../styled'
+import { Container, Flex } from '../styled'
 import { TableHeader, TableRecord } from './styled'
 
 import { TimeSlots } from './components'
@@ -25,6 +26,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../../context/recurrence'
+import { DeleteIcon } from '../../../../assets/icons'
 
 const Main = () => {
    const [recurrences, setRecurrences] = React.useState(undefined)
@@ -85,9 +87,12 @@ const Main = () => {
                   <>
                      <TableHeader>
                         <span>Recurrences</span>
+                        <span>Availability</span>
                         <span>Time Slots</span>
+                        <span>Availability</span>
                         <span>Delivery Range</span>
                         <span>Lead Time</span>
+                        <span>Availability</span>
                         <span>Order Value</span>
                         <span>Charges</span>
                      </TableHeader>
@@ -96,6 +101,15 @@ const Main = () => {
                            <div style={{ padding: '16px' }}>
                               {rrulestr(recurrence.rrule).toText()}
                            </div>
+                           <Flex direction="row" style={{ padding: '16px' }}>
+                              <Toggle
+                                 checked={recurrence.isActive}
+                                 setChecked={val => console.log(val)}
+                              />
+                              <span className="action">
+                                 <DeleteIcon color=" #FF5A52" />
+                              </span>
+                           </Flex>
                            <div>
                               <TimeSlots
                                  recurrenceId={recurrence.id}

@@ -1,10 +1,12 @@
 import React from 'react'
-import { ButtonTile } from '@dailykit/ui'
+import { ButtonTile, Toggle } from '@dailykit/ui'
 
 import { TableRecord } from './styled'
 
 import { DeliveryRanges } from '../'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
+import { Flex } from '../../../styled'
+import { DeleteIcon } from '../../../../../../assets/icons'
 
 const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -26,6 +28,15 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                      <div style={{ padding: '16px' }}>
                         {timeSlot.from} - {timeSlot.to}
                      </div>
+                     <Flex direction="row" style={{ padding: '16px' }}>
+                        <Toggle
+                           checked={timeSlot.isActive}
+                           setChecked={val => console.log(val)}
+                        />
+                        <span className="action">
+                           <DeleteIcon color=" #FF5A52" />
+                        </span>
+                     </Flex>
                      <div>
                         <DeliveryRanges
                            timeSlotId={timeSlot.id}
