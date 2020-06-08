@@ -10,8 +10,9 @@ import {
    Toggle,
    PlusIcon,
    IconButton,
+   Tag,
 } from '@dailykit/ui'
-import { Container, Flex } from '../styled'
+import { Container, Flex, Grid } from '../styled'
 import { TableHeader, TableRecord } from './styled'
 
 import { TimeSlots } from './components'
@@ -32,7 +33,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../../context/recurrence'
-import { DeleteIcon, AddIcon } from '../../../../assets/icons'
+import { DeleteIcon } from '../../../../assets/icons'
 import { Context } from '../../../../context'
 import { toast } from 'react-toastify'
 
@@ -124,7 +125,14 @@ const Main = () => {
                style={{ zIndex: '10' }}
             >
                <Flex direction="row" align="center">
-                  <Text as="h1">Recurrences</Text>
+                  <Grid cols="2" style={{ alignItems: 'baseline' }}>
+                     <Text as="h1">Recurrences</Text>
+                     <div as="title">
+                        {current.fulfillment.split('_').map(word => (
+                           <Tag>{word[0] + word.slice(1).toLowerCase()}</Tag>
+                        ))}
+                     </div>
+                  </Grid>
                   <IconButton type="solid" onClick={() => openTunnel(1)}>
                      <PlusIcon />
                   </IconButton>
