@@ -171,7 +171,7 @@ const MealKits = ({ mealkits }) => {
                         &nbsp;/&nbsp;
                         {
                            mealkit?.orderSachets.filter(
-                              sachet => sachet.status === 'COMPLETED'
+                              sachet => sachet.status === 'PACKED'
                            ).length
                         }
                         &nbsp; / {mealkit?.orderSachets?.length}

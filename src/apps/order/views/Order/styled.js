@@ -173,10 +173,10 @@ const selectBg = (arg1, arg2) => {
       return '#79df54'
    }
    if (args.every(item => item === false)) {
-      return '#65c6ff'
+      return '#f9daa8'
    }
    if (args.some(item => item === false)) {
-      return '#f9daa8'
+      return '#65c6ff'
    }
    return ''
 }

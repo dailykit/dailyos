@@ -33,7 +33,7 @@ const Header = ({ setPosition, isOpen, openPortal, closePortal }) => {
    React.useEffect(() => {
       if (!loading && notifications.length > 0) {
          const audio = new Audio(notifications[0]?.type?.audioUrl)
-         audio.play()
+         // audio.play()
       }
    }, [loading, notifications])
 
