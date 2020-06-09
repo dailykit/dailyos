@@ -40,7 +40,7 @@ const UserForm = () => {
    React.useEffect(() => {
       const tab = doesTabExists(`/settings/users/${params.name}`)
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         // history.push('/settings/users')
+         history.push('/settings/users')
       }
    }, [params.name, history])
 
@@ -64,7 +64,6 @@ const UserForm = () => {
    }
 
    if (loading) return <Loader />
-   if (error) return <div>{error.message}</div>
    return (
       <StyledWrapper>
          <StyledHeader>
