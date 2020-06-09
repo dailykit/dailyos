@@ -1025,25 +1025,6 @@
                   "add": "Añadir",
                   "type what you're looking for": "escribe lo que estás buscando"
                },
-               "user": {
-                  "new user": "Nuevo Usuario",
-                  "publish": "Publicar",
-                  "first name": "Nombre",
-                  "last name": "Nombre",
-                  "email": "Correo electrónico",
-                  "phone number": "Número de teléfono",
-                  "apps": "Aplicaciones",
-                  "configure": "Configurar",
-                  "select apps": "Seleccionar Apps",
-                  "devices": "Dispositivos",
-                  "select devices": "Seleccionar Dispositivos",
-                  "configure apps": "Configurar tienda",
-                  "add": "Añadir",
-                  "type what you're looking for": "escribe lo que estás buscando",
-                  "save": "Guardar",
-                  "roles for role": "Rayos para el rol",
-                  "select devices for the user": "Seleccionar dispositivos para el usuario"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1141,12 +1122,6 @@
                   "station type": "Nombre de la radio",
                   "devices": "Dispositivos",
                   "sachets": "Sachets"
-               },
-               "userslisting": {
-                  "users": "Usuarios",
-                  "apps configured": "Aplicaciones configuradas",
-                  "devices assigned": "Dispositivos asignados",
-                  "actions": "Acciones"
                },
                "masterlist": {
                   "master lists": "Master Lists",

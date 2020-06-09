@@ -1,5 +1,13 @@
 import gql from 'graphql-tag'
 
+export const CREATE_USER = gql`
+   mutation insert_settings_user_one($object: settings_user_insert_input!) {
+      insert_settings_user_one(object: $object) {
+         id
+      }
+   }
+`
+
 export const CREATE_ACCOMPANIMENT_TYPES = gql`
    mutation CreateAccompanimentTypes(
       $objects: [master_accompanimentType_insert_input!]!

@@ -1,5 +1,30 @@
 import gql from 'graphql-tag'
 
+export const USERS = gql`
+   subscription settings_user {
+      settings_user {
+         id
+         firstName
+         lastName
+         email
+         phoneNo
+      }
+   }
+`
+
+export const USER = gql`
+   subscription settings_user_by_pk($id: Int!) {
+      settings_user_by_pk(id: $id) {
+         id
+         firstName
+         lastName
+         email
+         phoneNo
+         tempPassword
+      }
+   }
+`
+
 export const PROCESSINGS = gql`
    subscription Processings {
       masterProcessings {

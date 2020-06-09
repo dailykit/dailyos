@@ -972,26 +972,6 @@
                   "add": "Add",
                   "type what you're looking for": "type what you're looking for"
                },
-               "user": {
-                  "new user": "New User",
-                  "publish": "Publish",
-                  "first name": "First Name",
-                  "last name": "Last Name",
-                  "email": "Email",
-                  "phone number": "Phone Number",
-                  "apps": "Apps",
-                  "configure": "Configure",
-                  "select apps": "Select Apps",
-                  "devices": "Devices",
-                  "select devices": "Select Devices",
-                  "configure apps": "Configure Apps",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for",
-                  "save": "Save",
-                  "roles for role": "Roles for role",
-                  "select devices for the user": "Select devices for the user"
-               }
-            },
             "home": {
                "settings app": "Setings App",
                "users": "Users",
@@ -1023,12 +1003,6 @@
                   "station type": "Station Type",
                   "devices": "Devices",
                   "sachets": "Sachets"
-               },
-               "userslisting": {
-                  "users": "Users",
-                  "apps configured": "Apps Configured",
-                  "devices assigned": "Devices Assigned",
-                  "actions": "Actions"
                }
             }
          }

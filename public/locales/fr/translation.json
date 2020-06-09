@@ -1025,25 +1025,6 @@
                   "add": "Ajouter",
                   "type what you're looking for": "tapez ce que vous cherchez"
                },
-               "user": {
-                  "new user": "Nouvel utilisateur",
-                  "publish": "Publier",
-                  "first name": "Prénom",
-                  "last name": "Nom De Famille",
-                  "email": "Email",
-                  "phone number": "Numéro de téléphone",
-                  "apps": "Applications",
-                  "configure": "Configurer",
-                  "select apps": "Sélectionner les applications",
-                  "devices": "Appareils",
-                  "select devices": "Sélectionnez un appareil",
-                  "configure apps": "Configurer les applis",
-                  "add": "Ajouter",
-                  "type what you're looking for": "tapez ce que vous cherchez",
-                  "save": "Enregistrer",
-                  "roles for role": "Rôles pour le rôle",
-                  "select devices for the user": "Sélectionnez un icône pour cet utilisateur"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1141,12 +1122,6 @@
                   "station type": "Nom de Station",
                   "devices": "Appareils",
                   "sachets": "Sachets"
-               },
-               "userslisting": {
-                  "users": "Utilisateurs",
-                  "apps configured": "Apps configurées",
-                  "devices assigned": "Equipements affectés",
-                  "actions": "Actions"
                },
                "masterlist": {
                   "master lists": "Master Lists",
