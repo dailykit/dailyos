@@ -250,7 +250,7 @@ const OrderListItem = ({ order }) => {
                                  &nbsp;/&nbsp;
                                  {
                                     mealkit?.orderSachets.filter(
-                                       sachet => sachet.status === 'COMPLETED'
+                                       sachet => sachet.status === 'PACKED'
                                     ).length
                                  }
                                  &nbsp; / {mealkit?.orderSachets?.length}
@@ -354,8 +354,7 @@ const OrderListItem = ({ order }) => {
                                       &nbsp;/&nbsp;
                                       {
                                          mealkit?.orderSachets.filter(
-                                            sachet =>
-                                               sachet.status === 'COMPLETED'
+                                            sachet => sachet.status === 'PACKED'
                                          ).length
                                       }
                                       &nbsp; / {mealkit?.orderSachets?.length}
