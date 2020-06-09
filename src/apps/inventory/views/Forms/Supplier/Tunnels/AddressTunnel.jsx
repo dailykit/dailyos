@@ -127,7 +127,7 @@ export default function AddressTunnel({ close, formState }) {
                         <div style={{ width: '10px' }} />
                         <Input
                            placeholder={t(address.concat('zip code'))}
-                           type="text"
+                           type="number"
                            name="zip"
                            value={zip}
                            onChange={e => setZip(e.target.value)}

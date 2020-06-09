@@ -91,7 +91,7 @@ export default function ItemInformationTunnel({ close, next }) {
 
             <FlexContainer style={{ width: '90%' }}>
                <Input
-                  type="text"
+                  type="number"
                   placeholder="width"
                   name="width"
                   value={itemWidth}
@@ -103,7 +103,7 @@ export default function ItemInformationTunnel({ close, next }) {
                />
                <span style={{ width: '30px' }} />
                <Input
-                  type="text"
+                  type="number"
                   placeholder="height"
                   name="height"
                   value={itemHeight}
@@ -115,7 +115,7 @@ export default function ItemInformationTunnel({ close, next }) {
                />
                <span style={{ width: '30px' }} />
                <Input
-                  type="text"
+                  type="number"
                   placeholder="depth"
                   name="depth"
                   value={itemDepth}
@@ -134,7 +134,7 @@ export default function ItemInformationTunnel({ close, next }) {
                style={{ justifyContent: 'space-between', width: '90%' }}
             >
                <Input
-                  type="text"
+                  type="number"
                   placeholder="Set Par Level"
                   name="itemName"
                   value={itemPar}
@@ -147,7 +147,7 @@ export default function ItemInformationTunnel({ close, next }) {
 
                <span style={{ width: '40px' }} />
                <Input
-                  type="text"
+                  type="number"
                   placeholder="Maximum Inventory Value"
                   name="itemSKU"
                   value={itemMaxValue}
