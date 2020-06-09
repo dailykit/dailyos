@@ -114,7 +114,7 @@ export default function InfoTunnel({ close, units, formState }) {
                   <StyledInputGroup>
                      <InputWrapper>
                         <Input
-                           type="text"
+                           type="number"
                            label={t(address.concat('unit qty'))}
                            name="unit quantity"
                            value={unitSize}
@@ -136,7 +136,7 @@ export default function InfoTunnel({ close, units, formState }) {
                         </StyledSelect>
                      </InputWrapper>
                      <Input
-                        type="text"
+                        type="number"
                         label={t(address.concat('unit price')).concat(':')}
                         name="Unit Price"
                         value={unitPrice}
@@ -225,7 +225,7 @@ export default function InfoTunnel({ close, units, formState }) {
                   <Highlight>
                      <InputWrapper>
                         <Input
-                           type="text"
+                           type="number"
                            label={t(address.concat('lead time')).concat(':')}
                            name="Lead Time"
                            value={leadTime}
