@@ -8,7 +8,7 @@ import { TextButton, Input, Text, HelperText, Loader } from '@dailykit/ui'
 // State
 import { useTabs } from '../../../context'
 
-import { CREATE_USER, USER } from '../../../graphql'
+import { CREATE_USER, USER, DELETE_USER } from '../../../graphql'
 import { initialState, reducers } from './store'
 
 // Styled
@@ -22,11 +22,11 @@ const UserForm = () => {
    const [state, dispatch] = React.useReducer(reducers, initialState)
 
    const {
-      error,
       loading,
       data: { settings_user_by_pk: user = {} } = {},
    } = useSubscription(USER, { variables: { id: params.name } })
 
+   const [deleteUser] = useMutation(DELETE_USER)
    const [addUser] = useMutation(CREATE_USER, {
       onCompleted: () => {
          const condition = node =>
@@ -70,9 +70,16 @@ const UserForm = () => {
             <Text as="h2">
                {Object.keys(user).length === 0 ? 'New User' : 'User Details'}
             </Text>
-            {Object.keys(user).length === 0 && (
+            {Object.keys(user).length === 0 ? (
                <TextButton type="solid" onClick={() => createUser()}>
                   Publish
+               </TextButton>
+            ) : (
+               <TextButton
+                  type="solid"
+                  onClick={() => deleteUser({ variables: user.id })}
+               >
+                  Delete User
                </TextButton>
             )}
          </StyledHeader>

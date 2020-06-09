@@ -8,6 +8,14 @@ export const CREATE_USER = gql`
    }
 `
 
+export const DELETE_USER = gql`
+   mutation delete_settings_user_by_pk($id: Int!) {
+      delete_settings_user_by_pk(id: $id) {
+         id
+      }
+   }
+`
+
 export const CREATE_ACCOMPANIMENT_TYPES = gql`
    mutation CreateAccompanimentTypes(
       $objects: [master_accompanimentType_insert_input!]!
