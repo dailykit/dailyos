@@ -1,5 +1,31 @@
 import gql from 'graphql-tag'
 
+export const CREATE_STATION = gql`
+   mutation insertStation($object: settings_station_insert_input!) {
+      insertStation(object: $object) {
+         id
+      }
+   }
+`
+
+export const UPDATE_STATION = gql`
+   mutation updateStation($id: Int!, $_set: settings_station_set_input!) {
+      updateStation(pk_columns: { id: $id }, _set: $_set) {
+         id
+         name
+      }
+   }
+`
+
+export const DELETE_STATION = gql`
+   mutation updateStation($id: Int!) {
+      deleteStation(id: $id) {
+         id
+         name
+      }
+   }
+`
+
 export const CREATE_USER = gql`
    mutation insert_settings_user_one($object: settings_user_insert_input!) {
       insert_settings_user_one(object: $object) {

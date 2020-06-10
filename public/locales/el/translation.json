@@ -1015,16 +1015,6 @@
                   "save": "Αποθήκευση",
                   "permissions for role": "Άδειες για ρόλο"
                },
-               "station": {
-                  "enter the station name": "Εισαγάγετε το όνομα του σταθμού",
-                  "publish": "Δημοσίευση",
-                  "select station type": "Επιλέξτε τύπο σταθμού",
-                  "devices": "Σσκευές",
-                  "select devices": "Επιλέξτε Συσκευές",
-                  "select devices for the user": "Επιλέξτε συσκευές για τον χρήστη",
-                  "add": "Προσθήκη",
-                  "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1114,14 +1104,6 @@
                   "roles": "Ρόλοι",
                   "apps configured": "Οι εφαρμογές διαμορφώθηκαν",
                   "actions": "Ενέργειες"
-               },
-               "stationslisting": {
-                  "actions": "Ενέργειες",
-                  "stations": "Σταθμοί",
-                  "station name": "Όνομα Σταθμού",
-                  "station type": "Τύπος σταθμού",
-                  "devices": "Σσκευές",
-                  "sachets": "Φακελάκια"
                },
                "masterlist": {
                   "master lists": "Master Lists",

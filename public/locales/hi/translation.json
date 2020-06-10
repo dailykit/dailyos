@@ -962,16 +962,6 @@
                   "save": "Save",
                   "permissions for role": "Permissions for role"
                },
-               "station": {
-                  "enter the station name": "Enter the station name",
-                  "publish": "Publish",
-                  "select station type": "Select station type",
-                  "devices": "Devices",
-                  "select devices": "Select Devices",
-                  "select devices for the user": "Select devices for the user",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for"
-               },
             "home": {
                "settings app": "Setings App",
                "users": "Users",
@@ -996,14 +986,6 @@
                   "apps configured": "Apps Configured",
                   "actions": "Actions"
                },
-               "stationslisting": {
-                  "actions": "Actions",
-                  "stations": "Stations",
-                  "station name": "Station Name",
-                  "station type": "Station Type",
-                  "devices": "Devices",
-                  "sachets": "Sachets"
-               }
             }
          }
       }

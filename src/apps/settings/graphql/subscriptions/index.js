@@ -1,5 +1,23 @@
 import gql from 'graphql-tag'
 
+export const STATION = gql`
+   subscription station($id: Int!) {
+      station(id: $id) {
+         id
+         name
+      }
+   }
+`
+
+export const STATIONS = gql`
+   subscription stations {
+      stations {
+         id
+         name
+      }
+   }
+`
+
 export const USERS = gql`
    subscription settings_user {
       settings_user {

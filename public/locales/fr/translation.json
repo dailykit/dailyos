@@ -1015,16 +1015,6 @@
                   "save": "Enregistrer",
                   "permissions for role": "Permissions pour le rôle"
                },
-               "station": {
-                  "enter the station name": "Saisissez le nom de la radio",
-                  "publish": "Publier",
-                  "select station type": "Sélectionnez la Station",
-                  "devices": "Appareils",
-                  "select devices": "Sélectionnez",
-                  "select devices for the user": "Sélectionnez un icône pour cet utilisateur",
-                  "add": "Ajouter",
-                  "type what you're looking for": "tapez ce que vous cherchez"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1114,14 +1104,6 @@
                   "roles": "Rôles",
                   "apps configured": "\"Pas d'applications configurées\"",
                   "actions": "Actions"
-               },
-               "stationslisting": {
-                  "actions": "Actions",
-                  "stations": "Stations",
-                  "station name": "Nom de Station",
-                  "station type": "Nom de Station",
-                  "devices": "Appareils",
-                  "sachets": "Sachets"
                },
                "masterlist": {
                   "master lists": "Master Lists",
