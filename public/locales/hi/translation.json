@@ -962,38 +962,8 @@
                   "save": "Save",
                   "permissions for role": "Permissions for role"
                },
-               "station": {
-                  "enter the station name": "Enter the station name",
-                  "publish": "Publish",
-                  "select station type": "Select station type",
-                  "devices": "Devices",
-                  "select devices": "Select Devices",
-                  "select devices for the user": "Select devices for the user",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for"
-               },
-               "user": {
-                  "new user": "New User",
-                  "publish": "Publish",
-                  "first name": "First Name",
-                  "last name": "Last Name",
-                  "email": "Email",
-                  "phone number": "Phone Number",
-                  "apps": "Apps",
-                  "configure": "Configure",
-                  "select apps": "Select Apps",
-                  "devices": "Devices",
-                  "select devices": "Select Devices",
-                  "configure apps": "Configure Apps",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for",
-                  "save": "Save",
-                  "roles for role": "Roles for role",
-                  "select devices for the user": "Select devices for the user"
-               }
-            },
             "home": {
-               "settings app": "Setings App",
+               "settings app": "Settings App",
                "users": "Users",
                "roles": "Roles",
                "apps": "Apps",
@@ -1016,20 +986,6 @@
                   "apps configured": "Apps Configured",
                   "actions": "Actions"
                },
-               "stationslisting": {
-                  "actions": "Actions",
-                  "stations": "Stations",
-                  "station name": "Station Name",
-                  "station type": "Station Type",
-                  "devices": "Devices",
-                  "sachets": "Sachets"
-               },
-               "userslisting": {
-                  "users": "Users",
-                  "apps configured": "Apps Configured",
-                  "devices assigned": "Devices Assigned",
-                  "actions": "Actions"
-               }
             }
          }
       }

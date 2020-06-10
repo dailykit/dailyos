@@ -61,7 +61,7 @@ export const useTabs = () => {
    const switchTab = path => history.push(path)
 
    const removeTab = (e, { tab, index }) => {
-      e.stopPropagation()
+      e && e.stopPropagation()
       dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
 
       const tabsCount = tabs.length
