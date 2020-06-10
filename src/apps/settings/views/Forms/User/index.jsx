@@ -70,11 +70,12 @@ const UserForm = () => {
             <Text as="h2">
                {Object.keys(user).length === 0 ? 'New User' : 'User Details'}
             </Text>
-            {Object.keys(user).length === 0 ? (
+            {Object.keys(user).length === 0 && (
                <TextButton type="solid" onClick={() => createUser()}>
                   Publish
                </TextButton>
-            ) : (
+            )}
+            {Object.keys(user).length > 0 && user?.keycloakId && (
                <TextButton
                   type="solid"
                   onClick={() => deleteUser({ variables: user.id })}
