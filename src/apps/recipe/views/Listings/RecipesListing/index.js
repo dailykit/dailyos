@@ -7,6 +7,8 @@ import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import { toast } from 'react-toastify'
 
+import ServingsCount from '../../../utils/countFormatter'
+
 import { randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
@@ -192,14 +194,6 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          </StyledContent>
       </>
    )
-}
-
-function ServingsCount({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   return <>{value.length}</>
 }
 
 function DeleteRecipe() {
