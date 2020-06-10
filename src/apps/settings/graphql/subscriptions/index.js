@@ -1,5 +1,24 @@
 import gql from 'graphql-tag'
 
+export const STATIONS_AGGREGATE = gql`
+   subscription stationsAggregate {
+      stationsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const USERS_AGGREGATE = gql`
+   subscription settings_user_aggregate {
+      settings_user_aggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
 export const STATION = gql`
    subscription station($id: Int!) {
       station(id: $id) {
