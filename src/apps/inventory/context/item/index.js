@@ -59,6 +59,7 @@ export const state = {
    configurable: {},
    activeSachet: {},
    nutriTarget: '',
+   derAction: '',
 }
 
 export const reducer = (state, { type, payload }) => {
@@ -143,8 +144,7 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             processing: {
                ...state.processing,
-               name: payload.name,
-               processingId: payload.id,
+               ...payload,
                sachets: [],
                shipped: true,
             },
@@ -417,6 +417,11 @@ export const reducer = (state, { type, payload }) => {
             unit_price: payload.unit_price,
             lead_time: payload.leadTime,
          }
+      case 'SET_DER_ACTION':
+         return { ...state, derAction: payload }
+
+      case 'CLEAR_STATE':
+         return { ...state, activeProcessing: {}, derAction: '' }
       default:
          return state
    }

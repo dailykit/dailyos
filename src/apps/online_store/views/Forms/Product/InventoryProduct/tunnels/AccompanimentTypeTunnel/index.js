@@ -31,12 +31,12 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
    //Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
-         toast.success('Accompaniment types added!')
+         toast.success(t(address.concat('accompaniment types added!')))
          close(4)
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
          setBusy(false)
       },
    })

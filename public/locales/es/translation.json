@@ -1015,35 +1015,6 @@
                   "save": "Guardar",
                   "permissions for role": "Permisos para el rol"
                },
-               "station": {
-                  "enter the station name": "Ingresar nombre de estación",
-                  "publish": "Publicar",
-                  "select station type": "Seleccionar Estación",
-                  "devices": "Dispositivos",
-                  "select devices": "Seleccionar Dispositivos",
-                  "select devices for the user": "Seleccionar dispositivos para el usuario",
-                  "add": "Añadir",
-                  "type what you're looking for": "escribe lo que estás buscando"
-               },
-               "user": {
-                  "new user": "Nuevo Usuario",
-                  "publish": "Publicar",
-                  "first name": "Nombre",
-                  "last name": "Nombre",
-                  "email": "Correo electrónico",
-                  "phone number": "Número de teléfono",
-                  "apps": "Aplicaciones",
-                  "configure": "Configurar",
-                  "select apps": "Seleccionar Apps",
-                  "devices": "Dispositivos",
-                  "select devices": "Seleccionar Dispositivos",
-                  "configure apps": "Configurar tienda",
-                  "add": "Añadir",
-                  "type what you're looking for": "escribe lo que estás buscando",
-                  "save": "Guardar",
-                  "roles for role": "Rayos para el rol",
-                  "select devices for the user": "Seleccionar dispositivos para el usuario"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1132,20 +1103,6 @@
                "roleslisting": {
                   "roles": "Roles",
                   "apps configured": "Aplicaciones configuradas",
-                  "actions": "Acciones"
-               },
-               "stationslisting": {
-                  "actions": "Acciones",
-                  "stations": "Emisora",
-                  "station name": "Nombre de la radio",
-                  "station type": "Nombre de la radio",
-                  "devices": "Dispositivos",
-                  "sachets": "Sachets"
-               },
-               "userslisting": {
-                  "users": "Usuarios",
-                  "apps configured": "Aplicaciones configuradas",
-                  "devices assigned": "Dispositivos asignados",
                   "actions": "Acciones"
                },
                "masterlist": {

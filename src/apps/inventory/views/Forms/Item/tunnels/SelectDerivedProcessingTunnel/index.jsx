@@ -22,23 +22,28 @@ export default function SelectDerivedProcessingTunnel({
    close,
    next,
    processings,
-   rawProcessings,
+   formState,
 }) {
    const { t } = useTranslation()
-   const { state, dispatch } = useContext(ItemContext)
+   const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList(processings)
+   const [list, current, selectOption] = useSingleList(
+      processings.filter(proc => {
+         const match = formState.bulkItems.find(
+            item => item.processingName === proc.title
+         )
+
+         if (!match) return true
+      })
+   )
 
    return (
       <TunnelContainer>
          <TunnelHeader
             title={t(address.concat('select processing'))}
             next={() => {
-               const payload = rawProcessings.find(
-                  processing => processing.id === current.id
-               )
-               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload })
+               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
                dispatch({
                   type: 'ADD_CONFIGURABLE_PROCESSING',
                   payload: current,

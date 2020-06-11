@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useTranslation } from 'react-i18next'
 
 import {
    StyledOrderItem,
@@ -40,12 +41,15 @@ import { formatDate } from '../../utils'
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
 import { useTabs } from '../../context'
 
+const address = 'apps.order.components.orderlistitem.'
+
 const normalize = address =>
    `${address.line1}, ${address.line2 ? `${address.line2}, ` : ''} ${
       address.city
    }, ${address.state}, ${address.zipcode}`
 
 const OrderListItem = ({ order }) => {
+   const { t } = useTranslation()
    const { addTab } = useTabs()
    const [currentPanel, setCurrentPanel] = React.useState('customer')
    const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
@@ -84,7 +88,7 @@ const OrderListItem = ({ order }) => {
          <section>
             <ListBodyItem isOpen={currentPanel === 'customer'}>
                <header>
-                  <span>Customer Info</span>
+                  <span>{t(address.concat('customer info'))}</span>
                   <ToggleButton
                      type="customer"
                      current={currentPanel}
@@ -113,7 +117,7 @@ const OrderListItem = ({ order }) => {
             </ListBodyItem>
             <ListBodyItem isOpen={currentPanel === 'billing'}>
                <header>
-                  <span>Billing Info</span>
+                  <span>{t(address.concat('billing info'))}</span>
                   <ToggleButton
                      type="billing"
                      current={currentPanel}
@@ -122,19 +126,19 @@ const OrderListItem = ({ order }) => {
                </header>
                <main>
                   <StyledStat>
-                     <span>Tax</span>
+                     <span>{t(address.concat('tax'))}</span>
                      <span>{rest.tax}</span>
                   </StyledStat>
                   <StyledStat>
-                     <span>Discount</span>
+                     <span>{t(address.concat('discount'))}</span>
                      <span>{rest.discount}</span>
                   </StyledStat>
                   <StyledStat>
-                     <span>Delivery Price</span>
+                     <span>{t(address.concat('delivery price'))}</span>
                      <span>{rest.deliveryPrice}</span>
                   </StyledStat>
                   <StyledStat>
-                     <span>Item Total</span>
+                     <span>{t(address.concat('item total'))}</span>
                      <span>{rest.itemTotal}</span>
                   </StyledStat>
                </main>
@@ -146,10 +150,12 @@ const OrderListItem = ({ order }) => {
                   ORD{order.id}
                   <NewTabIcon size={14} />
                </StyledViewOrder>
-               <span>Total: ${order.itemTotal}</span>
+               <span>
+                  {t(address.concat('total'))}: ${order.itemTotal}
+               </span>
                <section>
                   <StyledStatus>
-                     <span>Ordered On:&nbsp;</span>
+                     <span>{t(address.concat('ordered on'))}:&nbsp;</span>
                      <span>{formatDate(order?.created_at)}</span>
                   </StyledStatus>
                   &nbsp;|&nbsp;
@@ -162,7 +168,7 @@ const OrderListItem = ({ order }) => {
                <StyledTabs>
                   <StyledTabList>
                      <StyledTab>
-                        All{' '}
+                        {t(address.concat('all'))}{' '}
                         <StyledCount>
                            0 /&nbsp;
                            {inventories.length +
@@ -172,15 +178,15 @@ const OrderListItem = ({ order }) => {
                         </StyledCount>
                      </StyledTab>
                      <StyledTab>
-                        Inventory{' '}
+                        {t(address.concat('inventory'))}{' '}
                         <StyledCount>{inventories.length || 0}</StyledCount>
                      </StyledTab>
                      <StyledTab>
-                        Meal Kits{' '}
+                        {t(address.concat('meal kits'))}{' '}
                         <StyledCount>{mealkits.length || 0}</StyledCount>
                      </StyledTab>
                      <StyledTab>
-                        Ready to Eats{' '}
+                        {t(address.concat('ready to eat'))}{' '}
                         <StyledCount>{readytoeats.length}</StyledCount>
                      </StyledTab>
                   </StyledTabList>
@@ -208,7 +214,7 @@ const OrderListItem = ({ order }) => {
                                  </span>
                               </StyledServings>
                               <span>
-                                 {inventory.assemblyStatus === 'ASSEMBLED'
+                                 {inventory.assemblyStatus === 'COMPLETED'
                                     ? 1
                                     : 0}{' '}
                                  / 1
@@ -232,7 +238,7 @@ const OrderListItem = ({ order }) => {
                                        mealkit?.simpleRecipeProductOption
                                           ?.simpleRecipeYield?.yield?.serving
                                     }
-                                    &nbsp; Servings
+                                    &nbsp; {t(address.concat('servings'))}
                                  </span>
                               </StyledServings>
                               <span>
@@ -244,7 +250,7 @@ const OrderListItem = ({ order }) => {
                                  &nbsp;/&nbsp;
                                  {
                                     mealkit?.orderSachets.filter(
-                                       sachet => sachet.status === 'COMPLETED'
+                                       sachet => sachet.status === 'PACKED'
                                     ).length
                                  }
                                  &nbsp; / {mealkit?.orderSachets?.length}
@@ -268,11 +274,11 @@ const OrderListItem = ({ order }) => {
                                        readytoeat?.simpleRecipeProductOption
                                           ?.simpleRecipeYield?.yield?.serving
                                     }
-                                    &nbsp; Servings
+                                    &nbsp; {t(address.concat('servings'))}
                                  </span>
                               </StyledServings>
                               <span>
-                                 {readytoeat?.assemblyStatus === 'ASSEMBLED'
+                                 {readytoeat?.assemblyStatus === 'COMPLETED'
                                     ? 1
                                     : 0}{' '}
                                  / 1
@@ -307,14 +313,14 @@ const OrderListItem = ({ order }) => {
                                       </span>
                                    </StyledServings>
                                    <span>
-                                      {inventory.assemblyStatus === 'ASSEMBLED'
+                                      {inventory.assemblyStatus === 'COMPLETED'
                                          ? 1
                                          : 0}{' '}
                                       / 1
                                    </span>
                                 </StyledProductItem>
                              ))
-                           : 'No inventories'}
+                           : t(address.concat('no inventories'))}
                      </StyledTabPanel>
                      <StyledTabPanel>
                         {mealkits.length > 0
@@ -336,7 +342,7 @@ const OrderListItem = ({ order }) => {
                                                ?.simpleRecipeYield?.yield
                                                ?.serving
                                          }
-                                         &nbsp; Servings
+                                         &nbsp; {t(address.concat('servings'))}
                                       </span>
                                    </StyledServings>
                                    <span>
@@ -348,15 +354,14 @@ const OrderListItem = ({ order }) => {
                                       &nbsp;/&nbsp;
                                       {
                                          mealkit?.orderSachets.filter(
-                                            sachet =>
-                                               sachet.status === 'COMPLETED'
+                                            sachet => sachet.status === 'PACKED'
                                          ).length
                                       }
                                       &nbsp; / {mealkit?.orderSachets?.length}
                                    </span>
                                 </StyledProductItem>
                              ))
-                           : 'No Meal Kits'}
+                           : t(address.concat('no meal kits'))}
                      </StyledTabPanel>
                      <StyledTabPanel>
                         {readytoeats.length > 0
@@ -379,19 +384,19 @@ const OrderListItem = ({ order }) => {
                                                ?.simpleRecipeYield?.yield
                                                ?.serving
                                          }
-                                         &nbsp; Servings
+                                         &nbsp; {t(address.concat('servings'))}
                                       </span>
                                    </StyledServings>
                                    <span>
                                       {readytoeat?.assemblyStatus ===
-                                      'ASSEMBLED'
+                                      'COMPLETED'
                                          ? 1
                                          : 0}{' '}
                                       / 1
                                    </span>
                                 </StyledProductItem>
                              ))
-                           : 'No Ready to Eats'}
+                           : t(address.concat('no ready to eat'))}
                      </StyledTabPanel>
                   </StyledTabPanels>
                </StyledTabs>
@@ -470,9 +475,10 @@ const ToggleButton = ({ type, current, toggle }) => {
 }
 
 const ExpectedDelivery = ({ data = {} }) => {
+   const { t } = useTranslation()
    return (
       <StyledStatus>
-         <span>Expected Dispatch:&nbsp;</span>
+         <span>{t(address.concat('expected dispatch'))}:&nbsp;</span>
          <span>
             {data?.window?.approved?.startsAt
                ? formatDate(data?.window?.approved?.startsAt)
@@ -483,9 +489,10 @@ const ExpectedDelivery = ({ data = {} }) => {
 }
 
 const DeliveryOn = ({ data = {} }) => {
+   const { t } = useTranslation()
    return (
       <StyledStatus>
-         <span>Delivery On:&nbsp;</span>
+         <span>{t(address.concat('delivery on'))}:&nbsp;</span>
          <span>
             {data.window?.approved?.startsAt
                ? formatDate(data.window?.approved?.startsAt)

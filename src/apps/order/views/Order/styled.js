@@ -1,38 +1,90 @@
 import styled, { css } from 'styled-components'
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
 export const Wrapper = styled.div`
-   margin: 0 auto;
+   height: 100%;
    padding: 24px;
+   margin: 0 auto;
    > section {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      height: inherit;
    }
 `
 
+export const StyledTabs = styled(Tabs)(
+   () => css`
+      height: inherit;
+      margin-top: 16px;
+   `
+)
+
+export const StyledTabList = styled(TabList)(
+   () => css`
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      [data-selected] {
+         border-bottom: 2px solid #2cb2e6;
+      }
+   `
+)
+
+export const StyledTab = styled(Tab)(
+   () => css`
+      border: none;
+      height: 32px;
+      font-size: 18px;
+      margin-right: 14px;
+      background: #ffffff;
+      :focus {
+         outline: none;
+         border-bottom: 2px solid #2cb2e6;
+      }
+   `
+)
+
+export const StyledTabPanels = styled(TabPanels)(
+   () => css`
+      height: inherit;
+   `
+)
+
+export const StyledTabPanel = styled(TabPanel)(
+   () => css`
+      height: inherit;
+      :focus {
+         outline: none;
+      }
+   `
+)
+
 export const Header = styled.header(
    () => css`
+      display: flex;
       margin-bottom: 24px;
-
+      align-items: center;
       h3 {
-         font-size: 18px;
+         span {
+            color: #9aa5ab;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+         }
+         font-size: 14px;
          font-weight: 400;
-         margin-bottom: 24px;
       }
       > section {
-         display: grid;
-         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+         flex: 1;
+         display: flex;
+         align-items: center;
+         justify-content: space-around;
          section {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             span:first-child {
                color: #9aa5ab;
                font-size: 14px;
                font-weight: 500;
-               padding-bottom: 4px;
                letter-spacing: 0.6px;
                text-transform: uppercase;
-            }
-            span:last-child {
-               font-size: 24px;
             }
          }
       }
@@ -121,10 +173,10 @@ const selectBg = (arg1, arg2) => {
       return '#79df54'
    }
    if (args.every(item => item === false)) {
-      return '#65c6ff'
+      return '#f9daa8'
    }
    if (args.some(item => item === false)) {
-      return '#f9daa8'
+      return '#65c6ff'
    }
    return ''
 }

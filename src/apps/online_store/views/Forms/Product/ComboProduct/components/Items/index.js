@@ -50,11 +50,11 @@ const Items = ({ state, openTunnel }) => {
       DELETE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: () => {
-            toast.success('Label removed!')
+            toast.success(t(address.concat('label removed!')))
          },
          onError: error => {
             console.log(error)
-            toast.error('Error')
+            toast.error(t(address.concat('error')))
          },
       }
    )
@@ -63,7 +63,7 @@ const Items = ({ state, openTunnel }) => {
    const removeComponent = component => {
       if (
          window.confirm(
-            `Are you sure you want to remove label - ${component.label}?`
+            `t(address.concat('are you sure you want to remove label')) - ${component.label}?`
          )
       ) {
          deleteComboProductComponent({
@@ -94,38 +94,38 @@ const Items = ({ state, openTunnel }) => {
                      component.inventoryProduct ||
                      component.simpleRecipeProduct
                ).length ? (
-                  <ItemsView
-                     state={state}
-                     openTunnel={openTunnel}
-                     deleteComboProductComponent={deleteComboProductComponent}
-                  />
-               ) : (
-                  state.comboProductComponents.map(component => (
-                     <React.Fragment>
-                        <StyledLabel>
-                           {component.label}
-                           <span onClick={() => removeComponent(component)}>
-                              <DeleteIcon color="#FF5A52" />
-                           </span>
-                        </StyledLabel>
-                        <ButtonTile
-                           type="primary"
-                           size="sm"
-                           text={t(address.concat('add product'))}
-                           onClick={() => open(component.id)}
-                        />
-                     </React.Fragment>
-                  ))
-               )}
+                     <ItemsView
+                        state={state}
+                        openTunnel={openTunnel}
+                        deleteComboProductComponent={deleteComboProductComponent}
+                     />
+                  ) : (
+                     state.comboProductComponents.map(component => (
+                        <React.Fragment>
+                           <StyledLabel>
+                              {component.label}
+                              <span onClick={() => removeComponent(component)}>
+                                 <DeleteIcon color="#FF5A52" />
+                              </span>
+                           </StyledLabel>
+                           <ButtonTile
+                              type="primary"
+                              size="sm"
+                              text={t(address.concat('add product'))}
+                              onClick={() => open(component.id)}
+                           />
+                        </React.Fragment>
+                     ))
+                  )}
             </React.Fragment>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text={t(address.concat('add items'))}
-               onClick={() => openTunnel(2)}
-            />
-         )}
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat('add items'))}
+                  onClick={() => openTunnel(2)}
+               />
+            )}
       </StyledWrapper>
    )
 }
@@ -168,7 +168,7 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
    const removeProduct = component => {
       if (
          window.confirm(
-            `Are you sure you want to remove product from ${component.label}?`
+            `t(address.concat('are you sure you want to remove product from')) ${component.label}?`
          )
       ) {
          updateComboProductComponent({
@@ -212,29 +212,29 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                      </span>{' '}
                   </StyledLabel>
                   {component.customizableProduct ||
-                  component.inventoryProduct ||
-                  component.simpleRecipeProduct ? (
-                     <StyledListingTile
-                        active={active.id === component.id}
-                        onClick={() => setActive(component)}
-                     >
-                        <h3>
-                           {component.customizableProduct?.name ||
-                              component.inventoryProduct?.name ||
-                              component.simpleRecipeProduct?.name}
-                        </h3>
-                        <span onClick={() => removeProduct(component)}>
-                           <DeleteIcon color="#fff" />
-                        </span>
-                     </StyledListingTile>
-                  ) : (
-                     <ButtonTile
-                        type="secondary"
-                        size="sm"
-                        text={t(address.concat('add product'))}
-                        onClick={() => open(component.id)}
-                     />
-                  )}
+                     component.inventoryProduct ||
+                     component.simpleRecipeProduct ? (
+                        <StyledListingTile
+                           active={active.id === component.id}
+                           onClick={() => setActive(component)}
+                        >
+                           <h3>
+                              {component.customizableProduct?.name ||
+                                 component.inventoryProduct?.name ||
+                                 component.simpleRecipeProduct?.name}
+                           </h3>
+                           <span onClick={() => removeProduct(component)}>
+                              <DeleteIcon color="#fff" />
+                           </span>
+                        </StyledListingTile>
+                     ) : (
+                        <ButtonTile
+                           type="secondary"
+                           size="sm"
+                           text={t(address.concat('add product'))}
+                           onClick={() => open(component.id)}
+                        />
+                     )}
                </StyledComboTile>
             ))}
          </StyledListing>
@@ -249,21 +249,21 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                         onClick={() => {
                            active.inventoryProduct
                               ? addTab(
-                                   active.inventoryProduct.name,
-                                   'inventoryProduct',
-                                   active.inventoryProduct.id
-                                )
+                                 active.inventoryProduct.name,
+                                 'inventoryProduct',
+                                 active.inventoryProduct.id
+                              )
                               : active.simpleRecipeProduct
-                              ? addTab(
-                                   active.simpleRecipeProduct.name,
-                                   'simpleRecipeProduct',
-                                   active.simpleRecipeProduct.id
-                                )
-                              : addTab(
-                                   active.customizableProduct.name,
-                                   'customizableProduct',
-                                   active.customizableProduct.id
-                                )
+                                 ? addTab(
+                                    active.simpleRecipeProduct.name,
+                                    'simpleRecipeProduct',
+                                    active.simpleRecipeProduct.id
+                                 )
+                                 : addTab(
+                                    active.customizableProduct.name,
+                                    'customizableProduct',
+                                    active.customizableProduct.id
+                                 )
                         }}
                      >
                         <LinkIcon color="#00A7E1" stroke={1.5} />
@@ -317,8 +317,8 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                                                    )}
                                                 </span>
                                              ) : (
-                                                ''
-                                             )}
+                                                   ''
+                                                )}
                                           </td>
                                           <td>
                                              {
@@ -337,10 +337,10 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                                                 parseFloat(
                                                    option.price[0].value
                                                 ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
+                                                (parseFloat(
+                                                   option.price[0].discount
+                                                ) /
+                                                   100)
                                              ).toFixed(2) || ''}
                                           </td>
                                        </tr>
@@ -362,8 +362,8 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                                                    )}
                                                 </span>
                                              ) : (
-                                                ''
-                                             )}
+                                                   ''
+                                                )}
                                           </td>
                                           <td>
                                              {
@@ -382,51 +382,51 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                                                 parseFloat(
                                                    option.price[0].value
                                                 ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
+                                                (parseFloat(
+                                                   option.price[0].discount
+                                                ) /
+                                                   100)
                                              ).toFixed(2) || ''}
                                           </td>
                                        </tr>
                                     ))}
                               </React.Fragment>
                            ) : (
-                              <React.Fragment>
-                                 {active.inventoryProduct.inventoryProductOptions.map(
-                                    option => (
-                                       <tr key={option.id}>
-                                          <td>{option.label}</td>
-                                          <td>{option.quantity}</td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
+                                 <React.Fragment>
+                                    {active.inventoryProduct.inventoryProductOptions.map(
+                                       option => (
+                                          <tr key={option.id}>
+                                             <td>{option.label}</td>
+                                             <td>{option.quantity}</td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>{option.price[0].discount} %</td>
+                                             <td>
+                                                $
                                              {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) -
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) *
                                                    (parseFloat(
                                                       option.price[0].discount
                                                    ) /
                                                       100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    )
-                                 )}
-                              </React.Fragment>
-                           )}
+                                                ).toFixed(2) || ''}
+                                             </td>
+                                          </tr>
+                                       )
+                                    )}
+                                 </React.Fragment>
+                              )}
                         </tbody>
                      </StyledTable>
                   ) : (
-                     <Text as="p">
-                        Cannot display Pricing for a Customizable Product.
-                     </Text>
-                  )}
+                        <Text as="p">
+                           {t(address.concat('cannot display pricing for a customizable product'))}.
+                        </Text>
+                     )}
                </React.Fragment>
             )}
          </StyledPanel>

@@ -13,7 +13,7 @@ import {
 
 import { useTranslation } from 'react-i18next'
 
-const address = 'apps.online_store.sections.sidebar.'
+const address = 'apps.safety.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
@@ -26,11 +26,8 @@ const Sidebar = ({ visible, toggleSidebar }) => {
       <StyledSidebar visible={visible}>
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
-            <StyledListItem onClick={() => addTab('Products', 'products')}>
-               {t(address.concat('products'))}
-            </StyledListItem>
-            <StyledListItem onClick={() => addTab('Menus', 'menus')}>
-               {t(address.concat('menus'))}
+            <StyledListItem onClick={() => addTab('Safety Checks', 'checks')}>
+               {t(address.concat('Safety Checks'))}
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

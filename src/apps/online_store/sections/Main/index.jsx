@@ -13,6 +13,8 @@ import {
    SimpleRecipeProductForm,
    CustomizableProductForm,
    ComboProductForm,
+   StoreSettingsForm,
+   RecurrencesForm,
 } from '../../views'
 
 const renderComponent = (type, view) => {
@@ -29,6 +31,8 @@ const renderComponent = (type, view) => {
    if (type === 'forms' && view === 'customizableProduct')
       return <CustomizableProductForm />
    if (type === 'forms' && view === 'comboProduct') return <ComboProductForm />
+   if (type === 'forms' && view === 'settings') return <StoreSettingsForm />
+   if (type === 'forms' && view === 'recurrences') return <RecurrencesForm />
 }
 
 const Main = () => {

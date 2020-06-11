@@ -6,6 +6,7 @@ export const Container = styled.div`
 `
 
 export const StyledHeader = styled.div`
+   padding: 0 20px;
    height: 100px;
    display: flex;
    align-items: center;
@@ -85,6 +86,8 @@ export const ImageContainer = styled.div`
 `
 
 export const StyledInfo = styled.div`
+   display: flex;
+   align-items: center;
    h1 {
       font-weight: 500;
       font-size: 24px;
@@ -100,6 +103,8 @@ export const StyledInfo = styled.div`
 `
 
 export const StyledSupplier = styled.div`
+   display: flex;
+   align-items: center;
    span {
       padding: 0 16px;
       font-size: 14px;
@@ -167,22 +172,26 @@ export const StyledGrid = styled.div`
       }
    }
 `
-export const ProcessingButton = styled.button`
+export const ProcessingButton = styled.div`
    margin-top: 10px;
-   border: 0;
-   outline: 0;
    width: 90%;
    display: flex;
-   flex-direction: column;
    padding: 10px;
-
-   align-items: flex-start;
    background-color: ${props => (props.active ? '#555b6e' : '#e5e5e5')};
    color: ${props => (props.active ? '#fff' : '#555b6e')};
 
    &:hover {
       cursor: pointer;
    }
+`
+
+export const TransparentIconButton = styled.button`
+   height: 20px;
+   width: 20px;
+   background: transparent;
+   border: 0;
+   outline: none;
+   cursor: pointer;
 `
 
 export const TabContainer = styled.div`

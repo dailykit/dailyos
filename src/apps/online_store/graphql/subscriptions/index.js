@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const S_ACCOMPANIMENT_TYPES = gql`
-   {
+   subscription {
       master_accompanimentType {
          id
          name
@@ -10,7 +10,7 @@ export const S_ACCOMPANIMENT_TYPES = gql`
 `
 
 export const SRP_COUNT = gql`
-   {
+   subscription {
       simpleRecipeProductsAggregate {
          aggregate {
             count
@@ -20,7 +20,7 @@ export const SRP_COUNT = gql`
 `
 
 export const S_SIMPLE_RECIPE_PRODUCTS = gql`
-   {
+   subscription {
       simpleRecipeProducts {
          id
          name
@@ -65,7 +65,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
 `
 
 export const IP_COUNT = gql`
-   {
+   subscription {
       inventoryProductsAggregate {
          aggregate {
             count
@@ -75,7 +75,7 @@ export const IP_COUNT = gql`
 `
 
 export const S_INVENTORY_PRODUCTS = gql`
-   {
+   subscription {
       inventoryProducts {
          id
          name
@@ -151,7 +151,7 @@ export const S_SUPPLIER_ITEMS = gql`
 `
 
 export const CUP_COUNT = gql`
-   {
+   subscription {
       customizableProductsAggregate {
          aggregate {
             count
@@ -161,7 +161,7 @@ export const CUP_COUNT = gql`
 `
 
 export const S_CUSTOMIZABLE_PRODUCTS = gql`
-   {
+   subscription {
       customizableProducts {
          id
          name
@@ -212,7 +212,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
 `
 
 export const COP_COUNT = gql`
-   {
+   subscription {
       comboProductsAggregate {
          aggregate {
             count
@@ -222,7 +222,7 @@ export const COP_COUNT = gql`
 `
 
 export const S_COMBO_PRODUCTS = gql`
-   {
+   subscription {
       comboProducts {
          id
          name
@@ -301,6 +301,46 @@ export const S_COLLECTION = gql`
          availability
          categories
          store
+      }
+   }
+`
+
+export const STORE_SETTINGS = gql`
+   subscription StoreSettings($type: String!) {
+      storeSettings(where: { type: { _eq: $type } }) {
+         value
+         identifier
+      }
+   }
+`
+
+export const RECURRENCES = gql`
+   subscription Recurrence($type: String!) {
+      recurrences(where: { type: { _eq: $type } }) {
+         id
+         rrule
+         type
+         isActive
+         timeSlots {
+            id
+            from
+            to
+            isActive
+            mileRanges {
+               id
+               from
+               to
+               leadTime
+               prepTime
+               isActive
+               charges {
+                  id
+                  orderValueFrom
+                  orderValueUpto
+                  charge
+               }
+            }
+         }
       }
    }
 `

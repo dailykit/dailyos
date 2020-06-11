@@ -45,11 +45,11 @@ const Products = ({ state, openTunnel, view }) => {
    //Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
-         toast.success('Updated!')
+         toast.success(t(address.concat('updated!')))
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
 
@@ -71,7 +71,7 @@ const Products = ({ state, openTunnel, view }) => {
       }
    }
    const deleteProduct = product => {
-      if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
+      if (window.confirm(`t(address.concat('are you sure you want to delete')) ${product.name}?`)) {
          const accompaniments = state.accompaniments
          const products = accompaniments[
             productState.meta.accompanimentTabIndex
@@ -94,50 +94,50 @@ const Products = ({ state, openTunnel, view }) => {
       <React.Fragment>
          {state.accompaniments[productState.meta.accompanimentTabIndex]
             ?.products.length ? (
-            <StyledLayout>
-               <StyledListing>
-                  {state.accompaniments[
-                     productState.meta.accompanimentTabIndex
-                  ]?.products.map((product, i) => (
-                     <StyledListingTile
-                        key={product.id}
-                        active={current === i}
-                        onClick={() => setCurrent(i)}
-                     >
-                        {product.name}
-                        <span onClick={() => deleteProduct(product)}>
-                           <DeleteIcon color="#fff" />
-                        </span>
-                     </StyledListingTile>
-                  ))}
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add products'))}
-                     onClick={() => openTunnel(5)}
-                  />
-               </StyledListing>
-               <StyledPanel>
-                  <h2>{current.title}</h2>
-                  <StyledInputWrapper width="300">
-                     <Input
-                        type="text"
-                        label={t(address.concat('discount as accompaniment'))}
-                        name="discount"
-                        value={discount.value}
-                        onChange={e => setDiscount({ value: e.target.value })}
-                        onBlur={updateDiscount}
+               <StyledLayout>
+                  <StyledListing>
+                     {state.accompaniments[
+                        productState.meta.accompanimentTabIndex
+                     ]?.products.map((product, i) => (
+                        <StyledListingTile
+                           key={product.id}
+                           active={current === i}
+                           onClick={() => setCurrent(i)}
+                        >
+                           {product.name}
+                           <span onClick={() => deleteProduct(product)}>
+                              <DeleteIcon color="#fff" />
+                           </span>
+                        </StyledListingTile>
+                     ))}
+                     <ButtonTile
+                        type="secondary"
+                        text={t(address.concat('add products'))}
+                        onClick={() => openTunnel(5)}
                      />
+                  </StyledListing>
+                  <StyledPanel>
+                     <h2>{current.title}</h2>
+                     <StyledInputWrapper width="300">
+                        <Input
+                           type="text"
+                           label={t(address.concat('discount as accompaniment'))}
+                           name="discount"
+                           value={discount.value}
+                           onChange={e => setDiscount({ value: e.target.value })}
+                           onBlur={updateDiscount}
+                        />
                      %
                   </StyledInputWrapper>
-               </StyledPanel>
-            </StyledLayout>
-         ) : (
-            <ButtonTile
-               type="secondary"
-               text={t(address.concat('add products'))}
-               onClick={() => openTunnel(5)}
-            />
-         )}
+                  </StyledPanel>
+               </StyledLayout>
+            ) : (
+               <ButtonTile
+                  type="secondary"
+                  text={t(address.concat('add products'))}
+                  onClick={() => openTunnel(5)}
+               />
+            )}
       </React.Fragment>
    )
 }

@@ -30,6 +30,7 @@ import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 import { UserTunnel, CheckTunnel } from './tunnels'
 import { Context } from '../../../context'
 
+const address = 'apps.safety.views.forms.safetyform.'
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()
 
@@ -65,11 +66,11 @@ export default function SimpleRecipeProduct() {
    // Mutation
    const [deleteCheckup] = useMutation(DELETE_CHECKUP, {
       onCompleted: () => {
-         toast.success('Check deleted!')
+         toast.success(t(address.concat('check deleted!')))
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
 
@@ -99,7 +100,7 @@ export default function SimpleRecipeProduct() {
             </StyledHeader>
             <StyledBody>
                <Container paddingX="64">
-                  <Text as="p">Users</Text>
+                  <Text as="p">{t(address.concat('users'))}</Text>
                   <Container
                      bottom="32"
                      hidden={!state.SafetyCheckPerUsers?.length}
@@ -107,10 +108,10 @@ export default function SimpleRecipeProduct() {
                      <Table>
                         <TableHead>
                            <TableRow>
-                              <TableCell>Name</TableCell>
-                              <TableCell>Uses Mask</TableCell>
-                              <TableCell>Uses Sanitizer</TableCell>
-                              <TableCell>Temprature</TableCell>
+                              <TableCell>{t(address.concat('name'))}</TableCell>
+                              <TableCell>{t(address.concat('uses mask'))}</TableCell>
+                              <TableCell>{t(address.concat('uses sanitizer'))}</TableCell>
+                              <TableCell>{t(address.concat('temprature'))}</TableCell>
                               <TableCell></TableCell>
                            </TableRow>
                         </TableHead>
@@ -158,7 +159,7 @@ export default function SimpleRecipeProduct() {
                   <Container>
                      <ButtonTile
                         type="secondary"
-                        text="Add User"
+                        text={t(address.concat("add user"))}
                         onClick={() => openTunnel(1)}
                      />
                   </Container>

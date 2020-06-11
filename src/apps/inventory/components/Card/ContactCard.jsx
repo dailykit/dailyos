@@ -2,14 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text } from '@dailykit/ui'
 
-import { MessageBlue, Call } from '../../assets/icons'
 import { FlexContainer } from '../../views/Forms/styled'
 
-export default function ContactCard({ name, image }) {
+export default function ContactCard({ name }) {
    return (
       <StyledCard>
          <FlexContainer style={{ alignItems: 'center' }}>
-            <StyledImage src={image} alt="person" />
+            {/* <StyledImage src={image} alt="person" /> */}
             <Text as="subtitle">{name}</Text>
          </FlexContainer>
          {/* <FlexContainer style={{ alignItems: 'center' }}>
@@ -31,9 +30,9 @@ const StyledCard = styled.div`
    padding: 10px;
    background-color: #f3f3f3;
 `
-const StyledImage = styled.img`
-   border-radius: 50%;
-   width: 32px;
-   height: 32px;
-   margin-right: 10px;
-`
+// const StyledImage = styled.img`
+//    border-radius: 50%;
+//    width: 32px;
+//    height: 32px;
+//    margin-right: 10px;
+// `

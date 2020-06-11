@@ -1,4 +1,5 @@
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    ButtonTile,
    IconButton,
@@ -7,6 +8,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   TextButton,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,11 +23,12 @@ import {
 } from '../../../context/item'
 import { Context } from '../../../context/tabs'
 import {
-   MASTER_ALLERGENS,
-   MASTER_PROCESSINGS,
-   SUPPLIERS,
+   MASTER_ALLERGENS_SUBSCRIPTION,
+   MASTER_PROCESSINGS_SUBSCRIPTION,
+   SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
+   DELETE_BULK_ITEM,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -38,7 +41,10 @@ import {
    StyledMain,
    StyledSupplier,
    TabContainer,
+   TransparentIconButton,
 } from './styled'
+import EditIcon from '../../../../recipe/assets/icons/Edit'
+import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 // Tunnels
 import {
    AllergensTunnel,
@@ -68,7 +74,7 @@ export default function ItemForm() {
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
       {
-         variables: { id: state.id || tabState.itemId },
+         variables: { id: tabState.current.id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
             const bulkItemAsShipped = data.bulkItems?.find(
@@ -82,25 +88,13 @@ export default function ItemForm() {
                },
             }
             setFormState(normalisedData)
-
-            dispatch({
-               type: 'SET_SUB_DATA',
-               payload: {
-                  title: normalisedData.name,
-                  sku: normalisedData.sku,
-
-                  unit: normalisedData.unit,
-                  unitSize: normalisedData.unitSize,
-
-                  unit_price: normalisedData.prices[0].unitPrice,
-                  leadTime: normalisedData.leadTime,
-               },
-            })
          },
       }
    )
 
-   const { loading: supplierLoading, data: supplierData } = useQuery(SUPPLIERS)
+   const { loading: supplierLoading, data: supplierData } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION
+   )
    const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.units
@@ -108,61 +102,75 @@ export default function ItemForm() {
       },
    })
 
-   const { loading: processingsLoading, data: processingData } = useQuery(
-      MASTER_PROCESSINGS
+   const {
+      loading: processingsLoading,
+      data: processingData,
+   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
+
+   const { loading: allergensLoading, data: allergensData } = useSubscription(
+      MASTER_ALLERGENS_SUBSCRIPTION
    )
 
-   const { loading: allergensLoading, data: allergensData } = useQuery(
-      MASTER_ALLERGENS
-   )
-
-   React.useEffect(() => {
-      if (tabState.itemId) {
-         dispatch({ type: 'ADD_ITEM_ID', payload: tabState.itemId })
+   const [deleteBulkItem, { loading: bulkItemDeleteLoading }] = useMutation(
+      DELETE_BULK_ITEM,
+      {
+         onCompleted: () => {
+            toast.info('Bulk Item deleted successfully.')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! cannot delete the bulk item. Please try again.')
+         },
       }
-   }, [tabState.itemId])
+   )
+
+   const handleBulkItemDelete = id => {
+      deleteBulkItem({ variables: { id } })
+   }
 
    if (
       supplierLoading ||
       processingsLoading ||
       allergensLoading ||
       itemDetailLoading ||
-      unitsLoading
+      unitsLoading ||
+      bulkItemDeleteLoading
    )
       return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
                   close={closeTunnel}
-                  open={openTunnel}
                   suppliers={supplierData?.suppliers?.map(supplier => ({
                      id: supplier.id,
                      title: supplier.name,
                      description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
                   }))}
-                  rawSuppliers={supplierData.suppliers}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel layer={2}>
                <InfoTunnel
                   units={units}
                   close={() => closeTunnel(2)}
-                  next={() => openTunnel(3)}
+                  formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={3}>
+            <Tunnel layer={3} style={{ overflowY: 'auto' }}>
                <ProcessingTunnel
                   close={closeTunnel}
                   open={openTunnel}
                   processings={processingData?.masterProcessings?.map(
-                     processing => ({
-                        id: processing.id,
-                        title: processing.name,
-                     })
+                     processing => {
+                        return {
+                           id: processing.id,
+                           title: processing.name,
+                        }
+                     }
                   )}
-                  rawProcessings={processingData?.masterProcessings}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
@@ -170,9 +178,10 @@ export default function ItemForm() {
                   units={units}
                   close={closeTunnel}
                   open={openTunnel}
+                  formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={5}>
+            <Tunnel layer={5} style={{ overflowY: 'auto' }}>
                <AllergensTunnel
                   close={() => closeTunnel(5)}
                   allergens={allergensData?.masterAllergens?.map(allergen => ({
@@ -181,17 +190,19 @@ export default function ItemForm() {
                   }))}
                />
             </Tunnel>
-            <Tunnel layer={6}>
+            <Tunnel layer={6} style={{ overflowY: 'auto' }}>
                <SelectDerivedProcessingTunnel
                   next={openTunnel}
                   close={closeTunnel}
                   processings={processingData?.masterProcessings?.map(
-                     processing => ({
-                        id: processing.id,
-                        title: processing.name,
-                     })
+                     processing => {
+                        return {
+                           id: processing.id,
+                           title: processing.name,
+                        }
+                     }
                   )}
-                  rawProcessings={processingData?.masterProcessings}
+                  formState={formState}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
@@ -199,6 +210,7 @@ export default function ItemForm() {
                   units={units}
                   open={openTunnel}
                   close={closeTunnel}
+                  formState={formState}
                />
             </Tunnel>
 
@@ -213,7 +225,11 @@ export default function ItemForm() {
                />
             </Tunnel>
             <Tunnel layer={9}>
-               <ConfigureSachetTunnel open={openTunnel} close={closeTunnel} />
+               <ConfigureSachetTunnel
+                  open={openTunnel}
+                  close={closeTunnel}
+                  formState={formState}
+               />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={10}>
                <NutritionTunnel open={openTunnel} close={closeTunnel} />
@@ -224,20 +240,23 @@ export default function ItemForm() {
                {formState.name && (
                   <>
                      <StyledInfo>
-                        <h1>{state.title || formState.name}</h1>
-                        <span> {state.sku} </span>
+                        <div style={{ marginRight: '10px' }}>
+                           <h1>{formState.name}</h1>
+                           <span> {formState.sku} </span>
+                        </div>
+
+                        <IconButton
+                           type="outline"
+                           onClick={() => openTunnel(2)}
+                        >
+                           <EditIcon />
+                        </IconButton>
                      </StyledInfo>
                      <StyledSupplier>
-                        <span>{formState.supplier?.name}</span>
-                        {formState.supplier?.contatcPerson &&
-                           formState.supplier?.contactPerson.lastName &&
-                           formState.supplier?.contactPerson.countryCode &&
-                           formState.supplier?.contactPerson.phoneNumber && (
-                              <span>
-                                 {`${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} (${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson?.phoneNumber})` ||
-                                    ''}
-                              </span>
-                           )}
+                        <ContactPerson
+                           formState={formState}
+                           open={openTunnel}
+                        />
                      </StyledSupplier>
                   </>
                )}
@@ -265,10 +284,9 @@ export default function ItemForm() {
                            <div>
                               <span>{formState.unitSize + formState.unit}</span>
                               <span>
-                                 $
                                  {(formState.prices?.length &&
-                                    formState.prices[0]?.unitPrice?.value) ||
-                                    0}
+                                    `$ ${formState.prices[0]?.unitPrice?.value}`) ||
+                                    null}
                               </span>
                            </div>
                         </div>
@@ -319,10 +337,14 @@ export default function ItemForm() {
                         <div>
                            <span>{t(address.concat('lead time'))}</span>
                            <div>
-                              <span>
-                                 {formState.leadTime?.value +
-                                    formState.leadTime?.unit}
-                              </span>
+                              {formState.leadTime?.value ? (
+                                 <span>
+                                    {formState.leadTime?.value +
+                                       formState.leadTime?.unit}
+                                 </span>
+                              ) : (
+                                 'N/A'
+                              )}
                            </div>
                         </div>
                      </div>
@@ -346,15 +368,29 @@ export default function ItemForm() {
                               {t(address.concat('processings'))}
                            </Text>
                            <IconButton
-                              onClick={() => openTunnel(6)}
-                              type="ghost"
+                              onClick={() => {
+                                 if (!formState.supplier)
+                                    return toast.error(
+                                       'Select a supplier first!'
+                                    )
+
+                                 dispatch({
+                                    type: 'CLEAR_STATE',
+                                 })
+
+                                 if (formState.bulkItems.length) {
+                                    openTunnel(6)
+                                 } else {
+                                    openTunnel(3)
+                                 }
+                              }}
+                              type="outline"
                            >
                               <AddIcon />
                            </IconButton>
                         </FlexContainer>
 
-                        {(state.processing?.name ||
-                           formState.bulkItemAsShipped?.name) && (
+                        {formState.bulkItemAsShipped?.name && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -367,33 +403,43 @@ export default function ItemForm() {
                               <ProcessingButton
                                  active={active}
                                  onClick={() => {
-                                    const payload = formState.bulkItemAsShipped
-                                       ? formState.bulkItemAsShipped
-                                       : state.processing
                                     setActive(true)
                                     dispatch({
                                        type: 'SET_ACTIVE_PROCESSING',
-                                       payload,
+                                       payload: formState.bulkItemAsShipped,
                                     })
                                  }}
+                                 style={{ justifyContent: 'space-between' }}
                               >
-                                 <h3>{formState.bulkItemAsShipped?.name}</h3>
-                                 <Text as="subtitle">
-                                    {t(address.concat('on hand'))}:{' '}
-                                    {formState.bulkItemAsShipped?.onHand}
-                                 </Text>
-                                 <Text as="subtitle">
-                                    {t(address.concat('shelf life'))}:{' '}
-                                    {`${
-                                       state.processing?.shelf_life?.value ||
-                                       formState.bulkItemAsShipped?.shelfLife
-                                          ?.value
-                                    } ${
-                                       state.processing?.shelf_life?.unit ||
-                                       formState.bulkItemAsShipped?.shelfLife
-                                          ?.unit
-                                    }`}
-                                 </Text>
+                                 <div style={{ textAlign: 'left' }}>
+                                    <h3 style={{ marginBottom: '5px' }}>
+                                       {formState.bulkItemAsShipped?.name}
+                                    </h3>
+                                    <Text as="subtitle">
+                                       {t(address.concat('on hand'))}:{' '}
+                                       {formState.bulkItemAsShipped?.onHand}
+                                    </Text>
+                                    <Text as="subtitle">
+                                       {t(address.concat('shelf life'))}:{' '}
+                                       {`${
+                                          state.processing?.shelf_life?.value ||
+                                          formState.bulkItemAsShipped?.shelfLife
+                                             ?.value
+                                       } ${
+                                          state.processing?.shelf_life?.unit ||
+                                          formState.bulkItemAsShipped?.shelfLife
+                                             ?.unit
+                                       }`}
+                                    </Text>
+                                 </div>
+                                 <FlexContainer>
+                                    <TransparentIconButton
+                                       onClick={() => openTunnel(4)}
+                                       type="button"
+                                    >
+                                       <EditIcon />
+                                    </TransparentIconButton>
+                                 </FlexContainer>
                               </ProcessingButton>
                            </>
                         )}
@@ -409,74 +455,78 @@ export default function ItemForm() {
                                  )}
                               </Text>
 
-                              {formState.bulkItems?.length
-                                 ? formState.bulkItems?.map(procs => {
-                                      if (
-                                         procs.id ===
-                                         formState.bulkItemAsShippedId
-                                      )
-                                         return null
-                                      return (
-                                         <ProcessingButton
-                                            key={procs.id}
-                                            active={
-                                               state.activeProcessing.id ===
-                                               procs.id
-                                            }
-                                            onClick={() => {
-                                               setActive(false)
-                                               dispatch({
-                                                  type: 'SET_ACTIVE_PROCESSING',
-                                                  payload: {
-                                                     ...procs,
-                                                     name: procs.processingName,
-                                                  },
-                                               })
-                                            }}
-                                         >
-                                            <h3>{procs.processingName}</h3>
-                                            <Text as="subtitle">
-                                               {t(address.concat('on hand'))}:{' '}
-                                               {procs.onHand}
-                                               {t('units.gm')}
-                                            </Text>
-                                            <Text as="subtitle">
-                                               {t(address.concat('shelf life'))}
-                                               :{' '}
-                                               {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
-                                            </Text>
-                                         </ProcessingButton>
-                                      )
-                                   })
-                                 : state.derivedProcessings?.map(procs => (
-                                      <ProcessingButton
-                                         key={procs.id}
-                                         active={
-                                            state.activeProcessing.id ===
-                                            procs.id
-                                         }
-                                         onClick={() => {
-                                            setActive(false)
-                                            dispatch({
-                                               type: 'SET_ACTIVE_PROCESSING',
-                                               payload: {
-                                                  ...procs,
-                                                  name: procs.title,
-                                               },
-                                            })
-                                         }}
-                                      >
-                                         <h3>{procs.title}</h3>
-                                         <Text as="subtitle">
-                                            {t(address.concat('on hand'))}: 0{' '}
-                                            {t('units.gm')}
-                                         </Text>
-                                         <Text as="subtitle">
-                                            {t(address.concat('shelf life'))}:{' '}
-                                            {`${procs?.shelf_life?.value} ${procs?.shelf_life?.unit}`}
-                                         </Text>
-                                      </ProcessingButton>
-                                   ))}
+                              {formState.bulkItems?.map(procs => {
+                                 if (procs.id === formState.bulkItemAsShippedId)
+                                    return null
+                                 return (
+                                    <ProcessingButton
+                                       key={procs.id}
+                                       active={
+                                          state.activeProcessing.id === procs.id
+                                       }
+                                       onClick={() => {
+                                          setActive(false)
+                                          dispatch({
+                                             type: 'SET_ACTIVE_PROCESSING',
+                                             payload: {
+                                                ...procs,
+                                                name: procs.processingName,
+                                             },
+                                          })
+                                       }}
+                                       style={{
+                                          justifyContent: 'space-between',
+                                       }}
+                                    >
+                                       <div style={{ textAlign: 'left' }}>
+                                          <h3 style={{ marginBottom: '5px' }}>
+                                             {procs.processingName}
+                                          </h3>
+                                          <Text as="subtitle">
+                                             {t(address.concat('on hand'))}:{' '}
+                                             {procs.onHand}
+                                             {t('units.gm')}
+                                          </Text>
+                                          <Text as="subtitle">
+                                             {t(address.concat('shelf life'))}:{' '}
+                                             {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
+                                          </Text>
+                                       </div>
+                                       {state.activeProcessing.id ===
+                                          procs.id && (
+                                          <>
+                                             <FlexContainer>
+                                                <TransparentIconButton
+                                                   onClick={() => {
+                                                      dispatch({
+                                                         type: 'SET_DER_ACTION',
+                                                         payload: 'UPDATE',
+                                                      })
+                                                      openTunnel(7)
+                                                   }}
+                                                   type="button"
+                                                >
+                                                   <EditIcon />
+                                                </TransparentIconButton>
+                                                <span
+                                                   style={{ width: '5px' }}
+                                                />
+                                                <TransparentIconButton
+                                                   onClick={() =>
+                                                      handleBulkItemDelete(
+                                                         procs.id
+                                                      )
+                                                   }
+                                                   type="button"
+                                                >
+                                                   <DeleteIcon />
+                                                </TransparentIconButton>
+                                             </FlexContainer>
+                                          </>
+                                       )}
+                                    </ProcessingButton>
+                                 )
+                              })}
                            </>
                         )}
                      </Flexible>
@@ -488,7 +538,8 @@ export default function ItemForm() {
                               minHeight: '500px',
                            }}
                         >
-                           {state.activeProcessing?.name ? (
+                           {formState.bulkItems.length &&
+                           state.activeProcessing?.name ? (
                               <ProcessingView
                                  open={openTunnel}
                                  formState={formState}
@@ -507,8 +558,6 @@ export default function ItemForm() {
                   </FlexContainer>
                </>
             )}
-            <br />
-            <br />
          </StyledMain>
       </ItemContext.Provider>
    )
@@ -565,6 +614,8 @@ function RealTimeView({ formState }) {
       item => item.id === activeProcessing.id
    )
 
+   if (!active) return null
+
    return (
       <FlexContainer style={{ flexWrap: 'wrap' }}>
          <DataCard
@@ -599,6 +650,8 @@ function PlannedLotView({ open, formState }) {
       item => item.id === activeProcessing.id
    )
 
+   if (!active) return null
+
    const activeSachet = active.sachetItems.find(
       item => item.id === state.activeSachet.id
    )
@@ -609,49 +662,30 @@ function PlannedLotView({ open, formState }) {
             <Flexible width="1">
                <Text as="h2">{t(address.concat('sachets'))}</Text>
 
-               {formState.name
-                  ? active.sachetItems.map(sachet => {
-                       return (
-                          <ProcessingButton
-                             active={sachet.id === state.activeSachet.id}
-                             onClick={() =>
-                                dispatch({
-                                   type: 'SET_ACTIVE_SACHET',
-                                   payload: sachet,
-                                })
-                             }
-                          >
-                             <h3>
-                                {sachet.unitSize} {sachet.unit}
-                             </h3>
+               {active.sachetItems.map(sachet => {
+                  return (
+                     <ProcessingButton
+                        active={sachet.id === state.activeSachet.id}
+                        onClick={() =>
+                           dispatch({
+                              type: 'SET_ACTIVE_SACHET',
+                              payload: sachet,
+                           })
+                        }
+                     >
+                        <div style={{ textAlign: 'left' }}>
+                           <h3>
+                              {sachet.unitSize} {sachet.unit}
+                           </h3>
 
-                             <Text as="subtitle">
-                                {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                                {sachet.unit}
-                             </Text>
-                          </ProcessingButton>
-                       )
-                    })
-                  : activeProcessing.sachets.map(sachet => (
-                       <ProcessingButton
-                          active={sachet.id === state.activeSachet.id}
-                          onClick={() =>
-                             dispatch({
-                                type: 'SET_ACTIVE_SACHET',
-                                payload: sachet,
-                             })
-                          }
-                       >
-                          <h3>
-                             {sachet.quantity} {state.unit_quantity.unit}
-                          </h3>
-
-                          <Text as="subtitle">
-                             {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                             {state.unit_quantity.unit}
-                          </Text>
-                       </ProcessingButton>
-                    ))}
+                           <Text as="subtitle">
+                              {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                              {sachet.unit}
+                           </Text>
+                        </div>
+                     </ProcessingButton>
+                  )
+               })}
 
                <div style={{ width: '90%', marginTop: '10px' }}>
                   <ButtonTile
@@ -687,6 +721,31 @@ function PlannedLotView({ open, formState }) {
                )}
             </Flexible>
          </FlexContainer>
+      </>
+   )
+}
+
+function ContactPerson({ formState, open }) {
+   if (!formState.supplier)
+      return (
+         <TextButton type="outline" onClick={() => open(1)}>
+            Add Supplier
+         </TextButton>
+      )
+
+   const contatctPerson =
+      formState.supplier?.contactPerson?.firstName &&
+      formState.supplier?.contactPerson?.lastName
+         ? `${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} ${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson.phoneNumber}`
+         : 'N/A'
+
+   return (
+      <>
+         <span>{formState.supplier.name}</span>
+         <span>{contatctPerson}</span>
+         <IconButton type="outline" onClick={() => open(1)}>
+            <EditIcon />
+         </IconButton>
       </>
    )
 }

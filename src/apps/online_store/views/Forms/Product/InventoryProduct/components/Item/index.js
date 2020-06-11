@@ -43,16 +43,16 @@ export default function Item({ state, openTunnel }) {
    // Mutations
    const [deleteOption] = useMutation(DELETE_INVENTORY_PRODUCT_OPTION, {
       onCompleted: () => {
-         toast.success('Option(s) deleted!')
+         toast.success(t(address.concat('option(s) deleted!')))
       },
       onError: error => {
          console.log(error)
-         toast.error('Could not delete!')
+         toast.error(t(address.concat('could not delete!')))
       },
    })
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
-         toast.success('Item deleted!')
+         toast.success(t(address.concat('item deleted!')))
          const ids = state.inventoryProductOptions.map(op => op.id)
          deleteOption({
             variables: {
@@ -62,7 +62,7 @@ export default function Item({ state, openTunnel }) {
       },
       onError: error => {
          console.log(error)
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
       },
    })
 
@@ -104,8 +104,8 @@ export default function Item({ state, openTunnel }) {
                      <h3>
                         {state.supplierItem?.name ||
                            state.sachetItem.bulkItem.supplierItem.name +
-                              ' ' +
-                              state.sachetItem.bulkItem.processingName}
+                           ' ' +
+                           state.sachetItem.bulkItem.processingName}
                      </h3>
                      <span onClick={deleteItem}>
                         <DeleteIcon color="#fff" />
@@ -116,8 +116,8 @@ export default function Item({ state, openTunnel }) {
                   <h2>
                      {state.supplierItem?.name ||
                         state.sachetItem.bulkItem.supplierItem.name +
-                           ' ' +
-                           state.sachetItem.bulkItem.processingName}
+                        ' ' +
+                        state.sachetItem.bulkItem.processingName}
                   </h2>
                   <h5>
                      {t(address.concat('unit size'))}:{' '}
@@ -170,10 +170,10 @@ export default function Item({ state, openTunnel }) {
                                           {(
                                              parseFloat(option.price[0].value) -
                                              parseFloat(option.price[0].value) *
-                                                (parseFloat(
-                                                   option.price[0].discount
-                                                ) /
-                                                   100)
+                                             (parseFloat(
+                                                option.price[0].discount
+                                             ) /
+                                                100)
                                           ).toFixed(2) || ''}
                                        </td>
                                        <td>
@@ -202,19 +202,19 @@ export default function Item({ state, openTunnel }) {
                            </ComboButton>
                         </React.Fragment>
                      ) : (
-                        <Accompaniments state={state} openTunnel={openTunnel} />
-                     )}
+                           <Accompaniments state={state} openTunnel={openTunnel} />
+                        )}
                   </StyledTabView>
                </StyledPanel>
             </StyledLayout>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text={t(address.concat('add item'))}
-               onClick={() => openTunnel(2)}
-            />
-         )}
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat('add item'))}
+                  onClick={() => openTunnel(2)}
+               />
+            )}
       </StyledWrapper>
    )
 }

@@ -5,12 +5,16 @@ import { Tabs, TabList, Tab, TabPanel, TabPanels } from '@reach/tabs'
 import Images from './Images'
 import Upload from './Upload'
 
+import { useTranslation } from 'react-i18next'
+const address = 'shared.components.assetuploader.'
+
 export const AssetUploader = ({ onAssetUpload, onImageSelect }) => {
+   const { t } = useTranslation()
    return (
       <StyledTabs defaultIndex={0}>
          <StyledTabList>
-            <StyledTab>Upload</StyledTab>
-            <StyledTab>Images</StyledTab>
+            <StyledTab>{t(address.concat('upload'))}</StyledTab>
+            <StyledTab>{t(address.concat('images'))}</StyledTab>
          </StyledTabList>
          <StyledTabPanels>
             <StyledTabPanel>

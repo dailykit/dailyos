@@ -9,8 +9,8 @@ export const MetricItem = ({ title, count, variant, amount, currency }) => {
          <main>
             <span>{count}</span>
             <span>
-               {currency}
-               {amount}
+               {currency === 'usd' && '$'}
+               {amount.toFixed(2)}
             </span>
          </main>
       </ListItem>

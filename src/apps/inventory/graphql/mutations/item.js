@@ -1,5 +1,16 @@
 import gql from 'graphql-tag'
 
+export const CREATE_ITEM = gql`
+   mutation CreateSupplierItem($object: inventory_supplierItem_insert_input!) {
+      createSupplierItem(objects: [$object]) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`
+
 export const CREATE_SUPPLIER_ITEM = gql`
    mutation CreateSupplierItem(
       $name: String!
@@ -110,6 +121,22 @@ export const UPDATE_BULK_ITEM_AVAILABILITY = gql`
          where: { id: { _eq: $id } }
          _set: { isAvailable: $availability }
       ) {
+         affected_rows
+      }
+   }
+`
+
+export const UPDATE_BULK_ITEM = gql`
+   mutation UpdateBulkItem($id: Int!, $object: inventory_bulkItem_set_input!) {
+      updateBulkItem(where: { id: { _eq: $id } }, _set: $object) {
+         affected_rows
+      }
+   }
+`
+
+export const DELETE_BULK_ITEM = gql`
+   mutation DeleteBulkItem($id: Int!) {
+      deleteBulkItem(where: { id: { _eq: $id } }) {
          affected_rows
       }
    }

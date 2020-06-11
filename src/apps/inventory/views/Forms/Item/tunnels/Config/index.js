@@ -16,7 +16,11 @@ import { toast } from 'react-toastify'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 import { CloseIcon } from '../../../../../assets/icons'
 import { ItemContext } from '../../../../../context/item'
-import { ADD_BULK_ITEM, CREATE_BULK_ITEM } from '../../../../../graphql'
+import {
+   CREATE_BULK_ITEM,
+   UPDATE_SUPPLIER_ITEM,
+   UPDATE_BULK_ITEM,
+} from '../../../../../graphql'
 import { StyledSelect } from '../../../styled'
 import {
    Highlight,
@@ -27,60 +31,123 @@ import {
    TunnelBody,
    TunnelHeader,
 } from '../styled'
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, open, units }) {
+export default function ConfigTunnel({ close, open, units, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
-   const [loading, setLoading] = useState(false)
+   const [errors, setErrors] = useState([])
 
-   const [addBulkItem] = useMutation(ADD_BULK_ITEM)
-   const [createBulkItem] = useMutation(CREATE_BULK_ITEM)
+   const bulkItem = formState.bulkItemAsShipped
 
-   const handleSave = async () => {
-      try {
-         setLoading(true)
-         const res = await createBulkItem({
+   const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
+   const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
+   const [unit, setUnit] = useState(units[0].name)
+   const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
+   const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
+   const [yieldPercentage, setYieldPercentage] = useState(
+      bulkItem?.yield?.value || ''
+   )
+   const [shelfLife, setShelfLife] = useState(bulkItem?.shelfLife?.value || '')
+   const [shelfLifeUnit, setShelfLifeUnit] = useState(
+      bulkItem?.shelfLife?.unit || 'hours'
+   )
+   const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
+
+   const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
+      onCompleted: () => {
+         close(4)
+         toast.success('Bulk Item as Shipped Added!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error adding bulk item as shipped. Please try again')
+         close(4)
+      },
+   })
+   const [createBulkItem, { loading: createBulkItemLoading }] = useMutation(
+      CREATE_BULK_ITEM,
+      {
+         onCompleted: data => {
+            updateSupplierItem({
+               variables: {
+                  id: formState.id,
+                  object: {
+                     bulkItemAsShippedId: data.createBulkItem.returning[0].id,
+                  },
+               },
+            })
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error creating bulk item. Please try again')
+            close(4)
+         },
+      }
+   )
+
+   const [udpateBulkItem, { loading: updateBulkItemLoading }] = useMutation(
+      UPDATE_BULK_ITEM,
+      {
+         onCompleted: () => {
+            close(4)
+            toast.success('Bulk Item updated successfully !')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error updating bulk item as shipped. Please try again')
+            close(4)
+         },
+      }
+   )
+
+   const handleSave = () => {
+      if (!parLevel || !maxValue)
+         return toast.error('Please fill the form properly')
+
+      if (errors.length) {
+         errors.forEach(err => toast.error(err.message))
+         toast.error(`Cannot update item information !`)
+      } else if (formState.bulkItemAsShippedId) {
+         udpateBulkItem({
             variables: {
-               processingName: state.processing.name,
-               itemId: state.id,
-               unit: state.processing.unit, // string
-               yield: { value: state.processing.yield },
-               shelfLife: state.processing.shelf_life,
-               parLevel: +state.processing.par_level.value,
+               id: formState.bulkItemAsShippedId,
+               object: {
+                  unit, // string
+                  yield: { value: yieldPercentage },
+                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+                  parLevel: +parLevel,
+                  nutritionInfo: state.processing.nutrients || {},
+                  maxLevel: +maxValue,
+                  labor: { value: laborTime, unit: laborUnit },
+                  bulkDensity: +bulkDensity,
+                  allergens: state.processing.allergens,
+               },
+            },
+         })
+      } else {
+         createBulkItem({
+            variables: {
+               processingName: state.processing.title,
+               itemId: formState.id,
+               unit, // string
+               yield: { value: yieldPercentage },
+               shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+               parLevel: +parLevel,
                nutritionInfo: state.processing.nutrients || {},
-               maxLevel: +state.processing.max_inventory_level.value,
-               labor: state.processing.labor_time,
-               bulkDensity: +state.processing.bulk_density,
+               maxLevel: +maxValue,
+               labor: { value: laborTime, unit: laborUnit },
+               bulkDensity: +bulkDensity,
                allergens: state.processing.allergens,
             },
          })
-
-         if (res?.data?.createBulkItem) {
-            const bulkItemAsShippedId =
-               res?.data?.createBulkItem?.returning[0].id
-            const result = await addBulkItem({
-               variables: { itemId: state.id, bulkItemAsShippedId },
-            })
-
-            if (result?.data) {
-               dispatch({
-                  type: 'ADD_PROCESSING',
-                  payload: bulkItemAsShippedId,
-               })
-               close(4)
-               setLoading(false)
-               toast.success('Bulk Item Added!')
-            }
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Err! make sure you have filled the form properly')
       }
    }
 
-   if (loading) return <Loader />
+   if (createBulkItemLoading || updateBulkItemLoading) return <Loader />
 
    return (
       <>
@@ -105,29 +172,25 @@ export default function ConfigTunnel({ close, open, units }) {
                <StyledInputGroup>
                   <InputWrapper>
                      <Input
-                        type="text"
+                        type="number"
                         label={t(address.concat('set par level'))}
-                        name="par_level"
-                        value={state.processing.par_level.value}
-                        onChange={e =>
-                           dispatch({
-                              type: 'PAR_LEVEL',
-                              payload: { name: 'value', value: e.target.value },
-                           })
+                        name="par level"
+                        value={parLevel}
+                        onChange={e => setParLevel(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
                   </InputWrapper>
                   <InputWrapper>
                      <Input
-                        type="text"
+                        type="number"
                         label={t(address.concat('max inventory level'))}
-                        name="max_inventory_level"
-                        value={state.processing.max_inventory_level.value}
-                        onChange={e =>
-                           dispatch({
-                              type: 'MAX_INVENTORY_LEVEL',
-                              payload: { name: 'value', value: e.target.value },
-                           })
+                        name="max inventory level"
+                        value={maxValue}
+                        onChange={e => setMaxValue(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
                   </InputWrapper>
@@ -140,15 +203,8 @@ export default function ConfigTunnel({ close, open, units }) {
                   <span style={{ width: '10px' }} />
                   <StyledSelect
                      name="unit"
-                     defaultValue={state.processing.unit}
-                     onChange={e =>
-                        dispatch({
-                           type: 'SET_UNIT',
-                           payload: {
-                              value: e.target.value,
-                           },
-                        })
-                     }
+                     defaultValue={unit}
+                     onChange={e => setUnit(e.target.value)}
                   >
                      {units.map(unit => (
                         <option key={unit.id} value={unit.name}>
@@ -180,53 +236,34 @@ export default function ConfigTunnel({ close, open, units }) {
                   {!state.form_meta.shipped && (
                      <InputWrapper>
                         <Input
-                           type="text"
+                           type="number"
                            label={t(address.concat('labour time per 100gm'))}
-                           name="labor_time"
-                           value={state.processing.labor_time.value}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'LABOR_TIME',
-                                 payload: {
-                                    name: 'value',
-                                    value: e.target.value,
-                                 },
-                              })
+                           name="labor time"
+                           value={laborTime}
+                           onChange={e => setLaborTime(e.target.value)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
                            }
                         />
                         <StyledSelect
                            name="unit"
-                           defaultValue={state.processing.labor_time.unit}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'LABOR_TIME',
-                                 payload: {
-                                    name: 'unit',
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
+                           defaultValue={laborUnit}
+                           onChange={e => setLaborUnit(e.target.value)}
                         >
-                           <option value="hours">
-                              {t(address.concat('hours'))}
-                           </option>
-                           <option value="minutes">
-                              {t(address.concat('minutes'))}
-                           </option>
+                           <option value="hours">{t('units.hours')}</option>
+                           <option value="minutes">{t('units.minutes')}</option>
                         </StyledSelect>
                      </InputWrapper>
                   )}
                   <InputWrapper>
                      <Input
-                        type="text"
+                        type="number"
                         label={t(address.concat('percentage of yield'))}
                         name="yield"
-                        value={state.processing.yield}
-                        onChange={e =>
-                           dispatch({
-                              type: 'YIELD',
-                              payload: { value: e.target.value },
-                           })
+                        value={yieldPercentage}
+                        onChange={e => setYieldPercentage(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
                      <span>%</span>
@@ -237,48 +274,33 @@ export default function ConfigTunnel({ close, open, units }) {
                <StyledInputGroup>
                   <InputWrapper>
                      <Input
-                        type="text"
+                        type="number"
                         label={t(address.concat('shelf life'))}
-                        name="shelf_life"
-                        value={state.processing.shelf_life.value}
-                        onChange={e =>
-                           dispatch({
-                              type: 'SHELF_LIFE',
-                              payload: { name: 'value', value: e.target.value },
-                           })
+                        name="shelf life"
+                        value={shelfLife}
+                        onChange={e => setShelfLife(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
                      <StyledSelect
                         name="unit"
-                        defaultValue={state.processing.shelf_life.unit}
-                        onChange={e =>
-                           dispatch({
-                              type: 'SHELF_LIFE',
-                              payload: {
-                                 name: 'unit',
-                                 value: e.target.value,
-                              },
-                           })
-                        }
+                        defaultValue={shelfLifeUnit}
+                        onChange={e => setShelfLifeUnit(e.target.value)}
                      >
-                        {units.map(unit => (
-                           <option key={unit.id} value={unit.name}>
-                              {unit.name}
-                           </option>
-                        ))}
+                        <option value="hours">{t('units.hours')}</option>
+                        <option value="minutes">{t('units.minutes')}</option>
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>
                      <Input
-                        type="text"
+                        type="number"
                         label={t(address.concat('bulk dnesity'))}
-                        name="bulk_density"
-                        value={state.processing.bulk_density}
-                        onChange={e =>
-                           dispatch({
-                              type: 'BULK_DENSITY',
-                              payload: { value: e.target.value },
-                           })
+                        name="bulk density"
+                        value={bulkDensity}
+                        onChange={e => setBulkDensity(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
                   </InputWrapper>
@@ -308,26 +330,24 @@ export default function ConfigTunnel({ close, open, units }) {
                </StyledLabel>
                {state.processing.nutrients?.fat ||
                state.processing.nutrients?.cal ? (
-                  <>
-                     <div
-                        style={{
-                           width: '70%',
-                           minHeight: '100px',
-                           backgroundColor: '#F3F3F3',
-                           padding: '20px',
-                        }}
-                     >
-                        <Text as="title">
-                           <strong>{t(address.concat('calories'))}: </strong>
-                           {state.processing.nutrients?.cal}
-                        </Text>
-
-                        <Text as="title">
-                           <strong>{t(address.concat('total fat'))}: </strong>
-                           {state.processing.nutrients?.fat}
-                        </Text>
-                     </div>
-                  </>
+                  <Nutrition
+                     data={{
+                        calories: state.processing.nutrients.cal,
+                        totalFat: state.processing.nutrients.fat,
+                        transFat: state.processing.nutrients.transFat,
+                        saturatedFat: state.processing.nutrients.saturatedFat,
+                        cholesterol: state.processing.nutrients.cholestrol,
+                        sodium: state.processing.nutrients.sodium,
+                        totalCarbohydrates: state.processing.nutrients.carbs,
+                        dietaryFibre: state.processing.nutrients.dietryFiber,
+                        sugars: state.processing.nutrients.sugar,
+                        protein: state.processing.nutrients.protein,
+                        vitaminA: state.processing.nutrients.vitA,
+                        vitaminC: state.processing.nutrients.vitC,
+                        iron: state.processing.nutrients.iron,
+                        calcium: state.processing.nutrients.calcium,
+                     }}
+                  />
                ) : (
                   <ButtonTile
                      type="secondary"
@@ -360,29 +380,6 @@ export default function ConfigTunnel({ close, open, units }) {
                   />
                )}
             </StyledRow>
-            {!state.form_meta.shipped && (
-               <>
-                  <StyledRow>
-                     <StyledLabel>
-                        {t(
-                           address.concat('operating procedure for processing')
-                        )}
-                     </StyledLabel>
-                  </StyledRow>
-                  <StyledRow>
-                     <StyledLabel>
-                        {t(address.concat('standard operating procedure'))}
-                     </StyledLabel>
-                     <Highlight></Highlight>
-                  </StyledRow>
-                  <StyledRow>
-                     <StyledLabel>
-                        {t(address.concat('equipments needed'))}
-                     </StyledLabel>
-                     <Highlight></Highlight>
-                  </StyledRow>
-               </>
-            )}
          </TunnelBody>
       </>
    )

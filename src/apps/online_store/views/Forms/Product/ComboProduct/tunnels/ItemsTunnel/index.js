@@ -28,7 +28,7 @@ export default function ItemTunnel({ state, close }) {
       {
          onCompleted: data => {
             close(2)
-            toast.success('Items added!')
+            toast.success(t(address.concat('items added!')))
          },
          onError: error => {
             console.log(error)
@@ -51,7 +51,7 @@ export default function ItemTunnel({ state, close }) {
                }
             })
          if (!objects.length) {
-            throw Error('No labels added!')
+            throw Error(t(address.concat('no labels added!')))
          }
          createComboProductComponent({
             variables: {

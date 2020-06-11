@@ -12,6 +12,10 @@ import ArrowUpIcon from './ArrowUp'
 import ArrowDownIcon from './ArrowDown'
 import HomeIcon from './Home'
 import NewTabIcon from './NewTab'
+import WeighIcon from './Weigh'
+import LeftPanelIcon from './LeftPanel'
+import RightPanelIcon from './RightPanel'
+import BellIcon from './Bell'
 
 export {
    PhoneIcon,
@@ -28,4 +32,8 @@ export {
    ArrowUpIcon,
    ArrowDownIcon,
    NewTabIcon,
+   WeighIcon,
+   LeftPanelIcon,
+   RightPanelIcon,
+   BellIcon,
 }

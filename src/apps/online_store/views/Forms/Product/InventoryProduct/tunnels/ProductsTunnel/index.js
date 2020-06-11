@@ -57,8 +57,9 @@ const ProductsTunnel = ({ state, close, products }) => {
             id: el.id,
             name: el.name,
             discount: {
-               value: '',
+               value: '0',
             },
+            type: el.__typename.split('_')[1],
          }
       })
       accompaniments[productState.meta.accompanimentTabIndex].products = [

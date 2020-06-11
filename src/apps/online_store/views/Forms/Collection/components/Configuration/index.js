@@ -140,7 +140,7 @@ const Configuration = () => {
                <div>
                   <label>
                      <input
-                        name="freq"
+                        name={t(address.concat("freq"))}
                         type="radio"
                         value="0"
                         checked={freq == '0'}
@@ -150,7 +150,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="freq"
+                        name={t(address.concat("freq"))}
                         type="radio"
                         value="1"
                         checked={freq == '1'}
@@ -160,7 +160,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="freq"
+                        name={t(address.concat("freq"))}
                         type="radio"
                         value="2"
                         checked={freq == '2'}
@@ -170,7 +170,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="freq"
+                        name={t(address.concat("freq"))}
                         type="radio"
                         value="3"
                         checked={freq == '3'}
@@ -183,7 +183,7 @@ const Configuration = () => {
                   <label>
                      {t(address.concat('from'))}
                      <input
-                        name="dtstart"
+                        name={t(address.concat("dtstart"))}
                         type="date"
                         value={start}
                         onChange={e => setStart(e.target.value)}
@@ -192,7 +192,7 @@ const Configuration = () => {
                   <label>
                      {t(address.concat('till'))}
                      <input
-                        name="until"
+                        name={t(address.concat("until"))}
                         type="date"
                         value={until}
                         onChange={e => setUntil(e.target.value)}
@@ -207,7 +207,7 @@ const Configuration = () => {
                         max="1000"
                         min="1"
                         value={count}
-                        name="count"
+                        name={t(address.concat("count"))}
                         onChange={e => setCount(e.target.value)}
                      />
                   </label>
@@ -219,7 +219,7 @@ const Configuration = () => {
                         type="number"
                         value={gap}
                         min="1"
-                        name="interval"
+                        name={t(address.concat("interval"))}
                         onChange={e => setGap(e.target.value)}
                      />
                   </label>
@@ -229,7 +229,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="0"
                         checked={wkst == '0'}
                         onChange={e => setWkst(e.target.value)}
@@ -239,7 +239,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="1"
                         checked={wkst == '1'}
                         onChange={e => setWkst(e.target.value)}
@@ -249,7 +249,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="2"
                         checked={wkst == '2'}
                         onChange={e => setWkst(e.target.value)}
@@ -259,7 +259,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="3"
                         checked={wkst == '3'}
                         onChange={e => setWkst(e.target.value)}
@@ -269,7 +269,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="4"
                         checked={wkst == '4'}
                         onChange={e => setWkst(e.target.value)}
@@ -279,7 +279,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="5"
                         checked={wkst == '5'}
                         onChange={e => setWkst(e.target.value)}
@@ -289,7 +289,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="radio"
-                        name="wkst"
+                        name={t(address.concat("wkst"))}
                         value="6"
                         checked={wkst == '6'}
                         onChange={e => setWkst(e.target.value)}
@@ -302,7 +302,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="0"
                         checked={byWeekDay.includes(RRule.MO)}
                         onChange={() => toggleByDay(RRule.MO)}
@@ -312,7 +312,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="1"
                         checked={byWeekDay.includes(RRule.TU)}
                         onChange={() => toggleByDay(RRule.TU)}
@@ -322,7 +322,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="2"
                         checked={byWeekDay.includes(RRule.WE)}
                         onChange={() => toggleByDay(RRule.WE)}
@@ -332,7 +332,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="3"
                         checked={byWeekDay.includes(RRule.TH)}
                         onChange={() => toggleByDay(RRule.TH)}
@@ -342,7 +342,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="4"
                         checked={byWeekDay.includes(RRule.FR)}
                         onChange={() => toggleByDay(RRule.FR)}
@@ -352,7 +352,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="5"
                         checked={byWeekDay.includes(RRule.SA)}
                         onChange={() => toggleByDay(RRule.SA)}
@@ -362,7 +362,7 @@ const Configuration = () => {
                   <label>
                      <input
                         type="checkbox"
-                        name="byweekday"
+                        name={t(address.concat("byweekday"))}
                         value="6"
                         checked={byWeekDay.includes(RRule.SU)}
                         onChange={() => toggleByDay(RRule.SU)}
@@ -374,7 +374,7 @@ const Configuration = () => {
                   {t(address.concat('available in'))} <br />
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="1"
                         checked={byMonth.includes('1')}
@@ -384,7 +384,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="2"
                         checked={byMonth.includes('2')}
@@ -394,7 +394,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="3"
                         checked={byMonth.includes('3')}
@@ -404,7 +404,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="4"
                         checked={byMonth.includes('4')}
@@ -414,7 +414,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="5"
                         checked={byMonth.includes('5')}
@@ -424,7 +424,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="6"
                         checked={byMonth.includes('6')}
@@ -434,7 +434,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="7"
                         checked={byMonth.includes('7')}
@@ -444,7 +444,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="8"
                         checked={byMonth.includes('8')}
@@ -454,7 +454,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="9"
                         checked={byMonth.includes('9')}
@@ -464,7 +464,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="10"
                         checked={byMonth.includes('10')}
@@ -474,7 +474,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="11"
                         checked={byMonth.includes('11')}
@@ -484,7 +484,7 @@ const Configuration = () => {
                   </label>
                   <label>
                      <input
-                        name="bymonth"
+                        name={t(address.concat("bymonth"))}
                         type="checkbox"
                         value="12"
                         checked={byMonth.includes('12')}
