@@ -23,7 +23,8 @@ import {
 } from './styled'
 
 import { Users } from './sections/Users'
-import { Printers } from './sections/Printers'
+import { KotPrinters } from './sections/KotPrinters'
+import { LabelPrinters } from './sections/LabelPrinters'
 
 const StationForm = () => {
    const params = useParams()
@@ -113,13 +114,19 @@ const StationForm = () => {
                      <StyledTab>
                         Labels Printers ({station.labelPrinter.aggregate.count})
                      </StyledTab>
+                     <StyledTab>
+                        KOT Printers ({station.kotPrinter.aggregate.count})
+                     </StyledTab>
                   </StyledTabList>
                   <StyledTabPanels>
                      <StyledTabPanel>
                         <Users station={station} />
                      </StyledTabPanel>
                      <StyledTabPanel>
-                        <Printers station={station} />
+                        <LabelPrinters station={station} />
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        <KotPrinters station={station} />
                      </StyledTabPanel>
                   </StyledTabPanels>
                </StyledTabs>

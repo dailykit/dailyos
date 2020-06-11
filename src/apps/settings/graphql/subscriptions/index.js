@@ -20,6 +20,26 @@ export const LABEL_PRINTERS = gql`
    }
 `
 
+export const KOT_PRINTERS = gql`
+   subscription kotPrinters($type: String!, $stationId: Int!) {
+      kotPrinters: printers(
+         where: {
+            printerType: { _eq: $type }
+            _not: {
+               attachedStations_label: { station: { id: { _eq: $stationId } } }
+            }
+         }
+      ) {
+         printNodeId
+         name
+         computer {
+            name
+            hostname
+         }
+      }
+   }
+`
+
 export const STATIONS_AGGREGATE = gql`
    subscription stationsAggregate {
       stationsAggregate {

@@ -30,30 +30,29 @@ import { Header } from './styled'
 import { TunnelHeader, TunnelMain, StyledInfo } from '../../styled'
 
 import { CloseIcon } from '../../../../../../../shared/assets/icons'
-import { LABEL_PRINTERS } from '../../../../../graphql/subscriptions'
+import { KOT_PRINTERS } from '../../../../../graphql/subscriptions'
 import {
-   CREATE_STATION_LABEL_PRINTER,
-   UPDATE_STATION_LABEL_PRINTER,
-   DELETE_STATION_LABEL_PRINTER,
+   CREATE_STATION_KOT_PRINTER,
+   UPDATE_STATION_KOT_PRINTER,
+   DELETE_STATION_KOT_PRINTER,
 } from '../../../../../graphql/mutations'
 
-export const Printers = ({ station }) => {
+export const KotPrinters = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_STATION_LABEL_PRINTER)
-   const [remove] = useMutation(DELETE_STATION_LABEL_PRINTER)
+   const [update] = useMutation(UPDATE_STATION_KOT_PRINTER)
+   const [remove] = useMutation(DELETE_STATION_KOT_PRINTER)
 
-   const {
-      loading,
-      error,
-      data: { labelPrinters = [] } = {},
-   } = useSubscription(LABEL_PRINTERS, {
-      variables: {
-         type: 'LABEL_PRINTER',
-         stationId: station.id,
-      },
-   })
+   const { loading, error, data: { kotPrinters = [] } = {} } = useSubscription(
+      KOT_PRINTERS,
+      {
+         variables: {
+            type: 'KOT_PRINTER',
+            stationId: station.id,
+         },
+      }
+   )
 
-   const updateLabelPrinterStatus = (id, status) => {
+   const updateKotPrinterStatus = (id, status) => {
       update({
          variables: {
             printNodeId: id,
@@ -63,7 +62,7 @@ export const Printers = ({ station }) => {
       })
    }
 
-   const deleteStationLabelPrinter = id => {
+   const deleteStationKotPrinter = id => {
       remove({
          variables: {
             stationId: station.id,
@@ -83,27 +82,27 @@ export const Printers = ({ station }) => {
                >
                   Add Printer
                </TextButton>
-               {station.labelPrinter.nodes.map(node => (
+               {station.kotPrinter.nodes.map(node => (
                   <SectionTab
-                     key={node.labelPrinter.printNodeId}
-                     title={node.labelPrinter.name}
+                     key={node.kotPrinter.printNodeId}
+                     title={node.kotPrinter.name}
                   />
                ))}
             </SectionTabList>
             <SectionTabPanels>
-               {station.labelPrinter.nodes.map(node => (
-                  <SectionTabPanel key={node.labelPrinter.printNodeId}>
+               {station.kotPrinter.nodes.map(node => (
+                  <SectionTabPanel key={node.kotPrinter.printNodeId}>
                      <Header>
                         <div>
-                           <h2>{node.labelPrinter.name}</h2>
+                           <h2>{node.kotPrinter.name}</h2>
                            {node.active && <Tag>Active</Tag>}
                         </div>
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
                               onClick={() =>
-                                 updateLabelPrinterStatus(
-                                    node.labelPrinter.printNodeId,
+                                 updateKotPrinterStatus(
+                                    node.kotPrinter.printNodeId,
                                     !node.active
                                  )
                               }
@@ -113,8 +112,8 @@ export const Printers = ({ station }) => {
                            <TextButton
                               type="outline"
                               onClick={() =>
-                                 deleteStationLabelPrinter(
-                                    node.labelPrinter.printNodeId
+                                 deleteStationKotPrinter(
+                                    node.kotPrinter.printNodeId
                                  )
                               }
                            >
@@ -133,13 +132,11 @@ export const Printers = ({ station }) => {
                setIsOpen={setIsOpen}
                error={error}
                loading={loading}
-               printers={labelPrinters.map(
-                  ({ printNodeId, name, computer }) => ({
-                     id: printNodeId,
-                     title: name,
-                     description: `${computer.name} | ${computer.hostname}`,
-                  })
-               )}
+               printers={kotPrinters.map(({ printNodeId, name, computer }) => ({
+                  id: printNodeId,
+                  title: name,
+                  description: `${computer.name} | ${computer.hostname}`,
+               }))}
             />
          )}
       </>
@@ -158,7 +155,7 @@ const AddPrinterTunnel = ({
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(CREATE_STATION_LABEL_PRINTER, {
+   const [create] = useMutation(CREATE_STATION_KOT_PRINTER, {
       onCompleted: () => setIsOpen(false),
    })
 

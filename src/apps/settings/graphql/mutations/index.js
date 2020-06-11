@@ -13,9 +13,34 @@ export const CREATE_STATION_LABEL_PRINTER = gql`
    }
 `
 
+export const CREATE_STATION_KOT_PRINTER = gql`
+   mutation insert_settings_station_kot_printer(
+      $objects: [settings_station_kot_printer_insert_input!]!
+   ) {
+      insert_settings_station_kot_printer(objects: $objects) {
+         returning {
+            stationId
+            printNodeId
+         }
+      }
+   }
+`
+
 export const DELETE_STATION_LABEL_PRINTER = gql`
    mutation deleteStationLabelPrinter($stationId: Int!, $printNodeId: Int!) {
       deleteStationLabelPrinter: delete_settings_station_label_printer_by_pk(
+         printNodeId: $printNodeId
+         stationId: $stationId
+      ) {
+         stationId
+         printNodeId
+      }
+   }
+`
+
+export const DELETE_STATION_KOT_PRINTER = gql`
+   mutation deleteStationKotPrinter($stationId: Int!, $printNodeId: Int!) {
+      deleteStationKotPrinter: delete_settings_station_kot_printer_by_pk(
          printNodeId: $printNodeId
          stationId: $stationId
       ) {
@@ -32,6 +57,21 @@ export const UPDATE_STATION_LABEL_PRINTER = gql`
       $active: Boolean!
    ) {
       updateStationLabelPrinter: update_settings_station_label_printer_by_pk(
+         pk_columns: { printNodeId: $printNodeId, stationId: $stationId }
+         _set: { active: $active }
+      ) {
+         stationId
+      }
+   }
+`
+
+export const UPDATE_STATION_KOT_PRINTER = gql`
+   mutation updateStationKotPrinter(
+      $printNodeId: Int!
+      $stationId: Int!
+      $active: Boolean!
+   ) {
+      updateStationKotPrinter: update_settings_station_kot_printer_by_pk(
          pk_columns: { printNodeId: $printNodeId, stationId: $stationId }
          _set: { active: $active }
       ) {
