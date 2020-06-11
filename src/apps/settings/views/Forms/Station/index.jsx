@@ -13,6 +13,18 @@ import { useTabs } from '../../../context'
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
 
+import {
+   StyledMain,
+   StyledTabs,
+   StyledTabList,
+   StyledTab,
+   StyledTabPanel,
+   StyledTabPanels,
+} from './styled'
+
+import { Users } from './sections/Users'
+import { Printers } from './sections/Printers'
+
 const StationForm = () => {
    const params = useParams()
    const history = useHistory()
@@ -38,7 +50,7 @@ const StationForm = () => {
    React.useEffect(() => {
       const tab = doesTabExists(`/settings/stations/${params.name}`)
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/settings/stations')
+         // history.push('/settings/stations')
       }
    }, [params.name, history])
 
@@ -90,6 +102,29 @@ const StationForm = () => {
                </TextButton>
             )}
          </StyledHeader>
+         {station?.name && (
+            <StyledMain>
+               <h3>Configure</h3>
+               <StyledTabs>
+                  <StyledTabList>
+                     <StyledTab>
+                        Users ({station.user.aggregate.count})
+                     </StyledTab>
+                     <StyledTab>
+                        Printers ({station.printer.aggregate.count})
+                     </StyledTab>
+                  </StyledTabList>
+                  <StyledTabPanels>
+                     <StyledTabPanel>
+                        <Users station={station} />
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        <Printers station={station} />
+                     </StyledTabPanel>
+                  </StyledTabPanels>
+               </StyledTabs>
+            </StyledMain>
+         )}
       </StyledWrapper>
    )
 }

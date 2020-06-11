@@ -1,5 +1,46 @@
 import gql from 'graphql-tag'
 
+export const UPDATE_STATION_USER_STATUS = gql`
+   mutation updateStation_user(
+      $stationId: Int!
+      $userKeycloakId: String!
+      $active: Boolean!
+   ) {
+      updateStation_user(
+         pk_columns: { stationId: $stationId, userKeycloakId: $userKeycloakId }
+         _set: { active: $active }
+      ) {
+         stationId
+         userKeycloakId
+      }
+   }
+`
+
+export const DELETE_STATION_USER = gql`
+   mutation deleteStation_user($stationId: Int!, $userKeycloakId: String!) {
+      deleteStation_user(
+         stationId: $stationId
+         userKeycloakId: $userKeycloakId
+      ) {
+         stationId
+         userKeycloakId
+      }
+   }
+`
+
+export const CREATE_STATION_USERS = gql`
+   mutation createStation_users(
+      $objects: [settings_station_user_insert_input!]!
+   ) {
+      createStation_users(objects: $objects) {
+         returning {
+            stationId
+            userKeycloakId
+         }
+      }
+   }
+`
+
 export const CREATE_STATION = gql`
    mutation insertStation($object: settings_station_insert_input!) {
       insertStation(object: $object) {

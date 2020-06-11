@@ -19,11 +19,53 @@ export const USERS_AGGREGATE = gql`
    }
 `
 
+export const USER_BY_STATION = gql`
+   subscription settings_user($_eq: Int!) {
+      settings_user(
+         where: {
+            _not: { assignedStations: { station: { id: { _eq: $_eq } } } }
+         }
+      ) {
+         id
+         lastName
+         firstName
+         keycloakId
+      }
+   }
+`
+
 export const STATION = gql`
    subscription station($id: Int!) {
       station(id: $id) {
          id
          name
+         printer: attachedPrinters_aggregate {
+            nodes {
+               active
+               printer {
+                  name
+                  state
+                  printNodeId
+               }
+            }
+            aggregate {
+               count
+            }
+         }
+         user: assignedUsers_aggregate {
+            nodes {
+               active
+               user {
+                  id
+                  firstName
+                  lastName
+                  keycloakId
+               }
+            }
+            aggregate {
+               count
+            }
+         }
       }
    }
 `
