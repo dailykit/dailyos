@@ -20,6 +20,20 @@ export const LABEL_PRINTERS = gql`
    }
 `
 
+export const UNASSIGNED_SCALES = gql`
+   subscription scales {
+      scales(where: { stationId: { _is_null: true } }) {
+         deviceNum
+         deviceName
+         computer {
+            name
+            hostname
+            printNodeId
+         }
+      }
+   }
+`
+
 export const KOT_PRINTERS = gql`
    subscription kotPrinters($type: String!, $stationId: Int!) {
       kotPrinters: printers(
@@ -81,6 +95,21 @@ export const STATION = gql`
          name
          defaultKotPrinterId
          defaultLabelPrinterId
+         scale: assignedScales_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               active
+               deviceNum
+               deviceName
+               computer {
+                  name
+                  hostname
+                  printNodeId
+               }
+            }
+         }
          labelPrinter: attachedLabelPrinters_aggregate {
             nodes {
                active

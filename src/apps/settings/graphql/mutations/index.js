@@ -1,5 +1,68 @@
 import gql from 'graphql-tag'
 
+export const REMOVE_SCALE_STATION = gql`
+   mutation updateScale(
+      $deviceNum: Int!
+      $deviceName: String!
+      $computerId: Int!
+   ) {
+      updateScale(
+         pk_columns: {
+            computerId: $computerId
+            deviceName: $deviceName
+            deviceNum: $deviceNum
+         }
+         _set: { stationId: null }
+      ) {
+         deviceNum
+      }
+   }
+`
+
+export const ADD_STATION_TO_SCALE = gql`
+   mutation updateScales(
+      $computerId: Int!
+      $deviceName: String!
+      $deviceNum: Int!
+      $stationId: Int!
+   ) {
+      updateScales(
+         where: {
+            deviceNum: { _eq: $deviceNum }
+            deviceName: { _eq: $deviceName }
+            computerId: { _eq: $computerId }
+         }
+         _set: { stationId: $stationId }
+      ) {
+         returning {
+            deviceNum
+            deviceName
+         }
+      }
+   }
+`
+
+export const UPDATE_SCALE_STATUS = gql`
+   mutation updateScale(
+      $deviceNum: Int!
+      $deviceName: String!
+      $computerId: Int!
+      $active: Boolean!
+   ) {
+      updateScale(
+         pk_columns: {
+            computerId: $computerId
+            deviceName: $deviceName
+            deviceNum: $deviceNum
+         }
+         _set: { active: $active }
+      ) {
+         deviceNum
+         deviceName
+      }
+   }
+`
+
 export const UPDATE_STATION_DEFAULT_LABEL_PRINTER = gql`
    mutation updateStation($id: Int!, $defaultLabelPrinterId: Int!) {
       updateStation(

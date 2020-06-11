@@ -23,6 +23,7 @@ import {
 } from './styled'
 
 import { Users } from './sections/Users'
+import { Scales } from './sections/Scales'
 import { KotPrinters } from './sections/KotPrinters'
 import { LabelPrinters } from './sections/LabelPrinters'
 
@@ -117,6 +118,9 @@ const StationForm = () => {
                      <StyledTab>
                         KOT Printers ({station.kotPrinter.aggregate.count})
                      </StyledTab>
+                     <StyledTab>
+                        Scales ({station.scale.aggregate.count})
+                     </StyledTab>
                   </StyledTabList>
                   <StyledTabPanels>
                      <StyledTabPanel>
@@ -127,6 +131,9 @@ const StationForm = () => {
                      </StyledTabPanel>
                      <StyledTabPanel>
                         <KotPrinters station={station} />
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        <Scales station={station} />
                      </StyledTabPanel>
                   </StyledTabPanels>
                </StyledTabs>
