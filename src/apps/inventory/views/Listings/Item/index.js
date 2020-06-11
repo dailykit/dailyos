@@ -28,20 +28,17 @@ export default function ItemListing() {
       SUPPLIER_ITEMS_SUBSCRIPTION
    )
 
-   const [createItem, { loading: creatItemLoading }] = useMutation(
-      CREATE_ITEM,
-      {
-         onCompleted: input => {
-            const itemData = input.createSupplierItem.returning[0]
-            addTab(itemData.name, 'items', itemData.id)
-            toast.success('Supplier Item Added!')
-         },
-         onError: error => {
-            console.log(error)
-            toast.error('Something went wrong, try again')
-         },
-      }
-   )
+   const [createItem] = useMutation(CREATE_ITEM, {
+      onCompleted: input => {
+         const itemData = input.createSupplierItem.returning[0]
+         addTab(itemData.name, 'items', itemData.id)
+         toast.success('Supplier Item Added!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Something went wrong, try again')
+      },
+   })
 
    const createItemHandler = () => {
       // create item in DB
@@ -55,7 +52,7 @@ export default function ItemListing() {
       })
    }
 
-   if (itemsLoading || creatItemLoading) return <Loader />
+   if (itemsLoading) return <Loader />
 
    if (subError) return <p>{subError.message}</p>
 
