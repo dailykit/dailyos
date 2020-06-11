@@ -35,12 +35,14 @@ import {
    CREATE_STATION_LABEL_PRINTER,
    UPDATE_STATION_LABEL_PRINTER,
    DELETE_STATION_LABEL_PRINTER,
+   UPDATE_STATION_DEFAULT_LABEL_PRINTER,
 } from '../../../../../graphql/mutations'
 
 export const LabelPrinters = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
    const [update] = useMutation(UPDATE_STATION_LABEL_PRINTER)
    const [remove] = useMutation(DELETE_STATION_LABEL_PRINTER)
+   const [updateDefault] = useMutation(UPDATE_STATION_DEFAULT_LABEL_PRINTER)
 
    const {
       loading,
@@ -110,6 +112,23 @@ export const LabelPrinters = ({ station }) => {
                            >
                               Mark {node.active ? 'Inactive' : 'Active'}
                            </TextButton>
+                           {station.defaultLabelPrinterId !==
+                              node.labelPrinter.printNodeId && (
+                              <TextButton
+                                 type="outline"
+                                 onClick={() =>
+                                    updateDefault({
+                                       variables: {
+                                          id: station.id,
+                                          defaultLabelPrinterId:
+                                             node.labelPrinter.printNodeId,
+                                       },
+                                    })
+                                 }
+                              >
+                                 Make Default
+                              </TextButton>
+                           )}
                            <TextButton
                               type="outline"
                               onClick={() =>

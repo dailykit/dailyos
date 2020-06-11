@@ -1,5 +1,27 @@
 import gql from 'graphql-tag'
 
+export const UPDATE_STATION_DEFAULT_LABEL_PRINTER = gql`
+   mutation updateStation($id: Int!, $defaultLabelPrinterId: Int!) {
+      updateStation(
+         pk_columns: { id: $id }
+         _set: { defaultLabelPrinterId: $defaultLabelPrinterId }
+      ) {
+         id
+      }
+   }
+`
+
+export const UPDATE_STATION_DEFAULT_KOT_PRINTER = gql`
+   mutation updateStation($id: Int!, $defaultKotPrinterId: Int!) {
+      updateStation(
+         pk_columns: { id: $id }
+         _set: { defaultKotPrinterId: $defaultKotPrinterId }
+      ) {
+         id
+      }
+   }
+`
+
 export const CREATE_STATION_LABEL_PRINTER = gql`
    mutation insert_settings_station_label_printer(
       $objects: [settings_station_label_printer_insert_input!]!

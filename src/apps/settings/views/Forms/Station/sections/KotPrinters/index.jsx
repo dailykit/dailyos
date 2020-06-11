@@ -35,12 +35,14 @@ import {
    CREATE_STATION_KOT_PRINTER,
    UPDATE_STATION_KOT_PRINTER,
    DELETE_STATION_KOT_PRINTER,
+   UPDATE_STATION_DEFAULT_KOT_PRINTER,
 } from '../../../../../graphql/mutations'
 
 export const KotPrinters = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
    const [update] = useMutation(UPDATE_STATION_KOT_PRINTER)
    const [remove] = useMutation(DELETE_STATION_KOT_PRINTER)
+   const [updateDefault] = useMutation(UPDATE_STATION_DEFAULT_KOT_PRINTER)
 
    const { loading, error, data: { kotPrinters = [] } = {} } = useSubscription(
       KOT_PRINTERS,
@@ -109,6 +111,23 @@ export const KotPrinters = ({ station }) => {
                            >
                               Mark {node.active ? 'Inactive' : 'Active'}
                            </TextButton>
+                           {station.defaultKotPrinterId !==
+                              node.kotPrinter.printNodeId && (
+                              <TextButton
+                                 type="outline"
+                                 onClick={() =>
+                                    updateDefault({
+                                       variables: {
+                                          id: station.id,
+                                          defaultKotPrinterId:
+                                             node.kotPrinter.printNodeId,
+                                       },
+                                    })
+                                 }
+                              >
+                                 Make Default
+                              </TextButton>
+                           )}
                            <TextButton
                               type="outline"
                               onClick={() =>

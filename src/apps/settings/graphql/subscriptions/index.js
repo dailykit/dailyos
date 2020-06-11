@@ -79,6 +79,8 @@ export const STATION = gql`
       station(id: $id) {
          id
          name
+         defaultKotPrinterId
+         defaultLabelPrinterId
          labelPrinter: attachedLabelPrinters_aggregate {
             nodes {
                active
