@@ -1,5 +1,25 @@
 import gql from 'graphql-tag'
 
+export const LABEL_PRINTERS = gql`
+   subscription labelPrinters($type: String!, $stationId: Int!) {
+      labelPrinters: printers(
+         where: {
+            printerType: { _eq: $type }
+            _not: {
+               attachedStations_label: { station: { id: { _eq: $stationId } } }
+            }
+         }
+      ) {
+         printNodeId
+         name
+         computer {
+            name
+            hostname
+         }
+      }
+   }
+`
+
 export const STATIONS_AGGREGATE = gql`
    subscription stationsAggregate {
       stationsAggregate {
@@ -39,10 +59,23 @@ export const STATION = gql`
       station(id: $id) {
          id
          name
-         printer: attachedPrinters_aggregate {
+         labelPrinter: attachedLabelPrinters_aggregate {
             nodes {
                active
-               printer {
+               labelPrinter {
+                  name
+                  state
+                  printNodeId
+               }
+            }
+            aggregate {
+               count
+            }
+         }
+         kotPrinter: attachedKotPrinters_aggregate {
+            nodes {
+               active
+               kotPrinter {
                   name
                   state
                   printNodeId

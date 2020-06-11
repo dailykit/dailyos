@@ -186,12 +186,12 @@ const AddUserTunnel = ({
          <Tunnel layer={1} size="sm">
             <TunnelHeader>
                <h3>Add User</h3>
-               {list.length > 0 && (
+               {selected.length > 0 && (
                   <TextButton type="solid" onClick={() => handleSubmit()}>
                      Save
                   </TextButton>
                )}
-               {list.length === 0 && (
+               {list.length >= 0 && selected.length === 0 && (
                   <IconButton type="outline" onClick={() => setIsOpen(false)}>
                      <CloseIcon size={22} />
                   </IconButton>

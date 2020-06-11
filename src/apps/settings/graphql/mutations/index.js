@@ -1,5 +1,45 @@
 import gql from 'graphql-tag'
 
+export const CREATE_STATION_LABEL_PRINTER = gql`
+   mutation insert_settings_station_label_printer(
+      $objects: [settings_station_label_printer_insert_input!]!
+   ) {
+      insert_settings_station_label_printer(objects: $objects) {
+         returning {
+            stationId
+            printNodeId
+         }
+      }
+   }
+`
+
+export const DELETE_STATION_LABEL_PRINTER = gql`
+   mutation deleteStationLabelPrinter($stationId: Int!, $printNodeId: Int!) {
+      deleteStationLabelPrinter: delete_settings_station_label_printer_by_pk(
+         printNodeId: $printNodeId
+         stationId: $stationId
+      ) {
+         stationId
+         printNodeId
+      }
+   }
+`
+
+export const UPDATE_STATION_LABEL_PRINTER = gql`
+   mutation updateStationLabelPrinter(
+      $printNodeId: Int!
+      $stationId: Int!
+      $active: Boolean!
+   ) {
+      updateStationLabelPrinter: update_settings_station_label_printer_by_pk(
+         pk_columns: { printNodeId: $printNodeId, stationId: $stationId }
+         _set: { active: $active }
+      ) {
+         stationId
+      }
+   }
+`
+
 export const UPDATE_STATION_USER_STATUS = gql`
    mutation updateStation_user(
       $stationId: Int!

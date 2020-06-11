@@ -111,7 +111,7 @@ const StationForm = () => {
                         Users ({station.user.aggregate.count})
                      </StyledTab>
                      <StyledTab>
-                        Printers ({station.printer.aggregate.count})
+                        Labels Printers ({station.labelPrinter.aggregate.count})
                      </StyledTab>
                   </StyledTabList>
                   <StyledTabPanels>
