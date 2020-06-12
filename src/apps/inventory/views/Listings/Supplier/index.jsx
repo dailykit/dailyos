@@ -106,6 +106,7 @@ export default function SupplierListing() {
       {
          title: 'Actions',
          headerFilter: false,
+         headerSort: false,
          hozAlign: 'center',
          cellClick: (e, cell) => {
             e.stopPropagation()
