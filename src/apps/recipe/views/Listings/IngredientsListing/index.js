@@ -4,8 +4,6 @@ import * as moment from 'moment'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import 'react-tabulator/lib/styles.css'
 import { toast } from 'react-toastify'
 
 import ProcessingCount from '../../../utils/countFormatter'
@@ -147,6 +145,7 @@ function DataTable({
       {
          title: 'Actions',
          headerFilter: false,
+         headerSort: false,
          hozAlign: 'center',
          cellClick: (e, cell) => {
             e.stopPropagation()

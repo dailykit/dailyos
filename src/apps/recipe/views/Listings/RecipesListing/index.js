@@ -3,8 +3,6 @@ import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import 'react-tabulator/lib/styles.css'
 import { toast } from 'react-toastify'
 
 import ServingsCount from '../../../utils/countFormatter'
@@ -150,6 +148,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
       },
       {
          title: 'Actions',
+         headerSort: false,
          headerFilter: false,
          hozAlign: 'center',
          cellClick: (e, cell) => {
