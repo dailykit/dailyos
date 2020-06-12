@@ -148,6 +148,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
       },
       {
          title: 'Actions',
+         headerSort: false,
          headerFilter: false,
          hozAlign: 'center',
          cellClick: (e, cell) => {

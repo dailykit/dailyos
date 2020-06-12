@@ -145,6 +145,7 @@ function DataTable({
       {
          title: 'Actions',
          headerFilter: false,
+         headerSort: false,
          hozAlign: 'center',
          cellClick: (e, cell) => {
             e.stopPropagation()
