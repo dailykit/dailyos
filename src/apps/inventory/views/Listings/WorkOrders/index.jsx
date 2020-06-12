@@ -5,6 +5,7 @@ import {
    useTunnel,
    Text,
    Loader,
+   TextButton,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -159,6 +160,13 @@ function DataTable({ data }) {
 
    return (
       <div style={{ width: '95%', margin: '0 auto' }}>
+         <TextButton
+            style={{ marginBottom: '20px' }}
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+         >
+            Clear Filters
+         </TextButton>
          <ReactTabulator
             ref={tableRef}
             columns={columns}
