@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader } from '@dailykit/ui'
+import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
@@ -136,6 +136,13 @@ export default function SupplierListing() {
             </StyledHeader>
 
             <div style={{ margin: '0 auto', width: '80%' }}>
+               <TextButton
+                  style={{ marginBottom: '20px' }}
+                  type="outline"
+                  onClick={() => tableRef.current.table.clearHeaderFilter()}
+               >
+                  Clear Filters
+               </TextButton>
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
