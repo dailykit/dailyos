@@ -13,6 +13,20 @@ import { useTabs } from '../../../context'
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
 
+import {
+   StyledMain,
+   StyledTabs,
+   StyledTabList,
+   StyledTab,
+   StyledTabPanel,
+   StyledTabPanels,
+} from './styled'
+
+import { Users } from './sections/Users'
+import { Scales } from './sections/Scales'
+import { KotPrinters } from './sections/KotPrinters'
+import { LabelPrinters } from './sections/LabelPrinters'
+
 const StationForm = () => {
    const params = useParams()
    const history = useHistory()
@@ -38,7 +52,7 @@ const StationForm = () => {
    React.useEffect(() => {
       const tab = doesTabExists(`/settings/stations/${params.name}`)
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/settings/stations')
+         // history.push('/settings/stations')
       }
    }, [params.name, history])
 
@@ -90,6 +104,41 @@ const StationForm = () => {
                </TextButton>
             )}
          </StyledHeader>
+         {station?.name && (
+            <StyledMain>
+               <h3>Configure</h3>
+               <StyledTabs>
+                  <StyledTabList>
+                     <StyledTab>
+                        Users ({station.user.aggregate.count})
+                     </StyledTab>
+                     <StyledTab>
+                        Labels Printers ({station.labelPrinter.aggregate.count})
+                     </StyledTab>
+                     <StyledTab>
+                        KOT Printers ({station.kotPrinter.aggregate.count})
+                     </StyledTab>
+                     <StyledTab>
+                        Scales ({station.scale.aggregate.count})
+                     </StyledTab>
+                  </StyledTabList>
+                  <StyledTabPanels>
+                     <StyledTabPanel>
+                        <Users station={station} />
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        <LabelPrinters station={station} />
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        <KotPrinters station={station} />
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        <Scales station={station} />
+                     </StyledTabPanel>
+                  </StyledTabPanels>
+               </StyledTabs>
+            </StyledMain>
+         )}
       </StyledWrapper>
    )
 }

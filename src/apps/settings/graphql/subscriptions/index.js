@@ -1,5 +1,59 @@
 import gql from 'graphql-tag'
 
+export const LABEL_PRINTERS = gql`
+   subscription labelPrinters($type: String!, $stationId: Int!) {
+      labelPrinters: printers(
+         where: {
+            printerType: { _eq: $type }
+            _not: {
+               attachedStations_label: { station: { id: { _eq: $stationId } } }
+            }
+         }
+      ) {
+         printNodeId
+         name
+         computer {
+            name
+            hostname
+         }
+      }
+   }
+`
+
+export const UNASSIGNED_SCALES = gql`
+   subscription scales {
+      scales(where: { stationId: { _is_null: true } }) {
+         deviceNum
+         deviceName
+         computer {
+            name
+            hostname
+            printNodeId
+         }
+      }
+   }
+`
+
+export const KOT_PRINTERS = gql`
+   subscription kotPrinters($type: String!, $stationId: Int!) {
+      kotPrinters: printers(
+         where: {
+            printerType: { _eq: $type }
+            _not: {
+               attachedStations_label: { station: { id: { _eq: $stationId } } }
+            }
+         }
+      ) {
+         printNodeId
+         name
+         computer {
+            name
+            hostname
+         }
+      }
+   }
+`
+
 export const STATIONS_AGGREGATE = gql`
    subscription stationsAggregate {
       stationsAggregate {
@@ -19,11 +73,83 @@ export const USERS_AGGREGATE = gql`
    }
 `
 
+export const USER_BY_STATION = gql`
+   subscription settings_user($_eq: Int!) {
+      settings_user(
+         where: {
+            _not: { assignedStations: { station: { id: { _eq: $_eq } } } }
+         }
+      ) {
+         id
+         lastName
+         firstName
+         keycloakId
+      }
+   }
+`
+
 export const STATION = gql`
    subscription station($id: Int!) {
       station(id: $id) {
          id
          name
+         defaultKotPrinterId
+         defaultLabelPrinterId
+         scale: assignedScales_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               active
+               deviceNum
+               deviceName
+               computer {
+                  name
+                  hostname
+                  printNodeId
+               }
+            }
+         }
+         labelPrinter: attachedLabelPrinters_aggregate {
+            nodes {
+               active
+               labelPrinter {
+                  name
+                  state
+                  printNodeId
+               }
+            }
+            aggregate {
+               count
+            }
+         }
+         kotPrinter: attachedKotPrinters_aggregate {
+            nodes {
+               active
+               kotPrinter {
+                  name
+                  state
+                  printNodeId
+               }
+            }
+            aggregate {
+               count
+            }
+         }
+         user: assignedUsers_aggregate {
+            nodes {
+               active
+               user {
+                  id
+                  firstName
+                  lastName
+                  keycloakId
+               }
+            }
+            aggregate {
+               count
+            }
+         }
       }
    }
 `

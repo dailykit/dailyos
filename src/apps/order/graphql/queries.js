@@ -17,7 +17,6 @@ export const NOTIFICATIONS = gql`
          where: { type: { app: { _eq: "Order" } } }
       ) {
          id
-         action
          content
          created_at
          updated_at

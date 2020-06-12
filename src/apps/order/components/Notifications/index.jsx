@@ -25,9 +25,9 @@ export const Notifications = ({ isOpen, openPortal, closePortal }) => {
    }, [isOpen])
 
    const createTab = (e, notif) => {
-      const index = notif?.action?.url.lastIndexOf('/') + 1
-      const id = notif?.action?.url.slice(index)
-      addTab(`ORD${id}`, notif.action.url)
+      const index = notif?.content?.action?.url.lastIndexOf('/') + 1
+      const id = notif?.content?.action?.url.slice(index)
+      addTab(`ORD${id}`, notif.content.action.url)
       closePortal(e)
    }
 

@@ -15,8 +15,9 @@ export const SectionTab = ({ title, children }) => {
 
 export const SectionTabs = styled(Tabs)`
    width: 100%;
+   height: 100%;
    display: grid;
-   grid-template-columns: 220px 1fr;
+   grid-template-columns: 280px 1fr;
 `
 export const SectionTabList = styled(TabList)`
    display: flex;
@@ -26,6 +27,7 @@ export const SectionTabList = styled(TabList)`
 export const StyledTab = styled(Tab)`
    border: none;
    cursor: pointer;
+   border-radius: 2px;
    background: transparent;
    &[data-selected] {
       color: #fff;
@@ -42,10 +44,22 @@ export const StyledTab = styled(Tab)`
    }
 `
 export const SectionTabPanels = styled(TabPanels)(
-   ({ nopadding }) => css`
-      background: #fff;
-      padding: ${Boolean(nopadding) ? '0' : '24px'};
+   () => css`
+      height: 100%;
+      overflow: hidden;
+      :focus {
+         outline: none;
+      }
    `
 )
 
-export const SectionTabPanel = styled(TabPanel)``
+export const SectionTabPanel = styled(TabPanel)`
+   height: 100%;
+   padding: 16px;
+   overflow-y: auto;
+   background: #fff;
+   border-radius: 2px;
+   :focus {
+      outline: none;
+   }
+`

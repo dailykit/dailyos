@@ -55,7 +55,7 @@ const Upload = ({ onAssetUpload }) => {
                   type="text"
                   name="title"
                   value={file.title}
-                  placeholder={t(address.concat("enter the title"))}
+                  placeholder={t(address.concat('enter the title'))}
                   onChange={e => handleMetaChange(e)}
                />
             </fieldset>
@@ -65,7 +65,7 @@ const Upload = ({ onAssetUpload }) => {
                   row="4"
                   name="description"
                   value={file.description}
-                  placeholder={t(address.concat("enter the description"))}
+                  placeholder={t(address.concat('enter the description'))}
                   onChange={e => handleMetaChange(e)}
                />
             </fieldset>
@@ -121,7 +121,6 @@ const StyledSection = styled.section(css`
 const StyledForm = styled.div(css`
    display: flex;
    flex-direction: column;
-   border: 1px solid #d7d7d7;
    padding: 8px;
    border-radius: 8px;
    fieldset {
