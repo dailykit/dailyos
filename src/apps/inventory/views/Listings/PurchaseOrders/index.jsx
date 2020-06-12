@@ -1,15 +1,9 @@
-import {
-   IconButton,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   Loader,
-} from '@dailykit/ui'
-import React, { useState } from 'react'
+import { IconButton, Loader, TextButton } from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
 
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
@@ -22,17 +16,19 @@ export default function PurchaseOrders() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const [formState, setFormState] = useState([])
-
    const addTab = (title, view) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
    }
 
-   const { loading } = useSubscription(PURCHASE_ORDERS_SUBSCRIPTION, {
-      onSubscriptionData: input => {
-         setFormState(input.subscriptionData?.data?.purchaseOrderItems)
-      },
-   })
+   const { loading, data: { purchaseOrderItems = [] } = {} } = useSubscription(
+      PURCHASE_ORDERS_SUBSCRIPTION,
+      {
+         onError: error => {
+            toast.error('Error! Please try reloading the page')
+            console.log(error)
+         },
+      }
+   )
 
    if (loading) return <Loader />
 
@@ -50,40 +46,80 @@ export default function PurchaseOrders() {
             </StyledHeader>
 
             <div style={{ width: '95%', margin: '0 auto' }}>
-               <Table>
-                  <TableHead>
-                     <TableRow>
-                        <TableCell>Status</TableCell>
-                        <TableCell>Supplier Item</TableCell>
-                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                     {formState?.map(purchaseOrder => (
-                        <TableRow
-                           key={purchaseOrder.id}
-                           onClick={() => {
-                              dispatch({
-                                 type: 'SET_PURCHASE_WORK_ORDER',
-                                 payload: {
-                                    id: purchaseOrder.id,
-                                    status: purchaseOrder.status,
-                                 },
-                              })
-                              addTab('Update Purchase Order', 'purchaseOrder')
-                           }}
-                        >
-                           <TableCell>{purchaseOrder.status}</TableCell>
-                           <TableCell>
-                              {purchaseOrder.supplierItem.name}
-                           </TableCell>
-                        </TableRow>
-                     ))}
-                  </TableBody>
-               </Table>
+               <DataTable
+                  data={purchaseOrderItems}
+                  addTab={addTab}
+                  dispatch={dispatch}
+               />
             </div>
 
             <br />
          </StyledWrapper>
       </>
    )
+}
+
+function DataTable({ data, addTab, dispatch }) {
+   const tableRef = React.useRef()
+
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const rowClick = (e, row) => {
+      const { id, status } = row._row.data
+      dispatch({
+         type: 'SET_PURCHASE_WORK_ORDER',
+         payload: {
+            id,
+            status,
+         },
+      })
+      addTab('Purchase Order', 'purchaseOrder')
+   }
+
+   const columns = [
+      { title: 'Status', field: 'status', headerFilter: true },
+      {
+         title: 'Supplier Item',
+         field: 'supplierItem',
+         headerFilter: false,
+         formatter: reactFormatter(<SupplierItemName />),
+      },
+   ]
+
+   return (
+      <div>
+         <TextButton
+            style={{ marginBottom: '20px' }}
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+         >
+            Clear Filters
+         </TextButton>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={options}
+         />
+      </div>
+   )
+}
+
+function SupplierItemName({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.name) return <>{value.name}</>
+   return 'NA'
 }
