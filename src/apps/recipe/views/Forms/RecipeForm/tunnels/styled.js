@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const TunnelHeader = styled.div`
-   height: 76px;
+   height: 56px;
    display: flex;
    justify-content: space-between;
    align-items: center;
@@ -10,11 +10,24 @@ export const TunnelHeader = styled.div`
    > div {
       display: flex;
       align-items: center;
+      span:first-child {
+         width: 32px;
+         height: 32px;
+         display: flex;
+         cursor: pointer;
+         margin-right: 8px;
+         border-radius: 2px;
+         align-items: center;
+         justify-content: center;
+         :hover {
+            background: #e3e3e3;
+         }
+      }
    }
 `
 
 export const TunnelBody = styled.div`
-   padding: 16px 32px;
+   padding: 0 16px;
    height: calc(100% - 106px);
    overflow: auto;
 `

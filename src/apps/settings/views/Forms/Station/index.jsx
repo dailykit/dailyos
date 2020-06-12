@@ -52,7 +52,7 @@ const StationForm = () => {
    React.useEffect(() => {
       const tab = doesTabExists(`/settings/stations/${params.name}`)
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         // history.push('/settings/stations')
+         history.push('/settings/stations')
       }
    }, [params.name, history])
 
