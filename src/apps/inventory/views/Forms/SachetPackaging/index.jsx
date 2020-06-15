@@ -73,10 +73,11 @@ export default function SachetPackaging() {
                   <ItemInformationTunnel
                      close={closeTunnel}
                      next={openTunnel}
+                     state={packaging}
                   />
                </Tunnel>
                <Tunnel layer={3}>
-                  <MoreItemInfoTunnel close={closeTunnel} />
+                  <MoreItemInfoTunnel close={closeTunnel} state={packaging} />
                </Tunnel>
                <Tunnel layer={4}>
                   <LeakResistanceTunnel close={closeTunnel} />
