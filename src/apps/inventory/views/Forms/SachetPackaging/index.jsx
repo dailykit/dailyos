@@ -64,7 +64,7 @@ export default function SachetPackaging() {
                      suppliers={supplierData?.suppliers?.map(supplier => ({
                         id: supplier.id,
                         title: supplier.name,
-                        description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
+                        description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.phoneNumber})`,
                      }))}
                      state={packaging}
                   />

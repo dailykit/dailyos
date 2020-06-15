@@ -53,7 +53,7 @@ export default function SuppliersTunnel({ close, suppliers, state }) {
                title={t(address.concat('select supplier'))}
                next={handleNext}
                close={() => close(1)}
-               nextAction="Next"
+               nextAction="Save"
             />
 
             <Spacer />

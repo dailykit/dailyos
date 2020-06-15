@@ -1,9 +1,10 @@
 import React from 'react'
-import { TextButton } from '@dailykit/ui'
+import { TextButton, IconButton } from '@dailykit/ui'
 
 import { StyledHeader, StyledInfo, StyledSupplier } from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
+import EditIcon from '../../../../../shared/assets/icons/Edit'
 
 export default function FormView({ state, open }) {
    return (
@@ -34,9 +35,15 @@ function SupplierInfo({ state, open }) {
          <StyledSupplier>
             <span>{state.supplier.name}</span>
             <span>
-               {`${state.supplier.contactPerson?.firstName} ${state.supplier.contactPerson?.lastName} (${state.supplier.contactPerson?.countryCode} ${state.supplier.contactPerson?.phoneNumber})` ||
+               {(state.supplier.contactPerson?.phoneNumber &&
+                  state.supplier.contactPerson?.firstName &&
+                  state.supplier.contactPerson?.lastName &&
+                  `${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson.phoneNumber})`) ||
                   ''}
             </span>
+            <IconButton type="outline" onClick={() => open(1)}>
+               <EditIcon />
+            </IconButton>
          </StyledSupplier>
       )
 
