@@ -1015,35 +1015,6 @@
                   "save": "Αποθήκευση",
                   "permissions for role": "Άδειες για ρόλο"
                },
-               "station": {
-                  "enter the station name": "Εισαγάγετε το όνομα του σταθμού",
-                  "publish": "Δημοσίευση",
-                  "select station type": "Επιλέξτε τύπο σταθμού",
-                  "devices": "Σσκευές",
-                  "select devices": "Επιλέξτε Συσκευές",
-                  "select devices for the user": "Επιλέξτε συσκευές για τον χρήστη",
-                  "add": "Προσθήκη",
-                  "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε"
-               },
-               "user": {
-                  "new user": "Νέος Χρήστης",
-                  "publish": "Δημοσίευση",
-                  "first name": "Μικρό όνομα",
-                  "last name": "Επώνυμο",
-                  "email": "Email",
-                  "phone number": "Τηλεφωνικό νούμερο",
-                  "apps": "Εφαρμογές",
-                  "configure": "Διαμορφώστε",
-                  "select apps": "Επιλέξτε εφαρμογές",
-                  "devices": "Σσκευές",
-                  "select devices": "Επιλέξτε Συσκευές",
-                  "configure apps": "Διαμόρφωση εφαρμογών",
-                  "add": "Προσθήκη",
-                  "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε",
-                  "save": "Αποθήκευση",
-                  "roles for role": "Ρόλοι για ρόλο",
-                  "select devices for the user": "Ρόλοι για ρόλο"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1132,20 +1103,6 @@
                "roleslisting": {
                   "roles": "Ρόλοι",
                   "apps configured": "Οι εφαρμογές διαμορφώθηκαν",
-                  "actions": "Ενέργειες"
-               },
-               "stationslisting": {
-                  "actions": "Ενέργειες",
-                  "stations": "Σταθμοί",
-                  "station name": "Όνομα Σταθμού",
-                  "station type": "Τύπος σταθμού",
-                  "devices": "Σσκευές",
-                  "sachets": "Φακελάκια"
-               },
-               "userslisting": {
-                  "users": "Χρήστες",
-                  "apps configured": "Οι εφαρμογές διαμορφώθηκαν",
-                  "devices assigned": "Ανατέθηκαν συσκευές",
                   "actions": "Ενέργειες"
                },
                "masterlist": {

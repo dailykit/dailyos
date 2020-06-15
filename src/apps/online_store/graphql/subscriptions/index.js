@@ -313,3 +313,34 @@ export const STORE_SETTINGS = gql`
       }
    }
 `
+
+export const RECURRENCES = gql`
+   subscription Recurrence($type: String!) {
+      recurrences(where: { type: { _eq: $type } }) {
+         id
+         rrule
+         type
+         isActive
+         timeSlots {
+            id
+            from
+            to
+            isActive
+            mileRanges {
+               id
+               from
+               to
+               leadTime
+               prepTime
+               isActive
+               charges {
+                  id
+                  orderValueFrom
+                  orderValueUpto
+                  charge
+               }
+            }
+         }
+      }
+   }
+`

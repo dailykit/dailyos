@@ -131,6 +131,7 @@ export default function ConfigureDerivedProcessingTunnel({
                labor: { unit: laborUnit, value: laborTime },
                bulkDensity: +bulkDensity,
                allergens: state.configurable.allergens,
+               isAvailable: true,
             },
          })
       }
@@ -153,7 +154,7 @@ export default function ConfigureDerivedProcessingTunnel({
             <StyledInputGroup>
                <InputWrapper>
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('set par level'))}
                      name="par level"
                      value={par}
@@ -163,7 +164,7 @@ export default function ConfigureDerivedProcessingTunnel({
                </InputWrapper>
                <InputWrapper>
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('max inventory level'))}
                      name="max inventory level"
                      value={maxInventoryLevel}
@@ -210,7 +211,7 @@ export default function ConfigureDerivedProcessingTunnel({
             <StyledInputGroup>
                <InputWrapper>
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('labour time per 100gm'))}
                      name="labor time"
                      value={laborTime}
@@ -229,7 +230,7 @@ export default function ConfigureDerivedProcessingTunnel({
 
                <InputWrapper>
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('percentage of yield'))}
                      name="yield"
                      value={yieldPercentage}
@@ -244,7 +245,7 @@ export default function ConfigureDerivedProcessingTunnel({
             <StyledInputGroup>
                <InputWrapper>
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('shelf life'))}
                      name="shelf life"
                      value={shelfLife}
@@ -262,7 +263,7 @@ export default function ConfigureDerivedProcessingTunnel({
                </InputWrapper>
                <InputWrapper>
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('bulk density'))}
                      name="bulk density"
                      value={bulkDensity}

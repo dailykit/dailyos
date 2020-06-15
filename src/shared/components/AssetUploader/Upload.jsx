@@ -1,10 +1,10 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
+import { Input } from '@dailykit/ui'
+
 import useAssets from './useAssets'
-import { useTranslation } from 'react-i18next'
-const address = 'shared.components.assetuploader.'
+
 const Upload = ({ onAssetUpload }) => {
-   const { t } = useTranslation()
    const { upload } = useAssets()
    const inputRef = React.useRef(null)
    const [file, setFile] = React.useState({
@@ -50,27 +50,25 @@ const Upload = ({ onAssetUpload }) => {
       <div>
          <StyledForm>
             <fieldset>
-               <legend>{t(address.concat('title'))}</legend>
-               <input
+               <Input
                   type="text"
                   name="title"
+                  label="title"
                   value={file.title}
-                  placeholder={t(address.concat("enter the title"))}
                   onChange={e => handleMetaChange(e)}
                />
             </fieldset>
             <fieldset>
-               <legend>{t(address.concat('description'))}</legend>
-               <textarea
-                  row="4"
+               <Input
+                  row={5}
+                  type="textarea"
                   name="description"
+                  label="description"
                   value={file.description}
-                  placeholder={t(address.concat("enter the description"))}
                   onChange={e => handleMetaChange(e)}
                />
             </fieldset>
             <fieldset>
-               <legend>{t(address.concat('select image'))}</legend>
                <input
                   type="file"
                   ref={inputRef}
@@ -79,7 +77,7 @@ const Upload = ({ onAssetUpload }) => {
                />
             </fieldset>
             <button type="button" onClick={() => handleSubmit()}>
-               {t(address.concat('upload'))}
+               Upload
             </button>
          </StyledForm>
          {file.preview && (
@@ -109,7 +107,7 @@ const StyledSection = styled.section(css`
       display: none;
       align-items: center;
       justify-content: center;
-      border-radius: 6px;
+      border-radius: 3px;
       background: rgba(0, 0, 0, 0.4);
       position: absolute;
       padding: 6px;
@@ -121,31 +119,23 @@ const StyledSection = styled.section(css`
 const StyledForm = styled.div(css`
    display: flex;
    flex-direction: column;
-   border: 1px solid #d7d7d7;
    padding: 8px;
-   border-radius: 8px;
    fieldset {
-      padding: 4px 8px;
-      margin-bottom: 12px;
-      border: 1px solid #d7d7d7;
-   }
-   legend {
-      padding: 0 6px;
-   }
-   input,
-   textarea {
-      width: 100%;
-      padding: 4px;
       border: none;
-      font-size: 14px;
+      margin-bottom: 16px;
+      [type='file'] {
+         width: 100%;
+         padding: 8px;
+         border: 1px solid #e3e3e3;
+      }
    }
    button {
-      height: 32px;
+      height: 36px;
       border: none;
       color: #fff;
       font-size: 16px;
-      padding: 0 12px;
-      border-radius: 8px;
+      padding: 0 14px;
+      border-radius: 3px;
       background: #37d0b3;
       align-self: flex-start;
    }

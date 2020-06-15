@@ -1,33 +1,22 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {
-   IconButton,
-   Loader,
-   SearchBox,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-   Toggle,
-} from '@dailykit/ui'
+import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import * as moment from 'moment'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
+
+import ProcessingCount from '../../../utils/countFormatter'
+
 import { randomSuffix } from '../../../../../shared/utils'
-// Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-// State
 import { Context } from '../../../context/tabs'
 import {
    CREATE_INGREDIENT,
-   S_INGREDIENTS,
    DELETE_INGREDIENTS,
-   UPDATE_INGREDIENT,
+   S_INGREDIENTS,
 } from '../../../graphql'
-// Styled
 import {
-   GridContainer,
    StyledContent,
    StyledHeader,
    StyledPagination,
@@ -41,17 +30,20 @@ const address = 'apps.recipe.views.listings.ingredientslisting.'
 const IngredientsListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
-   const [ingredients, setIngredients] = React.useState([])
-   const [search, setSearch] = React.useState('')
 
-   // Queries
-   const { loading, error, data } = useSubscription(S_INGREDIENTS, {
-      onSubscriptionData: data => {
-         console.log(data)
-         setIngredients(data.subscriptionData.data.ingredients)
-      },
-   })
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
+   }
 
+   const { loading, data: { ingredients = [] } = {} } = useSubscription(
+      S_INGREDIENTS,
+      {
+         onError: error => {
+            console.log(error)
+            toast.error(error.message)
+         },
+      }
+   )
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
@@ -68,7 +60,7 @@ const IngredientsListing = () => {
       },
    })
    const [deleteIngredients] = useMutation(DELETE_INGREDIENTS, {
-      onCompleted: data => {
+      onCompleted: () => {
          toast.success('Ingredient deleted!')
       },
       onError: error => {
@@ -76,34 +68,12 @@ const IngredientsListing = () => {
          toast.error('Failed to delete!')
       },
    })
-   const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
-      onCompleted: () => {
-         toast.success('Updated!')
-      },
-      onError: error => {
-         console.log(error)
-         toast.error('Error')
-      },
-   })
 
-   // Effects
-   React.useEffect(() => {
-      if (data)
-         setIngredients(
-            data.ingredients.filter(ing =>
-               ing.name.toLowerCase().includes(search.toLowerCase())
-            )
-         )
-   }, [search])
-
-   // Handlers
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
    const createIngredientHandler = async () => {
-      let name = 'ingredient-' + randomSuffix()
+      const name = `ingredient-${randomSuffix()}`
       createIngredient({ variables: { name } })
    }
+
    const deleteIngredientHandler = (e, ingredient) => {
       e.stopPropagation()
       if (
@@ -118,19 +88,6 @@ const IngredientsListing = () => {
          })
       }
    }
-   const togglePublish = (val, ingredient) => {
-      if (!ingredient.isPublished && !ingredient.isValid.status) {
-         return toast.error('Ingredient should be valid!')
-      }
-      updateIngredient({
-         variables: {
-            id: ingredient.id,
-            set: {
-               isPublished: !ingredient.isPublished,
-            },
-         },
-      })
-   }
 
    if (loading) return <Loader />
 
@@ -138,89 +95,112 @@ const IngredientsListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <h1>{t(address.concat('ingredients'))}</h1>
-            <StyledPagination>
-               Total: {ingredients?.length}
-               {/* <span disabled={true}>
-                  <ChevronLeftIcon />
-               </span>
-               <span>
-                  <ChevronRightIcon />
-               </span> */}
-            </StyledPagination>
+            <StyledPagination>Total: {ingredients?.length}</StyledPagination>
          </StyledHeader>
+         <DataTable
+            data={ingredients}
+            addTab={addTab}
+            deleteIngredientHandler={deleteIngredientHandler}
+            createIngredientHandler={createIngredientHandler}
+         />
+      </StyledWrapper>
+   )
+}
+
+function DataTable({
+   data,
+   addTab,
+   deleteIngredientHandler,
+   createIngredientHandler,
+}) {
+   const tableRef = React.useRef()
+
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const columns = [
+      { title: 'Name', field: 'name', headerFilter: true },
+      {
+         title: 'Processings',
+         field: 'ingredientProcessings',
+         headerFilter: false,
+         hozAlign: 'right',
+         formatter: reactFormatter(<ProcessingCount />),
+      },
+      {
+         title: 'Created At',
+         field: 'createdAt',
+         headerFilter: false,
+         hozAlign: 'right',
+         formatter: reactFormatter(<FormatDate />),
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteIngredientHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteIngredient />),
+      },
+   ]
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, 'ingredient', id)
+   }
+
+   return (
+      <>
          <StyledTableHeader>
-            <p></p>
+            <TextButton
+               type="outline"
+               onClick={() => tableRef.current.table.clearHeaderFilter()}
+            >
+               Clear Filters
+            </TextButton>
+
             <StyledTableActions>
-               <SearchBox
-                  placeholder={t(address.concat('search'))}
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-               />
                <IconButton type="solid" onClick={createIngredientHandler}>
                   <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledTableActions>
          </StyledTableHeader>
          <StyledContent>
-            <Table>
-               <TableHead>
-                  <TableRow>
-                     <TableCell>Name</TableCell>
-                     <TableCell>Processings</TableCell>
-                     <TableCell>Created At</TableCell>
-                     {/* <TableCell>Published</TableCell> */}
-                     <TableCell> </TableCell>
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {!loading &&
-                     !error &&
-                     ingredients.map(ingredient => (
-                        <TableRow
-                           key={ingredient.id}
-                           onClick={() =>
-                              addTab(
-                                 ingredient.name,
-                                 'ingredient',
-                                 ingredient.id
-                              )
-                           }
-                        >
-                           <TableCell> {ingredient.name} </TableCell>
-                           <TableCell>
-                              {ingredient.ingredientProcessings.length}
-                           </TableCell>
-                           <TableCell>
-                              {ingredient.createdAt
-                                 ? moment(ingredient.createdAt).format('LLL')
-                                 : 'NA'}
-                           </TableCell>
-                           {/* <TableCell>
-                              <Toggle
-                                 checked={ingredient.isPublished}
-                                 setChecked={val =>
-                                    togglePublish(val, ingredient)
-                                 }
-                              />
-                           </TableCell> */}
-                           <TableCell>
-                              <GridContainer>
-                                 <IconButton
-                                    onClick={e =>
-                                       deleteIngredientHandler(e, ingredient)
-                                    }
-                                 >
-                                    <DeleteIcon color="#FF5A52" />
-                                 </IconButton>
-                              </GridContainer>
-                           </TableCell>
-                        </TableRow>
-                     ))}
-               </TableBody>
-            </Table>
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={data}
+               rowClick={rowClick}
+               options={options}
+               data-custom-attr="test-custom-attribute"
+               className="custom-css-class"
+            />
          </StyledContent>
-      </StyledWrapper>
+      </>
    )
+}
+
+function DeleteIngredient() {
+   return <DeleteIcon color="#FF5A52" />
+}
+
+function FormatDate({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   return <>{value ? moment(value).format('LLL') : 'NA'}</>
 }
 
 export default IngredientsListing

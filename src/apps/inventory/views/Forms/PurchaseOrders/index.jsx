@@ -229,7 +229,7 @@ export default function PurchaseOrderForm() {
                            <div style={{ width: '60%' }}>
                               <Input
                                  disabled={!!status}
-                                 type="text"
+                                 type="number"
                                  placeholder={t(
                                     address.concat('enter order quantity')
                                  )}

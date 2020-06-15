@@ -17,7 +17,6 @@ export const NOTIFICATIONS = gql`
          where: { type: { app: { _eq: "Order" } } }
       ) {
          id
-         action
          content
          created_at
          updated_at
@@ -72,10 +71,12 @@ export const ORDERS = gql`
          tax
          discount
          itemTotal
+         amountPaid
          deliveryPrice
          transactionId
          orderMealKitProducts {
             id
+            price
             assemblyStatus
             assemblyStation {
                name
@@ -102,6 +103,7 @@ export const ORDERS = gql`
          }
          orderReadyToEatProducts {
             id
+            price
             assemblyStatus
             simpleRecipeProduct {
                name
@@ -128,6 +130,7 @@ export const ORDERS = gql`
          }
          orderInventoryProducts {
             id
+            price
             inventoryProduct {
                name
             }

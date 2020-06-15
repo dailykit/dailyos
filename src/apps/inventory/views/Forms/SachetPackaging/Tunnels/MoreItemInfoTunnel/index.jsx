@@ -97,6 +97,7 @@ export default function MoreItemInfoTunnel({ close }) {
                   unitPrice,
                   unitQuantity,
                   caseQuantity,
+                  isAvailable: true,
                   minOrderValue,
                   type: sachetPackagingState.type,
                   leadTime: { unit: leadTimeUnit, value: leadTime },
@@ -139,7 +140,7 @@ export default function MoreItemInfoTunnel({ close }) {
             <PaddedInputGroup>
                <div style={{ width: '70%' }}>
                   <Input
-                     type="text"
+                     type="number"
                      placeholder="Unit qty (in pieces)"
                      name="unitQty"
                      value={unitQuantity}
@@ -157,7 +158,7 @@ export default function MoreItemInfoTunnel({ close }) {
                      $
                   </div>
                   <Input
-                     type="text"
+                     type="number"
                      placeholder="Unit Price"
                      name="unitPrice"
                      value={unitPrice}
@@ -174,7 +175,7 @@ export default function MoreItemInfoTunnel({ close }) {
             <PaddedInputGroup>
                <div style={{ width: '70%' }}>
                   <Input
-                     type="text"
+                     type="number"
                      placeholder="Case qty (in pieces)"
                      name="caseQty"
                      value={caseQuantity}
@@ -189,7 +190,7 @@ export default function MoreItemInfoTunnel({ close }) {
                <span style={{ width: '90px' }} />
 
                <Input
-                  type="text"
+                  type="number"
                   placeholder="Min. value order (in case)"
                   name="unitPrice"
                   value={minOrderValue}
@@ -207,7 +208,7 @@ export default function MoreItemInfoTunnel({ close }) {
                style={{ justifyContent: 'flex-start', width: '40%' }}
             >
                <Input
-                  type="text"
+                  type="number"
                   placeholder="Lead time"
                   name="leadTime"
                   value={leadTime}

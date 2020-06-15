@@ -24,6 +24,7 @@ import {
    StyledTabPanel,
    StyledHeader,
    StyledStat,
+   StyledPrint,
 } from './styled'
 
 import {
@@ -34,6 +35,7 @@ import {
    ArrowDownIcon,
    ArrowUpIcon,
    NewTabIcon,
+   PrintIcon,
 } from '../../assets/icons'
 
 import { formatDate } from '../../utils'
@@ -79,8 +81,19 @@ const OrderListItem = ({ order }) => {
       }
    }
 
-   const createTab = orderId => {
-      addTab(`ORD${orderId}`, `/order/orders/${orderId}`)
+   const createTab = () => {
+      addTab(`ORD${order.id}`, `/order/orders/${order.id}`)
+   }
+
+   const print = () => {
+      const template = encodeURIComponent(
+         JSON.stringify({ name: 'bill1', type: 'bill', format: 'pdf' })
+      )
+      const data = encodeURIComponent(JSON.stringify({ id: order.id }))
+      window.open(
+         `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
+         '_blank'
+      )
    }
 
    return (
@@ -138,8 +151,8 @@ const OrderListItem = ({ order }) => {
                      <span>{rest.deliveryPrice}</span>
                   </StyledStat>
                   <StyledStat>
-                     <span>{t(address.concat('item total'))}</span>
-                     <span>{rest.itemTotal}</span>
+                     <span>{t(address.concat('total'))}</span>
+                     <span>{rest.amountPaid}</span>
                   </StyledStat>
                </main>
             </ListBodyItem>
@@ -150,9 +163,9 @@ const OrderListItem = ({ order }) => {
                   ORD{order.id}
                   <NewTabIcon size={14} />
                </StyledViewOrder>
-               <span>
-                  {t(address.concat('total'))}: ${order.itemTotal}
-               </span>
+               <StyledPrint onClick={() => print()}>
+                  <PrintIcon size={16} />
+               </StyledPrint>
                <section>
                   <StyledStatus>
                      <span>{t(address.concat('ordered on'))}:&nbsp;</span>
@@ -250,7 +263,7 @@ const OrderListItem = ({ order }) => {
                                  &nbsp;/&nbsp;
                                  {
                                     mealkit?.orderSachets.filter(
-                                       sachet => sachet.status === 'COMPLETED'
+                                       sachet => sachet.status === 'PACKED'
                                     ).length
                                  }
                                  &nbsp; / {mealkit?.orderSachets?.length}
@@ -354,8 +367,7 @@ const OrderListItem = ({ order }) => {
                                       &nbsp;/&nbsp;
                                       {
                                          mealkit?.orderSachets.filter(
-                                            sachet =>
-                                               sachet.status === 'COMPLETED'
+                                            sachet => sachet.status === 'PACKED'
                                          ).length
                                       }
                                       &nbsp; / {mealkit?.orderSachets?.length}

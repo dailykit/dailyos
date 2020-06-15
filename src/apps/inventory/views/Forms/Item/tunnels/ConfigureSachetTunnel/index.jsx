@@ -77,7 +77,7 @@ export default function ConfigureSachetTunnel({ close, formState }) {
          <div style={{ width: '45%', display: 'flex', alignItems: 'flex-end' }}>
             <div style={{ width: '70%' }}>
                <Input
-                  type="text"
+                  type="number"
                   name="quantity"
                   value={quantity}
                   label="Sachet Quantity"
@@ -98,7 +98,7 @@ export default function ConfigureSachetTunnel({ close, formState }) {
          >
             <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
                <Input
-                  type="text"
+                  type="number"
                   name="par"
                   value={par}
                   label={t(address.concat('set par level'))}
@@ -112,7 +112,7 @@ export default function ConfigureSachetTunnel({ close, formState }) {
 
             <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
                <Input
-                  type="text"
+                  type="number"
                   name="inventory level"
                   value={maxInventoryLevel}
                   label={t(address.concat('max inventory level'))}

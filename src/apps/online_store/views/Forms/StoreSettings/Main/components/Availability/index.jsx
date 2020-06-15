@@ -1,12 +1,14 @@
 import React from 'react'
-import { Text, Input, TextButton, Loader, Checkbox } from '@dailykit/ui'
+import { Text, Input, TextButton, Loader, Checkbox, Tag } from '@dailykit/ui'
 
 import { Container, Flex, Grid } from '../../../styled'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
+import { Context } from '../../../../../../context'
 
 const AvailabilitySettings = () => {
+   const { dispatch } = React.useContext(Context)
    const [store, setStore] = React.useState(undefined)
    const [pickup, setPickup] = React.useState(undefined)
    const [delivery, setDelivery] = React.useState(undefined)
@@ -57,6 +59,23 @@ const AvailabilitySettings = () => {
             type: 'availability',
             identifier,
             value,
+         },
+      })
+   }
+   const addTab = (type, title, view, fulfillment) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: {
+            type,
+            title:
+               title +
+               ' - ' +
+               fulfillment
+                  .split('_')
+                  .map(word => word[0])
+                  .join(''),
+            view,
+            fulfillment,
          },
       })
    }
@@ -240,6 +259,69 @@ const AvailabilitySettings = () => {
                   Update
                </TextButton>
             </Flex>
+         </Container>
+         <Container bottom="32">
+            <Text as="p">Recurrences</Text>
+            <Container bottom="16">
+               <span
+                  onClick={() =>
+                     addTab(
+                        'forms',
+                        'Recurrences',
+                        'recurrences',
+                        'PREORDER_DELIVERY'
+                     )
+                  }
+                  style={{ cursor: 'pointer' }}
+               >
+                  <Tag>Pre Order - Delivery</Tag>
+               </span>
+            </Container>
+            <Container bottom="16">
+               <span
+                  onClick={() =>
+                     addTab(
+                        'forms',
+                        'Recurrences',
+                        'recurrences',
+                        'PREORDER_PICKUP'
+                     )
+                  }
+                  style={{ cursor: 'pointer' }}
+               >
+                  <Tag>Pre Order - Pickup</Tag>
+               </span>
+            </Container>
+            <Container bottom="16">
+               <span
+                  onClick={() =>
+                     addTab(
+                        'forms',
+                        'Recurrences',
+                        'recurrences',
+                        'ONDEMAND_DELIVERY'
+                     )
+                  }
+                  style={{ cursor: 'pointer' }}
+               >
+                  <Tag>On Demand - Delivery</Tag>
+               </span>
+            </Container>
+            <Container bottom="16">
+               <span
+                  onClick={() =>
+                     addTab(
+                        'forms',
+                        'Recurrences',
+                        'recurrences',
+                        'ONDEMAND_PICKUP'
+                     )
+                  }
+                  style={{ cursor: 'pointer' }}
+               >
+                  <Tag>On Demand - Pickup</Tag>
+               </span>
+            </Container>
          </Container>
       </Container>
    )

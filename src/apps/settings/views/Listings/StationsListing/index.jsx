@@ -1,6 +1,7 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
@@ -9,35 +10,31 @@ import {
    TableBody,
    TableRow,
    TableCell,
-   ButtonGroup,
    IconButton,
+   ButtonGroup,
    Text,
+   Loader,
 } from '@dailykit/ui'
 
 // State
 import { useTabs } from '../../../context'
 
+import { STATIONS, DELETE_STATION } from '../../../graphql'
+
 // Styled
-import { StyledWrapper, StyledHeader, StyledBadge } from '../styled'
+import { StyledWrapper, StyledHeader } from '../styled'
 
 // Icons
-import {
-   EditIcon,
-   DeleteIcon,
-   AddIcon,
-} from '../../../../../shared/assets/icons'
-
-import { useTranslation } from 'react-i18next'
-
-const address = 'apps.settings.views.listings.stationslisting.'
+import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
 
 const StationsListing = () => {
-   const { t } = useTranslation()
    const history = useHistory()
    const { tabs, addTab } = useTabs()
+   const { error, loading, data: { stations } = {} } = useSubscription(STATIONS)
+   const [remove] = useMutation(DELETE_STATION)
 
    const createTab = () => {
-      const hash = `untitled${uuid().split('-')[0]}`
+      const hash = `stations${uuid().split('-')[0]}`
       addTab(hash, `/settings/stations/${hash}`)
    }
 
@@ -47,65 +44,56 @@ const StationsListing = () => {
          history.push('/settings')
       }
    }, [history, tabs])
-   const data = [
-      {
-         id: 1,
-         title: 'Meat',
-         type: 'Packaging',
-         devices: 3,
-         sachets: 24,
-      },
-      {
-         id: 2,
-         title: 'Spices',
-         type: 'Packaging',
-         devices: 2,
-         sachets: 45,
-      },
-   ]
+
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">{t(address.concat('stations'))}</Text>
+            <Text as="h2">Stations</Text>
             <IconButton type="solid" onClick={() => createTab()}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
          </StyledHeader>
-         <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>{t(address.concat('station name'))}</TableCell>
-                  <TableCell>{t(address.concat('station type'))}</TableCell>
-                  <TableCell>{t(address.concat('devices'))}</TableCell>
-                  <TableCell>{t(address.concat('sachets'))}</TableCell>
-                  <TableCell align="right">{t(address.concat('actions'))}</TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               {data.map(row => (
-                  <TableRow key={row.title}>
-                     <TableCell>{row.title}</TableCell>
-                     <TableCell>{row.type}</TableCell>
-                     <TableCell>
-                        <StyledBadge>{row.devices}</StyledBadge>
-                     </TableCell>
-                     <TableCell>
-                        <StyledBadge>{row.sachets}</StyledBadge>
-                     </TableCell>
-                     <TableCell align="right">
-                        <ButtonGroup align="right">
-                           <IconButton type="outline">
-                              <EditIcon />
-                           </IconButton>
-                           <IconButton type="outline">
-                              <DeleteIcon />
-                           </IconButton>
-                        </ButtonGroup>
-                     </TableCell>
+         {loading && <Loader />}
+         {error && <div>{error.message}</div>}
+         {stations?.length === 0 && <div>No stations yet!</div>}
+         {stations?.length > 0 && (
+            <Table>
+               <TableHead>
+                  <TableRow>
+                     <TableCell>Station Name</TableCell>
+                     <TableCell align="right">Actions</TableCell>
                   </TableRow>
-               ))}
-            </TableBody>
-         </Table>
+               </TableHead>
+               <TableBody>
+                  {stations.map(station => (
+                     <TableRow
+                        key={station.id}
+                        onClick={() =>
+                           addTab(
+                              station.name,
+                              `/settings/stations/${station.id}`
+                           )
+                        }
+                     >
+                        <TableCell>{station.name}</TableCell>
+                        <TableCell align="right">
+                           <ButtonGroup align="right">
+                              <IconButton
+                                 type="outline"
+                                 onClick={e =>
+                                    e.stopPropagation() ||
+                                    remove({ variables: { id: station.id } })
+                                 }
+                              >
+                                 <DeleteIcon />
+                              </IconButton>
+                           </ButtonGroup>
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               </TableBody>
+            </Table>
+         )}
       </StyledWrapper>
    )
 }
