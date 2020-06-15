@@ -13,8 +13,14 @@ export default function FormView({ state, open }) {
             {state.name && (
                <>
                   <StyledInfo>
-                     <h1>{state.name}</h1>
-                     <span> {state.sku} </span>
+                     <div>
+                        <h1>{state.name}</h1>
+                        <span> {state.sku} </span>
+                     </div>
+                     <span style={{ width: '10px' }} />
+                     <IconButton type="outline" onClick={() => open(2)}>
+                        <EditIcon />
+                     </IconButton>
                   </StyledInfo>
                   <SupplierInfo state={state} open={open} />
                </>
