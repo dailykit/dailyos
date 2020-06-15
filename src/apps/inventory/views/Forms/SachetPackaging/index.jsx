@@ -80,13 +80,16 @@ export default function SachetPackaging() {
                   <MoreItemInfoTunnel close={closeTunnel} state={packaging} />
                </Tunnel>
                <Tunnel layer={4}>
-                  <LeakResistanceTunnel close={closeTunnel} />
+                  <LeakResistanceTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
                <Tunnel style={{ overflowY: 'auto' }} layer={5}>
-                  <OpacityTypeTunnel close={closeTunnel} />
+                  <OpacityTypeTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
                <Tunnel layer={6}>
-                  <CompressibilityTunnel close={closeTunnel} />
+                  <CompressibilityTunnel
+                     state={packaging}
+                     close={closeTunnel}
+                  />
                </Tunnel>
                <Tunnel layer={7}>
                   <PackagingTypeTunnel state={packaging} close={closeTunnel} />
