@@ -1,56 +1,41 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Text, Toggle, Loader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
-import { SachetPackagingContext } from '../../../../../context'
-
 import {
    Spacer,
    TunnelContainer,
    TunnelHeader,
 } from '../../../../../components'
 
-export default function OpacityTypeTunnel({ close }) {
-   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
-      SachetPackagingContext
-   )
-   const [top, setTop] = useState(false)
-   const [bottom, setBottom] = useState(false)
-   const [side1, setSide1] = useState(false)
-   const [side2, setSide2] = useState(false)
-   const [side3, setSide3] = useState(false)
-   const [side4, setSide4] = useState(false)
+export default function OpacityTypeTunnel({ close, state }) {
+   const [top, setTop] = useState(state.packOpacity?.top)
+   const [bottom, setBottom] = useState(state.packOpacity?.bottom)
+   const [side1, setSide1] = useState(state.packOpacity?.side1)
+   const [side2, setSide2] = useState(state.packOpacity?.side2)
+   const [side3, setSide3] = useState(state.packOpacity?.side3)
+   const [side4, setSide4] = useState(state.packOpacity?.side4)
 
-   const [loading, setLoading] = useState(false)
+   const [updatePakcaging, { loading }] = useMutation(UPDATE_PACKAGING, {
+      onCompleted: () => {
+         toast.info('Information Added :)')
+         close(5)
+      },
+      onError: error => {
+         console.log(error)
+         close(5)
+         toast.error('Error, Please try again')
+      },
+   })
 
-   const [updatePakcaging] = useMutation(UPDATE_PACKAGING)
-
-   const handleNext = async () => {
-      setLoading(true)
-      try {
-         const resp = await updatePakcaging({
-            variables: {
-               id: sachetPackagingState.id,
-               object: {
-                  packOpacity: {
-                     bottom,
-                     side1,
-                     side2,
-                     side3,
-                     side4,
-                     top,
-                  },
-               },
-            },
-         })
-
-         if (resp?.data?.updatePackaging) {
-            // succcess updating
-            sachetPackagingDispatch({
-               type: 'ADD_COMPRESSABILITY_INFO',
-               payload: {
+   const handleNext = () => {
+      updatePakcaging({
+         variables: {
+            id: state.id,
+            object: {
+               packOpacity: {
                   bottom,
                   side1,
                   side2,
@@ -58,17 +43,9 @@ export default function OpacityTypeTunnel({ close }) {
                   side4,
                   top,
                },
-            })
-            setLoading(false)
-            toast.info('Information Added :)')
-            close(5)
-         }
-      } catch (error) {
-         close(5)
-         setLoading(false)
-         console.log(error)
-         toast.error('Error, Please try again')
-      }
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />
