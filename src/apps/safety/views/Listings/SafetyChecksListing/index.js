@@ -1,17 +1,10 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 // Components
-import {
-   IconButton,
-   Loader,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-} from '@dailykit/ui'
+import { IconButton, Loader } from '@dailykit/ui'
 import * as moment from 'moment'
 import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
 
 // Icons
@@ -25,6 +18,7 @@ import {
 } from '../../../graphql'
 // Styled
 import { StyledHeader, StyledWrapper } from '../styled'
+
 const address = 'apps.safety.views.listings.safetycheckslisting.'
 const SafetyChecksListing = () => {
    const { t } = useTranslation()
@@ -34,19 +28,22 @@ const SafetyChecksListing = () => {
    }
 
    // Queries
-   const { data, loading } = useSubscription(SAFETY_CHECKS, {
-      onError: error => {
-         console.log(error)
-      },
-   })
+   const { data: { safety_safetyCheck = [] } = {}, loading } = useSubscription(
+      SAFETY_CHECKS,
+      {
+         onError: error => {
+            console.log(error)
+         },
+      }
+   )
 
    // Mutation
    const [createSafetyCheck] = useMutation(CREATE_SAFETY_CHECK, {
-      onCompleted: data => {
+      onCompleted: input => {
          addTab(
             'Check',
             'check',
-            data.insert_safety_safetyCheck.returning[0].id
+            input.insert_safety_safetyCheck.returning[0].id
          )
          toast.success('Initiated!')
       },
@@ -75,50 +72,100 @@ const SafetyChecksListing = () => {
                <AddIcon color="#fff" size={24} />
             </IconButton>
          </StyledHeader>
-         <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>{t(address.concat('time'))}</TableCell>
-                  <TableCell>{t(address.concat('users tested'))}</TableCell>
-                  <TableCell></TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               {data?.safety_safetyCheck.map(row => (
-                  <TableRow
-                     key={row.id}
-                     onClick={() => {
-                        addTab('Check', 'check', row.id)
-                     }}
-                  >
-                     <TableCell>
-                        {moment(row.created_at).format('LLL')}
-                     </TableCell>
-                     <TableCell>
-                        {row.SafetyCheckPerUsers?.length || 0}
-                     </TableCell>
-                     <TableCell align="right">
-                        <IconButton>
-                           <span
-                              onClick={e => {
-                                 e.stopPropagation()
-                                 deleteSafetyCheck({
-                                    variables: {
-                                       id: row.id,
-                                    },
-                                 })
-                              }}
-                           >
-                              <DeleteIcon color="#FF5A52" />
-                           </span>
-                        </IconButton>
-                     </TableCell>
-                  </TableRow>
-               ))}
-            </TableBody>
-         </Table>
+
+         <DataTable
+            data={safety_safetyCheck}
+            addTab={addTab}
+            deleteCheck={deleteSafetyCheck}
+         />
       </StyledWrapper>
    )
+}
+
+function DataTable({ data, addTab, deleteCheck }) {
+   const { t } = useTranslation()
+
+   const tableRef = React.useRef()
+
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const rowClick = (e, row) => {
+      const { id } = row._row.data
+      addTab('Check', 'check', id)
+   }
+
+   const columns = [
+      {
+         title: t(address.concat('time')),
+         field: 'created_at',
+         headerFilter: false,
+         formatter: reactFormatter(<ShowDate />),
+      },
+      {
+         title: t(address.concat('users tested')),
+         field: 'SafetyCheckPerUsers',
+         headerFilter: false,
+         headerSort: false,
+         formatter: reactFormatter(<ShowCount />),
+      },
+
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            const { id } = cell._cell.row.data
+            deleteCheck({
+               variables: { id },
+            })
+         },
+         formatter: reactFormatter(<DeleteCheck />),
+      },
+   ]
+
+   return (
+      <div>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={options}
+         />
+      </div>
+   )
+}
+
+function DeleteCheck() {
+   return <DeleteIcon color="#FF5A52" />
+}
+
+function ShowDate({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   return <>{moment(value).format('LLL')}</>
+}
+
+function ShowCount({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.length) return value.length
+   return '0'
 }
 
 export default SafetyChecksListing

@@ -17,13 +17,19 @@ export default function AddressTunnel({ close, formState }) {
    const [isManual, setIsManual] = useState(
       Boolean(formState.address?.isManual)
    )
-   const [location, setLocation] = useState(formState.address?.location || '')
-   const [address1, setAddress1] = useState(formState.address?.address1 || '')
-   const [address2, setAddress2] = useState(formState.address?.address2 || '')
-   const [city, setCity] = useState(formState.address?.city || '')
-   const [zip, setZip] = useState(formState.address?.zip || '')
+   const [location, setLocation] = useState(
+      (!isManual && formState.address?.location) || ''
+   )
+   const [address1, setAddress1] = useState(
+      (isManual && formState.address?.address1) || ''
+   )
+   const [address2, setAddress2] = useState(
+      (isManual && formState.address?.address2) || ''
+   )
+   const [city, setCity] = useState((isManual && formState.address?.city) || '')
+   const [zip, setZip] = useState((isManual && formState.address?.zip) || '')
    const [instructions, setInstructions] = useState(
-      formState.address?.instructions || ''
+      (isManual && formState.address?.instructions) || ''
    )
 
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
@@ -38,32 +44,45 @@ export default function AddressTunnel({ close, formState }) {
       },
    })
 
+   const handleNext = () => {
+      if (isManual && (!address1 || !city))
+         return toast.error('Fill the form properly')
+
+      let pushableAddress = null
+
+      if (isManual) {
+         pushableAddress = {
+            isManual,
+            address1,
+            address2,
+            city,
+            zip,
+            instructions,
+         }
+      } else {
+         pushableAddress = {
+            isManual,
+            location,
+         }
+      }
+
+      updateSupplier({
+         variables: {
+            id: formState.id,
+            object: {
+               address: pushableAddress,
+            },
+         },
+      })
+   }
+
    if (loading) return <Loader />
 
    return (
       <TunnelContainer>
          <TunnelHeader
             title={t(address.concat('add address'))}
-            next={() => {
-               if (isManual && (!address1 || !city))
-                  return toast.error('Fill the form properly')
-               updateSupplier({
-                  variables: {
-                     id: formState.id,
-                     object: {
-                        address: {
-                           isManual,
-                           location,
-                           address1,
-                           address2,
-                           city,
-                           zip,
-                           instructions,
-                        },
-                     },
-                  },
-               })
-            }}
+            next={handleNext}
             close={() => close(1)}
             nextAction="Save"
          />

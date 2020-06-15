@@ -1,28 +1,20 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {
-   IconButton,
-   Loader,
-   SearchBox,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-} from '@dailykit/ui'
+import { IconButton, Loader, TextButton } from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
+
+import ServingsCount from '../../../utils/countFormatter'
+
 import { randomSuffix } from '../../../../../shared/utils'
-// Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-// State
 import { Context } from '../../../context/tabs'
 import {
    CREATE_SIMPLE_RECIPE,
-   S_RECIPES,
    DELETE_SIMPLE_RECIPES,
+   S_RECIPES,
 } from '../../../graphql'
-// Styled
 import {
    StyledContent,
    StyledHeader,
@@ -37,16 +29,22 @@ const RecipesListing = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
    const [recipes, setRecipes] = React.useState([])
-   const [search, setSearch] = React.useState('')
+
+   const addTab = (title, view, id) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view, id },
+      })
+   }
 
    // Queries and Mutations
    const { loading, data } = useSubscription(S_RECIPES)
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
-      onCompleted: data => {
+      onCompleted: input => {
          addTab(
-            data.createSimpleRecipe.returning[0].name,
+            input.createSimpleRecipe.returning[0].name,
             'recipe',
-            data.createSimpleRecipe.returning[0].id
+            input.createSimpleRecipe.returning[0].id
          )
          toast.success('Recipe added!')
       },
@@ -67,32 +65,21 @@ const RecipesListing = () => {
 
    // Effects
    React.useEffect(() => {
-      if (data)
-         setRecipes(
-            data.simpleRecipes.filter(rec =>
-               rec.name.toLowerCase().includes(search.toLowerCase())
-            )
-         )
-   }, [search, data])
+      if (data) setRecipes(data.simpleRecipes)
+   }, [data])
 
    // Handlers
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
    const createRecipeHandler = () => {
-      let name = 'recipe-' + randomSuffix()
+      const name = `recipe-${randomSuffix()}`
       createRecipe({ variables: { name } })
    }
    const deleteRecipeHandler = (e, recipe) => {
-      e.stopPropagation()
-      if (
-         window.confirm(
-            `Are you sure you want to delete recipe - ${recipe.name}?`
-         )
-      ) {
+      // e.stopPropagation()
+      const cnfirmed = window.confirm(
+         `Are you sure you want to delete recipe - ${recipe.name}?`
+      )
+
+      if (cnfirmed) {
          deleteRecipes({
             variables: {
                ids: [recipe.id],
@@ -111,60 +98,105 @@ const RecipesListing = () => {
                {t(address.concat('total'))}: {recipes.length}
             </p>
          </StyledHeader>
+         <DataTable
+            data={recipes}
+            addTab={addTab}
+            deleteRecipeHandler={deleteRecipeHandler}
+            createRecipeHandler={createRecipeHandler}
+         />
+      </StyledWrapper>
+   )
+}
+
+function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
+   const tableRef = React.useRef()
+
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const columns = [
+      { title: 'Name', field: 'name', headerFilter: true },
+      { title: 'Author', field: 'author', headerFilter: true },
+      {
+         title: 'Cooking Time',
+         field: 'cookingTime',
+         headerFilter: true,
+         hozAlign: 'right',
+      },
+      {
+         title: '# of Servings',
+         field: 'simpleRecipeYields',
+         headerFilter: false,
+         hozAlign: 'right',
+         formatter: reactFormatter(<ServingsCount />),
+      },
+
+      {
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         headerFilter: true,
+         hozAlign: 'center',
+      },
+      {
+         title: 'Actions',
+         headerSort: false,
+         headerFilter: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteRecipeHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteRecipe />),
+      },
+   ]
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, 'recipe', id)
+   }
+
+   return (
+      <>
          <StyledTableHeader>
-            <p></p>
+            <TextButton
+               type="outline"
+               onClick={() => tableRef.current.table.clearHeaderFilter()}
+            >
+               Clear Filters
+            </TextButton>
+
             <StyledTableActions>
-               <SearchBox
-                  placeholder={t(address.concat('search'))}
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-               />
                <IconButton type="solid" onClick={createRecipeHandler}>
                   <AddIcon color="#fff" size={24} />
                </IconButton>
             </StyledTableActions>
          </StyledTableHeader>
          <StyledContent>
-            <Table>
-               <TableHead>
-                  <TableRow>
-                     <TableCell>{t(address.concat('name'))}</TableCell>
-                     <TableCell>{t(address.concat('author'))}</TableCell>
-                     <TableCell>{t(address.concat('# of servings'))}</TableCell>
-                     <TableCell>{t(address.concat('cooking time'))}</TableCell>
-                     <TableCell></TableCell>
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {recipes.map(recipe => (
-                     <TableRow
-                        key={recipe.id}
-                        onClick={() => addTab(recipe.name, 'recipe', recipe.id)}
-                     >
-                        <TableCell>{recipe.name}</TableCell>
-                        <TableCell>{recipe.author}</TableCell>
-                        <TableCell>
-                           {recipe.simpleRecipeYields.length}
-                        </TableCell>
-                        <TableCell>
-                           {recipe.cookingTime
-                              ? recipe.cookingTime + ' ' + t('units.mins') + '.'
-                              : 'NA'}
-                        </TableCell>
-                        <TableCell>
-                           <IconButton
-                              onClick={e => deleteRecipeHandler(e, recipe)}
-                           >
-                              <DeleteIcon color="#FF5A52" />
-                           </IconButton>
-                        </TableCell>
-                     </TableRow>
-                  ))}
-               </TableBody>
-            </Table>
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={data}
+               rowClick={rowClick}
+               options={options}
+               data-custom-attr="test-custom-attribute"
+               className="custom-css-class"
+            />
          </StyledContent>
-      </StyledWrapper>
+      </>
    )
+}
+
+function DeleteRecipe() {
+   return <DeleteIcon color="#FF5A52" />
 }
 
 export default RecipesListing

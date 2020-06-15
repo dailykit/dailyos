@@ -5,16 +5,12 @@ import { Tabs, TabList, Tab, TabPanel, TabPanels } from '@reach/tabs'
 import Images from './Images'
 import Upload from './Upload'
 
-import { useTranslation } from 'react-i18next'
-const address = 'shared.components.assetuploader.'
-
 export const AssetUploader = ({ onAssetUpload, onImageSelect }) => {
-   const { t } = useTranslation()
    return (
       <StyledTabs defaultIndex={0}>
          <StyledTabList>
-            <StyledTab>{t(address.concat('upload'))}</StyledTab>
-            <StyledTab>{t(address.concat('images'))}</StyledTab>
+            <StyledTab>Upload</StyledTab>
+            <StyledTab>images</StyledTab>
          </StyledTabList>
          <StyledTabPanels>
             <StyledTabPanel>
@@ -29,10 +25,9 @@ export const AssetUploader = ({ onAssetUpload, onImageSelect }) => {
 }
 
 const StyledTabs = styled(Tabs)(css`
-   margin: 8px;
    height: 480px;
    display: flex;
-   border-radius: 8px;
+   border-radius: 3px;
    flex-direction: column;
    border: 1px solid #d7d7d7;
 `)
@@ -47,21 +42,22 @@ const StyledTabList = styled(TabList)(css`
 
 const StyledTab = styled(Tab)(css`
    border: none;
-   height: 40px;
+   height: 36px;
    padding: 0 12px;
    font-size: 16px;
    cursor: pointer;
-   border-radius: 8px;
+   border-radius: 3px;
    background: transparent;
 `)
 
 const StyledTabPanels = styled(TabPanels)(css`
    flex: 1;
+   height: calc(100% - 40px);
 `)
 
 const StyledTabPanel = styled(TabPanel)(css`
-   height: 100%;
-   padding: 12px;
+   overflow-y: auto;
+   height: calc(100% - 1px);
    :focus {
       outline: none;
    }

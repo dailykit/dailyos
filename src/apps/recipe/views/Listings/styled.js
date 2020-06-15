@@ -47,6 +47,7 @@ export const StyledTableActions = styled.div`
 `
 export const StyledContent = styled.div`
    margin-top: 32px;
+   padding: 0 30px;
 `
 
 export const StyledPagination = styled.div`

@@ -236,22 +236,24 @@ export const StyledProductTypeTitle = styled.h4`
 
 export const StyledStatusBadge = styled.div(
    ({ status }) => css`
-      top: 0;
-      right: 0;
+      top: -3px;
+      right: -8px;
       color: #fff;
+      height: 32px;
       cursor: pointer;
+      font-size: 14px;
+      padding-left: 8px;
       position: absolute;
       align-items: center;
       display: inline-flex;
-      padding: 8px 16px 6px 16px;
       background: ${selectColor(status)};
       :hover {
          filter: brightness(85%);
       }
       span {
-         padding: 4px;
-         margin-left: 8px;
-         border-radius: 4px;
+         width: 32px;
+         height: 32px;
+         display: block;
          align-items: center;
          display: inline-flex;
          justify-content: center;
@@ -319,3 +321,16 @@ export const StyledProducts = styled.section(
       }
    `
 )
+
+export const StyledPrint = styled.button`
+   width: 28px;
+   height: 28px;
+   display: flex;
+   cursor: pointer;
+   background: #fff;
+   background: white;
+   margin-right: 14px;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+`
