@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, TextButton, Checkbox } from '@dailykit/ui'
+import { Text, TextButton, Input } from '@dailykit/ui'
 import { RRule } from 'rrule'
 
 import { CloseIcon } from '../../../../../../assets/icons'
@@ -10,12 +10,17 @@ import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { CREATE_TIME_SLOTS } from '../../../../../../graphql'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
+import { Context } from '../../../../../../context'
 
 const TimeSlotTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
+   const {
+      state: { current },
+   } = React.useContext(Context)
    const [busy, setBusy] = React.useState(false)
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
+   const [advance, setAdvance] = React.useState('')
 
    // Mutation
    const [createTimeSlots] = useMutation(CREATE_TIME_SLOTS, {
@@ -33,6 +38,10 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
    // Handlers
    const save = () => {
       setBusy(true)
+      if (isNaN(advance) && current.fulfillment.includes('PICKUP')) {
+         setBusy(false)
+         return toast.error('Invalid time!')
+      }
       createTimeSlots({
          variables: {
             objects: [
@@ -40,6 +49,12 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                   recurrenceId: recurrenceState.recurrenceId,
                   from,
                   to,
+                  pickUpLeadTime: current.fulfillment.includes('PREORDER')
+                     ? advance
+                     : null,
+                  pickUpPrepTime: current.fulfillment.includes('ONDEMAND')
+                     ? advance
+                     : null,
                },
             ],
          },
@@ -87,6 +102,20 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                      />
                   </label>
                </Flex>
+               {current.fulfillment.includes('PICKUP') && (
+                  <Container top="32">
+                     <Input
+                        type="number"
+                        label={`${
+                           current.fulfillment.includes('ONDEMAND')
+                              ? 'Prep'
+                              : 'Lead'
+                        } Time(minutes)`}
+                        value={advance}
+                        onChange={e => setAdvance(e.target.value)}
+                     />
+                  </Container>
+               )}
             </StyledRow>
          </TunnelBody>
       </React.Fragment>

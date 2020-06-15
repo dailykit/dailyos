@@ -111,8 +111,8 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                      type="text"
                      label={
                         current.fulfillment.includes('PREORDER')
-                           ? 'Lead Time(hours)'
-                           : 'Prep Time(hours)'
+                           ? 'Lead Time(minutes)'
+                           : 'Prep Time(minutes)'
                      }
                      name="time"
                      value={time}
