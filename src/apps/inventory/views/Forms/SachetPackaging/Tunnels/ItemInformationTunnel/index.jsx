@@ -91,42 +91,30 @@ export default function ItemInformationTunnel({ close, state, next }) {
             <br />
 
             <Text as="title">Dimensions (in cms)</Text>
-
+            <br />
             <FlexContainer style={{ width: '90%' }}>
                <Input
                   type="number"
-                  placeholder="width"
+                  label="width"
                   name="width"
                   value={itemWidth}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemWidth(value)
-                     if (!e.target.value.length) setItemWidth('')
-                  }}
+                  onChange={e => setItemWidth(e.target.value)}
                />
                <span style={{ width: '30px' }} />
                <Input
                   type="number"
-                  placeholder="height"
+                  label="height"
                   name="height"
                   value={itemHeight}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemHeight(value)
-                     if (!e.target.value.length) setItemHeight('')
-                  }}
+                  onChange={e => setItemHeight(e.target.value)}
                />
                <span style={{ width: '30px' }} />
                <Input
                   type="number"
-                  placeholder="depth"
+                  label="depth"
                   name="depth"
                   value={itemDepth}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemDepth(value)
-                     if (!e.target.value.length) setItemDepth('')
-                  }}
+                  onChange={e => setItemDepth(e.target.value)}
                />
             </FlexContainer>
 
@@ -138,27 +126,19 @@ export default function ItemInformationTunnel({ close, state, next }) {
             >
                <Input
                   type="number"
-                  placeholder="Set Par Level"
+                  label="Set Par Level"
                   name="itemName"
                   value={itemPar}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemPar(value)
-                     if (!e.target.value.length) setItemPar('')
-                  }}
+                  onChange={e => setItemPar(e.target.value)}
                />
 
                <span style={{ width: '40px' }} />
                <Input
                   type="number"
-                  placeholder="Maximum Inventory Value"
+                  label="Maximum Inventory Value"
                   name="itemSKU"
                   value={itemMaxValue}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemMaxValue(value)
-                     if (!e.target.value.length) setItemMaxValue('')
-                  }}
+                  onChange={e => setItemMaxValue(e.target.value)}
                />
             </FlexContainer>
          </TunnelContainer>

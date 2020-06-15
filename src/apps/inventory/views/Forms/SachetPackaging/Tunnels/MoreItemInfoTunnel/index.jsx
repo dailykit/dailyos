@@ -67,14 +67,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
                <div style={{ width: '70%' }}>
                   <Input
                      type="number"
-                     placeholder="Unit qty (in pieces)"
+                     label="Unit qty (in pieces)"
                      name="unitQty"
                      value={unitQuantity}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (value) setUnitQuantity(value)
-                        if (!e.target.value.length) setUnitQuantity('')
-                     }}
+                     onChange={e => setUnitQuantity(e.target.value)}
                   />
                </div>
 
@@ -85,14 +81,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
                   </div>
                   <Input
                      type="number"
-                     placeholder="Unit Price"
+                     label="Unit Price"
                      name="unitPrice"
                      value={unitPrice}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (value) setUnitPrice(value)
-                        if (!e.target.value.length) setUnitPrice('')
-                     }}
+                     onChange={e => setUnitPrice(e.target.value)}
                   />
                </FlexContainer>
             </PaddedInputGroup>
@@ -102,14 +94,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
                <div style={{ width: '70%' }}>
                   <Input
                      type="number"
-                     placeholder="Case qty (in pieces)"
+                     label="Case qty (in pieces)"
                      name="caseQty"
                      value={caseQuantity}
-                     onChange={e => {
-                        const value = parseInt(e.target.value)
-                        if (value) setCaseQuantity(value)
-                        if (!e.target.value.length) setCaseQuantity('')
-                     }}
+                     onChange={e => setCaseQuantity(e.target.value)}
                   />
                </div>
 
@@ -117,14 +105,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
 
                <Input
                   type="number"
-                  placeholder="Min. value order (in case)"
+                  label="Min. value order (in case)"
                   name="unitPrice"
                   value={minOrderValue}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setMinOrderValue(value)
-                     if (!e.target.value.length) setMinOrderValue('')
-                  }}
+                  onChange={e => setMinOrderValue(e.target.value)}
                />
             </PaddedInputGroup>
 
@@ -135,14 +119,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
             >
                <Input
                   type="number"
-                  placeholder="Lead time"
+                  label="Lead time"
                   name="leadTime"
                   value={leadTime}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setLeadTime(value)
-                     if (!e.target.value.length) setLeadTime('')
-                  }}
+                  onChange={e => setLeadTime(e.target.value)}
                />
 
                <StyledSelect
