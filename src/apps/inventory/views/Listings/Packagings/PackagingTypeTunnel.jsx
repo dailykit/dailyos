@@ -26,7 +26,7 @@ export default function WorkOrderTypeTunnel({ close }) {
       },
       onCompleted: input => {
          const { name, id } = input.createPackaging.returning[0]
-         addTab(name, 'createPackaging', id)
+         addTab(name, 'sachetPackaging', id)
       },
    })
 
