@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
@@ -18,6 +18,7 @@ import {
    InputWrapper,
 } from '../styled'
 import { StyledSelect } from '../../../styled'
+import { Context } from '../../../../../context/tabs'
 
 import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
@@ -25,6 +26,7 @@ const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
 export default function InfoTunnel({ close, units, formState }) {
    const { t } = useTranslation()
+   const { state, dispatch } = useContext(Context)
 
    const [itemName, setItemName] = useState(formState.name || '')
    const [sku, setSku] = useState(formState.sku || '')
@@ -41,8 +43,13 @@ export default function InfoTunnel({ close, units, formState }) {
    const [errors, setErrors] = useState([])
 
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
-      onCompleted: () => {
+      onCompleted: input => {
+         const newName = input.updateSupplierItem.returning[0].name
          close(2)
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { title: newName, oldTitle: state.current.title },
+         })
          toast.info('Item information updated')
       },
       onError: error => {

@@ -149,6 +149,9 @@ export const UPDATE_SUPPLIER_ITEM = gql`
    ) {
       updateSupplierItem(where: { id: { _eq: $id } }, _set: $object) {
          affected_rows
+         returning {
+            name
+         }
       }
    }
 `
