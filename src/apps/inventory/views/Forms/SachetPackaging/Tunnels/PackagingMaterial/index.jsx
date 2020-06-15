@@ -1,10 +1,9 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Text, Input, Loader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
-import { SachetPackagingContext } from '../../../../../context'
 
 import {
    Spacer,
@@ -12,44 +11,32 @@ import {
    TunnelHeader,
 } from '../../../../../components'
 
-export default function PackagingTypeTunnel({ close }) {
-   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
-      SachetPackagingContext
-   )
-
+export default function PackagingTypeTunnel({ close, state }) {
    const [loading, setLoading] = useState(false)
-   const [packagingType, setPackagingType] = useState('')
+   const [packagingType, setPackagingType] = useState(state.packagingType || '')
 
-   const [updatePakcaging] = useMutation(UPDATE_PACKAGING)
-
-   const handleNext = async () => {
-      setLoading(true)
-      try {
-         const resp = await updatePakcaging({
-            variables: {
-               id: sachetPackagingState.id,
-               object: {
-                  packagingType,
-               },
-            },
-         })
-
-         if (resp?.data?.updatePackaging) {
-            // succcess updating
-            sachetPackagingDispatch({
-               type: 'ADD_PACKAGING_TYPE',
-               payload: setPackagingType,
-            })
-            setLoading(false)
-            toast.info('Information Added :)')
-            close(7)
-         }
-      } catch (error) {
-         close(7)
-         setLoading(false)
+   const [updatePakcaging] = useMutation(UPDATE_PACKAGING, {
+      onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-      }
+         close(7)
+      },
+      onCompleted: () => {
+         setLoading(false)
+         toast.info('Information Added :)')
+         close(7)
+      },
+   })
+
+   const handleNext = () => {
+      updatePakcaging({
+         variables: {
+            id: state.id,
+            object: {
+               packagingType,
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />

@@ -89,10 +89,10 @@ export default function SachetPackaging() {
                   <CompressibilityTunnel close={closeTunnel} />
                </Tunnel>
                <Tunnel layer={7}>
-                  <PackagingTypeTunnel close={closeTunnel} />
+                  <PackagingTypeTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
                <Tunnel layer={8}>
-                  <SealingTypeTunnel close={closeTunnel} />
+                  <SealingTypeTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
             </Tunnels>
 
