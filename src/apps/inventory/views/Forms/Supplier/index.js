@@ -123,46 +123,7 @@ export default function SupplierForm() {
                   )}
                />
 
-               <FlexContainer
-                  style={{ alignItems: 'center', marginTop: '24px' }}
-               >
-                  <Text as="title">{t(address.concat('address'))}</Text>
-                  <hr
-                     style={{
-                        border: '1px solid #D8D8D8',
-                        width: '100%',
-                        marginLeft: '5px',
-                     }}
-                  />
-                  {formState.address?.location ||
-                  formState.address?.address1 ||
-                  formState.address?.address2 ? (
-                     <IconButton onClick={() => openTunnel(1)} type="ghost">
-                        <EditIcon />
-                     </IconButton>
-                  ) : null}
-               </FlexContainer>
-
-               {formState.address?.location ||
-               (formState.address?.city &&
-                  formState.address?.address1 &&
-                  formState.address?.address2) ? (
-                  <AddressCard
-                     address={
-                        formState.address.location ||
-                        `${formState.address.address1}, ${formState.address.address2}`
-                     }
-                     zip={formState.address?.zip}
-                     city={formState.address?.city}
-                  />
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add address'))}
-                     onClick={() => openTunnel(1)}
-                     style={{ margin: '20px 0' }}
-                  />
-               )}
+               <AddressView formState={formState} openTunnel={openTunnel} />
 
                <FlexContainer
                   style={{ alignItems: 'center', marginTop: '24px' }}
@@ -269,5 +230,53 @@ function ShowAvailability({ formState }) {
             })
          }}
       />
+   )
+}
+
+function AddressView({ formState, openTunnel }) {
+   const { t } = useTranslation()
+
+   const check =
+      formState.address?.location ||
+      formState.address?.address1 ||
+      formState.address?.address2 ||
+      formState.address?.city
+
+   return (
+      <>
+         <FlexContainer style={{ alignItems: 'center', marginTop: '24px' }}>
+            <Text as="title">{t(address.concat('address'))}</Text>
+            <hr
+               style={{
+                  border: '1px solid #D8D8D8',
+                  width: '100%',
+                  marginLeft: '5px',
+               }}
+            />
+            {check && (
+               <IconButton onClick={() => openTunnel(1)} type="ghost">
+                  <EditIcon />
+               </IconButton>
+            )}
+         </FlexContainer>
+
+         {check ? (
+            <AddressCard
+               address={
+                  formState.address.location ||
+                  `${formState.address.address1}, ${formState.address.address2}`
+               }
+               zip={formState.address?.zip}
+               city={formState.address?.city}
+            />
+         ) : (
+            <ButtonTile
+               type="secondary"
+               text={t(address.concat('add address'))}
+               onClick={() => openTunnel(1)}
+               style={{ margin: '20px 0' }}
+            />
+         )}
+      </>
    )
 }
