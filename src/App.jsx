@@ -2,15 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { Trans } from 'react-i18next'
 import Loadable from 'react-loadable'
+import { Loader } from '@dailykit/ui'
 import { Lang } from './shared/components'
-
-import { StyledLoader } from './styled'
-
-const Loader = () => (
-   <StyledLoader>
-      <img src="/assets/loader.gif" alt="Loading..." />
-   </StyledLoader>
-)
 
 const Safety = Loadable({
    loader: () => import('./apps/safety'),

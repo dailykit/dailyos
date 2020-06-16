@@ -8,13 +8,13 @@ const Main = () => {
    return (
       <main style={{ overflowY: 'auto', height: 'calc(100vh - 40px)' }}>
          <Switch>
-            <Route path="/order" exact>
+            <Route path="/apps/order" exact>
                <Home />
             </Route>
-            <Route path="/order/orders" exact>
+            <Route path="/apps/order/orders" exact>
                <Orders />
             </Route>
-            <Route path="/order/orders/:id" exact>
+            <Route path="/apps/order/orders/:id" exact>
                <Order />
             </Route>
          </Switch>

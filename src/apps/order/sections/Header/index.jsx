@@ -43,8 +43,8 @@ const Header = ({ setPosition, isOpen, openPortal, closePortal }) => {
             title={t(address.concat('menu'))}
             tabIndex="0"
             role="button"
-            onClick={() => history.push('/order')}
-            onKeyPress={e => e.charCode === 32 && history.push('/order')}
+            onClick={() => history.push('/apps/order')}
+            onKeyPress={e => e.charCode === 32 && history.push('/apps/order')}
          >
             <HomeIcon color="#000" size="20" />
          </StyledMenu>

@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import Loadable from 'react-loadable'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { Loader } from '@dailykit/ui'
 
 // Toasts
 import { ToastContainer } from 'react-toastify'
@@ -21,15 +22,7 @@ import Backend from 'i18next-http-backend'
 
 import './global.css'
 
-import { StyledLoader } from './styled'
-
 const languages = ['en', 'fr', 'es', 'he', 'de', 'el', 'hi', 'it']
-
-const Loader = () => (
-   <StyledLoader>
-      <img src="/assets/loader.gif" alt="Loading..." />
-   </StyledLoader>
-)
 
 const App = Loadable({
    loader: () => import('./App'),
@@ -69,9 +62,7 @@ i18n
    .use(initReactI18next)
    .init({
       backend: {
-         loadPath: process.env.NODE_ENV === 'production' 
-           ? '/apps/locales/{{lng}}/{{ns}}.json' 
-           : '/locales/{{lng}}/{{ns}}.json'
+         loadPath: '/apps/locales/{{lng}}/{{ns}}.json',
       },
       lng: 'en',
       fallbackLng: false,
