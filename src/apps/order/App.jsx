@@ -57,7 +57,7 @@ const App = () => {
       )
    return (
       <StyledWrapper position={position}>
-         <Router>
+         <Router basename={process.env.PUBLIC_URL}>
             <div>
                <Header
                   isOpen={isOpen}
