@@ -1,5 +1,5 @@
-import React, { useReducer, useState, useContext } from 'react'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import React, { useReducer, useContext } from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import { Tunnels, Tunnel, useTunnel, ButtonTile, Loader } from '@dailykit/ui'
 
 import {
@@ -32,54 +32,22 @@ export default function SachetPackaging() {
       sachetPackagingReducers,
       sachetPackagingInitialState
    )
-   const { state } = useContext(Context)
+   const {
+      state: {
+         current: { id },
+      },
+   } = useContext(Context)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(6)
-   const [formState, setFormState] = useState({})
    const { loading: supplierLoading, data: supplierData } = useSubscription(
       SUPPLIERS_SUBSCRIPTION
    )
 
-   const { loading } = useSubscription(PACKAGING_SUBSCRIPTION, {
-      variables: { id: sachetPackagingState.id },
-      onSubscriptionData: async input => {
-         const data = input.subscriptionData.data.packaging
-         sachetPackagingDispatch({
-            type: 'ADD_ITEM_INFO',
-            payload: {
-               itemName: data.name,
-               itemSku: data.sku,
-               itemWidth: data.dimensions.width,
-               itemHeight: data.dimensions.height,
-               itemDepth: data.dimensions.depth,
-               itemPar: data.parLevel,
-               itemMaxValue: data.maxLevel,
-               unitPrice: data.unitPrice,
-               caseQuantity: data.caseQuantity,
-               minOrderValue: data.minOrderValue,
-               leadTime: data.leadTime.value,
-               leadTimeUnit: data.leadTime.unit,
-               unitQuantity: data.unitQuantity,
-               type: data.type,
-               packagingType: data.packagingType,
-               sealingType: data.sealingType,
-            },
-         })
-         setFormState(data)
-      },
-   })
-
-   React.useEffect(() => {
-      if (state.packagingId) {
-         sachetPackagingDispatch({ type: 'ADD_ID', payload: state.packagingId })
+   const { loading, data: { packaging = {} } = {} } = useSubscription(
+      PACKAGING_SUBSCRIPTION,
+      {
+         variables: { id },
       }
-
-      if (state.packagingType) {
-         sachetPackagingDispatch({
-            type: 'ADD_TYPE',
-            payload: state.packagingType,
-         })
-      }
-   }, [state.packagingId, state.packagingType])
+   )
 
    if (supplierLoading || loading) return <Loader />
 
@@ -96,40 +64,44 @@ export default function SachetPackaging() {
                      suppliers={supplierData?.suppliers?.map(supplier => ({
                         id: supplier.id,
                         title: supplier.name,
-                        description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
+                        description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.phoneNumber})`,
                      }))}
-                     rawSuppliers={supplierData.suppliers}
+                     state={packaging}
                   />
                </Tunnel>
                <Tunnel layer={2}>
                   <ItemInformationTunnel
                      close={closeTunnel}
                      next={openTunnel}
+                     state={packaging}
                   />
                </Tunnel>
                <Tunnel layer={3}>
-                  <MoreItemInfoTunnel close={closeTunnel} />
+                  <MoreItemInfoTunnel close={closeTunnel} state={packaging} />
                </Tunnel>
                <Tunnel layer={4}>
-                  <LeakResistanceTunnel close={closeTunnel} />
+                  <LeakResistanceTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
                <Tunnel style={{ overflowY: 'auto' }} layer={5}>
-                  <OpacityTypeTunnel close={closeTunnel} />
+                  <OpacityTypeTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
                <Tunnel layer={6}>
-                  <CompressibilityTunnel close={closeTunnel} />
+                  <CompressibilityTunnel
+                     state={packaging}
+                     close={closeTunnel}
+                  />
                </Tunnel>
                <Tunnel layer={7}>
-                  <PackagingTypeTunnel close={closeTunnel} />
+                  <PackagingTypeTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
                <Tunnel layer={8}>
-                  <SealingTypeTunnel close={closeTunnel} />
+                  <SealingTypeTunnel state={packaging} close={closeTunnel} />
                </Tunnel>
             </Tunnels>
 
             <StyledWrapper>
-               {formState.id ? (
-                  <FormView state={formState} open={openTunnel} />
+               {packaging.id ? (
+                  <FormView state={packaging} open={openTunnel} />
                ) : (
                   <ButtonTile
                      type="primary"

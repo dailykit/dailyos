@@ -184,6 +184,8 @@ export const PACKAGING_SUBSCRIPTION = gql`
          caseQuantity
          unitPrice
          minOrderValue
+         packagingType
+         sealingType
          leadTime
          supplier {
             id

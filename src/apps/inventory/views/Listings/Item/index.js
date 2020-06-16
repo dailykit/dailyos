@@ -77,7 +77,7 @@ function DataTable({ addTab, data }) {
 
    const options = {
       cellVertAlign: 'middle',
-      layout: 'fitDataFill',
+      layout: 'fitColumns',
       autoResize: true,
       resizableColumns: true,
       virtualDomBuffer: 80,

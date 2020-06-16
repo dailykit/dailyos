@@ -5,7 +5,9 @@ import {
    ListSearch,
    useSingleList,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
 import {
@@ -13,36 +15,45 @@ import {
    TunnelContainer,
    TunnelHeader,
 } from '../../../../../components'
-import { SachetPackagingContext } from '../../../../../context'
+import { UPDATE_PACKAGING } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
-export default function SuppliersTunnel({
-   close,
-   suppliers,
-   next,
-   rawSuppliers,
-}) {
+export default function SuppliersTunnel({ close, suppliers, state }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
-   const { sachetPackagingDispatch } = useContext(SachetPackagingContext)
    const [list, current, selectOption] = useSingleList(suppliers)
+
+   const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
+      onError: error => {
+         console.log(error)
+         toast.error('Error! Please try again')
+      },
+      onCompleted: () => {
+         close(1)
+         toast.success('Supplier Added!')
+      },
+   })
+
+   const handleNext = () => {
+      updatePackaging({
+         variables: {
+            id: state.id,
+            object: {
+               supplierId: current.id,
+            },
+         },
+      })
+   }
 
    return (
       <>
          <TunnelContainer>
             <TunnelHeader
                title={t(address.concat('select supplier'))}
-               next={() => {
-                  const payload = rawSuppliers.find(
-                     supplier => supplier.id === current.id
-                  )
-                  sachetPackagingDispatch({ type: 'SET_SUPPLIER', payload })
-                  close(1)
-                  next(2)
-               }}
+               next={handleNext}
                close={() => close(1)}
-               nextAction="Next"
+               nextAction="Save"
             />
 
             <Spacer />

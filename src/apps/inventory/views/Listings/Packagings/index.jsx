@@ -60,10 +60,12 @@ export default function Packagings() {
 function DataTable({ data }) {
    const { dispatch } = React.useContext(Context)
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const addTab = (title, view, id) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view, id },
+      })
    }
-
    const tableRef = React.useRef()
 
    const options = {
@@ -79,11 +81,7 @@ function DataTable({ data }) {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      dispatch({
-         type: 'SET_PACKAGING_ID',
-         payload: id,
-      })
-      addTab(name, 'sachetPackaging')
+      addTab(name, 'sachetPackaging', id)
    }
 
    const columns = [

@@ -1,5 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { TextButton } from '@dailykit/ui'
+import styled from 'styled-components'
 
 import { StyledGrid } from '../Item/styled'
 
@@ -9,6 +11,24 @@ const address = 'apps.inventory.views.forms.item.'
 
 export default function InfoBar({ open, state }) {
    const { t } = useTranslation()
+
+   if (
+      !state.unitQuantity &&
+      !state.unitPrice &&
+      !state.caseQuantity &&
+      !state.unitPrice &&
+      !state.minOrderValue &&
+      !state.leadTime?.value &&
+      !state.leadTime?.unit
+   )
+      return (
+         <EmptyWrapper>
+            <TextButton onClick={() => open(2)} type="outline">
+               Add Information
+            </TextButton>
+         </EmptyWrapper>
+      )
+
    return (
       <StyledGrid onClick={() => open(2)}>
          <div>
@@ -61,3 +81,11 @@ export default function InfoBar({ open, state }) {
       </StyledGrid>
    )
 }
+
+const EmptyWrapper = styled.div`
+   width: 100%;
+   padding: 30px;
+   text-align: center;
+   border-bottom: 1px solid #dddddd;
+   border-top: 1px solid #dddddd;
+`
