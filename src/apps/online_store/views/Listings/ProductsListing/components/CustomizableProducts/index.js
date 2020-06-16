@@ -1,15 +1,9 @@
 import React from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import {
-   IconButton,
-   Loader,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-   Text,
-} from '@dailykit/ui'
+import { Loader, Text, TextButton } from '@dailykit/ui'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { toast } from 'react-toastify'
+
 import { useTranslation } from 'react-i18next'
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { Context } from '../../../../../context/tabs'
@@ -17,8 +11,6 @@ import {
    S_CUSTOMIZABLE_PRODUCTS,
    DELETE_CUSTOMIZABLE_PRODUCTS,
 } from '../../../../../graphql'
-import { GridContainer } from '../../../styled'
-import { toast } from 'react-toastify'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -26,7 +18,13 @@ const CustomizableProducts = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const { data, loading, error } = useSubscription(S_CUSTOMIZABLE_PRODUCTS)
+   const tableRef = React.useRef()
+
+   const {
+      data: { customizableProducts = [] } = {},
+      loading,
+      error,
+   } = useSubscription(S_CUSTOMIZABLE_PRODUCTS)
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
@@ -36,8 +34,8 @@ const CustomizableProducts = () => {
       onCompleted: () => {
          toast.success('Product deleted!')
       },
-      onError: error => {
-         console.log(error)
+      onError: err => {
+         console.log(err)
          toast.error('Could not delete!')
       },
    })
@@ -58,6 +56,43 @@ const CustomizableProducts = () => {
       }
    }
 
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const columns = [
+      {
+         title: t(address.concat('product name')),
+         field: 'name',
+         headerFilter: true,
+         widthGrow: 2,
+      },
+
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteIngredient />),
+      },
+   ]
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, 'customizableProduct', id)
+   }
+
    if (loading) return <Loader />
    if (error) {
       console.log(error)
@@ -65,34 +100,29 @@ const CustomizableProducts = () => {
    }
 
    return (
-      <Table>
-         <TableHead>
-            <TableRow>
-               <TableCell>{t(address.concat('product name'))}</TableCell>
-               <TableCell></TableCell>
-            </TableRow>
-         </TableHead>
-         <TableBody>
-            {data.customizableProducts.map(product => (
-               <TableRow
-                  key={product.id}
-                  onClick={() =>
-                     addTab(product.name, 'customizableProduct', product.id)
-                  }
-               >
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell align="right">
-                     <GridContainer>
-                        <IconButton onClick={e => deleteHandler(e, product)}>
-                           <DeleteIcon color="#FF5A52" />
-                        </IconButton>
-                     </GridContainer>
-                  </TableCell>
-               </TableRow>
-            ))}
-         </TableBody>
-      </Table>
+      <div style={{ width: '80%', margin: '0 auto' }}>
+         <TextButton
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+            style={{ marginBottom: '20px' }}
+         >
+            Clear Filters
+         </TextButton>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={customizableProducts}
+            rowClick={rowClick}
+            options={options}
+            data-custom-attr="test-custom-attribute"
+            className="custom-css-class"
+         />
+      </div>
    )
+}
+
+function DeleteIngredient() {
+   return <DeleteIcon color="#FF5A52" />
 }
 
 export default CustomizableProducts
