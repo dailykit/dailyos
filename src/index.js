@@ -68,6 +68,9 @@ i18n
    .use(Backend)
    .use(initReactI18next)
    .init({
+      backend: {
+         loadPath: process.env.NODE_ENV ? '/apps/locales/{{lng}}/{{ns}}.json' : '/locales/{{lng}}/{{ns}}.json'
+      },
       lng: 'en',
       fallbackLng: false,
       debug: false,
