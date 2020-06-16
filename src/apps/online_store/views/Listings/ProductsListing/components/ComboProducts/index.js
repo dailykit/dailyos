@@ -115,8 +115,6 @@ const ComboProducts = () => {
             data={comboProducts}
             rowClick={rowClick}
             options={options}
-            data-custom-attr="test-custom-attribute"
-            className="custom-css-class"
          />
       </div>
    )

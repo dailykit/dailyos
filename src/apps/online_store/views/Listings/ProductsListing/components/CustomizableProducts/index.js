@@ -114,8 +114,6 @@ const CustomizableProducts = () => {
             data={customizableProducts}
             rowClick={rowClick}
             options={options}
-            data-custom-attr="test-custom-attribute"
-            className="custom-css-class"
          />
       </div>
    )

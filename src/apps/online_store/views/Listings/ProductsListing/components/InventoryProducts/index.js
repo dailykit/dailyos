@@ -114,8 +114,6 @@ const InventoryProducts = () => {
             data={inventoryProducts}
             rowClick={rowClick}
             options={options}
-            data-custom-attr="test-custom-attribute"
-            className="custom-css-class"
          />
       </div>
    )
