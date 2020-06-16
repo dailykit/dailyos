@@ -4,32 +4,31 @@ import {
    Tunnels,
    useTunnel,
    Text,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
+   TextButton,
    Loader,
-   Toggle,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import React, { useState } from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import React from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 
 import { Context } from '../../../context/tabs'
 
 import { AddIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
-import { PACKAGINGS_SUBSCRIPTION, UPDATE_PACKAGING } from '../../../graphql'
+import { PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
 
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [data, setData] = useState([])
 
-   const { loading: subLoading } = useSubscription(PACKAGINGS_SUBSCRIPTION, {
-      onSubscriptionData: input => {
-         setData(input.subscriptionData.data.packagings)
+   const {
+      loading: subLoading,
+      data: { packagings = [] } = {},
+   } = useSubscription(PACKAGINGS_SUBSCRIPTION, {
+      onError: error => {
+         toast.error('Error! Please try reloading the page')
+         console.log(error)
       },
    })
 
@@ -51,7 +50,7 @@ export default function Packagings() {
             </StyledHeader>
 
             <div style={{ width: '90%', margin: '20px auto' }}>
-               <DataTable data={data} />
+               <DataTable data={packagings} />
             </div>
          </StyledWrapper>
       </>
@@ -60,80 +59,101 @@ export default function Packagings() {
 
 function DataTable({ data }) {
    const { dispatch } = React.useContext(Context)
-   const [loading, setLoading] = useState(false)
 
-   const [updatePackaging] = useMutation(UPDATE_PACKAGING)
+   const addTab = (title, view, id) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view, id },
+      })
+   }
+   const tableRef = React.useRef()
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
    }
 
-   if (loading) return <Loader />
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, 'sachetPackaging', id)
+   }
+
+   const columns = [
+      { title: 'Name', field: 'name', headerFilter: true },
+      {
+         title: 'Supplier',
+         field: 'supplier',
+         headerFilter: false,
+         formatter: reactFormatter(<SupplierName />),
+      },
+      {
+         title: 'Type',
+         field: 'type',
+         headerFilter: true,
+      },
+      {
+         title: 'Par Level',
+         field: 'parLevel',
+         headerFilter: true,
+         hozAlign: 'right',
+      },
+      {
+         title: 'On Hand',
+         field: 'onHand',
+         headerFilter: true,
+         hozAlign: 'right',
+      },
+      {
+         title: 'Max Level',
+         field: 'maxLevel',
+         headerFilter: true,
+         hozAlign: 'right',
+      },
+      {
+         title: 'Awaiting',
+         field: 'awaiting',
+         headerFilter: true,
+         hozAlign: 'right',
+      },
+      {
+         title: 'Committed',
+         field: 'committed',
+         headerFilter: true,
+         hozAlign: 'right',
+      },
+   ]
 
    return (
-      <Table>
-         <TableHead>
-            <TableRow>
-               <TableCell>Packaging item</TableCell>
-               <TableCell>Supplier</TableCell>
-               <TableCell>Packaging type</TableCell>
-               <TableCell>Par Level</TableCell>
-               <TableCell>On hand</TableCell>
-               <TableCell>Max Level</TableCell>
-               <TableCell>Awaiting</TableCell>
-               <TableCell>Committed</TableCell>
-               <TableCell>Availability</TableCell>
-            </TableRow>
-         </TableHead>
-         <TableBody>
-            {data.reverse().map(packaging => (
-               <TableRow
-                  key={packaging.id}
-                  onClick={() => {
-                     dispatch({
-                        type: 'SET_PACKAGING_ID',
-                        payload: packaging.id,
-                     })
-                     addTab('Packaging', 'sachetPackaging')
-                  }}
-               >
-                  <TableCell>{packaging.name}</TableCell>
-                  <TableCell>{packaging.supplier.name}</TableCell>
-                  <TableCell>{packaging.type}</TableCell>
-                  <TableCell>{packaging.parLevel}</TableCell>
-                  <TableCell>{packaging.onHand}</TableCell>
-                  <TableCell>{packaging.maxLevel}</TableCell>
-                  <TableCell>{packaging.awaiting}</TableCell>
-                  <TableCell>{packaging.committed}</TableCell>
-                  <TableCell>
-                     <Toggle
-                        checked={packaging.isAvailable}
-                        setChecked={async () => {
-                           try {
-                              setLoading(true)
-                              const resp = await updatePackaging({
-                                 variables: {
-                                    id: packaging.id,
-                                    object: {
-                                       isAvailable: !packaging.isAvailable,
-                                    },
-                                 },
-                              })
-
-                              if (resp?.data?.updatePackaging) {
-                                 setLoading(false)
-                              }
-                           } catch (error) {
-                              setLoading(false)
-                              console.log(error)
-                              toast.error('Internal Error')
-                           }
-                        }}
-                     />
-                  </TableCell>
-               </TableRow>
-            ))}
-         </TableBody>
-      </Table>
+      <div>
+         <TextButton
+            style={{ marginBottom: '20px' }}
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+         >
+            Clear Filters
+         </TextButton>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={options}
+         />
+      </div>
    )
+}
+
+function SupplierName({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.name) return <>{value.name}</>
+   return 'NA'
 }

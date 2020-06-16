@@ -10,9 +10,13 @@ import { DeleteIcon } from '../../../../../../assets/icons'
 import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_TIME_SLOT, DELETE_TIME_SLOT } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
+import { Context } from '../../../../../../context'
 
 const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
+   const {
+      state: { current },
+   } = React.useContext(Context)
 
    // Mutations
    const [updateTimeSlot] = useMutation(UPDATE_TIME_SLOT, {
@@ -63,6 +67,14 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                      <div style={{ padding: '16px' }}>
                         {timeSlot.from} - {timeSlot.to}
                      </div>
+                     {current.fulfillment.includes('PICKUP') && (
+                        <div style={{ padding: '16px' }}>
+                           {current.fulfillment.includes('ONDEMAND')
+                              ? timeSlot.pickUpPrepTime
+                              : timeSlot.pickUpLeadTime}{' '}
+                           mins.
+                        </div>
+                     )}
                      <Flex direction="row" style={{ padding: '16px' }}>
                         <Toggle
                            checked={timeSlot.isActive}
@@ -84,13 +96,15 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                            <DeleteIcon color=" #FF5A52" />
                         </span>
                      </Flex>
-                     <div>
-                        <DeliveryRanges
-                           timeSlotId={timeSlot.id}
-                           mileRanges={timeSlot.mileRanges}
-                           openTunnel={openTunnel}
-                        />
-                     </div>
+                     {current.fulfillment.includes('DELIVERY') && (
+                        <div>
+                           <DeliveryRanges
+                              timeSlotId={timeSlot.id}
+                              mileRanges={timeSlot.mileRanges}
+                              openTunnel={openTunnel}
+                           />
+                        </div>
+                     )}
                   </TableRecord>
                ))}
             </>

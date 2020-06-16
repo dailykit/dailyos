@@ -1,37 +1,15 @@
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-import {
-   IconButton,
-   Loader,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-   Toggle,
-   Text,
-} from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { toast } from 'react-toastify'
 
+import { randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
-import {
-   SUPPLIER_ITEMS_SUBSCRIPTION,
-   UPDATE_BULK_ITEM_AVAILABILITY,
-   CREATE_ITEM,
-} from '../../../graphql'
-import {
-   StyledContent,
-   StyledTableActions,
-   StyledTableHeader,
-   StyledWrapper,
-   CellColumnContainer,
-   OnHandData,
-} from '../styled'
-
-import EditIcon from '../../../../recipe/assets/icons/Edit'
-import { randomSuffix } from '../../../../../shared/utils/index'
+import { CREATE_ITEM, SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
+import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
 
 const address = 'apps.inventory.views.listings.item.'
 
@@ -49,27 +27,18 @@ export default function ItemListing() {
    const { loading: itemsLoading, data, error: subError } = useSubscription(
       SUPPLIER_ITEMS_SUBSCRIPTION
    )
-   const [updateBulkItem] = useMutation(UPDATE_BULK_ITEM_AVAILABILITY, {
-      onCompleted: () => {
-         toast.info('Updated Successfully !')
-      },
-      onError: () => toast.error('Something went wrong, try again'),
-   })
 
-   const [createItem, { loading: creatItemLoading }] = useMutation(
-      CREATE_ITEM,
-      {
-         onCompleted: input => {
-            const itemData = input.createSupplierItem.returning[0]
-            addTab(itemData.name, 'items', itemData.id)
-            toast.success('Supplier Item Added!')
-         },
-         onError: error => {
-            console.log(error)
-            toast.error('Something went wrong, try again')
-         },
-      }
-   )
+   const [createItem] = useMutation(CREATE_ITEM, {
+      onCompleted: input => {
+         const itemData = input.createSupplierItem.returning[0]
+         addTab(itemData.name, 'items', itemData.id)
+         toast.success('Supplier Item Added!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Something went wrong, try again')
+      },
+   })
 
    const createItemHandler = () => {
       // create item in DB
@@ -83,7 +52,7 @@ export default function ItemListing() {
       })
    }
 
-   if (itemsLoading || creatItemLoading) return <Loader />
+   if (itemsLoading) return <Loader />
 
    if (subError) return <p>{subError.message}</p>
 
@@ -98,173 +67,113 @@ export default function ItemListing() {
                   </IconButton>
                </StyledTableActions>
             </StyledTableHeader>
-            <StyledContent style={{ width: '90%', margin: '20px auto' }}>
-               <Table>
-                  <TableHead>
-                     <TableRow>
-                        <TableCell>Supplier Item</TableCell>
-                        <TableCell>Supplier</TableCell>
-                        <TableCell>Processings</TableCell>
-                        <TableCell>Par Level</TableCell>
-                        <TableCell>On Hand</TableCell>
-                        <TableCell>Max Level</TableCell>
-                        <TableCell>Awaiting</TableCell>
-                        <TableCell>Committed</TableCell>
-                        <TableCell>Availability</TableCell>
-                        <TableCell />
-                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                     {data && data.supplierItems.length ? (
-                        data.supplierItems.map(item => (
-                           <TableRow key={item.id}>
-                              <TableCell>{item.name}</TableCell>
-                              <TableCell>
-                                 {item.supplier?.name
-                                    ? item.supplier.name
-                                    : 'N/A'}
-                              </TableCell>
-                              <TableCell>
-                                 <CellColumnContainer>
-                                    {item.bulkItems?.map(processing => (
-                                       <div
-                                          style={{ padding: '5px' }}
-                                          key={processing.id}
-                                       >
-                                          {processing.processingName}
-                                       </div>
-                                    ))}
-                                 </CellColumnContainer>
-                              </TableCell>
-                              <TableCell>
-                                 {item.bulkItems?.map(processing => (
-                                    <CellColumnContainer key={processing.id}>
-                                       <div
-                                          style={{
-                                             padding: '5px 0',
-                                             display: 'flex',
-                                          }}
-                                       >
-                                          <OnHandData
-                                             alert={
-                                                processing.onHand <
-                                                processing.parLevel
-                                             }
-                                          >
-                                             {processing.parLevel}
-                                          </OnHandData>
-                                       </div>
-                                    </CellColumnContainer>
-                                 ))}
-                              </TableCell>
-                              <TableCell>
-                                 {item.bulkItems?.map(processing => (
-                                    <CellColumnContainer key={processing.id}>
-                                       <div
-                                          style={{
-                                             padding: '5px 0',
-                                             display: 'flex',
-                                          }}
-                                       >
-                                          <OnHandData
-                                             alertAndSuccess={
-                                                processing.onHand >
-                                                processing.parLevel
-                                             }
-                                          >
-                                             {processing.onHand}
-                                          </OnHandData>
-                                       </div>
-                                    </CellColumnContainer>
-                                 ))}
-                              </TableCell>
-                              <TableCell>
-                                 {item.bulkItems?.map(processing => (
-                                    <CellColumnContainer key={processing.id}>
-                                       <div
-                                          style={{
-                                             padding: '5px 0',
-                                             display: 'flex',
-                                          }}
-                                       >
-                                          <OnHandData>
-                                             {processing.maxLevel}
-                                          </OnHandData>
-                                       </div>
-                                    </CellColumnContainer>
-                                 ))}
-                              </TableCell>
-                              <TableCell>
-                                 <CellColumnContainer>
-                                    {item.bulkItems?.map(processing => (
-                                       <div
-                                          style={{ padding: '5px' }}
-                                          key={processing.id}
-                                       >
-                                          {processing.awaiting}{' '}
-                                          {processing.unit}
-                                       </div>
-                                    ))}
-                                 </CellColumnContainer>
-                              </TableCell>
-                              <TableCell>
-                                 <CellColumnContainer>
-                                    {item.bulkItems?.map(processing => (
-                                       <div
-                                          style={{ padding: '5px' }}
-                                          key={processing.id}
-                                       >
-                                          {processing.committed}{' '}
-                                          {processing.unit}
-                                       </div>
-                                    ))}
-                                 </CellColumnContainer>
-                              </TableCell>
-                              <TableCell>
-                                 <CellColumnContainer>
-                                    {item.bulkItems?.map(processing => (
-                                       <div
-                                          style={{ padding: '5px' }}
-                                          key={processing.id}
-                                       >
-                                          <Toggle
-                                             checked={processing.isAvailable}
-                                             setChecked={() =>
-                                                updateBulkItem({
-                                                   variables: {
-                                                      id: processing.id,
-                                                      availability: !processing.isAvailable,
-                                                   },
-                                                })
-                                             }
-                                          />
-                                       </div>
-                                    ))}
-                                 </CellColumnContainer>
-                              </TableCell>
-                              <TableCell>
-                                 <IconButton
-                                    onClick={() => {
-                                       dispatch({
-                                          type: 'SET_ITEM_ID',
-                                          payload: item.id,
-                                       })
-
-                                       addTab(item.name, 'items', item.id)
-                                    }}
-                                    type="outline"
-                                 >
-                                    <EditIcon />
-                                 </IconButton>
-                              </TableCell>
-                           </TableRow>
-                        ))
-                     ) : (
-                        <Text as="title">No Supplier Items</Text>
-                     )}
-                  </TableBody>
-               </Table>
-            </StyledContent>
+            <DataTable addTab={addTab} data={data.supplierItems} />
          </StyledWrapper>
       )
+}
+
+function DataTable({ addTab, data }) {
+   const tableRef = React.useRef()
+
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+      dataTree: true,
+      dataTreeChildField: 'bulkItems',
+      dataTreeStartExpanded: true,
+   }
+
+   const columns = [
+      {
+         title: 'Supplier Item',
+         field: 'name',
+         headerFilter: true,
+      },
+      {
+         title: 'Supplier',
+         field: 'supplier',
+         headerFilter: false,
+         formatter: reactFormatter(<SupplierContact />),
+         hozAlign: 'center',
+      },
+      {
+         title: 'Processing',
+         field: 'processingName',
+         headerFilter: false,
+         hozAlign: 'center',
+      },
+      {
+         title: 'Par Level',
+         field: 'parLevel',
+         headerFilter: false,
+         hozAlign: 'center',
+      },
+      {
+         title: 'On Hand',
+         field: 'onHand',
+         headerFilter: false,
+         hozAlign: 'center',
+      },
+      {
+         title: 'Max Level',
+         field: 'maxLevel',
+         headerFilter: false,
+         hozAlign: 'center',
+      },
+      {
+         title: 'Awaiting',
+         field: 'awaiting',
+         headerFilter: false,
+         hozAlign: 'center',
+      },
+      {
+         title: 'Committed',
+         field: 'committed',
+         headerFilter: false,
+         hozAlign: 'center',
+      },
+   ]
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      const tabName = name || row._row.modules.dataTree.parent.data.name
+      addTab(tabName, 'items', id)
+   }
+
+   return (
+      <div>
+         <TextButton
+            style={{ marginBottom: '20px' }}
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+         >
+            Clear Filters
+         </TextButton>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={options}
+            data-custom-attr="test-custom-attribute"
+            className="custom-css-class"
+         />
+      </div>
+   )
+}
+
+function SupplierContact({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.name) return <>{value.name}</>
+
+   return '-'
 }

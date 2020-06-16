@@ -1,5 +1,211 @@
 import gql from 'graphql-tag'
 
+export const REMOVE_SCALE_STATION = gql`
+   mutation updateScale(
+      $deviceNum: Int!
+      $deviceName: String!
+      $computerId: Int!
+   ) {
+      updateScale(
+         pk_columns: {
+            computerId: $computerId
+            deviceName: $deviceName
+            deviceNum: $deviceNum
+         }
+         _set: { stationId: null }
+      ) {
+         deviceNum
+      }
+   }
+`
+
+export const ADD_STATION_TO_SCALE = gql`
+   mutation updateScales(
+      $computerId: Int!
+      $deviceName: String!
+      $deviceNum: Int!
+      $stationId: Int!
+   ) {
+      updateScales(
+         where: {
+            deviceNum: { _eq: $deviceNum }
+            deviceName: { _eq: $deviceName }
+            computerId: { _eq: $computerId }
+         }
+         _set: { stationId: $stationId }
+      ) {
+         returning {
+            deviceNum
+            deviceName
+         }
+      }
+   }
+`
+
+export const UPDATE_SCALE_STATUS = gql`
+   mutation updateScale(
+      $deviceNum: Int!
+      $deviceName: String!
+      $computerId: Int!
+      $active: Boolean!
+   ) {
+      updateScale(
+         pk_columns: {
+            computerId: $computerId
+            deviceName: $deviceName
+            deviceNum: $deviceNum
+         }
+         _set: { active: $active }
+      ) {
+         deviceNum
+         deviceName
+      }
+   }
+`
+
+export const UPDATE_STATION_DEFAULT_LABEL_PRINTER = gql`
+   mutation updateStation($id: Int!, $defaultLabelPrinterId: Int!) {
+      updateStation(
+         pk_columns: { id: $id }
+         _set: { defaultLabelPrinterId: $defaultLabelPrinterId }
+      ) {
+         id
+      }
+   }
+`
+
+export const UPDATE_STATION_DEFAULT_KOT_PRINTER = gql`
+   mutation updateStation($id: Int!, $defaultKotPrinterId: Int!) {
+      updateStation(
+         pk_columns: { id: $id }
+         _set: { defaultKotPrinterId: $defaultKotPrinterId }
+      ) {
+         id
+      }
+   }
+`
+
+export const CREATE_STATION_LABEL_PRINTER = gql`
+   mutation insert_settings_station_label_printer(
+      $objects: [settings_station_label_printer_insert_input!]!
+   ) {
+      insert_settings_station_label_printer(objects: $objects) {
+         returning {
+            stationId
+            printNodeId
+         }
+      }
+   }
+`
+
+export const CREATE_STATION_KOT_PRINTER = gql`
+   mutation insert_settings_station_kot_printer(
+      $objects: [settings_station_kot_printer_insert_input!]!
+   ) {
+      insert_settings_station_kot_printer(objects: $objects) {
+         returning {
+            stationId
+            printNodeId
+         }
+      }
+   }
+`
+
+export const DELETE_STATION_LABEL_PRINTER = gql`
+   mutation deleteStationLabelPrinter($stationId: Int!, $printNodeId: Int!) {
+      deleteStationLabelPrinter: delete_settings_station_label_printer_by_pk(
+         printNodeId: $printNodeId
+         stationId: $stationId
+      ) {
+         stationId
+         printNodeId
+      }
+   }
+`
+
+export const DELETE_STATION_KOT_PRINTER = gql`
+   mutation deleteStationKotPrinter($stationId: Int!, $printNodeId: Int!) {
+      deleteStationKotPrinter: delete_settings_station_kot_printer_by_pk(
+         printNodeId: $printNodeId
+         stationId: $stationId
+      ) {
+         stationId
+         printNodeId
+      }
+   }
+`
+
+export const UPDATE_STATION_LABEL_PRINTER = gql`
+   mutation updateStationLabelPrinter(
+      $printNodeId: Int!
+      $stationId: Int!
+      $active: Boolean!
+   ) {
+      updateStationLabelPrinter: update_settings_station_label_printer_by_pk(
+         pk_columns: { printNodeId: $printNodeId, stationId: $stationId }
+         _set: { active: $active }
+      ) {
+         stationId
+      }
+   }
+`
+
+export const UPDATE_STATION_KOT_PRINTER = gql`
+   mutation updateStationKotPrinter(
+      $printNodeId: Int!
+      $stationId: Int!
+      $active: Boolean!
+   ) {
+      updateStationKotPrinter: update_settings_station_kot_printer_by_pk(
+         pk_columns: { printNodeId: $printNodeId, stationId: $stationId }
+         _set: { active: $active }
+      ) {
+         stationId
+      }
+   }
+`
+
+export const UPDATE_STATION_USER_STATUS = gql`
+   mutation updateStation_user(
+      $stationId: Int!
+      $userKeycloakId: String!
+      $active: Boolean!
+   ) {
+      updateStation_user(
+         pk_columns: { stationId: $stationId, userKeycloakId: $userKeycloakId }
+         _set: { active: $active }
+      ) {
+         stationId
+         userKeycloakId
+      }
+   }
+`
+
+export const DELETE_STATION_USER = gql`
+   mutation deleteStation_user($stationId: Int!, $userKeycloakId: String!) {
+      deleteStation_user(
+         stationId: $stationId
+         userKeycloakId: $userKeycloakId
+      ) {
+         stationId
+         userKeycloakId
+      }
+   }
+`
+
+export const CREATE_STATION_USERS = gql`
+   mutation createStation_users(
+      $objects: [settings_station_user_insert_input!]!
+   ) {
+      createStation_users(objects: $objects) {
+         returning {
+            stationId
+            userKeycloakId
+         }
+      }
+   }
+`
+
 export const CREATE_STATION = gql`
    mutation insertStation($object: settings_station_insert_input!) {
       insertStation(object: $object) {

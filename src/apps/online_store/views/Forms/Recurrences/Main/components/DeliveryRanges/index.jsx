@@ -62,7 +62,7 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                   {mileRange.from} - {mileRange.to} miles
                </div>
                <div style={{ padding: '8px' }}>
-                  {mileRange.leadTime || mileRange.prepTime} hours
+                  {mileRange.leadTime || mileRange.prepTime} mins.
                </div>
                <Flex direction="row" style={{ padding: '16px' }}>
                   <Toggle

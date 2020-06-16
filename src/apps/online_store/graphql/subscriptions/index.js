@@ -326,6 +326,8 @@ export const RECURRENCES = gql`
             from
             to
             isActive
+            pickUpLeadTime
+            pickUpPrepTime
             mileRanges {
                id
                from

@@ -143,6 +143,16 @@ export const SUPPLIERS_SUBSCRIPTION = gql`
       }
    }
 `
+export const ALL_SUPPLIERS_SUBSCRIPTION = gql`
+   subscription AllSuppliers {
+      suppliers {
+         id
+         name
+         available
+         contactPerson
+      }
+   }
+`
 
 export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packaging($id: Int!) {
@@ -164,8 +174,6 @@ export const PACKAGING_SUBSCRIPTION = gql`
          compostable
          fdaComp
          type
-         packagingType
-         sealingType
          innGreaseRes
          outGreaseRes
          leakResistance
@@ -176,6 +184,8 @@ export const PACKAGING_SUBSCRIPTION = gql`
          caseQuantity
          unitPrice
          minOrderValue
+         packagingType
+         sealingType
          leadTime
          supplier {
             id
