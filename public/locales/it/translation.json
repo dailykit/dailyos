@@ -1205,7 +1205,6 @@
                "tax": "Tax",
                "discount": "Discount",
                "delivery price": "Delivery Price",
-               "item total": "Item Total",
                "total": "Total",
                "all": "All",
                "meal kits": "Meal Kits",
@@ -1336,16 +1335,6 @@
    },
    "shared": {
       "components": {
-         "assetuploader": {
-            "loading": "loading...",
-            "upload": "Upload",
-            "images": "Images",
-            "title": "Title",
-            "enter the title": "Enter the title",
-            "description": "Description",
-            "enter the discription": "Enter the Discription",
-            "select image": "Select Image"
-         },
          "nutrition": {
             "calories": "Calories",
             "amount": "Amount",
