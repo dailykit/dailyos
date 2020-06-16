@@ -18,6 +18,8 @@ const InventoryProducts = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
+   const tableRef = React.useRef()
+
    const {
       data: { inventoryProducts = [] } = {},
       loading,
@@ -37,8 +39,6 @@ const InventoryProducts = () => {
          toast.error('Could not delete!')
       },
    })
-
-   const tableRef = React.useRef()
 
    const options = {
       cellVertAlign: 'middle',
