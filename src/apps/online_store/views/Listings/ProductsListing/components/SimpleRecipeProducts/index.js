@@ -1,24 +1,16 @@
 import React from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import {
-   IconButton,
-   Loader,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-   Text,
-} from '@dailykit/ui'
+import { Loader, Text, TextButton } from '@dailykit/ui'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { Context } from '../../../../../context/tabs'
 import {
    S_SIMPLE_RECIPE_PRODUCTS,
    DELETE_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../../graphql'
-import { GridContainer } from '../../../styled'
-import { toast } from 'react-toastify'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -26,7 +18,13 @@ const InventoryProducts = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const { data, loading, error } = useSubscription(S_SIMPLE_RECIPE_PRODUCTS)
+   const tableRef = React.useRef()
+
+   const {
+      data: { simpleRecipeProducts = [] } = {},
+      loading,
+      error,
+   } = useSubscription(S_SIMPLE_RECIPE_PRODUCTS)
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
@@ -36,8 +34,8 @@ const InventoryProducts = () => {
       onCompleted: () => {
          toast.success('Product deleted!')
       },
-      onError: error => {
-         console.log(error)
+      onError: err => {
+         console.log(err)
          toast.error('Could not delete!')
       },
    })
@@ -58,42 +56,83 @@ const InventoryProducts = () => {
       }
    }
 
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const columns = [
+      {
+         title: t(address.concat('product name')),
+         field: 'name',
+         headerFilter: true,
+      },
+      {
+         title: t(address.concat('recipe')),
+         field: 'simpleRecipe',
+         headerFilter: false,
+         formatter: reactFormatter(<RcipeName />),
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteIngredient />),
+      },
+   ]
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, 'simpleRecipeProduct', id)
+   }
+
    if (loading) return <Loader />
    if (error) {
       console.log(error)
       return <Text as="p">Error: Could'nt fetch products!</Text>
    }
    return (
-      <Table>
-         <TableHead>
-            <TableRow>
-               <TableCell>{t(address.concat('product name'))}</TableCell>
-               <TableCell>{t(address.concat('recipe'))}</TableCell>
-               <TableCell></TableCell>
-            </TableRow>
-         </TableHead>
-         <TableBody>
-            {data.simpleRecipeProducts.map(product => (
-               <TableRow
-                  key={product.id}
-                  onClick={() =>
-                     addTab(product.name, 'simpleRecipeProduct', product.id)
-                  }
-               >
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.simpleRecipe?.name || ''}</TableCell>
-                  <TableCell align="right">
-                     <GridContainer>
-                        <IconButton onClick={e => deleteHandler(e, product)}>
-                           <DeleteIcon color="#FF5A52" />
-                        </IconButton>
-                     </GridContainer>
-                  </TableCell>
-               </TableRow>
-            ))}
-         </TableBody>
-      </Table>
+      <div style={{ width: '80%', margin: '0 auto' }}>
+         <TextButton
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+            style={{ marginBottom: '20px' }}
+         >
+            Clear Filters
+         </TextButton>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={simpleRecipeProducts}
+            rowClick={rowClick}
+            options={options}
+         />
+      </div>
    )
+}
+
+function DeleteIngredient() {
+   return <DeleteIcon color="#FF5A52" />
+}
+
+function RcipeName({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.name) return <>{value.name}</>
+   return null
 }
 
 export default InventoryProducts
