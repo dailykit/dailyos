@@ -145,17 +145,29 @@ const Main = () => {
                         <span>Recurrences</span>
                         <span>Availability</span>
                         <span>Time Slots</span>
+                        {current.fulfillment.includes('PICKUP') && (
+                           <span>
+                              {current.fulfillment.includes('PREORDER')
+                                 ? 'Lead'
+                                 : 'Prep'}{' '}
+                              Time
+                           </span>
+                        )}
                         <span>Availability</span>
-                        <span>Delivery Range</span>
-                        <span>
-                           {current.fulfillment.includes('PREORDER')
-                              ? 'Lead'
-                              : 'Prep'}{' '}
-                           Time
-                        </span>
-                        <span>Availability</span>
-                        <span>Order Value</span>
-                        <span>Charges</span>
+                        {current.fulfillment.includes('DELIVERY') && (
+                           <>
+                              <span>Delivery Range</span>
+                              <span>
+                                 {current.fulfillment.includes('PREORDER')
+                                    ? 'Lead'
+                                    : 'Prep'}{' '}
+                                 Time
+                              </span>
+                              <span>Availability</span>
+                              <span>Order Value</span>
+                              <span>Charges</span>
+                           </>
+                        )}
                      </TableHeader>
                      {recurrences.map(recurrence => (
                         <TableRecord key={recurrence.id}>

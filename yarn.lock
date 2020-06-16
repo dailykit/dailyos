@@ -1147,7 +1147,7 @@
 
 "@dailykit/ui@^0.6.91":
   version "0.6.91"
-  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.6.91.tgz#85c7aa77e3aa0747da013cb343161c39c690bf17"
+  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.6.91.tgz#85c7aa77e3aa0747da013cb343161c39c690bf17"
   integrity sha512-ve1s4e6tOq+lYDbjHvFQ0qIBUao8dhqtZquYuYgUExdOjBywxhAjhq8JbZsp9IVzFW3Unmq+WnbzD8l5UG6wcg==
 
 "@emotion/is-prop-valid@^0.8.8":
