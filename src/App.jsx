@@ -41,7 +41,7 @@ const Order = Loadable({
 const App = () => {
    return (
       <>
-         <Router>
+         <Router basename={process.env.PUBLIC_URL}>
             <Switch>
                <Route path="/" exact>
                   <Link to="/safety">
