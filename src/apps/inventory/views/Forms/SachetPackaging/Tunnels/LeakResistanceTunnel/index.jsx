@@ -1,66 +1,45 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Text, Toggle, Loader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
-import { SachetPackagingContext } from '../../../../../context'
-
 import {
    Spacer,
    TunnelContainer,
    TunnelHeader,
 } from '../../../../../components'
 
-export default function LeakResistanceTunnel({ close }) {
-   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
-      SachetPackagingContext
-   )
-   const [liquids, setLiquids] = useState(
-      sachetPackagingState.leakResistance.liquids
-   )
+export default function LeakResistanceTunnel({ close, state }) {
+   const [liquids, setLiquids] = useState(state.leakResistance?.liquids)
    const [powderedParticles, setPowParticles] = useState(
-      sachetPackagingState.leakResistance.powderedParticles
+      state.leakResistance?.powderedParticles
    )
 
-   const [loading, setLoading] = useState(false)
+   const [updatePakcaging, { loading }] = useMutation(UPDATE_PACKAGING, {
+      onCompleted: () => {
+         toast.info('Information Added :)')
+         close(4)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error, Please try again')
+         close(4)
+      },
+   })
 
-   const [updatePakcaging] = useMutation(UPDATE_PACKAGING)
-
-   const handleNext = async () => {
-      setLoading(true)
-      try {
-         const resp = await updatePakcaging({
-            variables: {
-               id: sachetPackagingState.id,
-               object: {
-                  leakResistance: {
-                     liquids,
-                     powderedParticles,
-                  },
-               },
-            },
-         })
-
-         if (resp?.data?.updatePackaging) {
-            // succcess updating
-            sachetPackagingDispatch({
-               type: 'ADD_LEAK_RESISTANCE_INFO',
-               payload: {
+   const handleNext = () => {
+      updatePakcaging({
+         variables: {
+            id: state.id,
+            object: {
+               leakResistance: {
                   liquids,
                   powderedParticles,
                },
-            })
-            setLoading(false)
-            toast.info('Information Added :)')
-            close(4)
-         }
-      } catch (error) {
-         close(4)
-         setLoading(false)
-         console.log(error)
-         toast.error('Error, Please try again')
-      }
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />

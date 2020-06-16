@@ -1,18 +1,19 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import Loader from '../Loader'
 import { useOrder } from '../../context/order'
-import { FETCH_ORDER_SACHET } from '../../graphql'
+import { FETCH_ORDER_SACHET, UPDATE_ORDER_SACHET } from '../../graphql'
 import {
    Wrapper,
    StyledHeader,
    StyledMode,
    StyledMain,
-   StyledStatus,
+   StyledStat,
    StyledWeigh,
    StyledPackaging,
    StyledSOP,
+   StyledButton,
 } from './styled'
 
 import { WeighIcon } from '../../assets/icons'
@@ -23,6 +24,7 @@ export const ProcessOrder = () => {
       switchView,
    } = useOrder()
    const [sachet, setSachet] = React.useState(null)
+   const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
    const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
       variables: {
          id: mealkit.sachet_id,
@@ -107,20 +109,29 @@ export const ProcessOrder = () => {
          <StyledMain>
             <section>
                <h4>{sachet.ingredientName}</h4>
-               <StyledStatus>Under Processing</StyledStatus>
+               <StyledStat status={sachet.status}>{sachet.status}</StyledStat>
             </section>
             <section>
-               <span>
-                  {(sachet.bulkItemId &&
-                     sachet?.bulkItem?.supplierItem?.name) ||
-                     ''}
-                  {(sachet.sachetItemId &&
-                     sachet?.sachetItem?.bulkItem?.supplierItem?.name) ||
-                     ''}
-                  {!sachet?.bulkItemId && !sachet?.sachetItemId && 'NA'}
-               </span>
-               <span>{sachet.processingName}</span>
-               <span>{sachet.quantity}gm</span>
+               <section>
+                  <span>Supplier Item</span>
+                  <span>
+                     {(sachet.bulkItemId &&
+                        sachet?.bulkItem?.supplierItem?.name) ||
+                        ''}
+                     {(sachet.sachetItemId &&
+                        sachet?.sachetItem?.bulkItem?.supplierItem?.name) ||
+                        ''}
+                     {!sachet?.bulkItemId && !sachet?.sachetItemId && 'NA'}
+                  </span>
+               </section>
+               <section>
+                  <span>Processing Name</span>
+                  <span>{sachet.processingName}</span>
+               </section>
+               <section>
+                  <span>Quantity</span>
+                  <span>{sachet.quantity}gm</span>
+               </section>
             </section>
             <StyledWeigh>
                <span>
@@ -163,6 +174,42 @@ export const ProcessOrder = () => {
                   )}
             </div>
          </StyledSOP>
+         {sachet.status === 'PENDING' && (
+            <StyledButton
+               type="button"
+               onClick={() =>
+                  updateSachet({
+                     variables: {
+                        id: sachet.id,
+                        _set: {
+                           status: 'PACKED',
+                           isLabelled: true,
+                           isPortioned: true,
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Packed
+            </StyledButton>
+         )}
+         {!sachet.isAssembled && (
+            <StyledButton
+               type="button"
+               onClick={() =>
+                  updateSachet({
+                     variables: {
+                        id: sachet.id,
+                        _set: {
+                           isAssembled: true,
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Assembled
+            </StyledButton>
+         )}
       </Wrapper>
    )
 }

@@ -1,16 +1,15 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 
+import { Loader } from '@dailykit/ui'
 import useAssets from './useAssets'
-import { useTranslation } from 'react-i18next'
-const address = 'shared.components.assetuploader.'
+
 const Images = ({ onImageSelect }) => {
-   const { t } = useTranslation()
    const { images, status, error, remove } = useAssets('images')
-   if (status === 'LOADING') return <div>{t(address.concat('loading'))}</div>
+   if (status === 'LOADING') return <Loader />
    if (status === 'ERROR') return <div>{error}</div>
    return (
-      <div>
+      <>
          <StyledList>
             {images.map(image => (
                <StyledListItem
@@ -28,19 +27,24 @@ const Images = ({ onImageSelect }) => {
                </StyledListItem>
             ))}
          </StyledList>
-      </div>
+      </>
    )
 }
 
 export default Images
 
 const StyledList = styled.ul(css`
+   height: 100%;
    display: grid;
-   grid-gap: 16px;
+   padding: 8px;
+   grid-gap: 8px;
    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
    li {
       height: 120px;
       list-style: none;
+      overflow: hidden;
+      border-radius: 3px;
+      border: 1px solid #e3e3e3;
    }
 `)
 
@@ -57,23 +61,22 @@ const StyledListItem = styled.li(css`
       display: none;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
+      border-radius: 4px;
       background: rgba(0, 0, 0, 0.4);
       position: absolute;
       top: 4px;
       right: 4px;
-      padding: 8px;
+      padding: 6px;
    }
 `)
 
 const StyledImage = styled.img(css`
    width: 100%;
    height: 100%;
-   object-fit: cover;
-   border-radius: 8px;
+   object-fit: contain;
 `)
 
-const Trash = ({ size = 18, color = '#ffffff' }) => (
+const Trash = ({ size = 16, color = '#ffffff' }) => (
    <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}

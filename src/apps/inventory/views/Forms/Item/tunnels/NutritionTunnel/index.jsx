@@ -139,7 +139,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('calories'))}
                      name="cal"
                      value={cal || ''}
@@ -163,7 +163,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('total fat'))}
                      name="fat"
                      value={fat || ''}
@@ -189,7 +189,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('saturated fat'))}
                      name="saturatedFat"
                      value={saturatedFat || ''}
@@ -217,7 +217,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('trans fat'))}
                      name="transFat"
                      value={transFat || ''}
@@ -243,7 +243,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('cholestrol'))}
                      name="cholestrol"
                      value={cholestrol || ''}
@@ -269,7 +269,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('sodium'))}
                      name="sodium"
                      value={sodium || ''}
@@ -295,7 +295,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('total carbohydrates'))}
                      name="totalCarbs"
                      value={carbs || ''}
@@ -323,7 +323,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('dietry fiber'))}
                      name="dietryFibre"
                      value={dietryFiber || ''}
@@ -351,7 +351,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('sugar'))}
                      name="sugar"
                      value={sugar || ''}
@@ -377,7 +377,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('protein'))}
                      name="protein"
                      value={protein || ''}
@@ -403,7 +403,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('vitamin A'))}
                      name="vitaminA"
                      value={vitA || ''}
@@ -429,7 +429,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('vitamin C'))}
                      name="vitC"
                      value={vitC || ''}
@@ -455,7 +455,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('calcium'))}
                      name="calcium"
                      value={calcium || ''}
@@ -481,7 +481,7 @@ export default function NutritionTunnel({ close }) {
                   }}
                >
                   <Input
-                     type="text"
+                     type="number"
                      label={t(address.concat('iron'))}
                      name="iron"
                      value={iron || ''}

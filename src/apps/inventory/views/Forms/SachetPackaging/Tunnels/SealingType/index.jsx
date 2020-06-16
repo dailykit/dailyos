@@ -1,10 +1,9 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Text, Input, Loader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
-import { SachetPackagingContext } from '../../../../../context'
 
 import {
    Spacer,
@@ -12,44 +11,30 @@ import {
    TunnelHeader,
 } from '../../../../../components'
 
-export default function SealingTypeTunnel({ close }) {
-   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
-      SachetPackagingContext
-   )
+export default function SealingTypeTunnel({ close, state }) {
+   const [sealingType, setSealingType] = useState(state.sealingType || '')
 
-   const [loading, setLoading] = useState(false)
-   const [sealingType, setSealingType] = useState('')
-
-   const [updatePakcaging] = useMutation(UPDATE_PACKAGING)
-
-   const handleNext = async () => {
-      setLoading(true)
-      try {
-         const resp = await updatePakcaging({
-            variables: {
-               id: sachetPackagingState.id,
-               object: {
-                  sealingType,
-               },
-            },
-         })
-
-         if (resp?.data?.updatePackaging) {
-            // succcess updating
-            sachetPackagingDispatch({
-               type: 'ADD_SEALING_TYPE',
-               payload: sealingType,
-            })
-            setLoading(false)
-            toast.info('Information Added :)')
-            close(8)
-         }
-      } catch (error) {
-         close(8)
-         setLoading(false)
+   const [updatePakcaging, { loading }] = useMutation(UPDATE_PACKAGING, {
+      onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-      }
+         close(8)
+      },
+      onCompleted: () => {
+         close(8)
+         toast.info('Information Added :)')
+      },
+   })
+
+   const handleNext = async () => {
+      updatePakcaging({
+         variables: {
+            id: state.id,
+            object: {
+               sealingType,
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />
@@ -58,7 +43,7 @@ export default function SealingTypeTunnel({ close }) {
       <>
          <TunnelContainer>
             <TunnelHeader
-               title="Select leak resistance"
+               title="Select Sealing Type"
                next={handleNext}
                close={() => close(8)}
                nextAction="Next"

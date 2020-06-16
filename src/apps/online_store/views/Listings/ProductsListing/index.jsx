@@ -65,12 +65,11 @@ const ProductsListing = () => {
             </StyledHeader>
             <RadioGroup
                options={options}
-               active={'inventory'}
+               active="inventory"
                onChange={option => setView(option.id)}
             />
             <Spacer />
             {renderListing()}
-            {/* */}
          </StyledWrapper>
       </>
    )

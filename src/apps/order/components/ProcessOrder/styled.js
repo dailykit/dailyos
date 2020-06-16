@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.div`
    height: 100%;
@@ -6,6 +6,18 @@ export const Wrapper = styled.div`
    border-right: 1px solid #e7e7e7;
    border-left: 1px solid #e7e7e7;
 `
+
+export const StyledStat = styled.span(
+   ({ status }) => css`
+      color: #fff;
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background: ${status === 'PENDING' ? '#FF5A52' : '#53C22B'};
+   `
+)
 
 export const StyledMode = styled.div`
    height: 32px;
@@ -26,18 +38,37 @@ export const StyledMain = styled.main`
          color: #555b6e;
       }
    }
-   section:nth-child(2) {
+   > section:nth-of-type(2) {
       display: flex;
-      margin: 8px 0;
-      align-items: center;
-      span:nth-child(2) {
-         flex: 1;
-         text-align: center;
+      margin-bottom: 16px;
+      flex-direction: column;
+      section {
+         display: flex;
+         margin: 4px 0;
+         align-items: center;
+         justify-content: space-between;
+         span:first-child {
+            color: #9aa5ab;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+         }
       }
    }
 `
 
-export const StyledStatus = styled.span``
+export const StyledButton = styled.button`
+   color: #fff;
+   height: 32px;
+   border: none;
+   padding: 0 12px;
+   cursor: pointer;
+   margin-top: 16px;
+   margin-right: 16px;
+   border-radius: 6px;
+   background: #53c22b;
+`
 
 export const StyledWeigh = styled.section`
    color: #fff;
@@ -45,6 +76,7 @@ export const StyledWeigh = styled.section`
    display: grid;
    padding: 0 16px;
    background: #0ead69;
+   border-radius: 4px;
    grid-template-rows: 48px 1fr 48px;
    * {
       display: flex;

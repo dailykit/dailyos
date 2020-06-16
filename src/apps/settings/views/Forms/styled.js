@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components'
 
 export const StyledWrapper = styled.div`
+   margin: 0 auto;
+   width: calc(100vw - 40px);
    h1 {
       color: #555b6e;
       font-size: 20px;
@@ -18,7 +20,6 @@ export const StyledHeader = styled.div`
    display: flex;
    margin: 0 auto;
    align-items: center;
-   width: calc(100vw - 40px);
    justify-content: space-between;
    border-bottom: 1px solid #d8d8d8;
 `

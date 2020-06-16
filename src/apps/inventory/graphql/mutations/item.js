@@ -126,6 +126,22 @@ export const UPDATE_BULK_ITEM_AVAILABILITY = gql`
    }
 `
 
+export const UPDATE_BULK_ITEM = gql`
+   mutation UpdateBulkItem($id: Int!, $object: inventory_bulkItem_set_input!) {
+      updateBulkItem(where: { id: { _eq: $id } }, _set: $object) {
+         affected_rows
+      }
+   }
+`
+
+export const DELETE_BULK_ITEM = gql`
+   mutation DeleteBulkItem($id: Int!) {
+      deleteBulkItem(where: { id: { _eq: $id } }) {
+         affected_rows
+      }
+   }
+`
+
 export const UPDATE_SUPPLIER_ITEM = gql`
    mutation UpdateSupplierItem(
       $id: Int!
@@ -133,6 +149,9 @@ export const UPDATE_SUPPLIER_ITEM = gql`
    ) {
       updateSupplierItem(where: { id: { _eq: $id } }, _set: $object) {
          affected_rows
+         returning {
+            name
+         }
       }
    }
 `

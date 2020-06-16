@@ -15,6 +15,8 @@ import NewTabIcon from './NewTab'
 import WeighIcon from './Weigh'
 import LeftPanelIcon from './LeftPanel'
 import RightPanelIcon from './RightPanel'
+import BellIcon from './Bell'
+import PrintIcon from './Print'
 
 export {
    PhoneIcon,
@@ -34,4 +36,6 @@ export {
    WeighIcon,
    LeftPanelIcon,
    RightPanelIcon,
+   BellIcon,
+   PrintIcon,
 }

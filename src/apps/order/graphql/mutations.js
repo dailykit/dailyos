@@ -1,5 +1,13 @@
 import gql from 'graphql-tag'
 
+export const UPDATE_ORDER_SACHET = gql`
+   mutation updateOrderSachet($id: Int!, $_set: order_orderSachet_set_input!) {
+      updateOrderSachet(pk_columns: { id: $id }, _set: $_set) {
+         id
+      }
+   }
+`
+
 export const UPDATE_ORDER_STATUS = gql`
    mutation updateOrder($id: oid!, $orderStatus: String!) {
       updateOrder(

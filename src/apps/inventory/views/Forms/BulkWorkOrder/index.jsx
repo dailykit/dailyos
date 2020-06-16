@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
    ButtonTile,
@@ -72,12 +72,12 @@ export default function BulkWorkOrderForm() {
       STATIONS_SUBSCRIPTION
    )
 
-   const {
-      data: bulkWorkOrderData,
-      loading: orderLoading,
-   } = useSubscription(BULK_WORK_ORDER_SUBSCRIPTION, {
-      variables: { id: state.bulkWorkOrder.id },
-   })
+   const { data: bulkWorkOrderData, loading: orderLoading } = useSubscription(
+      BULK_WORK_ORDER_SUBSCRIPTION,
+      {
+         variables: { id: state.bulkWorkOrder.id },
+      }
+   )
 
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
    const [updateBulkWorkOrderStatus] = useMutation(
@@ -476,7 +476,7 @@ function Configurator({ open, bulkWorkOrder }) {
             }}
          >
             <Input
-               type="text"
+               type="number"
                placeholder={t(address.concat('yield percentage'))}
                name="yield"
                disabled={bulkWorkOrder?.outputBulkItem?.yield}
@@ -510,7 +510,7 @@ function Configurator({ open, bulkWorkOrder }) {
          >
             <div style={{ width: '45%' }}>
                <Input
-                  type="text"
+                  type="number"
                   placeholder={t(address.concat('enter output quantity'))}
                   name="output"
                   value={outputQuantity}

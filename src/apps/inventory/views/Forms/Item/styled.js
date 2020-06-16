@@ -172,22 +172,26 @@ export const StyledGrid = styled.div`
       }
    }
 `
-export const ProcessingButton = styled.button`
+export const ProcessingButton = styled.div`
    margin-top: 10px;
-   border: 0;
-   outline: 0;
    width: 90%;
    display: flex;
-   flex-direction: column;
    padding: 10px;
-
-   align-items: flex-start;
    background-color: ${props => (props.active ? '#555b6e' : '#e5e5e5')};
    color: ${props => (props.active ? '#fff' : '#555b6e')};
 
    &:hover {
       cursor: pointer;
    }
+`
+
+export const TransparentIconButton = styled.button`
+   height: 20px;
+   width: 20px;
+   background: transparent;
+   border: 0;
+   outline: none;
+   cursor: pointer;
 `
 
 export const TabContainer = styled.div`

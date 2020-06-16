@@ -1,6 +1,8 @@
-import React, { useState, useContext } from 'react'
-import { Input, Text } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { Input, Text, Loader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 import {
    Spacer,
@@ -8,59 +10,60 @@ import {
    TunnelHeader,
 } from '../../../../../components'
 import { FlexContainer } from '../../../styled'
-import { SachetPackagingContext } from '../../../../../context'
+import { UPDATE_PACKAGING } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
-export default function ItemInformationTunnel({ close, next }) {
+export default function ItemInformationTunnel({ close, state, next }) {
    const { t } = useTranslation()
-   const { sachetPackagingState, sachetPackagingDispatch } = useContext(
-      SachetPackagingContext
-   )
 
-   const [itemName, setItemName] = useState(
-      sachetPackagingState.info.itemName || ''
-   )
-   const [itemSku, setItemSku] = useState(
-      sachetPackagingState.info.itemSku || ''
-   )
-   const [itemWidth, setItemWidth] = useState(
-      sachetPackagingState.info.itemWidth || ''
-   )
-   const [itemHeight, setItemHeight] = useState(
-      sachetPackagingState.info.itemHeight || ''
-   )
-   const [itemDepth, setItemDepth] = useState(
-      sachetPackagingState.info.itemDepth || ''
-   )
-   const [itemPar, setItemPar] = useState(
-      sachetPackagingState.info.itemPar || ''
-   )
-   const [itemMaxValue, setItemMaxValue] = useState(
-      sachetPackagingState.info.itemMaxValue || ''
-   )
+   const [itemName, setItemName] = useState(state.name || '')
+   const [itemSku, setItemSku] = useState(state.sku || '')
+   const [itemWidth, setItemWidth] = useState(state.dimensions?.width || '')
+   const [itemHeight, setItemHeight] = useState(state.dimensions?.height || '')
+   const [itemDepth, setItemDepth] = useState(state.dimensions?.depth || '')
+   const [itemPar, setItemPar] = useState(state.parLevel || '')
+   const [itemMaxValue, setItemMaxValue] = useState(state.maxLevel || '')
+
+   const [updatePackaging, { loading }] = useMutation(UPDATE_PACKAGING, {
+      onError: error => {
+         console.log(error)
+         toast.error('Error! Please try again')
+      },
+      onCompleted: () => {
+         toast.success('Information Added')
+         close(2)
+         next(3)
+      },
+   })
+
+   const handleNext = () => {
+      updatePackaging({
+         variables: {
+            id: state.id,
+            object: {
+               name: itemName,
+               sku: itemSku,
+               dimensions: {
+                  width: itemWidth,
+                  height: itemHeight,
+                  depth: itemDepth,
+               },
+               parLevel: itemPar,
+               maxLevel: itemMaxValue,
+            },
+         },
+      })
+   }
+
+   if (loading) return <Loader />
 
    return (
       <>
          <TunnelContainer>
             <TunnelHeader
                title="Item Information"
-               next={() => {
-                  sachetPackagingDispatch({
-                     type: 'ADD_ITEM_INFO',
-                     payload: {
-                        itemName,
-                        itemSku,
-                        itemWidth,
-                        itemHeight,
-                        itemDepth,
-                        itemPar,
-                        itemMaxValue,
-                     },
-                  })
-                  close(2)
-                  next(3)
-               }}
+               next={handleNext}
                close={() => close(2)}
                nextAction="Next"
             />
@@ -88,42 +91,30 @@ export default function ItemInformationTunnel({ close, next }) {
             <br />
 
             <Text as="title">Dimensions (in cms)</Text>
-
+            <br />
             <FlexContainer style={{ width: '90%' }}>
                <Input
-                  type="text"
-                  placeholder="width"
+                  type="number"
+                  label="width"
                   name="width"
                   value={itemWidth}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemWidth(value)
-                     if (!e.target.value.length) setItemWidth('')
-                  }}
+                  onChange={e => setItemWidth(e.target.value)}
                />
                <span style={{ width: '30px' }} />
                <Input
-                  type="text"
-                  placeholder="height"
+                  type="number"
+                  label="height"
                   name="height"
                   value={itemHeight}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemHeight(value)
-                     if (!e.target.value.length) setItemHeight('')
-                  }}
+                  onChange={e => setItemHeight(e.target.value)}
                />
                <span style={{ width: '30px' }} />
                <Input
-                  type="text"
-                  placeholder="depth"
+                  type="number"
+                  label="depth"
                   name="depth"
                   value={itemDepth}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemDepth(value)
-                     if (!e.target.value.length) setItemDepth('')
-                  }}
+                  onChange={e => setItemDepth(e.target.value)}
                />
             </FlexContainer>
 
@@ -134,28 +125,20 @@ export default function ItemInformationTunnel({ close, next }) {
                style={{ justifyContent: 'space-between', width: '90%' }}
             >
                <Input
-                  type="text"
-                  placeholder="Set Par Level"
+                  type="number"
+                  label="Set Par Level"
                   name="itemName"
                   value={itemPar}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemPar(value)
-                     if (!e.target.value.length) setItemPar('')
-                  }}
+                  onChange={e => setItemPar(e.target.value)}
                />
 
                <span style={{ width: '40px' }} />
                <Input
-                  type="text"
-                  placeholder="Maximum Inventory Value"
+                  type="number"
+                  label="Maximum Inventory Value"
                   name="itemSKU"
                   value={itemMaxValue}
-                  onChange={e => {
-                     const value = parseInt(e.target.value)
-                     if (value) setItemMaxValue(value)
-                     if (!e.target.value.length) setItemMaxValue('')
-                  }}
+                  onChange={e => setItemMaxValue(e.target.value)}
                />
             </FlexContainer>
          </TunnelContainer>

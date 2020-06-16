@@ -1,4 +1,4 @@
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import {
    ButtonTile,
@@ -28,6 +28,7 @@ import {
    SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
+   DELETE_BULK_ITEM,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -40,8 +41,10 @@ import {
    StyledMain,
    StyledSupplier,
    TabContainer,
+   TransparentIconButton,
 } from './styled'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
+import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 // Tunnels
 import {
    AllergensTunnel,
@@ -108,18 +111,36 @@ export default function ItemForm() {
       MASTER_ALLERGENS_SUBSCRIPTION
    )
 
+   const [deleteBulkItem, { loading: bulkItemDeleteLoading }] = useMutation(
+      DELETE_BULK_ITEM,
+      {
+         onCompleted: () => {
+            toast.info('Bulk Item deleted successfully.')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! cannot delete the bulk item. Please try again.')
+         },
+      }
+   )
+
+   const handleBulkItemDelete = id => {
+      deleteBulkItem({ variables: { id } })
+   }
+
    if (
       supplierLoading ||
       processingsLoading ||
       allergensLoading ||
       itemDetailLoading ||
-      unitsLoading
+      unitsLoading ||
+      bulkItemDeleteLoading
    )
       return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
                   close={closeTunnel}
                   suppliers={supplierData?.suppliers?.map(supplier => ({
@@ -137,7 +158,7 @@ export default function ItemForm() {
                   formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={3}>
+            <Tunnel layer={3} style={{ overflowY: 'auto' }}>
                <ProcessingTunnel
                   close={closeTunnel}
                   open={openTunnel}
@@ -160,7 +181,7 @@ export default function ItemForm() {
                   formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={5}>
+            <Tunnel layer={5} style={{ overflowY: 'auto' }}>
                <AllergensTunnel
                   close={() => closeTunnel(5)}
                   allergens={allergensData?.masterAllergens?.map(allergen => ({
@@ -169,7 +190,7 @@ export default function ItemForm() {
                   }))}
                />
             </Tunnel>
-            <Tunnel layer={6}>
+            <Tunnel layer={6} style={{ overflowY: 'auto' }}>
                <SelectDerivedProcessingTunnel
                   next={openTunnel}
                   close={closeTunnel}
@@ -353,6 +374,10 @@ export default function ItemForm() {
                                        'Select a supplier first!'
                                     )
 
+                                 dispatch({
+                                    type: 'CLEAR_STATE',
+                                 })
+
                                  if (formState.bulkItems.length) {
                                     openTunnel(6)
                                  } else {
@@ -365,8 +390,7 @@ export default function ItemForm() {
                            </IconButton>
                         </FlexContainer>
 
-                        {(state.processing?.name ||
-                           formState.bulkItemAsShipped?.name) && (
+                        {formState.bulkItemAsShipped?.name && (
                            <>
                               <br />
                               <Text as="subtitle">
@@ -379,33 +403,43 @@ export default function ItemForm() {
                               <ProcessingButton
                                  active={active}
                                  onClick={() => {
-                                    const payload = formState.bulkItemAsShipped
-                                       ? formState.bulkItemAsShipped
-                                       : state.processing
                                     setActive(true)
                                     dispatch({
                                        type: 'SET_ACTIVE_PROCESSING',
-                                       payload,
+                                       payload: formState.bulkItemAsShipped,
                                     })
                                  }}
+                                 style={{ justifyContent: 'space-between' }}
                               >
-                                 <h3>{formState.bulkItemAsShipped?.name}</h3>
-                                 <Text as="subtitle">
-                                    {t(address.concat('on hand'))}:{' '}
-                                    {formState.bulkItemAsShipped?.onHand}
-                                 </Text>
-                                 <Text as="subtitle">
-                                    {t(address.concat('shelf life'))}:{' '}
-                                    {`${
-                                       state.processing?.shelf_life?.value ||
-                                       formState.bulkItemAsShipped?.shelfLife
-                                          ?.value
-                                    } ${
-                                       state.processing?.shelf_life?.unit ||
-                                       formState.bulkItemAsShipped?.shelfLife
-                                          ?.unit
-                                    }`}
-                                 </Text>
+                                 <div style={{ textAlign: 'left' }}>
+                                    <h3 style={{ marginBottom: '5px' }}>
+                                       {formState.bulkItemAsShipped?.name}
+                                    </h3>
+                                    <Text as="subtitle">
+                                       {t(address.concat('on hand'))}:{' '}
+                                       {formState.bulkItemAsShipped?.onHand}
+                                    </Text>
+                                    <Text as="subtitle">
+                                       {t(address.concat('shelf life'))}:{' '}
+                                       {`${
+                                          state.processing?.shelf_life?.value ||
+                                          formState.bulkItemAsShipped?.shelfLife
+                                             ?.value
+                                       } ${
+                                          state.processing?.shelf_life?.unit ||
+                                          formState.bulkItemAsShipped?.shelfLife
+                                             ?.unit
+                                       }`}
+                                    </Text>
+                                 </div>
+                                 <FlexContainer>
+                                    <TransparentIconButton
+                                       onClick={() => openTunnel(4)}
+                                       type="button"
+                                    >
+                                       <EditIcon />
+                                    </TransparentIconButton>
+                                 </FlexContainer>
                               </ProcessingButton>
                            </>
                         )}
@@ -440,17 +474,56 @@ export default function ItemForm() {
                                              },
                                           })
                                        }}
+                                       style={{
+                                          justifyContent: 'space-between',
+                                       }}
                                     >
-                                       <h3>{procs.processingName}</h3>
-                                       <Text as="subtitle">
-                                          {t(address.concat('on hand'))}:{' '}
-                                          {procs.onHand}
-                                          {t('units.gm')}
-                                       </Text>
-                                       <Text as="subtitle">
-                                          {t(address.concat('shelf life'))}:{' '}
-                                          {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
-                                       </Text>
+                                       <div style={{ textAlign: 'left' }}>
+                                          <h3 style={{ marginBottom: '5px' }}>
+                                             {procs.processingName}
+                                          </h3>
+                                          <Text as="subtitle">
+                                             {t(address.concat('on hand'))}:{' '}
+                                             {procs.onHand}
+                                             {t('units.gm')}
+                                          </Text>
+                                          <Text as="subtitle">
+                                             {t(address.concat('shelf life'))}:{' '}
+                                             {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
+                                          </Text>
+                                       </div>
+                                       {state.activeProcessing.id ===
+                                          procs.id && (
+                                          <>
+                                             <FlexContainer>
+                                                <TransparentIconButton
+                                                   onClick={() => {
+                                                      dispatch({
+                                                         type: 'SET_DER_ACTION',
+                                                         payload: 'UPDATE',
+                                                      })
+                                                      openTunnel(7)
+                                                   }}
+                                                   type="button"
+                                                >
+                                                   <EditIcon />
+                                                </TransparentIconButton>
+                                                <span
+                                                   style={{ width: '5px' }}
+                                                />
+                                                <TransparentIconButton
+                                                   onClick={() =>
+                                                      handleBulkItemDelete(
+                                                         procs.id
+                                                      )
+                                                   }
+                                                   type="button"
+                                                >
+                                                   <DeleteIcon />
+                                                </TransparentIconButton>
+                                             </FlexContainer>
+                                          </>
+                                       )}
                                     </ProcessingButton>
                                  )
                               })}
@@ -600,14 +673,16 @@ function PlannedLotView({ open, formState }) {
                            })
                         }
                      >
-                        <h3>
-                           {sachet.unitSize} {sachet.unit}
-                        </h3>
+                        <div style={{ textAlign: 'left' }}>
+                           <h3>
+                              {sachet.unitSize} {sachet.unit}
+                           </h3>
 
-                        <Text as="subtitle">
-                           {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                           {sachet.unit}
-                        </Text>
+                           <Text as="subtitle">
+                              {t(address.concat('par'))}: {sachet.parLevel}{' '}
+                              {sachet.unit}
+                           </Text>
+                        </div>
                      </ProcessingButton>
                   )
                })}
