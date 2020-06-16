@@ -1,22 +1,13 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Loader, Tag, Text, TextButton } from '@dailykit/ui'
 import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import {
-   IconButton,
-   Loader,
-   Table,
-   TableBody,
-   TableCell,
-   TableHead,
-   TableRow,
-   Tag,
-   Text,
-} from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { toast } from 'react-toastify'
+
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { Context } from '../../../../../context/tabs'
-import { S_COMBO_PRODUCTS, DELETE_COMBO_PRODUCTS } from '../../../../../graphql'
-import { GridContainer } from '../../../styled'
-import { toast } from 'react-toastify'
+import { DELETE_COMBO_PRODUCTS, S_COMBO_PRODUCTS } from '../../../../../graphql'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -24,7 +15,13 @@ const ComboProducts = () => {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const { data, loading, error } = useSubscription(S_COMBO_PRODUCTS)
+   const tableRef = React.useRef()
+
+   const {
+      data: { comboProducts = [] } = {},
+      loading,
+      error,
+   } = useSubscription(S_COMBO_PRODUCTS)
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
@@ -34,8 +31,8 @@ const ComboProducts = () => {
       onCompleted: () => {
          toast.success('Product deleted!')
       },
-      onError: error => {
-         console.log(error)
+      onError: err => {
+         console.log(err)
          toast.error('Could not delete!')
       },
    })
@@ -56,6 +53,47 @@ const ComboProducts = () => {
       }
    }
 
+   const options = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+   }
+
+   const columns = [
+      {
+         title: t(address.concat('product name')),
+         field: 'name',
+         headerFilter: true,
+      },
+      {
+         title: t(address.concat('labels')),
+         field: 'comboProductComponents',
+         headerFilter: false,
+         formatter: reactFormatter(<ShowLabels />),
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteIngredient />),
+      },
+   ]
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, 'comboProduct', id)
+   }
+
    if (loading) return <Loader />
    if (error) {
       console.log(error)
@@ -63,40 +101,39 @@ const ComboProducts = () => {
    }
 
    return (
-      <Table>
-         <TableHead>
-            <TableRow>
-               <TableCell>{t(address.concat('product name'))}</TableCell>
-               <TableCell>{t(address.concat('labels'))}</TableCell>
-               <TableCell></TableCell>
-            </TableRow>
-         </TableHead>
-         <TableBody>
-            {data.comboProducts.map(product => (
-               <TableRow
-                  key={product.id}
-                  onClick={() =>
-                     addTab(product.name, 'comboProduct', product.id)
-                  }
-               >
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>
-                     {product.comboProductComponents.map(comp => (
-                        <Tag key={comp.id}>{comp.label}</Tag>
-                     ))}
-                  </TableCell>
-                  <TableCell align="right">
-                     <GridContainer>
-                        <IconButton onClick={e => deleteHandler(e, product)}>
-                           <DeleteIcon color="#FF5A52" />
-                        </IconButton>
-                     </GridContainer>
-                  </TableCell>
-               </TableRow>
-            ))}
-         </TableBody>
-      </Table>
+      <div style={{ width: '80%', margin: '0 auto' }}>
+         <TextButton
+            type="outline"
+            onClick={() => tableRef.current.table.clearHeaderFilter()}
+            style={{ marginBottom: '20px' }}
+         >
+            Clear Filters
+         </TextButton>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={comboProducts}
+            rowClick={rowClick}
+            options={options}
+            data-custom-attr="test-custom-attribute"
+            className="custom-css-class"
+         />
+      </div>
    )
+}
+
+function DeleteIngredient() {
+   return <DeleteIcon color="#FF5A52" />
+}
+
+function ShowLabels({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.length)
+      return value.map(comp => <Tag key={comp.id}>{comp.label}</Tag>)
+   return null
 }
 
 export default ComboProducts
