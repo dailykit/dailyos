@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
+import { IconButton, Loader, TextButton, Text } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
@@ -10,6 +10,7 @@ import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import { CREATE_ITEM, SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
 import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.inventory.views.listings.item.'
 
@@ -52,42 +53,7 @@ export default function ItemListing() {
       })
    }
 
-   if (itemsLoading) return <Loader />
-
-   if (subError) return <p>{subError.message}</p>
-
-   if (data)
-      return (
-         <StyledWrapper>
-            <StyledTableHeader style={{ marginTop: '30px' }}>
-               <div />
-               <StyledTableActions>
-                  <IconButton type="solid" onClick={createItemHandler}>
-                     <AddIcon color="#fff" size={24} />
-                  </IconButton>
-               </StyledTableActions>
-            </StyledTableHeader>
-            <DataTable addTab={addTab} data={data.supplierItems} />
-         </StyledWrapper>
-      )
-}
-
-function DataTable({ addTab, data }) {
    const tableRef = React.useRef()
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-      dataTree: true,
-      dataTreeChildField: 'bulkItems',
-      dataTreeStartExpanded: true,
-   }
 
    const columns = [
       {
@@ -146,26 +112,42 @@ function DataTable({ addTab, data }) {
       addTab(tabName, 'items', id)
    }
 
-   return (
-      <div>
-         <TextButton
-            style={{ marginBottom: '20px' }}
-            type="outline"
-            onClick={() => tableRef.current.table.clearHeaderFilter()}
-         >
-            Clear Filters
-         </TextButton>
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={data}
-            rowClick={rowClick}
-            options={options}
-            data-custom-attr="test-custom-attribute"
-            className="custom-css-class"
-         />
-      </div>
-   )
+   if (itemsLoading) return <Loader />
+
+   if (subError) return <p>{subError.message}</p>
+
+   if (data)
+      return (
+         <StyledWrapper>
+            <StyledTableHeader style={{ marginTop: '30px' }}>
+               <Text as="title">Supplier Items</Text>
+               <StyledTableActions>
+                  <TextButton
+                     type="outline"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  >
+                     Clear Filters
+                  </TextButton>
+                  <IconButton type="solid" onClick={createItemHandler}>
+                     <AddIcon color="#fff" size={24} />
+                  </IconButton>
+               </StyledTableActions>
+            </StyledTableHeader>
+            <br />
+            <br />
+            <div style={{ width: '90%', margin: '0 auto' }}>
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={data.supplierItems}
+                  rowClick={rowClick}
+                  options={tableOptions}
+                  data-custom-attr="test-custom-attribute"
+                  className="custom-css-class"
+               />
+            </div>
+         </StyledWrapper>
+      )
 }
 
 function SupplierContact({

@@ -18,6 +18,7 @@ import { AddIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
 import { PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
+import tableOptions from '../tableOption'
 
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -67,17 +68,6 @@ function DataTable({ data }) {
       })
    }
    const tableRef = React.useRef()
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
@@ -143,7 +133,7 @@ function DataTable({ data }) {
             columns={columns}
             data={data}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

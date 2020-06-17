@@ -21,6 +21,7 @@ import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
+import tableOptions from '../tableOption'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
@@ -115,17 +116,6 @@ function DataTable({ data }) {
 
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    const columns = [
       { title: 'Status', field: 'status', headerFilter: true },
       {
@@ -172,7 +162,7 @@ function DataTable({ data }) {
             columns={columns}
             data={data}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

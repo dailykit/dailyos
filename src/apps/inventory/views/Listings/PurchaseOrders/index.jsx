@@ -9,6 +9,7 @@ import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import { StyledHeader, StyledWrapper } from '../styled'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
+import tableOptions from '../tableOption'
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
 
@@ -62,17 +63,6 @@ export default function PurchaseOrders() {
 function DataTable({ data, addTab, dispatch }) {
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    const rowClick = (e, row) => {
       const { id, status } = row._row.data
       dispatch({
@@ -109,7 +99,7 @@ function DataTable({ data, addTab, dispatch }) {
             columns={columns}
             data={data}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

@@ -15,6 +15,7 @@ import {
    ALL_SUPPLIERS_SUBSCRIPTION,
 } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -77,17 +78,6 @@ export default function SupplierListing() {
 
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    const columns = [
       { title: 'Name', field: 'name', headerFilter: true },
       {
@@ -149,7 +139,7 @@ export default function SupplierListing() {
                   columns={columns}
                   data={suppliers}
                   rowClick={rowClick}
-                  options={options}
+                  options={tableOptions}
                />
             </div>
          </StyledWrapper>
