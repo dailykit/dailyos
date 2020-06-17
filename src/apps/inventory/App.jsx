@@ -2,6 +2,7 @@ import React from 'react'
 
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
+import './views/Listings/tableStyle.css'
 
 import { Context, state as initialState, reducers } from './context/tabs'
 

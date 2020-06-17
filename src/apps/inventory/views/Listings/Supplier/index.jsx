@@ -16,6 +16,7 @@ import {
 } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
+import { FlexContainer } from '../../Forms/styled'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -83,7 +84,7 @@ export default function SupplierListing() {
       {
          title: 'Person of Contact',
          field: 'contactPerson',
-         headerFilter: true,
+         headerFilter: false,
          formatter: reactFormatter(<ContactPerson />),
       },
       {
@@ -92,12 +93,14 @@ export default function SupplierListing() {
          formatter: 'tickCross',
          headerFilter: true,
          hozAlign: 'center',
+         cssClass: 'center-text',
       },
       {
          title: 'Actions',
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
+         cssClass: 'center-text',
          cellClick: (e, cell) => {
             e.stopPropagation()
             const { id } = cell._cell.row.data
@@ -121,19 +124,22 @@ export default function SupplierListing() {
          <StyledWrapper>
             <StyledHeader>
                <h1>{t(address.concat('suppliers'))}</h1>
-               <IconButton type="solid" onClick={createSupplierHandler}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
+               <FlexContainer>
+                  <TextButton
+                     type="outline"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  >
+                     Clear Filters
+                  </TextButton>
+                  <span style={{ width: '10px' }} />
+                  <IconButton type="solid" onClick={createSupplierHandler}>
+                     <AddIcon color="#fff" size={24} />
+                  </IconButton>
+               </FlexContainer>
             </StyledHeader>
+            <br />
 
-            <div style={{ margin: '0 auto', width: '80%' }}>
-               <TextButton
-                  style={{ marginBottom: '20px' }}
-                  type="outline"
-                  onClick={() => tableRef.current.table.clearHeaderFilter()}
-               >
-                  Clear Filters
-               </TextButton>
+            <div style={{ margin: '0 auto', width: '90%' }}>
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
