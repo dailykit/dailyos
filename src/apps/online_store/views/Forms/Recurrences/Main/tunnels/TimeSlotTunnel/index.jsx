@@ -49,12 +49,10 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                   recurrenceId: recurrenceState.recurrenceId,
                   from,
                   to,
-                  pickUpLeadTime: current.fulfillment.includes('PREORDER')
-                     ? advance
-                     : null,
-                  pickUpPrepTime: current.fulfillment.includes('ONDEMAND')
-                     ? advance
-                     : null,
+                  pickUpLeadTime:
+                     current.fulfillment === 'PREORDER_PICKUP' ? advance : null,
+                  pickUpPrepTime:
+                     current.fulfillment === 'ONDEMAND_PICKUP' ? advance : null,
                },
             ],
          },

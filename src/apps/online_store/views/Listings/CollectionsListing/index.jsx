@@ -58,7 +58,8 @@ const CollectionsListing = () => {
       variables: {
          name: `collection-${randomSuffix()}`,
          availability: {
-            rule: 'RRULE:FREQ=DAILY;COUNT=30;INTERVAL=1;WKST=MO',
+            rule:
+               'RRULE:FREQ=WEEKLY;INTERVAL=1;WKST=MO;BYDAY=TH,WE,TU,SU,SA,MO,FR',
             time: {
                end: '23:59',
                start: '00:00',
