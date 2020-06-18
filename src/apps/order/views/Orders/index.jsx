@@ -18,9 +18,9 @@ const Orders = () => {
       ORDERS
    )
    React.useEffect(() => {
-      const tab = tabs.find(item => item.path === `/order/orders`) || {}
+      const tab = tabs.find(item => item.path === `/apps/order/orders`) || {}
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/order')
+         history.push('/apps/order')
       }
    }, [history, tabs])
 

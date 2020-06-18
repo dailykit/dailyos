@@ -31,10 +31,10 @@ const Home = () => {
          <Text as="h1">{t(address.concat('order app'))}</Text>
          <StyledCardList>
             <DashboardTile
-               title={t(address.concat("orders"))}
+               title={t(address.concat('orders'))}
                conf="All available"
                count={data?.ordersAggregate?.aggregate?.count}
-               onClick={() => addTab('Orders', '/order/orders')}
+               onClick={() => addTab('Orders', '/apps/order/orders')}
             />
          </StyledCardList>
       </StyledHome>

@@ -82,7 +82,7 @@ const OrderListItem = ({ order }) => {
    }
 
    const createTab = () => {
-      addTab(`ORD${order.id}`, `/order/orders/${order.id}`)
+      addTab(`ORD${order.id}`, `/apps/order/orders/${order.id}`)
    }
 
    const print = () => {
