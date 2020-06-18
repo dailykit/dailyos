@@ -18,7 +18,8 @@ import {
    DELETE_COLLECTIONS,
 } from '../../../graphql'
 // Styled
-import { StyledHeader, StyledWrapper } from '../styled'
+import { StyledHeader, StyledWrapper, Flexible } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
 
@@ -31,17 +32,6 @@ const CollectionsListing = () => {
    }
 
    const tableRef = React.useRef()
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
 
    // Queries
    const { data: { menuCollections = [] } = {}, loading } = useSubscription(
@@ -147,24 +137,26 @@ const CollectionsListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <h1>{t(address.concat('collections'))}</h1>
-            <IconButton type="solid" onClick={createCollection}>
-               <AddIcon color="#fff" size={24} />
-            </IconButton>
+            <Flexible style={{ alingItems: 'center' }}>
+               <TextButton
+                  type="outline"
+                  onClick={() => tableRef.current.table.clearHeaderFilter()}
+               >
+                  Clear Filters
+               </TextButton>
+               <span style={{ width: '10px' }} />
+               <IconButton type="solid" onClick={createCollection}>
+                  <AddIcon color="#fff" size={24} />
+               </IconButton>
+            </Flexible>
          </StyledHeader>
          <div style={{ width: '80%', margin: '0 auto' }}>
-            <TextButton
-               type="outline"
-               onClick={() => tableRef.current.table.clearHeaderFilter()}
-               style={{ marginBottom: '20px' }}
-            >
-               Clear Filters
-            </TextButton>
             <ReactTabulator
                ref={tableRef}
                columns={columns}
                data={menuCollections}
                rowClick={rowClick}
-               options={options}
+               options={tableOptions}
             />
          </div>
       </StyledWrapper>

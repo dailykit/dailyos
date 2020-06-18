@@ -46,3 +46,6 @@ export const GridContainer = styled.div`
    grid-template-columns: repeat(2, 1fr);
    grid-gap: 8px;
 `
+export const Flexible = styled.div`
+   display: flex;
+`
