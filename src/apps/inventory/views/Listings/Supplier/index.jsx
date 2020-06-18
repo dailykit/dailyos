@@ -53,7 +53,7 @@ export default function SupplierListing() {
       },
    })
 
-   const [deleteSupplier, { loading }] = useMutation(DELETE_SUPPLIER, {
+   const [deleteSupplier] = useMutation(DELETE_SUPPLIER, {
       onCompleted: () => {
          toast.info('Supplier deleted!')
       },
@@ -117,7 +117,7 @@ export default function SupplierListing() {
       addTab(name, 'suppliers', id)
    }
 
-   if (loading || listLoading) return <Loader />
+   if (listLoading) return <Loader />
 
    return (
       <>

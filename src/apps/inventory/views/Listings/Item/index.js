@@ -10,7 +10,6 @@ import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import { CREATE_ITEM, SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
 import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
-import tableOptions from '../tableOption'
 
 const address = 'apps.inventory.views.listings.item.'
 
@@ -51,6 +50,21 @@ export default function ItemListing() {
             },
          },
       })
+   }
+
+   const tableOptions = {
+      cellVertAlign: 'middle',
+      layout: 'fitColumns',
+      autoResize: true,
+      maxHeight: 420,
+      resizableColumns: true,
+      virtualDomBuffer: 80,
+      placeholder: 'No Data Available',
+      persistence: true,
+      persistenceMode: 'cookie',
+      dataTree: true,
+      dataTreeChildField: 'bulkItems',
+      dataTreeStartExpanded: true,
    }
 
    const tableRef = React.useRef()

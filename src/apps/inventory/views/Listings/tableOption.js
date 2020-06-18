@@ -8,9 +8,6 @@ const options = {
    placeholder: 'No Data Available',
    persistence: true,
    persistenceMode: 'cookie',
-   dataTree: true,
-   dataTreeChildField: 'bulkItems',
-   dataTreeStartExpanded: true,
 }
 
 export default options
