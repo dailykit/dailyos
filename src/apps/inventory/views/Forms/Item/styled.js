@@ -122,6 +122,7 @@ export const StyledSupplier = styled.div`
 export const StyledGrid = styled.div`
    width: 100%;
    display: grid;
+   padding: 0 20px;
    grid-template-columns: repeat(4, 1fr);
    height: 96px;
    border-bottom: 1px solid #dddddd;
@@ -173,7 +174,7 @@ export const StyledGrid = styled.div`
    }
 `
 export const ProcessingButton = styled.div`
-   margin-top: 10px;
+   margin-top: 14px;
    width: 90%;
    display: flex;
    padding: 10px;

@@ -291,35 +291,25 @@ export default function ItemForm() {
             </StyledHeader>
          </StyledWrapper>
          <StyledMain>
-            {!formState.id && !state.title ? (
-               <StyledWrapper>
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text={t(address.concat('add item information'))}
-                     onClick={() => openTunnel(1)}
-                  />
-               </StyledWrapper>
-            ) : (
-               <>
-                  <StyledGrid onClick={() => openTunnel(2)}>
+            <>
+               <StyledGrid onClick={() => openTunnel(2)}>
+                  <div>
                      <div>
+                        <ItemIcon />
+                     </div>
+                     <div>
+                        <span>{t(address.concat('unit qty'))}</span>
                         <div>
-                           <ItemIcon />
-                        </div>
-                        <div>
-                           <span>{t(address.concat('unit qty'))}</span>
-                           <div>
-                              <span>{formState.unitSize + formState.unit}</span>
-                              <span>
-                                 {(formState.prices?.length &&
-                                    `$ ${formState.prices[0]?.unitPrice?.value}`) ||
-                                    null}
-                              </span>
-                           </div>
+                           <span>{formState.unitSize + formState.unit}</span>
+                           <span>
+                              {(formState.prices?.length &&
+                                 `$ ${formState.prices[0]?.unitPrice?.value}`) ||
+                                 null}
+                           </span>
                         </div>
                      </div>
-                     {/* <div>
+                  </div>
+                  {/* <div>
                         <div>
                            <CaseIcon />
                         </div>
@@ -339,7 +329,7 @@ export default function ItemForm() {
                            </div>
                         </div>
                      </div> */}
-                     {/* <div>
+                  {/* <div>
                         <div>
                            <TruckIcon />
                         </div>
@@ -358,238 +348,226 @@ export default function ItemForm() {
                            </div>
                         </div>
                      </div> */}
+                  <div>
                      <div>
-                        <div>
-                           <ClockIcon />
-                        </div>
-                        <div>
-                           <span>{t(address.concat('lead time'))}</span>
-                           <div>
-                              {formState.leadTime?.value ? (
-                                 <span>
-                                    {formState.leadTime?.value +
-                                       formState.leadTime?.unit}
-                                 </span>
-                              ) : (
-                                 'N/A'
-                              )}
-                           </div>
-                        </div>
+                        <ClockIcon />
                      </div>
-                  </StyledGrid>
-
-                  <FlexContainer
-                     style={{
-                        marginTop: '30px',
-                        padding: '0 30px',
-                        backgroundColor: '#f3f3f3',
-                     }}
-                  >
-                     <Flexible width="1">
-                        <FlexContainer
-                           style={{
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                           }}
-                        >
-                           <Text as="title">
-                              {t(address.concat('processings'))}
-                           </Text>
-                           <IconButton
-                              onClick={() => {
-                                 if (!formState.supplier)
-                                    return toast.error(
-                                       'Select a supplier first!'
-                                    )
-
-                                 dispatch({
-                                    type: 'CLEAR_STATE',
-                                 })
-
-                                 if (formState.bulkItems.length) {
-                                    openTunnel(6)
-                                 } else {
-                                    openTunnel(3)
-                                 }
-                              }}
-                              type="outline"
-                           >
-                              <AddIcon />
-                           </IconButton>
-                        </FlexContainer>
-
-                        {formState.bulkItemAsShipped?.name && (
-                           <>
-                              <br />
-                              <Text as="subtitle">
-                                 {t(
-                                    address.concat('as recieved from supplier')
-                                 )}
-                                 .
-                              </Text>
-
-                              <ProcessingButton
-                                 active={active}
-                                 onClick={() => {
-                                    setActive(true)
-                                    dispatch({
-                                       type: 'SET_ACTIVE_PROCESSING',
-                                       payload: formState.bulkItemAsShipped,
-                                    })
-                                 }}
-                                 style={{ justifyContent: 'space-between' }}
-                              >
-                                 <div style={{ textAlign: 'left' }}>
-                                    <h3 style={{ marginBottom: '5px' }}>
-                                       {formState.bulkItemAsShipped?.name}
-                                    </h3>
-                                    <Text as="subtitle">
-                                       {t(address.concat('on hand'))}:{' '}
-                                       {formState.bulkItemAsShipped?.onHand ||
-                                          'N/A'}
-                                       {formState.bulkItemAsShipped?.unit || ''}
-                                    </Text>
-                                    <Text as="subtitle">
-                                       {t(address.concat('shelf life'))}:{' '}
-                                       {`${
-                                          formState.bulkItemAsShipped?.shelfLife
-                                             ?.value || 'N/A'
-                                       } ${
-                                          state.processing?.shelf_life?.unit ||
-                                          formState.bulkItemAsShipped?.shelfLife
-                                             ?.unit ||
-                                          ''
-                                       }`}
-                                    </Text>
-                                 </div>
-                                 <FlexContainer>
-                                    <TransparentIconButton
-                                       onClick={() => openTunnel(4)}
-                                       type="button"
-                                    >
-                                       <EditIcon />
-                                    </TransparentIconButton>
-                                 </FlexContainer>
-                              </ProcessingButton>
-                           </>
-                        )}
-
-                        {formState.bulkItems?.length && (
-                           <>
-                              <br />
-                              <Text as="subtitle">
-                                 {t(
-                                    address.concat(
-                                       'derived from recieved processing'
-                                    )
-                                 )}
-                              </Text>
-
-                              {formState.bulkItems?.map(procs => {
-                                 if (procs.id === formState.bulkItemAsShippedId)
-                                    return null
-                                 return (
-                                    <ProcessingButton
-                                       key={procs.id}
-                                       active={
-                                          state.activeProcessing.id === procs.id
-                                       }
-                                       onClick={() => {
-                                          setActive(false)
-                                          dispatch({
-                                             type: 'SET_ACTIVE_PROCESSING',
-                                             payload: {
-                                                ...procs,
-                                                name: procs.processingName,
-                                             },
-                                          })
-                                       }}
-                                       style={{
-                                          justifyContent: 'space-between',
-                                       }}
-                                    >
-                                       <div style={{ textAlign: 'left' }}>
-                                          <h3 style={{ marginBottom: '5px' }}>
-                                             {procs.processingName}
-                                          </h3>
-                                          <Text as="subtitle">
-                                             {t(address.concat('on hand'))}:{' '}
-                                             {procs.onHand || 'N/A'}
-                                             {procs.unit || ''}
-                                          </Text>
-                                          <Text as="subtitle">
-                                             {t(address.concat('shelf life'))}:{' '}
-                                             {`${
-                                                procs?.shelfLife?.value || 'N/A'
-                                             } ${procs?.shelfLife?.unit || ''}`}
-                                          </Text>
-                                       </div>
-                                       {state.activeProcessing.id ===
-                                          procs.id && (
-                                          <>
-                                             <FlexContainer>
-                                                <TransparentIconButton
-                                                   onClick={() => {
-                                                      dispatch({
-                                                         type: 'SET_DER_ACTION',
-                                                         payload: 'UPDATE',
-                                                      })
-                                                      openTunnel(7)
-                                                   }}
-                                                   type="button"
-                                                >
-                                                   <EditIcon />
-                                                </TransparentIconButton>
-                                                <span
-                                                   style={{ width: '5px' }}
-                                                />
-                                                <TransparentIconButton
-                                                   onClick={() =>
-                                                      handleBulkItemDelete(
-                                                         procs.id
-                                                      )
-                                                   }
-                                                   type="button"
-                                                >
-                                                   <DeleteIcon />
-                                                </TransparentIconButton>
-                                             </FlexContainer>
-                                          </>
-                                       )}
-                                    </ProcessingButton>
-                                 )
-                              })}
-                           </>
-                        )}
-                     </Flexible>
-                     <Flexible style={{ marginTop: '16vh' }} width="4">
-                        <div
-                           style={{
-                              padding: '15px',
-                              backgroundColor: '#fff',
-                              minHeight: '500px',
-                           }}
-                        >
-                           {formState.bulkItems.length &&
-                           state.activeProcessing?.name ? (
-                              <ProcessingView
-                                 open={openTunnel}
-                                 formState={formState}
-                              />
+                     <div>
+                        <span>{t(address.concat('lead time'))}</span>
+                        <div>
+                           {formState.leadTime?.value ? (
+                              <span>
+                                 {formState.leadTime?.value +
+                                    formState.leadTime?.unit}
+                              </span>
                            ) : (
-                              <Text as="title">
-                                 {t(
-                                    address.concat(
-                                       'select any processing from left menu to get started!'
-                                    )
-                                 )}
-                              </Text>
+                              'N/A'
                            )}
                         </div>
-                     </Flexible>
-                  </FlexContainer>
-               </>
-            )}
+                     </div>
+                  </div>
+               </StyledGrid>
+
+               <FlexContainer
+                  style={{
+                     marginTop: '30px',
+                     padding: '0 30px',
+                     backgroundColor: '#f3f3f3',
+                  }}
+               >
+                  <Flexible width="1">
+                     <FlexContainer
+                        style={{
+                           justifyContent: 'space-between',
+                           alignItems: 'center',
+                        }}
+                     >
+                        <Text as="title">
+                           {t(address.concat('processings'))}
+                        </Text>
+                        <IconButton
+                           onClick={() => {
+                              if (!formState.supplier)
+                                 return toast.error('Select a supplier first!')
+
+                              dispatch({
+                                 type: 'CLEAR_STATE',
+                              })
+
+                              if (formState.bulkItems.length) {
+                                 openTunnel(6)
+                              } else {
+                                 openTunnel(3)
+                              }
+                           }}
+                           type="outline"
+                        >
+                           <AddIcon />
+                        </IconButton>
+                     </FlexContainer>
+
+                     {formState.bulkItemAsShipped?.name && (
+                        <>
+                           <br />
+                           <Text as="subtitle">
+                              {t(address.concat('as recieved from supplier'))}.
+                           </Text>
+
+                           <ProcessingButton
+                              active={active}
+                              onClick={() => {
+                                 setActive(true)
+                                 dispatch({
+                                    type: 'SET_ACTIVE_PROCESSING',
+                                    payload: formState.bulkItemAsShipped,
+                                 })
+                              }}
+                              style={{ justifyContent: 'space-between' }}
+                           >
+                              <div style={{ textAlign: 'left' }}>
+                                 <h3 style={{ marginBottom: '5px' }}>
+                                    {formState.bulkItemAsShipped.name}
+                                 </h3>
+                                 <Text as="subtitle">
+                                    {t(address.concat('on hand'))}:{' '}
+                                    {formState.bulkItemAsShipped.onHand}{' '}
+                                    {formState.bulkItemAsShipped?.unit || ''}
+                                 </Text>
+                                 <Text as="subtitle">
+                                    {t(address.concat('shelf life'))}:{' '}
+                                    {formState.bulkItemAsShipped.shelfLife
+                                       ?.value || 'N/A'}{' '}
+                                    {formState.bulkItemAsShipped.shelfLife
+                                       ?.value
+                                       ? formState.bulkItemAsShipped.shelfLife
+                                            ?.unit
+                                       : ''}
+                                 </Text>
+                              </div>
+                              <FlexContainer>
+                                 <TransparentIconButton
+                                    onClick={() => openTunnel(4)}
+                                    type="button"
+                                 >
+                                    <EditIcon />
+                                 </TransparentIconButton>
+                              </FlexContainer>
+                           </ProcessingButton>
+                        </>
+                     )}
+
+                     {formState.bulkItems?.length && (
+                        <>
+                           <br />
+                           <Text as="subtitle">
+                              {t(
+                                 address.concat(
+                                    'derived from recieved processing'
+                                 )
+                              )}
+                           </Text>
+
+                           {formState.bulkItems?.map(procs => {
+                              if (procs.id === formState.bulkItemAsShippedId)
+                                 return null
+                              return (
+                                 <ProcessingButton
+                                    key={procs.id}
+                                    active={
+                                       state.activeProcessing.id === procs.id
+                                    }
+                                    onClick={() => {
+                                       setActive(false)
+                                       dispatch({
+                                          type: 'SET_ACTIVE_PROCESSING',
+                                          payload: {
+                                             ...procs,
+                                             name: procs.processingName,
+                                          },
+                                       })
+                                    }}
+                                    style={{
+                                       justifyContent: 'space-between',
+                                    }}
+                                 >
+                                    <div style={{ textAlign: 'left' }}>
+                                       <h3 style={{ marginBottom: '5px' }}>
+                                          {procs.processingName}
+                                       </h3>
+                                       <Text as="subtitle">
+                                          {t(address.concat('on hand'))}:{' '}
+                                          {procs.onHand} {procs.unit}
+                                       </Text>
+                                       <Text as="subtitle">
+                                          {t(address.concat('shelf life'))}:{' '}
+                                          {procs?.shelfLife?.value || 'N/A'}{' '}
+                                          {procs?.shelfLife?.value
+                                             ? procs?.shelfLife?.unit
+                                             : ''}
+                                       </Text>
+                                    </div>
+                                    {state.activeProcessing.id === procs.id && (
+                                       <>
+                                          <FlexContainer>
+                                             <TransparentIconButton
+                                                onClick={() => {
+                                                   dispatch({
+                                                      type: 'SET_DER_ACTION',
+                                                      payload: 'UPDATE',
+                                                   })
+                                                   openTunnel(7)
+                                                }}
+                                                type="button"
+                                             >
+                                                <EditIcon />
+                                             </TransparentIconButton>
+                                             <span style={{ width: '5px' }} />
+                                             <TransparentIconButton
+                                                onClick={() =>
+                                                   handleBulkItemDelete(
+                                                      procs.id
+                                                   )
+                                                }
+                                                type="button"
+                                             >
+                                                <DeleteIcon />
+                                             </TransparentIconButton>
+                                          </FlexContainer>
+                                       </>
+                                    )}
+                                 </ProcessingButton>
+                              )
+                           })}
+                        </>
+                     )}
+                  </Flexible>
+                  <Flexible style={{ marginTop: '16vh' }} width="4">
+                     <div
+                        style={{
+                           padding: '15px',
+                           backgroundColor: '#fff',
+                           minHeight: '500px',
+                        }}
+                     >
+                        {formState.bulkItems.length &&
+                        state.activeProcessing?.name ? (
+                           <ProcessingView
+                              open={openTunnel}
+                              formState={formState}
+                           />
+                        ) : (
+                           <Text as="title">
+                              {t(
+                                 address.concat(
+                                    'select any processing from left menu to get started!'
+                                 )
+                              )}
+                           </Text>
+                        )}
+                     </div>
+                  </Flexible>
+               </FlexContainer>
+            </>
          </StyledMain>
       </ItemContext.Provider>
    )
