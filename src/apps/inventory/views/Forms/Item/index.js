@@ -417,18 +417,20 @@ export default function ItemForm() {
                                     </h3>
                                     <Text as="subtitle">
                                        {t(address.concat('on hand'))}:{' '}
-                                       {formState.bulkItemAsShipped?.onHand}
+                                       {formState.bulkItemAsShipped?.onHand ||
+                                          'N/A'}
+                                       {formState.bulkItemAsShipped?.unit || ''}
                                     </Text>
                                     <Text as="subtitle">
                                        {t(address.concat('shelf life'))}:{' '}
                                        {`${
-                                          state.processing?.shelf_life?.value ||
                                           formState.bulkItemAsShipped?.shelfLife
-                                             ?.value
+                                             ?.value || 'N/A'
                                        } ${
                                           state.processing?.shelf_life?.unit ||
                                           formState.bulkItemAsShipped?.shelfLife
-                                             ?.unit
+                                             ?.unit ||
+                                          ''
                                        }`}
                                     </Text>
                                  </div>
@@ -484,12 +486,14 @@ export default function ItemForm() {
                                           </h3>
                                           <Text as="subtitle">
                                              {t(address.concat('on hand'))}:{' '}
-                                             {procs.onHand}
-                                             {t('units.gm')}
+                                             {procs.onHand || 'N/A'}
+                                             {procs.unit || ''}
                                           </Text>
                                           <Text as="subtitle">
                                              {t(address.concat('shelf life'))}:{' '}
-                                             {`${procs?.shelfLife?.value} ${procs?.shelfLife?.unit}`}
+                                             {`${
+                                                procs?.shelfLife?.value || 'N/A'
+                                             } ${procs?.shelfLife?.unit || ''}`}
                                           </Text>
                                        </div>
                                        {state.activeProcessing.id ===
