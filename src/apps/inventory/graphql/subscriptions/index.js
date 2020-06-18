@@ -7,6 +7,7 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
          name
          bulkItemAsShippedId
          supplier {
+            id
             name
             contactPerson
          }
@@ -428,6 +429,7 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          supplierItem {
             id
             name
+            unit
          }
          status
          orderQuantity

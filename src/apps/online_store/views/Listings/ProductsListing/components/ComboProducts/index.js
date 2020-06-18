@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { Context } from '../../../../../context/tabs'
 import { DELETE_COMBO_PRODUCTS, S_COMBO_PRODUCTS } from '../../../../../graphql'
+import tableOptions from '../../../tableOption'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -51,17 +52,6 @@ const ComboProducts = () => {
             },
          })
       }
-   }
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
    }
 
    const columns = [
@@ -114,7 +104,7 @@ const ComboProducts = () => {
             columns={columns}
             data={comboProducts}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

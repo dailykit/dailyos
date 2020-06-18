@@ -11,6 +11,7 @@ import {
    S_SIMPLE_RECIPE_PRODUCTS,
    DELETE_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../../graphql'
+import tableOptions from '../../../tableOption'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -54,17 +55,6 @@ const InventoryProducts = () => {
             },
          })
       }
-   }
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
    }
 
    const columns = [
@@ -116,7 +106,7 @@ const InventoryProducts = () => {
             columns={columns}
             data={simpleRecipeProducts}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

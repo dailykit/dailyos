@@ -18,6 +18,8 @@ import { AddIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
 import { PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
+import tableOptions from '../tableOption'
+import { FlexContainer } from '../../Forms/styled'
 
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -32,32 +34,6 @@ export default function Packagings() {
       },
    })
 
-   if (subLoading) return <Loader />
-
-   return (
-      <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <PackagingTypeTunnel close={closeTunnel} />
-            </Tunnel>
-         </Tunnels>
-         <StyledWrapper>
-            <StyledHeader>
-               <Text as="h1">Packagings</Text>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
-            </StyledHeader>
-
-            <div style={{ width: '90%', margin: '20px auto' }}>
-               <DataTable data={packagings} />
-            </div>
-         </StyledWrapper>
-      </>
-   )
-}
-
-function DataTable({ data }) {
    const { dispatch } = React.useContext(Context)
 
    const addTab = (title, view, id) => {
@@ -67,17 +43,6 @@ function DataTable({ data }) {
       })
    }
    const tableRef = React.useRef()
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
@@ -129,23 +94,44 @@ function DataTable({ data }) {
       },
    ]
 
+   if (subLoading) return <Loader />
+
    return (
-      <div>
-         <TextButton
-            style={{ marginBottom: '20px' }}
-            type="outline"
-            onClick={() => tableRef.current.table.clearHeaderFilter()}
-         >
-            Clear Filters
-         </TextButton>
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={data}
-            rowClick={rowClick}
-            options={options}
-         />
-      </div>
+      <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <PackagingTypeTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <StyledWrapper>
+            <StyledHeader>
+               <Text as="title">Packagings</Text>
+               <FlexContainer>
+                  <TextButton
+                     type="outline"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  >
+                     Clear Filters
+                  </TextButton>{' '}
+                  <span style={{ width: '10px' }} />
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                     <AddIcon color="#fff" size={24} />
+                  </IconButton>
+               </FlexContainer>
+            </StyledHeader>
+            <br />
+
+            <div style={{ width: '90%', margin: '0 auto' }}>
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={packagings}
+                  rowClick={rowClick}
+                  options={tableOptions}
+               />
+            </div>
+         </StyledWrapper>
+      </>
    )
 }
 

@@ -11,6 +11,7 @@ import {
    S_CUSTOMIZABLE_PRODUCTS,
    DELETE_CUSTOMIZABLE_PRODUCTS,
 } from '../../../../../graphql'
+import tableOptions from '../../../tableOption'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -54,17 +55,6 @@ const CustomizableProducts = () => {
             },
          })
       }
-   }
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
    }
 
    const columns = [
@@ -113,7 +103,7 @@ const CustomizableProducts = () => {
             columns={columns}
             data={customizableProducts}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

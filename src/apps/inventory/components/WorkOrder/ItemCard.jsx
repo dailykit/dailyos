@@ -79,7 +79,6 @@ const StyledCard = styled.div`
    justify-content: space-between;
    align-items: center;
    padding: 10px 20px;
-   border-radius: 7px;
    margin-top: 20px;
    margin-left: 20px;
    width: 80%;
