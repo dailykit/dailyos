@@ -131,7 +131,6 @@ export default function ConfigureDerivedProcessingTunnel({
                labor: { unit: laborUnit, value: laborTime },
                bulkDensity: +bulkDensity,
                allergens: state.configurable.allergens,
-               isAvailable: true,
             },
          })
       }

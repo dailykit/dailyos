@@ -142,7 +142,6 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
                allergens: state.processing.allergens,
-               isAvailable: true,
             },
          })
       }
