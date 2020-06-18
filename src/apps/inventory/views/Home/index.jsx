@@ -1,5 +1,6 @@
-import { DashboardTile, Loader } from '@dailykit/ui'
+import { DashboardTile } from '@dailykit/ui'
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
@@ -26,39 +27,44 @@ const Home = () => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
    }
 
-   const {
-      loading: availableSupplierLoading,
-      data: availableSuppliers,
-   } = useSubscription(ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION)
-   const { loading: suppliersLoading, data: suppliers } = useSubscription(
-      SUPPLIERS_COUNT_SUBSCRIPTION
-   )
-   const { loading: itemsLoading, data: supplierItems } = useSubscription(
-      SUPPLIER_ITEMS_COUNT_SUBSCRIPTION
-   )
-   const { loading: bulkOrdersLoading, data: bulkOrders } = useSubscription(
-      BULK_WORK_ORDERS_COUNT_SUBSCRIPTION
-   )
-   const { loading: sachetLoading, data: sachetOrders } = useSubscription(
-      SACHET_WORK_ORDERS_COUNT_SUBSCRIPTION
-   )
-   const {
-      loading: purchaseOrdersLoading,
-      data: purchaseOrders,
-   } = useSubscription(PURCHASE_ORDERS_COUNT_SUBSCRIPTION)
-   const { loading: packagingsLoading, data: packagings } = useSubscription(
-      PACKAGINGS_COUNT_SUBSCRIPTION
-   )
+   const logError = error => {
+      console.log(error)
+      toast.error('Error! Please try reloading the page')
+   }
 
-   if (
-      suppliersLoading ||
-      itemsLoading ||
-      bulkOrdersLoading ||
-      sachetLoading ||
-      purchaseOrdersLoading ||
-      packagingsLoading
+   const { data: availableSuppliers } = useSubscription(
+      ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION
    )
-      return <Loader />
+   const { data: suppliers } = useSubscription(SUPPLIERS_COUNT_SUBSCRIPTION, {
+      onError: logError,
+   })
+   const { data: supplierItems } = useSubscription(
+      SUPPLIER_ITEMS_COUNT_SUBSCRIPTION,
+      {
+         onError: logError,
+      }
+   )
+   const { data: bulkOrders } = useSubscription(
+      BULK_WORK_ORDERS_COUNT_SUBSCRIPTION,
+      {
+         onError: logError,
+      }
+   )
+   const { data: sachetOrders } = useSubscription(
+      SACHET_WORK_ORDERS_COUNT_SUBSCRIPTION,
+      {
+         onError: logError,
+      }
+   )
+   const { data: purchaseOrders } = useSubscription(
+      PURCHASE_ORDERS_COUNT_SUBSCRIPTION,
+      {
+         onError: logError,
+      }
+   )
+   const { data: packagings } = useSubscription(PACKAGINGS_COUNT_SUBSCRIPTION, {
+      onError: logError,
+   })
 
    return (
       <StyledHome>
@@ -66,13 +72,19 @@ const Home = () => {
          <StyledTileContainer>
             <DashboardTile
                title={t(address.concat('suppliers'))}
-               count={suppliers?.suppliersAggregate?.aggregate?.count}
-               conf={`${availableSuppliers?.suppliersAggregate?.aggregate?.count} available`}
+               count={suppliers?.suppliersAggregate?.aggregate?.count || '...'}
+               conf={`${
+                  availableSuppliers?.suppliersAggregate?.aggregate?.count ||
+                  '...'
+               } available`}
                onClick={() => addTab('Suppliers', 'suppliers')}
             />
             <DashboardTile
                title={t(address.concat('items'))}
-               count={supplierItems?.supplierItemsAggregate?.aggregate?.count}
+               count={
+                  supplierItems?.supplierItemsAggregate?.aggregate?.count ||
+                  '...'
+               }
                conf="All available"
                onClick={() => addTab('Supplier Items', 'items')}
             />
@@ -80,21 +92,28 @@ const Home = () => {
                title={t(address.concat('work orders'))}
                count={
                   bulkOrders?.bulkWorkOrdersAggregate?.aggregate?.count +
-                  sachetOrders?.sachetWorkOrdersAggregate?.aggregate?.count
+                     sachetOrders?.sachetWorkOrdersAggregate?.aggregate
+                        ?.count || '...'
                }
-               conf={`${bulkOrders?.bulkWorkOrdersAggregate?.aggregate?.count} Bulk and ${sachetOrders?.sachetWorkOrdersAggregate?.aggregate?.count} Sachets`}
+               conf={`${
+                  bulkOrders?.bulkWorkOrdersAggregate?.aggregate?.count || '...'
+               } Bulk and ${
+                  sachetOrders?.sachetWorkOrdersAggregate?.aggregate?.count ||
+                  '...'
+               } Sachets`}
                onClick={() => addTab('Work Orders', 'orders')}
             />
             <DashboardTile
                title={t(address.concat('purchase orders'))}
                count={
-                  purchaseOrders?.purchaseOrderItemsAggregate?.aggregate?.count
+                  purchaseOrders?.purchaseOrderItemsAggregate?.aggregate
+                     ?.count || '...'
                }
                onClick={() => addTab('Purchase Orders', 'purchaseOrders')}
             />
             <DashboardTile
                title="Packagings"
-               count={packagings?.packagingAggregate?.aggregate?.count}
+               count={packagings?.packagingAggregate?.aggregate?.count || '...'}
                onClick={() => addTab('Packagings', 'packagings')}
             />
          </StyledTileContainer>
