@@ -185,7 +185,7 @@ export default function PurchaseOrderForm() {
                   </FormActions>
                </FormHeading>
 
-               <StyledForm style={{ padding: '0px 60px' }}>
+               <StyledForm style={{ width: '90%', margin: '0 auto' }}>
                   <Text as="title">{t(address.concat('supplier item'))}</Text>
                   {purchaseOrderState.supplierItem?.name ||
                   purchaseItemsData?.purchaseOrderItem?.supplierItem?.id ? (
