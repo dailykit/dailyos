@@ -9,6 +9,7 @@ import {
    Tunnels,
    useTunnel,
    TextButton,
+   Input,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,6 +30,7 @@ import {
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
    DELETE_BULK_ITEM,
+   UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
 // Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -63,11 +65,12 @@ const address = 'apps.inventory.views.forms.item.'
 
 export default function ItemForm() {
    const { t } = useTranslation()
-   const { state: tabState } = useContext(Context)
+   const { state: tabState, dispatch: tabDispatch } = useContext(Context)
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
    const [units, setUnits] = React.useState([])
+   const [itemName, setItemName] = React.useState('')
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
 
@@ -87,6 +90,7 @@ export default function ItemForm() {
                   name: bulkItemAsShipped?.processingName,
                },
             }
+            setItemName(normalisedData.name)
             setFormState(normalisedData)
          },
       }
@@ -123,6 +127,20 @@ export default function ItemForm() {
          },
       }
    )
+
+   const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
+      onError: error => {
+         console.log(error)
+         toast.error('Error! Please try again.')
+      },
+      onCompleted: () => {
+         toast.info('Item name updated successfully')
+         tabDispatch({
+            type: 'SET_TITLE',
+            payload: { title: itemName, oldTitle: tabState.current.title },
+         })
+      },
+   })
 
    const handleBulkItemDelete = id => {
       deleteBulkItem({ variables: { id } })
@@ -241,16 +259,26 @@ export default function ItemForm() {
                   <>
                      <StyledInfo>
                         <div style={{ marginRight: '10px' }}>
-                           <h1>{formState.name}</h1>
-                           <span> {formState.sku} </span>
+                           <Input
+                              type="text"
+                              name="itemName"
+                              value={itemName}
+                              label="Item Name"
+                              onChange={e => setItemName(e.target.value)}
+                              onBlur={() => {
+                                 if (itemName !== formState.name)
+                                    updateSupplierItem({
+                                       variables: {
+                                          id: formState.id,
+                                          object: { name: itemName },
+                                       },
+                                    })
+                              }}
+                           />
+                           <span style={{ marginTop: '8px' }}>
+                              sku: {formState.sku || 'N/A'}
+                           </span>
                         </div>
-
-                        <IconButton
-                           type="outline"
-                           onClick={() => openTunnel(2)}
-                        >
-                           <EditIcon />
-                        </IconButton>
                      </StyledInfo>
                      <StyledSupplier>
                         <ContactPerson
