@@ -6,7 +6,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { useOrder } from '../../context'
 import { ORDER } from '../../graphql'
 import { Loader } from '../../components'
-import { UserIcon } from '../../assets/icons'
+import { UserIcon, PrintIcon } from '../../assets/icons'
 
 import {
    Wrapper,
@@ -22,6 +22,7 @@ import {
    StyledTab,
    StyledTabPanels,
    StyledTabPanel,
+   StyledPrint,
 } from './styled'
 
 import MealKitProductDetails from './MealKitProductDetails'
@@ -59,6 +60,17 @@ const Order = () => {
       return () => switchView('SUMMARY')
    }, [])
 
+   const print = () => {
+      const template = encodeURIComponent(
+         JSON.stringify({ name: 'bill1', type: 'bill', format: 'pdf' })
+      )
+      const data = encodeURIComponent(JSON.stringify({ id: order.id }))
+      window.open(
+         `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
+         '_blank'
+      )
+   }
+
    if (loading || !order)
       return (
          <Wrapper>
@@ -73,6 +85,9 @@ const Order = () => {
             <h3>
                <span>{t(address.concat('order no'))}</span>: ORD{order.id}
             </h3>
+            <StyledPrint onClick={() => print()}>
+               <PrintIcon size={16} />
+            </StyledPrint>
             <section>
                <section>
                   <span>{t(address.concat('ordered'))}:&nbsp;</span>

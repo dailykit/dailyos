@@ -271,3 +271,16 @@ export const Legend = styled.div`
       }
    }
 `
+
+export const StyledPrint = styled.button`
+   width: 28px;
+   height: 28px;
+   display: flex;
+   cursor: pointer;
+   background: #fff;
+   background: white;
+   margin-left: 14px;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+`
