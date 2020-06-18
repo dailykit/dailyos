@@ -19,7 +19,7 @@ const InformationTunnel = ({ state, closeTunnel, cuisines }) => {
    const [busy, setBusy] = React.useState(false)
    const [_state, _setState] = React.useState({
       type: state.type || 'Vegetarian',
-      cuisine: state.cuisine || cuisines[0].name,
+      cuisine: state.cuisine || cuisines[0]?.name,
       cookingTime: state.cookingTime || '',
       author: state.author || '',
       utensils: state.utensils?.join(',') || '',
