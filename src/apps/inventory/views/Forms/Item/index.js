@@ -260,6 +260,7 @@ export default function ItemForm() {
                      <StyledInfo>
                         <div style={{ marginRight: '10px' }}>
                            <Input
+                              style={{ margin: '10px 0 5px' }}
                               type="text"
                               name="itemName"
                               value={itemName}
@@ -275,9 +276,7 @@ export default function ItemForm() {
                                     })
                               }}
                            />
-                           <span style={{ marginTop: '8px' }}>
-                              sku: {formState.sku || 'N/A'}
-                           </span>
+                           <span>sku: {formState.sku || 'N/A'}</span>
                         </div>
                      </StyledInfo>
                      <StyledSupplier>
@@ -385,7 +384,7 @@ export default function ItemForm() {
                         <Text as="title">
                            {t(address.concat('processings'))}
                         </Text>
-                        <IconButton
+                        <TransparentIconButton
                            onClick={() => {
                               if (!formState.supplier)
                                  return toast.error('Select a supplier first!')
@@ -402,8 +401,8 @@ export default function ItemForm() {
                            }}
                            type="outline"
                         >
-                           <AddIcon />
-                        </IconButton>
+                           <AddIcon size="18" strokeWidth="3" color="#555B6E" />
+                        </TransparentIconButton>
                      </FlexContainer>
 
                      {formState.bulkItemAsShipped?.name && (
@@ -541,7 +540,7 @@ export default function ItemForm() {
                         </>
                      )}
                   </Flexible>
-                  <Flexible style={{ marginTop: '16vh' }} width="4">
+                  <Flexible style={{ marginTop: '14vh' }} width="4">
                      <div
                         style={{
                            padding: '15px',
@@ -753,9 +752,9 @@ function ContactPerson({ formState, open }) {
       <>
          <span>{formState.supplier.name}</span>
          <span>{contatctPerson}</span>
-         <IconButton type="outline" onClick={() => open(1)}>
-            <EditIcon />
-         </IconButton>
+         <TransparentIconButton type="outline" onClick={() => open(1)}>
+            <EditIcon size="18" color="#555B6E" />
+         </TransparentIconButton>
       </>
    )
 }

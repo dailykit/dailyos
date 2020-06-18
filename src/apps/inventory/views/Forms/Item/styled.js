@@ -6,6 +6,7 @@ export const Container = styled.div`
 `
 
 export const StyledHeader = styled.div`
+   margin-top: 10px;
    padding: 0 20px;
    height: 100px;
    display: flex;
