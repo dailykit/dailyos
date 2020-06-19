@@ -35,8 +35,8 @@ const UsersListing = () => {
    }
 
    const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, 'suppliers', id)
+      const { id, firstName, lastName } = row._row.data
+      addTab(`${firstName} ${lastName}`, `/settings/users/${id}`)
    }
 
    const columns = [
@@ -69,7 +69,7 @@ const UsersListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <Text as="h2">Users</Text>
-            <IconButton type="solid" onClick={() => createTab()}>
+            <IconButton type="solid" onClick={createTab}>
                <AddIcon color="#fff" size={24} />
             </IconButton>
          </StyledHeader>
