@@ -1,45 +1,30 @@
-import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
-// Components
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   IconButton,
+   Loader,
    Text,
-   Table,
-   TableHead,
-   TableCell,
-   TableBody,
-   TableRow,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
-   IconButton,
 } from '@dailykit/ui'
-
-// Styled
-import { Layout, Card, Listing, ListingHeader } from '../styled'
-
-// Icons
-import {
-   EditIcon,
-   DeleteIcon,
-   AddIcon,
-} from '../../../../../../shared/assets/icons'
-
-// Tunnels
-import { AddTypesTunnel } from './tunnels'
-
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { toast } from 'react-toastify'
+import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
    ACCOMPANIMENT_TYPES,
    DELETE_ACCOMPANIMENT_TYPES,
 } from '../../../../graphql'
-import { toast } from 'react-toastify'
+import tableOptions from '../../../Listings/tableOption'
+import { Card, Layout, Listing, ListingHeader } from '../styled'
+import { AddTypesTunnel } from './tunnels'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
 const AccompanimentTypesForm = () => {
    const { t } = useTranslation()
+   const tableRef = React.useRef()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
@@ -51,8 +36,8 @@ const AccompanimentTypesForm = () => {
       onCompleted: () => {
          toast.success('Deleted!')
       },
-      onError: error => {
-         console.log(error)
+      onError: err => {
+         console.log(err)
          toast.error('Error')
       },
    })
@@ -69,13 +54,33 @@ const AccompanimentTypesForm = () => {
       }
    }
 
+   const columns = [
+      {
+         title: t(address.concat('type')),
+         field: 'name',
+         headerFilter: true,
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            const { id, name } = cell._cell.row.data
+            deleteHandler(e, { id, name })
+         },
+         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+      },
+   ]
+
    if (error) {
       console.log(error)
    }
    if (loading) return <Loader />
 
    return (
-      <React.Fragment>
+      <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <AddTypesTunnel closeTunnel={closeTunnel} />
@@ -105,29 +110,15 @@ const AccompanimentTypesForm = () => {
                      <AddIcon size={24} />
                   </IconButton>
                </ListingHeader>
-               <Table>
-                  <TableHead>
-                     <TableRow>
-                        <TableCell>{t(address.concat('type'))}</TableCell>
-                        <TableCell></TableCell>
-                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                     {data.master_accompanimentType.map(type => (
-                        <TableRow key={type.id}>
-                           <TableCell>{type.name}</TableCell>
-                           <TableCell>
-                              <IconButton onClick={e => deleteHandler(e, type)}>
-                                 <DeleteIcon color="#FF5A52" />
-                              </IconButton>
-                           </TableCell>
-                        </TableRow>
-                     ))}
-                  </TableBody>
-               </Table>
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={data.master_accompanimentType}
+                  options={tableOptions}
+               />
             </Listing>
          </Layout>
-      </React.Fragment>
+      </>
    )
 }
 
