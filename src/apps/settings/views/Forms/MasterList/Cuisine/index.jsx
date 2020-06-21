@@ -62,6 +62,7 @@ const CuisineForm = () => {
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
+         cssClass: 'center-text',
          cellClick: (e, cell) => {
             e.stopPropagation()
             const { id, name } = cell._cell.row.data
