@@ -53,7 +53,7 @@ const AllergensForm = () => {
 
    const columns = [
       {
-         title: t(address.concat('type')),
+         title: t(address.concat('name')),
          field: 'name',
          headerFilter: true,
       },
