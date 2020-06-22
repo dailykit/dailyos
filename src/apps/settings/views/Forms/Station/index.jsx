@@ -76,7 +76,7 @@ const StationForm = () => {
          variables: {
             id: params.name,
             _set: {
-               name: form.name,
+               name: form.name || station.name,
             },
          },
       })

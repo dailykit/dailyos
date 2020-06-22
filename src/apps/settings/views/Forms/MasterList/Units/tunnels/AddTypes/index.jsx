@@ -1,18 +1,18 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 // Components
-import { TextButton, Text, Input, ButtonTile } from '@dailykit/ui'
+import { TunnelHeader, TextButton, Text, Input, ButtonTile } from '@dailykit/ui'
 
 // Styles
-import { TunnelHeader, TunnelBody } from '../styled'
+import { TunnelBody } from '../styled'
 
 // Icons
 import { CloseIcon } from '../../../../../../../../shared/assets/icons'
 
-import { useTranslation } from 'react-i18next'
 import { CREATE_UNITS } from '../../../../../../graphql'
-import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
 
 const address = 'apps.settings.views.forms.units.tunnels.addnew.'
 
@@ -65,22 +65,17 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(1)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">{t(address.concat('add new types'))}</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={add}>
-                  {busy
-                     ? t(address.concat('adding'))
-                     : t(address.concat('add'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('add new types'))}
+            right={{
+               action: add,
+               title: busy
+                  ? t(address.concat('adding'))
+                  : t(address.concat('add')),
+            }}
+            close={() => closeTunnel(1)}
+         />
          <TunnelBody>
             {types.map((type, i) => (
                <Input
@@ -98,7 +93,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                onClick={() => setTypes([...types, ''])}
             />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 
