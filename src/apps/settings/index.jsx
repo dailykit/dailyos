@@ -5,11 +5,11 @@ import { AuthProvider, TabProvider } from './context'
 import App from './App'
 
 const Settings = () => (
-   // <AuthProvider>
-   <TabProvider>
-      <App />
-   </TabProvider>
-   // </AuthProvider>
+   <AuthProvider>
+      <TabProvider>
+         <App />
+      </TabProvider>
+   </AuthProvider>
 )
 
 export default Settings
