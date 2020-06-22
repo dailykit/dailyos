@@ -1,10 +1,9 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, HelperText, Input, Text, TextButton } from '@dailykit/ui'
+import { ButtonTile, HelperText, Input, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { CREATE_SIMPLE_RECIPE_YIELDS } from '../../../../../graphql'
-import { Container, TunnelBody, TunnelHeader } from '../styled'
+import { Container, TunnelBody } from '../styled'
 
 const ServingsTunnel = ({ state, closeTunnel }) => {
    // State
@@ -19,14 +18,12 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
          toast.success('Added!')
          closeTunnel(3)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error!')
          setBusy(false)
       },
    })
 
-   //Handlers
    const save = () => {
       if (busy) return
       setBusy(true)
@@ -36,12 +33,15 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
             simpleRecipeId: state.id,
             yield: { serving },
          }))
-      if (!objects.length) return toast.error('No serving to add!')
-      createYields({
-         variables: {
-            objects,
-         },
-      })
+      if (!objects.length) {
+         toast.error('No serving to add!')
+      } else {
+         createYields({
+            variables: {
+               objects,
+            },
+         })
+      }
    }
 
    const handleChange = (i, val) => {
@@ -51,20 +51,12 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(3)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Servings</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Servings"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(3)}
+         />
          <TunnelBody>
             <Container bottom="16">
                <HelperText
@@ -89,7 +81,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                onClick={() => setServings([...servings, ''])}
             />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

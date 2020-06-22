@@ -5,15 +5,13 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
-   TextButton,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -33,13 +31,11 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
          closeTunnel(5)
          closeTunnel(4)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error()
       },
    })
 
-   //Handlers
    const add = () => {
       if (busy) return
       setBusy(true)
@@ -64,20 +60,15 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(5)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Processing</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={add}>
-                  {busy ? 'Adding...' : 'Add'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Select Processing"
+            right={{
+               action: add,
+               title: busy ? 'Adding...' : 'Add',
+            }}
+            close={() => closeTunnel(5)}
+         />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
@@ -105,7 +96,7 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

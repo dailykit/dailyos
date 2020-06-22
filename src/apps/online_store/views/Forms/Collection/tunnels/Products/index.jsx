@@ -6,23 +6,19 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { CloseIcon } from '../../../../../assets/icons'
 import { CollectionContext } from '../../../../../context/collection'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const address = 'apps.online_store.views.forms.collection.tunnels.products.'
 
 const ProductsTunnel = ({ close, products }) => {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
-   const { collectionState, collectionDispatch } = React.useContext(
-      CollectionContext
-   )
+   const { collectionDispatch } = React.useContext(CollectionContext)
    const [list, selected, selectOption] = useMultiList(products)
 
    const save = () => {
@@ -37,24 +33,14 @@ const ProductsTunnel = ({ close, products }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(2)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(
-                     address.concat('select and add products to the collection')
-                  )}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(
+               address.concat('select and add products to the collection')
+            )}
+            right={{ action: save, title: t(address.concat('save')) }}
+            close={() => close(2)}
+         />
          <TunnelBody>
             <List>
                <ListSearch
@@ -95,7 +81,7 @@ const ProductsTunnel = ({ close, products }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

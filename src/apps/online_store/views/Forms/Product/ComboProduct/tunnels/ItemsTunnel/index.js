@@ -1,22 +1,17 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Input, Text, TextButton } from '@dailykit/ui'
+import { ButtonTile, Input, Text, TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 // graphql
 import { CREATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
-import { StyledRow, TunnelBody, TunnelHeader } from '../styled'
+import { StyledRow, TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.itemstunnel.'
 
 export default function ItemTunnel({ state, close }) {
    const { t } = useTranslation()
-   const { productState, productDispatch } = React.useContext(
-      ComboProductContext
-   )
 
    const [busy, setBusy] = React.useState(false)
 
@@ -26,12 +21,11 @@ export default function ItemTunnel({ state, close }) {
    const [createComboProductComponent] = useMutation(
       CREATE_COMBO_PRODUCT_COMPONENT,
       {
-         onCompleted: data => {
+         onCompleted: () => {
             close(2)
             toast.success(t(address.concat('items added!')))
          },
-         onError: error => {
-            console.log(error)
+         onError: () => {
             setBusy(false)
          },
       }
@@ -71,22 +65,17 @@ export default function ItemTunnel({ state, close }) {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(2)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">{t(address.concat('add items'))}</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('add items'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(2)}
+         />
          <TunnelBody>
             <Text as="h2">
                {t(address.concat('label your items to add recipes for'))}
@@ -108,6 +97,6 @@ export default function ItemTunnel({ state, close }) {
                onClick={() => setLabels([...labels, ''])}
             />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

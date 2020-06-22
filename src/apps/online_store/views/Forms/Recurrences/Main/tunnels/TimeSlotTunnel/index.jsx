@@ -1,13 +1,10 @@
 import React from 'react'
-import { Text, TextButton, Input } from '@dailykit/ui'
-import { RRule } from 'rrule'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-import { Container, Flex } from '../../../styled'
-import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { Text, Input, TunnelHeader } from '@dailykit/ui'
+
+import { TunnelBody, StyledRow } from '../styled'
+import { Container, Flex } from '../../../styled'
 import { CREATE_TIME_SLOTS } from '../../../../../../graphql'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Context } from '../../../../../../context'
@@ -28,10 +25,9 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
          toast.success('Time slot added!')
          closeTunnel(2)
       },
-      onError: error => {
+      onError: () => {
          setBusy(false)
          toast.error('Error')
-         console.log(error)
       },
    })
 
@@ -60,20 +56,12 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(2)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Time Slot</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Time Slot"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(2)}
+         />
          <TunnelBody>
             <StyledRow>
                <Text as="p">Enter time slot:</Text>
@@ -116,7 +104,7 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                )}
             </StyledRow>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

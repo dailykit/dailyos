@@ -1,10 +1,10 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Text } from '@dailykit/ui'
+import { Text, TunnelHeader } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { randomSuffix } from '../../../../../../../shared/utils'
-import { TunnelHeader, TunnelBody, SolidTile } from '../styled'
+import { TunnelBody, SolidTile } from '../styled'
 import { Context } from '../../../../../context/tabs'
 import {
    CREATE_COMBO_PRODUCT,
@@ -12,13 +12,16 @@ import {
    CREATE_INVENTORY_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../../graphql'
-import { CloseIcon } from '../../../../../assets/icons'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
 export default function ProductTypeTunnel({ close }) {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
+
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
+   }
 
    // Mutations
    const [createComboProduct] = useMutation(CREATE_COMBO_PRODUCT, {
@@ -65,13 +68,9 @@ export default function ProductTypeTunnel({ close }) {
       }
    )
 
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
-
    const createProduct = type => {
       const object = {
-         name: type + '-' + randomSuffix(),
+         name: `${type}-${randomSuffix()}`,
       }
       switch (type) {
          case 'combo': {
@@ -112,17 +111,11 @@ export default function ProductTypeTunnel({ close }) {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(1)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select type of product'))}
-               </Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select type of product'))}
+            close={() => close(1)}
+         />
          <TunnelBody>
             <SolidTile onClick={() => createProduct('inventory')}>
                <Text as="h1">{t(address.concat('inventory product'))}</Text>
@@ -163,6 +156,6 @@ export default function ProductTypeTunnel({ close }) {
                </Text>
             </SolidTile>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

@@ -1,18 +1,5 @@
 import styled from 'styled-components'
 
-export const TunnelHeader = styled.div`
-   height: 76px;
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   padding: 0 16px;
-
-   > div {
-      display: flex;
-      align-items: center;
-   }
-`
-
 export const SolidTile = styled.button`
    width: 70%;
    display: block;

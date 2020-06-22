@@ -5,16 +5,14 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
-   TextButton,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
@@ -27,7 +25,6 @@ export default function ItemTunnel({ state, close, items }) {
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(items)
 
-   //Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       variables: {
          id: state.id,
@@ -43,37 +40,31 @@ export default function ItemTunnel({ state, close, items }) {
          close(3)
          close(2)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
    })
 
    // Handlers
-   const add = item => {
+   const add = () => {
       if (busy) return
-      else setBusy(true)
+      setBusy(true)
       updateProduct()
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(3)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">{t(address.concat('select an item'))}</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={add}>
-                  {busy
-                     ? t(address.concat('adding'))
-                     : t(address.concat('add'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select an item'))}
+            right={{
+               action: add,
+               title: busy
+                  ? t(address.concat('adding'))
+                  : t(address.concat('add')),
+            }}
+            close={() => close(3)}
+         />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
@@ -103,6 +94,6 @@ export default function ItemTunnel({ state, close, items }) {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

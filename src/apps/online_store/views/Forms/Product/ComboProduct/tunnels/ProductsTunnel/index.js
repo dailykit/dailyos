@@ -5,24 +5,21 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import { UPDATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ close, products }) => {
    const { t } = useTranslation()
-   const { productState, productDispatch } = React.useContext(
-      ComboProductContext
-   )
+   const { productState } = React.useContext(ComboProductContext)
 
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(products)
@@ -31,13 +28,10 @@ const ProductsTunnel = ({ close, products }) => {
    const [updateComboProductComponent] = useMutation(
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
-         onCompleted: data => {
+         onCompleted: () => {
             toast.success(t(address.concat('product added!')))
             close(4)
             close(3)
-         },
-         onError: error => {
-            console.log(error)
          },
       }
    )
@@ -66,29 +60,23 @@ const ProductsTunnel = ({ close, products }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(4)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select product to add'))}
-               </Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select product to add'))}
+            close={() => close(4)}
+         />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        )}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+               )}
                <ListOptions>
                   {list
                      .filter(option =>
@@ -106,7 +94,7 @@ const ProductsTunnel = ({ close, products }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

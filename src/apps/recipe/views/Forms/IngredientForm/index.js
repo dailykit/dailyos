@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Input,
@@ -10,7 +11,7 @@ import {
    Toggle,
 } from '@dailykit/ui'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
-import { toast } from 'react-toastify'
+
 import {
    IngredientContext,
    reducers,
@@ -203,8 +204,7 @@ const IngredientForm = () => {
       onCompleted: () => {
          toast.success('Updated!')
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
       },
    })
@@ -263,7 +263,7 @@ const IngredientForm = () => {
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
-         <React.Fragment>
+         <>
             {/* Tunnels */}
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1}>
@@ -377,15 +377,15 @@ const IngredientForm = () => {
                <MasterSettings>
                   <div>
                      {state.isValid?.status ? (
-                        <React.Fragment>
+                        <>
                            <TickIcon color="#00ff00" stroke={2} />
                            <Text as="p">All good!</Text>
-                        </React.Fragment>
+                        </>
                      ) : (
-                        <React.Fragment>
+                        <>
                            <CloseIcon color="#ff0000" />
                            <Text as="p">{state.isValid?.error}</Text>
-                        </React.Fragment>
+                        </>
                      )}
                   </div>
                   <div>
@@ -401,7 +401,7 @@ const IngredientForm = () => {
                <Stats state={state} openTunnel={openTunnel} />
                <Processings state={state} openTunnel={openTunnel} />
             </StyledMain>
-         </React.Fragment>
+         </>
       </IngredientContext.Provider>
    )
 }

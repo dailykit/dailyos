@@ -1,10 +1,10 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Input, Text, TextButton, Toggle } from '@dailykit/ui'
+import { ButtonTile, Input, Toggle, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon, DeleteIcon } from '../../../../../assets/icons'
+import { DeleteIcon } from '../../../../../assets/icons'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { Container, InputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { Container, InputWrapper, TunnelBody } from '../styled'
 
 const reducer = (state, { type, payload }) => {
    switch (type) {
@@ -102,14 +102,12 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
          toast.success('Updated!')
          closeTunnel(2)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error!')
          setBusy(false)
       },
    })
 
-   //Handlers
    const save = () => {
       if (busy) return
       setBusy(true)
@@ -117,20 +115,12 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(2)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Cooking Steps</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Cooking Steps"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(2)}
+         />
          <TunnelBody>
             {_state.procedures?.map((procedure, index) => (
                <Container bottom="32">
@@ -159,7 +149,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                      </span>
                   </InputWrapper>
                   {procedure.steps?.map((step, stepIndex) => (
-                     <React.Fragment>
+                     <>
                         <Container bottom="16">
                            <InputWrapper>
                               <Input
@@ -224,7 +214,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                               }}
                            />
                         </Container>
-                     </React.Fragment>
+                     </>
                   ))}
                   <ButtonTile
                      type="secondary"
@@ -248,7 +238,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                }}
             />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

@@ -1,22 +1,18 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, TextButton, Toggle } from '@dailykit/ui'
+import { Input, Toggle, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_SACHET } from '../../../../../graphql'
 import {
    Container,
    StyledInputWrapper,
    TunnelBody,
-   TunnelHeader,
    StyledSelect,
 } from '../styled'
 
 const EditSachetTunnel = ({ state, units, closeTunnel }) => {
-   const { ingredientState, ingredientDispatch } = React.useContext(
-      IngredientContext
-   )
+   const { ingredientState } = React.useContext(IngredientContext)
 
    const sachet =
       state.ingredientProcessings[ingredientState.processingIndex]
@@ -42,8 +38,7 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
          toast.success('Sachet updated!')
          closeTunnel(7)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -65,20 +60,12 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(7)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Configure Sachet</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Configure Sachet"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(7)}
+         />
          <TunnelBody>
             <Container bottom="32">
                <StyledInputWrapper width="300">
@@ -110,7 +97,7 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
                </StyledInputWrapper>
             </Container>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

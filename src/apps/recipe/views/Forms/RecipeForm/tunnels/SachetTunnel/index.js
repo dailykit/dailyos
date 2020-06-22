@@ -5,18 +5,16 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
-   TextButton,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
 import {
    CREATE_SIMPLE_RECIPE_YIELD_SACHET,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
 } from '../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const SachetTunnel = ({ closeTunnel, sachets }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -30,7 +28,7 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
          .filter(sachet => sachet.isValid.status)
          .map(sachet => ({
             ...sachet,
-            title: sachet.quantity + ' ' + sachet.unit,
+            title: `${sachet.quantity} ${sachet.unit}`,
          }))
    )
 
@@ -50,8 +48,7 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
          toast.success('Sachet added!')
          closeTunnel(7)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error()
       },
    })
@@ -67,37 +64,25 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
          toast.success('Sachet updated!')
          closeTunnel(7)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error()
       },
    })
 
-   //Handlers
    const save = () => {
       if (busy) return
       setBusy(true)
-      console.log(recipeState)
-      console.log(current)
       if (recipeState.updating) updateSachet()
       else createSachet()
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(7)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Sachet</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Select Sachet"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(7)}
+         />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
@@ -125,7 +110,7 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

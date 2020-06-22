@@ -1,17 +1,16 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, TextButton } from '@dailykit/ui'
+import { Input, Text, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_SACHET } from '../../../../../graphql'
-import { Container, TunnelBody, TunnelHeader } from '../styled'
+import { Container, TunnelBody } from '../styled'
 import { FlexContainer, Flexible } from './styled'
 
 const NutritionTunnel = ({ state, closeTunnel }) => {
    const { ingredientState } = React.useContext(IngredientContext)
 
-   const [sachet, setSachet] = React.useState(
+   const [sachet] = React.useState(
       state.ingredientProcessings[ingredientState.processingIndex]
          .ingredientSachets[ingredientState.sachetIndex]
    )
@@ -77,8 +76,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
          toast.success('Nutritional values updated!')
          closeTunnel(13)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -93,20 +91,20 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
             id: sachet.id,
             set: {
                defaultNutritionalValues: {
-                  calories: calories,
-                  totalFat: totalFat,
-                  saturatedFat: saturatedFat,
-                  transFat: transFat,
-                  cholesterol: cholesterol,
-                  sodium: sodium,
-                  totalCarbohydrates: totalCarbohydrates,
-                  dietaryFibre: dietaryFibre,
-                  sugars: sugars,
-                  protein: protein,
-                  vitaminA: vitaminA,
-                  vitaminC: vitaminC,
-                  calcium: calcium,
-                  iron: iron,
+                  calories,
+                  totalFat,
+                  saturatedFat,
+                  transFat,
+                  cholesterol,
+                  sodium,
+                  totalCarbohydrates,
+                  dietaryFibre,
+                  sugars,
+                  protein,
+                  vitaminA,
+                  vitaminC,
+                  calcium,
+                  iron,
                },
             },
          },
@@ -114,20 +112,12 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(13)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Default Nutritional Values</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Default Nutritional Values"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(13)}
+         />
          <TunnelBody>
             <Container bottom="16">
                <Text as="title">
@@ -563,7 +553,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
             </FlexContainer>
             <br />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

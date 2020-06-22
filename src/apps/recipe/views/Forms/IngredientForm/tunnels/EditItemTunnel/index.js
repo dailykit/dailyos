@@ -4,14 +4,13 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
-import { CloseIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
-const EditItemTunnel = ({ openTunnel, closeTunnel, items }) => {
+const EditItemTunnel = ({ closeTunnel, items }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -39,15 +38,8 @@ const EditItemTunnel = ({ openTunnel, closeTunnel, items }) => {
    }, [current])
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(10)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Item</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader title="Select Item" close={() => closeTunnel(10)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
@@ -75,7 +67,7 @@ const EditItemTunnel = ({ openTunnel, closeTunnel, items }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

@@ -7,15 +7,13 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
@@ -28,14 +26,12 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(accompanimentTypes)
 
-   //Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success(t(address.concat('accompaniment types added!')))
          close(4)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error(t(address.concat('error')))
          setBusy(false)
       },
@@ -60,24 +56,17 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(4)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select accompaniment type'))}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select accompaniment type'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(4)}
+         />
          <TunnelBody>
             <List>
                <ListSearch
@@ -118,7 +107,7 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

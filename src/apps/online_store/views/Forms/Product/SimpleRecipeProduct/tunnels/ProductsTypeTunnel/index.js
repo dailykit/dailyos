@@ -1,9 +1,8 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, TunnelHeader } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-import { SolidTile, TunnelBody, TunnelHeader } from '../styled'
+import { SolidTile, TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.productstypetunnel.'
@@ -21,17 +20,11 @@ const ProductsTypeTunnel = ({ close, open }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(4)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select product type'))}
-               </Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select product type'))}
+            close={() => close(4)}
+         />
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>
                <Text as="h1">{t(address.concat('inventory product'))}</Text>
@@ -52,7 +45,7 @@ const ProductsTypeTunnel = ({ close, open }) => {
                </Text>
             </SolidTile>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

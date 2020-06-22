@@ -7,25 +7,21 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import { CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS } from '../../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ state, close, products }) => {
    const { t } = useTranslation()
-   const { productState, productDispatch } = React.useContext(
-      CustomizableProductContext
-   )
+   const { productState } = React.useContext(CustomizableProductContext)
 
    const [busy, setBusy] = React.useState(false)
 
@@ -40,8 +36,7 @@ const ProductsTunnel = ({ state, close, products }) => {
             close(3)
             close(2)
          },
-         onError: error => {
-            console.log(error)
+         onError: () => {
             toast.error(t(address.concat('error')))
             setBusy(false)
          },
@@ -50,7 +45,7 @@ const ProductsTunnel = ({ state, close, products }) => {
 
    const save = () => {
       if (busy) return
-      else setBusy(true)
+      setBusy(true)
       const objects = selected.map(product => {
          return {
             customizableProductId: state.id,
@@ -68,28 +63,23 @@ const ProductsTunnel = ({ state, close, products }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(3)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select'))}{' '}
-                  {productState.meta.itemType === 'inventory'
-                     ? t(address.concat('inventory products'))
-                     : t(address.concat('simple recipe products'))}{' '}
-                  {t(address.concat('to add'))}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={`${t(address.concat('select'))} 
+                  ${
+                     productState.meta.itemType === 'inventory'
+                        ? t(address.concat('inventory products'))
+                        : t(address.concat('simple recipe products'))
+                  }{' '}
+                  {t(address.concat('to add'))}`}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(3)}
+         />
          <TunnelBody>
             <List>
                <ListSearch
@@ -130,7 +120,7 @@ const ProductsTunnel = ({ state, close, products }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 
