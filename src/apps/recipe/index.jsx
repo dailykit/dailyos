@@ -5,9 +5,9 @@ import { AuthProvider } from './context/auth'
 import App from './App'
 
 const Recipe = () => (
-   // <AuthProvider>
-   <App />
-   // </AuthProvider>
+   <AuthProvider>
+      <App />
+   </AuthProvider>
 )
 
 export default Recipe
