@@ -4,12 +4,11 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
-import { CloseIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const LabelTemplateTunnel = ({ closeTunnel, templates }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -35,15 +34,11 @@ const LabelTemplateTunnel = ({ closeTunnel, templates }) => {
    }, [current])
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(6)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Label Template</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Select Label Template"
+            close={() => closeTunnel(6)}
+         />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
@@ -71,7 +66,7 @@ const LabelTemplateTunnel = ({ closeTunnel, templates }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

@@ -4,23 +4,19 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
-import { CloseIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const IngredientsTunnel = ({ closeTunnel, openTunnel, ingredients }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
 
    // State for search input
    const [search, setSearch] = React.useState('')
-   const [list, current, selectOption] = useSingleList(
-      ingredients.map(ing => ({ ...ing, title: ing.name }))
-   )
+   const [list, current, selectOption] = useSingleList(ingredients)
 
-   //Handlers
    const select = option => {
       selectOption('id', option.id)
       recipeDispatch({
@@ -31,15 +27,8 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel, ingredients }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(4)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Ingredient</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader title="Select Ingredient" close={() => closeTunnel(4)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
@@ -67,7 +56,7 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel, ingredients }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

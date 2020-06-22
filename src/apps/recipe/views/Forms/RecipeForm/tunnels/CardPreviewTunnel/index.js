@@ -1,33 +1,31 @@
 import React from 'react'
-import { TunnelHeader, TunnelBody, StyledRow, ImageContainer } from '../styled'
-import { CloseIcon } from '../../../../../assets/icons'
-import { Text } from '@dailykit/ui'
+import { Text, TunnelHeader } from '@dailykit/ui'
+import { TunnelBody, StyledRow, ImageContainer } from '../styled'
 import { RecipeContext } from '../../../../../context/recipee'
 
 const CardPreviewTunnel = ({ closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(9)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Card Preview: {recipeState.preview.title}</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={`Card Preview: ${recipeState.preview.title}`}
+            close={() => closeTunnel(9)}
+         />
          <TunnelBody>
             <StyledRow>
                <Text as="title">Front</Text>
             </StyledRow>
             <StyledRow>
                <ImageContainer>
-                  <img src={recipeState.preview.img} />
+                  <img
+                     src={recipeState.preview.img}
+                     alt={recipeState.preview.title}
+                  />
                </ImageContainer>
             </StyledRow>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

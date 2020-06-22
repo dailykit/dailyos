@@ -7,14 +7,12 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { CREATE_PROCESSINGS } from '../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
    const [busy, setBusy] = React.useState(false)
@@ -47,20 +45,12 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(1)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Processings</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={add}>
-                  {busy ? 'Adding...' : 'Add'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Processings"
+            right={{ action: add, title: busy ? 'Adding...' : 'Add' }}
+            close={() => closeTunnel(1)}
+         />
          <TunnelBody>
             <List>
                <ListSearch
@@ -99,7 +89,7 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

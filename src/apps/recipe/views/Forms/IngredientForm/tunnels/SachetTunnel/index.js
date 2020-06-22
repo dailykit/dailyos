@@ -5,19 +5,16 @@ import {
    Input,
    RadioGroup,
    Select,
-   Text,
-   TextButton,
    Toggle,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { CREATE_SACHET } from '../../../../../graphql'
 import {
    StyledInputWrapper,
    StyledRow,
    TunnelBody,
-   TunnelHeader,
    StyledSelect,
 } from '../styled'
 import { StyledTable } from './styled'
@@ -167,20 +164,12 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Sachet</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={add}>
-                  {busy ? 'Adding...' : 'Add'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Sachet"
+            right={{ action: add, title: busy ? 'Adding...' : 'Add' }}
+            close={close}
+         />
          <TunnelBody>
             <StyledRow>
                <StyledInputWrapper width="300">
@@ -412,7 +401,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                </tbody>
             </StyledTable>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

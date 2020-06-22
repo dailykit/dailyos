@@ -1,19 +1,4 @@
-import styled, { css } from 'styled-components'
-
-export const Header = styled.header(
-   () => css`
-      height: 64px;
-      display: flex;
-      padding: 0 16px;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e3e3e3;
-      h2 {
-         font-size: 18px;
-         font-weight: 400;
-      }
-   `
-)
+import styled from 'styled-components'
 
 export const Main = styled.main`
    overflow-y: auto;

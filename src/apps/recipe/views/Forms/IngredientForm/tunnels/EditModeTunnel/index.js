@@ -1,14 +1,14 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, RadioGroup, Select, Text, TextButton } from '@dailykit/ui'
+import { Input, RadioGroup, Select, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon, EditIcon } from '../../../../../assets/icons'
+import { EditIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { StyledInputWrapper, TunnelBody } from '../styled'
 import { StyledTable } from './styled'
 
-const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
+const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -21,14 +21,25 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
       { id: 3, title: "Don't Weigh", value: '0' },
    ]
 
+   const close = () => {
+      closeTunnel(8)
+      ingredientDispatch({
+         type: 'EDIT_MODE',
+         payload: undefined,
+      })
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: undefined,
+      })
+   }
+
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
       onCompleted: () => {
          toast.success('Mode updated!')
          close()
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -66,33 +77,14 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
          setBusy(false)
       }
    }
-   const close = () => {
-      closeTunnel(8)
-      ingredientDispatch({
-         type: 'EDIT_MODE',
-         payload: undefined,
-      })
-      ingredientDispatch({
-         type: 'CURRENT_MODE',
-         payload: undefined,
-      })
-   }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Edit Mode</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Edit Mode"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={close}
+         />
          <TunnelBody>
             <StyledTable cellSpacing={0}>
                <thead>
@@ -204,7 +196,7 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                </tbody>
             </StyledTable>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

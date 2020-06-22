@@ -1,15 +1,15 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, TextButton } from '@dailykit/ui'
+import { Input, Text, TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { AddIcon, CloseIcon, MinusIcon } from '../../../../../../assets/icons'
+import { AddIcon, MinusIcon } from '../../../../../../assets/icons'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import {
    CREATE_INVENTORY_PRODUCT_OPTIONS,
    UPDATE_INVENTORY_PRODUCT_OPTION,
 } from '../../../../../../graphql'
-import { Grid, StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { Grid, StyledInputWrapper, TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.pricingtunnel.'
@@ -53,8 +53,7 @@ const PricingTunnel = ({ state, close }) => {
          toast.success('Option added!')
          close(7)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -71,8 +70,7 @@ const PricingTunnel = ({ state, close }) => {
          toast.success('Option updated!')
          close(7)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -105,22 +103,17 @@ const PricingTunnel = ({ state, close }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(7)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">{t(address.concat('configure option'))}</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('configure option'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(7)}
+         />
          <TunnelBody>
             <Grid cols="4" gap="16">
                <Text as="p">Label</Text>
@@ -131,7 +124,7 @@ const PricingTunnel = ({ state, close }) => {
             <Grid cols="4" gap="16">
                <Input
                   type="text"
-                  name={`title`}
+                  name="title"
                   value={_state.label}
                   onChange={e =>
                      _setState({ ..._state, label: e.target.value })
@@ -153,7 +146,7 @@ const PricingTunnel = ({ state, close }) => {
                   </span>
                   <Input
                      type="text"
-                     name={`quantity`}
+                     name="quantity"
                      value={_state.quantity}
                      readOnly
                   />
@@ -172,7 +165,7 @@ const PricingTunnel = ({ state, close }) => {
                   $
                   <Input
                      type="text"
-                     name={`price`}
+                     name="price"
                      value={_state.price.value}
                      onChange={e =>
                         _setState({
@@ -188,7 +181,7 @@ const PricingTunnel = ({ state, close }) => {
                <StyledInputWrapper>
                   <Input
                      type="text"
-                     name={`discount`}
+                     name="discount"
                      value={_state.price.discount}
                      onChange={e =>
                         _setState({
@@ -204,7 +197,7 @@ const PricingTunnel = ({ state, close }) => {
                </StyledInputWrapper>
             </Grid>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

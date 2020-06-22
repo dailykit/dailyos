@@ -10,7 +10,7 @@ import {
    Text,
    Toggle,
 } from '@dailykit/ui'
-import { CloseIcon, TickIcon, ChevronRightIcon } from '../../../assets/icons'
+import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
    state as initialState,
@@ -24,8 +24,6 @@ import {
    InputWrapper,
    MasterSettings,
    Flex,
-   Breadcrumb,
-   BreadcrumbGroup,
 } from '../styled'
 
 import {
@@ -77,17 +75,15 @@ const RecipeForm = () => {
          id: tabs.current.id,
       },
       onSubscriptionData: data => {
-         console.log(data)
          setState(data.subscriptionData.data.simpleRecipe)
          setTitle(data.subscriptionData.data.simpleRecipe.name)
       },
    })
    useSubscription(S_INGREDIENTS, {
       onSubscriptionData: data => {
-         const ingredients = data.subscriptionData.data.ingredients.filter(
-            ing => ing.isValid.status && ing.isPublished
-         )
-         console.log(ingredients)
+         const ingredients = data.subscriptionData.data.ingredients
+            .filter(ing => ing.isValid.status && ing.isPublished)
+            .map(ing => ({ ...ing, title: ing.name }))
          setIngredients(ingredients)
       },
    })
@@ -102,8 +98,7 @@ const RecipeForm = () => {
       onCompleted: () => {
          toast.success('Updated!')
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error!')
       },
    })
@@ -145,7 +140,7 @@ const RecipeForm = () => {
 
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
-         <React.Fragment>
+         <>
             {/* Tunnels */}
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1}>
@@ -252,15 +247,15 @@ const RecipeForm = () => {
                <MasterSettings>
                   <div>
                      {state.isValid?.status ? (
-                        <React.Fragment>
+                        <>
                            <TickIcon color="#00ff00" stroke={2} />
                            <Text as="p">All good!</Text>
-                        </React.Fragment>
+                        </>
                      ) : (
-                        <React.Fragment>
+                        <>
                            <CloseIcon color="#ff0000" />
                            <Text as="p">{state.isValid?.error}</Text>
-                        </React.Fragment>
+                        </>
                      )}
                   </div>
                   <div>
@@ -274,18 +269,18 @@ const RecipeForm = () => {
             </StyledHeader>
             <StyledWrapper width="980">
                {recipeState.stage === 0 ? (
-                  <React.Fragment>
+                  <>
                      <Information state={state} openTunnel={openTunnel} />
                      <Photo state={state} openTunnel={openTunnel} />
                      <Servings state={state} openTunnel={openTunnel} />
                      <Ingredients state={state} openTunnel={openTunnel} />
                      <Procedures state={state} openTunnel={openTunnel} />
-                  </React.Fragment>
+                  </>
                ) : (
                   <RecipeCard state={state} openTunnel={openTunnel} />
                )}
             </StyledWrapper>
-         </React.Fragment>
+         </>
       </RecipeContext.Provider>
    )
 }

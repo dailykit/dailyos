@@ -1,17 +1,16 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { Tunnels, Tunnel, useTunnel, IconButton, Loader } from '@dailykit/ui'
+import { Loader, Tunnel, Tunnels, useTunnel, TunnelHeader } from '@dailykit/ui'
 
 import { useTabs } from '../../context'
 import { NOTIFICATIONS } from '../../graphql'
-import { CloseIcon } from '../../assets/icons'
-import { Header, Notifs, Notif, Main } from './styled'
+import { Notifs, Notif, Main } from './styled'
 
-export const Notifications = ({ isOpen, openPortal, closePortal }) => {
+export const Notifications = ({ isOpen, closePortal }) => {
    const { addTab } = useTabs()
    const {
-      loading,
       error,
+      loading,
       data: { displayNotifications: notifications = [] } = {},
    } = useSubscription(NOTIFICATIONS)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -34,15 +33,7 @@ export const Notifications = ({ isOpen, openPortal, closePortal }) => {
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1} size="sm">
-            <Header>
-               <h2>Notifications</h2>
-               <IconButton
-                  type="outline"
-                  onClick={e => (isOpen ? closePortal(e) : openPortal(e))}
-               >
-                  <CloseIcon size={22} />
-               </IconButton>
-            </Header>
+            <TunnelHeader title="Notifications" close={closePortal} />
             <Main>
                {loading && <Loader />}
                {error && <div>{error.message}</div>}

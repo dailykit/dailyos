@@ -1,5 +1,4 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -7,10 +6,11 @@ import {
    ListSearch,
    Text,
    useSingleList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { CloseIcon } from '../../../../../assets/icons'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 import { SafetyCheckContext } from '../../../../../context/check'
 
 const address = 'apps.safety.views.forms.safetyform.tunnels.usertunnel.'
@@ -33,25 +33,23 @@ const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
    }, [current])
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(1)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">{t(address.concat('select user'))}</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select user'))}
+            close={() => closeTunnel(1)}
+         />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />
                ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you’re looking for"))}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat('type what you’re looking for')
+                     )}
+                  />
+               )}
                <ListOptions>
                   {list
                      .filter(option =>
@@ -69,7 +67,7 @@ const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

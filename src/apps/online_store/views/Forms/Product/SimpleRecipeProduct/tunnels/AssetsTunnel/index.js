@@ -1,11 +1,10 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
-import { CloseIcon } from '../../../../../../assets/icons'
-import { AssetUploader } from '../../../../../../../../shared/components'
-import { TunnelHeader, TunnelBody } from '../styled'
-import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 import { toast } from 'react-toastify'
+import { TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
+import { AssetUploader } from '../../../../../../../../shared/components'
+import { TunnelBody } from '../styled'
+import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 
 const AssetsTunnel = ({ state, closeTunnel }) => {
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -13,8 +12,7 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
          toast.success('Image added!')
          closeTunnel(7)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
       },
    })
@@ -34,22 +32,15 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(7)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Photo</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader title="Select Photo" close={() => closeTunnel(7)} />
          <TunnelBody>
             <AssetUploader
                onImageSelect={image => addImage(image)}
                onAssetUpload={url => addImage(url)}
             />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

@@ -7,41 +7,33 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ state, close, products }) => {
    const { t } = useTranslation()
-   const { productState, productDispatch } = React.useContext(
-      InventoryProductContext
-   )
-
-   console.log('Products:', products)
+   const { productState } = React.useContext(InventoryProductContext)
 
    const [busy, setBusy] = React.useState(false)
    const [search, setSearch] = React.useState('')
    const [list, selected, selectOption] = useMultiList(products)
 
-   //Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success('Products added!')
          close(6)
          close(5)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -77,24 +69,17 @@ const ProductsTunnel = ({ state, close, products }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(6)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select products to add'))}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select products to add'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(6)}
+         />
          <TunnelBody>
             <List>
                <ListSearch
@@ -135,7 +120,7 @@ const ProductsTunnel = ({ state, close, products }) => {
                </ListOptions>
             </List>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

@@ -1,12 +1,10 @@
 import React from 'react'
-import { Text, TextButton, Input } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-import { Grid } from '../../../styled'
-import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { Text, Input, TunnelHeader } from '@dailykit/ui'
+
+import { TunnelBody, StyledRow } from '../styled'
+import { Grid } from '../../../styled'
 import { CREATE_MILE_RANGES } from '../../../../../../graphql'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Context } from '../../../../../../context'
@@ -27,10 +25,9 @@ const MileRangeTunnel = ({ closeTunnel }) => {
          toast.success('Mile range added!')
          closeTunnel(3)
       },
-      onError: error => {
+      onError: () => {
          setBusy(false)
          toast.error('Error')
-         console.log(error)
       },
    })
 
@@ -69,20 +66,12 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(3)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Mile Range</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Mile Range"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(3)}
+         />
          <TunnelBody>
             <StyledRow>
                <Text as="p">
@@ -121,7 +110,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                </Grid>
             </StyledRow>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

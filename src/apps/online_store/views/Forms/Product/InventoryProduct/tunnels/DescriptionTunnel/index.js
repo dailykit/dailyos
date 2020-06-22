@@ -1,11 +1,10 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, TextButton } from '@dailykit/ui'
+import { Input, TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { StyledRow, TunnelBody, TunnelHeader } from '../styled'
+import { StyledRow, TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.descriptiontunnel.'
@@ -32,8 +31,7 @@ export default function DescriptionTunnel({ state, close }) {
          toast.success(t(address.concat('updated!')))
          close(1)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error(t(address.concat('error!')))
          setBusy(false)
       },
@@ -47,24 +45,17 @@ export default function DescriptionTunnel({ state, close }) {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(1)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('add description and tags'))}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('add description and tags'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(1)}
+         />
          <TunnelBody>
             <StyledRow>
                <Input
@@ -86,6 +77,6 @@ export default function DescriptionTunnel({ state, close }) {
                />
             </StyledRow>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

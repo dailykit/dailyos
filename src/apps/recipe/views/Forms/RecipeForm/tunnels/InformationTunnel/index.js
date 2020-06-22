@@ -1,14 +1,12 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { HelperText, Input, RadioGroup, Text, TextButton } from '@dailykit/ui'
+import { TunnelHeader, HelperText, Input, RadioGroup, Text } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 import {
    Container,
    Grid,
    TunnelBody,
-   TunnelHeader,
    StyledSelect,
    Flex,
    StyledLabel,
@@ -51,14 +49,12 @@ const InformationTunnel = ({ state, closeTunnel, cuisines }) => {
          toast.success('Updated!')
          closeTunnel(1)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error!')
          setBusy(false)
       },
    })
 
-   //Handlers
    const save = () => {
       if (busy) return
       setBusy(true)
@@ -66,20 +62,12 @@ const InformationTunnel = ({ state, closeTunnel, cuisines }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(1)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Basic Information</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Basic Information"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(1)}
+         />
          <TunnelBody>
             <Container bottom="32">
                <Text as="subtitle">Type</Text>
@@ -160,7 +148,7 @@ const InformationTunnel = ({ state, closeTunnel, cuisines }) => {
                />
             </Container>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 
