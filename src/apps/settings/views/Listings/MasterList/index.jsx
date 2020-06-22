@@ -1,31 +1,20 @@
-import React from 'react'
-import { useHistory } from 'react-router-dom'
-
-// Components
-import {
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   Text,
-} from '@dailykit/ui'
-
-// State
-import { useTabs } from '../../../context'
-
-// Styled
-import { StyledWrapper, StyledHeader } from '../styled'
-
-import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
+import { Text } from '@dailykit/ui'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
+import { ReactTabulator } from 'react-tabulator'
+
+import { useTabs } from '../../../context'
 import {
    ACCOMPANIMENT_TYPES,
-   PROCESSINGS,
    ALLERGENS,
    CUISINES,
+   PROCESSINGS,
    UNITS_COUNT,
 } from '../../../graphql'
+import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.settings.views.listings.masterlist.'
 
@@ -33,6 +22,7 @@ const MasterList = () => {
    const { t } = useTranslation()
    const history = useHistory()
    const { tabs, addTab } = useTabs()
+   const tableRef = React.useRef()
 
    // subscription
    const { data: accompaniments } = useSubscription(ACCOMPANIMENT_TYPES)
@@ -40,6 +30,65 @@ const MasterList = () => {
    const { data: allergens } = useSubscription(ALLERGENS)
    const { data: cuisines } = useSubscription(CUISINES)
    const { data: units } = useSubscription(UNITS_COUNT)
+
+   const rowClick = (e, row) => {
+      const { _click } = row._row.data
+      _click()
+   }
+
+   const columns = [
+      {
+         title: t(address.concat('list name')),
+         field: 'listName',
+         headerFilter: true,
+      },
+      {
+         title: t(address.concat('total inputs')),
+         field: 'length',
+         headerFilter: true,
+      },
+   ]
+
+   const data = [
+      {
+         listName: t(address.concat('accompaniment types')),
+         length: accompaniments?.master_accompanimentType.length || '...',
+         _click() {
+            addTab(
+               'Accompaniment Types',
+               '/settings/master-lists/accompaniment-types'
+            )
+         },
+      },
+      {
+         listName: t(address.concat('allergens')),
+         length: allergens?.masterAllergens.length || '...',
+         _click() {
+            addTab('Allergens', '/settings/master-lists/allergens')
+         },
+      },
+      {
+         listName: t(address.concat('cuisines')),
+         length: cuisines?.cuisineNames.length || '...',
+         _click() {
+            addTab('Cuisines', '/settings/master-lists/cuisines')
+         },
+      },
+      {
+         listName: t(address.concat('processings')),
+         length: processings?.masterProcessings.length || '...',
+         _click() {
+            addTab('Processings', '/settings/master-lists/processings')
+         },
+      },
+      {
+         listName: t(address.concat('units')),
+         length: units?.unitsAggregate.aggregate.count || '...',
+         _click() {
+            addTab('Units', '/settings/master-lists/units')
+         },
+      },
+   ]
 
    React.useEffect(() => {
       const tab =
@@ -54,71 +103,13 @@ const MasterList = () => {
          <StyledHeader>
             <Text as="h2">{t(address.concat('master lists'))}</Text>
          </StyledHeader>
-         <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>{t(address.concat('list name'))}</TableCell>
-                  <TableCell>{t(address.concat('total inputs'))}</TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               <TableRow>
-                  <TableCell
-                     onClick={() =>
-                        addTab(
-                           'Accompaniment Types',
-                           '/settings/master-lists/accompaniment-types'
-                        )
-                     }
-                  >
-                     {t(address.concat('accompaniment types'))}
-                  </TableCell>
-                  <TableCell>
-                     {accompaniments?.master_accompanimentType.length || '...'}
-                  </TableCell>
-               </TableRow>
-               <TableRow
-                  onClick={() =>
-                     addTab('Allergens', '/settings/master-lists/allergens')
-                  }
-               >
-                  <TableCell>{t(address.concat('allergens'))}</TableCell>
-                  <TableCell>
-                     {allergens?.masterAllergens.length || '...'}
-                  </TableCell>
-               </TableRow>
-               <TableRow
-                  onClick={() =>
-                     addTab('Cuisines', '/settings/master-lists/cuisines')
-                  }
-               >
-                  <TableCell>{t(address.concat('cuisines'))}</TableCell>
-                  <TableCell>
-                     {cuisines?.cuisineNames.length || '...'}
-                  </TableCell>
-               </TableRow>
-               <TableRow
-                  onClick={() =>
-                     addTab('Processings', '/settings/master-lists/processings')
-                  }
-               >
-                  <TableCell>{t(address.concat('processings'))}</TableCell>
-                  <TableCell>
-                     {processings?.masterProcessings.length || '...'}
-                  </TableCell>
-               </TableRow>
-               <TableRow
-                  onClick={() =>
-                     addTab('Units', '/settings/master-lists/units')
-                  }
-               >
-                  <TableCell>{t(address.concat('units'))}</TableCell>
-                  <TableCell>
-                     {units?.unitsAggregate.aggregate.count || '...'}
-                  </TableCell>
-               </TableRow>
-            </TableBody>
-         </Table>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={tableOptions}
+         />
       </StyledWrapper>
    )
 }

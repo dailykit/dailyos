@@ -548,7 +548,7 @@ export default function ItemForm() {
                            minHeight: '500px',
                         }}
                      >
-                        {formState.bulkItems.length &&
+                        {formState.bulkItems?.length &&
                         state.activeProcessing?.name ? (
                            <ProcessingView
                               open={openTunnel}
