@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:11 as build
+FROM mhart/alpine-node:12.18.0 as build
 
 ARG PUBLIC_URL
 ARG REACT_APP_TEMPLATE_URL
