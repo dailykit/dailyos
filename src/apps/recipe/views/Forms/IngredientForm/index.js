@@ -51,18 +51,18 @@ const IngredientForm = () => {
       initialState
    )
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [
       processingTunnels,
       openProcessingTunnel,
       closeProcessingTunnel,
-   ] = useTunnel()
-   const [sachetTunnels, openSachetTunnel, closeSachetTunnel] = useTunnel()
+   ] = useTunnel(1)
+   const [sachetTunnels, openSachetTunnel, closeSachetTunnel] = useTunnel(5)
    const [
       editSachetTunnels,
       openEditSachetTunnel,
       closeEditSachetTunnel,
-   ] = useTunnel()
+   ] = useTunnel(7)
 
    const [title, setTitle] = React.useState('')
    const [category, setCategory] = React.useState('')
