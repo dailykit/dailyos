@@ -214,3 +214,12 @@ export const FETCH_UNITS = gql`
       }
    }
 `
+
+export const FETCH_STATIONS = gql`
+   subscription {
+      stations {
+         id
+         title: name
+      }
+   }
+`

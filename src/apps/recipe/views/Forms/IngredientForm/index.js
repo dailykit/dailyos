@@ -76,7 +76,6 @@ const IngredientForm = () => {
    const [category, setCategory] = React.useState('')
    const [state, setState] = React.useState({})
 
-   const [stations, setStations] = React.useState([])
    const [items, setItems] = React.useState({
       realTime: [],
       plannedLot: [],
@@ -98,18 +97,7 @@ const IngredientForm = () => {
          console.log(error)
       },
    })
-   useSubscription(FETCH_STATIONS, {
-      onSubscriptionData: data => {
-         const temp = data.subscriptionData.data.stations.map(station => ({
-            id: station.id,
-            title: station.name,
-         }))
-         setStations([...temp])
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
+
    // Subscriptions for fetching items
    useSubscription(S_BULK_ITEMS, {
       onSubscriptionData: data => {
@@ -268,7 +256,6 @@ const IngredientForm = () => {
                   <StationTunnel
                      openTunnel={openSachetTunnel}
                      closeTunnel={closeSachetTunnel}
-                     stations={stations}
                   />
                </Tunnel>
                <Tunnel layer={3}>
@@ -305,10 +292,7 @@ const IngredientForm = () => {
                   />
                </Tunnel>
                <Tunnel layer={3}>
-                  <EditStationTunnel
-                     closeTunnel={closeEditSachetTunnel}
-                     stations={stations}
-                  />
+                  <EditStationTunnel closeTunnel={closeEditSachetTunnel} />
                </Tunnel>
                <Tunnel laayer={4}>
                   <EditItemTunnel
