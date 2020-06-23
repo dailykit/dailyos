@@ -1,21 +1,20 @@
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   ButtonTile,
-   IconButton,
+   Input,
    Loader,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   TextButton,
-   Input,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import { DataCard } from '../../../components'
+import DeleteIcon from '../../../../../shared/assets/icons/Delete'
+import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import {
    ItemContext,
@@ -24,30 +23,24 @@ import {
 } from '../../../context/item'
 import { Context } from '../../../context/tabs'
 import {
+   DELETE_BULK_ITEM,
    MASTER_ALLERGENS_SUBSCRIPTION,
    MASTER_PROCESSINGS_SUBSCRIPTION,
    SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UNITS_SUBSCRIPTION,
-   DELETE_BULK_ITEM,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
-// Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
 import {
-   ItemTab,
    ProcessingButton,
    StyledGrid,
    StyledHeader,
    StyledInfo,
    StyledMain,
    StyledSupplier,
-   TabContainer,
    TransparentIconButton,
 } from './styled'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
-import DeleteIcon from '../../../../../shared/assets/icons/Delete'
-// Tunnels
 import {
    AllergensTunnel,
    AllergensTunnelForDerivedProcessing,
@@ -60,6 +53,7 @@ import {
    SelectDerivedProcessingTunnel,
    SuppliersTunnel,
 } from './tunnels'
+import ProcessingView from './ProcessingView'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -569,168 +563,6 @@ export default function ItemForm() {
             </>
          </StyledMain>
       </ItemContext.Provider>
-   )
-}
-
-function ProcessingView({ open, formState }) {
-   const { t } = useTranslation()
-   const [activeView, setActiveView] = React.useState('realtime') // realtime | plannedLot
-
-   return (
-      <>
-         <TabContainer>
-            <ItemTab
-               active={activeView === 'realtime'}
-               onClick={() => setActiveView('realtime')}
-            >
-               <Text as="title">{t(address.concat('real-time'))}</Text>
-            </ItemTab>
-            <ItemTab
-               active={activeView === 'plannedLot'}
-               onClick={() => setActiveView('plannedLot')}
-            >
-               <Text as="title">{t(address.concat('planned-lot'))}</Text>
-            </ItemTab>
-         </TabContainer>
-
-         {activeView === 'realtime' && (
-            <>
-               <FlexContainer>
-                  <Flexible width="4">
-                     <RealTimeView formState={formState} />
-                  </Flexible>
-                  <Flexible width="1" />
-               </FlexContainer>
-            </>
-         )}
-
-         {activeView === 'plannedLot' && (
-            <>
-               <PlannedLotView open={open} formState={formState} />
-            </>
-         )}
-      </>
-   )
-}
-
-function RealTimeView({ formState }) {
-   const { t } = useTranslation()
-
-   const {
-      state: { activeProcessing },
-   } = useContext(ItemContext)
-   const active = formState.bulkItems.find(
-      item => item.id === activeProcessing.id
-   )
-
-   if (!active) return null
-
-   return (
-      <FlexContainer style={{ flexWrap: 'wrap' }}>
-         <DataCard
-            title={t(address.concat('awaiting'))}
-            quantity={`${active.awaiting} ${active.unit}`}
-         />
-         <DataCard
-            title={t(address.concat('commited'))}
-            quantity={`${active.committed} ${active.unit}`}
-         />
-         <DataCard
-            title={t(address.concat('consumed'))}
-            quantity={`${active.consumed} ${active.unit}`}
-         />
-         <DataCard
-            title={t(address.concat('on hand'))}
-            quantity={`${active.onHand} ${active.unit}`}
-         />
-      </FlexContainer>
-   )
-}
-
-function PlannedLotView({ open, formState }) {
-   const { t } = useTranslation()
-   const {
-      state: { activeProcessing },
-      state,
-      dispatch,
-   } = useContext(ItemContext)
-
-   const active = formState.bulkItems.find(
-      item => item.id === activeProcessing.id
-   )
-
-   if (!active) return null
-
-   const activeSachet = active.sachetItems.find(
-      item => item.id === state.activeSachet.id
-   )
-
-   return (
-      <>
-         <FlexContainer>
-            <Flexible width="1">
-               <Text as="h2">{t(address.concat('sachets'))}</Text>
-
-               {active.sachetItems.map(sachet => {
-                  return (
-                     <ProcessingButton
-                        active={sachet.id === state.activeSachet.id}
-                        onClick={() =>
-                           dispatch({
-                              type: 'SET_ACTIVE_SACHET',
-                              payload: sachet,
-                           })
-                        }
-                     >
-                        <div style={{ textAlign: 'left' }}>
-                           <h3>
-                              {sachet.unitSize} {sachet.unit}
-                           </h3>
-
-                           <Text as="subtitle">
-                              {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                              {sachet.unit}
-                           </Text>
-                        </div>
-                     </ProcessingButton>
-                  )
-               })}
-
-               <div style={{ width: '90%', marginTop: '10px' }}>
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text={t(address.concat('add sachets'))}
-                     onClick={() => {
-                        dispatch({
-                           type: 'SET_UNIT_QUANTITY',
-                           payload: { unit: active.unit },
-                        })
-                        open(9)
-                     }}
-                  />
-               </div>
-            </Flexible>
-            <Flexible width="4">
-               {(activeSachet?.id || state.activeSachet?.quantity) && (
-                  <FlexContainer style={{ flexWrap: 'wrap' }}>
-                     <DataCard
-                        title={t(address.concat('awaiting'))}
-                        quantity={`${activeSachet.awaiting || 0} pkt`}
-                     />
-                     <DataCard
-                        title={t(address.concat('commited'))}
-                        quantity={`${activeSachet.committed || 0} pkt`}
-                     />
-                     <DataCard
-                        title={t(address.concat('consumed'))}
-                        quantity={`${activeSachet.consumed || 0} pkt`}
-                     />
-                  </FlexContainer>
-               )}
-            </Flexible>
-         </FlexContainer>
-      </>
    )
 }
 
