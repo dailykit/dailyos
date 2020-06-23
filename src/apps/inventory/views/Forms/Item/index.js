@@ -66,7 +66,42 @@ export default function ItemForm() {
    const [units, setUnits] = React.useState([])
    const [itemName, setItemName] = React.useState('')
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
+   const [supplierTunnel, openSupplierTunnel, closeSupplierTunnel] = useTunnel(
+      1
+   )
+   const [infoTunnel, openInfoTunnel, closeInfoTunnel] = useTunnel(1)
+   const [
+      processingTunnel,
+      openProcessingTunnel,
+      closeProcessingTunnel,
+   ] = useTunnel(1)
+   const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
+   const [
+      allergensTunnel,
+      openAllergensTunnel,
+      closeAllergensTunnel,
+   ] = useTunnel(1)
+   const [
+      derivedProcessingsTunnel,
+      openDerivedProcessingTunnel,
+      closeDerivedProcessingTunnel,
+   ] = useTunnel(1)
+   const [
+      allergensTunnelForDerivedProcessing,
+      openDerivedAllergensTunnel,
+      closeDerivedAllergensTunnel,
+   ] = useTunnel(1)
+
+   const [
+      configureSachetTunnel,
+      openConfigureSachetTunnel,
+      closeConfigureSachetTunnel,
+   ] = useTunnel(1)
+   const [
+      nutritionTunnel,
+      openNutritionTunnel,
+      closeNutritionTunnel,
+   ] = useTunnel(1)
 
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
@@ -151,10 +186,10 @@ export default function ItemForm() {
       return <Loader />
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={supplierTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
-                  close={closeTunnel}
+                  close={closeSupplierTunnel}
                   suppliers={supplierData?.suppliers?.map(supplier => ({
                      id: supplier.id,
                      title: supplier.name,
@@ -163,90 +198,108 @@ export default function ItemForm() {
                   formState={formState}
                />
             </Tunnel>
-            <Tunnel layer={2}>
+         </Tunnels>
+         <Tunnels tunnels={infoTunnel}>
+            <Tunnel layer={1}>
                <InfoTunnel
                   units={units}
-                  close={() => closeTunnel(2)}
+                  close={() => closeInfoTunnel(2)}
                   formState={formState}
                />
-            </Tunnel>
-            <Tunnel layer={3} style={{ overflowY: 'auto' }}>
-               <ProcessingTunnel
-                  close={closeTunnel}
-                  open={openTunnel}
-                  processings={processingData?.masterProcessings?.map(
-                     processing => {
-                        return {
-                           id: processing.id,
-                           title: processing.name,
-                        }
-                     }
-                  )}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
-               <ConfigTunnel
-                  units={units}
-                  close={closeTunnel}
-                  open={openTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel layer={5} style={{ overflowY: 'auto' }}>
-               <AllergensTunnel
-                  close={() => closeTunnel(5)}
-                  allergens={allergensData?.masterAllergens?.map(allergen => ({
-                     id: allergen.id,
-                     title: allergen.name,
-                  }))}
-               />
-            </Tunnel>
-            <Tunnel layer={6} style={{ overflowY: 'auto' }}>
-               <SelectDerivedProcessingTunnel
-                  next={openTunnel}
-                  close={closeTunnel}
-                  processings={processingData?.masterProcessings?.map(
-                     processing => {
-                        return {
-                           id: processing.id,
-                           title: processing.name,
-                        }
-                     }
-                  )}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
-               <ConfigureDerivedProcessingTunnel
-                  units={units}
-                  open={openTunnel}
-                  close={closeTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-
-            <Tunnel layer={8}>
-               <AllergensTunnelForDerivedProcessing
-                  open={openTunnel}
-                  close={closeTunnel}
-                  allergens={allergensData?.masterAllergens?.map(allergen => ({
-                     id: allergen.id,
-                     title: allergen.name,
-                  }))}
-               />
-            </Tunnel>
-            <Tunnel layer={9}>
-               <ConfigureSachetTunnel
-                  open={openTunnel}
-                  close={closeTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} layer={10}>
-               <NutritionTunnel open={openTunnel} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={processingTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <ProcessingTunnel
+                  close={closeProcessingTunnel}
+                  open={openProcessingTunnel}
+                  processings={processingData?.masterProcessings?.map(
+                     processing => {
+                        return {
+                           id: processing.id,
+                           title: processing.name,
+                        }
+                     }
+                  )}
+                  formState={formState}
+               />
+            </Tunnel>
+            <Tunnel style={{ overflowY: 'auto' }} layer={2} size="lg">
+               <ConfigTunnel
+                  units={units}
+                  close={closeProcessingTunnel}
+                  open={openProcessingTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={allergensTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <AllergensTunnel
+                  close={() => closeAllergensTunnel(1)}
+                  allergens={allergensData?.masterAllergens?.map(allergen => ({
+                     id: allergen.id,
+                     title: allergen.name,
+                  }))}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={derivedProcessingsTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <SelectDerivedProcessingTunnel
+                  next={openDerivedProcessingTunnel(1)}
+                  close={closeDerivedProcessingTunnel(1)}
+                  processings={processingData?.masterProcessings?.map(
+                     processing => {
+                        return {
+                           id: processing.id,
+                           title: processing.name,
+                        }
+                     }
+                  )}
+                  formState={formState}
+               />
+            </Tunnel>
+            <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={2}>
+               <ConfigureDerivedProcessingTunnel
+                  units={units}
+                  open={openDerivedProcessingTunnel}
+                  close={closeDerivedProcessingTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+
+         <Tunnels tunnels={allergensTunnelForDerivedProcessing}>
+            <Tunnel layer={1}>
+               <AllergensTunnelForDerivedProcessing
+                  open={openDerivedAllergensTunnel}
+                  close={closeDerivedAllergensTunnel}
+                  allergens={allergensData?.masterAllergens?.map(allergen => ({
+                     id: allergen.id,
+                     title: allergen.name,
+                  }))}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={configureSachetTunnel}>
+            <Tunnel layer={1}>
+               <ConfigureSachetTunnel
+                  open={openConfigureSachetTunnel}
+                  close={closeConfigureSachetTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={nutritionTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={10}>
+               <NutritionTunnel
+                  open={openNutritionTunnel}
+                  close={closeNutritionTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+
          <StyledWrapper>
             <StyledHeader>
                {formState.name && (
