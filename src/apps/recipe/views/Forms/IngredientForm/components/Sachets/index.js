@@ -71,7 +71,9 @@ const Sachets = ({ state, openSachetTunnel, openEditSachetTunnel }) => {
                         role="button"
                         tabIndex="0"
                         onClick={() => openSachetTunnel(1)}
-                        onKeyDown={() => openSachetTunnel(1)}
+                        onKeyDown={e =>
+                           e.charCode === 13 && openSachetTunnel(1)
+                        }
                      >
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
                      </span>
@@ -94,7 +96,9 @@ const Sachets = ({ state, openSachetTunnel, openEditSachetTunnel }) => {
                               role="button"
                               tabIndex="0"
                               onClick={() => remove(sachet)}
-                              onKeyDown={() => remove(sachet)}
+                              onKeyDown={e =>
+                                 e.charCode === 13 && remove(sachet)
+                              }
                            >
                               <DeleteIcon />
                            </span>

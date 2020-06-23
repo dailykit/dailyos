@@ -54,7 +54,7 @@ const Stats = ({ state, openTunnel }) => {
                      role="button"
                      tabIndex="0"
                      onClick={() => openTunnel(1)}
-                     onKeyDown={() => openTunnel(1)}
+                     onKeyDown={e => e.charCode === 13 && openTunnel(1)}
                   >
                      <EditIcon />
                   </span>
@@ -62,7 +62,7 @@ const Stats = ({ state, openTunnel }) => {
                      role="button"
                      tabIndex="0"
                      onClick={removeImage}
-                     onKeyDown={() => openTunnel(1)}
+                     onKeyDown={e => e.charCode === 13 && openTunnel(1)}
                   >
                      <DeleteIcon />
                   </span>

@@ -70,7 +70,9 @@ const Processings = ({
                         role="button"
                         tabIndex="0"
                         onClick={() => openProcessingTunnel(1)}
-                        onKeyDown={() => openProcessingTunnel(1)}
+                        onKeyDown={e =>
+                           e.charCode === 13 && openProcessingTunnel(1)
+                        }
                      >
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
                      </span>
@@ -91,7 +93,9 @@ const Processings = ({
                               role="button"
                               tabIndex="0"
                               onClick={() => remove(processing)}
-                              onKeyDown={() => remove(processing)}
+                              onKeyDown={e =>
+                                 e.charCode === 13 && remove(processing)
+                              }
                            >
                               <DeleteIcon />
                            </span>
