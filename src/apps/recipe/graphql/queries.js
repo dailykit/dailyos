@@ -94,10 +94,10 @@ export const FETCH_PROCESSING_NAMES = gql`
 `
 
 export const FETCH_UNITS = gql`
-   {
+   subscription {
       units {
          id
-         name
+         name: title
       }
    }
 `

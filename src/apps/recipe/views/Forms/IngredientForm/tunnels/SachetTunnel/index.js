@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Checkbox,
    Input,
@@ -7,10 +7,11 @@ import {
    Select,
    Toggle,
    TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { CREATE_SACHET } from '../../../../../graphql'
+import { CREATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
 import {
    StyledInputWrapper,
    StyledRow,
@@ -19,7 +20,7 @@ import {
 } from '../styled'
 import { StyledTable } from './styled'
 
-const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
+const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -27,6 +28,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
    // State
    const [busy, setBusy] = React.useState(false)
    const [quantity, setQuantity] = React.useState('')
+   const [units, setUnits] = React.useState([])
    const [unit, setUnit] = React.useState(units[0]?.title || '')
    const [tracking, setTracking] = React.useState(true)
 
@@ -35,6 +37,20 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
       { id: 2, title: 'Atleast 95%', value: '95' },
       { id: 3, title: "Don't Weigh", value: '0' },
    ]
+
+   // Subscription
+   const { loading } = useSubscription(FETCH_UNITS, {
+      onSubscriptionData: data => {
+         console.log(
+            'SachetTunnel -> data.subscriptionData.data.units',
+            data.subscriptionData.data.units
+         )
+         setUnits([...data.subscriptionData.data.units])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    // Handlers
    const close = () => {
@@ -163,6 +179,8 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
          setBusy(false)
       }
    }
+
+   if (loading) return <Loader />
 
    return (
       <>

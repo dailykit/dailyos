@@ -196,3 +196,21 @@ export const S_BULK_ITEMS = gql`
       }
    }
 `
+
+export const FETCH_PROCESSING_NAMES = gql`
+   subscription {
+      masterProcessings {
+         id
+         title: name
+      }
+   }
+`
+
+export const FETCH_UNITS = gql`
+   subscription {
+      units {
+         id
+         title: name
+      }
+   }
+`

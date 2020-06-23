@@ -21,9 +21,7 @@ import { Context } from '../../../context/tabs'
 import {
    FETCH_LABEL_TEMPLATES,
    FETCH_PACKAGINGS,
-   FETCH_PROCESSING_NAMES,
    FETCH_STATIONS,
-   FETCH_UNITS,
    S_BULK_ITEMS,
    S_INGREDIENT,
    S_SACHET_ITEMS,
@@ -78,8 +76,6 @@ const IngredientForm = () => {
    const [category, setCategory] = React.useState('')
    const [state, setState] = React.useState({})
 
-   const [processings, setProcessings] = React.useState([])
-   const [units, setUnits] = React.useState([])
    const [stations, setStations] = React.useState([])
    const [items, setItems] = React.useState({
       realTime: [],
@@ -97,29 +93,6 @@ const IngredientForm = () => {
          setState(data.subscriptionData.data.ingredient)
          setTitle(data.subscriptionData.data.ingredient.name)
          setCategory(data.subscriptionData.data.ingredient.category || '')
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(FETCH_PROCESSING_NAMES, {
-      onSubscriptionData: data => {
-         const temp = data.subscriptionData.data.masterProcessings.map(
-            proc => ({ id: proc.id, title: proc.name })
-         )
-         setProcessings([...temp])
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(FETCH_UNITS, {
-      onSubscriptionData: data => {
-         const temp = data.subscriptionData.data.units.map(unit => ({
-            id: unit.id,
-            title: unit.name,
-         }))
-         setUnits([...temp])
       },
       onError: error => {
          console.log(error)
@@ -279,7 +252,6 @@ const IngredientForm = () => {
                <Tunnel layer={1}>
                   <ProcessingsTunnel
                      state={state}
-                     processings={processings}
                      closeTunnel={closeProcessingTunnel}
                   />
                </Tunnel>
@@ -290,7 +262,6 @@ const IngredientForm = () => {
                      state={state}
                      openTunnel={openSachetTunnel}
                      closeTunnel={closeSachetTunnel}
-                     units={units}
                   />
                </Tunnel>
                <Tunnel layer={2}>
@@ -324,7 +295,6 @@ const IngredientForm = () => {
                   <EditSachetTunnel
                      state={state}
                      closeTunnel={closeEditSachetTunnel}
-                     units={units}
                   />
                </Tunnel>
                <Tunnel layer={2} size="lg">

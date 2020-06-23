@@ -1,9 +1,9 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { Input, Toggle, TunnelHeader } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Input, Toggle, TunnelHeader, Loader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { UPDATE_SACHET } from '../../../../../graphql'
+import { UPDATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
 import {
    Container,
    StyledInputWrapper,
@@ -11,7 +11,7 @@ import {
    StyledSelect,
 } from '../styled'
 
-const EditSachetTunnel = ({ state, units, closeTunnel }) => {
+const EditSachetTunnel = ({ state, closeTunnel }) => {
    const { ingredientState } = React.useContext(IngredientContext)
 
    const sachet =
@@ -19,10 +19,21 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
          .ingredientSachets[ingredientState.sachetIndex]
 
    const [busy, setBusy] = React.useState(false)
+   const [units, setUnits] = React.useState([])
 
    const [tracking, setTracking] = React.useState(sachet.tracking)
    const [quantity, setQuantity] = React.useState(sachet.quantity)
    const [unit, setUnit] = React.useState(sachet.unit)
+
+   // Subscription
+   const { loading } = useSubscription(FETCH_UNITS, {
+      onSubscriptionData: data => {
+         setUnits([...data.subscriptionData.data.units])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    // Mutation
    const [updateSachet] = useMutation(UPDATE_SACHET, {
@@ -58,6 +69,8 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
          setBusy(false)
       }
    }
+
+   if (loading) return <Loader />
 
    return (
       <>

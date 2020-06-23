@@ -27,10 +27,7 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
    // Subscription
    const { loading } = useSubscription(FETCH_PROCESSING_NAMES, {
       onSubscriptionData: data => {
-         const temp = data.subscriptionData.data.masterProcessings.map(
-            proc => ({ id: proc.id, title: proc.name })
-         )
-         setProcessings([...temp])
+         setProcessings([...data.subscriptionData.data.masterProcessings])
       },
       onError: error => {
          console.log(error)
