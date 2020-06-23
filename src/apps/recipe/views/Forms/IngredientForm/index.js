@@ -18,13 +18,7 @@ import {
    state as initialState,
 } from '../../../context/ingredient'
 import { Context } from '../../../context/tabs'
-import {
-   FETCH_LABEL_TEMPLATES,
-   S_BULK_ITEMS,
-   S_INGREDIENT,
-   S_SACHET_ITEMS,
-   UPDATE_INGREDIENT,
-} from '../../../graphql'
+import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 import {
    InputWrapper,
    StyledHeader,
@@ -74,11 +68,6 @@ const IngredientForm = () => {
    const [category, setCategory] = React.useState('')
    const [state, setState] = React.useState({})
 
-   const [items, setItems] = React.useState({
-      realTime: [],
-      plannedLot: [],
-   })
-
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
       variables: {
@@ -88,44 +77,6 @@ const IngredientForm = () => {
          setState(data.subscriptionData.data.ingredient)
          setTitle(data.subscriptionData.data.ingredient.name)
          setCategory(data.subscriptionData.data.ingredient.category || '')
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-
-   // Subscriptions for fetching items
-   useSubscription(S_BULK_ITEMS, {
-      onSubscriptionData: data => {
-         const updatedItems = data.subscriptionData.data.bulkItems.map(item => {
-            return {
-               id: item.id,
-               title: `${item.supplierItem.name} ${item.processingName}`,
-            }
-         })
-         setItems({
-            ...items,
-            realTime: updatedItems,
-         })
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(S_SACHET_ITEMS, {
-      onSubscriptionData: data => {
-         const updatedItems = data.subscriptionData.data.sachetItems.map(
-            item => {
-               return {
-                  id: item.id,
-                  title: `${item.bulkItem.supplierItem.name} ${item.bulkItem.processingName} - ${item.unitSize} ${item.unit}`,
-               }
-            }
-         )
-         setItems({
-            ...items,
-            plannedLot: updatedItems,
-         })
       },
       onError: error => {
          console.log(error)
@@ -227,10 +178,7 @@ const IngredientForm = () => {
                   />
                </Tunnel>
                <Tunnel layer={3}>
-                  <ItemTunnel
-                     closeTunnel={closeSachetTunnel}
-                     items={items[ingredientState.currentMode]}
-                  />
+                  <ItemTunnel closeTunnel={closeSachetTunnel} />
                </Tunnel>
                <Tunnel layer={4}>
                   <PackagingTunnel closeTunnel={closeSachetTunnel} />
@@ -257,10 +205,7 @@ const IngredientForm = () => {
                   <EditStationTunnel closeTunnel={closeEditSachetTunnel} />
                </Tunnel>
                <Tunnel laayer={4}>
-                  <EditItemTunnel
-                     closeTunnel={closeEditSachetTunnel}
-                     items={items[ingredientState.currentMode]}
-                  />
+                  <EditItemTunnel closeTunnel={closeEditSachetTunnel} />
                </Tunnel>
                <Tunnel layer={5}>
                   <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />

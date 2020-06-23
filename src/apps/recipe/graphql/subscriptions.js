@@ -169,34 +169,6 @@ export const S_RECIPE = gql`
    }
 `
 
-export const S_SACHET_ITEMS = gql`
-   subscription SachetItems {
-      sachetItems {
-         id
-         unitSize
-         unit
-         bulkItem {
-            processingName
-            supplierItem {
-               name
-            }
-         }
-      }
-   }
-`
-
-export const S_BULK_ITEMS = gql`
-   subscription BulkItems {
-      bulkItems {
-         id
-         processingName
-         supplierItem {
-            name
-         }
-      }
-   }
-`
-
 export const FETCH_PROCESSING_NAMES = gql`
    subscription {
       masterProcessings {

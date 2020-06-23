@@ -132,3 +132,31 @@ export const RECIPE = gql`
       }
    }
 `
+
+export const SACHET_ITEMS = gql`
+   {
+      sachetItems {
+         id
+         unitSize
+         unit
+         bulkItem {
+            processingName
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`
+
+export const BULK_ITEMS = gql`
+   {
+      bulkItems {
+         id
+         processingName
+         supplierItem {
+            name
+         }
+      }
+   }
+`
