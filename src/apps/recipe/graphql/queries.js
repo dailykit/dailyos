@@ -140,6 +140,7 @@ export const SACHET_ITEMS = gql`
          unitSize
          unit
          bulkItem {
+            id
             processingName
             supplierItem {
                name
@@ -155,6 +156,7 @@ export const BULK_ITEMS = gql`
          id
          processingName
          supplierItem {
+            id
             name
          }
       }
