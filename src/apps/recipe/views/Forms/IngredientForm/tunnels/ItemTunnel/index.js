@@ -32,14 +32,14 @@ const ItemTunnel = ({ closeTunnel, items }) => {
                value: current,
             },
          })
-         closeTunnel(4)
          closeTunnel(3)
+         closeTunnel(2)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Item" close={() => closeTunnel(4)} />
+         <TunnelHeader title="Select Item" close={() => closeTunnel(3)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (

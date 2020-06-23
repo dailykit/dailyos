@@ -29,13 +29,13 @@ const StationTunnel = ({ openTunnel, closeTunnel, stations }) => {
                value: current,
             },
          })
-         openTunnel(4)
+         openTunnel(3)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Station" close={() => closeTunnel(3)} />
+         <TunnelHeader title="Select Station" close={() => closeTunnel(2)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (

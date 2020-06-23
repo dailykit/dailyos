@@ -1,5 +1,7 @@
 import React from 'react'
 import { ButtonTile } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
 import {
    ImageContainer,
@@ -8,9 +10,7 @@ import {
    StyledStat,
    StyledStatsContainer,
 } from './styled'
-import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_INGREDIENT } from '../../../../../graphql'
-import { toast } from 'react-toastify'
 
 const Stats = ({ state, openTunnel }) => {
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -23,7 +23,7 @@ const Stats = ({ state, openTunnel }) => {
       },
    })
 
-   //Handlers
+   // Handlers
    const removeImage = () => {
       updateIngredient({
          variables: {
@@ -50,10 +50,20 @@ const Stats = ({ state, openTunnel }) => {
          {state.image ? (
             <ImageContainer>
                <div>
-                  <span onClick={() => openTunnel(14)}>
+                  <span
+                     role="button"
+                     tabIndex="0"
+                     onClick={() => openTunnel(1)}
+                     onKeyDown={() => openTunnel(1)}
+                  >
                      <EditIcon />
                   </span>
-                  <span onClick={removeImage}>
+                  <span
+                     role="button"
+                     tabIndex="0"
+                     onClick={removeImage}
+                     onKeyDown={() => openTunnel(1)}
+                  >
                      <DeleteIcon />
                   </span>
                </div>
@@ -66,7 +76,7 @@ const Stats = ({ state, openTunnel }) => {
                   size="sm"
                   text="Add Photo to your Ingredient"
                   helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => openTunnel(14)}
+                  onClick={() => openTunnel(1)}
                />
             </PhotoTileWrapper>
          )}

@@ -74,7 +74,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
    const [updateSachet] = useMutation(UPDATE_SACHET, {
       onCompleted: () => {
          toast.success('Nutritional values updated!')
-         closeTunnel(13)
+         closeTunnel(7)
       },
       onError: () => {
          toast.error('Error')
@@ -116,7 +116,7 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
          <TunnelHeader
             title="Add Default Nutritional Values"
             right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
-            close={() => closeTunnel(13)}
+            close={() => closeTunnel(7)}
          />
          <TunnelBody>
             <Container bottom="16">

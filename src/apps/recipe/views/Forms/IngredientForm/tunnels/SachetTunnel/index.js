@@ -36,6 +36,48 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
       { id: 3, title: "Don't Weigh", value: '0' },
    ]
 
+   // Handlers
+   const close = () => {
+      ingredientDispatch({
+         type: 'CLEAN',
+      })
+      closeTunnel(1)
+   }
+   const propagate = (type, val) => {
+      if (
+         val &&
+         !(ingredientState[type].sachetItem || ingredientState[type].bulkItem)
+      ) {
+         ingredientDispatch({
+            type: 'CURRENT_MODE',
+            payload: type,
+         })
+         openTunnel(2)
+      }
+      ingredientDispatch({
+         type: 'MODE',
+         payload: {
+            mode: type,
+            name: 'isLive',
+            value: val,
+         },
+      })
+   }
+   const selectPackaging = type => {
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: type,
+      })
+      openTunnel(4)
+   }
+   const selectLabelTemplate = type => {
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: type,
+      })
+      openTunnel(5)
+   }
+
    // Mutations
    const [createSachet] = useMutation(CREATE_SACHET, {
       onCompleted: () => {
@@ -49,30 +91,23 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
       },
    })
 
-   // Handlers
-   const close = () => {
-      ingredientDispatch({
-         type: 'CLEAN',
-      })
-      closeTunnel(2)
-   }
    const add = () => {
       try {
          if (busy) return
          setBusy(true)
-         if (!quantity || isNaN(quantity) || parseInt(quantity) === 0) {
+         if (!quantity || Number.isNaN(quantity) || parseInt(quantity) === 0) {
             throw Error('Invalid Quantity!')
          }
          if (
             !ingredientState.realTime.priority ||
-            isNaN(ingredientState.realTime.priority) ||
+            Number.isNaN(ingredientState.realTime.priority) ||
             parseInt(ingredientState.realTime.priority) === 0
          ) {
             throw Error('Invalid Priority!')
          }
          if (
             !ingredientState.plannedLot.priority ||
-            isNaN(ingredientState.plannedLot.priority) ||
+            Number.isNaN(ingredientState.plannedLot.priority) ||
             parseInt(ingredientState.plannedLot.priority) === 0
          ) {
             throw Error('Invalid Priority!')
@@ -128,40 +163,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
          setBusy(false)
       }
    }
-   const propagate = (type, val) => {
-      if (
-         val &&
-         !(ingredientState[type].sachetItem || ingredientState[type].bulkItem)
-      ) {
-         ingredientDispatch({
-            type: 'CURRENT_MODE',
-            payload: type,
-         })
-         openTunnel(3)
-      }
-      ingredientDispatch({
-         type: 'MODE',
-         payload: {
-            mode: type,
-            name: 'isLive',
-            value: val,
-         },
-      })
-   }
-   const selectPackaging = type => {
-      ingredientDispatch({
-         type: 'CURRENT_MODE',
-         payload: type,
-      })
-      openTunnel(5)
-   }
-   const selectLabelTemplate = type => {
-      ingredientDispatch({
-         type: 'CURRENT_MODE',
-         payload: type,
-      })
-      openTunnel(6)
-   }
 
    return (
       <>
@@ -180,9 +181,9 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel, units }) => {
                      onChange={e => setQuantity(e.target.value)}
                   />
                   <StyledSelect onChange={e => setUnit(e.target.value)}>
-                     {units.map(unit => (
-                        <option key={unit.id} value={unit.title}>
-                           {unit.title}
+                     {units.map(item => (
+                        <option key={item.id} value={item.title}>
+                           {item.title}
                         </option>
                      ))}
                   </StyledSelect>

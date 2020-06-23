@@ -28,13 +28,13 @@ const EditStationTunnel = ({ closeTunnel, stations }) => {
                station: current,
             },
          })
-         closeTunnel(9)
+         closeTunnel(3)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Station" close={() => closeTunnel(9)} />
+         <TunnelHeader title="Select Station" close={() => closeTunnel(3)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (

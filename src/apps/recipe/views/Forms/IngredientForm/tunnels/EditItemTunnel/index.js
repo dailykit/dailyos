@@ -33,13 +33,13 @@ const EditItemTunnel = ({ closeTunnel, items }) => {
                      : null,
             },
          })
-         closeTunnel(10)
+         closeTunnel(4)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Item" close={() => closeTunnel(10)} />
+         <TunnelHeader title="Select Item" close={() => closeTunnel(4)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (

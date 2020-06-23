@@ -62,6 +62,17 @@ const IngredientForm = () => {
    )
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [
+      processingTunnels,
+      openProcessingTunnel,
+      closeProcessingTunnel,
+   ] = useTunnel()
+   const [sachetTunnels, openSachetTunnel, closeSachetTunnel] = useTunnel()
+   const [
+      editSachetTunnels,
+      openEditSachetTunnel,
+      closeEditSachetTunnel,
+   ] = useTunnel()
 
    const [title, setTitle] = React.useState('')
    const [category, setCategory] = React.useState('')
@@ -93,10 +104,10 @@ const IngredientForm = () => {
    })
    useSubscription(FETCH_PROCESSING_NAMES, {
       onSubscriptionData: data => {
-         const processings = data.subscriptionData.data.masterProcessings.map(
+         const temp = data.subscriptionData.data.masterProcessings.map(
             proc => ({ id: proc.id, title: proc.name })
          )
-         setProcessings([...processings])
+         setProcessings([...temp])
       },
       onError: error => {
          console.log(error)
@@ -104,11 +115,11 @@ const IngredientForm = () => {
    })
    useSubscription(FETCH_UNITS, {
       onSubscriptionData: data => {
-         const units = data.subscriptionData.data.units.map(unit => ({
+         const temp = data.subscriptionData.data.units.map(unit => ({
             id: unit.id,
             title: unit.name,
          }))
-         setUnits([...units])
+         setUnits([...temp])
       },
       onError: error => {
          console.log(error)
@@ -116,11 +127,11 @@ const IngredientForm = () => {
    })
    useSubscription(FETCH_STATIONS, {
       onSubscriptionData: data => {
-         const stations = data.subscriptionData.data.stations.map(station => ({
+         const temp = data.subscriptionData.data.stations.map(station => ({
             id: station.id,
             title: station.name,
          }))
-         setStations([...stations])
+         setStations([...temp])
       },
       onError: error => {
          console.log(error)
@@ -132,7 +143,7 @@ const IngredientForm = () => {
          const updatedItems = data.subscriptionData.data.bulkItems.map(item => {
             return {
                id: item.id,
-               title: item.supplierItem.name + ' ' + item.processingName,
+               title: `${item.supplierItem.name} ${item.processingName}`,
             }
          })
          setItems({
@@ -150,14 +161,7 @@ const IngredientForm = () => {
             item => {
                return {
                   id: item.id,
-                  title:
-                     item.bulkItem.supplierItem.name +
-                     ' ' +
-                     item.bulkItem.processingName +
-                     ' - ' +
-                     item.unitSize +
-                     ' ' +
-                     item.unit,
+                  title: `${item.bulkItem.supplierItem.name} ${item.bulkItem.processingName} - ${item.unitSize} ${item.unit}`,
                }
             }
          )
@@ -172,13 +176,13 @@ const IngredientForm = () => {
    })
    useSubscription(FETCH_PACKAGINGS, {
       onSubscriptionData: data => {
-         const packagings = data.subscriptionData.data.packaging_packaging.map(
+         const temp = data.subscriptionData.data.packaging_packaging.map(
             packaging => ({
                id: packaging.id,
                title: packaging.name,
             })
          )
-         setPackagings([...packagings])
+         setPackagings([...temp])
       },
       onError: error => {
          console.log(error)
@@ -186,13 +190,13 @@ const IngredientForm = () => {
    })
    useSubscription(FETCH_LABEL_TEMPLATES, {
       onSubscriptionData: data => {
-         const templates = data.subscriptionData.data.deviceHub_labelTemplate.map(
+         const temp = data.subscriptionData.data.deviceHub_labelTemplate.map(
             template => ({
                id: template.id,
                title: template.name,
             })
          )
-         setTemplates([...templates])
+         setTemplates([...temp])
       },
       onError: error => {
          console.log(error)
@@ -245,16 +249,17 @@ const IngredientForm = () => {
    }
    const togglePublish = val => {
       if (val && !state.isValid.status) {
-         return toast.error('Ingredient should be valid!')
-      }
-      updateIngredient({
-         variables: {
-            id: state.id,
-            set: {
-               isPublished: val,
+         toast.error('Ingredient should be valid!')
+      } else {
+         updateIngredient({
+            variables: {
+               id: state.id,
+               set: {
+                  isPublished: val,
+               },
             },
-         },
-      })
+         })
+      }
    }
 
    if (loading) return <Loader />
@@ -267,88 +272,97 @@ const IngredientForm = () => {
             {/* Tunnels */}
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1}>
+                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={processingTunnels}>
+               <Tunnel layer={1}>
                   <ProcessingsTunnel
                      state={state}
                      processings={processings}
-                     closeTunnel={closeTunnel}
+                     closeTunnel={closeProcessingTunnel}
                   />
                </Tunnel>
-               <Tunnel layer={2} size="lg">
+            </Tunnels>
+            <Tunnels tunnels={sachetTunnels}>
+               <Tunnel layer={1} size="lg">
                   <SachetTunnel
                      state={state}
-                     openTunnel={openTunnel}
-                     closeTunnel={closeTunnel}
+                     openTunnel={openSachetTunnel}
+                     closeTunnel={closeSachetTunnel}
                      units={units}
                   />
                </Tunnel>
-               <Tunnel layer={3}>
+               <Tunnel layer={2}>
                   <StationTunnel
-                     openTunnel={openTunnel}
-                     closeTunnel={closeTunnel}
+                     openTunnel={openSachetTunnel}
+                     closeTunnel={closeSachetTunnel}
                      stations={stations}
                   />
                </Tunnel>
-               <Tunnel layer={4}>
+               <Tunnel layer={3}>
                   <ItemTunnel
-                     closeTunnel={closeTunnel}
+                     closeTunnel={closeSachetTunnel}
+                     items={items[ingredientState.currentMode]}
+                  />
+               </Tunnel>
+               <Tunnel layer={4}>
+                  <PackagingTunnel
+                     closeTunnel={closeSachetTunnel}
+                     packagings={packagings}
+                  />
+               </Tunnel>
+               <Tunnel layer={5}>
+                  <LabelTemplateTunnel
+                     closeTunnel={closeSachetTunnel}
+                     templates={templates}
+                  />
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={editSachetTunnels}>
+               <Tunnel layer={1}>
+                  <EditSachetTunnel
+                     state={state}
+                     closeTunnel={closeEditSachetTunnel}
+                     units={units}
+                  />
+               </Tunnel>
+               <Tunnel layer={2} size="lg">
+                  <EditModeTunnel
+                     state={state}
+                     closeTunnel={closeEditSachetTunnel}
+                     openTunnel={openEditSachetTunnel}
+                  />
+               </Tunnel>
+               <Tunnel layer={3}>
+                  <EditStationTunnel
+                     closeTunnel={closeEditSachetTunnel}
+                     stations={stations}
+                  />
+               </Tunnel>
+               <Tunnel laayer={4}>
+                  <EditItemTunnel
+                     closeTunnel={closeEditSachetTunnel}
                      items={items[ingredientState.currentMode]}
                   />
                </Tunnel>
                <Tunnel layer={5}>
-                  <PackagingTunnel
-                     closeTunnel={closeTunnel}
+                  <EditPackagingTunnel
+                     closeTunnel={closeEditSachetTunnel}
                      packagings={packagings}
                   />
                </Tunnel>
                <Tunnel layer={6}>
-                  <LabelTemplateTunnel
-                     closeTunnel={closeTunnel}
+                  <EditLabelTemplateTunnel
+                     closeTunnel={closeEditSachetTunnel}
                      templates={templates}
                   />
                </Tunnel>
                <Tunnel layer={7}>
-                  <EditSachetTunnel
+                  <NutritionTunnel
                      state={state}
-                     closeTunnel={closeTunnel}
-                     units={units}
+                     closeTunnel={closeEditSachetTunnel}
                   />
-               </Tunnel>
-               <Tunnel layer={8} size="lg">
-                  <EditModeTunnel
-                     state={state}
-                     closeTunnel={closeTunnel}
-                     openTunnel={openTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={9}>
-                  <EditStationTunnel
-                     closeTunnel={closeTunnel}
-                     stations={stations}
-                  />
-               </Tunnel>
-               <Tunnel laayer={10}>
-                  <EditItemTunnel
-                     closeTunnel={closeTunnel}
-                     items={items[ingredientState.currentMode]}
-                  />
-               </Tunnel>
-               <Tunnel layer={11}>
-                  <EditPackagingTunnel
-                     closeTunnel={closeTunnel}
-                     packagings={packagings}
-                  />
-               </Tunnel>
-               <Tunnel layer={12}>
-                  <EditLabelTemplateTunnel
-                     closeTunnel={closeTunnel}
-                     templates={templates}
-                  />
-               </Tunnel>
-               <Tunnel layer={13}>
-                  <NutritionTunnel state={state} closeTunnel={closeTunnel} />
-               </Tunnel>
-               <Tunnel layer={14}>
-                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
                </Tunnel>
             </Tunnels>
             <StyledHeader>
@@ -399,7 +413,12 @@ const IngredientForm = () => {
             </StyledHeader>
             <StyledMain>
                <Stats state={state} openTunnel={openTunnel} />
-               <Processings state={state} openTunnel={openTunnel} />
+               <Processings
+                  state={state}
+                  openProcessingTunnel={openProcessingTunnel}
+                  openEditSachetTunnel={openEditSachetTunnel}
+                  openSachetTunnel={openSachetTunnel}
+               />
             </StyledMain>
          </>
       </IngredientContext.Provider>

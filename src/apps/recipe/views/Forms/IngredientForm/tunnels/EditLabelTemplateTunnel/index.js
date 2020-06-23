@@ -28,7 +28,7 @@ const EditLabelTemplateTunnel = ({ closeTunnel, templates }) => {
                labelTemplate: current,
             },
          })
-         closeTunnel(12)
+         closeTunnel(6)
       }
    }, [current])
 
@@ -36,7 +36,7 @@ const EditLabelTemplateTunnel = ({ closeTunnel, templates }) => {
       <>
          <TunnelHeader
             title="Select Label Template"
-            close={() => closeTunnel(12)}
+            close={() => closeTunnel(6)}
          />
          <TunnelBody>
             <List>

@@ -29,7 +29,7 @@ const LabelTemplateTunnel = ({ closeTunnel, templates }) => {
                value: current,
             },
          })
-         closeTunnel(6)
+         closeTunnel(5)
       }
    }, [current])
 
@@ -37,7 +37,7 @@ const LabelTemplateTunnel = ({ closeTunnel, templates }) => {
       <>
          <TunnelHeader
             title="Select Label Template"
-            close={() => closeTunnel(6)}
+            close={() => closeTunnel(5)}
          />
          <TunnelBody>
             <List>

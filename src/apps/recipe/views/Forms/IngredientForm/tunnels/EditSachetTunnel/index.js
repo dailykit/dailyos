@@ -36,7 +36,7 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
       },
       onCompleted: () => {
          toast.success('Sachet updated!')
-         closeTunnel(7)
+         closeTunnel(1)
       },
       onError: () => {
          toast.error('Error')
@@ -49,7 +49,7 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
       try {
          if (busy) return
          setBusy(true)
-         if (!quantity || isNaN(quantity) || parseInt(quantity) === 0) {
+         if (!quantity || Number.isNaN(quantity) || parseInt(quantity) === 0) {
             throw Error('Invalid Quantity!')
          }
          updateSachet()
@@ -64,7 +64,7 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
          <TunnelHeader
             title="Configure Sachet"
             right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
-            close={() => closeTunnel(7)}
+            close={() => closeTunnel(1)}
          />
          <TunnelBody>
             <Container bottom="32">
@@ -88,9 +88,9 @@ const EditSachetTunnel = ({ state, units, closeTunnel }) => {
                      value={unit}
                      onChange={e => setUnit(e.target.value)}
                   >
-                     {units.map(unit => (
-                        <option key={unit.id} value={unit.title}>
-                           {unit.title}
+                     {units.map(item => (
+                        <option key={item.id} value={item.title}>
+                           {item.title}
                         </option>
                      ))}
                   </StyledSelect>

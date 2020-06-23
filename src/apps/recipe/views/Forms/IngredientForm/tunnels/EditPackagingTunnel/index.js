@@ -28,13 +28,13 @@ const EditPackagingTunnel = ({ closeTunnel, packagings }) => {
                packaging: current,
             },
          })
-         closeTunnel(11)
+         closeTunnel(5)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Packaging" close={() => closeTunnel(11)} />
+         <TunnelHeader title="Select Packaging" close={() => closeTunnel(5)} />
          <TunnelBody>
             <List>
                {Object.keys(current).length > 0 ? (
