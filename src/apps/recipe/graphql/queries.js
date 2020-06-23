@@ -134,7 +134,7 @@ export const RECIPE = gql`
 `
 
 export const SACHET_ITEMS = gql`
-   {
+   query {
       sachetItems {
          id
          unitSize
@@ -150,7 +150,7 @@ export const SACHET_ITEMS = gql`
 `
 
 export const BULK_ITEMS = gql`
-   {
+   query {
       bulkItems {
          id
          processingName
