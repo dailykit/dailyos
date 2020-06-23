@@ -44,37 +44,39 @@ const EditStationTunnel = ({ closeTunnel }) => {
       }
    }, [current])
 
-   if (loading) return <Loader />
-
    return (
       <>
          <TunnelHeader title="Select Station" close={() => closeTunnel(3)} />
          <TunnelBody>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.title} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.title}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {loading ? (
+               <Loader />
+            ) : (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
       </>
    )

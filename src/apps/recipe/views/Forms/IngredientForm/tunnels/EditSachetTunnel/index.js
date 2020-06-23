@@ -70,8 +70,6 @@ const EditSachetTunnel = ({ state, closeTunnel }) => {
       }
    }
 
-   if (loading) return <Loader />
-
    return (
       <>
          <TunnelHeader
@@ -80,35 +78,41 @@ const EditSachetTunnel = ({ state, closeTunnel }) => {
             close={() => closeTunnel(1)}
          />
          <TunnelBody>
-            <Container bottom="32">
-               <StyledInputWrapper width="300">
-                  <Toggle
-                     label="Track Inventory"
-                     checked={tracking}
-                     setChecked={val => setTracking(val)}
-                  />
-               </StyledInputWrapper>
-            </Container>
-            <Container bottom="32">
-               <StyledInputWrapper width="300">
-                  <Input
-                     type="text"
-                     label="Quantity"
-                     value={quantity}
-                     onChange={e => setQuantity(e.target.value)}
-                  />
-                  <StyledSelect
-                     value={unit}
-                     onChange={e => setUnit(e.target.value)}
-                  >
-                     {units.map(item => (
-                        <option key={item.id} value={item.title}>
-                           {item.title}
-                        </option>
-                     ))}
-                  </StyledSelect>
-               </StyledInputWrapper>
-            </Container>
+            {loading ? (
+               <Loader />
+            ) : (
+               <>
+                  <Container bottom="32">
+                     <StyledInputWrapper width="300">
+                        <Toggle
+                           label="Track Inventory"
+                           checked={tracking}
+                           setChecked={val => setTracking(val)}
+                        />
+                     </StyledInputWrapper>
+                  </Container>
+                  <Container bottom="32">
+                     <StyledInputWrapper width="300">
+                        <Input
+                           type="text"
+                           label="Quantity"
+                           value={quantity}
+                           onChange={e => setQuantity(e.target.value)}
+                        />
+                        <StyledSelect
+                           value={unit}
+                           onChange={e => setUnit(e.target.value)}
+                        >
+                           {units.map(item => (
+                              <option key={item.id} value={item.title}>
+                                 {item.title}
+                              </option>
+                           ))}
+                        </StyledSelect>
+                     </StyledInputWrapper>
+                  </Container>
+               </>
+            )}
          </TunnelBody>
       </>
    )
