@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -9,15 +9,33 @@ import {
    TagGroup,
    useMultiList,
    TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CREATE_PROCESSINGS } from '../../../../../graphql'
+import {
+   CREATE_PROCESSINGS,
+   FETCH_PROCESSING_NAMES,
+} from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
-const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
+const ProcessingsTunnel = ({ state, closeTunnel }) => {
    const [busy, setBusy] = React.useState(false)
    const [search, setSearch] = React.useState('')
+   const [processings, setProcessings] = React.useState([])
    const [list, selected, selectOption] = useMultiList(processings)
+
+   // Subscription
+   const { loading } = useSubscription(FETCH_PROCESSING_NAMES, {
+      onSubscriptionData: data => {
+         const temp = data.subscriptionData.data.masterProcessings.map(
+            proc => ({ id: proc.id, title: proc.name })
+         )
+         setProcessings([...temp])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    // Mutation
    const [createProcessings] = useMutation(CREATE_PROCESSINGS, {
@@ -43,6 +61,8 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
       setBusy(true)
       createProcessings()
    }
+
+   if (loading) return <Loader />
 
    return (
       <>
