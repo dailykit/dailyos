@@ -43,6 +43,7 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
 
          leadTime
          supplier {
+            id
             name
             contactPerson
          }
