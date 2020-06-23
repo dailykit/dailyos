@@ -25,7 +25,7 @@ const PackagingTunnel = ({ closeTunnel }) => {
    // Subscription
    const { loading } = useSubscription(FETCH_PACKAGINGS, {
       onSubscriptionData: data => {
-         setPackagings([...data.subscriptionData.data.packaging_packaging])
+         setPackagings([...data.subscriptionData.data.packagings])
       },
       onError: error => {
          console.log(error)

@@ -84,32 +84,6 @@ export const SACHETS_OF_PROCESSING = gql`
    }
 `
 //  Issue: Don't use name, but title
-export const FETCH_PROCESSING_NAMES = gql`
-   {
-      masterProcessings {
-         id
-         name
-      }
-   }
-`
-
-export const FETCH_UNITS = gql`
-   subscription {
-      units {
-         id
-         name: title
-      }
-   }
-`
-
-export const FETCH_STATIONS = gql`
-   {
-      stations {
-         id
-         name
-      }
-   }
-`
 
 export const FETCH_SACHET_ITEMS = gql`
    {
@@ -125,24 +99,6 @@ export const FETCH_BULK_ITEMS = gql`
       bulkItems {
          id
          processingName
-      }
-   }
-`
-
-export const FETCH_PACKAGINGS = gql`
-   {
-      packaging_packaging {
-         id
-         name
-      }
-   }
-`
-
-export const FETCH_LABEL_TEMPLATES = gql`
-   {
-      deviceHub_labelTemplate {
-         id
-         name
       }
    }
 `

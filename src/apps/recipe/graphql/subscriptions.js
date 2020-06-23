@@ -226,7 +226,16 @@ export const FETCH_STATIONS = gql`
 
 export const FETCH_PACKAGINGS = gql`
    subscription {
-      packaging_packaging {
+      packagings {
+         id
+         title: name
+      }
+   }
+`
+
+export const FETCH_LABEL_TEMPLATES = gql`
+   subscription {
+      labelTemplates {
          id
          title: name
       }

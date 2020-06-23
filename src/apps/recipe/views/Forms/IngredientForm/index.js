@@ -78,7 +78,6 @@ const IngredientForm = () => {
       realTime: [],
       plannedLot: [],
    })
-   const [templates, setTemplates] = React.useState([])
 
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
@@ -127,21 +126,6 @@ const IngredientForm = () => {
             ...items,
             plannedLot: updatedItems,
          })
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-
-   useSubscription(FETCH_LABEL_TEMPLATES, {
-      onSubscriptionData: data => {
-         const temp = data.subscriptionData.data.deviceHub_labelTemplate.map(
-            template => ({
-               id: template.id,
-               title: template.name,
-            })
-         )
-         setTemplates([...temp])
       },
       onError: error => {
          console.log(error)
@@ -252,10 +236,7 @@ const IngredientForm = () => {
                   <PackagingTunnel closeTunnel={closeSachetTunnel} />
                </Tunnel>
                <Tunnel layer={5}>
-                  <LabelTemplateTunnel
-                     closeTunnel={closeSachetTunnel}
-                     templates={templates}
-                  />
+                  <LabelTemplateTunnel closeTunnel={closeSachetTunnel} />
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={editSachetTunnels}>
@@ -287,7 +268,6 @@ const IngredientForm = () => {
                <Tunnel layer={6}>
                   <EditLabelTemplateTunnel
                      closeTunnel={closeEditSachetTunnel}
-                     templates={templates}
                   />
                </Tunnel>
                <Tunnel layer={7}>
