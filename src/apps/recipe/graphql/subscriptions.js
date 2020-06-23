@@ -223,3 +223,12 @@ export const FETCH_STATIONS = gql`
       }
    }
 `
+
+export const FETCH_PACKAGINGS = gql`
+   subscription {
+      packaging_packaging {
+         id
+         title: name
+      }
+   }
+`

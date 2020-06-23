@@ -20,8 +20,6 @@ import {
 import { Context } from '../../../context/tabs'
 import {
    FETCH_LABEL_TEMPLATES,
-   FETCH_PACKAGINGS,
-   FETCH_STATIONS,
    S_BULK_ITEMS,
    S_INGREDIENT,
    S_SACHET_ITEMS,
@@ -80,7 +78,6 @@ const IngredientForm = () => {
       realTime: [],
       plannedLot: [],
    })
-   const [packagings, setPackagings] = React.useState([])
    const [templates, setTemplates] = React.useState([])
 
    // Subscriptions
@@ -135,20 +132,7 @@ const IngredientForm = () => {
          console.log(error)
       },
    })
-   useSubscription(FETCH_PACKAGINGS, {
-      onSubscriptionData: data => {
-         const temp = data.subscriptionData.data.packaging_packaging.map(
-            packaging => ({
-               id: packaging.id,
-               title: packaging.name,
-            })
-         )
-         setPackagings([...temp])
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
+
    useSubscription(FETCH_LABEL_TEMPLATES, {
       onSubscriptionData: data => {
          const temp = data.subscriptionData.data.deviceHub_labelTemplate.map(
@@ -265,10 +249,7 @@ const IngredientForm = () => {
                   />
                </Tunnel>
                <Tunnel layer={4}>
-                  <PackagingTunnel
-                     closeTunnel={closeSachetTunnel}
-                     packagings={packagings}
-                  />
+                  <PackagingTunnel closeTunnel={closeSachetTunnel} />
                </Tunnel>
                <Tunnel layer={5}>
                   <LabelTemplateTunnel
@@ -301,10 +282,7 @@ const IngredientForm = () => {
                   />
                </Tunnel>
                <Tunnel layer={5}>
-                  <EditPackagingTunnel
-                     closeTunnel={closeEditSachetTunnel}
-                     packagings={packagings}
-                  />
+                  <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />
                </Tunnel>
                <Tunnel layer={6}>
                   <EditLabelTemplateTunnel
