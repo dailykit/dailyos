@@ -143,6 +143,7 @@ export const SACHET_ITEMS = gql`
             id
             processingName
             supplierItem {
+               id
                name
             }
          }
