@@ -24,11 +24,7 @@ import {
 import { Context } from '../../../context/tabs'
 import {
    DELETE_BULK_ITEM,
-   MASTER_ALLERGENS_SUBSCRIPTION,
-   MASTER_PROCESSINGS_SUBSCRIPTION,
-   SUPPLIERS_SUBSCRIPTION,
    SUPPLIER_ITEM_SUBSCRIPTION,
-   UNITS_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
@@ -63,7 +59,6 @@ export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
-   const [units, setUnits] = React.useState([])
    const [itemName, setItemName] = React.useState('')
 
    const [supplierTunnel, openSupplierTunnel, closeSupplierTunnel] = useTunnel(
@@ -75,32 +70,17 @@ export default function ItemForm() {
       openProcessingTunnel,
       closeProcessingTunnel,
    ] = useTunnel(1)
-   const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
-   const [
-      allergensTunnel,
-      openAllergensTunnel,
-      closeAllergensTunnel,
-   ] = useTunnel(1)
+
    const [
       derivedProcessingsTunnel,
       openDerivedProcessingTunnel,
       closeDerivedProcessingTunnel,
-   ] = useTunnel(1)
-   const [
-      allergensTunnelForDerivedProcessing,
-      openDerivedAllergensTunnel,
-      closeDerivedAllergensTunnel,
    ] = useTunnel(1)
 
    const [
       configureSachetTunnel,
       openConfigureSachetTunnel,
       closeConfigureSachetTunnel,
-   ] = useTunnel(1)
-   const [
-      nutritionTunnel,
-      openNutritionTunnel,
-      closeNutritionTunnel,
    ] = useTunnel(1)
 
    const { loading: itemDetailLoading } = useSubscription(
@@ -123,25 +103,6 @@ export default function ItemForm() {
             setFormState(normalisedData)
          },
       }
-   )
-
-   const { loading: supplierLoading, data: supplierData } = useSubscription(
-      SUPPLIERS_SUBSCRIPTION
-   )
-   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
-      onSubscriptionData: input => {
-         const data = input.subscriptionData.data.units
-         setUnits(data)
-      },
-   })
-
-   const {
-      loading: processingsLoading,
-      data: processingData,
-   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
-
-   const { loading: allergensLoading, data: allergensData } = useSubscription(
-      MASTER_ALLERGENS_SUBSCRIPTION
    )
 
    const [deleteBulkItem, { loading: bulkItemDeleteLoading }] = useMutation(
@@ -175,26 +136,14 @@ export default function ItemForm() {
       deleteBulkItem({ variables: { id } })
    }
 
-   if (
-      supplierLoading ||
-      processingsLoading ||
-      allergensLoading ||
-      itemDetailLoading ||
-      unitsLoading ||
-      bulkItemDeleteLoading
-   )
-      return <Loader />
+   if (itemDetailLoading || bulkItemDeleteLoading) return <Loader />
+
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
          <Tunnels tunnels={supplierTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
                   close={closeSupplierTunnel}
-                  suppliers={supplierData?.suppliers?.map(supplier => ({
-                     id: supplier.id,
-                     title: supplier.name,
-                     description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
-                  }))}
                   formState={formState}
                />
             </Tunnel>
@@ -202,7 +151,6 @@ export default function ItemForm() {
          <Tunnels tunnels={infoTunnel}>
             <Tunnel layer={1}>
                <InfoTunnel
-                  units={units}
                   close={() => closeInfoTunnel(2)}
                   formState={formState}
                />
@@ -213,34 +161,14 @@ export default function ItemForm() {
                <ProcessingTunnel
                   close={closeProcessingTunnel}
                   open={openProcessingTunnel}
-                  processings={processingData?.masterProcessings?.map(
-                     processing => {
-                        return {
-                           id: processing.id,
-                           title: processing.name,
-                        }
-                     }
-                  )}
                   formState={formState}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} layer={2} size="lg">
                <ConfigTunnel
-                  units={units}
                   close={closeProcessingTunnel}
                   open={openProcessingTunnel}
                   formState={formState}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={allergensTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-               <AllergensTunnel
-                  close={() => closeAllergensTunnel(1)}
-                  allergens={allergensData?.masterAllergens?.map(allergen => ({
-                     id: allergen.id,
-                     title: allergen.name,
-                  }))}
                />
             </Tunnel>
          </Tunnels>
@@ -249,20 +177,11 @@ export default function ItemForm() {
                <SelectDerivedProcessingTunnel
                   next={openDerivedProcessingTunnel(1)}
                   close={closeDerivedProcessingTunnel(1)}
-                  processings={processingData?.masterProcessings?.map(
-                     processing => {
-                        return {
-                           id: processing.id,
-                           title: processing.name,
-                        }
-                     }
-                  )}
                   formState={formState}
                />
             </Tunnel>
             <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={2}>
                <ConfigureDerivedProcessingTunnel
-                  units={units}
                   open={openDerivedProcessingTunnel}
                   close={closeDerivedProcessingTunnel}
                   formState={formState}
@@ -270,32 +189,12 @@ export default function ItemForm() {
             </Tunnel>
          </Tunnels>
 
-         <Tunnels tunnels={allergensTunnelForDerivedProcessing}>
-            <Tunnel layer={1}>
-               <AllergensTunnelForDerivedProcessing
-                  open={openDerivedAllergensTunnel}
-                  close={closeDerivedAllergensTunnel}
-                  allergens={allergensData?.masterAllergens?.map(allergen => ({
-                     id: allergen.id,
-                     title: allergen.name,
-                  }))}
-               />
-            </Tunnel>
-         </Tunnels>
          <Tunnels tunnels={configureSachetTunnel}>
             <Tunnel layer={1}>
                <ConfigureSachetTunnel
                   open={openConfigureSachetTunnel}
                   close={closeConfigureSachetTunnel}
                   formState={formState}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={nutritionTunnel}>
-            <Tunnel style={{ overflowY: 'auto' }} layer={10}>
-               <NutritionTunnel
-                  open={openNutritionTunnel}
-                  close={closeNutritionTunnel}
                />
             </Tunnel>
          </Tunnels>
@@ -329,7 +228,7 @@ export default function ItemForm() {
                      <StyledSupplier>
                         <ContactPerson
                            formState={formState}
-                           open={openTunnel}
+                           open={openSupplierTunnel}
                         />
                      </StyledSupplier>
                   </>
@@ -338,7 +237,7 @@ export default function ItemForm() {
          </StyledWrapper>
          <StyledMain>
             <>
-               <StyledGrid onClick={() => openTunnel(2)}>
+               <StyledGrid onClick={() => openInfoTunnel(1)}>
                   <div>
                      <div>
                         <ItemIcon />
@@ -441,9 +340,9 @@ export default function ItemForm() {
                               })
 
                               if (formState.bulkItems.length) {
-                                 openTunnel(6)
+                                 openDerivedProcessingTunnel(1)
                               } else {
-                                 openTunnel(3)
+                                 openProcessingTunnel(1)
                               }
                            }}
                            type="outline"
@@ -492,7 +391,7 @@ export default function ItemForm() {
                               </div>
                               <FlexContainer>
                                  <TransparentIconButton
-                                    onClick={() => openTunnel(4)}
+                                    onClick={() => openProcessingTunnel(2)}
                                     type="button"
                                  >
                                     <EditIcon />
@@ -561,7 +460,9 @@ export default function ItemForm() {
                                                       type: 'SET_DER_ACTION',
                                                       payload: 'UPDATE',
                                                    })
-                                                   openTunnel(7)
+                                                   openDerivedProcessingTunnel(
+                                                      2
+                                                   )
                                                 }}
                                                 type="button"
                                              >
@@ -598,7 +499,7 @@ export default function ItemForm() {
                         {formState.bulkItems?.length &&
                         state.activeProcessing?.name ? (
                            <ProcessingView
-                              open={openTunnel}
+                              open={openConfigureSachetTunnel}
                               formState={formState}
                            />
                         ) : (

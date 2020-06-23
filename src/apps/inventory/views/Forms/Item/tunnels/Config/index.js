@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    IconButton,
@@ -8,6 +8,9 @@ import {
    TagGroup,
    Text,
    TextButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,6 +23,7 @@ import {
    CREATE_BULK_ITEM,
    UPDATE_SUPPLIER_ITEM,
    UPDATE_BULK_ITEM,
+   UNITS_SUBSCRIPTION,
 } from '../../../../../graphql'
 import { StyledSelect } from '../../../styled'
 import {
@@ -33,19 +37,22 @@ import {
 } from '../styled'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+import AllergensTunnel from '../Allergens'
+import NutritionTunnel from '../NutritionTunnel'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, open, units, formState }) {
+export default function ConfigTunnel({ close, open, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [errors, setErrors] = useState([])
+   const [units, setUnits] = useState([])
 
    const bulkItem = formState.bulkItemAsShipped
 
    const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(units[0].name)
+   const [unit, setUnit] = useState(bulkItem?.unit || 'gram')
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
    const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -56,6 +63,25 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       bulkItem?.shelfLife?.unit || 'hours'
    )
    const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
+
+   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const data = input.subscriptionData.data.units
+         setUnits(data)
+      },
+   })
+
+   const [
+      allergensTunnel,
+      openAllergensTunnel,
+      closeAllergensTunnel,
+   ] = useTunnel(1)
+
+   const [
+      nutritionTunnel,
+      openNutritionTunnel,
+      closeNutritionTunnel,
+   ] = useTunnel(1)
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
@@ -147,10 +173,24 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       }
    }
 
-   if (createBulkItemLoading || updateBulkItemLoading) return <Loader />
+   if (createBulkItemLoading || updateBulkItemLoading || unitsLoading)
+      return <Loader />
 
    return (
       <>
+         <Tunnels tunnels={allergensTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <AllergensTunnel close={() => closeAllergensTunnel(1)} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={nutritionTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
+               <NutritionTunnel
+                  open={openNutritionTunnel}
+                  close={closeNutritionTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
          <TunnelHeader>
             <div>
                <span onClick={() => close(4)}>
@@ -321,7 +361,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                            type: 'SET_NUTRI_TARGET',
                            payload: 'processing',
                         })
-                        open(10)
+                        openNutritionTunnel(1)
                      }}
                      type="ghost"
                   >
@@ -357,7 +397,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                            type: 'SET_NUTRI_TARGET',
                            payload: 'processing',
                         })
-                        open(10)
+                        openNutritionTunnel(1)
                      }}
                   />
                )}
@@ -365,7 +405,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
             <StyledRow>
                <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
                {state.processing.allergens.length ? (
-                  <Highlight pointer onClick={() => open(5)}>
+                  <Highlight pointer onClick={() => openAllergensTunnel(1)}>
                      <TagGroup>
                         {state.processing.allergens.map(el => (
                            <Tag key={el.id}> {el.title} </Tag>
@@ -376,7 +416,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                   <ButtonTile
                      type="secondary"
                      text={t(address.concat('add allergens'))}
-                     onClick={() => open(5)}
+                     onClick={() => openAllergensTunnel(1)}
                   />
                )}
             </StyledRow>

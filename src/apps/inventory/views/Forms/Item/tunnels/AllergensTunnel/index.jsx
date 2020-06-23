@@ -9,25 +9,31 @@ import {
    TextButton,
    Tag,
    TagGroup,
+   Loader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import { useSubscription } from '@apollo/react-hooks'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
 import { ItemContext } from '../../../../../context/item'
 
 import { TunnelHeader, TunnelBody } from '../styled'
+import { MASTER_ALLERGENS_SUBSCRIPTION } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.allergenstunnel.'
 
-export default function AllergensTunnelForDerivedProcessing({
-   close,
-   allergens,
-}) {
+export default function AllergensTunnelForDerivedProcessing({ close }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
    const { dispatch } = React.useContext(ItemContext)
-   const [list, selected, selectOption] = useMultiList(allergens)
+
+   const {
+      loading: allergensLoading,
+      data: { masterAllergens = [] } = {},
+   } = useSubscription(MASTER_ALLERGENS_SUBSCRIPTION)
+
+   const [list, selected, selectOption] = useMultiList(masterAllergens)
 
    const save = () => {
       dispatch({
@@ -36,6 +42,8 @@ export default function AllergensTunnelForDerivedProcessing({
       })
       close(8)
    }
+
+   if (allergensLoading) return <Loader />
 
    return (
       <>

@@ -306,7 +306,7 @@ export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
    subscription {
       masterProcessings {
          id
-         name
+         title: name
          description
       }
    }
@@ -315,7 +315,7 @@ export const MASTER_ALLERGENS_SUBSCRIPTION = gql`
    subscription {
       masterAllergens {
          id
-         name
+         title: name
          description
       }
    }

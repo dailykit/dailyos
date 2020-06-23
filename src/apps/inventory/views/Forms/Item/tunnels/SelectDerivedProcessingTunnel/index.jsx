@@ -4,9 +4,11 @@ import {
    ListOptions,
    ListSearch,
    useSingleList,
+   Loader,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSubscription } from '@apollo/react-hooks'
 
 import {
    Spacer,
@@ -14,6 +16,7 @@ import {
    TunnelHeader,
 } from '../../../../../components'
 import { ItemContext } from '../../../../../context/item'
+import { MASTER_PROCESSINGS_SUBSCRIPTION } from '../../../../../graphql'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.selectderivedprocessingtunnel.'
@@ -21,15 +24,19 @@ const address =
 export default function SelectDerivedProcessingTunnel({
    close,
    next,
-   processings,
    formState,
 }) {
    const { t } = useTranslation()
    const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
 
+   const {
+      loading: processingsLoading,
+      data: { masterProcessings = [] } = {},
+   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
+
    const [list, current, selectOption] = useSingleList(
-      processings.filter(proc => {
+      masterProcessings.filter(proc => {
          const match = formState.bulkItems.find(
             item => item.processingName === proc.title
          )
@@ -37,6 +44,8 @@ export default function SelectDerivedProcessingTunnel({
          if (!match) return true
       })
    )
+
+   if (processingsLoading) return <Loader />
 
    return (
       <TunnelContainer>
@@ -48,10 +57,10 @@ export default function SelectDerivedProcessingTunnel({
                   type: 'ADD_CONFIGURABLE_PROCESSING',
                   payload: current,
                })
-               close(6)
-               next(7)
+               close(1)
+               next(2)
             }}
-            close={() => close(6)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

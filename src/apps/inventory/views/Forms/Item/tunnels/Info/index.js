@@ -1,11 +1,14 @@
 import React, { useState, useContext } from 'react'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { TextButton, Input, Loader } from '@dailykit/ui'
 
 // Mutations
-import { UPDATE_SUPPLIER_ITEM } from '../../../../../graphql'
+import {
+   UPDATE_SUPPLIER_ITEM,
+   UNITS_SUBSCRIPTION,
+} from '../../../../../graphql'
 
 import { CloseIcon } from '../../../../../assets/icons'
 
@@ -24,14 +27,15 @@ import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({ close, units, formState }) {
+export default function InfoTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = useContext(Context)
+   const [units, setUnits] = useState([])
 
    const [itemName, setItemName] = useState(formState.name || '')
    const [sku, setSku] = useState(formState.sku || '')
    const [unitSize, setUnitSize] = useState(formState.unitSize || '')
-   const [unit, setUnit] = useState(formState.unit || units[0].name)
+   const [unit, setUnit] = useState(formState.unit || 'gram')
    const [unitPrice, setUnitPrice] = useState(
       (formState.prices?.length && formState.prices[0].unitPrice.value) || ''
    )
@@ -41,6 +45,13 @@ export default function InfoTunnel({ close, units, formState }) {
    )
 
    const [errors, setErrors] = useState([])
+
+   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const data = input.subscriptionData.data.units
+         setUnits(data)
+      },
+   })
 
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: input => {
@@ -80,7 +91,7 @@ export default function InfoTunnel({ close, units, formState }) {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading || unitsLoading) return <Loader />
 
    return (
       <>

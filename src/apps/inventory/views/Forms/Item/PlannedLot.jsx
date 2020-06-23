@@ -68,7 +68,7 @@ export default function PlannedLotView({ open, formState }) {
                            type: 'SET_UNIT_QUANTITY',
                            payload: { unit: active.unit },
                         })
-                        open(9)
+                        open(1)
                      }}
                   />
                </div>

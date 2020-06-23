@@ -9,22 +9,35 @@ import {
    Loader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
    TunnelContainer,
    TunnelHeader,
    Spacer,
 } from '../../../../../components'
-import { UPDATE_SUPPLIER_ITEM } from '../../../../../graphql/mutations/item'
+import {
+   UPDATE_SUPPLIER_ITEM,
+   SUPPLIERS_SUBSCRIPTION,
+} from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
-export default function SupplierTunnel({ close, suppliers, formState }) {
+export default function SupplierTunnel({ close, formState }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
 
-   const [list, current, selectOption] = useSingleList(suppliers)
+   const { loading: supplierLoading, data: supplierData } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION
+   )
+
+   const [list, current, selectOption] = useSingleList(
+      supplierData?.suppliers?.map(supplier => ({
+         id: supplier.id,
+         title: supplier.name,
+         description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
+      }))
+   )
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
          // toast and close
@@ -51,7 +64,7 @@ export default function SupplierTunnel({ close, suppliers, formState }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading || supplierLoading) return <Loader />
 
    return (
       <>
