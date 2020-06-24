@@ -73,7 +73,7 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          }
          bulkItems {
             id
-            processingName
+            name: processingName
             awaiting
             onHand
             committed
