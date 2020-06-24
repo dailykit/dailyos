@@ -86,8 +86,6 @@ export default function SupplierTunnel({ close, formState }) {
             right={{ action: handleNext, title: 'Save' }}
          />
          <TunnelContainer>
-            <Spacer />
-
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem
