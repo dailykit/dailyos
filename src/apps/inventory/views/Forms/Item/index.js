@@ -399,79 +399,69 @@ export default function ItemForm() {
                               )}
                            </Text>
 
-                           {formState.bulkItems?.map(procs => {
-                              if (procs.id === formState.bulkItemAsShippedId)
-                                 return null
-                              return (
-                                 <ProcessingButton
-                                    key={procs.id}
-                                    active={
-                                       state.activeProcessing.id === procs.id
-                                    }
-                                    onClick={() => {
-                                       setActive(false)
-                                       dispatch({
-                                          type: 'SET_ACTIVE_PROCESSING',
-                                          payload: {
-                                             ...procs,
-                                             name: procs.processingName,
-                                          },
-                                       })
-                                    }}
-                                    style={{
-                                       justifyContent: 'space-between',
-                                    }}
-                                 >
-                                    <div style={{ textAlign: 'left' }}>
-                                       <h3 style={{ marginBottom: '5px' }}>
-                                          {procs.processingName}
-                                       </h3>
-                                       <Text as="subtitle">
-                                          {t(address.concat('on hand'))}:{' '}
-                                          {procs.onHand} {procs.unit}
-                                       </Text>
-                                       <Text as="subtitle">
-                                          {t(address.concat('shelf life'))}:{' '}
-                                          {procs?.shelfLife?.value || 'N/A'}{' '}
-                                          {procs?.shelfLife?.value
-                                             ? procs?.shelfLife?.unit
-                                             : ''}
-                                       </Text>
-                                    </div>
-                                    {state.activeProcessing.id === procs.id && (
-                                       <>
-                                          <FlexContainer>
-                                             <TransparentIconButton
-                                                onClick={() => {
-                                                   dispatch({
-                                                      type: 'SET_DER_ACTION',
-                                                      payload: 'UPDATE',
-                                                   })
-                                                   openDerivedProcessingTunnel(
-                                                      2
-                                                   )
-                                                }}
-                                                type="button"
-                                             >
-                                                <EditIcon />
-                                             </TransparentIconButton>
-                                             <span style={{ width: '5px' }} />
-                                             <TransparentIconButton
-                                                onClick={() =>
-                                                   handleBulkItemDelete(
-                                                      procs.id
-                                                   )
-                                                }
-                                                type="button"
-                                             >
-                                                <DeleteIcon />
-                                             </TransparentIconButton>
-                                          </FlexContainer>
-                                       </>
-                                    )}
-                                 </ProcessingButton>
-                              )
-                           })}
+                           {formState.bulkItems?.map(procs => (
+                              <ProcessingButton
+                                 key={procs.id}
+                                 active={state.activeProcessing.id === procs.id}
+                                 onClick={() => {
+                                    setActive(false)
+                                    dispatch({
+                                       type: 'SET_ACTIVE_PROCESSING',
+                                       payload: {
+                                          ...procs,
+                                          name: procs.processingName,
+                                       },
+                                    })
+                                 }}
+                                 style={{
+                                    justifyContent: 'space-between',
+                                 }}
+                              >
+                                 <div style={{ textAlign: 'left' }}>
+                                    <h3 style={{ marginBottom: '5px' }}>
+                                       {procs.processingName}
+                                    </h3>
+                                    <Text as="subtitle">
+                                       {t(address.concat('on hand'))}:{' '}
+                                       {procs.onHand} {procs.unit}
+                                    </Text>
+                                    <Text as="subtitle">
+                                       {t(address.concat('shelf life'))}:{' '}
+                                       {procs?.shelfLife?.value || 'N/A'}{' '}
+                                       {procs?.shelfLife?.value
+                                          ? procs?.shelfLife?.unit
+                                          : ''}
+                                    </Text>
+                                 </div>
+                                 {state.activeProcessing.id === procs.id && (
+                                    <>
+                                       <FlexContainer>
+                                          <TransparentIconButton
+                                             onClick={() => {
+                                                dispatch({
+                                                   type: 'SET_DER_ACTION',
+                                                   payload: 'UPDATE',
+                                                })
+                                                openDerivedProcessingTunnel(2)
+                                             }}
+                                             type="button"
+                                          >
+                                             <EditIcon />
+                                          </TransparentIconButton>
+                                          <span style={{ width: '5px' }} />
+                                          <TransparentIconButton
+                                             onClick={() =>
+                                                handleBulkItemDelete(procs.id)
+                                             }
+                                             type="button"
+                                          >
+                                             <DeleteIcon />
+                                          </TransparentIconButton>
+                                       </FlexContainer>
+                                    </>
+                                 )}
+                              </ProcessingButton>
+                           ))}
                         </>
                      )}
                   </Flexible>
