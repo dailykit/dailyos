@@ -40,7 +40,7 @@ export default function AllergensTunnelForDerivedProcessing({ close }) {
          type: 'ADD_ALLERGENS_FOR_DERIVED_PROCESSING',
          payload: selected,
       })
-      close(8)
+      close()
    }
 
    if (allergensLoading) return <Loader />
@@ -49,7 +49,7 @@ export default function AllergensTunnelForDerivedProcessing({ close }) {
       <>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(8)}>
+               <span onClick={() => close()}>
                   <CloseIcon size={24} />
                </span>
                <span>{t(address.concat('add allergens'))}</span>

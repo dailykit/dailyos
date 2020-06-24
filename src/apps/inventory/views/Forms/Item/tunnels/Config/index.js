@@ -42,7 +42,7 @@ import NutritionTunnel from '../NutritionTunnel'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, open, formState }) {
+export default function ConfigTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [errors, setErrors] = useState([])
@@ -52,7 +52,7 @@ export default function ConfigTunnel({ close, open, formState }) {
 
    const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(bulkItem?.unit || 'gram')
+   const [unit, setUnit] = useState(bulkItem?.unit || formState?.unit || 'gm')
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
    const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -185,10 +185,7 @@ export default function ConfigTunnel({ close, open, formState }) {
          </Tunnels>
          <Tunnels tunnels={nutritionTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <NutritionTunnel
-                  open={openNutritionTunnel}
-                  close={closeNutritionTunnel}
-               />
+               <NutritionTunnel close={closeNutritionTunnel} />
             </Tunnel>
          </Tunnels>
          <TunnelHeader>
@@ -243,7 +240,7 @@ export default function ConfigTunnel({ close, open, formState }) {
                   <span style={{ width: '10px' }} />
                   <StyledSelect
                      name="unit"
-                     defaultValue={unit}
+                     value={unit}
                      onChange={e => setUnit(e.target.value)}
                   >
                      {units.map(unit => (
@@ -273,28 +270,27 @@ export default function ConfigTunnel({ close, open, formState }) {
             </StyledRow>
             <StyledRow>
                <StyledInputGroup>
-                  {!state.form_meta.shipped && (
-                     <InputWrapper>
-                        <Input
-                           type="number"
-                           label={t(address.concat('labour time per 100gm'))}
-                           name="labor time"
-                           value={laborTime}
-                           onChange={e => setLaborTime(e.target.value)}
-                           onBlur={e =>
-                              handleNumberInputErrors(e, errors, setErrors)
-                           }
-                        />
-                        <StyledSelect
-                           name="unit"
-                           defaultValue={laborUnit}
-                           onChange={e => setLaborUnit(e.target.value)}
-                        >
-                           <option value="hours">{t('units.hours')}</option>
-                           <option value="minutes">{t('units.minutes')}</option>
-                        </StyledSelect>
-                     </InputWrapper>
-                  )}
+                  <InputWrapper>
+                     <Input
+                        type="number"
+                        label={t(address.concat('labour time per 100gm'))}
+                        name="labor time"
+                        value={laborTime}
+                        onChange={e => setLaborTime(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
+                     />
+                     <StyledSelect
+                        name="unit"
+                        defaultValue={laborUnit}
+                        onChange={e => setLaborUnit(e.target.value)}
+                     >
+                        <option value="hours">{t('units.hours')}</option>
+                        <option value="minutes">{t('units.minutes')}</option>
+                     </StyledSelect>
+                  </InputWrapper>
+
                   <InputWrapper>
                      <Input
                         type="number"
@@ -365,7 +361,7 @@ export default function ConfigTunnel({ close, open, formState }) {
                      }}
                      type="ghost"
                   >
-                     <EditIcon />
+                     <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
                {state.processing.nutrients?.fat ||

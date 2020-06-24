@@ -98,12 +98,12 @@ export default function NutritionTunnel({ close }) {
                         },
                      })
                   }
-                  close(10)
+                  close(1)
                } else {
                   toast.error('Invalid inputs, fill only numbers')
                }
             }}
-            close={() => close(10)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

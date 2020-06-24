@@ -104,7 +104,9 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
       }
    )
 
-   const [unit, setUnit] = useState('gram')
+   const [unit, setUnit] = useState(
+      state.activeProcessing?.unit || formState?.unit || 'gm'
+   )
    const [par, setPar] = useState(state.activeProcessing?.parLevel || '')
 
    const [maxInventoryLevel, setMaxInventoryLevel] = useState(
@@ -167,17 +169,13 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
          <Tunnels tunnels={allergensTunnelForDerivedProcessing}>
             <Tunnel layer={1}>
                <AllergensTunnelForDerivedProcessing
-                  open={openDerivedAllergensTunnel}
-                  close={closeDerivedAllergensTunnel}
+                  close={() => closeDerivedAllergensTunnel(1)}
                />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={nutritionTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <NutritionTunnel
-                  open={openNutritionTunnel}
-                  close={closeNutritionTunnel}
-               />
+               <NutritionTunnel close={closeNutritionTunnel} />
             </Tunnel>
          </Tunnels>
 
@@ -225,7 +223,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                   <span style={{ width: '10px' }} />
                   <StyledSelect
                      name="unit"
-                     defaultValue={unit}
+                     value={unit}
                      onChange={e => setUnit(e.target.value)}
                   >
                      {units.map(unit => (
@@ -345,7 +343,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                      }}
                      type="ghost"
                   >
-                     <EditIcon />
+                     <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
                {state.configurable.nutrients?.fat ||
