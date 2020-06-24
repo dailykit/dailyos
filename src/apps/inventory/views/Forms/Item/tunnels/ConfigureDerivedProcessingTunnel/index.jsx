@@ -47,11 +47,7 @@ import NutritionTunnel from '../NutritionTunnel'
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
 
-export default function ConfigureDerivedProcessingTunnel({
-   close,
-   open,
-   formState,
-}) {
+export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
    const { t } = useTranslation()
    const {
       state: { configurable },
@@ -83,12 +79,12 @@ export default function ConfigureDerivedProcessingTunnel({
 
    const [createBulkItem, { loading }] = useMutation(CREATE_BULK_ITEM, {
       onCompleted: () => {
-         close(7)
+         close(2)
          toast.success('Bulk Item Created!')
       },
       onError: error => {
          console.log(error)
-         close(7)
+         close(2)
          toast.error('Error! make sure you have filled the form properly')
       },
    })
@@ -97,13 +93,13 @@ export default function ConfigureDerivedProcessingTunnel({
       UPDATE_BULK_ITEM,
       {
          onCompleted: () => {
-            close(7)
+            close(2)
             toast.success('Bulk Item updated successfully !')
          },
          onError: error => {
             console.log(error)
             toast.error('Error updating bulk item. Please try again')
-            close(7)
+            close(2)
          },
       }
    )
@@ -189,7 +185,7 @@ export default function ConfigureDerivedProcessingTunnel({
             <TunnelHeader
                title={t(address.concat('configure processing'))}
                next={handleNext}
-               close={() => close(7)}
+               close={() => close(2)}
                nextAction="Save"
             />
 

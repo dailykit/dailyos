@@ -11,7 +11,6 @@ import {
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
@@ -28,6 +27,7 @@ import {
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
+import ProcessingView from './ProcessingView'
 import {
    ProcessingButton,
    StyledGrid,
@@ -38,18 +38,14 @@ import {
    TransparentIconButton,
 } from './styled'
 import {
-   AllergensTunnel,
-   AllergensTunnelForDerivedProcessing,
    ConfigTunnel,
    ConfigureDerivedProcessingTunnel,
    ConfigureSachetTunnel,
    InfoTunnel,
-   NutritionTunnel,
    ProcessingTunnel,
    SelectDerivedProcessingTunnel,
    SuppliersTunnel,
 } from './tunnels'
-import ProcessingView from './ProcessingView'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -89,18 +85,9 @@ export default function ItemForm() {
          variables: { id: tabState.current.id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
-            const bulkItemAsShipped = data.bulkItems?.find(
-               item => item.id === data.bulkItemAsShippedId
-            )
-            const normalisedData = {
-               ...data,
-               bulkItemAsShipped: {
-                  ...bulkItemAsShipped,
-                  name: bulkItemAsShipped?.processingName,
-               },
-            }
-            setItemName(normalisedData.name)
-            setFormState(normalisedData)
+
+            setItemName(data.name)
+            setFormState(data)
          },
       }
    )
@@ -339,7 +326,7 @@ export default function ItemForm() {
                                  type: 'CLEAR_STATE',
                               })
 
-                              if (formState.bulkItems.length) {
+                              if (formState.bulkItemAsShippedId) {
                                  openDerivedProcessingTunnel(1)
                               } else {
                                  openProcessingTunnel(1)

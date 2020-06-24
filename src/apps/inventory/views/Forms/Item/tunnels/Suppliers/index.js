@@ -26,18 +26,33 @@ const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 export default function SupplierTunnel({ close, formState }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
+   const [data, setData] = React.useState([])
+   const [list, current, selectOption] = useSingleList(data)
 
-   const { loading: supplierLoading, data: supplierData } = useSubscription(
-      SUPPLIERS_SUBSCRIPTION
+   const { loading: supplierLoading } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION,
+      {
+         onSubscriptionData: input => {
+            const newSuppliers = input.subscriptionData.data.suppliers.map(
+               sup => {
+                  return {
+                     id: sup.id,
+                     supplier: { title: sup.name },
+                     contact: {
+                        title: `${sup.contactPerson?.firstName || ''} ${
+                           sup.contactPerson?.lastName || ''
+                        }`,
+                        img: '',
+                     },
+                  }
+               }
+            )
+
+            setData(newSuppliers)
+         },
+      }
    )
 
-   const [list, current, selectOption] = useSingleList(
-      supplierData?.suppliers?.map(supplier => ({
-         id: supplier.id,
-         title: supplier.name,
-         description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
-      }))
-   )
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
          // toast and close
@@ -81,34 +96,32 @@ export default function SupplierTunnel({ close, formState }) {
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem
-                     type="SSL2"
+                     type="SSL22"
                      content={{
-                        title: current.title,
-                        description: current.description,
+                        supplier: current.supplier,
+                        contact: current.contact,
                      }}
                   />
                ) : (
                   <ListSearch
                      onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat('type what you’re looking for')
-                     )}
+                     placeholder="type what you’re looking for..."
                   />
                )}
                <ListOptions>
                   {list
                      .filter(option =>
-                        option.title.toLowerCase().includes(search)
+                        option.supplier.title.toLowerCase().includes(search)
                      )
                      .map(option => (
                         <ListItem
-                           type="SSL2"
+                           type="SSL22"
                            key={option.id}
                            isActive={option.id === current.id}
                            onClick={() => selectOption('id', option.id)}
                            content={{
-                              title: option.title,
-                              description: option.description,
+                              supplier: option.supplier,
+                              contact: option.contact,
                            }}
                         />
                      ))}

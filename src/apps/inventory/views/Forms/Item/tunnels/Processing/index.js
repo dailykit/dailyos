@@ -25,21 +25,20 @@ export default function ProcessingTunnel({ close, open, formState }) {
    const { t } = useTranslation()
    const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
+   const [data, setData] = React.useState([])
+   const [list, current, selectOption] = useSingleList(data)
 
-   const {
-      loading: processingsLoading,
-      data: { masterProcessings = [] } = {},
-   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
+   const { loading: processingsLoading } = useSubscription(
+      MASTER_PROCESSINGS_SUBSCRIPTION,
+      {
+         variables: { supplierItemId: formState.id },
+         onSubscriptionData: input => {
+            const newProcessings =
+               input.subscriptionData.data.masterProcessingsAggregate.nodes
 
-   const [list, current, selectOption] = useSingleList(
-      masterProcessings.filter(proc => {
-         const match = formState.bulkItems.find(
-            item => item.processingName === proc.title
-         )
-
-         if (!match) return true
-         return false
-      })
+            setData(newProcessings)
+         },
+      }
    )
 
    if (processingsLoading) return <Loader />

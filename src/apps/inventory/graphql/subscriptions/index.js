@@ -36,6 +36,30 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          id
          name
          bulkItemAsShippedId
+         bulkItemAsShipped {
+            id
+            name: processingName
+            awaiting
+            onHand
+            committed
+            parLevel
+            maxLevel
+            isAvailable
+            shelfLife
+            unit
+            consumed
+
+            sachetItems {
+               id
+               onHand
+               awaiting
+               consumed
+               unit
+               unitSize
+               parLevel
+               committed
+            }
+         }
          unit
          unitSize
          prices
@@ -303,11 +327,17 @@ export const UNITS_SUBSCRIPTION = gql`
 `
 
 export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
-   subscription {
-      masterProcessings {
-         id
-         title: name
-         description
+   subscription MasterProcessings($supplierItemId: Int!) {
+      masterProcessingsAggregate(
+         where: {
+            _not: { bulkItems: { supplierItemId: { _eq: $supplierItemId } } }
+         }
+      ) {
+         nodes {
+            id
+            name
+            description
+         }
       }
    }
 `

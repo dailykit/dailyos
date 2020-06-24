@@ -110,7 +110,7 @@ export default function ConfigTunnel({ close, open, formState }) {
          onError: error => {
             console.log(error)
             toast.error('Error creating bulk item. Please try again')
-            close(4)
+            close(2)
          },
       }
    )
@@ -119,13 +119,13 @@ export default function ConfigTunnel({ close, open, formState }) {
       UPDATE_BULK_ITEM,
       {
          onCompleted: () => {
-            close(4)
+            close(2)
             toast.success('Bulk Item updated successfully !')
          },
          onError: error => {
             console.log(error)
             toast.error('Error updating bulk item as shipped. Please try again')
-            close(4)
+            close(2)
          },
       }
    )
@@ -193,7 +193,7 @@ export default function ConfigTunnel({ close, open, formState }) {
          </Tunnels>
          <TunnelHeader>
             <div>
-               <span onClick={() => close(4)}>
+               <span onClick={() => close(2)}>
                   <CloseIcon size={24} />
                </span>
                <span>
