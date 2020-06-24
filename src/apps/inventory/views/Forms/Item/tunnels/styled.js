@@ -27,7 +27,7 @@ export const TunnelHeader = styled.div`
 `
 
 export const TunnelBody = styled.div`
-   padding: 32px;
+   padding: 16px 32px;
    overflow: auto;
 `
 

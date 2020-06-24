@@ -1,29 +1,23 @@
-import React, { useState, useContext } from 'react'
-import { toast } from 'react-toastify'
-import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { TextButton, Input, Loader } from '@dailykit/ui'
+import { Input, Loader, TunnelHeader } from '@dailykit/ui'
+import React, { useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
-// Mutations
+import { Context } from '../../../../../context/tabs'
 import {
-   UPDATE_SUPPLIER_ITEM,
    UNITS_SUBSCRIPTION,
+   UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
+import { StyledSelect } from '../../../styled'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 import {
-   TunnelHeader,
-   TunnelBody,
-   StyledRow,
-   StyledInputGroup,
    Highlight,
    InputWrapper,
+   StyledInputGroup,
+   StyledRow,
+   TunnelBody,
 } from '../styled'
-import { StyledSelect } from '../../../styled'
-import { Context } from '../../../../../context/tabs'
-
-import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
@@ -95,19 +89,12 @@ export default function InfoTunnel({ close, formState }) {
 
    return (
       <>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>{t(address.concat('item information'))}</span>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={handleNext}>
-                  {t(address.concat('next'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+         <TunnelHeader
+            title={t(address.concat('item information'))}
+            close={close}
+            right={{ title: t(address.concat('next')), action: handleNext }}
+         />
+
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>

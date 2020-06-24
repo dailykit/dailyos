@@ -7,25 +7,27 @@ import {
    Tag,
    TagGroup,
    Text,
-   TextButton,
-   Tunnels,
    Tunnel,
+   Tunnels,
    useTunnel,
+   TunnelHeader,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
-import { CloseIcon } from '../../../../../assets/icons'
 import { ItemContext } from '../../../../../context/item'
 import {
    CREATE_BULK_ITEM,
-   UPDATE_SUPPLIER_ITEM,
-   UPDATE_BULK_ITEM,
    UNITS_SUBSCRIPTION,
+   UPDATE_BULK_ITEM,
+   UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
 import { StyledSelect } from '../../../styled'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+import AllergensTunnel from '../Allergens'
+import NutritionTunnel from '../NutritionTunnel'
 import {
    Highlight,
    InputWrapper,
@@ -33,12 +35,7 @@ import {
    StyledLabel,
    StyledRow,
    TunnelBody,
-   TunnelHeader,
 } from '../styled'
-import Nutrition from '../../../../../../../shared/components/Nutrition/index'
-import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
-import AllergensTunnel from '../Allergens'
-import NutritionTunnel from '../NutritionTunnel'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
@@ -188,22 +185,13 @@ export default function ConfigTunnel({ close, formState }) {
                <NutritionTunnel close={closeNutritionTunnel} />
             </Tunnel>
          </Tunnels>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(2)}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>
-                  {t(address.concat('configure processing'))}:{' '}
-                  {state.processing.name}
-               </span>
-            </div>
-            <div>
-               <TextButton onClick={handleSave} type="solid">
-                  {t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+
+         <TunnelHeader
+            title={t(address.concat('configure processing'))}
+            close={() => close(2)}
+            right={{ title: t(address.concat('save')), action: handleSave }}
+         />
+
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>

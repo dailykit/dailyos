@@ -1,14 +1,10 @@
 import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-import { Input, Loader, Text } from '@dailykit/ui'
+import { Input, Loader, Text, TunnelHeader } from '@dailykit/ui'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 import { ItemContext } from '../../../../../context/item'
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { FlexContainer } from '../../../styled'
@@ -62,68 +58,66 @@ export default function ConfigureSachetTunnel({ close, formState }) {
    if (loading) return <Loader />
 
    return (
-      <TunnelContainer>
+      <>
          <TunnelHeader
             title={t(address.concat('add sachet'))}
-            next={handleNext}
             close={() => close(1)}
-            nextAction="Save"
+            right={{ title: 'Save', action: handleNext }}
          />
-
-         <Spacer />
-
-         <br />
-
-         <div style={{ width: '45%', display: 'flex', alignItems: 'flex-end' }}>
-            <div style={{ width: '70%' }}>
-               <Input
-                  type="number"
-                  name="quantity"
-                  value={quantity}
-                  label="Sachet Quantity"
-                  onChange={e => setQuantity(e.target.value)}
-                  onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
-               />
+         <TunnelContainer>
+            <div
+               style={{ width: '45%', display: 'flex', alignItems: 'flex-end' }}
+            >
+               <div style={{ width: '70%' }}>
+                  <Input
+                     type="number"
+                     name="quantity"
+                     value={quantity}
+                     label="Sachet Quantity"
+                     onChange={e => setQuantity(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
+                  />
+               </div>
+               <span style={{ width: '10px' }} />
+               <Text as="subtitle">in {active.unit}</Text>
             </div>
-            <span style={{ width: '10px' }} />
-            <Text as="subtitle">in {active.unit}</Text>
-         </div>
 
-         <br />
+            <br />
 
-         <FlexContainer
-            style={{
-               justifyContent: 'space-between',
-            }}
-         >
-            <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
-               <Input
-                  type="number"
-                  name="par"
-                  value={par}
-                  label={t(address.concat('set par level'))}
-                  onChange={e => setPar(e.target.value)}
-                  onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
-               />
-               <span style={{ marginLeft: '5px' }}>
-                  {t(address.concat('pkt'))}
-               </span>
+            <FlexContainer
+               style={{
+                  justifyContent: 'space-between',
+               }}
+            >
+               <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
+                  <Input
+                     type="number"
+                     name="par"
+                     value={par}
+                     label={t(address.concat('set par level'))}
+                     onChange={e => setPar(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
+                  />
+                  <span style={{ marginLeft: '5px' }}>
+                     {t(address.concat('pkt'))}
+                  </span>
+               </FlexContainer>
+
+               <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
+                  <Input
+                     type="number"
+                     name="inventory level"
+                     value={maxInventoryLevel}
+                     label={t(address.concat('max inventory level'))}
+                     onChange={e => setMaxInventoryLevel(e.target.value)}
+                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
+                  />
+                  <span style={{ marginLeft: '5px' }}>
+                     {t(address.concat('pkt'))}
+                  </span>
+               </FlexContainer>
             </FlexContainer>
-
-            <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
-               <Input
-                  type="number"
-                  name="inventory level"
-                  value={maxInventoryLevel}
-                  label={t(address.concat('max inventory level'))}
-                  onChange={e => setMaxInventoryLevel(e.target.value)}
-                  onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
-               />
-               <span style={{ marginLeft: '5px' }}>
-                  {t(address.concat('pkt'))}
-               </span>
-            </FlexContainer>
-         </FlexContainer>
-      </TunnelContainer>
+         </TunnelContainer>
+      </>
    )
 }

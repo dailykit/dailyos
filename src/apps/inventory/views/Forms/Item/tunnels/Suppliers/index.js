@@ -1,21 +1,21 @@
-import React from 'react'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Loader,
    TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
-import { TunnelContainer, Spacer } from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 import {
-   UPDATE_SUPPLIER_ITEM,
    SUPPLIERS_SUBSCRIPTION,
+   UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'

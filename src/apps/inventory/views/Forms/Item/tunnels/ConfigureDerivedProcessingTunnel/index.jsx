@@ -1,48 +1,41 @@
-import React, { useState, useContext } from 'react'
-import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Input,
    ButtonTile,
-   TagGroup,
-   Tag,
    IconButton,
-   Text,
+   Input,
    Loader,
-   Tunnels,
+   Tag,
+   TagGroup,
+   Text,
    Tunnel,
+   TunnelHeader,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
+import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
+import EditIcon from '../../../../../../recipe/assets/icons/Edit'
+import { TunnelContainer } from '../../../../../components'
+import { ItemContext } from '../../../../../context/item'
 import {
    CREATE_BULK_ITEM,
-   UPDATE_BULK_ITEM,
    UNITS_SUBSCRIPTION,
+   UPDATE_BULK_ITEM,
 } from '../../../../../graphql'
-
-import { ItemContext } from '../../../../../context/item'
-
-import EditIcon from '../../../../../../recipe/assets/icons/Edit'
-import {
-   TunnelContainer,
-   TunnelHeader,
-   Spacer,
-} from '../../../../../components'
-
-import {
-   StyledRow,
-   StyledInputGroup,
-   Highlight,
-   InputWrapper,
-   StyledLabel,
-} from '../styled'
-
 import { StyledSelect } from '../../../styled'
-import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 import AllergensTunnelForDerivedProcessing from '../AllergensTunnel'
 import NutritionTunnel from '../NutritionTunnel'
+import {
+   Highlight,
+   InputWrapper,
+   StyledInputGroup,
+   StyledLabel,
+   StyledRow,
+} from '../styled'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
@@ -179,16 +172,13 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
             </Tunnel>
          </Tunnels>
 
+         <TunnelHeader
+            title={t(address.concat('configure processing'))}
+            close={() => close(2)}
+            right={{ title: 'Save', action: handleNext }}
+         />
+
          <TunnelContainer>
-            <TunnelHeader
-               title={t(address.concat('configure processing'))}
-               next={handleNext}
-               close={() => close(2)}
-               nextAction="Save"
-            />
-
-            <Spacer />
-
             <StyledRow>
                <StyledInputGroup>
                   <InputWrapper>

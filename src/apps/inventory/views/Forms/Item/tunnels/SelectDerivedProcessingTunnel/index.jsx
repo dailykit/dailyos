@@ -1,20 +1,17 @@
+import { useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Loader,
+   TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
 
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 import { ItemContext } from '../../../../../context/item'
 import { MASTER_PROCESSINGS_SUBSCRIPTION } from '../../../../../graphql'
 
@@ -50,49 +47,52 @@ export default function SelectDerivedProcessingTunnel({
    if (processingsLoading) return <Loader />
 
    return (
-      <TunnelContainer>
+      <>
          <TunnelHeader
             title={t(address.concat('select processing'))}
-            next={() => {
-               dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
-               dispatch({
-                  type: 'ADD_CONFIGURABLE_PROCESSING',
-                  payload: current,
-               })
-               close()
-               next()
-            }}
             close={() => close()}
-            nextAction="Save"
+            right={{
+               action: () => {
+                  dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
+                  dispatch({
+                     type: 'ADD_CONFIGURABLE_PROCESSING',
+                     payload: current,
+                  })
+                  close()
+                  next()
+               },
+               title: 'Save',
+            }}
          />
-
-         <Spacer />
-
-         <List>
-            {Object.keys(current).length > 0 ? (
-               <ListItem type="SSL1" title={current.title} />
-            ) : (
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder={t(
-                     address.concat("type what you're looking for")
-                  )}
-               />
-            )}
-            <ListOptions>
-               {list
-                  .filter(option => option.title.toLowerCase().includes(search))
-                  .map(option => (
-                     <ListItem
-                        type="SSL1"
-                        key={option.id}
-                        title={option.title}
-                        isActive={option.id === current.id}
-                        onClick={() => selectOption('id', option.id)}
-                     />
-                  ))}
-            </ListOptions>
-         </List>
-      </TunnelContainer>
+         <TunnelContainer>
+            <List>
+               {Object.keys(current).length > 0 ? (
+                  <ListItem type="SSL1" title={current.title} />
+               ) : (
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+               )}
+               <ListOptions>
+                  {list
+                     .filter(option =>
+                        option.title.toLowerCase().includes(search)
+                     )
+                     .map(option => (
+                        <ListItem
+                           type="SSL1"
+                           key={option.id}
+                           title={option.title}
+                           isActive={option.id === current.id}
+                           onClick={() => selectOption('id', option.id)}
+                        />
+                     ))}
+               </ListOptions>
+            </List>
+         </TunnelContainer>
+      </>
    )
 }

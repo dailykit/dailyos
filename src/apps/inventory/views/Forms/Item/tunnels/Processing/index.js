@@ -1,22 +1,18 @@
-import React, { useContext } from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Loader,
-} from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
-
-import { ItemContext } from '../../../../../context/item'
-
-import {
-   TunnelContainer,
    TunnelHeader,
-   Spacer,
-} from '../../../../../components'
+   useSingleList,
+} from '@dailykit/ui'
+import React, { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { TunnelContainer } from '../../../../../components'
+import { ItemContext } from '../../../../../context/item'
 import { MASTER_PROCESSINGS_SUBSCRIPTION } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
@@ -45,20 +41,19 @@ export default function ProcessingTunnel({ close, open, formState }) {
 
    return (
       <>
-         <TunnelContainer>
-            <TunnelHeader
-               title={t(address.concat('select processing as item shipped'))}
-               next={() => {
+         <TunnelHeader
+            title={t(address.concat('select processing as item shipped'))}
+            close={() => close(1)}
+            right={{
+               title: 'Next',
+               action: () => {
                   dispatch({ type: 'PROCESSING', payload: current })
                   close(1)
                   open(2)
-               }}
-               close={() => close(1)}
-               nextAction="Next"
-            />
-
-            <Spacer />
-
+               },
+            }}
+         />
+         <TunnelContainer>
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />

@@ -1,25 +1,20 @@
-import React from 'react'
-
+import { useSubscription } from '@apollo/react-hooks'
 import {
-   useMultiList,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   TextButton,
+   Loader,
    Tag,
    TagGroup,
-   Loader,
+   TunnelHeader,
+   useMultiList,
 } from '@dailykit/ui'
-import { useSubscription } from '@apollo/react-hooks'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
 import { ItemContext } from '../../../../../context/item'
-
-import { TunnelHeader, TunnelBody } from '../styled'
 import { MASTER_ALLERGENS_SUBSCRIPTION } from '../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.allergens.'
 
@@ -49,17 +44,12 @@ export default function AllergensTunnel({ close }) {
 
    return (
       <>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close()}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>{t(address.concat('add allergens'))}</span>
-            </div>
-            <TextButton type="solid" onClick={save}>
-               {t(address.concat('save'))}
-            </TextButton>
-         </TunnelHeader>
+         <TunnelHeader
+            title={t(address.concat('add allergens'))}
+            right={{ title: t(address.concat('save')), action: save }}
+            close={close}
+         />
+
          <TunnelBody>
             <List>
                <ListSearch
