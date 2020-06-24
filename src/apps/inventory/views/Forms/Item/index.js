@@ -201,6 +201,11 @@ export default function ItemForm() {
                               label="Item Name"
                               onChange={e => setItemName(e.target.value)}
                               onBlur={() => {
+                                 if (!itemName.length) {
+                                    toast.error("Name can't be empty")
+                                    return setItemName(formState.name)
+                                 }
+
                                  if (itemName !== formState.name)
                                     updateSupplierItem({
                                        variables: {

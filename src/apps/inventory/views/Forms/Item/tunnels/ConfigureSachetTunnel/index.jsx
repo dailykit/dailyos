@@ -27,11 +27,11 @@ export default function ConfigureSachetTunnel({ close, formState }) {
 
    const [creatSachetItem, { loading }] = useMutation(CREATE_SACHET_ITEM, {
       onCompleted: () => {
-         close(9)
+         close(1)
          toast.info('Sachet added!')
       },
       onError: error => {
-         close(9)
+         close(1)
          console.log(error)
          toast.error('Err! creating sachets. Please try again')
       },
@@ -66,7 +66,7 @@ export default function ConfigureSachetTunnel({ close, formState }) {
          <TunnelHeader
             title={t(address.concat('add sachet'))}
             next={handleNext}
-            close={() => close(9)}
+            close={() => close(1)}
             nextAction="Save"
          />
 
