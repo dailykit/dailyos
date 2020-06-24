@@ -9,7 +9,7 @@ import { Container, ContainerAction, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
 import { Nutrition } from '../../../../../../../shared/components'
 
-const Sachet = ({ state, openTunnel }) => {
+const Sachet = ({ state, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -44,7 +44,7 @@ const Sachet = ({ state, openTunnel }) => {
             return toast.error('Mode not configured!')
          }
       }
-      updateMode({
+      return updateMode({
          variables: {
             id: mode.id,
             set: {
@@ -73,23 +73,13 @@ const Sachet = ({ state, openTunnel }) => {
             bulkItem: mode.bulkItem
                ? {
                     ...mode.bulkItem,
-                    title:
-                       mode.bulkItem.supplierItem.name +
-                       ' ' +
-                       mode.bulkItem.processingName,
+                    title: `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`,
                  }
                : null,
             sachetItem: mode.sachetItem
                ? {
                     ...mode.sachetItem,
-                    title:
-                       mode.sachetItem.bulkItem.supplierItem.name +
-                       ' ' +
-                       mode.sachetItem.bulkItem.processingName +
-                       ' ' +
-                       mode.sachetItem.unitSize +
-                       ' ' +
-                       mode.sachetItem.unit,
+                    title: `${mode.sachetItem.bulkItem.supplierItem.name}  ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`,
                  }
                : null,
          },
@@ -98,11 +88,11 @@ const Sachet = ({ state, openTunnel }) => {
          type: 'CURRENT_MODE',
          payload: mode.type,
       })
-      openTunnel(8)
+      openEditSachetTunnel(2)
    }
 
    return (
-      <React.Fragment>
+      <>
          <Container bottom="32">
             <Grid>
                <Flex justify="start" align="center">
@@ -117,16 +107,15 @@ const Sachet = ({ state, openTunnel }) => {
                </Flex>
                <Flex align="center">
                   <Flex justify="start" align="baseline">
-                     <Text as="subtitle">Active:</Text>{' '}
+                     <Text as="subtitle">Active: </Text>{' '}
                      <Text as="title">
-                        {sachet.liveModeOfFulfillment
-                           ? sachet.liveModeOfFulfillment.type === 'realTime'
-                              ? 'Real Time'
-                              : 'Planned Lot'
-                           : 'NA'}
+                        {sachet.liveModeOfFulfillment?.type === 'realTime' &&
+                           'Real Time'}
+                        {sachet.liveModeOfFulfillment?.type === 'plannedLot' &&
+                           'Planned Lot'}
                      </Text>
                   </Flex>
-                  <IconButton onClick={() => openTunnel(7)}>
+                  <IconButton onClick={() => openEditSachetTunnel(1)}>
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                </Flex>
@@ -142,7 +131,7 @@ const Sachet = ({ state, openTunnel }) => {
                   <th>Accuracy</th>
                   <th>Packaging</th>
                   <th>Label</th>
-                  <th></th>
+                  <th> </th>
                </tr>
             </thead>
             <tbody>
@@ -158,32 +147,22 @@ const Sachet = ({ state, openTunnel }) => {
                      <td>{mode.priority}</td>
                      <td>{mode.station?.name || ''}</td>
                      <td>
-                        {mode.bulkItem
-                           ? mode.bulkItem.supplierItem.name +
-                             ' ' +
-                             mode.bulkItem.processingName
-                           : ''}
-                        {mode.sachetItem
-                           ? mode.sachetItem.bulkItem.supplierItem.name +
-                             ' ' +
-                             mode.sachetItem.bulkItem.processingName +
-                             ' ' +
-                             mode.sachetItem.unitSize +
-                             ' ' +
-                             mode.sachetItem.unit
-                           : ''}
+                        {mode.bulkItem &&
+                           `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`}
+                        {mode.sachetItem &&
+                           `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`}
                      </td>
                      <td>
                         {mode.accuracy
-                           ? 'Atleast' + mode.accuracy + '%'
+                           ? `Atleast ${mode.accuracy} %`
                            : "Don't Weigh"}
                      </td>
                      <td>{mode.packaging?.name || '-'}</td>
                      <td>{mode.labelTemplate?.title || '-'}</td>
                      <td>
-                        <span onClick={() => editMOF(mode)}>
+                        <IconButton type="ghost" onClick={() => editMOF(mode)}>
                            <EditIcon color="#00A7E1" />
-                        </span>
+                        </IconButton>
                      </td>
                   </tr>
                ))}
@@ -193,7 +172,7 @@ const Sachet = ({ state, openTunnel }) => {
             {sachet.defaultNutritionalValues ? (
                <Container>
                   <ContainerAction>
-                     <IconButton onClick={() => openTunnel(13)}>
+                     <IconButton onClick={() => openEditSachetTunnel(7)}>
                         <EditIcon color="#00A7E1" />
                      </IconButton>
                   </ContainerAction>
@@ -203,11 +182,11 @@ const Sachet = ({ state, openTunnel }) => {
                <ButtonTile
                   type="secondary"
                   text="Add Default Nutritional Values"
-                  onClick={() => openTunnel(13)}
+                  onClick={() => openEditSachetTunnel(7)}
                />
             )}
          </Container>
-      </React.Fragment>
+      </>
    )
 }
 

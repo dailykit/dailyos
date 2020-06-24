@@ -1,6 +1,12 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, RadioGroup, Select, TunnelHeader } from '@dailykit/ui'
+import {
+   Input,
+   RadioGroup,
+   Select,
+   TunnelHeader,
+   IconButton,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -22,7 +28,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
    ]
 
    const close = () => {
-      closeTunnel(8)
+      closeTunnel(2)
       ingredientDispatch({
          type: 'EDIT_MODE',
          payload: undefined,
@@ -52,7 +58,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
          setBusy(true)
          if (
             !ingredientState.editMode.priority ||
-            isNaN(ingredientState.editMode.priority) ||
+            Number.isNaN(ingredientState.editMode.priority) ||
             parseInt(ingredientState.editMode.priority) === 0
          ) {
             throw Error('Invalid Priority!')
@@ -126,9 +132,9 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                         {ingredientState.editMode.station?.name ||
                            ingredientState.editMode.station?.title ||
                            '-'}
-                        <span onClick={() => openTunnel(9)}>
+                        <IconButton type="ghost" onClick={() => openTunnel(3)}>
                            <EditIcon color="#00A7E1" />
-                        </span>
+                        </IconButton>
                      </td>
                      <td>
                         {ingredientState.editMode.bulkItem
@@ -137,9 +143,9 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                         {ingredientState.editMode.sachetItem
                            ? ingredientState.editMode.sachetItem.title
                            : ''}
-                        <span onClick={() => openTunnel(10)}>
+                        <IconButton type="ghost" onClick={() => openTunnel(4)}>
                            <EditIcon color="#00A7E1" />
-                        </span>
+                        </IconButton>
                      </td>
                      <td>
                         <RadioGroup
@@ -147,7 +153,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                            active={
                               options.find(
                                  op =>
-                                    op.value ==
+                                    op.value ===
                                     ingredientState.editMode.accuracy
                               )?.id || 3
                            }
@@ -165,7 +171,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                      <td>
                         <Select
                            option={ingredientState.editMode.packaging || []}
-                           addOption={() => openTunnel(11)}
+                           addOption={() => openTunnel(5)}
                            removeOption={() =>
                               ingredientDispatch({
                                  type: 'EDIT_MODE',
@@ -180,7 +186,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                      <td>
                         <Select
                            option={ingredientState.editMode.labelTemplate || []}
-                           addOption={() => openTunnel(12)}
+                           addOption={() => openTunnel(6)}
                            removeOption={() =>
                               ingredientDispatch({
                                  type: 'EDIT_MODE',
