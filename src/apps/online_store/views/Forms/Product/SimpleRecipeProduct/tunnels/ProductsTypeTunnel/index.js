@@ -16,14 +16,14 @@ const ProductsTypeTunnel = ({ close, open }) => {
          type: 'META',
          payload: { name: 'productsType', value },
       })
-      open(5)
+      open(2)
    }
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select product type'))}
-            close={() => close(4)}
+            close={() => close(1)}
          />
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>
