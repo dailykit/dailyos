@@ -7,6 +7,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Avatar,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -505,16 +506,15 @@ function ContactPerson({ formState, open }) {
          </TextButton>
       )
 
-   const contatctPerson =
-      formState.supplier?.contactPerson?.firstName &&
-      formState.supplier?.contactPerson?.lastName
-         ? `${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} ${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson.phoneNumber}`
-         : 'N/A'
-
    return (
       <>
          <span>{formState.supplier.name}</span>
-         <span>{contatctPerson}</span>
+         <Avatar
+            withName
+            title={`${formState.supplier?.contactPerson?.firstName} ${
+               formState.supplier?.contactPerson?.lastName || ''
+            }`}
+         />
          <TransparentIconButton type="outline" onClick={() => open(1)}>
             <EditIcon size="18" color="#555B6E" />
          </TransparentIconButton>

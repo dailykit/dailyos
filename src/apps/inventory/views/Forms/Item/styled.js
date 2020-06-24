@@ -113,6 +113,8 @@ export const StyledSupplier = styled.div`
       color: #888d9d;
 
       &:first-child {
+         margin-right: 12px;
+         padding: 0 4px;
          font-weight: 500;
          color: #00a7e1;
          border-right: 1px solid #e4e4e4;
