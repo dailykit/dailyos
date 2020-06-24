@@ -24,39 +24,6 @@ export const PRODUCTS = gql`
    }
 `
 
-export const SIMPLE_RECIPE_PRODUCTS = gql`
-   {
-      simpleRecipeProducts {
-         id
-         name
-         simpleRecipeProductOptions {
-            type
-            isActive
-            price
-            simpleRecipeYield {
-               id
-               yield
-            }
-         }
-      }
-   }
-`
-
-export const INVENTORY_PRODUCTS = gql`
-   {
-      inventoryProducts {
-         id
-         name
-         inventoryProductOptions {
-            id
-            label
-            price
-            quantity
-         }
-      }
-   }
-`
-
 export const CUSTOMIZABLE_PRODUCTS = gql`
    {
       customizableProducts {
@@ -134,6 +101,63 @@ export const COLLECTIONS = gql`
          name
          categories
          availability
+      }
+   }
+`
+
+export const SACHET_ITEMS = gql`
+   query SachetItems {
+      sachetItems {
+         id
+         unitSize
+         unit
+         bulkItem {
+            processingName
+            supplierItem {
+               name
+            }
+         }
+      }
+   }
+`
+
+export const SUPPLIER_ITEMS = gql`
+   query SupplierItems {
+      supplierItems {
+         id
+         name
+         unitSize
+         unit
+      }
+   }
+`
+
+export const INVENTORY_PRODUCTS = gql`
+   query InventoryProducts($where: onlineStore_inventoryProduct_bool_exp) {
+      inventoryProducts(where: $where) {
+         id
+         name
+         title: name
+         isValid
+         isPublished
+      }
+   }
+`
+
+export const SIMPLE_RECIPE_PRODUCTS = gql`
+   query SimpleRecipeProducts(
+      $where: onlineStore_simpleRecipeProduct_bool_exp
+   ) {
+      simpleRecipeProducts(where: $where) {
+         id
+         name
+         title: name
+         isValid
+         isPublished
+         simpleRecipe {
+            id
+            name
+         }
       }
    }
 `
