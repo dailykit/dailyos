@@ -11,5 +11,5 @@ export const TunnelHeaderContainer = styled.div`
 `
 
 export const TunnelContainer = styled.div`
-   padding: 30px;
+   padding: 0 20px;
 `

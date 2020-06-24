@@ -7,15 +7,12 @@ import {
    ListSearch,
    useSingleList,
    Loader,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
-import {
-   TunnelContainer,
-   TunnelHeader,
-   Spacer,
-} from '../../../../../components'
+import { TunnelContainer, Spacer } from '../../../../../components'
 import {
    UPDATE_SUPPLIER_ITEM,
    SUPPLIERS_SUBSCRIPTION,
@@ -83,14 +80,12 @@ export default function SupplierTunnel({ close, formState }) {
 
    return (
       <>
+         <TunnelHeader
+            title={t(address.concat('select supplier'))}
+            close={() => close(1)}
+            right={{ action: handleNext, title: 'Save' }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title={t(address.concat('select supplier'))}
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Save"
-            />
-
             <Spacer />
 
             <List>
