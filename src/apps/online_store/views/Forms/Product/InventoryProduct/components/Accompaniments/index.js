@@ -1,7 +1,8 @@
 import React from 'react'
 import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { Products } from '../'
+// eslint-disable-next-line import/no-cycle
+import { Products } from '..'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import { StyledTab, StyledTabs, StyledTabView } from './styled'
 import { AccompanimentTypeTunnel } from '../../tunnels'
@@ -24,9 +25,9 @@ const Accompaniments = ({ state }) => {
                <AccompanimentTypeTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <React.Fragment>
+         <>
             {state.accompaniments?.length ? (
-               <React.Fragment>
+               <>
                   <StyledTabs>
                      {state.accompaniments.map((el, i) => (
                         <StyledTab
@@ -51,7 +52,7 @@ const Accompaniments = ({ state }) => {
                   <StyledTabView>
                      <Products state={state} />
                   </StyledTabView>
-               </React.Fragment>
+               </>
             ) : (
                <ButtonTile
                   type="secondary"
@@ -59,7 +60,7 @@ const Accompaniments = ({ state }) => {
                   onClick={() => openTunnel(1)}
                />
             )}
-         </React.Fragment>
+         </>
       </>
    )
 }

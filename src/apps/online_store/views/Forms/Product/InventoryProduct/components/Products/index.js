@@ -18,11 +18,9 @@ import { ProductsTypeTunnel, ProductsTunnel } from '../../tunnels'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.products.'
 
-const Products = ({ state, products }) => {
+const Products = ({ state }) => {
    const { t } = useTranslation()
-   const { productState, productDispatch } = React.useContext(
-      InventoryProductContext
-   )
+   const { productState } = React.useContext(InventoryProductContext)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [current, setCurrent] = React.useState(0)
    const [discount, setDiscount] = React.useState(
@@ -43,7 +41,7 @@ const Products = ({ state, products }) => {
       setCurrent(0)
    }, [productState.meta.accompanimentTabIndex])
 
-   //Mutation
+   // Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success(t(address.concat('updated!')))
@@ -56,8 +54,8 @@ const Products = ({ state, products }) => {
 
    // Handlers
    const updateDiscount = () => {
-      if (discount.value && !isNaN(discount.value)) {
-         const accompaniments = state.accompaniments
+      if (discount.value && !Number.isNaN(discount.value)) {
+         const { accompaniments } = state
          accompaniments[productState.meta.accompanimentTabIndex].products[
             current
          ].discount = discount
@@ -77,13 +75,13 @@ const Products = ({ state, products }) => {
             `t(address.concat('are you sure you want to delete')) ${product.name}?`
          )
       ) {
-         const accompaniments = state.accompaniments
-         const products = accompaniments[
+         const { accompaniments } = state
+         const updatedProducts = accompaniments[
             productState.meta.accompanimentTabIndex
          ].products.filter(pro => pro.id !== product.id)
          accompaniments[
             productState.meta.accompanimentTabIndex
-         ].products = products
+         ].products = updatedProducts
          updateProduct({
             variables: {
                id: state.id,
@@ -102,14 +100,10 @@ const Products = ({ state, products }) => {
                <ProductsTypeTunnel open={openTunnel} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <ProductsTunnel
-                  state={state}
-                  close={closeTunnel}
-                  products={products[productState.meta.productsType]}
-               />
+               <ProductsTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <React.Fragment>
+         <>
             {state.accompaniments[productState.meta.accompanimentTabIndex]
                ?.products.length ? (
                <StyledLayout>
@@ -123,7 +117,14 @@ const Products = ({ state, products }) => {
                            onClick={() => setCurrent(i)}
                         >
                            {product.name}
-                           <span onClick={() => deleteProduct(product)}>
+                           <span
+                              role="button"
+                              tabIndex="0"
+                              onKeyDown={e =>
+                                 e.charCode === 13 && deleteProduct(product)
+                              }
+                              onClick={() => deleteProduct(product)}
+                           >
                               <DeleteIcon color="#fff" />
                            </span>
                         </StyledListingTile>
@@ -160,7 +161,7 @@ const Products = ({ state, products }) => {
                   onClick={() => openTunnel(1)}
                />
             )}
-         </React.Fragment>
+         </>
       </>
    )
 }

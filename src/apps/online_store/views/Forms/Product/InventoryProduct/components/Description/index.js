@@ -28,7 +28,7 @@ const Description = ({ state }) => {
                <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <React.Fragment>
+         <>
             {state.description || state.tags?.length ? (
                <StyledContainer>
                   <StyledAction>
@@ -38,8 +38,8 @@ const Description = ({ state }) => {
                   </StyledAction>
                   <StyledRow>
                      <TagGroup>
-                        {state.tags.map((tag, i) => (
-                           <Tag key={i}>{tag}</Tag>
+                        {state.tags.map(tag => (
+                           <Tag key={tag}>{tag}</Tag>
                         ))}
                      </TagGroup>
                   </StyledRow>
@@ -55,7 +55,7 @@ const Description = ({ state }) => {
                   onClick={() => openTunnel(1)}
                />
             )}
-         </React.Fragment>
+         </>
       </>
    )
 }

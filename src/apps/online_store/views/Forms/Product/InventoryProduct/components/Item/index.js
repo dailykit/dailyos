@@ -10,7 +10,8 @@ import {
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { Accompaniments } from '../'
+// eslint-disable-next-line import/no-cycle
+import { Accompaniments } from '..'
 import {
    DeleteIcon,
    EditIcon,
@@ -39,12 +40,10 @@ import { ItemTypeTunnel, ItemTunnel, PricingTunnel } from '../../tunnels'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.item.'
 
-export default function Item({ state, items }) {
+export default function Item({ state }) {
    const { t } = useTranslation()
 
-   const { productState, productDispatch } = React.useContext(
-      InventoryProductContext
-   )
+   const { productDispatch } = React.useContext(InventoryProductContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
@@ -115,11 +114,7 @@ export default function Item({ state, items }) {
                <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <ItemTunnel
-                  state={state}
-                  close={closeTunnel}
-                  items={items[productState.meta.itemType]}
-               />
+               <ItemTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={pricingTunnels}>
@@ -134,11 +129,14 @@ export default function Item({ state, items }) {
                      <StyledListingTile active>
                         <h3>
                            {state.supplierItem?.name ||
-                              state.sachetItem.bulkItem.supplierItem.name +
-                                 ' ' +
-                                 state.sachetItem.bulkItem.processingName}
+                              `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
                         </h3>
-                        <span onClick={deleteItem}>
+                        <span
+                           role="button"
+                           tabIndex="0"
+                           onKeyDown={e => e.charCode === 13 && deleteItem()}
+                           onClick={deleteItem}
+                        >
                            <DeleteIcon color="#fff" />
                         </span>
                      </StyledListingTile>
@@ -146,9 +144,7 @@ export default function Item({ state, items }) {
                   <StyledPanel>
                      <h2>
                         {state.supplierItem?.name ||
-                           state.sachetItem.bulkItem.supplierItem.name +
-                              ' ' +
-                              state.sachetItem.bulkItem.processingName}
+                           `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
                      </h2>
                      <h5>
                         {t(address.concat('unit size'))}:{' '}
@@ -176,7 +172,7 @@ export default function Item({ state, items }) {
                      </StyledTabs>
                      <StyledTabView>
                         {_state.view === 'pricing' ? (
-                           <React.Fragment>
+                           <>
                               <StyledTable>
                                  <thead>
                                     <tr>
@@ -189,7 +185,7 @@ export default function Item({ state, items }) {
                                              address.concat('discounted price')
                                           )}
                                        </th>
-                                       <th></th>
+                                       <th> </th>
                                     </tr>
                                  </thead>
                                  <tbody>
@@ -245,7 +241,7 @@ export default function Item({ state, items }) {
                                  <AddIcon />
                                  {t(address.concat('add option'))}
                               </ComboButton>
-                           </React.Fragment>
+                           </>
                         ) : (
                            <Accompaniments state={state} />
                         )}

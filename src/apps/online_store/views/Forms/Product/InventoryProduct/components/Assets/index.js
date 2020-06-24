@@ -1,12 +1,13 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { ButtonTile, Tunnels, useTunnel, Tunnel } from '@dailykit/ui'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
 import { ImageContainer, PhotoTileWrapper, Container } from './styled'
-import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { useTranslation } from 'react-i18next'
 import { AssetsTunnel } from '../../tunnels'
+
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.assets.'
 const Assets = ({ state }) => {
@@ -50,10 +51,20 @@ const Assets = ({ state }) => {
             {state.assets?.images?.length ? (
                <ImageContainer>
                   <div>
-                     <span onClick={() => openTunnel(8)}>
+                     <span
+                        role="button"
+                        tabIndex="0"
+                        onKeyDown={e => e.charCode === 13 && openTunnel(1)}
+                        onClick={() => openTunnel(1)}
+                     >
                         <EditIcon />
                      </span>
-                     <span onClick={removeImage}>
+                     <span
+                        role="button"
+                        tabIndex="0"
+                        onKeyDown={e => e.charCode === 13 && removeImage()}
+                        onClick={removeImage}
+                     >
                         <DeleteIcon />
                      </span>
                   </div>
@@ -68,7 +79,7 @@ const Assets = ({ state }) => {
                      helper={t(
                         address.concat('upto 1MB - only JPG, PNG, PDF allowed')
                      )}
-                     onClick={() => openTunnel(8)}
+                     onClick={() => openTunnel(1)}
                   />
                </PhotoTileWrapper>
             )}
