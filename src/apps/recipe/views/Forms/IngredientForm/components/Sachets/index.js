@@ -2,7 +2,8 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { ButtonTile } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { Sachet } from '../'
+// eslint-disable-next-line import/no-cycle
+import { Sachet } from '..'
 import { AddIcon, DeleteIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { DELETE_SACHET } from '../../../../../graphql'
@@ -15,7 +16,7 @@ import {
    StyledSection,
 } from './styled'
 
-const Sachets = ({ state, openTunnel }) => {
+const Sachets = ({ state, openSachetTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -39,9 +40,7 @@ const Sachets = ({ state, openTunnel }) => {
    const remove = sachet => {
       if (
          window.confirm(
-            `Do you want to delete sachet - ${
-               sachet.quantity + ' ' + sachet.unit
-            }?`
+            `Do you want to delete sachet - ${sachet.quantity}  ${sachet.unit}}?`
          )
       ) {
          deleteSachet({
@@ -53,7 +52,7 @@ const Sachets = ({ state, openTunnel }) => {
    }
 
    return (
-      <React.Fragment>
+      <>
          {state.ingredientProcessings[ingredientState.processingIndex]
             .ingredientSachets.length ? (
             <StyledSection>
@@ -68,7 +67,14 @@ const Sachets = ({ state, openTunnel }) => {
                         }
                         )
                      </h3>
-                     <span onClick={() => openTunnel(2)}>
+                     <span
+                        role="button"
+                        tabIndex="0"
+                        onClick={() => openSachetTunnel(1)}
+                        onKeyDown={e =>
+                           e.charCode === 13 && openSachetTunnel(1)
+                        }
+                     >
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
                      </span>
                   </StyledListingHeader>
@@ -86,18 +92,24 @@ const Sachets = ({ state, openTunnel }) => {
                         }
                      >
                         <Actions active={ingredientState.sachetIndex === i}>
-                           <span onClick={() => remove(sachet)}>
+                           <span
+                              role="button"
+                              tabIndex="0"
+                              onClick={() => remove(sachet)}
+                              onKeyDown={e =>
+                                 e.charCode === 13 && remove(sachet)
+                              }
+                           >
                               <DeleteIcon />
                            </span>
                         </Actions>
-                        <h3>{sachet.quantity + ' ' + sachet.unit}</h3>
+                        <h3>{`${sachet.quantity} ${sachet.unit}`}</h3>
                         <p>
                            Active:{' '}
-                           {sachet.liveModeOfFulfillment
-                              ? sachet.liveModeOfFulfillment.type === 'realTime'
-                                 ? 'Real Time'
-                                 : 'Planned Lot'
-                              : 'NA'}
+                           {sachet.liveModeOfFulfillment?.type === 'realTime' &&
+                              'Real Time'}
+                           {sachet.liveModeOfFulfillment?.type ===
+                              'plannedLot' && 'Planned Lot'}
                         </p>
                         <p>Available: NA</p>
                      </StyledListingTile>
@@ -105,11 +117,14 @@ const Sachets = ({ state, openTunnel }) => {
                   <ButtonTile
                      type="primary"
                      size="lg"
-                     onClick={() => openTunnel(2)}
+                     onClick={() => openSachetTunnel(1)}
                   />
                </StyledListing>
                <StyledDisplay>
-                  <Sachet state={state} openTunnel={openTunnel} />
+                  <Sachet
+                     state={state}
+                     openEditSachetTunnel={openEditSachetTunnel}
+                  />
                </StyledDisplay>
             </StyledSection>
          ) : (
@@ -117,10 +132,10 @@ const Sachets = ({ state, openTunnel }) => {
                type="primary"
                size="lg"
                text="Add Sachet"
-               onClick={() => openTunnel(2)}
+               onClick={() => openSachetTunnel(1)}
             />
          )}
-      </React.Fragment>
+      </>
    )
 }
 

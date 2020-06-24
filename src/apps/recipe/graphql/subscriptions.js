@@ -169,30 +169,47 @@ export const S_RECIPE = gql`
    }
 `
 
-export const S_SACHET_ITEMS = gql`
-   subscription SachetItems {
-      sachetItems {
+export const FETCH_PROCESSING_NAMES = gql`
+   subscription {
+      masterProcessings {
          id
-         unitSize
-         unit
-         bulkItem {
-            processingName
-            supplierItem {
-               name
-            }
-         }
+         title: name
       }
    }
 `
 
-export const S_BULK_ITEMS = gql`
-   subscription BulkItems {
-      bulkItems {
+export const FETCH_UNITS = gql`
+   subscription {
+      units {
          id
-         processingName
-         supplierItem {
-            name
-         }
+         title: name
+      }
+   }
+`
+
+export const FETCH_STATIONS = gql`
+   subscription {
+      stations {
+         id
+         title: name
+      }
+   }
+`
+
+export const FETCH_PACKAGINGS = gql`
+   subscription {
+      packagings {
+         id
+         title: name
+      }
+   }
+`
+
+export const FETCH_LABEL_TEMPLATES = gql`
+   subscription {
+      labelTemplates {
+         id
+         title: name
       }
    }
 `
