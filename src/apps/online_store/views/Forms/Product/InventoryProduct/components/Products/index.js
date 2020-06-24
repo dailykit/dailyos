@@ -18,7 +18,7 @@ import { ProductsTypeTunnel, ProductsTunnel } from '../../tunnels'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.products.'
 
-const Products = ({ state }) => {
+const Products = ({ state, products }) => {
    const { t } = useTranslation()
    const { productState, productDispatch } = React.useContext(
       InventoryProductContext

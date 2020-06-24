@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { AssetsTunnel } from '../../tunnels'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.assets.'
-const Assets = ({ state, openTunnel }) => {
+const Assets = ({ state }) => {
    const { t } = useTranslation()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)

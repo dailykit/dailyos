@@ -6,6 +6,7 @@ import {
    IconButton,
    useTunnel,
    Tunnels,
+   Tunnel,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -38,10 +39,12 @@ import { ItemTypeTunnel, ItemTunnel, PricingTunnel } from '../../tunnels'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.item.'
 
-export default function Item({ state }) {
+export default function Item({ state, items }) {
    const { t } = useTranslation()
 
-   const { productDispatch } = React.useContext(InventoryProductContext)
+   const { productState, productDispatch } = React.useContext(
+      InventoryProductContext
+   )
 
    const [_state, _setState] = React.useState({
       view: 'pricing',

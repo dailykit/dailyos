@@ -1,5 +1,5 @@
 import React from 'react'
-import { ButtonTile, Tunnels, Tunnel } from '@dailykit/ui'
+import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { Products } from '../'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
@@ -9,7 +9,7 @@ import { AccompanimentTypeTunnel } from '../../tunnels'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.accompaniments.'
 
-const Accompaniments = ({ state, openTunnel }) => {
+const Accompaniments = ({ state }) => {
    const { t } = useTranslation()
    const { productState, productDispatch } = React.useContext(
       InventoryProductContext
