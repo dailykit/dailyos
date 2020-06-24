@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Input } from '@dailykit/ui'
+import { ButtonTile, Input, Tunnel, useTunnel, Tunnels } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { DeleteIcon } from '../../../../../../assets/icons'
@@ -13,16 +13,17 @@ import {
    StyledListingTile,
    StyledPanel,
 } from './styled'
+import { ProductsTypeTunnel, ProductsTunnel } from '../../tunnels'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.products.'
 
-const Products = ({ state, openTunnel, view }) => {
+const Products = ({ state }) => {
    const { t } = useTranslation()
    const { productState, productDispatch } = React.useContext(
       InventoryProductContext
    )
-
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [current, setCurrent] = React.useState(0)
    const [discount, setDiscount] = React.useState(
       state.accompaniments[productState.meta.accompanimentTabIndex].products[
@@ -71,7 +72,11 @@ const Products = ({ state, openTunnel, view }) => {
       }
    }
    const deleteProduct = product => {
-      if (window.confirm(`t(address.concat('are you sure you want to delete')) ${product.name}?`)) {
+      if (
+         window.confirm(
+            `t(address.concat('are you sure you want to delete')) ${product.name}?`
+         )
+      ) {
          const accompaniments = state.accompaniments
          const products = accompaniments[
             productState.meta.accompanimentTabIndex
@@ -91,9 +96,22 @@ const Products = ({ state, openTunnel, view }) => {
    }
 
    return (
-      <React.Fragment>
-         {state.accompaniments[productState.meta.accompanimentTabIndex]
-            ?.products.length ? (
+      <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <ProductsTypeTunnel open={openTunnel} close={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ProductsTunnel
+                  state={state}
+                  close={closeTunnel}
+                  products={products[productState.meta.productsType]}
+               />
+            </Tunnel>
+         </Tunnels>
+         <React.Fragment>
+            {state.accompaniments[productState.meta.accompanimentTabIndex]
+               ?.products.length ? (
                <StyledLayout>
                   <StyledListing>
                      {state.accompaniments[
@@ -113,7 +131,7 @@ const Products = ({ state, openTunnel, view }) => {
                      <ButtonTile
                         type="secondary"
                         text={t(address.concat('add products'))}
-                        onClick={() => openTunnel(5)}
+                        onClick={() => openTunnel(1)}
                      />
                   </StyledListing>
                   <StyledPanel>
@@ -121,24 +139,29 @@ const Products = ({ state, openTunnel, view }) => {
                      <StyledInputWrapper width="300">
                         <Input
                            type="text"
-                           label={t(address.concat('discount as accompaniment'))}
+                           label={t(
+                              address.concat('discount as accompaniment')
+                           )}
                            name="discount"
                            value={discount.value}
-                           onChange={e => setDiscount({ value: e.target.value })}
+                           onChange={e =>
+                              setDiscount({ value: e.target.value })
+                           }
                            onBlur={updateDiscount}
                         />
-                     %
-                  </StyledInputWrapper>
+                        %
+                     </StyledInputWrapper>
                   </StyledPanel>
                </StyledLayout>
             ) : (
                <ButtonTile
                   type="secondary"
                   text={t(address.concat('add products'))}
-                  onClick={() => openTunnel(5)}
+                  onClick={() => openTunnel(1)}
                />
             )}
-      </React.Fragment>
+         </React.Fragment>
+      </>
    )
 }
 

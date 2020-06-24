@@ -66,20 +66,6 @@ export default function InventoryProduct() {
       inventory: [],
       simple: [],
    })
-   const [assetsTunnels, openAssetTunnel, closeAssetTunnel] = useTunnel(1)
-   const [
-      descriptionTunnels,
-      openDescriptionTunnel,
-      closeDescriptionTunnel,
-   ] = useTunnel(1)
-   const [itemsTunnel, openItemTunnel, closeItemTunnel] = useTunnel(2)
-   const [
-      accompanimentsTunnel,
-      openAccompanimentTunnel,
-      closeAccompanimentTunnel,
-   ] = useTunnel(1)
-   const [productsTunnel, openProductTunnel, closeProductTunnel] = useTunnel(2)
-   const [pricingTunnel, openPricingTunnel, closePricingTunnel] = useTunnel(1)
 
    // Subscription
    const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
@@ -245,60 +231,6 @@ export default function InventoryProduct() {
       <InventoryProductContext.Provider
          value={{ productState, productDispatch }}
       >
-         <Tunnels tunnels={descriptionTunnels}>
-            <Tunnel layer={1}>
-               <DescriptionTunnel
-                  state={state}
-                  close={closeDescriptionTunnel}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={assetsTunnels}>
-            <Tunnel layer={1}>
-               <AssetsTunnel state={state} closeTunnel={closeAssetTunnel} />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={itemsTunnel}>
-            <Tunnel layer={1}>
-               <ItemTypeTunnel close={closeItemTunnel} open={openItemTunnel} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <ItemTunnel
-                  state={state}
-                  close={closeItemTunnel}
-                  items={items[productState.meta.itemType]}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={accompanimentsTunnel}>
-            <Tunnel layer={1}>
-               <AccompanimentTypeTunnel
-                  state={state}
-                  close={closeAccompanimentTunnel}
-                  accompanimentTypes={accompanimentTypes}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={productsTunnel}>
-            <Tunnel layer={1}>
-               <ProductsTypeTunnel
-                  open={openProductTunnel}
-                  close={closeProductTunnel}
-               />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <ProductsTunnel
-                  state={state}
-                  close={closeProductTunnel}
-                  products={products[productState.meta.productsType]}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={pricingTunnel}>
-            <Tunnel layer={1}>
-               <PricingTunnel state={state} close={closePricingTunnel} />
-            </Tunnel>
-         </Tunnels>
          <StyledWrapper>
             <StyledHeader>
                <div>
@@ -337,23 +269,14 @@ export default function InventoryProduct() {
             <StyledBody>
                <StyledMeta>
                   <div>
-                     <Description
-                        state={state}
-                        openTunnel={openDescriptionTunnel}
-                     />
+                     <Description state={state} />
                   </div>
                   <div>
-                     <Assets state={state} openTunnel={openAssetTunnel} />
+                     <Assets state={state} />
                   </div>
                </StyledMeta>
                <StyledRule />
-               <Item
-                  state={state}
-                  openTunnel={openItemTunnel}
-                  openAccompanimentTunnel={openAccompanimentTunnel}
-                  openProductTunnel={openProductTunnel}
-                  open
-               />
+               <Item state={state} />
             </StyledBody>
          </StyledWrapper>
       </InventoryProductContext.Provider>

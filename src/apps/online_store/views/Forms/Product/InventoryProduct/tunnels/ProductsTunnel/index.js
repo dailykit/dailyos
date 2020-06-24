@@ -30,8 +30,8 @@ const ProductsTunnel = ({ state, close, products }) => {
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success('Products added!')
-         close(6)
-         close(5)
+         close(2)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -78,7 +78,7 @@ const ProductsTunnel = ({ state, close, products }) => {
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
-            close={() => close(6)}
+            close={() => close(2)}
          />
          <TunnelBody>
             <List>

@@ -51,7 +51,7 @@ const PricingTunnel = ({ state, close }) => {
       },
       onCompleted: () => {
          toast.success('Option added!')
-         close(7)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -68,7 +68,7 @@ const PricingTunnel = ({ state, close }) => {
       },
       onCompleted: () => {
          toast.success('Option updated!')
-         close(7)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -112,7 +112,7 @@ const PricingTunnel = ({ state, close }) => {
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
-            close={() => close(7)}
+            close={() => close(1)}
          />
          <TunnelBody>
             <Grid cols="4" gap="16">

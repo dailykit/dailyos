@@ -37,8 +37,8 @@ export default function ItemTunnel({ state, close, items }) {
       },
       onCompleted: () => {
          toast.success('Item added!')
-         close(3)
          close(2)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -63,7 +63,7 @@ export default function ItemTunnel({ state, close, items }) {
                   ? t(address.concat('adding'))
                   : t(address.concat('add')),
             }}
-            close={() => close(3)}
+            close={() => close(2)}
          />
          <TunnelBody>
             <List>
