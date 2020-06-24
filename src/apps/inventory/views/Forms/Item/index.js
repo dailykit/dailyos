@@ -138,7 +138,7 @@ export default function ItemForm() {
          <Tunnels tunnels={infoTunnel}>
             <Tunnel layer={1}>
                <InfoTunnel
-                  close={() => closeInfoTunnel(2)}
+                  close={() => closeInfoTunnel(1)}
                   formState={formState}
                />
             </Tunnel>
@@ -162,8 +162,8 @@ export default function ItemForm() {
          <Tunnels tunnels={derivedProcessingsTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectDerivedProcessingTunnel
-                  next={openDerivedProcessingTunnel(1)}
-                  close={closeDerivedProcessingTunnel(1)}
+                  next={() => openDerivedProcessingTunnel(2)}
+                  close={() => closeDerivedProcessingTunnel(1)}
                   formState={formState}
                />
             </Tunnel>

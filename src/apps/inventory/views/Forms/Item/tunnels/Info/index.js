@@ -56,7 +56,7 @@ export default function InfoTunnel({ close, formState }) {
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: input => {
          const newName = input.updateSupplierItem.returning[0].name
-         close(2)
+         close()
          dispatch({
             type: 'SET_TITLE',
             payload: { title: newName, oldTitle: state.current.title },
@@ -66,7 +66,7 @@ export default function InfoTunnel({ close, formState }) {
       onError: error => {
          console.log(error)
          toast.error('Error adding item information. Please try again')
-         close(2)
+         close()
       },
    })
 

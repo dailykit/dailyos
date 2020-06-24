@@ -335,7 +335,7 @@ export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
       ) {
          nodes {
             id
-            name
+            title: name
             description
          }
       }

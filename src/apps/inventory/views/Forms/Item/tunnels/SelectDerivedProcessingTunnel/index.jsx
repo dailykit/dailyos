@@ -45,6 +45,8 @@ export default function SelectDerivedProcessingTunnel({
       }
    )
 
+   console.log(data)
+
    if (processingsLoading) return <Loader />
 
    return (
@@ -57,10 +59,10 @@ export default function SelectDerivedProcessingTunnel({
                   type: 'ADD_CONFIGURABLE_PROCESSING',
                   payload: current,
                })
-               close(1)
-               next(2)
+               close()
+               next()
             }}
-            close={() => close(1)}
+            close={() => close()}
             nextAction="Save"
          />
 
