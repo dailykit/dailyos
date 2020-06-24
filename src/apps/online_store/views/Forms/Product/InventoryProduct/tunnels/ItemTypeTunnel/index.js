@@ -7,20 +7,20 @@ import { SolidTile, TunnelBody } from '../styled'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtypetunnel.'
 
-const ProductsTypeTunnel = ({ close, open }) => {
+const ItemsTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()
    const { productDispatch } = React.useContext(InventoryProductContext)
 
    const select = value => {
       productDispatch({ type: 'META', payload: { name: 'itemType', value } })
-      open(3)
+      open(2)
    }
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select item type'))}
-            close={() => close(2)}
+            close={() => close(1)}
          />
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>
@@ -45,4 +45,4 @@ const ProductsTypeTunnel = ({ close, open }) => {
    )
 }
 
-export default ProductsTypeTunnel
+export default ItemsTypeTunnel

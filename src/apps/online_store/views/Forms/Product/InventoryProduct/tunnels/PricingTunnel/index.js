@@ -51,7 +51,7 @@ const PricingTunnel = ({ state, close }) => {
       },
       onCompleted: () => {
          toast.success('Option added!')
-         close(7)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -68,7 +68,7 @@ const PricingTunnel = ({ state, close }) => {
       },
       onCompleted: () => {
          toast.success('Option updated!')
-         close(7)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -86,12 +86,12 @@ const PricingTunnel = ({ state, close }) => {
          }
          if (
             !_state.price.value ||
-            isNaN(_state.price.value) ||
+            Number.isNaN(_state.price.value) ||
             parseFloat(_state.price.value) === 0
          ) {
             throw Error('Invalid price!')
          }
-         if (!_state.price.discount || isNaN(_state.price.discount)) {
+         if (!_state.price.discount || Number.isNaN(_state.price.discount)) {
             throw Error('Invalid discount!')
          }
          if (productState.updating) updateOption()
@@ -112,7 +112,7 @@ const PricingTunnel = ({ state, close }) => {
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
-            close={() => close(7)}
+            close={() => close(1)}
          />
          <TunnelBody>
             <Grid cols="4" gap="16">
@@ -132,6 +132,18 @@ const PricingTunnel = ({ state, close }) => {
                />
                <StyledInputWrapper align="center">
                   <span
+                     role="button"
+                     tabIndex="0"
+                     onKeyDown={e =>
+                        e.charCode === 13 &&
+                        _setState({
+                           ..._state,
+                           quantity:
+                              _state.quantity - 1 === 0
+                                 ? 1
+                                 : _state.quantity - 1,
+                        })
+                     }
                      onClick={() =>
                         _setState({
                            ..._state,
@@ -151,6 +163,15 @@ const PricingTunnel = ({ state, close }) => {
                      readOnly
                   />
                   <span
+                     role="button"
+                     tabIndex="0"
+                     onKeyDown={e =>
+                        e.charCode === 13 &&
+                        _setState({
+                           ..._state,
+                           quantity: _state.quantity + 1,
+                        })
+                     }
                      onClick={() =>
                         _setState({
                            ..._state,
