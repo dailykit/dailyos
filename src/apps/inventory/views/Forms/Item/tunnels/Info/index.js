@@ -1,37 +1,35 @@
-import React, { useState, useContext } from 'react'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Input, Loader, TunnelHeader } from '@dailykit/ui'
+import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-import { TextButton, Input, Loader } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 
-// Mutations
-import { UPDATE_SUPPLIER_ITEM } from '../../../../../graphql'
-
-import { CloseIcon } from '../../../../../assets/icons'
-
+import { Context } from '../../../../../context/tabs'
 import {
-   TunnelHeader,
-   TunnelBody,
-   StyledRow,
-   StyledInputGroup,
+   UNITS_SUBSCRIPTION,
+   UPDATE_SUPPLIER_ITEM,
+} from '../../../../../graphql'
+import { StyledSelect } from '../../../styled'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+import {
    Highlight,
    InputWrapper,
+   StyledInputGroup,
+   StyledRow,
+   TunnelBody,
 } from '../styled'
-import { StyledSelect } from '../../../styled'
-import { Context } from '../../../../../context/tabs'
-
-import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({ close, units, formState }) {
+export default function InfoTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = useContext(Context)
+   const [units, setUnits] = useState([])
 
    const [itemName, setItemName] = useState(formState.name || '')
    const [sku, setSku] = useState(formState.sku || '')
    const [unitSize, setUnitSize] = useState(formState.unitSize || '')
-   const [unit, setUnit] = useState(formState.unit || units[0].name)
+   const [unit, setUnit] = useState(formState.unit || units[0]?.name)
    const [unitPrice, setUnitPrice] = useState(
       (formState.prices?.length && formState.prices[0].unitPrice.value) || ''
    )
@@ -42,10 +40,17 @@ export default function InfoTunnel({ close, units, formState }) {
 
    const [errors, setErrors] = useState([])
 
+   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const data = input.subscriptionData.data.units
+         setUnits(data)
+      },
+   })
+
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: input => {
          const newName = input.updateSupplierItem.returning[0].name
-         close(2)
+         close()
          dispatch({
             type: 'SET_TITLE',
             payload: { title: newName, oldTitle: state.current.title },
@@ -55,7 +60,7 @@ export default function InfoTunnel({ close, units, formState }) {
       onError: error => {
          console.log(error)
          toast.error('Error adding item information. Please try again')
-         close(2)
+         close()
       },
    })
 
@@ -80,23 +85,16 @@ export default function InfoTunnel({ close, units, formState }) {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading || unitsLoading) return <Loader />
 
    return (
       <>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>{t(address.concat('item information'))}</span>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={handleNext}>
-                  {t(address.concat('next'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+         <TunnelHeader
+            title={t(address.concat('item information'))}
+            close={close}
+            right={{ title: t(address.concat('next')), action: handleNext }}
+         />
+
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>
@@ -132,7 +130,7 @@ export default function InfoTunnel({ close, units, formState }) {
                         />
                         <StyledSelect
                            name="unit"
-                           defaultValue={unit}
+                           value={unit}
                            onChange={e => setUnit(e.target.value)}
                         >
                            {units.map(unit => (

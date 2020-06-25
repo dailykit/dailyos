@@ -1,21 +1,20 @@
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   ButtonTile,
-   IconButton,
+   Input,
    Loader,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   TextButton,
-   Input,
+   Avatar,
 } from '@dailykit/ui'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-
+import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import { DataCard } from '../../../components'
+import DeleteIcon from '../../../../../shared/assets/icons/Delete'
+import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import {
    ItemContext,
@@ -24,38 +23,26 @@ import {
 } from '../../../context/item'
 import { Context } from '../../../context/tabs'
 import {
-   MASTER_ALLERGENS_SUBSCRIPTION,
-   MASTER_PROCESSINGS_SUBSCRIPTION,
-   SUPPLIERS_SUBSCRIPTION,
-   SUPPLIER_ITEM_SUBSCRIPTION,
-   UNITS_SUBSCRIPTION,
    DELETE_BULK_ITEM,
+   SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
-// Styled
 import { FlexContainer, Flexible, StyledWrapper } from '../styled'
+import ProcessingView from './ProcessingView'
 import {
-   ItemTab,
    ProcessingButton,
    StyledGrid,
    StyledHeader,
    StyledInfo,
    StyledMain,
    StyledSupplier,
-   TabContainer,
    TransparentIconButton,
 } from './styled'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
-import DeleteIcon from '../../../../../shared/assets/icons/Delete'
-// Tunnels
 import {
-   AllergensTunnel,
-   AllergensTunnelForDerivedProcessing,
    ConfigTunnel,
    ConfigureDerivedProcessingTunnel,
    ConfigureSachetTunnel,
    InfoTunnel,
-   NutritionTunnel,
    ProcessingTunnel,
    SelectDerivedProcessingTunnel,
    SuppliersTunnel,
@@ -69,10 +56,29 @@ export default function ItemForm() {
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
-   const [units, setUnits] = React.useState([])
    const [itemName, setItemName] = React.useState('')
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(10)
+   const [supplierTunnel, openSupplierTunnel, closeSupplierTunnel] = useTunnel(
+      1
+   )
+   const [infoTunnel, openInfoTunnel, closeInfoTunnel] = useTunnel(1)
+   const [
+      processingTunnel,
+      openProcessingTunnel,
+      closeProcessingTunnel,
+   ] = useTunnel(1)
+
+   const [
+      derivedProcessingsTunnel,
+      openDerivedProcessingTunnel,
+      closeDerivedProcessingTunnel,
+   ] = useTunnel(1)
+
+   const [
+      configureSachetTunnel,
+      openConfigureSachetTunnel,
+      closeConfigureSachetTunnel,
+   ] = useTunnel(1)
 
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
@@ -80,39 +86,11 @@ export default function ItemForm() {
          variables: { id: tabState.current.id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
-            const bulkItemAsShipped = data.bulkItems?.find(
-               item => item.id === data.bulkItemAsShippedId
-            )
-            const normalisedData = {
-               ...data,
-               bulkItemAsShipped: {
-                  ...bulkItemAsShipped,
-                  name: bulkItemAsShipped?.processingName,
-               },
-            }
-            setItemName(normalisedData.name)
-            setFormState(normalisedData)
+
+            setItemName(data.name)
+            setFormState(data)
          },
       }
-   )
-
-   const { loading: supplierLoading, data: supplierData } = useSubscription(
-      SUPPLIERS_SUBSCRIPTION
-   )
-   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
-      onSubscriptionData: input => {
-         const data = input.subscriptionData.data.units
-         setUnits(data)
-      },
-   })
-
-   const {
-      loading: processingsLoading,
-      data: processingData,
-   } = useSubscription(MASTER_PROCESSINGS_SUBSCRIPTION)
-
-   const { loading: allergensLoading, data: allergensData } = useSubscription(
-      MASTER_ALLERGENS_SUBSCRIPTION
    )
 
    const [deleteBulkItem, { loading: bulkItemDeleteLoading }] = useMutation(
@@ -146,113 +124,69 @@ export default function ItemForm() {
       deleteBulkItem({ variables: { id } })
    }
 
-   if (
-      supplierLoading ||
-      processingsLoading ||
-      allergensLoading ||
-      itemDetailLoading ||
-      unitsLoading ||
-      bulkItemDeleteLoading
-   )
-      return <Loader />
+   if (itemDetailLoading || bulkItemDeleteLoading) return <Loader />
+
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={supplierTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
-                  close={closeTunnel}
-                  suppliers={supplierData?.suppliers?.map(supplier => ({
-                     id: supplier.id,
-                     title: supplier.name,
-                     description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.countryCode} ${supplier.contactPerson?.phoneNumber})`,
-                  }))}
+                  close={closeSupplierTunnel}
                   formState={formState}
                />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <InfoTunnel
-                  units={units}
-                  close={() => closeTunnel(2)}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel layer={3} style={{ overflowY: 'auto' }}>
-               <ProcessingTunnel
-                  close={closeTunnel}
-                  open={openTunnel}
-                  processings={processingData?.masterProcessings?.map(
-                     processing => {
-                        return {
-                           id: processing.id,
-                           title: processing.name,
-                        }
-                     }
-                  )}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} layer={4} size="lg">
-               <ConfigTunnel
-                  units={units}
-                  close={closeTunnel}
-                  open={openTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel layer={5} style={{ overflowY: 'auto' }}>
-               <AllergensTunnel
-                  close={() => closeTunnel(5)}
-                  allergens={allergensData?.masterAllergens?.map(allergen => ({
-                     id: allergen.id,
-                     title: allergen.name,
-                  }))}
-               />
-            </Tunnel>
-            <Tunnel layer={6} style={{ overflowY: 'auto' }}>
-               <SelectDerivedProcessingTunnel
-                  next={openTunnel}
-                  close={closeTunnel}
-                  processings={processingData?.masterProcessings?.map(
-                     processing => {
-                        return {
-                           id: processing.id,
-                           title: processing.name,
-                        }
-                     }
-                  )}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={7}>
-               <ConfigureDerivedProcessingTunnel
-                  units={units}
-                  open={openTunnel}
-                  close={closeTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-
-            <Tunnel layer={8}>
-               <AllergensTunnelForDerivedProcessing
-                  open={openTunnel}
-                  close={closeTunnel}
-                  allergens={allergensData?.masterAllergens?.map(allergen => ({
-                     id: allergen.id,
-                     title: allergen.name,
-                  }))}
-               />
-            </Tunnel>
-            <Tunnel layer={9}>
-               <ConfigureSachetTunnel
-                  open={openTunnel}
-                  close={closeTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} layer={10}>
-               <NutritionTunnel open={openTunnel} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={infoTunnel}>
+            <Tunnel layer={1}>
+               <InfoTunnel
+                  close={() => closeInfoTunnel(1)}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={processingTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <ProcessingTunnel
+                  close={closeProcessingTunnel}
+                  open={openProcessingTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+            <Tunnel style={{ overflowY: 'auto' }} layer={2} size="lg">
+               <ConfigTunnel
+                  close={closeProcessingTunnel}
+                  open={openProcessingTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={derivedProcessingsTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <SelectDerivedProcessingTunnel
+                  next={() => openDerivedProcessingTunnel(2)}
+                  close={() => closeDerivedProcessingTunnel(1)}
+                  formState={formState}
+               />
+            </Tunnel>
+            <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={2}>
+               <ConfigureDerivedProcessingTunnel
+                  open={openDerivedProcessingTunnel}
+                  close={closeDerivedProcessingTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+
+         <Tunnels tunnels={configureSachetTunnel}>
+            <Tunnel layer={1}>
+               <ConfigureSachetTunnel
+                  open={openConfigureSachetTunnel}
+                  close={closeConfigureSachetTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+
          <StyledWrapper>
             <StyledHeader>
                {formState.name && (
@@ -267,6 +201,11 @@ export default function ItemForm() {
                               label="Item Name"
                               onChange={e => setItemName(e.target.value)}
                               onBlur={() => {
+                                 if (!itemName.length) {
+                                    toast.error("Name can't be empty")
+                                    return setItemName(formState.name)
+                                 }
+
                                  if (itemName !== formState.name)
                                     updateSupplierItem({
                                        variables: {
@@ -282,7 +221,7 @@ export default function ItemForm() {
                      <StyledSupplier>
                         <ContactPerson
                            formState={formState}
-                           open={openTunnel}
+                           open={openSupplierTunnel}
                         />
                      </StyledSupplier>
                   </>
@@ -291,7 +230,7 @@ export default function ItemForm() {
          </StyledWrapper>
          <StyledMain>
             <>
-               <StyledGrid onClick={() => openTunnel(2)}>
+               <StyledGrid onClick={() => openInfoTunnel(1)}>
                   <div>
                      <div>
                         <ItemIcon />
@@ -393,10 +332,10 @@ export default function ItemForm() {
                                  type: 'CLEAR_STATE',
                               })
 
-                              if (formState.bulkItems.length) {
-                                 openTunnel(6)
+                              if (formState.bulkItemAsShippedId) {
+                                 openDerivedProcessingTunnel(1)
                               } else {
-                                 openTunnel(3)
+                                 openProcessingTunnel(1)
                               }
                            }}
                            type="outline"
@@ -445,7 +384,7 @@ export default function ItemForm() {
                               </div>
                               <FlexContainer>
                                  <TransparentIconButton
-                                    onClick={() => openTunnel(4)}
+                                    onClick={() => openProcessingTunnel(2)}
                                     type="button"
                                  >
                                     <EditIcon />
@@ -481,7 +420,6 @@ export default function ItemForm() {
                                           type: 'SET_ACTIVE_PROCESSING',
                                           payload: {
                                              ...procs,
-                                             name: procs.processingName,
                                           },
                                        })
                                     }}
@@ -491,7 +429,7 @@ export default function ItemForm() {
                                  >
                                     <div style={{ textAlign: 'left' }}>
                                        <h3 style={{ marginBottom: '5px' }}>
-                                          {procs.processingName}
+                                          {procs.name}
                                        </h3>
                                        <Text as="subtitle">
                                           {t(address.concat('on hand'))}:{' '}
@@ -514,7 +452,9 @@ export default function ItemForm() {
                                                       type: 'SET_DER_ACTION',
                                                       payload: 'UPDATE',
                                                    })
-                                                   openTunnel(7)
+                                                   openDerivedProcessingTunnel(
+                                                      2
+                                                   )
                                                 }}
                                                 type="button"
                                              >
@@ -551,7 +491,7 @@ export default function ItemForm() {
                         {formState.bulkItems?.length &&
                         state.activeProcessing?.name ? (
                            <ProcessingView
-                              open={openTunnel}
+                              open={openConfigureSachetTunnel}
                               formState={formState}
                            />
                         ) : (
@@ -572,168 +512,6 @@ export default function ItemForm() {
    )
 }
 
-function ProcessingView({ open, formState }) {
-   const { t } = useTranslation()
-   const [activeView, setActiveView] = React.useState('realtime') // realtime | plannedLot
-
-   return (
-      <>
-         <TabContainer>
-            <ItemTab
-               active={activeView === 'realtime'}
-               onClick={() => setActiveView('realtime')}
-            >
-               <Text as="title">{t(address.concat('real-time'))}</Text>
-            </ItemTab>
-            <ItemTab
-               active={activeView === 'plannedLot'}
-               onClick={() => setActiveView('plannedLot')}
-            >
-               <Text as="title">{t(address.concat('planned-lot'))}</Text>
-            </ItemTab>
-         </TabContainer>
-
-         {activeView === 'realtime' && (
-            <>
-               <FlexContainer>
-                  <Flexible width="4">
-                     <RealTimeView formState={formState} />
-                  </Flexible>
-                  <Flexible width="1" />
-               </FlexContainer>
-            </>
-         )}
-
-         {activeView === 'plannedLot' && (
-            <>
-               <PlannedLotView open={open} formState={formState} />
-            </>
-         )}
-      </>
-   )
-}
-
-function RealTimeView({ formState }) {
-   const { t } = useTranslation()
-
-   const {
-      state: { activeProcessing },
-   } = useContext(ItemContext)
-   const active = formState.bulkItems.find(
-      item => item.id === activeProcessing.id
-   )
-
-   if (!active) return null
-
-   return (
-      <FlexContainer style={{ flexWrap: 'wrap' }}>
-         <DataCard
-            title={t(address.concat('awaiting'))}
-            quantity={`${active.awaiting} ${active.unit}`}
-         />
-         <DataCard
-            title={t(address.concat('commited'))}
-            quantity={`${active.committed} ${active.unit}`}
-         />
-         <DataCard
-            title={t(address.concat('consumed'))}
-            quantity={`${active.consumed} ${active.unit}`}
-         />
-         <DataCard
-            title={t(address.concat('on hand'))}
-            quantity={`${active.onHand} ${active.unit}`}
-         />
-      </FlexContainer>
-   )
-}
-
-function PlannedLotView({ open, formState }) {
-   const { t } = useTranslation()
-   const {
-      state: { activeProcessing },
-      state,
-      dispatch,
-   } = useContext(ItemContext)
-
-   const active = formState.bulkItems.find(
-      item => item.id === activeProcessing.id
-   )
-
-   if (!active) return null
-
-   const activeSachet = active.sachetItems.find(
-      item => item.id === state.activeSachet.id
-   )
-
-   return (
-      <>
-         <FlexContainer>
-            <Flexible width="1">
-               <Text as="h2">{t(address.concat('sachets'))}</Text>
-
-               {active.sachetItems.map(sachet => {
-                  return (
-                     <ProcessingButton
-                        active={sachet.id === state.activeSachet.id}
-                        onClick={() =>
-                           dispatch({
-                              type: 'SET_ACTIVE_SACHET',
-                              payload: sachet,
-                           })
-                        }
-                     >
-                        <div style={{ textAlign: 'left' }}>
-                           <h3>
-                              {sachet.unitSize} {sachet.unit}
-                           </h3>
-
-                           <Text as="subtitle">
-                              {t(address.concat('par'))}: {sachet.parLevel}{' '}
-                              {sachet.unit}
-                           </Text>
-                        </div>
-                     </ProcessingButton>
-                  )
-               })}
-
-               <div style={{ width: '90%', marginTop: '10px' }}>
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text={t(address.concat('add sachets'))}
-                     onClick={() => {
-                        dispatch({
-                           type: 'SET_UNIT_QUANTITY',
-                           payload: { unit: active.unit },
-                        })
-                        open(9)
-                     }}
-                  />
-               </div>
-            </Flexible>
-            <Flexible width="4">
-               {(activeSachet?.id || state.activeSachet?.quantity) && (
-                  <FlexContainer style={{ flexWrap: 'wrap' }}>
-                     <DataCard
-                        title={t(address.concat('awaiting'))}
-                        quantity={`${activeSachet.awaiting || 0} pkt`}
-                     />
-                     <DataCard
-                        title={t(address.concat('commited'))}
-                        quantity={`${activeSachet.committed || 0} pkt`}
-                     />
-                     <DataCard
-                        title={t(address.concat('consumed'))}
-                        quantity={`${activeSachet.consumed || 0} pkt`}
-                     />
-                  </FlexContainer>
-               )}
-            </Flexible>
-         </FlexContainer>
-      </>
-   )
-}
-
 function ContactPerson({ formState, open }) {
    if (!formState.supplier)
       return (
@@ -742,16 +520,15 @@ function ContactPerson({ formState, open }) {
          </TextButton>
       )
 
-   const contatctPerson =
-      formState.supplier?.contactPerson?.firstName &&
-      formState.supplier?.contactPerson?.lastName
-         ? `${formState.supplier.contactPerson.firstName} ${formState.supplier.contactPerson.lastName} ${formState.supplier.contactPerson?.countryCode} ${formState.supplier.contactPerson.phoneNumber}`
-         : 'N/A'
-
    return (
       <>
          <span>{formState.supplier.name}</span>
-         <span>{contatctPerson}</span>
+         <Avatar
+            withName
+            title={`${formState.supplier?.contactPerson?.firstName} ${
+               formState.supplier?.contactPerson?.lastName || ''
+            }`}
+         />
          <TransparentIconButton type="outline" onClick={() => open(1)}>
             <EditIcon size="18" color="#555B6E" />
          </TransparentIconButton>

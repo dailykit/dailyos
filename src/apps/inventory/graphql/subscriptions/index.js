@@ -36,6 +36,30 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          id
          name
          bulkItemAsShippedId
+         bulkItemAsShipped {
+            id
+            name: processingName
+            awaiting
+            onHand
+            committed
+            parLevel
+            maxLevel
+            isAvailable
+            shelfLife
+            unit
+            consumed
+
+            sachetItems {
+               id
+               onHand
+               awaiting
+               consumed
+               unit
+               unitSize
+               parLevel
+               committed
+            }
+         }
          unit
          unitSize
          prices
@@ -43,12 +67,13 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
 
          leadTime
          supplier {
+            id
             name
             contactPerson
          }
          bulkItems {
             id
-            processingName
+            name: processingName
             awaiting
             onHand
             committed
@@ -226,6 +251,15 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
    }
 `
 
+export const PACKAGINGS_LIST_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
+      }
+   }
+`
+
 export const ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION = gql`
    subscription Suppliers {
       suppliersAggregate(where: { available: { _eq: true } }) {
@@ -302,11 +336,17 @@ export const UNITS_SUBSCRIPTION = gql`
 `
 
 export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
-   subscription {
-      masterProcessings {
-         id
-         name
-         description
+   subscription MasterProcessings($supplierItemId: Int!) {
+      masterProcessingsAggregate(
+         where: {
+            _not: { bulkItems: { supplierItemId: { _eq: $supplierItemId } } }
+         }
+      ) {
+         nodes {
+            id
+            title: name
+            description
+         }
       }
    }
 `
@@ -314,7 +354,7 @@ export const MASTER_ALLERGENS_SUBSCRIPTION = gql`
    subscription {
       masterAllergens {
          id
-         name
+         title: name
          description
       }
    }

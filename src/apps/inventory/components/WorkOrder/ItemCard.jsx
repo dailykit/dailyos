@@ -66,7 +66,7 @@ export default function ItemCard({
          {edit && (
             <div>
                <IconButton type="ghost" onClick={() => edit()}>
-                  <EditIcon />
+                  <EditIcon color="#555b6e" />
                </IconButton>
             </div>
          )}

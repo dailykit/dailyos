@@ -1,59 +1,59 @@
-import React, { useContext } from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
+   Loader,
+   TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
+import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { TunnelContainer } from '../../../../../components'
 import { ItemContext } from '../../../../../context/item'
-
-import {
-   TunnelContainer,
-   TunnelHeader,
-   Spacer,
-} from '../../../../../components'
+import { MASTER_PROCESSINGS_SUBSCRIPTION } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
 
-export default function SupplierTunnel({
-   close,
-   processings,
-   open,
-   formState,
-}) {
+export default function ProcessingTunnel({ close, open, formState }) {
    const { t } = useTranslation()
-   const { state, dispatch } = useContext(ItemContext)
+   const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
+   const [data, setData] = React.useState([])
+   const [list, current, selectOption] = useSingleList(data)
 
-   const [list, current, selectOption] = useSingleList(
-      processings.filter(proc => {
-         const match = formState.bulkItems.find(
-            item => item.processingName === proc.title
-         )
+   const { loading: processingsLoading } = useSubscription(
+      MASTER_PROCESSINGS_SUBSCRIPTION,
+      {
+         variables: { supplierItemId: formState.id },
+         onSubscriptionData: input => {
+            const newProcessings =
+               input.subscriptionData.data.masterProcessingsAggregate.nodes
 
-         if (!match) return true
-      })
+            setData(newProcessings)
+         },
+      }
    )
+
+   if (processingsLoading) return <Loader />
 
    return (
       <>
-         <TunnelContainer>
-            <TunnelHeader
-               title={t(address.concat('select processing as item shipped'))}
-               next={() => {
+         <TunnelHeader
+            title={t(address.concat('select processing as item shipped'))}
+            close={() => close(1)}
+            right={{
+               title: 'Next',
+               action: () => {
                   dispatch({ type: 'PROCESSING', payload: current })
-                  close(3)
-                  open(4)
-               }}
-               close={() => close(3)}
-               nextAction="Next"
-            />
-
-            <Spacer />
-
+                  close(1)
+                  open(2)
+               },
+            }}
+         />
+         <TunnelContainer>
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.title} />

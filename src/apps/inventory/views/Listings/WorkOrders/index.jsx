@@ -75,7 +75,6 @@ export default function WorkOrders() {
          title: 'Scheduled On',
          field: 'scheduledOn',
          headerFilter: false,
-         hozAlign: 'center',
          formatter: reactFormatter(<ShowDate />),
       },
       {
@@ -83,21 +82,18 @@ export default function WorkOrders() {
          field: 'user',
          formatter: reactFormatter(<UserName />),
          headerFilter: false,
-         hozAlign: 'center',
       },
       {
          title: 'Station Assigned',
          field: 'station',
          formatter: reactFormatter(<StationName />),
          headerFilter: false,
-         hozAlign: 'center',
       },
       {
          title: 'Type',
          field: 'type',
          formatter: reactFormatter(<FormatType />),
          headerFilter: false,
-         hozAlign: 'center',
       },
    ]
 

@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    IconButton,
@@ -7,21 +7,27 @@ import {
    Tag,
    TagGroup,
    Text,
-   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   TunnelHeader,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
-import { CloseIcon } from '../../../../../assets/icons'
 import { ItemContext } from '../../../../../context/item'
 import {
    CREATE_BULK_ITEM,
-   UPDATE_SUPPLIER_ITEM,
+   UNITS_SUBSCRIPTION,
    UPDATE_BULK_ITEM,
+   UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
 import { StyledSelect } from '../../../styled'
+import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+import AllergensTunnel from '../Allergens'
+import NutritionTunnel from '../NutritionTunnel'
 import {
    Highlight,
    InputWrapper,
@@ -29,23 +35,23 @@ import {
    StyledLabel,
    StyledRow,
    TunnelBody,
-   TunnelHeader,
 } from '../styled'
-import Nutrition from '../../../../../../../shared/components/Nutrition/index'
-import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, open, units, formState }) {
+export default function ConfigTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { state, dispatch } = React.useContext(ItemContext)
    const [errors, setErrors] = useState([])
+   const [units, setUnits] = useState([])
 
    const bulkItem = formState.bulkItemAsShipped
 
    const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(units[0].name)
+   const [unit, setUnit] = useState(
+      bulkItem?.unit || formState?.unit || units[0]?.name
+   )
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
    const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -56,6 +62,25 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       bulkItem?.shelfLife?.unit || 'hours'
    )
    const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
+
+   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const data = input.subscriptionData.data.units
+         setUnits(data)
+      },
+   })
+
+   const [
+      allergensTunnel,
+      openAllergensTunnel,
+      closeAllergensTunnel,
+   ] = useTunnel(1)
+
+   const [
+      nutritionTunnel,
+      openNutritionTunnel,
+      closeNutritionTunnel,
+   ] = useTunnel(1)
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
@@ -84,7 +109,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
          onError: error => {
             console.log(error)
             toast.error('Error creating bulk item. Please try again')
-            close(4)
+            close(2)
          },
       }
    )
@@ -93,13 +118,13 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       UPDATE_BULK_ITEM,
       {
          onCompleted: () => {
-            close(4)
+            close(2)
             toast.success('Bulk Item updated successfully !')
          },
          onError: error => {
             console.log(error)
             toast.error('Error updating bulk item as shipped. Please try again')
-            close(4)
+            close(2)
          },
       }
    )
@@ -147,26 +172,28 @@ export default function ConfigTunnel({ close, open, units, formState }) {
       }
    }
 
-   if (createBulkItemLoading || updateBulkItemLoading) return <Loader />
+   if (createBulkItemLoading || updateBulkItemLoading || unitsLoading)
+      return <Loader />
 
    return (
       <>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(4)}>
-                  <CloseIcon size={24} />
-               </span>
-               <span>
-                  {t(address.concat('configure processing'))}:{' '}
-                  {state.processing.name}
-               </span>
-            </div>
-            <div>
-               <TextButton onClick={handleSave} type="solid">
-                  {t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+         <Tunnels tunnels={allergensTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <AllergensTunnel close={() => closeAllergensTunnel(1)} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={nutritionTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
+               <NutritionTunnel close={closeNutritionTunnel} />
+            </Tunnel>
+         </Tunnels>
+
+         <TunnelHeader
+            title={t(address.concat('configure processing'))}
+            close={() => close(2)}
+            right={{ title: t(address.concat('save')), action: handleSave }}
+         />
+
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>
@@ -203,7 +230,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                   <span style={{ width: '10px' }} />
                   <StyledSelect
                      name="unit"
-                     defaultValue={unit}
+                     value={unit}
                      onChange={e => setUnit(e.target.value)}
                   >
                      {units.map(unit => (
@@ -233,28 +260,27 @@ export default function ConfigTunnel({ close, open, units, formState }) {
             </StyledRow>
             <StyledRow>
                <StyledInputGroup>
-                  {!state.form_meta.shipped && (
-                     <InputWrapper>
-                        <Input
-                           type="number"
-                           label={t(address.concat('labour time per 100gm'))}
-                           name="labor time"
-                           value={laborTime}
-                           onChange={e => setLaborTime(e.target.value)}
-                           onBlur={e =>
-                              handleNumberInputErrors(e, errors, setErrors)
-                           }
-                        />
-                        <StyledSelect
-                           name="unit"
-                           defaultValue={laborUnit}
-                           onChange={e => setLaborUnit(e.target.value)}
-                        >
-                           <option value="hours">{t('units.hours')}</option>
-                           <option value="minutes">{t('units.minutes')}</option>
-                        </StyledSelect>
-                     </InputWrapper>
-                  )}
+                  <InputWrapper>
+                     <Input
+                        type="number"
+                        label={t(address.concat('labour time per 100gm'))}
+                        name="labor time"
+                        value={laborTime}
+                        onChange={e => setLaborTime(e.target.value)}
+                        onBlur={e =>
+                           handleNumberInputErrors(e, errors, setErrors)
+                        }
+                     />
+                     <StyledSelect
+                        name="unit"
+                        defaultValue={laborUnit}
+                        onChange={e => setLaborUnit(e.target.value)}
+                     >
+                        <option value="hours">{t('units.hours')}</option>
+                        <option value="minutes">{t('units.minutes')}</option>
+                     </StyledSelect>
+                  </InputWrapper>
+
                   <InputWrapper>
                      <Input
                         type="number"
@@ -321,11 +347,11 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                            type: 'SET_NUTRI_TARGET',
                            payload: 'processing',
                         })
-                        open(10)
+                        openNutritionTunnel(1)
                      }}
                      type="ghost"
                   >
-                     <EditIcon />
+                     <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
                {state.processing.nutrients?.fat ||
@@ -357,7 +383,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                            type: 'SET_NUTRI_TARGET',
                            payload: 'processing',
                         })
-                        open(10)
+                        openNutritionTunnel(1)
                      }}
                   />
                )}
@@ -365,7 +391,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
             <StyledRow>
                <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
                {state.processing.allergens.length ? (
-                  <Highlight pointer onClick={() => open(5)}>
+                  <Highlight pointer onClick={() => openAllergensTunnel(1)}>
                      <TagGroup>
                         {state.processing.allergens.map(el => (
                            <Tag key={el.id}> {el.title} </Tag>
@@ -376,7 +402,7 @@ export default function ConfigTunnel({ close, open, units, formState }) {
                   <ButtonTile
                      type="secondary"
                      text={t(address.concat('add allergens'))}
-                     onClick={() => open(5)}
+                     onClick={() => openAllergensTunnel(1)}
                   />
                )}
             </StyledRow>

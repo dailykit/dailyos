@@ -1,11 +1,11 @@
-import { Checkbox, Input, Loader } from '@dailykit/ui'
+import { Checkbox, Input, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import MapView from '../../../../assets/images/mapView.png'
-import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
+import { TunnelContainer } from '../../../../components'
 import { FlexContainer } from '../../styled'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 
@@ -79,95 +79,96 @@ export default function AddressTunnel({ close, formState }) {
    if (loading) return <Loader />
 
    return (
-      <TunnelContainer>
+      <>
          <TunnelHeader
             title={t(address.concat('add address'))}
-            next={handleNext}
             close={() => close(1)}
-            nextAction="Save"
+            right={{ title: 'Save', action: handleNext }}
          />
 
-         <Spacer />
+         <TunnelContainer>
+            <FlexContainer
+               style={{ width: '100%', justifyContent: 'space-between' }}
+            >
+               <div>
+                  <Input
+                     disabled={isManual}
+                     placeholder={t(address.concat('shipping location'))}
+                     type="text"
+                     name="location"
+                     value={location}
+                     onChange={e => {
+                        setLocation(e.target.value)
+                     }}
+                  />
+                  <div style={{ height: '10px' }} />
+                  <Checkbox
+                     id="label"
+                     checked={isManual}
+                     onChange={() => setIsManual(!isManual)}
+                  >
+                     {t(address.concat('enter manually'))}
+                  </Checkbox>
 
-         <FlexContainer
-            style={{ width: '100%', justifyContent: 'space-between' }}
-         >
-            <div>
-               <Input
-                  disabled={isManual}
-                  placeholder={t(address.concat('shipping location'))}
-                  type="text"
-                  name="location"
-                  value={location}
-                  onChange={e => {
-                     setLocation(e.target.value)
-                  }}
-               />
-               <div style={{ height: '10px' }} />
-               <Checkbox
-                  id="label"
-                  checked={isManual}
-                  onChange={() => setIsManual(!isManual)}
-               >
-                  {t(address.concat('enter manually'))}
-               </Checkbox>
-
-               {isManual && (
-                  <>
-                     <br />
-                     <Input
-                        placeholder={t(address.concat('address line 1'))}
-                        type="text"
-                        name="address1"
-                        value={address1}
-                        onChange={e => {
-                           setAddress1(e.target.value)
-                        }}
-                     />{' '}
-                     <br />
-                     <Input
-                        placeholder={t(address.concat('address line 2'))}
-                        type="text"
-                        name="address2"
-                        value={address2}
-                        onChange={e => {
-                           setAddress2(e.target.value)
-                        }}
-                     />
-                     <br />
-                     <FlexContainer>
+                  {isManual && (
+                     <>
+                        <br />
                         <Input
-                           placeholder={t(address.concat('city'))}
+                           placeholder={t(address.concat('address line 1'))}
                            type="text"
-                           name="city"
-                           value={city}
-                           onChange={e => setCity(e.target.value)}
-                        />
-                        <div style={{ width: '10px' }} />
+                           name="address1"
+                           value={address1}
+                           onChange={e => {
+                              setAddress1(e.target.value)
+                           }}
+                        />{' '}
+                        <br />
                         <Input
-                           placeholder={t(address.concat('zip code'))}
-                           type="number"
-                           name="zip"
-                           value={zip}
-                           onChange={e => setZip(e.target.value)}
+                           placeholder={t(address.concat('address line 2'))}
+                           type="text"
+                           name="address2"
+                           value={address2}
+                           onChange={e => {
+                              setAddress2(e.target.value)
+                           }}
                         />
-                     </FlexContainer>
-                     <br />
-                     <Input
-                        placeholder={t(address.concat('special instructions'))}
-                        type="text"
-                        name="instructions"
-                        value={instructions}
-                        onChange={e => setInstructions(e.target.value)}
-                     />{' '}
-                  </>
-               )}
-            </div>
+                        <br />
+                        <FlexContainer>
+                           <Input
+                              placeholder={t(address.concat('city'))}
+                              type="text"
+                              name="city"
+                              value={city}
+                              onChange={e => setCity(e.target.value)}
+                           />
+                           <div style={{ width: '10px' }} />
+                           <Input
+                              placeholder={t(address.concat('zip code'))}
+                              type="number"
+                              name="zip"
+                              value={zip}
+                              onChange={e => setZip(e.target.value)}
+                           />
+                        </FlexContainer>
+                        <br />
+                        <Input
+                           placeholder={t(
+                              address.concat('special instructions')
+                           )}
+                           type="text"
+                           name="instructions"
+                           value={instructions}
+                           onChange={e => setInstructions(e.target.value)}
+                        />{' '}
+                     </>
+                  )}
+               </div>
 
-            <div style={{ marginLeft: '20px' }}>
-               <img src={MapView} alt="map" />
-            </div>
-         </FlexContainer>
-      </TunnelContainer>
+               <div style={{ marginLeft: '20px' }}>
+                  <img src={MapView} alt="map" />
+               </div>
+            </FlexContainer>
+         </TunnelContainer>
+      </>
    )
 }

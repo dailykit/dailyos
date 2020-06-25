@@ -25,9 +25,9 @@ export default function SelectInputBulkItemTunnel({ close, bulkItems }) {
             title={t(address.concat('select input bulk item processing'))}
             next={() => {
                bulkOrderDispatch({ type: 'ADD_INPUT_ITEM', payload: current })
-               close(5)
+               close(1)
             }}
-            close={() => close(5)}
+            close={() => close(1)}
             nextAction="Save"
          />
 
@@ -63,7 +63,11 @@ export default function SelectInputBulkItemTunnel({ close, bulkItems }) {
                         onClick={() => selectOption('id', option.id)}
                         content={{
                            title: option.processingName,
-                           description: `Shelf Life: ${option.shelfLife} On Hand: ${option.onHand}`,
+                           description: `Shelf Life: ${
+                              option.shelfLife?.value || 'N/A'
+                           } ${option.shelfLife?.unit || ''} On Hand: ${
+                              option.onHand
+                           }`,
                         }}
                      />
                   ))}

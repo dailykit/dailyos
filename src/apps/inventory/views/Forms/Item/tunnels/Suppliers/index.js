@@ -1,30 +1,55 @@
-import React from 'react'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Loader,
-} from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-
-import {
-   TunnelContainer,
    TunnelHeader,
-   Spacer,
-} from '../../../../../components'
-import { UPDATE_SUPPLIER_ITEM } from '../../../../../graphql/mutations/item'
+   useSingleList,
+} from '@dailykit/ui'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+
+import { TunnelContainer } from '../../../../../components'
+import {
+   SUPPLIERS_SUBSCRIPTION,
+   UPDATE_SUPPLIER_ITEM,
+} from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
-export default function SupplierTunnel({ close, suppliers, formState }) {
+export default function SupplierTunnel({ close, formState }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
+   const [data, setData] = React.useState([])
+   const [list, current, selectOption] = useSingleList(data)
 
-   const [list, current, selectOption] = useSingleList(suppliers)
+   const { loading: supplierLoading } = useSubscription(
+      SUPPLIERS_SUBSCRIPTION,
+      {
+         onSubscriptionData: input => {
+            const newSuppliers = input.subscriptionData.data.suppliers.map(
+               sup => {
+                  return {
+                     id: sup.id,
+                     supplier: { title: sup.name },
+                     contact: {
+                        title: `${sup.contactPerson?.firstName || ''} ${
+                           sup.contactPerson?.lastName || ''
+                        }`,
+                        img: '',
+                     },
+                  }
+               }
+            )
+
+            setData(newSuppliers)
+         },
+      }
+   )
+
    const [updateSupplierItem, { loading }] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
          // toast and close
@@ -51,51 +76,45 @@ export default function SupplierTunnel({ close, suppliers, formState }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading || supplierLoading) return <Loader />
 
    return (
       <>
+         <TunnelHeader
+            title={t(address.concat('select supplier'))}
+            close={() => close(1)}
+            right={{ action: handleNext, title: 'Save' }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title={t(address.concat('select supplier'))}
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Save"
-            />
-
-            <Spacer />
-
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem
-                     type="SSL2"
+                     type="SSL22"
                      content={{
-                        title: current.title,
-                        description: current.description,
+                        supplier: current.supplier,
+                        contact: current.contact,
                      }}
                   />
                ) : (
                   <ListSearch
                      onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat('type what you’re looking for')
-                     )}
+                     placeholder="type what you’re looking for..."
                   />
                )}
                <ListOptions>
                   {list
                      .filter(option =>
-                        option.title.toLowerCase().includes(search)
+                        option.supplier.title.toLowerCase().includes(search)
                      )
                      .map(option => (
                         <ListItem
-                           type="SSL2"
+                           type="SSL22"
                            key={option.id}
                            isActive={option.id === current.id}
                            onClick={() => selectOption('id', option.id)}
                            content={{
-                              title: option.title,
-                              description: option.description,
+                              supplier: option.supplier,
+                              contact: option.contact,
                            }}
                         />
                      ))}
