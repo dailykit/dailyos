@@ -25,9 +25,9 @@ export default function SelectOutputBulkItem({ close, bulkItems }) {
             title={t(address.concat('select output bulk item processing'))}
             next={() => {
                bulkOrderDispatch({ type: 'ADD_OUTPUT_ITEM', payload: current })
-               close(2)
+               close(1)
             }}
-            close={() => close(2)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

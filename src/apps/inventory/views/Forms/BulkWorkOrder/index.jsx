@@ -59,7 +59,23 @@ export default function BulkWorkOrderForm() {
 
    const [loading, setLoading] = useState(false)
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
+   const [
+      supplierItemTunnel,
+      openSupplierItemTunnel,
+      closeSupplierItemTunnel,
+   ] = useTunnel(1)
+   const [
+      outputBulkItemTunnel,
+      openOutputBulkItemTunnel,
+      closeOutputBulkItemTunnel,
+   ] = useTunnel(1)
+   const [usersTunnels, openUserTunnel, closeUserTunnel] = useTunnel(1)
+   const [stationsTunnel, openStationTunnel, closeStationTunnel] = useTunnel(1)
+   const [
+      inputBulkItemTunnel,
+      openInputBulkItemTunnel,
+      closeInputBulkItemTunnel,
+   ] = useTunnel(1)
 
    const {
       data: supplierItemData,
@@ -207,41 +223,50 @@ export default function BulkWorkOrderForm() {
 
    return (
       <BulkOrderContext.Provider value={{ bulkOrderState, bulkOrderDispatch }}>
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={supplierItemTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectSupplierItemTunnel
-                  close={closeTunnel}
+                  close={closeSupplierItemTunnel}
                   supplierItems={supplierItemData?.supplierItems}
                />
             </Tunnel>
-            <Tunnel layer={2}>
+         </Tunnels>
+         <Tunnels tunnels={outputBulkItemTunnel}>
+            <Tunnel layer={1}>
                <SelectOutputBulkItemTunnel
-                  close={closeTunnel}
+                  close={closeOutputBulkItemTunnel}
                   bulkItems={bulkOrderState.supplierItem?.bulkItems}
                />
             </Tunnel>
-            <Tunnel layer={3}>
+         </Tunnels>
+         <Tunnels tunnels={usersTunnels}>
+            <Tunnel layer={1}>
                <SelectUserTunnel
-                  close={closeTunnel}
+                  close={closeUserTunnel}
                   users={userData?.settings_user?.map(user => ({
                      ...user,
                      name: `${user.firstName} ${user.lastName}`,
                   }))}
                />
             </Tunnel>
-            <Tunnel layer={4}>
+         </Tunnels>
+         <Tunnels tunnels={stationsTunnel}>
+            <Tunnel layer={1}>
                <SelectStationTunnel
-                  close={closeTunnel}
+                  close={closeStationTunnel}
                   stations={stationsData?.stations}
                />
             </Tunnel>
-            <Tunnel layer={5}>
+         </Tunnels>
+         <Tunnels tunnels={inputBulkItemTunnel}>
+            <Tunnel layer={1}>
                <SelectInputBulkItemTunnel
-                  close={closeTunnel}
+                  close={closeInputBulkItemTunnel}
                   bulkItems={bulkOrderState.supplierItem?.bulkItems}
                />
             </Tunnel>
          </Tunnels>
+
          <StyledWrapper>
             <FormHeading>
                <div
@@ -290,7 +315,7 @@ export default function BulkWorkOrderForm() {
                               bulkWorkOrderData.bulkWorkOrder.outputBulkItem
                                  .supplierItem.name
                            }
-                           edit={() => openTunnel(1)}
+                           edit={() => openSupplierItemTunnel(1)}
                         />
                      )}
                   </>
@@ -299,7 +324,7 @@ export default function BulkWorkOrderForm() {
                      noIcon
                      type="secondary"
                      text={t(address.concat('select supplier item'))}
-                     onClick={e => openTunnel(1)}
+                     onClick={() => openSupplierItemTunnel(1)}
                   />
                )}
 
@@ -330,10 +355,10 @@ export default function BulkWorkOrderForm() {
                                        ?.inputBulkItem.onHand
                                  }
                                  shelfLife={
-                                    bulkOrderState.inputItemProcessing
-                                       .shelfLife ||
+                                    bulkOrderState.inputItemProcessing.shelfLife
+                                       ?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.inputBulkItem.shelfLife
+                                       ?.inputBulkItem.shelfLife?.value
                                  }
                               />
                            ) : (
@@ -350,12 +375,12 @@ export default function BulkWorkOrderForm() {
                                        ?.inputBulkItem.onHand
                                  }
                                  shelfLife={
-                                    bulkOrderState.inputItemProcessing
-                                       .shelfLife ||
+                                    bulkOrderState.inputItemProcessing.shelfLife
+                                       ?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.inputBulkItem.shelfLife
+                                       ?.inputBulkItem.shelfLife?.value
                                  }
-                                 edit={() => openTunnel(2)}
+                                 edit={() => openInputBulkItemTunnel(1)}
                               />
                            )}
                         </>
@@ -364,7 +389,7 @@ export default function BulkWorkOrderForm() {
                            noIcon
                            type="secondary"
                            text={t(address.concat('select input bulk item'))}
-                           onClick={() => openTunnel(5)}
+                           onClick={() => openInputBulkItemTunnel(1)}
                         />
                      )}
                   </>
@@ -399,9 +424,9 @@ export default function BulkWorkOrderForm() {
                                  }
                                  shelfLife={
                                     bulkOrderState.outputItemProcessing
-                                       .shelfLife ||
+                                       .shelfLife?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.outputBulkItem?.shelfLife
+                                       ?.outputBulkItem?.shelfLife?.value
                                  }
                               />
                            ) : (
@@ -420,11 +445,11 @@ export default function BulkWorkOrderForm() {
                                  }
                                  shelfLife={
                                     bulkOrderState.outputItemProcessing
-                                       .shelfLife ||
+                                       .shelfLife?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.outputBulkItem?.shelfLife
+                                       ?.outputBulkItem?.shelfLife?.value
                                  }
-                                 edit={() => openTunnel(2)}
+                                 edit={() => openOutputBulkItemTunnel(1)}
                               />
                            )}
                         </>
@@ -433,7 +458,7 @@ export default function BulkWorkOrderForm() {
                            noIcon
                            type="secondary"
                            text={t(address.concat('select output bulk item'))}
-                           onClick={e => openTunnel(2)}
+                           onClick={() => openOutputBulkItemTunnel(1)}
                         />
                      )}
                   </>
@@ -441,7 +466,8 @@ export default function BulkWorkOrderForm() {
 
                {bulkOrderState.outputItemProcessing?.processingName && (
                   <Configurator
-                     open={openTunnel}
+                     openUserTunnel={openUserTunnel}
+                     openStationTunnel={openStationTunnel}
                      bulkWorkOrder={bulkWorkOrderData?.bulkWorkOrder}
                   />
                )}
@@ -451,7 +477,7 @@ export default function BulkWorkOrderForm() {
    )
 }
 
-function Configurator({ open, bulkWorkOrder }) {
+function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    const { t } = useTranslation()
    const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -559,14 +585,14 @@ function Configurator({ open, bulkWorkOrder }) {
                      bulkOrderState.assignedUser.name ||
                      `${bulkWorkOrder?.user?.firstName} ${bulkWorkOrder?.user?.lastName}`
                   }
-                  edit={() => open(3)}
+                  edit={() => openUserTunnel(1)}
                />
             ) : (
                <ButtonTile
                   noIcon
                   type="secondary"
                   text={t(address.concat('select and assign user to work'))}
-                  onClick={e => open(3)}
+                  onClick={() => openUserTunnel(1)}
                />
             )}
          </>
@@ -610,7 +636,7 @@ function Configurator({ open, bulkWorkOrder }) {
                      bulkOrderState.selectedStation.name ||
                      bulkWorkOrder?.station?.name
                   }
-                  edit={() => open(4)}
+                  edit={() => openStationTunnel(1)}
                />
             ) : (
                <ButtonTile
@@ -619,7 +645,7 @@ function Configurator({ open, bulkWorkOrder }) {
                   text={t(
                      address.concat('select and assign station to route to')
                   )}
-                  onClick={e => open(4)}
+                  onClick={() => openStationTunnel(1)}
                />
             )}
          </>

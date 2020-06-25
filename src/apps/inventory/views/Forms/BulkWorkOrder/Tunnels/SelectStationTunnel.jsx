@@ -27,9 +27,9 @@ export default function SelectStationTunnel({ close, stations }) {
             title={t(address.concat('select station'))}
             next={() => {
                bulkOrderDispatch({ type: 'ADD_STATION', payload: current })
-               close(4)
+               close(1)
             }}
-            close={() => close(4)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

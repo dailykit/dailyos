@@ -26,9 +26,9 @@ export default function SelectUserTunnel({ close, users }) {
             title={t(address.concat('select user'))}
             next={() => {
                bulkOrderDispatch({ type: 'SELECT_USER', payload: current })
-               close(3)
+               close(1)
             }}
-            close={() => close(3)}
+            close={() => close(1)}
             nextAction="Save"
          />
 
