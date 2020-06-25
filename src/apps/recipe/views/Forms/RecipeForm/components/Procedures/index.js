@@ -9,7 +9,8 @@ import {
 } from '@dailykit/ui'
 import { EditIcon } from '../../../../../assets/icons'
 import { Container, ContainerAction } from '../styled'
-import { ProceduresTunnel } from '../../tunnels'
+import { Image } from './styled'
+import { ProceduresTunnel, StepPhotoTunnel } from '../../tunnels'
 
 const Procedures = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(0)
@@ -18,7 +19,14 @@ const Procedures = ({ state }) => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="lg">
-               <ProceduresTunnel state={state} closeTunnel={closeTunnel} />
+               <ProceduresTunnel
+                  state={state}
+                  openTunnel={openTunnel}
+                  closeTunnel={closeTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <StepPhotoTunnel state={state} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Container top="32" paddingX="32">
@@ -55,6 +63,9 @@ const Procedure = ({ procedure }) => {
          {procedure.steps.map(step => (
             <Container bottom="8" paddingX="8" key={step.title}>
                <Text as="title">{step.title}</Text>
+               {Boolean(step.assets.images.length) && (
+                  <Image src={step.assets.images[0]} />
+               )}
                <p>{step.description}</p>
             </Container>
          ))}

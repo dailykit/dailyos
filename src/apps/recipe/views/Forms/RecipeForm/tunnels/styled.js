@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const TunnelBody = styled.div`
-   padding: 0 16px;
+   padding: 8px 16px;
    height: calc(100% - 106px);
    overflow: auto;
 `
@@ -58,12 +58,8 @@ export const Flex = styled.div`
 
 export const InputWrapper = styled.div`
    display: flex;
-   width: 100%;
    align-items: baseline;
-   justify-content: space-between;
-   input {
-      max-width: 240px;
-   }
+   margin-bottom: 16px;
    span {
       cursor: pointer;
    }
