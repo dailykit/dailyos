@@ -1,15 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import {
-   Input,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   Loader,
-   Text,
-   Toggle,
-} from '@dailykit/ui'
+import { Input, Loader, Text, Toggle } from '@dailykit/ui'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
 import {
@@ -34,23 +26,7 @@ import {
    Photo,
    RecipeCard,
 } from './components'
-import {
-   InformationTunnel,
-   ProceduresTunnel,
-   ServingsTunnel,
-   IngredientsTunnel,
-   ProcessingsTunnel,
-   ConfigureIngredientTunnel,
-   SachetTunnel,
-   PhotoTunnel,
-   CardPreviewTunnel,
-} from './tunnels'
-import {
-   UPDATE_RECIPE,
-   S_RECIPE,
-   S_INGREDIENTS,
-   CUISINES,
-} from '../../../graphql'
+import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
 
 const RecipeForm = () => {
    // Context
@@ -63,11 +39,6 @@ const RecipeForm = () => {
    // States
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
-   const [ingredients, setIngredients] = React.useState([])
-   const [cuisines, setCuisines] = React.useState([])
-
-   // Tunnels
-   const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Subscription
    const { loading } = useSubscription(S_RECIPE, {
@@ -77,19 +48,6 @@ const RecipeForm = () => {
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.simpleRecipe)
          setTitle(data.subscriptionData.data.simpleRecipe.name)
-      },
-   })
-   useSubscription(S_INGREDIENTS, {
-      onSubscriptionData: data => {
-         const ingredients = data.subscriptionData.data.ingredients
-            .filter(ing => ing.isValid.status && ing.isPublished)
-            .map(ing => ({ ...ing, title: ing.name }))
-         setIngredients(ingredients)
-      },
-   })
-   useSubscription(CUISINES, {
-      onSubscriptionData: data => {
-         setCuisines(data.subscriptionData.data.cuisineNames)
       },
    })
 
@@ -124,7 +82,8 @@ const RecipeForm = () => {
    }
    const togglePublish = val => {
       if (val && !state.isValid.status) {
-         return toast.error('Recipe should be valid!')
+         toast.error('Recipe should be valid!')
+         return
       }
       updateRecipe({
          variables: {
@@ -141,76 +100,6 @@ const RecipeForm = () => {
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
          <>
-            {/* Tunnels */}
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1}>
-                  <InformationTunnel
-                     state={state}
-                     closeTunnel={closeTunnel}
-                     cuisines={cuisines}
-                  />
-               </Tunnel>
-               <Tunnel layer={2}>
-                  <ProceduresTunnel state={state} closeTunnel={closeTunnel} />
-               </Tunnel>
-               <Tunnel layer={3}>
-                  <ServingsTunnel state={state} closeTunnel={closeTunnel} />
-               </Tunnel>
-               <Tunnel layer={4}>
-                  <IngredientsTunnel
-                     closeTunnel={closeTunnel}
-                     openTunnel={openTunnel}
-                     ingredients={ingredients}
-                  />
-               </Tunnel>
-               <Tunnel layer={5}>
-                  <ProcessingsTunnel
-                     state={state}
-                     closeTunnel={closeTunnel}
-                     processings={
-                        ingredients[
-                           ingredients.findIndex(
-                              ing => ing.id === recipeState.newIngredient?.id
-                           )
-                        ]?.ingredientProcessings || []
-                     }
-                  />
-               </Tunnel>
-               <Tunnel layer={6}>
-                  <ConfigureIngredientTunnel
-                     state={state}
-                     closeTunnel={closeTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={7}>
-                  <SachetTunnel
-                     closeTunnel={closeTunnel}
-                     sachets={
-                        ingredients[
-                           ingredients.findIndex(
-                              ing => ing.id === recipeState.edit?.id
-                           )
-                        ]?.ingredientProcessings[
-                           ingredients[
-                              ingredients.findIndex(
-                                 ing => ing.id === recipeState.edit?.id
-                              )
-                           ]?.ingredientProcessings.findIndex(
-                              proc =>
-                                 proc.id ===
-                                 recipeState.edit?.ingredientProcessing?.id
-                           )
-                        ]?.ingredientSachets || []
-                     }
-                  />
-               </Tunnel>
-               <Tunnel layer={8}>
-                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
-               </Tunnel>
-               <Tunnel layer={9} size="lg">
-                  <CardPreviewTunnel closeTunnel={closeTunnel} />
-               </Tunnel>
-            </Tunnels>
             {/* View */}
             <StyledHeader>
                <Flex>
@@ -270,14 +159,14 @@ const RecipeForm = () => {
             <StyledWrapper width="980">
                {recipeState.stage === 0 ? (
                   <>
-                     <Information state={state} openTunnel={openTunnel} />
-                     <Photo state={state} openTunnel={openTunnel} />
-                     <Servings state={state} openTunnel={openTunnel} />
-                     <Ingredients state={state} openTunnel={openTunnel} />
-                     <Procedures state={state} openTunnel={openTunnel} />
+                     <Information state={state} />
+                     <Photo state={state} />
+                     <Servings state={state} />
+                     <Ingredients state={state} />
+                     <Procedures state={state} />
                   </>
                ) : (
-                  <RecipeCard state={state} openTunnel={openTunnel} />
+                  <RecipeCard state={state} />
                )}
             </StyledWrapper>
          </>

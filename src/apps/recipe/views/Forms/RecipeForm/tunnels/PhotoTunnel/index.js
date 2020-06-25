@@ -10,7 +10,7 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
          toast.success('Image added!')
-         closeTunnel(8)
+         closeTunnel(1)
       },
       onError: () => {
          toast.error('Error')
@@ -30,7 +30,7 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Photo" close={() => closeTunnel(8)} />
+         <TunnelHeader title="Select Photo" close={() => closeTunnel(1)} />
          <TunnelBody>
             <AssetUploader
                onImageSelect={image => addImage(image)}

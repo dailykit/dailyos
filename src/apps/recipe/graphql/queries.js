@@ -1,20 +1,7 @@
 import gql from 'graphql-tag'
 
-export const INGREDIENTS = gql`
-   {
-      ingredients {
-         id
-         name
-         createdAt
-         ingredientProcessings {
-            id
-         }
-      }
-   }
-`
-
 export const CUISINES = gql`
-   {
+   query Cuisines {
       cuisineNames {
          id
          name
@@ -22,113 +9,39 @@ export const CUISINES = gql`
    }
 `
 
-// Issue: It should take ID, but is asking for Int
-export const INGREDIENT = gql`
-   query Ingredient($ID: Int!) {
-      ingredient(id: $ID) {
+export const INGREDIENTS = gql`
+   query Ingredients($where: ingredient_ingredient_bool_exp) {
+      ingredients(where: $where) {
+         id
+         title: name
          name
-         image
-         id
+         isValid
       }
    }
 `
 
-export const PROCESSINGS_OF_INGREDIENT = gql`
-   query Ingredient($ingredientId: Int!) {
-      ingredient(id: $ingredientId) {
+// TODO: add isValid on processing
+export const PROCESSINGS = gql`
+   query Processings($where: ingredient_ingredientProcessing_bool_exp) {
+      ingredientProcessings(where: $where) {
          id
-         ingredientProcessings {
-            id
-            processingName
-         }
-      }
-   }
-`
-
-export const SACHETS_OF_PROCESSING = gql`
-   query Processing($processingId: Int!, $ingredientId: Int!) {
-      ingredientSachets(
-         where: {
-            ingredientId: { _eq: $ingredientId }
-            ingredientProcessing: { id: { _eq: $processingId } }
-         }
-      ) {
-         id
-         quantity
-         unit
-         tracking
-         defaultNutritionalValues
-         liveMOF
-         modeOfFulfillments {
-            id
-            type
-            isLive
-            accuracy
-            station {
-               name
-            }
-            sachetItem {
-               unitSize
-            }
-            bulkItem {
-               processingName
-            }
-            labelTemplate {
-               name
-            }
-            packaging {
-               name
-            }
-         }
-      }
-   }
-`
-//  Issue: Don't use name, but title
-
-export const FETCH_SACHET_ITEMS = gql`
-   {
-      sachetItems {
-         id
-         unitSize
-      }
-   }
-`
-
-export const FETCH_BULK_ITEMS = gql`
-   {
-      bulkItems {
-         id
+         title: processingName
          processingName
       }
    }
 `
 
-export const RECIPES = gql`
-   {
-      simpleRecipes {
+export const SACHETS = gql`
+   query Sachets($where: ingredient_ingredientSachet_bool_exp) {
+      ingredientSachets(where: $where) {
          id
-         name
-         author
-         cookingTime
-         simpleRecipeYields {
+         isValid
+         quantity
+         unit
+         ingredient {
             id
+            name
          }
-      }
-   }
-`
-
-export const RECIPE = gql`
-   query Recipe($id: Int!) {
-      simpleRecipe(id: $id) {
-         id
-         name
-         cookingTime
-         type
-         author
-         description
-         utensils
-         cookingTime
-         cuisine
       }
    }
 `

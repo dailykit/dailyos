@@ -82,6 +82,8 @@ const reducer = (state, { type, payload }) => {
             procedures: updatedProcedures,
          }
       }
+      default:
+         return state
    }
 }
 
@@ -100,7 +102,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
       },
       onCompleted: () => {
          toast.success('Updated!')
-         closeTunnel(2)
+         closeTunnel(1)
       },
       onError: () => {
          toast.error('Error!')
@@ -119,7 +121,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
          <TunnelHeader
             title="Add Cooking Steps"
             right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
-            close={() => closeTunnel(2)}
+            close={() => closeTunnel(1)}
          />
          <TunnelBody>
             {_state.procedures?.map((procedure, index) => (
@@ -138,6 +140,15 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                         }
                      />
                      <span
+                        tabIndex="0"
+                        role="button"
+                        onKeyDown={e =>
+                           e.charCode === 13 &&
+                           _dispatch({
+                              type: 'DELETE_PROCEDURE',
+                              payload: { index },
+                           })
+                        }
                         onClick={() =>
                            _dispatch({
                               type: 'DELETE_PROCEDURE',
@@ -183,6 +194,15 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                                     }}
                                  />
                                  <span
+                                    tabIndex="0"
+                                    role="button"
+                                    onKeyDown={e =>
+                                       e.charCode === 13 &&
+                                       _dispatch({
+                                          type: 'DELETE_STEP',
+                                          payload: { index, stepIndex },
+                                       })
+                                    }
                                     onClick={() =>
                                        _dispatch({
                                           type: 'DELETE_STEP',

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -7,29 +7,44 @@ import {
    ListSearch,
    useSingleList,
    TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { RecipeContext } from '../../../../../context/recipee'
-import { UPDATE_RECIPE } from '../../../../../graphql'
+import { UPDATE_RECIPE, PROCESSINGS } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
-const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
+const ProcessingsTunnel = ({ state, closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
    const [busy, setBusy] = React.useState(false)
 
    // State for search input
    const [search, setSearch] = React.useState('')
-   const [list, current, selectOption] = useSingleList(
-      processings.map(proc => ({ ...proc, title: proc.processingName }))
-   )
+   const [processings, setProcessings] = React.useState([])
+   const [list, current, selectOption] = useSingleList(processings)
+
+   // Query
+   const { loading } = useQuery(PROCESSINGS, {
+      variables: {
+         where: { ingredientId: { _eq: recipeState.newIngredient?.id } },
+      },
+      onCompleted: data => {
+         setProcessings(data.ingredientProcessings)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error: Cannot fetch Processings!')
+      },
+      fetchPolicy: 'cache-and-network',
+   })
 
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
          toast.success('Ingredient added!')
-         closeTunnel(5)
-         closeTunnel(4)
+         closeTunnel(2)
+         closeTunnel(1)
       },
       onError: () => {
          toast.error()
@@ -67,34 +82,38 @@ const ProcessingsTunnel = ({ state, closeTunnel, processings }) => {
                action: add,
                title: busy ? 'Adding...' : 'Add',
             }}
-            close={() => closeTunnel(5)}
+            close={() => closeTunnel(2)}
          />
          <TunnelBody>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.title} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.title}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {loading ? (
+               <Loader />
+            ) : (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
       </>
    )
