@@ -469,7 +469,7 @@ function Configurator({
                   }}
                   type="ghost"
                >
-                  <span style={{ color: '#00a7e1', fontWeight: '400' }}>-</span>
+                  <span style={{ color: '#00a7e1', fontWeight: '600' }}>-</span>
                </IconButton>
                <span style={{ width: '10px' }} />
                <Text as="title">{sachetOrderState.sachetQuantity}</Text>
@@ -483,7 +483,7 @@ function Configurator({
                   }}
                   type="ghost"
                >
-                  <AddIcon />
+                  <AddIcon color="#00a7e1" />
                </IconButton>
             </FlexContainer>
 
