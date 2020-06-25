@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
-   SETTINGS_USERS_SUBSCRIPTION,
    STATIONS_SUBSCRIPTION,
    SACHET_ITEMS_SUBSCRIPTION,
    PACKAGINGS_SUBSCRIPTION,
