@@ -84,3 +84,14 @@ export const CUSTOMIZABLE_PRODUCTS = gql`
       }
    }
 `
+
+export const COMBO_PRODUCTS = gql`
+   query ComboProducts($where: onlineStore_comboProduct_bool_exp) {
+      comboProducts(where: $where) {
+         id
+         name
+         title: name
+         isValid
+      }
+   }
+`
