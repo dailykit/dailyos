@@ -251,6 +251,15 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
    }
 `
 
+export const PACKAGINGS_LIST_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
+      }
+   }
+`
+
 export const ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION = gql`
    subscription Suppliers {
       suppliersAggregate(where: { available: { _eq: true } }) {
