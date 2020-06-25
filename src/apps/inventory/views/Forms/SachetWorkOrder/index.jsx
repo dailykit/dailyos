@@ -89,7 +89,6 @@ export default function SachetWorkOrder() {
       closeLabelTemplateTunnel,
    ] = useTunnel(1)
 
-   const { data: stationsData } = useSubscription(STATIONS_SUBSCRIPTION)
    const { data: packagingData } = useSubscription(PACKAGINGS_SUBSCRIPTION)
    const {
       data: sachetItemsData,
@@ -238,10 +237,7 @@ export default function SachetWorkOrder() {
          </Tunnels>
          <Tunnels tunnels={stationTunnel}>
             <Tunnel layer={1}>
-               <SelectStationTunnel
-                  close={closeStationTunnel}
-                  stations={stationsData?.stations}
-               />
+               <SelectStationTunnel close={closeStationTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={inputBulkItemTunnel}>
