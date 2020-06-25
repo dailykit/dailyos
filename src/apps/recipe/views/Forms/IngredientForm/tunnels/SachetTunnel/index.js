@@ -180,6 +180,12 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
       }
    }
 
+   React.useEffect(() => {
+      if (units.length) {
+         setUnit(units[0].title)
+      }
+   }, [units])
+
    if (loading) return <Loader />
 
    return (
