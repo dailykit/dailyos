@@ -23,44 +23,32 @@ export default function SelectLabelTemplateTunnel({ close }) {
 
    const [search, setSearch] = React.useState('')
 
-   const [list, selected, selectOption] = useMultiList([
-      {
-         id: 1,
-         title: 'Slip Name',
-      },
-      { id: 2, title: 'Bar Code' },
-      {
-         id: 3,
-         title: 'Sachet Quantity',
-      },
-      { id: 4, title: 'Supplier Name' },
-      { id: 5, title: 'Packaging date' },
-   ])
+   // const [list, selected, selectOption] = useMultiList()
 
-   useEffect(() => {
-      sachetOrderState.labelTemplates.forEach(temp => {
-         selectOption('id', temp.id)
-      })
-   }, [])
+   // useEffect(() => {
+   //    sachetOrderState.labelTemplates.forEach(temp => {
+   //       selectOption('id', temp.id)
+   //    })
+   // }, [])
 
    return (
       <TunnelContainer>
          <TunnelHeader
             title={t(address.concat('select label templates'))}
-            next={() => {
-               sachetOrderDispatch({
-                  type: 'SELECT_TEMPLATE_OPTIONS',
-                  payload: selected,
-               })
-               close(1)
-            }}
+            // next={() => {
+            //    sachetOrderDispatch({
+            //       type: 'SELECT_TEMPLATE_OPTIONS',
+            //       payload: selected,
+            //    })
+            //    close(1)
+            // }}
             close={() => close(1)}
             nextAction="Save"
          />
 
          <Spacer />
 
-         <List>
+         {/* <List>
             <ListSearch
                onChange={value => setSearch(value)}
                placeholder={t(address.concat("type what you're looking for"))}
@@ -91,7 +79,7 @@ export default function SelectLabelTemplateTunnel({ close }) {
                      />
                   ))}
             </ListOptions>
-         </List>
+         </List> */}
       </TunnelContainer>
    )
 }

@@ -291,7 +291,9 @@ export default function SachetWorkOrder() {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={labelTemplateTunnel}>
-            <SelectLabelTemplateTunnel close={closeLabelTemplateTunnel} />
+            <Tunnel layer={1}>
+               <SelectLabelTemplateTunnel close={closeLabelTemplateTunnel} />
+            </Tunnel>
          </Tunnels>
 
          <StyledWrapper>
@@ -384,9 +386,9 @@ export default function SachetWorkOrder() {
                                  }
                                  shelfLife={
                                     sachetOrderState.inputItemProcessing
-                                       .shelfLife ||
+                                       .shelfLife?.value ||
                                     sachetWorkOrderData?.sachetWorkOrder
-                                       ?.bulkItem?.shelfLife
+                                       ?.bulkItem?.shelfLife?.value
                                  }
                               />
                            ) : (
@@ -405,9 +407,9 @@ export default function SachetWorkOrder() {
                                  }
                                  shelfLife={
                                     sachetOrderState.inputItemProcessing
-                                       .shelfLife ||
+                                       .shelfLife?.value ||
                                     sachetWorkOrderData?.sachetWorkOrder
-                                       ?.bulkItem?.shelfLife
+                                       ?.bulkItem?.shelfLife?.value
                                  }
                                  edit={() => openInputBulkItemTunnel(1)}
                               />
@@ -454,7 +456,7 @@ export default function SachetWorkOrder() {
                                        ?.outputSachetItem.parLevel
                                  }
                                  edit={() => {
-                                    openTunnel(2)
+                                    openOutputSachetItemTunnel(1)
                                  }}
                               />
                            )}
@@ -465,7 +467,7 @@ export default function SachetWorkOrder() {
                            type="secondary"
                            text={t(address.concat('select output sachet item'))}
                            onClick={() => {
-                              openOutputSachetItemTunnel(2)
+                              openOutputSachetItemTunnel(1)
                            }}
                         />
                      )}
