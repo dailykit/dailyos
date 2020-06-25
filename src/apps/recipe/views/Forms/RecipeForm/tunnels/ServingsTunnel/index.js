@@ -16,7 +16,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    const [createYields] = useMutation(CREATE_SIMPLE_RECIPE_YIELDS, {
       onCompleted: () => {
          toast.success('Added!')
-         closeTunnel(3)
+         closeTunnel(1)
       },
       onError: () => {
          toast.error('Error!')
@@ -55,7 +55,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
          <TunnelHeader
             title="Add Servings"
             right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
-            close={() => closeTunnel(3)}
+            close={() => closeTunnel(1)}
          />
          <TunnelBody>
             <Container bottom="16">
@@ -65,7 +65,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                />
             </Container>
             {servings.map((serving, i) => (
-               <Container bottom="16" key={i}>
+               <Container bottom="16" key={serving}>
                   <Input
                      type="text"
                      label="Serving"

@@ -1,12 +1,15 @@
 import React from 'react'
-import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
 import { TunnelHeader } from '@dailykit/ui'
-import { AssetUploader } from '../../../../../../../shared/components'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import { TunnelBody } from '../styled'
+import { AssetUploader } from '../../../../../../../shared/components'
+import { RecipeContext } from '../../../../../context/recipee'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 
-const PhotoTunnel = ({ state, closeTunnel }) => {
+const StepPhotoTunnel = ({ state, closeTunnel }) => {
+   const { recipeState } = React.useContext(RecipeContext)
+
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
          toast.success('Image added!')
@@ -18,11 +21,18 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
    })
 
    const addImage = image => {
+      const { procedures } = state
+      procedures[recipeState.procedureIndex].steps[
+         recipeState.stepIndex
+      ].assets = {
+         images: [image],
+         videos: [],
+      }
       updateRecipe({
          variables: {
             id: state.id,
             set: {
-               image: image.url,
+               procedures,
             },
          },
       })
@@ -30,7 +40,7 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Photo" close={() => closeTunnel(1)} />
+         <TunnelHeader title="Select Photo" close={() => closeTunnel(2)} />
          <TunnelBody>
             <AssetUploader
                onImageSelect={image => addImage(image)}
@@ -41,4 +51,4 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
    )
 }
 
-export default PhotoTunnel
+export default StepPhotoTunnel
