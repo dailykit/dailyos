@@ -77,9 +77,6 @@ export default function BulkWorkOrderForm() {
       closeInputBulkItemTunnel,
    ] = useTunnel(1)
 
-   const { data: userData, loading: userLoading } = useSubscription(
-      SETTINGS_USERS_SUBSCRIPTION
-   )
    const { data: stationsData, loading: stationsLoading } = useSubscription(
       STATIONS_SUBSCRIPTION
    )
@@ -211,12 +208,6 @@ export default function BulkWorkOrderForm() {
 
    if (orderLoading || loading) return <Loader />
 
-   if (bulkOrderState.outputItemProcessing?.processingName && userLoading)
-      return <Loader />
-
-   if (bulkOrderState.outputItemProcessing?.processingName && stationsLoading)
-      return <Loader />
-
    return (
       <BulkOrderContext.Provider value={{ bulkOrderState, bulkOrderDispatch }}>
          <Tunnels tunnels={supplierItemTunnel}>
@@ -234,13 +225,7 @@ export default function BulkWorkOrderForm() {
          </Tunnels>
          <Tunnels tunnels={usersTunnels}>
             <Tunnel layer={1}>
-               <SelectUserTunnel
-                  close={closeUserTunnel}
-                  users={userData?.settings_user?.map(user => ({
-                     ...user,
-                     name: `${user.firstName} ${user.lastName}`,
-                  }))}
-               />
+               <SelectUserTunnel close={closeUserTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={stationsTunnel}>

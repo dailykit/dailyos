@@ -28,7 +28,11 @@ export default function SelectUserTunnel({ close }) {
 
    const { loading } = useSubscription(SETTINGS_USERS_SUBSCRIPTION, {
       onSubscriptionData: input => {
-         const data = input.subscriptionData.data.settings_user
+         const data = input.subscriptionData.data.settings_user?.map(user => ({
+            ...user,
+            name: `${user.firstName} ${user.lastName}`,
+         }))
+
          setData(data)
       },
    })
