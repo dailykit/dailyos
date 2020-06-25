@@ -63,7 +63,33 @@ export default function SachetWorkOrder() {
       sachetOrderState.status || state.sachetWorkOrder?.status || ''
    )
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(7)
+   const [
+      supplierItemTunnel,
+      openSupplierItemTunnel,
+      closeSupplierItemTunnel,
+   ] = useTunnel(1)
+   const [
+      outputSachetItemTunnel,
+      openOutputSachetItemTunnel,
+      closeOutputSachetItemTunnel,
+   ] = useTunnel(1)
+   const [userTunnel, openUserTunnel, closeUserTunnel] = useTunnel(1)
+   const [stationTunnel, openStationTunnel, closeStationTunnel] = useTunnel(1)
+   const [
+      inputBulkItemTunnel,
+      openInputBulkItemTunnel,
+      closeInputBulkItemTunnel,
+   ] = useTunnel(1)
+   const [
+      packagingTunnel,
+      openPackagingTunnel,
+      closePackagingTunnel,
+   ] = useTunnel(1)
+   const [
+      labelTemplateTunnel,
+      openLabelTemplateTunnel,
+      closeLabelTemplateTunnel,
+   ] = useTunnel(1)
 
    const {
       data: supplierItemData,
@@ -213,51 +239,61 @@ export default function SachetWorkOrder() {
       <SachetOrderContext.Provider
          value={{ sachetOrderState, sachetOrderDispatch }}
       >
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={supplierItemTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectSupplierItemTunnel
                   supplierItems={supplierItemData?.supplierItems}
-                  close={closeTunnel}
+                  close={closeSupplierItemTunnel}
                />
             </Tunnel>
-            <Tunnel layer={2}>
+         </Tunnels>
+         <Tunnels tunnels={outputSachetItemTunnel}>
+            <Tunnel layer={1}>
                <SelectOutputSachetItemTunnel
-                  close={closeTunnel}
+                  close={closeOutputSachetItemTunnel}
                   sachetItems={sachetItemsData?.sachetItems}
                />
             </Tunnel>
-            <Tunnel layer={3}>
+         </Tunnels>
+         <Tunnels tunnels={userTunnel}>
+            <Tunnel layer={1}>
                <SelectUserTunnel
-                  close={closeTunnel}
+                  close={closeUserTunnel}
                   users={userData?.settings_user?.map(user => ({
                      ...user,
                      name: `${user.firstName} ${user.lastName}`,
                   }))}
                />
             </Tunnel>
-            <Tunnel layer={4}>
+         </Tunnels>
+         <Tunnels tunnels={stationTunnel}>
+            <Tunnel layer={1}>
                <SelectStationTunnel
-                  close={closeTunnel}
+                  close={closeStationTunnel}
                   stations={stationsData?.stations}
                />
             </Tunnel>
-            <Tunnel layer={5}>
+         </Tunnels>
+         <Tunnels tunnels={inputBulkItemTunnel}>
+            <Tunnel layer={1}>
                <SelectInputBulkItemTunnel
-                  close={closeTunnel}
+                  close={closeInputBulkItemTunnel}
                   bulkItems={sachetOrderState.supplierItem?.bulkItems}
                />
             </Tunnel>
-
-            <Tunnel layer={6}>
+         </Tunnels>
+         <Tunnels tunnels={packagingTunnel}>
+            <Tunnel layer={1}>
                <SelectPackagingTunnel
                   packagings={packagingData?.packagings}
-                  close={closeTunnel}
+                  close={closePackagingTunnel}
                />
             </Tunnel>
-            <Tunnel layer={7}>
-               <SelectLabelTemplateTunnel close={closeTunnel} />
-            </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={labelTemplateTunnel}>
+            <SelectLabelTemplateTunnel close={closeLabelTemplateTunnel} />
+         </Tunnels>
+
          <StyledWrapper>
             <FormHeading>
                <div
@@ -306,7 +342,7 @@ export default function SachetWorkOrder() {
                               sachetWorkOrderData?.sachetWorkOrder?.bulkItem
                                  ?.supplierItem.name
                            }
-                           edit={() => openTunnel(1)}
+                           edit={() => openSupplierItemTunnel(1)}
                         />
                      )}
                   </>
@@ -315,7 +351,7 @@ export default function SachetWorkOrder() {
                      noIcon
                      type="secondary"
                      text={t(address.concat('select supplier item'))}
-                     onClick={() => openTunnel(1)}
+                     onClick={() => openSupplierItemTunnel(1)}
                   />
                )}
 
@@ -373,7 +409,7 @@ export default function SachetWorkOrder() {
                                     sachetWorkOrderData?.sachetWorkOrder
                                        ?.bulkItem?.shelfLife
                                  }
-                                 edit={() => openTunnel(5)}
+                                 edit={() => openInputBulkItemTunnel(1)}
                               />
                            )}
                         </>
@@ -382,7 +418,7 @@ export default function SachetWorkOrder() {
                            noIcon
                            type="secondary"
                            text={t(address.concat('select input bulk item'))}
-                           onClick={() => openTunnel(5)}
+                           onClick={() => openInputBulkItemTunnel(1)}
                         />
                      )}
                   </>
@@ -429,7 +465,7 @@ export default function SachetWorkOrder() {
                            type="secondary"
                            text={t(address.concat('select output sachet item'))}
                            onClick={() => {
-                              openTunnel(2)
+                              openOutputSachetItemTunnel(2)
                            }}
                         />
                      )}
@@ -437,7 +473,12 @@ export default function SachetWorkOrder() {
                )}
 
                {sachetOrderState.outputSachet?.id && (
-                  <Configurator open={openTunnel} />
+                  <Configurator
+                     openPackagingTunnel={openPackagingTunnel}
+                     openLabelTemplateTunnel={openLabelTemplateTunnel}
+                     openUserTunnel={openUserTunnel}
+                     openStationTunnel={openStationTunnel}
+                  />
                )}
             </StyledForm>
          </StyledWrapper>
@@ -445,7 +486,12 @@ export default function SachetWorkOrder() {
    )
 }
 
-function Configurator({ open }) {
+function Configurator({
+   openPackagingTunnel,
+   openLabelTemplateTunnel,
+   openUserTunnel,
+   openStationTunnel,
+}) {
    const { t } = useTranslation()
    const { sachetOrderState, sachetOrderDispatch } = useContext(
       SachetOrderContext
@@ -511,14 +557,14 @@ function Configurator({ open }) {
             {sachetOrderState.packaging?.name ? (
                <ItemCard
                   title={sachetOrderState.packaging.name}
-                  edit={() => open(6)}
+                  edit={() => openPackagingTunnel(1)}
                />
             ) : (
                <ButtonTile
                   noIcon
                   type="secondary"
                   text={t(address.concat('select packaging'))}
-                  onClick={() => open(6)}
+                  onClick={() => openPackagingTunnel(1)}
                />
             )}
          </>
@@ -534,14 +580,14 @@ function Configurator({ open }) {
                         title={sachetOrderState.labelTemplates
                            .map(temp => `${temp.title}`)
                            .join(', ')}
-                        edit={() => open(7)}
+                        edit={() => openLabelTemplateTunnel(1)}
                      />
                   ) : (
                      <ButtonTile
                         noIcon
                         type="secondary"
                         text={t(address.concat('select label template'))}
-                        onClick={() => open(7)}
+                        onClick={() => openLabelTemplateTunnel(1)}
                      />
                   )}
                </>
@@ -556,14 +602,14 @@ function Configurator({ open }) {
             {sachetOrderState.assignedUser?.name ? (
                <ItemCard
                   title={sachetOrderState.assignedUser.name}
-                  edit={() => open(3)}
+                  edit={() => openUserTunnel(1)}
                />
             ) : (
                <ButtonTile
                   noIcon
                   type="secondary"
                   text={t(address.concat('select and assign user to work'))}
-                  onClick={() => open(3)}
+                  onClick={() => openUserTunnel(1)}
                />
             )}
          </>
@@ -603,7 +649,7 @@ function Configurator({ open }) {
             {sachetOrderState.selectedStation?.name ? (
                <ItemCard
                   title={sachetOrderState.selectedStation.name}
-                  edit={() => open(4)}
+                  edit={() => openStationTunnel(1)}
                />
             ) : (
                <ButtonTile
@@ -612,7 +658,7 @@ function Configurator({ open }) {
                   text={t(
                      address.concat('select and assign station to route to')
                   )}
-                  onClick={() => open(4)}
+                  onClick={() => openStationTunnel(1)}
                />
             )}
          </>
