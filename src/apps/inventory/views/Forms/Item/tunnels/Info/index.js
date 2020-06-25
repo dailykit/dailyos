@@ -29,7 +29,7 @@ export default function InfoTunnel({ close, formState }) {
    const [itemName, setItemName] = useState(formState.name || '')
    const [sku, setSku] = useState(formState.sku || '')
    const [unitSize, setUnitSize] = useState(formState.unitSize || '')
-   const [unit, setUnit] = useState(formState.unit || 'gram')
+   const [unit, setUnit] = useState(formState.unit || units[0]?.name)
    const [unitPrice, setUnitPrice] = useState(
       (formState.prices?.length && formState.prices[0].unitPrice.value) || ''
    )
@@ -130,7 +130,7 @@ export default function InfoTunnel({ close, formState }) {
                         />
                         <StyledSelect
                            name="unit"
-                           defaultValue={unit}
+                           value={unit}
                            onChange={e => setUnit(e.target.value)}
                         >
                            {units.map(unit => (

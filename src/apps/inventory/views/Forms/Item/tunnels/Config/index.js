@@ -49,7 +49,9 @@ export default function ConfigTunnel({ close, formState }) {
 
    const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(bulkItem?.unit || formState?.unit || 'gm')
+   const [unit, setUnit] = useState(
+      bulkItem?.unit || formState?.unit || units[0]?.name
+   )
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
    const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(

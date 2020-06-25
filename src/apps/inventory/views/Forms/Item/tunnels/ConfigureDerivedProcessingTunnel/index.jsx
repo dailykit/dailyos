@@ -98,7 +98,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
    )
 
    const [unit, setUnit] = useState(
-      state.activeProcessing?.unit || formState?.unit || 'gm'
+      state.activeProcessing?.unit || formState?.unit || units[0]?.name
    )
    const [par, setPar] = useState(state.activeProcessing?.parLevel || '')
 
