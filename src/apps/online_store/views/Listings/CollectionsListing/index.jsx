@@ -13,7 +13,7 @@ import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
 import {
-   COLLECTIONS,
+   S_COLLECTIONS,
    CREATE_COLLECTION,
    DELETE_COLLECTIONS,
 } from '../../../graphql'
@@ -35,7 +35,7 @@ const CollectionsListing = () => {
 
    // Queries
    const { data: { menuCollections = [] } = {}, loading } = useSubscription(
-      COLLECTIONS,
+      S_COLLECTIONS,
       {
          onError: error => {
             console.log(error)

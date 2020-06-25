@@ -10,7 +10,7 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
       onCompleted: () => {
          toast.success('Image added!')
-         closeTunnel(7)
+         closeTunnel(1)
       },
       onError: () => {
          toast.error('Error')
@@ -33,7 +33,7 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Photo" close={() => closeTunnel(7)} />
+         <TunnelHeader title="Select Photo" close={() => closeTunnel(1)} />
          <TunnelBody>
             <AssetUploader
                onImageSelect={image => addImage(image)}

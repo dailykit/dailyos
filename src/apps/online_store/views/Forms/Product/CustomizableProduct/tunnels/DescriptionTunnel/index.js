@@ -7,7 +7,7 @@ import { UPDATE_CUSTOMIZABLE_PRODUCT } from '../../../../../../graphql'
 import { StyledRow, TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.customizable.tunnels.descriptiontunnel.'
+   'apps.online_store.views.forms.product.customizableproduct.tunnels.descriptiontunnel.'
 
 export default function DescriptionTunnel({ state, close }) {
    const { t } = useTranslation()

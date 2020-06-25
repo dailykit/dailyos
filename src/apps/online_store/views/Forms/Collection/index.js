@@ -1,13 +1,6 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {
-   Input,
-   Loader,
-   TextButton,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-} from '@dailykit/ui'
+import { Input, Loader, TextButton } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { ChevronRight } from '../../../assets/icons'
@@ -17,14 +10,7 @@ import {
    state as initialState,
 } from '../../../context/collection'
 import { Context } from '../../../context/tabs'
-import {
-   S_COLLECTION,
-   UPDATE_COLLECTION,
-   S_COMBO_PRODUCTS,
-   S_CUSTOMIZABLE_PRODUCTS,
-   S_INVENTORY_PRODUCTS,
-   S_SIMPLE_RECIPE_PRODUCTS,
-} from '../../../graphql'
+import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
 import { Categories, Configuration } from './components'
 import {
    Breadcrumbs,
@@ -33,7 +19,6 @@ import {
    FormHeaderActions,
    FormHeaderInputs,
 } from './styled'
-import { ProductsTunnel, ProductTypeTunnel } from './tunnels'
 
 const address = 'apps.online_store.views.forms.collection.'
 
@@ -49,14 +34,6 @@ const CollectionForm = () => {
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
    const [busy, setBusy] = React.useState(false)
-
-   const [products, setProducts] = React.useState({
-      simple: [],
-      inventory: [],
-      customizable: [],
-      combo: [],
-   })
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    // Subscription
    const { loading } = useSubscription(S_COLLECTION, {
@@ -74,84 +51,9 @@ const CollectionForm = () => {
       },
    })
 
-   // Subscription for fetching products
-   useSubscription(S_SIMPLE_RECIPE_PRODUCTS, {
-      onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts
-            .filter(pdct => pdct.isValid.status && pdct.isPublished)
-            .map(pdct => {
-               return {
-                  ...pdct,
-                  title: pdct.name,
-               }
-            })
-         setProducts({
-            ...products,
-            simple: updatedProducts,
-         })
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(S_INVENTORY_PRODUCTS, {
-      onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.inventoryProducts
-            .filter(pdct => pdct.isValid.status && pdct.isPublished)
-            .map(pdct => {
-               return {
-                  ...pdct,
-                  title: pdct.name,
-               }
-            })
-         setProducts({
-            ...products,
-            inventory: updatedProducts,
-         })
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(S_CUSTOMIZABLE_PRODUCTS, {
-      onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.customizableProducts
-            .filter(pdct => pdct.isValid.status && pdct.isPublished)
-            .map(pdct => {
-               return {
-                  ...pdct,
-                  title: pdct.name,
-               }
-            })
-         setProducts({
-            ...products,
-            customizable: updatedProducts,
-         })
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(S_COMBO_PRODUCTS, {
-      onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.comboProducts
-            .filter(pdct => pdct.isValid.status && pdct.isPublished)
-            .map(pdct => {
-               return {
-                  ...pdct,
-                  title: pdct.name,
-               }
-            })
-         setProducts({
-            ...products,
-            combo: updatedProducts,
-         })
-      },
-   })
-
    // Mutations
    const [updateCollection] = useMutation(UPDATE_COLLECTION, {
-      onCompleted: data => {
+      onCompleted: () => {
          setBusy(false)
          toast.success('Updated!')
          dispatch({
@@ -233,17 +135,6 @@ const CollectionForm = () => {
       <CollectionContext.Provider
          value={{ collectionState, collectionDispatch }}
       >
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <ProductsTunnel
-                  close={closeTunnel}
-                  products={products[collectionState.meta.productType]}
-               />
-            </Tunnel>
-         </Tunnels>
          <FormHeader>
             <FormHeaderInputs>
                <Input
@@ -257,6 +148,12 @@ const CollectionForm = () => {
                <Breadcrumbs>
                   <span
                      className={collectionState.stage >= 1 ? 'active' : ''}
+                     role="button"
+                     tabIndex="0"
+                     onKeyDown={e =>
+                        e.charCode === 13 &&
+                        collectionDispatch({ type: 'STAGE', payload: 1 })
+                     }
                      onClick={() =>
                         collectionDispatch({ type: 'STAGE', payload: 1 })
                      }
@@ -267,6 +164,12 @@ const CollectionForm = () => {
                      <ChevronRight />
                   </span>
                   <span
+                     role="button"
+                     tabIndex="0"
+                     onKeyDown={e =>
+                        e.charCode === 13 &&
+                        collectionDispatch({ type: 'STAGE', payload: 2 })
+                     }
                      className={collectionState.stage >= 2 ? 'active' : ''}
                      onClick={() =>
                         collectionDispatch({ type: 'STAGE', payload: 2 })
@@ -294,11 +197,7 @@ const CollectionForm = () => {
             </FormHeaderActions>
          </FormHeader>
          <FormBody>
-            {collectionState.stage === 1 ? (
-               <Categories openTunnel={openTunnel} />
-            ) : (
-               <Configuration />
-            )}
+            {collectionState.stage === 1 ? <Categories /> : <Configuration />}
          </FormBody>
       </CollectionContext.Provider>
    )
