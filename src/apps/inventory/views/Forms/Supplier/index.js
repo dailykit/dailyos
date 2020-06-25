@@ -142,7 +142,7 @@ export default function SupplierForm() {
                   {formState.contactPerson?.email ||
                   formState.contactPerson?.firstName ? (
                      <IconButton onClick={() => openTunnel(2)} type="ghost">
-                        <EditIcon />
+                        <EditIcon color="#555b6e" />
                      </IconButton>
                   ) : null}
                </FlexContainer>
@@ -180,7 +180,7 @@ export default function SupplierForm() {
 
                <Input
                   type="textarea"
-                  placeholder={t(address.concat('payment terms'))}
+                  label={t(address.concat('payment terms'))}
                   name="paymentTerms"
                   rows="4"
                   value={paymentTerms}
@@ -191,7 +191,7 @@ export default function SupplierForm() {
 
                <Input
                   type="textarea"
-                  placeholder={t(address.concat('shipping terms'))}
+                  label={t(address.concat('shipping terms'))}
                   name="shippingTerms"
                   rows="4"
                   value={shippingTerms}
@@ -255,7 +255,7 @@ function AddressView({ formState, openTunnel }) {
             />
             {check && (
                <IconButton onClick={() => openTunnel(1)} type="ghost">
-                  <EditIcon />
+                  <EditIcon color="#555b6e" />
                </IconButton>
             )}
          </FlexContainer>
