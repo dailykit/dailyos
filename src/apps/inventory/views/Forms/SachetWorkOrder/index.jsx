@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
-   SACHET_ITEMS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,
    SACHET_WORK_ORDER_SUBSCRIPTION,
@@ -86,13 +85,6 @@ export default function SachetWorkOrder() {
       openLabelTemplateTunnel,
       closeLabelTemplateTunnel,
    ] = useTunnel(1)
-
-   const {
-      data: sachetItemsData,
-      loading: sachetItemLoading,
-   } = useSubscription(SACHET_ITEMS_SUBSCRIPTION, {
-      variables: { bulkItemId: sachetOrderState.inputItemProcessing?.id },
-   })
 
    const { data: sachetWorkOrderData, loading: orderLoading } = useSubscription(
       SACHET_WORK_ORDER_SUBSCRIPTION,
@@ -208,7 +200,7 @@ export default function SachetWorkOrder() {
       }
    }
 
-   if (orderLoading || loading || sachetItemLoading) return <Loader />
+   if (orderLoading || loading) return <Loader />
 
    return (
       <SachetOrderContext.Provider
@@ -223,7 +215,6 @@ export default function SachetWorkOrder() {
             <Tunnel layer={1}>
                <SelectOutputSachetItemTunnel
                   close={closeOutputSachetItemTunnel}
-                  sachetItems={sachetItemsData?.sachetItems}
                />
             </Tunnel>
          </Tunnels>
