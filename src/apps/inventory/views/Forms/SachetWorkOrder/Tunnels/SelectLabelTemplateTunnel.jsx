@@ -52,9 +52,9 @@ export default function SelectLabelTemplateTunnel({ close }) {
                   type: 'SELECT_TEMPLATE_OPTIONS',
                   payload: selected,
                })
-               close(7)
+               close(1)
             }}
-            close={() => close(7)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

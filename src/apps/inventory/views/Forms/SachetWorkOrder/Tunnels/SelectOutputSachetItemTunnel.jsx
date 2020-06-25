@@ -29,9 +29,9 @@ export default function SelectOutputSachetItemTunnel({ close, sachetItems }) {
                   type: 'ADD_OUTPUT_SACHET',
                   payload: current,
                })
-               close(2)
+               close(1)
             }}
-            close={() => close(2)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

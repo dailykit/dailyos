@@ -30,9 +30,9 @@ export default function SelectPackagingTunnel({ close, packagings }) {
                   type: 'SELECT_PACKAGING',
                   payload: current,
                })
-               close(6)
+               close(1)
             }}
-            close={() => close(6)}
+            close={() => close(1)}
             nextAction="Save"
          />
 

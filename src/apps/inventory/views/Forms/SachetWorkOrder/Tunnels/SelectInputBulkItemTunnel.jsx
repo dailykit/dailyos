@@ -25,9 +25,9 @@ export default function SelectInputBulkItemTunnel({ close, bulkItems }) {
             title={t(address.concat('select input bulk item processing'))}
             next={() => {
                sachetOrderDispatch({ type: 'ADD_INPUT_ITEM', payload: current })
-               close(5)
+               close(1)
             }}
-            close={() => close(5)}
+            close={() => close(1)}
             nextAction="Save"
          />
 
