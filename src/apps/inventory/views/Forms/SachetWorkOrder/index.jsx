@@ -16,7 +16,6 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
    SACHET_ITEMS_SUBSCRIPTION,
-   PACKAGINGS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,
    SACHET_WORK_ORDER_SUBSCRIPTION,
@@ -88,7 +87,6 @@ export default function SachetWorkOrder() {
       closeLabelTemplateTunnel,
    ] = useTunnel(1)
 
-   const { data: packagingData } = useSubscription(PACKAGINGS_SUBSCRIPTION)
    const {
       data: sachetItemsData,
       loading: sachetItemLoading,
@@ -249,10 +247,7 @@ export default function SachetWorkOrder() {
          </Tunnels>
          <Tunnels tunnels={packagingTunnel}>
             <Tunnel layer={1}>
-               <SelectPackagingTunnel
-                  packagings={packagingData?.packagings}
-                  close={closePackagingTunnel}
-               />
+               <SelectPackagingTunnel close={closePackagingTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={labelTemplateTunnel}>
