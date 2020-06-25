@@ -63,7 +63,11 @@ export default function SelectInputBulkItemTunnel({ close, bulkItems }) {
                         onClick={() => selectOption('id', option.id)}
                         content={{
                            title: option.processingName,
-                           description: `Shelf Life: ${option.shelfLife} On Hand: ${option.onHand}`,
+                           description: `Shelf Life: ${
+                              option.shelfLife?.value || 'N/A'
+                           } ${option.shelfLife?.unit || ''} On Hand: ${
+                              option.onHand
+                           }`,
                         }}
                      />
                   ))}

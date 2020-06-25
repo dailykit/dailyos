@@ -77,10 +77,6 @@ export default function BulkWorkOrderForm() {
       closeInputBulkItemTunnel,
    ] = useTunnel(1)
 
-   const { data: stationsData, loading: stationsLoading } = useSubscription(
-      STATIONS_SUBSCRIPTION
-   )
-
    const { data: bulkWorkOrderData, loading: orderLoading } = useSubscription(
       BULK_WORK_ORDER_SUBSCRIPTION,
       {
@@ -230,10 +226,7 @@ export default function BulkWorkOrderForm() {
          </Tunnels>
          <Tunnels tunnels={stationsTunnel}>
             <Tunnel layer={1}>
-               <SelectStationTunnel
-                  close={closeStationTunnel}
-                  stations={stationsData?.stations}
-               />
+               <SelectStationTunnel close={closeStationTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={inputBulkItemTunnel}>
