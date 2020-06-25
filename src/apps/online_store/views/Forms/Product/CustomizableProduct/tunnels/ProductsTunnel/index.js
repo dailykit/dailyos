@@ -53,6 +53,7 @@ const ProductsTunnel = ({ state, close }) => {
       onError: error => {
          console.log(error)
       },
+      fetchPolicy: 'cache-and-network',
    })
    const [
       fetchInventoryProducts,
@@ -72,6 +73,7 @@ const ProductsTunnel = ({ state, close }) => {
       onError: error => {
          console.log(error)
       },
+      fetchPolicy: 'cache-and-network',
    })
 
    const [createCustomizableProductOptions] = useMutation(

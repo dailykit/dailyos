@@ -71,3 +71,16 @@ export const SIMPLE_RECIPES = gql`
       }
    }
 `
+
+export const CUSTOMIZABLE_PRODUCTS = gql`
+   query CustomizableProducts(
+      $where: onlineStore_customizableProduct_bool_exp
+   ) {
+      customizableProducts(where: $where) {
+         id
+         name
+         title: name
+         isValid
+      }
+   }
+`

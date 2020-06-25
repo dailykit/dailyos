@@ -19,14 +19,14 @@ const ProductTypeTunnel = ({ close, open }) => {
             value: type,
          },
       })
-      open(4)
+      open(3)
    }
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select product type'))}
-            close={() => close(3)}
+            close={() => close(2)}
          />
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>
