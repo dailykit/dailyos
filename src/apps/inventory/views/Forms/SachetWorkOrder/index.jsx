@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import {
-   SUPPLIER_ITEMS_SUBSCRIPTION,
    SETTINGS_USERS_SUBSCRIPTION,
    STATIONS_SUBSCRIPTION,
    SACHET_ITEMS_SUBSCRIPTION,
@@ -91,19 +90,8 @@ export default function SachetWorkOrder() {
       closeLabelTemplateTunnel,
    ] = useTunnel(1)
 
-   const {
-      data: supplierItemData,
-      loading: supplierItemLoading,
-   } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
-   const { data: userData, loading: userLoading } = useSubscription(
-      SETTINGS_USERS_SUBSCRIPTION
-   )
-   const { data: stationsData, loading: stationsLoading } = useSubscription(
-      STATIONS_SUBSCRIPTION
-   )
-   const { data: packagingData, loading: packagingsLoading } = useSubscription(
-      PACKAGINGS_SUBSCRIPTION
-   )
+   const { data: stationsData } = useSubscription(STATIONS_SUBSCRIPTION)
+   const { data: packagingData } = useSubscription(PACKAGINGS_SUBSCRIPTION)
    const {
       data: sachetItemsData,
       loading: sachetItemLoading,
@@ -225,15 +213,7 @@ export default function SachetWorkOrder() {
       }
    }
 
-   if (supplierItemLoading || orderLoading || loading || sachetItemLoading)
-      return <Loader />
-
-   if (
-      sachetOrderState.outputSachet?.processingName &&
-      (userLoading || stationsLoading || packagingsLoading)
-   ) {
-      return <Loader />
-   }
+   if (orderLoading || loading || sachetItemLoading) return <Loader />
 
    return (
       <SachetOrderContext.Provider
@@ -241,10 +221,7 @@ export default function SachetWorkOrder() {
       >
          <Tunnels tunnels={supplierItemTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-               <SelectSupplierItemTunnel
-                  supplierItems={supplierItemData?.supplierItems}
-                  close={closeSupplierItemTunnel}
-               />
+               <SelectSupplierItemTunnel close={closeSupplierItemTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={outputSachetItemTunnel}>
@@ -257,13 +234,7 @@ export default function SachetWorkOrder() {
          </Tunnels>
          <Tunnels tunnels={userTunnel}>
             <Tunnel layer={1}>
-               <SelectUserTunnel
-                  close={closeUserTunnel}
-                  users={userData?.settings_user?.map(user => ({
-                     ...user,
-                     name: `${user.firstName} ${user.lastName}`,
-                  }))}
-               />
+               <SelectUserTunnel close={closeUserTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={stationTunnel}>
