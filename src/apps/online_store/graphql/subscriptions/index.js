@@ -263,6 +263,17 @@ export const COLLECTIONS_COUNT = gql`
    }
 `
 
+export const S_COLLECTIONS = gql`
+   subscription Collections {
+      menuCollections {
+         id
+         name
+         categories
+         availability
+      }
+   }
+`
+
 export const S_COLLECTION = gql`
    subscription Collection($id: Int!) {
       menuCollection(id: $id) {

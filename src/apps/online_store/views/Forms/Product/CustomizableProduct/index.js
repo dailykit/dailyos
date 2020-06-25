@@ -1,17 +1,9 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {
-   Input,
-   Loader,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   Text,
-   Toggle,
-} from '@dailykit/ui'
-import { TickIcon, CloseIcon } from '../../../../assets/icons'
-import { useTranslation } from 'react-i18next'
+import { Input, Loader, Text, Toggle } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
+import { TickIcon, CloseIcon } from '../../../../assets/icons'
 // context
 import {
    CustomizableProductContext,
@@ -23,16 +15,12 @@ import { Context } from '../../../../context/tabs'
 import {
    S_CUSTOMIZABLE_PRODUCT,
    UPDATE_CUSTOMIZABLE_PRODUCT,
-   S_SIMPLE_RECIPE_PRODUCTS,
-   S_INVENTORY_PRODUCTS,
 } from '../../../../graphql'
 // styles
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 // components
 import { Description, Products } from './components'
-// tunnels
-import { DescriptionTunnel, ProductsTunnel, ProductTypeTunnel } from './tunnels'
 
 const address = 'apps.online_store.views.forms.product.customizableproduct.'
 
@@ -48,12 +36,6 @@ export default function CustomizableProduct() {
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
 
-   const [products, setProducts] = React.useState({
-      inventory: [],
-      simple: [],
-   })
-   const [tunnels, openTunnel, closeTunnel] = useTunnel()
-
    // Subscription
    const { loading } = useSubscription(S_CUSTOMIZABLE_PRODUCT, {
       variables: {
@@ -67,45 +49,6 @@ export default function CustomizableProduct() {
       onError: error => {
          console.log(error)
          toast.error('Error')
-      },
-   })
-   // Subscription for fetching products
-   useSubscription(S_SIMPLE_RECIPE_PRODUCTS, {
-      onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.simpleRecipeProducts
-            .filter(pdct => pdct.isValid.status && pdct.isPublished)
-            .map(pdct => {
-               return {
-                  ...pdct,
-                  title: pdct.name,
-               }
-            })
-         setProducts({
-            ...products,
-            simple: updatedProducts,
-         })
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
-   useSubscription(S_INVENTORY_PRODUCTS, {
-      onSubscriptionData: data => {
-         const updatedProducts = data.subscriptionData.data.inventoryProducts
-            .filter(pdct => pdct.isValid.status && pdct.isPublished)
-            .map(pdct => {
-               return {
-                  ...pdct,
-                  title: pdct.name,
-               }
-            })
-         setProducts({
-            ...products,
-            inventory: updatedProducts,
-         })
-      },
-      onError: error => {
-         console.log(error)
       },
    })
 
@@ -141,7 +84,8 @@ export default function CustomizableProduct() {
    }
    const togglePublish = val => {
       if (val && !state.isValid.status) {
-         return toast.error(t(address.concat('product should be valid!')))
+         toast.error(t(address.concat('product should be valid!')))
+         return
       }
       updateProduct({
          variables: {
@@ -159,21 +103,6 @@ export default function CustomizableProduct() {
       <CustomizableProductContext.Provider
          value={{ productState, productDispatch }}
       >
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <DescriptionTunnel state={state} close={closeTunnel} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
-            </Tunnel>
-            <Tunnel layer={3}>
-               <ProductsTunnel
-                  state={state}
-                  close={closeTunnel}
-                  products={products[productState.meta.itemType]}
-               />
-            </Tunnel>
-         </Tunnels>
          <StyledWrapper>
             <StyledHeader>
                <div>
@@ -189,22 +118,22 @@ export default function CustomizableProduct() {
                <MasterSettings>
                   <div>
                      {state.isValid?.status ? (
-                        <React.Fragment>
+                        <>
                            <TickIcon color="#00ff00" stroke={2} />
                            <Text as="p">{t(address.concat('all good!'))}</Text>
-                        </React.Fragment>
+                        </>
                      ) : (
-                           <React.Fragment>
-                              <CloseIcon color="#ff0000" />
-                              <Text as="p">{state.isValid?.error}</Text>
-                           </React.Fragment>
-                        )}
+                        <>
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isValid?.error}</Text>
+                        </>
+                     )}
                   </div>
                   <div>
                      <Toggle
                         checked={state.isPublished}
                         setChecked={togglePublish}
-                        label={t(address.concat("published"))}
+                        label={t(address.concat('published'))}
                      />
                   </div>
                </MasterSettings>
@@ -212,12 +141,12 @@ export default function CustomizableProduct() {
             <StyledBody>
                <StyledMeta>
                   <div>
-                     <Description state={state} openTunnel={openTunnel} />
+                     <Description state={state} />
                   </div>
-                  <div></div>
+                  <div> </div>
                </StyledMeta>
                <StyledRule />
-               <Products state={state} openTunnel={openTunnel} />
+               <Products state={state} />
             </StyledBody>
          </StyledWrapper>
       </CustomizableProductContext.Provider>

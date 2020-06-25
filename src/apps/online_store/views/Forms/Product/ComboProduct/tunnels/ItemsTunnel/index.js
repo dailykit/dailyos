@@ -22,7 +22,7 @@ export default function ItemTunnel({ state, close }) {
       CREATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: () => {
-            close(2)
+            close(1)
             toast.success(t(address.concat('items added!')))
          },
          onError: () => {
@@ -74,7 +74,7 @@ export default function ItemTunnel({ state, close }) {
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
-            close={() => close(2)}
+            close={() => close(1)}
          />
          <TunnelBody>
             <Text as="h2">
