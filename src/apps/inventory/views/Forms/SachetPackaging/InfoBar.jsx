@@ -74,7 +74,7 @@ export default function InfoBar({ open, state }) {
             <div>
                <span>{t(address.concat('lead time'))}</span>
                <div>
-                  <span>{state.leadTime?.value + state.leadTime?.unit}</span>
+                  <span>{`${state.leadTime?.value}  ${state.leadTime?.unit}`}</span>
                </div>
             </div>
          </div>

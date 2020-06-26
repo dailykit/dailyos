@@ -35,10 +35,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
          variables: {
             id: state.id,
             object: {
-               unitPrice,
-               unitQuantity,
-               caseQuantity,
-               minOrderValue,
+               unitPrice: +unitPrice,
+               unitQuantity: +unitQuantity,
+               caseQuantity: +caseQuantity,
+               minOrderValue: +minOrderValue,
                leadTime: { unit: leadTimeUnit, value: leadTime },
             },
          },

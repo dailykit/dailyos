@@ -42,12 +42,12 @@ export default function ItemInformationTunnel({ close, state, next }) {
                name: itemName,
                sku: itemSku,
                dimensions: {
-                  width: itemWidth,
-                  height: itemHeight,
-                  depth: itemDepth,
+                  width: +itemWidth,
+                  height: +itemHeight,
+                  depth: +itemDepth,
                },
-               parLevel: itemPar,
-               maxLevel: itemMaxValue,
+               parLevel: +itemPar,
+               maxLevel: +itemMaxValue,
             },
          },
       })
