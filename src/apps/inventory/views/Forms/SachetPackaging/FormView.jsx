@@ -1,19 +1,15 @@
 import React from 'react'
-import {
-   TextButton,
-   IconButton,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-} from '@dailykit/ui'
-import { useSubscription } from '@apollo/react-hooks'
+import { TextButton, Tunnels, Tunnel, useTunnel, Avatar } from '@dailykit/ui'
 
-import { StyledHeader, StyledInfo, StyledSupplier } from '../Item/styled'
+import {
+   StyledHeader,
+   StyledInfo,
+   StyledSupplier,
+   TransparentIconButton,
+} from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
 import EditIcon from '../../../../../shared/assets/icons/Edit'
-
-import { SUPPLIERS_SUBSCRIPTION } from '../../../graphql'
 
 import {
    ItemInformationTunnel,
@@ -21,7 +17,7 @@ import {
    SuppliersTunnel,
 } from './Tunnels'
 
-export default function FormView({ state, open }) {
+export default function FormView({ state }) {
    const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
       2
    )
@@ -50,12 +46,11 @@ export default function FormView({ state, open }) {
                         <span> {state.sku} </span>
                      </div>
                      <span style={{ width: '10px' }} />
-                     <IconButton
-                        type="outline"
+                     <TransparentIconButton
                         onClick={() => openItemInfoTunnel(1)}
                      >
-                        <EditIcon />
-                     </IconButton>
+                        <EditIcon size="18" color="#555B6E" />
+                     </TransparentIconButton>
                   </StyledInfo>
                   <SupplierInfo state={state} />
                </>
@@ -77,20 +72,10 @@ function SupplierInfo({ state }) {
       closeSuppliersTunnel,
    ] = useTunnel(1)
 
-   const { data: supplierData } = useSubscription(SUPPLIERS_SUBSCRIPTION)
-
    const TunnelContainer = (
       <Tunnels tunnels={suppliersTunnel}>
          <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-            <SuppliersTunnel
-               close={closeSuppliersTunnel}
-               suppliers={supplierData?.suppliers?.map(supplier => ({
-                  id: supplier.id,
-                  title: supplier.name,
-                  description: `${supplier.contactPerson?.firstName} ${supplier.contactPerson?.lastName} (${supplier.contactPerson?.phoneNumber})`,
-               }))}
-               state={state}
-            />
+            <SuppliersTunnel close={closeSuppliersTunnel} state={state} />
          </Tunnel>
       </Tunnels>
    )
@@ -101,19 +86,15 @@ function SupplierInfo({ state }) {
             {TunnelContainer}
             <StyledSupplier>
                <span>{state.supplier.name}</span>
-               <span>
-                  {(state.supplier.contactPerson?.phoneNumber &&
-                     state.supplier.contactPerson?.firstName &&
-                     state.supplier.contactPerson?.lastName &&
-                     `${state.supplier.contactPerson.firstName} ${state.supplier.contactPerson.lastName} (${state.supplier.contactPerson.phoneNumber})`) ||
-                     ''}
-               </span>
-               <IconButton
-                  type="outline"
-                  onClick={() => openSuppliersTunnel(1)}
-               >
-                  <EditIcon />
-               </IconButton>
+               <Avatar
+                  withName
+                  title={`${state.supplier?.contactPerson?.firstName} ${
+                     state.supplier?.contactPerson?.lastName || ''
+                  }`}
+               />
+               <TransparentIconButton onClick={() => openSuppliersTunnel(1)}>
+                  <EditIcon size="18" color="#555B6E" />
+               </TransparentIconButton>
             </StyledSupplier>
          </>
       )
@@ -122,7 +103,7 @@ function SupplierInfo({ state }) {
       <>
          {TunnelContainer}
          <TextButton onClick={() => openSuppliersTunnel(1)} type="outline">
-            Select Supplier
+            Add Supplier
          </TextButton>
       </>
    )
