@@ -1,13 +1,9 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Loader } from '@dailykit/ui'
+import { Input, Loader, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 import { FlexContainer, StyledSelect } from '../../../styled'
 import { PaddedInputGroup } from './styled'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
@@ -24,13 +20,13 @@ export default function MoreItemInfoTunnel({ close, state }) {
 
    const [updatePackaging, { loading }] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
-         close(3)
+         close(2)
          toast.info('updated successfully!')
       },
       onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-         close(3)
+         close(2)
       },
    })
 
@@ -39,10 +35,10 @@ export default function MoreItemInfoTunnel({ close, state }) {
          variables: {
             id: state.id,
             object: {
-               unitPrice,
-               unitQuantity,
-               caseQuantity,
-               minOrderValue,
+               unitPrice: +unitPrice,
+               unitQuantity: +unitQuantity,
+               caseQuantity: +caseQuantity,
+               minOrderValue: +minOrderValue,
                leadTime: { unit: leadTimeUnit, value: leadTime },
             },
          },
@@ -53,16 +49,12 @@ export default function MoreItemInfoTunnel({ close, state }) {
 
    return (
       <>
+         <TunnelHeader
+            title="More Item Information"
+            close={() => close(2)}
+            right={{ title: 'Save', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title="More Item Information"
-               next={handleNext}
-               close={() => close(3)}
-               nextAction="Save"
-            />
-
-            <Spacer />
-
             <PaddedInputGroup>
                <div style={{ width: '70%' }}>
                   <Input

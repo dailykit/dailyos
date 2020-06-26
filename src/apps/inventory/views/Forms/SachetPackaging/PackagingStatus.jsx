@@ -1,12 +1,45 @@
 import React from 'react'
-import { ButtonTile, Text, IconButton } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Text,
+   IconButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+} from '@dailykit/ui'
 
 import { DataCard } from '../../../components'
 import { FlexContainer, Flexible, ShadowCard } from '../styled'
 import AdditionalInfo from './AdditionalInfo'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
 
-export default function PackagingStats({ state, open }) {
+import {
+   LeakResistanceTunnel,
+   OpacityTypeTunnel,
+   PackagingTypeTunnel,
+   CompressibilityTunnel,
+   SealingTypeTunnel,
+} from './Tunnels'
+
+export default function PackagingStats({ state }) {
+   const [leakTunnel, openLeakTunnel, closeLeakTunnel] = useTunnel(1)
+   const [opacityTunnel, openOpacityTunnel, closeOpacityTunnel] = useTunnel(1)
+   const [
+      compressibilityTunnel,
+      openCompressibilityTunnel,
+      closeCompressibilityTunnel,
+   ] = useTunnel(1)
+   const [
+      packagingTypeTunnel,
+      openPackagingTypeTunnel,
+      closePackagingTypeTunnel,
+   ] = useTunnel(1)
+   const [
+      sealingTypeTunnel,
+      openSealingTypeTunnel,
+      closeSealingTypeTunnel,
+   ] = useTunnel(1)
+
    const tickGreenSvg = (
       <svg
          width="13"
@@ -49,6 +82,44 @@ export default function PackagingStats({ state, open }) {
 
    return (
       <>
+         <Tunnels tunnels={leakTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <LeakResistanceTunnel state={state} close={closeLeakTunnel} />
+            </Tunnel>
+         </Tunnels>
+
+         <Tunnels tunnels={opacityTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
+               <OpacityTypeTunnel state={state} close={closeOpacityTunnel} />
+            </Tunnel>
+         </Tunnels>
+
+         <Tunnels tunnels={compressibilityTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <CompressibilityTunnel
+                  state={state}
+                  close={closeCompressibilityTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+
+         <Tunnels tunnels={packagingTypeTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <PackagingTypeTunnel
+                  state={state}
+                  close={closePackagingTypeTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+
+         <Tunnels tunnels={sealingTypeTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <SealingTypeTunnel
+                  state={state}
+                  close={closeSealingTypeTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
          <FlexContainer style={{ padding: '0 30px', margin: '0 20px' }}>
             <Flexible width="2">
                <ButtonTile
@@ -85,8 +156,11 @@ export default function PackagingStats({ state, open }) {
                      <FlexContainer style={{ alignItems: 'center' }}>
                         <Text as="title">Packaging type</Text>
                         {state.packagingType && (
-                           <IconButton type="ghost" onClick={() => open(7)}>
-                              <EditIcon />
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openPackagingTypeTunnel(1)}
+                           >
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -115,7 +189,7 @@ export default function PackagingStats({ state, open }) {
                            noIcon
                            type="secondary"
                            text="Select Packaging Material"
-                           onClick={() => open(7)}
+                           onClick={() => openPackagingTypeTunnel(1)}
                            style={{ margin: '20px 0' }}
                         />
                      )}
@@ -125,8 +199,11 @@ export default function PackagingStats({ state, open }) {
                      <FlexContainer style={{ alignItems: 'center' }}>
                         <Text as="title">Sealing type</Text>
                         {state.sealingType && (
-                           <IconButton type="ghost" onClick={() => open(8)}>
-                              <EditIcon />
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openSealingTypeTunnel(1)}
+                           >
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -155,7 +232,7 @@ export default function PackagingStats({ state, open }) {
                            noIcon
                            type="secondary"
                            text="Select Sealing type"
-                           onClick={() => open(8)}
+                           onClick={() => openSealingTypeTunnel(1)}
                            style={{ margin: '20px 0' }}
                         />
                      )}
@@ -165,8 +242,11 @@ export default function PackagingStats({ state, open }) {
                      <FlexContainer style={{ alignItems: 'center' }}>
                         <Text as="title">Leak Resistance</Text>
                         {state.leakResistance && (
-                           <IconButton type="ghost" onClick={() => open(4)}>
-                              <EditIcon />
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openLeakTunnel(1)}
+                           >
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -210,7 +290,7 @@ export default function PackagingStats({ state, open }) {
                            noIcon
                            type="secondary"
                            text="Select Leak Resistance"
-                           onClick={() => open(4)}
+                           onClick={() => openLeakTunnel(1)}
                            style={{ margin: '20px 0' }}
                         />
                      )}
@@ -220,8 +300,11 @@ export default function PackagingStats({ state, open }) {
                      <FlexContainer style={{ alignItems: 'center' }}>
                         <Text as="title">Opacity Type</Text>
                         {state.packOpacity && (
-                           <IconButton type="ghost" onClick={() => open(5)}>
-                              <EditIcon />
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openOpacityTunnel(1)}
+                           >
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -333,7 +416,7 @@ export default function PackagingStats({ state, open }) {
                            noIcon
                            type="secondary"
                            text="Select Opacity Type"
-                           onClick={() => open(5)}
+                           onClick={() => openOpacityTunnel(1)}
                            style={{ margin: '20px 0' }}
                         />
                      )}
@@ -343,8 +426,11 @@ export default function PackagingStats({ state, open }) {
                         <Text as="title">Compressable From</Text>
 
                         {state.compressableFrom && (
-                           <IconButton type="ghost" onClick={() => open(6)}>
-                              <EditIcon />
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openCompressibilityTunnel(1)}
+                           >
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -456,7 +542,7 @@ export default function PackagingStats({ state, open }) {
                            noIcon
                            type="secondary"
                            text="Select Compressability"
-                           onClick={() => open(6)}
+                           onClick={() => openCompressibilityTunnel(1)}
                            style={{ margin: '20px 0' }}
                         />
                      )}
