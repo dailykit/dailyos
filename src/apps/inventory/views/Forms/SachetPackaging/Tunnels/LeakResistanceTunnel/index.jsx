@@ -1,14 +1,10 @@
 import React, { useState } from 'react'
-import { Text, Toggle, Loader } from '@dailykit/ui'
+import { Text, Toggle, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 
 export default function LeakResistanceTunnel({ close, state }) {
    const [liquids, setLiquids] = useState(state.leakResistance?.liquids)
@@ -46,16 +42,12 @@ export default function LeakResistanceTunnel({ close, state }) {
 
    return (
       <>
+         <TunnelHeader
+            title="Select leak resistance"
+            close={() => close(1)}
+            right={{ title: 'Save', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title="Select leak resistance"
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Next"
-            />
-
-            <Spacer />
-
             <Text as="title">Safe for:</Text>
             <br />
 

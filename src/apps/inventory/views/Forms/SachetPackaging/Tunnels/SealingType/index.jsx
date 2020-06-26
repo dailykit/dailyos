@@ -1,15 +1,11 @@
 import React, { useState } from 'react'
-import { Text, Input, Loader } from '@dailykit/ui'
+import { Text, Input, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
 
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 
 export default function SealingTypeTunnel({ close, state }) {
    const [sealingType, setSealingType] = useState(state.sealingType || '')
@@ -41,16 +37,12 @@ export default function SealingTypeTunnel({ close, state }) {
 
    return (
       <>
+         <TunnelHeader
+            title="Select Sealing Type"
+            close={() => close(1)}
+            right={{ title: 'Next', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title="Select Sealing Type"
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Next"
-            />
-
-            <Spacer />
-
             <Text as="title">Enter Sealing type</Text>
             <br />
 

@@ -1,14 +1,10 @@
 import React, { useState } from 'react'
-import { Text, Toggle, Loader } from '@dailykit/ui'
+import { Text, Toggle, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 
 export default function OpacityTypeTunnel({ close, state }) {
    const [top, setTop] = useState(state.packOpacity?.top)
@@ -52,16 +48,12 @@ export default function OpacityTypeTunnel({ close, state }) {
 
    return (
       <>
+         <TunnelHeader
+            title="Select opacity type"
+            close={() => close(1)}
+            right={{ title: 'Save', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title="Select opacity type"
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Save"
-            />
-
-            <Spacer />
-
             <div style={{ margin: '20px 0px' }}>
                <Text as="subtitle">
                   Ignore the side which is not appicable for the item.

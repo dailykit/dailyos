@@ -1,15 +1,11 @@
 import React, { useState } from 'react'
-import { Text, Input, Loader } from '@dailykit/ui'
+import { Text, Input, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { UPDATE_PACKAGING } from '../../../../../graphql'
 
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 
 export default function PackagingTypeTunnel({ close, state }) {
    const [loading, setLoading] = useState(false)
@@ -43,16 +39,12 @@ export default function PackagingTypeTunnel({ close, state }) {
 
    return (
       <>
+         <TunnelHeader
+            title="Select leak resistance"
+            close={() => close(1)}
+            right={{ title: 'Save', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title="Select leak resistance"
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Next"
-            />
-
-            <Spacer />
-
             <Text as="title">Enter Packaging type</Text>
             <br />
 
