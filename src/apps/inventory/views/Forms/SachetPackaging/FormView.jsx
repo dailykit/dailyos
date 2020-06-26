@@ -1,5 +1,14 @@
 import React from 'react'
-import { TextButton, Tunnels, Tunnel, useTunnel, Avatar } from '@dailykit/ui'
+import {
+   TextButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   Avatar,
+   Input,
+} from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
 
 import {
    StyledHeader,
@@ -16,11 +25,23 @@ import {
    MoreItemInfoTunnel,
    SuppliersTunnel,
 } from './Tunnels'
+import { UPDATE_PACKAGING } from '../../../graphql'
 
 export default function FormView({ state }) {
    const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
       2
    )
+   const [itemName, setItemName] = React.useState(state.name)
+
+   const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
+      onCompleted: () => {
+         toast.info('Packaging name updated !')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error, Please try again')
+      },
+   })
 
    return (
       <>
@@ -41,16 +62,31 @@ export default function FormView({ state }) {
             {state.name && (
                <>
                   <StyledInfo>
-                     <div>
-                        <h1>{state.name}</h1>
-                        <span> {state.sku} </span>
+                     <div style={{ marginRight: '10px' }}>
+                        <Input
+                           style={{ margin: '10px 0 5px' }}
+                           type="text"
+                           name="itemName"
+                           value={itemName}
+                           label="Item Name"
+                           onChange={e => setItemName(e.target.value)}
+                           onBlur={() => {
+                              if (!itemName.length) {
+                                 toast.error("Name can't be empty")
+                                 return setItemName(state.name)
+                              }
+
+                              if (itemName !== state.name)
+                                 updatePackaging({
+                                    variables: {
+                                       id: state.id,
+                                       object: { name: itemName },
+                                    },
+                                 })
+                           }}
+                        />
+                        <span>sku: {state.sku || 'N/A'}</span>
                      </div>
-                     <span style={{ width: '10px' }} />
-                     <TransparentIconButton
-                        onClick={() => openItemInfoTunnel(1)}
-                     >
-                        <EditIcon size="18" color="#555B6E" />
-                     </TransparentIconButton>
                   </StyledInfo>
                   <SupplierInfo state={state} />
                </>
