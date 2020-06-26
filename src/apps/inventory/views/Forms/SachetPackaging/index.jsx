@@ -37,7 +37,34 @@ export default function SachetPackaging() {
          current: { id },
       },
    } = useContext(Context)
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel(6)
+   const [
+      suppliersTunnel,
+      openSuppliersTunnel,
+      closeSuppliersTunnel,
+   ] = useTunnel(1)
+   const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
+      2
+   )
+   const [leakTunnel, openLeakTunnel, closeLeakTunnel] = useTunnel(1)
+   const [opacityTunnel, openOpacityTunnel, closeOpacityTunnel] = useTunnel(1)
+   const [
+      compressibilityTunnel,
+      openCompressibilityTunnel,
+      closeCompressibilityTunnel,
+   ] = useTunnel(1)
+   const [
+      packagingTypeTunnel,
+      openPackagingTypeTunnel,
+      closePackagingTypeTunnel,
+   ] = useTunnel(1)
+   const [
+      sealingTypeTunnel,
+      openSealingTypeTunnel,
+      closeSealingTypeTunnel,
+   ] = useTunnel(1)
+
    const { loading: supplierLoading, data: supplierData } = useSubscription(
       SUPPLIERS_SUBSCRIPTION
    )
@@ -56,11 +83,11 @@ export default function SachetPackaging() {
          <SachetPackagingContext.Provider
             value={{ sachetPackagingState, sachetPackagingDispatch }}
          >
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1}>
+            <Tunnels tunnels={suppliersTunnel}>
+               <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                   <SuppliersTunnel
-                     close={closeTunnel}
-                     next={openTunnel}
+                     close={openSuppliersTunnel}
+                     next={closeSuppliersTunnel}
                      suppliers={supplierData?.suppliers?.map(supplier => ({
                         id: supplier.id,
                         title: supplier.name,
@@ -69,48 +96,70 @@ export default function SachetPackaging() {
                      state={packaging}
                   />
                </Tunnel>
-               <Tunnel layer={2}>
+            </Tunnels>
+            <Tunnels tunnels={itemInfoTunnel}>
+               <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                   <ItemInformationTunnel
-                     close={closeTunnel}
-                     next={openTunnel}
+                     close={closeItemInfoTunnel}
+                     next={openItemInfoTunnel}
                      state={packaging}
                   />
                </Tunnel>
-               <Tunnel layer={3}>
-                  <MoreItemInfoTunnel close={closeTunnel} state={packaging} />
+               <Tunnel layer={2} style={{ overflowY: 'auto' }}>
+                  <MoreItemInfoTunnel
+                     close={closeItemInfoTunnel}
+                     state={packaging}
+                  />
                </Tunnel>
-               <Tunnel layer={4}>
-                  <LeakResistanceTunnel state={packaging} close={closeTunnel} />
+            </Tunnels>
+
+            <Tunnels tunnels={leakTunnel}>
+               <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+                  <LeakResistanceTunnel
+                     state={packaging}
+                     close={closeLeakTunnel}
+                  />
                </Tunnel>
-               <Tunnel style={{ overflowY: 'auto' }} layer={5}>
-                  <OpacityTypeTunnel state={packaging} close={closeTunnel} />
+            </Tunnels>
+
+            <Tunnels tunnels={opacityTunnel}>
+               <Tunnel style={{ overflowY: 'auto' }} layer={1}>
+                  <OpacityTypeTunnel
+                     state={packaging}
+                     close={closeOpacityTunnel}
+                  />
                </Tunnel>
-               <Tunnel layer={6}>
+            </Tunnels>
+
+            <Tunnels tunnels={compressibilityTunnel}>
+               <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                   <CompressibilityTunnel
                      state={packaging}
-                     close={closeTunnel}
+                     close={closeCompressibilityTunnel}
                   />
                </Tunnel>
-               <Tunnel layer={7}>
-                  <PackagingTypeTunnel state={packaging} close={closeTunnel} />
+            </Tunnels>
+
+            <Tunnels tunnels={packagingTypeTunnel}>
+               <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+                  <PackagingTypeTunnel
+                     state={packaging}
+                     close={closePackagingTypeTunnel}
+                  />
                </Tunnel>
-               <Tunnel layer={8}>
-                  <SealingTypeTunnel state={packaging} close={closeTunnel} />
+            </Tunnels>
+
+            <Tunnels tunnels={sealingTypeTunnel}>
+               <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+                  <SealingTypeTunnel
+                     state={packaging}
+                     close={closeSealingTypeTunnel}
+                  />
                </Tunnel>
             </Tunnels>
 
             <StyledWrapper>
-               {packaging.id ? (
-                  <FormView state={packaging} open={openTunnel} />
-               ) : (
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text="Select Supplier"
-                     onClick={() => openTunnel(1)}
-                     style={{ margin: '20px 0' }}
-                  />
-               )}
+               <FormView state={packaging} />
             </StyledWrapper>
          </SachetPackagingContext.Provider>
       </>
