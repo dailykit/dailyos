@@ -137,7 +137,12 @@ export default function WorkOrders() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                  <IconButton
+                     type="solid"
+                     onClick={() => {
+                        openTunnel(1)
+                     }}
+                  >
                      <AddIcon color="#fff" size={24} />
                   </IconButton>
                </FlexContainer>
