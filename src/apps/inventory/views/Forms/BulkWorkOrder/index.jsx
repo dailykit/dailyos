@@ -35,9 +35,6 @@ import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
 import {
-   SUPPLIER_ITEMS_SUBSCRIPTION,
-   SETTINGS_USERS_SUBSCRIPTION,
-   STATIONS_SUBSCRIPTION,
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
    BULK_WORK_ORDER_SUBSCRIPTION,
@@ -56,8 +53,6 @@ export default function BulkWorkOrderForm() {
    const [status, setStatus] = useState(
       bulkOrderState.status || state.bulkWorkOrder.status || ''
    )
-
-   const [loading, setLoading] = useState(false)
 
    const [
       supplierItemTunnel,
@@ -84,9 +79,46 @@ export default function BulkWorkOrderForm() {
       }
    )
 
-   const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
+   const [createBulkWorkOrder, { loading }] = useMutation(
+      CREATE_BULK_WORK_ORDER,
+      {
+         onCompleted: data => {
+            toast.success('Work Order created successfully!')
+            setStatus(data.createBulkWorkOrder.returning[0].status)
+            bulkOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: data.createBulkWorkOrder.returning[0].id,
+                  status: data.createBulkWorkOrder.returning[0].status,
+               },
+            })
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! Please try again.')
+         },
+      }
+   )
    const [updateBulkWorkOrderStatus] = useMutation(
-      UPDATE_BULK_WORK_ORDER_STATUS
+      UPDATE_BULK_WORK_ORDER_STATUS,
+      {
+         onCompleted: data => {
+            console.log(data)
+            toast.info('Work Order updated successfully!')
+
+            bulkOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: data.updateBulkWorkOrder.returning[0].id,
+                  status: data.updateBulkWorkOrder.returning[0].status,
+               },
+            })
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! Please try again.')
+         },
+      }
    )
 
    React.useEffect(() => {
@@ -131,74 +163,33 @@ export default function BulkWorkOrderForm() {
       return true
    }
 
-   const saveStatus = async status => {
-      try {
-         setLoading(true)
-         const response = await updateBulkWorkOrderStatus({
-            variables: { id: bulkOrderState.id, status },
-         })
-
-         if (response?.data) {
-            setLoading(false)
-            toast.info('Work Order updated successfully!')
-
-            bulkOrderDispatch({
-               type: 'SET_META',
-               payload: {
-                  id: response.data.updateBulkWorkOrder.returning[0].id,
-                  status: response.data.updateBulkWorkOrder.returning[0].status,
-               },
-            })
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Errr! internal server error')
-      }
+   const saveStatus = status => {
+      updateBulkWorkOrderStatus({
+         variables: { id: bulkOrderState.id, status },
+      })
    }
 
-   const handlePublish = async () => {
-      try {
-         setLoading(true)
-         const isValid = checkForm()
+   const handlePublish = () => {
+      const isValid = checkForm()
 
-         if (isValid) {
-            // create work order
-            const response = await createBulkWorkOrder({
-               variables: {
-                  object: {
-                     status: 'PENDING',
-                     inputQuantity: bulkOrderState.inputQuantity,
-                     inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
-                     outputQuantity:
-                        bulkOrderState.outputItemProcessing.outputQuantity,
-                     inputBulkItemId: bulkOrderState.inputItemProcessing.id,
-                     outputBulkItemId: bulkOrderState.outputItemProcessing.id,
-                     userId: bulkOrderState.assignedUser.id,
-                     stationId: bulkOrderState.selectedStation.id,
-                     scheduledOn: bulkOrderState.assignedDate,
-                  },
+      if (isValid) {
+         // create work order
+         createBulkWorkOrder({
+            variables: {
+               object: {
+                  status: 'PENDING',
+                  inputQuantity: bulkOrderState.inputQuantity,
+                  inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
+                  outputQuantity:
+                     bulkOrderState.outputItemProcessing.outputQuantity,
+                  inputBulkItemId: bulkOrderState.inputItemProcessing.id,
+                  outputBulkItemId: bulkOrderState.outputItemProcessing.id,
+                  userId: bulkOrderState.assignedUser.id,
+                  stationId: bulkOrderState.selectedStation.id,
+                  scheduledOn: bulkOrderState.assignedDate,
                },
-            })
-
-            if (response?.data) {
-               setLoading(false)
-               toast.success('Work Order created successfully!')
-               setStatus(response.data.createBulkWorkOrder.returning[0].status)
-               bulkOrderDispatch({
-                  type: 'SET_META',
-                  payload: {
-                     id: response.data.createBulkWorkOrder.returning[0].id,
-                     status:
-                        response.data.createBulkWorkOrder.returning[0].status,
-                  },
-               })
-            }
-         } else {
-            setLoading(false)
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Errr! internal server error')
+            },
+         })
       }
    }
 

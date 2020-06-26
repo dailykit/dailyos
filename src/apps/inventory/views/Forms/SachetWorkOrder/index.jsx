@@ -52,7 +52,6 @@ export default function SachetWorkOrder() {
       reducers,
       initialState
    )
-   const [loading, setLoading] = useState(false)
 
    const [status, setStatus] = useState(
       sachetOrderState.status || state.sachetWorkOrder?.status || ''
@@ -93,8 +92,42 @@ export default function SachetWorkOrder() {
       }
    )
 
-   const [createSachetWorkOrder] = useMutation(CREATE_SACHET_WORK_ORDER)
-   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER)
+   const [createSachetWorkOrder, { loading }] = useMutation(
+      CREATE_SACHET_WORK_ORDER,
+      {
+         onCompleted: data => {
+            toast.success('Work Order created successfully!')
+
+            sachetOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: data.createSachetWorkOrder.returning[0].id,
+                  status: data.createSachetWorkOrder.returning[0].status,
+               },
+            })
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! Please try again.')
+         },
+      }
+   )
+   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
+      onCompleted: data => {
+         toast.info('Work Order updated successfully!')
+         sachetOrderDispatch({
+            type: 'SET_META',
+            payload: {
+               id: data.updateSachetWorkOrder.returning[0].id,
+               status: data.updateSachetWorkOrder.returning[0].status,
+            },
+         })
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error! Please try again.')
+      },
+   })
 
    React.useEffect(() => {
       if (state.sachetWorkOrder?.id) {
@@ -131,72 +164,30 @@ export default function SachetWorkOrder() {
    }
 
    const saveStatus = async status => {
-      try {
-         setLoading(true)
-         const response = await updateSachetWorkOrder({
-            variables: { id: sachetOrderState.id, status },
-         })
-         if (response?.data) {
-            setLoading(false)
-            toast.info('Work Order updated successfully!')
-            sachetOrderDispatch({
-               type: 'SET_META',
-               payload: {
-                  id: response.data.updateSachetWorkOrder.returning[0].id,
-                  status:
-                     response.data.updateSachetWorkOrder.returning[0].status,
-               },
-            })
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Errr! internal server error')
-      }
+      updateSachetWorkOrder({
+         variables: { id: sachetOrderState.id, status },
+      })
    }
 
    const handlePublish = async () => {
-      try {
-         setLoading(true)
-         const isValid = checkForm()
-         if (isValid) {
-            const response = await createSachetWorkOrder({
-               variables: {
-                  object: {
-                     status: 'PENDING',
-                     inputQuantity: sachetOrderState.inputQuantity,
-                     packagingId: sachetOrderState.packaging.id,
-                     label: sachetOrderState.labelTemplates,
-                     inputBulkItemId: sachetOrderState.inputItemProcessing.id,
-                     outputSachetItemId: sachetOrderState.outputSachet.id,
-                     outputQuantity: sachetOrderState.sachetQuantity,
-                     scheduledOn: sachetOrderState.assignedDate,
-                     stationId: sachetOrderState.selectedStation.id,
-                     userId: sachetOrderState.assignedUser.id,
-                  },
+      const isValid = checkForm()
+      if (isValid) {
+         createSachetWorkOrder({
+            variables: {
+               object: {
+                  status: 'PENDING',
+                  inputQuantity: sachetOrderState.inputQuantity,
+                  packagingId: sachetOrderState.packaging.id,
+                  label: sachetOrderState.labelTemplates,
+                  inputBulkItemId: sachetOrderState.inputItemProcessing.id,
+                  outputSachetItemId: sachetOrderState.outputSachet.id,
+                  outputQuantity: sachetOrderState.sachetQuantity,
+                  scheduledOn: sachetOrderState.assignedDate,
+                  stationId: sachetOrderState.selectedStation.id,
+                  userId: sachetOrderState.assignedUser.id,
                },
-            })
-            if (response?.data) {
-               setLoading(false)
-               toast.success('Work Order created successfully!')
-
-               setStatus(
-                  response.data.createSachetWorkOrder.returning[0].status
-               )
-               sachetOrderDispatch({
-                  type: 'SET_META',
-                  payload: {
-                     id: response.data.createSachetWorkOrder.returning[0].id,
-                     status:
-                        response.data.createSachetWorkOrder.returning[0].status,
-                  },
-               })
-            }
-         } else {
-            setLoading(false)
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Errr! internal server error')
+            },
+         })
       }
    }
 

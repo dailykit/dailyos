@@ -28,7 +28,15 @@ export default function WorkOrderTypeTunnel({ close }) {
             nextAction="Save"
          />
          <Spacer />
-         <SolidTile onClick={() => addTab('Bulk Work Order', 'bulkOrder')}>
+         <SolidTile
+            onClick={() => {
+               dispatch({
+                  type: 'SET_BULK_WORK_ORDER',
+                  payload: {},
+               })
+               addTab('Bulk Work Order', 'bulkOrder')
+            }}
+         >
             <Text as="h1">{t(address.concat('bulk work order'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('bulk subtitle 1')}>
@@ -38,7 +46,15 @@ export default function WorkOrderTypeTunnel({ close }) {
             </Text>
          </SolidTile>
          <br />
-         <SolidTile onClick={() => addTab('Sachet Work Order', 'sachetOrder')}>
+         <SolidTile
+            onClick={() => {
+               dispatch({
+                  type: 'SET_SACHET_WORK_ORDER',
+                  payload: {},
+               })
+               addTab('Sachet Work Order', 'sachetOrder')
+            }}
+         >
             <Text as="h1">{t(address.concat('sachet work order'))}</Text>
             <Text as="subtitle">
                <Trans i18nKey={address.concat('sachet subtitle 1')}>
