@@ -160,7 +160,7 @@ export default function PackagingStats({ state }) {
                               type="ghost"
                               onClick={() => openPackagingTypeTunnel(1)}
                            >
-                              <EditIcon />
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -203,7 +203,7 @@ export default function PackagingStats({ state }) {
                               type="ghost"
                               onClick={() => openSealingTypeTunnel(1)}
                            >
-                              <EditIcon />
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -246,7 +246,7 @@ export default function PackagingStats({ state }) {
                               type="ghost"
                               onClick={() => openLeakTunnel(1)}
                            >
-                              <EditIcon />
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -304,7 +304,7 @@ export default function PackagingStats({ state }) {
                               type="ghost"
                               onClick={() => openOpacityTunnel(1)}
                            >
-                              <EditIcon />
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
@@ -430,7 +430,7 @@ export default function PackagingStats({ state }) {
                               type="ghost"
                               onClick={() => openCompressibilityTunnel(1)}
                            >
-                              <EditIcon />
+                              <EditIcon color="#555B6E" />
                            </IconButton>
                         )}
                      </FlexContainer>
