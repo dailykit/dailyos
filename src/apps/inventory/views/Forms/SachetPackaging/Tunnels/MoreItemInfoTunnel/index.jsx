@@ -24,13 +24,13 @@ export default function MoreItemInfoTunnel({ close, state }) {
 
    const [updatePackaging, { loading }] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
-         close(3)
+         close(2)
          toast.info('updated successfully!')
       },
       onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-         close(3)
+         close(2)
       },
    })
 
@@ -57,7 +57,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
             <TunnelHeader
                title="More Item Information"
                next={handleNext}
-               close={() => close(3)}
+               close={() => close(2)}
                nextAction="Save"
             />
 

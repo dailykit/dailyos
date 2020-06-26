@@ -19,12 +19,12 @@ export default function PackagingTypeTunnel({ close, state }) {
       onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-         close(7)
+         close(1)
       },
       onCompleted: () => {
          setLoading(false)
          toast.info('Information Added :)')
-         close(7)
+         close(1)
       },
    })
 
@@ -47,7 +47,7 @@ export default function PackagingTypeTunnel({ close, state }) {
             <TunnelHeader
                title="Select leak resistance"
                next={handleNext}
-               close={() => close(7)}
+               close={() => close(1)}
                nextAction="Next"
             />
 

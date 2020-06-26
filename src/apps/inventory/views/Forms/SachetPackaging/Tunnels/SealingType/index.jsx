@@ -18,10 +18,10 @@ export default function SealingTypeTunnel({ close, state }) {
       onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-         close(8)
+         close(1)
       },
       onCompleted: () => {
-         close(8)
+         close(1)
          toast.info('Information Added :)')
       },
    })
@@ -45,7 +45,7 @@ export default function SealingTypeTunnel({ close, state }) {
             <TunnelHeader
                title="Select Sealing Type"
                next={handleNext}
-               close={() => close(8)}
+               close={() => close(1)}
                nextAction="Next"
             />
 

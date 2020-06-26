@@ -19,12 +19,12 @@ export default function LeakResistanceTunnel({ close, state }) {
    const [updatePakcaging, { loading }] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
          toast.info('Information Added :)')
-         close(4)
+         close(1)
       },
       onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-         close(4)
+         close(1)
       },
    })
 
@@ -50,7 +50,7 @@ export default function LeakResistanceTunnel({ close, state }) {
             <TunnelHeader
                title="Select leak resistance"
                next={handleNext}
-               close={() => close(4)}
+               close={() => close(1)}
                nextAction="Next"
             />
 

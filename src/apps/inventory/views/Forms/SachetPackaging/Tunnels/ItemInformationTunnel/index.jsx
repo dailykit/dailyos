@@ -29,11 +29,12 @@ export default function ItemInformationTunnel({ close, state, next }) {
       onError: error => {
          console.log(error)
          toast.error('Error! Please try again')
+         close(1)
       },
       onCompleted: () => {
          toast.success('Information Added')
-         close(2)
-         next(3)
+         close(1)
+         next(2)
       },
    })
 
@@ -64,7 +65,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
             <TunnelHeader
                title="Item Information"
                next={handleNext}
-               close={() => close(2)}
+               close={() => close(1)}
                nextAction="Next"
             />
 

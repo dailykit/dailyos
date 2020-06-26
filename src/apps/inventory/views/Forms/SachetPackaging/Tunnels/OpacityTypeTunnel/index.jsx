@@ -21,11 +21,11 @@ export default function OpacityTypeTunnel({ close, state }) {
    const [updatePakcaging, { loading }] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
          toast.info('Information Added :)')
-         close(5)
+         close(1)
       },
       onError: error => {
          console.log(error)
-         close(5)
+         close(1)
          toast.error('Error, Please try again')
       },
    })
@@ -56,7 +56,7 @@ export default function OpacityTypeTunnel({ close, state }) {
             <TunnelHeader
                title="Select opacity type"
                next={handleNext}
-               close={() => close(5)}
+               close={() => close(1)}
                nextAction="Save"
             />
 

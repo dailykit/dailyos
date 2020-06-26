@@ -23,14 +23,14 @@ export default function InfoBar({ open, state }) {
    )
       return (
          <EmptyWrapper>
-            <TextButton onClick={() => open(2)} type="outline">
+            <TextButton onClick={() => open(1)} type="outline">
                Add Information
             </TextButton>
          </EmptyWrapper>
       )
 
    return (
-      <StyledGrid onClick={() => open(2)}>
+      <StyledGrid onClick={() => open(1)}>
          <div>
             <div>
                <ItemIcon />

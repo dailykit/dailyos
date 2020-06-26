@@ -21,11 +21,11 @@ export default function CompressibilityTunnel({ close, state }) {
    const [updatePakcaging, { loading }] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
          toast.info('Information Added')
-         close(6)
+         close(1)
       },
       onError: error => {
          console.log(error)
-         close(6)
+         close(1)
          toast.error('Error, Please try again')
       },
    })
@@ -56,7 +56,7 @@ export default function CompressibilityTunnel({ close, state }) {
             <TunnelHeader
                title="Select compressibility"
                next={handleNext}
-               close={() => close(6)}
+               close={() => close(1)}
                nextAction="Save"
             />
 
