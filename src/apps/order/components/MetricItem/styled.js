@@ -24,6 +24,7 @@ const selectColor = variant => {
 export const ListItem = styled.li(
    ({ variant }) => css`
       padding: 12px;
+      list-style: none;
       margin-bottom: 16px;
       box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
       border-left: 4px solid ${selectColor(variant)};
