@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { Text, Input, TunnelHeader } from '@dailykit/ui'
+import { Text, Input, TunnelHeader, Toggle, HelperText } from '@dailykit/ui'
 
 import { TunnelBody, StyledRow } from '../styled'
 import { Grid } from '../../../styled'
@@ -16,6 +16,9 @@ const ChargesTunnel = ({ closeTunnel }) => {
    )
    const [to, setTo] = React.useState(
       recurrenceState?.charge?.orderValueUpto || ''
+   )
+   const [auto] = React.useState(
+      recurrenceState?.charge?.autoDeliverySelection || false
    )
    const [charge, setCharge] = React.useState(
       recurrenceState?.charge?.charge || ''
@@ -47,15 +50,15 @@ const ChargesTunnel = ({ closeTunnel }) => {
    // Handlers
    const save = () => {
       setBusy(true)
-      if (isNaN(charge) || charge === 0) {
+      if (Number.isNaN(charge) || charge === 0) {
          setBusy(false)
          return toast.error('Invalid charge!')
       }
-      if (isNaN(from) || from === 0) {
+      if (Number.isNaN(from) || from === 0) {
          setBusy(false)
          return toast.error('From value invalid!')
       }
-      if (isNaN(to) || to === 0) {
+      if (Number.isNaN(to) || to === 0) {
          setBusy(false)
          return toast.error('To value invalid!')
       }
@@ -120,6 +123,14 @@ const ChargesTunnel = ({ closeTunnel }) => {
                   />
                </Grid>
             </StyledRow>
+            <section>
+               <Toggle
+                  checked={auto}
+                  setChecked={() => {}}
+                  label="Handle delivery automatically?"
+               />
+               <HelperText type="hint" message="Coming Soon!" />
+            </section>
          </TunnelBody>
       </>
    )

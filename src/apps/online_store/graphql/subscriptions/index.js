@@ -321,9 +321,10 @@ export const RECURRENCES = gql`
                isActive
                charges {
                   id
+                  charge
                   orderValueFrom
                   orderValueUpto
-                  charge
+                  autoDeliverySelection
                }
             }
          }
