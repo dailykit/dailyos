@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const Wrapper = styled.main`
    padding: 0 16px;
-   section {
+   > section {
       padding-top: 16px;
       border-top: 1px solid #e3e3e3;
    }
@@ -24,6 +24,13 @@ export const StyledList = styled.ul`
       }
       + li {
          border-top: none;
+      }
+      section {
+         display: flex;
+         align-items: center;
+         input {
+            margin-right: 16px;
+         }
       }
    }
 `

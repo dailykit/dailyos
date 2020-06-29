@@ -1,5 +1,15 @@
 import gql from 'graphql-tag'
 
+export const ORDER_DELIVERY_INFO = gql`
+   subscription order($id: oid!) {
+      order(id: $id) {
+         id
+         deliveryBy
+         deliveryInfo
+      }
+   }
+`
+
 export const DELIVERY_SERVICE = gql`
    query service($id: Int!) {
       service: partnerships_deliveryPartnership_by_pk(id: $id) {

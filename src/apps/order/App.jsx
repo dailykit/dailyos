@@ -22,7 +22,7 @@ import {
 } from './components'
 
 const App = () => {
-   const { state } = useOrder()
+   const { state, updateOrder } = useOrder()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
@@ -34,6 +34,25 @@ const App = () => {
          openTunnel(1)
       }
    }, [state.delivery_config])
+
+   const addDeliveryPartner = async () => {
+      await updateOrder({
+         id: state.delivery_config.orderId,
+         set: state.delivery_config.selectedDeliveryService.id
+            ? {
+                 deliveryBy: state.delivery_config.selectedDeliveryService.id,
+              }
+            : null,
+         append: {
+            deliveryInfo: {
+               deliveryCompany: {
+                  ...state.delivery_config.selectedDeliveryService,
+               },
+            },
+         },
+      })
+      closeTunnel(1)
+   }
 
    if (position === 'left')
       return (
@@ -66,8 +85,12 @@ const App = () => {
                <Tunnels tunnels={tunnels}>
                   <Tunnel layer="1" size="md">
                      <TunnelHeader
-                        title={`Delivery Configuration - Order ${state.delivery_config.orderId}`}
                         close={() => closeTunnel(1)}
+                        right={{
+                           action: () => addDeliveryPartner(),
+                           title: 'Save',
+                        }}
+                        title={`Delivery - Order ${state.delivery_config.orderId}`}
                      />
                      <DeliveryConfig />
                   </Tunnel>
@@ -81,8 +104,12 @@ const App = () => {
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1" size="md">
                   <TunnelHeader
-                     title={`Delivery Configuration - Order ${state.delivery_config.orderId}`}
                      close={() => closeTunnel(1)}
+                     right={{
+                        action: () => addDeliveryPartner(),
+                        title: 'Save',
+                     }}
+                     title={`Delivery - Order ${state.delivery_config.orderId}`}
                   />
                   <DeliveryConfig />
                </Tunnel>

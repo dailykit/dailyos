@@ -171,8 +171,8 @@ const OrderListItem = ({ order }) => {
                   type="button"
                   onClick={() =>
                      dispatch({
-                        type: 'OPEN_DELIVERY_PANEL',
-                        payload: { id: order.id },
+                        type: 'DELIVERY_PANEL',
+                        payload: { orderId: order.id },
                      })
                   }
                >
