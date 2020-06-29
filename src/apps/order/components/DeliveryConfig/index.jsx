@@ -48,7 +48,7 @@ export const DeliveryConfig = () => {
             orderId: delivery_config.orderId,
             selectedDeliveryService: {
                logo: service.logo,
-               id: service.partnershipId,
+               id: service.details.id,
                name: service.companyName,
             },
          },
