@@ -3,6 +3,9 @@ import React from 'react'
 const Context = React.createContext()
 
 const initialState = {
+   delivery_config: {
+      orderId: null,
+   },
    current_view: 'SUMMARY',
    mealkit: {
       name: null,
@@ -58,6 +61,14 @@ const reducers = (state, { type, payload }) => {
                sachet_id: null,
             },
             current_view: payload.view,
+         }
+      }
+      case 'OPEN_DELIVERY_PANEL': {
+         return {
+            ...state,
+            delivery_config: {
+               orderId: payload.id,
+            },
          }
       }
       default:

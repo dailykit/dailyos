@@ -89,7 +89,7 @@ export const StyledHeader = styled.header`
    }
 `
 
-export const StyledViewOrder = styled.button`
+export const StyledButton = styled.button`
    height: 28px;
    display: flex;
    padding: 0 8px;

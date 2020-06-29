@@ -23,6 +23,7 @@ import {
    StyledTabPanels,
    StyledTabPanel,
    StyledPrint,
+   StyledButton,
 } from './styled'
 
 import MealKitProductDetails from './MealKitProductDetails'
@@ -31,7 +32,7 @@ const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
-   const { switchView } = useOrder()
+   const { switchView, dispatch } = useOrder()
    const [order, setOrder] = React.useState(null)
    const [mealkits, setMealKits] = React.useState([])
    const [inventories, setInventories] = React.useState([])
@@ -88,6 +89,17 @@ const Order = () => {
             <StyledPrint onClick={() => print()}>
                <PrintIcon size={16} />
             </StyledPrint>
+            <StyledButton
+               type="button"
+               onClick={() =>
+                  dispatch({
+                     type: 'OPEN_DELIVERY_PANEL',
+                     payload: { id: order.id },
+                  })
+               }
+            >
+               View Delivery
+            </StyledButton>
             <section>
                <section>
                   <span>{t(address.concat('ordered'))}:&nbsp;</span>
