@@ -40,7 +40,8 @@ const App = () => {
          id: state.delivery_config.orderId,
          set: state.delivery_config.selectedDeliveryService.id
             ? {
-                 deliveryBy: state.delivery_config.selectedDeliveryService.id,
+                 deliveryPartnershipId:
+                    state.delivery_config.selectedDeliveryService.id,
               }
             : null,
          append: {

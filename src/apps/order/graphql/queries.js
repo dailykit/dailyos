@@ -4,8 +4,8 @@ export const ORDER_DELIVERY_INFO = gql`
    subscription order($id: oid!) {
       order(id: $id) {
          id
-         deliveryBy
          deliveryInfo
+         deliveryPartnershipId
       }
    }
 `

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLazyQuery, useSubscription } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
    Avatar,
@@ -30,16 +30,10 @@ export const DeliveryConfig = () => {
          variables: { id: delivery_config.orderId },
       }
    )
-   const [
-      fetchServices,
-      { loading: loadingServices, data: { deliveryServices = [] } = {} },
-   ] = useLazyQuery(DELIVERY_SERVICES)
-
-   React.useEffect(() => {
-      if (order.deliveryBy === null) {
-         fetchServices()
-      }
-   }, [order])
+   const {
+      loading: loadingServices,
+      data: { deliveryServices = [] } = {},
+   } = useQuery(DELIVERY_SERVICES)
 
    const viewInfo = (e, service) => {
       e.stopPropagation()
