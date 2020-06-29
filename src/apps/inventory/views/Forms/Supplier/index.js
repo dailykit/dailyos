@@ -22,6 +22,7 @@ import { FlexContainer, FormActions, StyledWrapper } from '../styled'
 import { Container } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import PersonContactTunnel from './Tunnels/PersonContactTunnel'
+import AssetTunnel from './Tunnels/AssetTunnel'
 
 const address = 'apps.inventory.views.forms.supplier.'
 
@@ -34,7 +35,9 @@ export default function SupplierForm() {
 
    const { state, dispatch } = useContext(Context)
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [addressTunnel, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
+   const [contactTunnel, openContactTunnel, closeContactTunnel] = useTunnel(1)
+   const [assetTunnel, openAssetTunnel, closeAssetTunnel] = useTunnel(1)
 
    const { loading: supplierLoading } = useSubscription(SUPPLIER_SUBSCRIPTION, {
       variables: {
@@ -80,12 +83,25 @@ export default function SupplierForm() {
 
    return (
       <>
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={addressTunnel}>
             <Tunnel size="lg" layer={1}>
-               <AddressTunnel close={closeTunnel} formState={formState} />
+               <AddressTunnel
+                  close={closeAddressTunnel}
+                  formState={formState}
+               />
             </Tunnel>
-            <Tunnel layer={2}>
-               <PersonContactTunnel close={closeTunnel} formState={formState} />
+         </Tunnels>
+         <Tunnels tunnels={contactTunnel}>
+            <Tunnel layer={1}>
+               <PersonContactTunnel
+                  close={closeContactTunnel}
+                  formState={formState}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={assetTunnel}>
+            <Tunnel layer={1}>
+               <AssetTunnel close={closeAssetTunnel} formState={formState} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -112,7 +128,7 @@ export default function SupplierForm() {
             </FormHeading>
             <Container>
                <ButtonTile
-                  onClick={() => {}}
+                  onClick={() => openAssetTunnel(1)}
                   type="primary"
                   size="lg"
                   text={t(address.concat('add logo of the supplier'))}
@@ -123,7 +139,10 @@ export default function SupplierForm() {
                   )}
                />
 
-               <AddressView formState={formState} openTunnel={openTunnel} />
+               <AddressView
+                  formState={formState}
+                  openTunnel={openAddressTunnel}
+               />
 
                <FlexContainer
                   style={{ alignItems: 'center', marginTop: '24px' }}
@@ -141,7 +160,10 @@ export default function SupplierForm() {
 
                   {formState.contactPerson?.email ||
                   formState.contactPerson?.firstName ? (
-                     <IconButton onClick={() => openTunnel(2)} type="ghost">
+                     <IconButton
+                        onClick={() => openContactTunnel(1)}
+                        type="ghost"
+                     >
                         <EditIcon color="#555b6e" />
                      </IconButton>
                   ) : null}
@@ -156,7 +178,7 @@ export default function SupplierForm() {
                   <ButtonTile
                      type="secondary"
                      text={t(address.concat('add person of contact'))}
-                     onClick={() => openTunnel(2)}
+                     onClick={() => openContactTunnel(1)}
                      style={{ margin: '20px 0' }}
                   />
                )}

@@ -31,12 +31,12 @@ export default function PersonContactTunnel({ close, formState }) {
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
          toast.info('Contact information added!')
-         close(2)
+         close(1)
       },
       onError: error => {
          console.log(error)
          toast.error('Error, Please try again')
-         close(2)
+         close(1)
       },
    })
 
@@ -64,7 +64,7 @@ export default function PersonContactTunnel({ close, formState }) {
       <>
          <TunnelHeader
             title={t(address.concat('add person of contact'))}
-            close={() => close(2)}
+            close={() => close(1)}
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
