@@ -35,9 +35,9 @@ export const DeliveryConfig = () => {
       data: { deliveryServices = [] } = {},
    } = useQuery(DELIVERY_SERVICES)
 
-   const viewInfo = (e, service) => {
+   const viewInfo = (e, id) => {
       e.stopPropagation()
-      setService(service)
+      setService(id)
       openTunnel(1)
    }
 
@@ -93,7 +93,9 @@ export const DeliveryConfig = () => {
                            {service.isThirdParty && (
                               <IconButton
                                  type="outline"
-                                 onClick={e => viewInfo(e, service)}
+                                 onClick={e =>
+                                    viewInfo(e, service.partnershipId)
+                                 }
                               >
                                  <InfoIcon />
                               </IconButton>
