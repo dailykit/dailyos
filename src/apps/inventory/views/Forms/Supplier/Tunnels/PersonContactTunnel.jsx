@@ -1,5 +1,13 @@
 import PhoneInput from 'react-phone-input-2'
-import { Input, Text, Loader, TunnelHeader } from '@dailykit/ui'
+import {
+   Input,
+   Text,
+   Loader,
+   TunnelHeader,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+} from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
@@ -12,9 +20,13 @@ import { FlexContainer } from '../../styled'
 import { CircleButton } from '../styled'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 
+import PhotoTunnel from './PhotoTunnel'
+
 const address = 'apps.inventory.views.forms.supplier.tunnels.'
 
 export default function PersonContactTunnel({ close, formState }) {
+   const [photoTunnel, openPhotoTunnel, closePhotoTunnel] = useTunnel(1)
+
    const { t } = useTranslation()
 
    const [firstName, setFirstName] = useState(
@@ -48,6 +60,7 @@ export default function PersonContactTunnel({ close, formState }) {
             id: formState.id,
             object: {
                contactPerson: {
+                  ...formState.contactPerson,
                   firstName,
                   lastName,
                   email,
@@ -62,6 +75,11 @@ export default function PersonContactTunnel({ close, formState }) {
 
    return (
       <>
+         <Tunnels tunnels={photoTunnel}>
+            <Tunnel layer={1}>
+               <PhotoTunnel close={closePhotoTunnel} formState={formState} />
+            </Tunnel>
+         </Tunnels>
          <TunnelHeader
             title={t(address.concat('add person of contact'))}
             close={() => close(1)}
@@ -118,8 +136,15 @@ export default function PersonContactTunnel({ close, formState }) {
                      justifyContent: 'center',
                   }}
                >
-                  <CircleButton>
-                     <Camera color="#555B6E" size="44" />
+                  <CircleButton onClick={() => openPhotoTunnel(1)}>
+                     {formState.contactPerson.imageUrl ? (
+                        <img
+                           src={formState.contactPerson.imageUrl}
+                           alt="profile"
+                        />
+                     ) : (
+                        <Camera color="#555B6E" size="44" />
+                     )}
                   </CircleButton>
                </FlexContainer>
             </FlexContainer>

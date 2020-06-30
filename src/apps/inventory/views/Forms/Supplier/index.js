@@ -23,6 +23,7 @@ import { Container, ImageContainer } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import PersonContactTunnel from './Tunnels/PersonContactTunnel'
 import LogoTunnel from './Tunnels/LogoTunnel'
+import PhotoTunnel from './Tunnels/PhotoTunnel'
 
 const address = 'apps.inventory.views.forms.supplier.'
 
@@ -104,6 +105,7 @@ export default function SupplierForm() {
                <LogoTunnel close={closeAssetTunnel} formState={formState} />
             </Tunnel>
          </Tunnels>
+
          <StyledWrapper>
             <FormHeading>
                <div>
