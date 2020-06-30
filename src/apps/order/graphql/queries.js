@@ -1,5 +1,43 @@
 import gql from 'graphql-tag'
 
+export const ORDER_DELIVERY_INFO = gql`
+   subscription order($id: oid!) {
+      order(id: $id) {
+         id
+         deliveryInfo
+         deliveryPartnershipId
+      }
+   }
+`
+
+export const DELIVERY_SERVICE = gql`
+   query service($id: Int!) {
+      service: partnerships_deliveryPartnership_by_pk(id: $id) {
+         id
+         details: deliveryCompany {
+            id
+            name
+            assets
+            website
+            description
+            established
+         }
+      }
+   }
+`
+
+export const DELIVERY_SERVICES = gql`
+   query deliveryServices {
+      deliveryServices(where: { isActive: { _eq: true } }) {
+         id
+         logo
+         companyName
+         isThirdParty
+         partnershipId
+      }
+   }
+`
+
 export const NEW_NOTIF = gql`
    subscription displayNotifications {
       displayNotifications(where: { type: { app: { _eq: "Order" } } }) {

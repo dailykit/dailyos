@@ -284,3 +284,19 @@ export const StyledPrint = styled.button`
    justify-content: center;
    border: 1px solid rgba(0, 0, 0, 0.2);
 `
+
+export const StyledButton = styled.button`
+   height: 28px;
+   display: flex;
+   padding: 0 8px;
+   color: #787d91;
+   cursor: pointer;
+   background: #fff;
+   font-weight: 500;
+   margin-left: 14px;
+   background: white;
+   margin-right: 14px;
+   align-items: center;
+   text-transform: uppercase;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+`

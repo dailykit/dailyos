@@ -1,8 +1,14 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
+
+import { UPDATE_ORDER } from '../../graphql'
 
 const Context = React.createContext()
 
 const initialState = {
+   delivery_config: {
+      orderId: null,
+   },
    current_view: 'SUMMARY',
    mealkit: {
       name: null,
@@ -60,6 +66,15 @@ const reducers = (state, { type, payload }) => {
             current_view: payload.view,
          }
       }
+      case 'DELIVERY_PANEL': {
+         return {
+            ...state,
+            delivery_config: {
+               ...state.delivery_config,
+               ...payload,
+            },
+         }
+      }
       default:
          return state
    }
@@ -77,6 +92,7 @@ export const OrderProvider = ({ children }) => {
 
 export const useOrder = () => {
    const { state, dispatch } = React.useContext(Context)
+   const [update] = useMutation(UPDATE_ORDER)
 
    const selectMealKit = (id, name) => {
       dispatch({
@@ -108,10 +124,21 @@ export const useOrder = () => {
       })
    }
 
+   const updateOrder = ({ id, set, append }) => {
+      update({
+         variables: {
+            id,
+            ...(set && { _set: set }),
+            ...(append && { _append: append }),
+         },
+      })
+   }
+
    return {
       state,
       dispatch,
       switchView,
+      updateOrder,
       selectMealKit,
       selectInventory,
       selectReadyToEat,

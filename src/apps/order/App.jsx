@@ -1,5 +1,6 @@
 import React from 'react'
 import usePortal from 'react-useportal'
+import { Tunnels, Tunnel, useTunnel, TunnelHeader } from '@dailykit/ui'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // Context
@@ -14,17 +15,45 @@ import { StyledWrapper } from './styled'
 import {
    OrderSummary,
    ProcessOrder,
+   DeliveryConfig,
    Notifications,
    ProcessInventory,
    ProcessReadyToEat,
 } from './components'
 
 const App = () => {
-   const { state } = useOrder()
+   const { state, updateOrder } = useOrder()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('notifications'),
    })
+
+   React.useEffect(() => {
+      if (state.delivery_config.orderId) {
+         openTunnel(1)
+      }
+   }, [state.delivery_config])
+
+   const addDeliveryPartner = async () => {
+      await updateOrder({
+         id: state.delivery_config.orderId,
+         set: state.delivery_config.selectedDeliveryService.name
+            ? {
+                 deliveryPartnershipId:
+                    state.delivery_config.selectedDeliveryService.id,
+              }
+            : null,
+         append: {
+            deliveryInfo: {
+               deliveryCompany: {
+                  ...state.delivery_config.selectedDeliveryService,
+               },
+            },
+         },
+      })
+      closeTunnel(1)
+   }
 
    if (position === 'left')
       return (
@@ -53,11 +82,41 @@ const App = () => {
                   </Portal>
                )}
             </Router>
+            <Portal>
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer="1" size="md">
+                     <TunnelHeader
+                        close={() => closeTunnel(1)}
+                        right={{
+                           action: () => addDeliveryPartner(),
+                           title: 'Save',
+                        }}
+                        title={`Delivery - Order ${state.delivery_config.orderId}`}
+                     />
+                     <DeliveryConfig />
+                  </Tunnel>
+               </Tunnels>
+            </Portal>
          </StyledWrapper>
       )
    return (
       <StyledWrapper position={position}>
-         <Router basename={process.env.PUBLIC_URL}>
+         <Portal>
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer="1" size="md">
+                  <TunnelHeader
+                     close={() => closeTunnel(1)}
+                     right={{
+                        action: () => addDeliveryPartner(),
+                        title: 'Save',
+                     }}
+                     title={`Delivery - Order ${state.delivery_config.orderId}`}
+                  />
+                  <DeliveryConfig />
+               </Tunnel>
+            </Tunnels>
+         </Portal>
+         <Router>
             <div>
                <Header
                   isOpen={isOpen}

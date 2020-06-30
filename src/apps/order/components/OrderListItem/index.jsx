@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import {
    StyledOrderItem,
-   StyledViewOrder,
+   StyledButton,
    StyledConsumer,
    StyledConsumerName,
    StyledConsumerAddress,
@@ -41,7 +41,7 @@ import {
 import { formatDate } from '../../utils'
 
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
-import { useTabs } from '../../context'
+import { useTabs, useOrder } from '../../context'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -53,6 +53,7 @@ const normalize = address =>
 const OrderListItem = ({ order }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+   const { dispatch } = useOrder()
    const [currentPanel, setCurrentPanel] = React.useState('customer')
    const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
    const {
@@ -159,13 +160,24 @@ const OrderListItem = ({ order }) => {
          </section>
          <StyledProducts>
             <StyledHeader>
-               <StyledViewOrder type="button" onClick={() => createTab(id)}>
+               <StyledButton type="button" onClick={() => createTab(id)}>
                   ORD{order.id}
                   <NewTabIcon size={14} />
-               </StyledViewOrder>
+               </StyledButton>
                <StyledPrint onClick={() => print()}>
                   <PrintIcon size={16} />
                </StyledPrint>
+               <StyledButton
+                  type="button"
+                  onClick={() =>
+                     dispatch({
+                        type: 'DELIVERY_PANEL',
+                        payload: { orderId: order.id },
+                     })
+                  }
+               >
+                  View Delivery
+               </StyledButton>
                <section>
                   <StyledStatus>
                      <span>{t(address.concat('ordered on'))}:&nbsp;</span>
