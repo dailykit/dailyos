@@ -47,7 +47,11 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             isAvailable
             shelfLife
             unit
+            yield
             consumed
+            image
+            labor
+            bulkDensity
 
             sachetItems {
                id
@@ -82,7 +86,11 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             isAvailable
             shelfLife
             unit
+            image
+            labor
+            yield
             consumed
+            bulkDensity
 
             sachetItems {
                id
