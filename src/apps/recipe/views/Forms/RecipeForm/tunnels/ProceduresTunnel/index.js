@@ -292,8 +292,8 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                     </span>
                                  </div>
                                  <img
-                                    src={step.assets.images[0]}
-                                    alt="Cooking Step"
+                                    src={step.assets.images[0].url}
+                                    alt={step.assets.images[0].title}
                                  />
                               </ImageContainer>
                            ) : (
