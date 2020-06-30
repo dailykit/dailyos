@@ -6,6 +6,7 @@ import OpacityTypeTunnel from './OpacityTypeTunnel'
 import CompressibilityTunnel from './CompressibilityTunnel'
 import PackagingTypeTunnel from './PackagingMaterial/index'
 import SealingTypeTunnel from './SealingType/index'
+import PhotoTunnel from './PhotoTunnel/index'
 
 export {
    SuppliersTunnel,
@@ -16,4 +17,5 @@ export {
    CompressibilityTunnel,
    PackagingTypeTunnel,
    SealingTypeTunnel,
+   PhotoTunnel,
 }

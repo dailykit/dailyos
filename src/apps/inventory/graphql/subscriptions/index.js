@@ -47,7 +47,11 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             isAvailable
             shelfLife
             unit
+            yield
             consumed
+            image
+            labor
+            bulkDensity
 
             sachetItems {
                id
@@ -82,7 +86,11 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             isAvailable
             shelfLife
             unit
+            image
+            labor
+            yield
             consumed
+            bulkDensity
 
             sachetItems {
                id
@@ -150,6 +158,7 @@ export const SUPPLIER_SUBSCRIPTION = gql`
       supplier(id: $id) {
          id
          name
+         logo
          contactPerson
          available
          address
@@ -213,6 +222,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          packagingType
          sealingType
          leadTime
+         image
          supplier {
             id
             name

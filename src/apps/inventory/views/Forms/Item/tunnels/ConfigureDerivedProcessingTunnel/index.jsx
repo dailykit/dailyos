@@ -35,7 +35,10 @@ import {
    StyledInputGroup,
    StyledLabel,
    StyledRow,
+   ImageContainer,
 } from '../styled'
+
+import PhotoTunnel from './PhotoTunnel'
 
 const address =
    'apps.inventory.views.forms.item.tunnels.configurederivedprocessingtunnel.'
@@ -52,6 +55,34 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
 
    const [errors, setErrors] = useState([])
 
+   const [unit, setUnit] = useState(
+      state.activeProcessing?.unit || formState?.unit || units[0]?.name
+   )
+   const [par, setPar] = useState(state.activeProcessing?.parLevel || '')
+
+   const [maxInventoryLevel, setMaxInventoryLevel] = useState(
+      state.activeProcessing?.maxLevel || ''
+   )
+
+   const [laborTime, setLaborTime] = useState(
+      state.activeProcessing?.labor?.value || ''
+   )
+   const [laborUnit, setLaborUnit] = useState(
+      state.activeProcessing?.labor?.unit || 'hours'
+   )
+   const [yieldPercentage, setYieldPercentage] = useState(
+      state.activeProcessing?.yield?.value || ''
+   )
+   const [shelfLife, setShelfLife] = useState(
+      state.activeProcessing?.shelfLife?.value || ''
+   )
+   const [shelfLifeUnit, setShelfLifeUnit] = useState(
+      state.activeProcessing?.shelfLife?.unit || 'hours'
+   )
+   const [bulkDensity, setBulkDensity] = useState(
+      state.activeProcessing?.bulkDensity || ''
+   )
+
    const [
       allergensTunnelForDerivedProcessing,
       openDerivedAllergensTunnel,
@@ -62,6 +93,8 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
       openNutritionTunnel,
       closeNutritionTunnel,
    ] = useTunnel(1)
+
+   const [photoTunnel, openPhotoTunnel, closePhotoTunnel] = useTunnel(1)
 
    const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
       onSubscriptionData: input => {
@@ -87,6 +120,21 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
       {
          onCompleted: () => {
             close(2)
+            dispatch({
+               type: 'SET_ACTIVE_PROCESSING',
+               payload: {
+                  ...formState.bulkItemAsShipped,
+                  unit, // string
+                  yield: { value: yieldPercentage },
+                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+                  parLevel: +par,
+                  nutritionInfo: state.processing.nutrients || {},
+                  maxLevel: +maxInventoryLevel,
+                  labor: { value: laborTime, unit: laborUnit },
+                  bulkDensity: +bulkDensity,
+                  allergens: state.processing.allergens,
+               },
+            })
             toast.success('Bulk Item updated successfully !')
          },
          onError: error => {
@@ -96,22 +144,6 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
          },
       }
    )
-
-   const [unit, setUnit] = useState(
-      state.activeProcessing?.unit || formState?.unit || units[0]?.name
-   )
-   const [par, setPar] = useState(state.activeProcessing?.parLevel || '')
-
-   const [maxInventoryLevel, setMaxInventoryLevel] = useState(
-      state.activeProcessing?.maxLevel || ''
-   )
-
-   const [laborTime, setLaborTime] = useState('')
-   const [laborUnit, setLaborUnit] = useState('hours')
-   const [yieldPercentage, setYieldPercentage] = useState('')
-   const [shelfLife, setShelfLife] = useState('')
-   const [shelfLifeUnit, setShelfLifeUnit] = useState('hours')
-   const [bulkDensity, setBulkDensity] = useState('')
 
    const handleNext = () => {
       if (!par || !maxInventoryLevel)
@@ -172,6 +204,12 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
             </Tunnel>
          </Tunnels>
 
+         <Tunnels tunnels={photoTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
+               <PhotoTunnel close={closePhotoTunnel} />
+            </Tunnel>
+         </Tunnels>
+
          <TunnelHeader
             title={t(address.concat('configure processing'))}
             close={() => close(2)}
@@ -229,17 +267,42 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                   {t(address.concat('processing information'))}
                </StyledLabel>
             </StyledRow>
-            <StyledRow>
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text={t(address.concat('add photo to your processing'))}
-                  helper={t(
-                     address.concat('upto 1MB - only JPG, PNG, PDF allowed')
+            {state.activeProcessing?.id && (
+               <StyledRow>
+                  {state.activeProcessing?.image ? (
+                     <ImageContainer>
+                        <div>
+                           <span
+                              role="button"
+                              tabIndex="0"
+                              onClick={() => openPhotoTunnel(1)}
+                              onKeyDown={e =>
+                                 e.charCode === 13 && openPhotoTunnel(1)
+                              }
+                           >
+                              <EditIcon />
+                           </span>
+                        </div>
+                        <img
+                           src={state.activeProcessing?.image}
+                           alt="processing"
+                        />
+                     </ImageContainer>
+                  ) : (
+                     <ButtonTile
+                        type="primary"
+                        size="sm"
+                        text={t(address.concat('add photo to your processing'))}
+                        helper={t(
+                           address.concat(
+                              'upto 1MB - only JPG, PNG, PDF allowed'
+                           )
+                        )}
+                        onClick={() => openPhotoTunnel(1)}
+                     />
                   )}
-                  onClick={e => console.log('Tile clicked')}
-               />
-            </StyledRow>
+               </StyledRow>
+            )}
             <StyledRow>
                <StyledInputGroup>
                   <InputWrapper>
@@ -255,7 +318,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                      />
                      <StyledSelect
                         name="unit"
-                        defaultValue={laborUnit}
+                        value={laborUnit}
                         onChange={e => setLaborUnit(e.target.value)}
                      >
                         <option value="hours">{t('units.hours')}</option>
@@ -293,7 +356,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                      />
                      <StyledSelect
                         name="unit"
-                        defaultValue={shelfLifeUnit}
+                        value={shelfLifeUnit}
                         onChange={e => setShelfLifeUnit(e.target.value)}
                      >
                         <option value="hours">{t('units.hours')}</option>

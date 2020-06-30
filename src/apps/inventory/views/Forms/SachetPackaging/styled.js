@@ -1,33 +1,9 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
-   width: 50%;
-   margin: 24px auto;
-`
-
-export const CircleButton = styled.button`
-   background-color: #fff;
-   padding: 20px;
-   border: 0;
-   border-radius: 50%;
-   width: 8rem;
-   height: 8rem;
-   box-shadow: -3px 4px 4px rgba(0, 0, 0, 0.05);
-
-   img {
-      width: 100%;
-   }
-
-   &:hover {
-      cursor: pointer;
-   }
-`
-
 export const ImageContainer = styled.div`
    width: 464px;
    height: 128px;
    position: relative;
-   margin: 0 auto;
    img {
       width: 464px;
       height: 128px;

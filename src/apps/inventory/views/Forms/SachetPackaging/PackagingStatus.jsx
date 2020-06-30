@@ -10,6 +10,7 @@ import {
 
 import { DataCard } from '../../../components'
 import { FlexContainer, Flexible, ShadowCard } from '../styled'
+import { ImageContainer } from './styled'
 import AdditionalInfo from './AdditionalInfo'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
 
@@ -19,6 +20,7 @@ import {
    PackagingTypeTunnel,
    CompressibilityTunnel,
    SealingTypeTunnel,
+   PhotoTunnel,
 } from './Tunnels'
 
 export default function PackagingStats({ state }) {
@@ -39,6 +41,7 @@ export default function PackagingStats({ state }) {
       openSealingTypeTunnel,
       closeSealingTypeTunnel,
    ] = useTunnel(1)
+   const [photoTunnel, openPhotoTunnel, closePhotoTunnel] = useTunnel(1)
 
    const tickGreenSvg = (
       <svg
@@ -120,15 +123,37 @@ export default function PackagingStats({ state }) {
                />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={photoTunnel}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+               <PhotoTunnel state={state} close={closePhotoTunnel} />
+            </Tunnel>
+         </Tunnels>
          <FlexContainer style={{ padding: '0 30px', margin: '0 20px' }}>
             <Flexible width="2">
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text="Add a Photo"
-                  helper="add some text maybe"
-                  onClick={() => {}}
-               />
+               {state.image ? (
+                  <ImageContainer>
+                     <div>
+                        <span
+                           role="button"
+                           tabIndex="0"
+                           onClick={() => openPhotoTunnel(1)}
+                           onKeyDown={e =>
+                              e.charCode === 13 && openPhotoTunnel(1)
+                           }
+                        >
+                           <EditIcon />
+                        </span>
+                     </div>
+                     <img src={state.image} alt="processing" />
+                  </ImageContainer>
+               ) : (
+                  <ButtonTile
+                     type="primary"
+                     size="lg"
+                     text="Add Packaging Image"
+                     onClick={() => openPhotoTunnel(1)}
+                  />
+               )}
             </Flexible>
             <span style={{ width: '20px' }} />
             <Flexible width="3">

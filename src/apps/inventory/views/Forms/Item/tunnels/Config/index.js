@@ -35,7 +35,9 @@ import {
    StyledLabel,
    StyledRow,
    TunnelBody,
+   ImageContainer,
 } from '../styled'
+import PhotoTunnel from './PhotoTunnel'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
@@ -82,6 +84,8 @@ export default function ConfigTunnel({ close, formState }) {
       closeNutritionTunnel,
    ] = useTunnel(1)
 
+   const [photoTunnel, openPhotoTunnel, closePhotoTunnel] = useTunnel(1)
+
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
          close(4)
@@ -119,6 +123,21 @@ export default function ConfigTunnel({ close, formState }) {
       {
          onCompleted: () => {
             close(2)
+            dispatch({
+               type: 'SET_ACTIVE_PROCESSING',
+               payload: {
+                  ...formState.bulkItemAsShipped,
+                  unit, // string
+                  yield: { value: yieldPercentage },
+                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
+                  parLevel: +parLevel,
+                  nutritionInfo: state.processing.nutrients || {},
+                  maxLevel: +maxValue,
+                  labor: { value: laborTime, unit: laborUnit },
+                  bulkDensity: +bulkDensity,
+                  allergens: state.processing.allergens,
+               },
+            })
             toast.success('Bulk Item updated successfully !')
          },
          onError: error => {
@@ -188,6 +207,12 @@ export default function ConfigTunnel({ close, formState }) {
             </Tunnel>
          </Tunnels>
 
+         <Tunnels tunnels={photoTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
+               <PhotoTunnel close={closePhotoTunnel} bulkItem={bulkItem} />
+            </Tunnel>
+         </Tunnels>
+
          <TunnelHeader
             title={t(address.concat('configure processing'))}
             close={() => close(2)}
@@ -247,17 +272,39 @@ export default function ConfigTunnel({ close, formState }) {
                   {t(address.concat('processing information'))}
                </StyledLabel>
             </StyledRow>
-            <StyledRow>
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text={t(address.concat('add photo to your processing'))}
-                  helper={t(
-                     address.concat('upto 1MB - only JPG, PNG, PDF allowed')
+            {bulkItem?.id && (
+               <StyledRow>
+                  {bulkItem?.image ? (
+                     <ImageContainer>
+                        <div>
+                           <span
+                              role="button"
+                              tabIndex="0"
+                              onClick={() => openPhotoTunnel(1)}
+                              onKeyDown={e =>
+                                 e.charCode === 13 && openPhotoTunnel(1)
+                              }
+                           >
+                              <EditIcon />
+                           </span>
+                        </div>
+                        <img src={bulkItem.image} alt="processing" />
+                     </ImageContainer>
+                  ) : (
+                     <ButtonTile
+                        type="primary"
+                        size="sm"
+                        text={t(address.concat('add photo to your processing'))}
+                        helper={t(
+                           address.concat(
+                              'upto 1MB - only JPG, PNG, PDF allowed'
+                           )
+                        )}
+                        onClick={() => openPhotoTunnel(1)}
+                     />
                   )}
-                  onClick={e => console.log('Tile clicked')}
-               />
-            </StyledRow>
+               </StyledRow>
+            )}
             <StyledRow>
                <StyledInputGroup>
                   <InputWrapper>

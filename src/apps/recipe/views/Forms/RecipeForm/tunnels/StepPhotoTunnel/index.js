@@ -13,7 +13,7 @@ const StepPhotoTunnel = ({ state, closeTunnel }) => {
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
          toast.success('Image added!')
-         closeTunnel(1)
+         closeTunnel(2)
       },
       onError: () => {
          toast.error('Error')
