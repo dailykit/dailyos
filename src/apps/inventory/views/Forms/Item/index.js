@@ -295,8 +295,7 @@ export default function ItemForm() {
                         <div>
                            {formState.leadTime?.value ? (
                               <span>
-                                 {formState.leadTime?.value +
-                                    formState.leadTime?.unit}
+                                 {`${formState.leadTime?.value} ${formState.leadTime?.unit}`}
                               </span>
                            ) : (
                               'N/A'
