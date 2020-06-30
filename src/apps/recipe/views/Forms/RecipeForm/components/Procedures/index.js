@@ -64,7 +64,10 @@ const Procedure = ({ procedure }) => {
             <Container bottom="8" paddingX="8" key={step.title}>
                <Text as="title">{step.title}</Text>
                {Boolean(step.assets.images.length) && (
-                  <Image src={step.assets.images[0]} />
+                  <Image
+                     src={step.assets.images[0].url}
+                     alt={step.assets.images[0].title}
+                  />
                )}
                <p>{step.description}</p>
             </Container>
