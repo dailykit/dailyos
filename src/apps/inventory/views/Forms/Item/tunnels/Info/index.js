@@ -92,7 +92,7 @@ export default function InfoTunnel({ close, formState }) {
          <TunnelHeader
             title={t(address.concat('item information'))}
             close={close}
-            right={{ title: t(address.concat('next')), action: handleNext }}
+            right={{ title: 'Save', action: handleNext }}
          />
 
          <TunnelBody>

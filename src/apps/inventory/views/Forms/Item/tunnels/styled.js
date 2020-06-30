@@ -60,3 +60,25 @@ export const StyledLabel = styled.div`
    color: #888d9d;
    margin-bottom: 8px;
 `
+export const ImageContainer = styled.div`
+   width: 464px;
+   height: 128px;
+   position: relative;
+   img {
+      width: 464px;
+      height: 128px;
+      object-fit: auto;
+   }
+   div {
+      position: absolute;
+      padding: 12px;
+      right: 0;
+      left: 0;
+      text-align: right;
+      background: linear-gradient(to bottom, #111, transparent);
+      span {
+         margin-right: 16px;
+         cursor: pointer;
+      }
+   }
+`
