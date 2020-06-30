@@ -222,6 +222,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          packagingType
          sealingType
          leadTime
+         image
          supplier {
             id
             name
