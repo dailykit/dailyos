@@ -5,6 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { useOrder } from '../../context'
 import { ORDER } from '../../graphql'
+import { formatDate } from '../../utils'
 import { Loader } from '../../components'
 import { UserIcon, PrintIcon } from '../../assets/icons'
 
@@ -103,15 +104,29 @@ const Order = () => {
             <section>
                <section>
                   <span>{t(address.concat('ordered'))}:&nbsp;</span>
-                  <span>Feb 12, 2020</span>
+                  <span>{formatDate(order.created_at)}</span>
                </section>
                <section>
                   <span>{t(address.concat('expected dispatch'))}:&nbsp;</span>
-                  <span>Feb 12, 2020</span>
+                  <span>
+                     {order.deliveryInfo?.pickup?.window?.approved?.startsAt
+                        ? formatDate(
+                             order.deliveryInfo?.pickup?.window?.approved
+                                ?.startsAt
+                          )
+                        : 'N/A'}
+                  </span>
                </section>
                <section>
                   <span>{t(address.concat('delivery'))}:&nbsp;</span>
-                  <span>Feb 12, 2020</span>
+                  <span>
+                     {order.deliveryInfo?.dropoff?.window?.approved?.endsAt
+                        ? formatDate(
+                             order.deliveryInfo?.dropoff?.window?.approved
+                                ?.endsAt
+                          )
+                        : 'N/A'}
+                  </span>
                </section>
             </section>
          </Header>

@@ -186,7 +186,7 @@ const OrderListItem = ({ order }) => {
                   &nbsp;|&nbsp;
                   <ExpectedDelivery data={deliveryInfo?.pickup} />
                   &nbsp;|&nbsp;
-                  <DeliveryOn data={deliveryInfo?.dropoff} />
+                  <DeliveryBy data={deliveryInfo?.dropoff} />
                </section>
             </StyledHeader>
             <main>
@@ -513,14 +513,14 @@ const ExpectedDelivery = ({ data = {} }) => {
    )
 }
 
-const DeliveryOn = ({ data = {} }) => {
+const DeliveryBy = ({ data = {} }) => {
    const { t } = useTranslation()
    return (
       <StyledStatus>
-         <span>{t(address.concat('delivery on'))}:&nbsp;</span>
+         <span>{t(address.concat('delivery by'))}:&nbsp;</span>
          <span>
-            {data.window?.approved?.startsAt
-               ? formatDate(data.window?.approved?.startsAt)
+            {data?.window?.approved?.startsAt
+               ? formatDate(data?.window?.approved?.startsAt)
                : 'N/A'}
          </span>
       </StyledStatus>
