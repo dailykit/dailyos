@@ -10,7 +10,7 @@ import { UPDATE_SUPPLIER } from '../../../../graphql'
 export default function LogoTunnel({ close, formState }) {
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Address information added!')
+         toast.info('Supplier Logo Added!')
          close(1)
       },
       onError: error => {
