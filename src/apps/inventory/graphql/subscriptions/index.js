@@ -150,6 +150,7 @@ export const SUPPLIER_SUBSCRIPTION = gql`
       supplier(id: $id) {
          id
          name
+         logo
          contactPerson
          available
          address

@@ -19,10 +19,10 @@ import { AddressCard, ContactCard, FormHeading } from '../../../components'
 import { Context } from '../../../context/tabs'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
 import { FlexContainer, FormActions, StyledWrapper } from '../styled'
-import { Container } from './styled'
+import { Container, ImageContainer } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import PersonContactTunnel from './Tunnels/PersonContactTunnel'
-import AssetTunnel from './Tunnels/AssetTunnel'
+import LogoTunnel from './Tunnels/LogoTunnel'
 
 const address = 'apps.inventory.views.forms.supplier.'
 
@@ -101,7 +101,7 @@ export default function SupplierForm() {
          </Tunnels>
          <Tunnels tunnels={assetTunnel}>
             <Tunnel layer={1}>
-               <AssetTunnel close={closeAssetTunnel} formState={formState} />
+               <LogoTunnel close={closeAssetTunnel} formState={formState} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -127,17 +127,35 @@ export default function SupplierForm() {
                </FormActions>
             </FormHeading>
             <Container>
-               <ButtonTile
-                  onClick={() => openAssetTunnel(1)}
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat('add logo of the supplier'))}
-                  helper={t(
-                     address.concat(
-                        'upto 1MB - only JPGs, PNGs, and PDFs are allowed'
-                     )
-                  )}
-               />
+               {formState.logo ? (
+                  <ImageContainer>
+                     <div>
+                        <span
+                           role="button"
+                           tabIndex="0"
+                           onClick={() => openAssetTunnel(1)}
+                           onKeyDown={e =>
+                              e.charCode === 13 && openAssetTunnel(1)
+                           }
+                        >
+                           <EditIcon />
+                        </span>
+                     </div>
+                     <img src={formState.logo} alt="supplier logo" />
+                  </ImageContainer>
+               ) : (
+                  <ButtonTile
+                     onClick={() => openAssetTunnel(1)}
+                     type="primary"
+                     size="lg"
+                     text={t(address.concat('add logo of the supplier'))}
+                     helper={t(
+                        address.concat(
+                           'upto 1MB - only JPGs, PNGs, and PDFs are allowed'
+                        )
+                     )}
+                  />
+               )}
 
                <AddressView
                   formState={formState}
