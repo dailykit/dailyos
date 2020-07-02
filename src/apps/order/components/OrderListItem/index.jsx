@@ -181,7 +181,10 @@ const OrderListItem = ({ order }) => {
                         })
                      }
                   >
-                     View Delivery
+                     {order?.deliveryInfo?.deliveryCompany?.name
+                        ? 'View'
+                        : 'Select'}{' '}
+                     Delivery
                   </StyledButton>
                )}
 
