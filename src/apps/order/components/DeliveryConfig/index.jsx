@@ -54,6 +54,7 @@ export const DeliveryConfig = () => {
             selectedDeliveryService: {
                logo: service.logo,
                name: service.companyName,
+               ...(service.isThirdParty && { id: service.partnershipId }),
             },
          },
       })
