@@ -38,7 +38,7 @@ const App = () => {
    const addDeliveryPartner = async () => {
       await updateOrder({
          id: state.delivery_config.orderId,
-         set: state.delivery_config.selectedDeliveryService.name
+         set: state.delivery_config.selectedDeliveryService.id
             ? {
                  deliveryPartnershipId:
                     state.delivery_config.selectedDeliveryService.id,

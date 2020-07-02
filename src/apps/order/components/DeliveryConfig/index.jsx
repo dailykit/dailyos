@@ -12,7 +12,12 @@ import {
 
 import { useOrder } from '../../context'
 import { DELIVERY_SERVICES, ORDER_DELIVERY_INFO } from '../../graphql'
-import { Wrapper, StyledList } from './styled'
+import {
+   Wrapper,
+   StyledList,
+   StyledDeliveryCard,
+   DeliveryStates,
+} from './styled'
 import { ServiceInfo } from '../ServiceInfo'
 import { InfoIcon } from '../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../shared/components'
@@ -49,6 +54,7 @@ export const DeliveryConfig = () => {
             selectedDeliveryService: {
                logo: service.logo,
                name: service.companyName,
+               ...(service.isThirdParty && { id: service.partnershipId }),
             },
          },
       })
@@ -64,14 +70,7 @@ export const DeliveryConfig = () => {
       <Wrapper>
          {order.deliveryInfo?.deliveryCompany?.name ? (
             <>
-               <section>
-                  <Text as="title">Delivery By</Text>
-                  <Avatar
-                     withName
-                     title={order.deliveryInfo.deliveryCompany.name}
-                     url={order.deliveryInfo.deliveryCompany.logo}
-                  />
-               </section>
+               <DeliveryDetails details={order} />
             </>
          ) : (
             <>
@@ -115,5 +114,82 @@ export const DeliveryConfig = () => {
             </>
          )}
       </Wrapper>
+   )
+}
+
+const DeliveryDetails = ({ details }) => {
+   const [isLoading, setIsLoading] = React.useState(true)
+   const [deliveryInfo, setDeliveryInfo] = React.useState(null)
+   const [order, setOrder] = React.useState(null)
+
+   React.useEffect(() => {
+      const { deliveryInfo, ...rest } = details
+      setOrder(rest)
+      setDeliveryInfo(deliveryInfo)
+      setIsLoading(false)
+   }, [details])
+
+   if (isLoading) return <InlineLoader />
+   return (
+      <main>
+         <Text as="title">Delivery By</Text>
+         <Avatar
+            withName
+            title={deliveryInfo.deliveryCompany.name}
+            url={deliveryInfo.deliveryCompany.logo}
+         />
+         <section>
+            <Text as="title">Delivery Status</Text>
+            <DeliveryStates
+               status={{
+                  request: deliveryInfo.deliveryRequest.status.value,
+                  assignment: deliveryInfo.assigned.status.value,
+                  pickup: deliveryInfo.pickup.status.value,
+                  dropoff: deliveryInfo.dropoff.status.value,
+               }}
+            >
+               <DeliveryState
+                  title="Delivery Request"
+                  value={deliveryInfo.deliveryRequest.status.value}
+               />
+               <DeliveryState
+                  title="Driver Assigned"
+                  value={deliveryInfo.assigned.status.value}
+               />
+               <DeliveryState
+                  title="Pick Up"
+                  value={deliveryInfo.pickup.status.value}
+               />
+               <DeliveryState
+                  title="Drop Off"
+                  value={deliveryInfo.dropoff.status.value}
+               />
+               <DeliveryState
+                  title="Delivered"
+                  value={
+                     deliveryInfo.dropoff.status.value === 'SUCCEEDED'
+                        ? 'SUCCEEDED'
+                        : 'WAITING'
+                  }
+               />
+            </DeliveryStates>
+         </section>
+      </main>
+   )
+}
+
+const STATUS = {
+   WAITING: 'Waiting',
+   IN_PROGRESS: 'In Progress',
+   SUCCEEDED: 'Completed',
+   CANCELLED: 'Cancelled',
+}
+
+const DeliveryState = ({ title, value }) => {
+   return (
+      <StyledDeliveryCard>
+         <span>{title}</span>
+         <span>{STATUS[value]}</span>
+      </StyledDeliveryCard>
    )
 }

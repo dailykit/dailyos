@@ -112,6 +112,7 @@ export const ORDERS = gql`
          amountPaid
          deliveryPrice
          transactionId
+         fulfillmentType
          orderMealKitProducts {
             id
             price
@@ -207,6 +208,7 @@ export const ORDER = gql`
          itemTotal
          deliveryPrice
          transactionId
+         fulfillmentType
          orderMealKitProducts {
             id
             assemblyStatus
