@@ -1,18 +1,15 @@
 import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.main`
-   overflow-y: auto;
-   padding: 0 16px 16px 16px;
-   height: calc(100% - 104px);
-   > section,
-   main {
-      padding: 16px 0;
+   height: 100%;
+   [data-type='tunnel-content'] {
       border-top: 1px solid #e3e3e3;
+      padding: 16px 16px 0 16px;
+      overflow-y: scroll;
+      height: calc(100% - 104px);
    }
-   > main {
-      > section {
-         margin-top: 16px;
-      }
+   [data-type='delivery-states'] {
+      margin-bottom: 16px;
    }
 `
 
@@ -152,7 +149,7 @@ const statePicker = status => {
          `
       case 'IN_PROGRESS':
          return css`
-            color: #696161;
+            color: #fff;
             background: #5d83f5;
          `
       case 'SUCCEEDED':
@@ -177,18 +174,3 @@ export const StyledTag = styled.span(
       margin-left: 8px;
    `
 )
-
-export const StyledTrackingButton = styled.button`
-   height: 28px;
-   display: flex;
-   padding: 0 8px;
-   color: #787d91;
-   cursor: pointer;
-   background: #fff;
-   font-weight: 500;
-   background: white;
-   margin-left: 14px;
-   align-items: center;
-   text-transform: uppercase;
-   border: 1px solid rgba(0, 0, 0, 0.2);
-`

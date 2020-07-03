@@ -20,19 +20,19 @@ import {
    DeliveryStates,
    StyledDeliveryBy,
    StyledTag,
-   StyledTrackingButton,
 } from './styled'
 import { normalizeAddress, formatDate } from '../../utils'
 import { ServiceInfo } from '../ServiceInfo'
 import { InfoIcon } from '../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../shared/components'
 
-export const DeliveryConfig = () => {
+export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
    const {
-      dispatch,
+      updateOrder,
       state: { delivery_config },
    } = useOrder()
-   const [service, setService] = React.useState(null)
+   const [selectedService, setSelectedService] = React.useState(null)
+   const [serviceInfo, setServiceInfo] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { loading: loadingOrder, data: { order = {} } = {} } = useSubscription(
       ORDER_DELIVERY_INFO,
@@ -47,22 +47,35 @@ export const DeliveryConfig = () => {
 
    const viewInfo = (e, id) => {
       e.stopPropagation()
-      setService(id)
+      setServiceInfo(id)
       openTunnel(1)
    }
 
-   const handleSelection = (e, service) => {
-      dispatch({
-         type: 'DELIVERY_PANEL',
-         payload: {
-            orderId: delivery_config.orderId,
-            selectedDeliveryService: {
-               logo: service.logo,
-               name: service.companyName,
-               ...(service.isThirdParty && { id: service.partnershipId }),
+   const addDeliveryPartner = async () => {
+      await updateOrder({
+         id: order.id,
+         set: selectedService.partnershipId
+            ? {
+                 deliveryPartnershipId: selectedService.partnershipId,
+              }
+            : null,
+         append: {
+            deliveryInfo: {
+               deliveryCompany: {
+                  logo: selectedService.logo,
+                  name: selectedService.companyName,
+                  ...(selectedService.isThirdParty && {
+                     id: selectedService.partnershipId,
+                  }),
+               },
             },
          },
       })
+      closeParentTunnel(1)
+   }
+
+   const trackDelivery = () => {
+      window.open(order.deliveryInfo.tracking.code.url, '__blank')
    }
 
    if (loadingOrder)
@@ -75,17 +88,35 @@ export const DeliveryConfig = () => {
       <Wrapper>
          {order.deliveryInfo?.deliveryCompany?.name ? (
             <>
+               <TunnelHeader
+                  close={() => closeParentTunnel(1)}
+                  right={{
+                     action: () => trackDelivery(),
+                     title: 'Track',
+                  }}
+                  title={`Delivery - Order ${order.id}`}
+               />
                <DeliveryDetails details={order} />
             </>
          ) : (
             <>
-               <section>
+               <TunnelHeader
+                  close={() => closeParentTunnel(1)}
+                  right={{
+                     action: () => addDeliveryPartner(),
+                     title: 'Save',
+                  }}
+                  title={`Delivery - Order ${order.id}`}
+               />
+               <section data-type="tunnel-content">
                   <Text as="title">Available Delivery Partners</Text>
                   {loadingServices && <InlineLoader />}
                   <StyledList>
                      {deliveryServices.map(service => (
                         <li key={service.id}>
-                           <section onChange={e => handleSelection(e, service)}>
+                           <section
+                              onChange={() => setSelectedService(service)}
+                           >
                               <input type="radio" name="service" />
                               <Avatar
                                  withName
@@ -113,7 +144,7 @@ export const DeliveryConfig = () => {
                         title="Delivery Partner Information"
                         close={() => closeTunnel(1)}
                      />
-                     <ServiceInfo id={service} />
+                     <ServiceInfo id={serviceInfo} />
                   </Tunnel>
                </Tunnels>
             </>
@@ -169,25 +200,11 @@ const DeliveryDetails = ({ details }) => {
       height: '400px',
    }
 
-   const trackDelivery = () => {
-      window.open(deliveryInfo.tracking.code.url, '__blank')
-   }
-
    if (isLoading) return <InlineLoader />
    return (
-      <main>
+      <main data-type="tunnel-content">
          <StyledDeliveryBy>
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-               }}
-            >
-               <Text as="title">Delivery Status</Text>
-               <StyledTrackingButton onClick={() => trackDelivery()}>
-                  Track
-               </StyledTrackingButton>
-            </div>
+            <Text as="title">Delivery Status</Text>
             <Avatar
                withName
                title={deliveryInfo.deliveryCompany.name}
@@ -200,7 +217,7 @@ const DeliveryDetails = ({ details }) => {
                onLoad={onLoad}
                onUnmount={onUnmount}
                clickableIcons={false}
-               center={coordinates.organization}
+               center={coordinates.driver}
                mapContainerStyle={containerStyle}
             >
                <Marker
@@ -213,11 +230,11 @@ const DeliveryDetails = ({ details }) => {
                />
                <Marker
                   position={coordinates.driver}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/driver.png"
+                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/package.png"
                />
             </GoogleMap>
          </LoadScript>
-         <section>
+         <section data-type="delivery-states">
             <DeliveryStates
                status={{
                   request: deliveryInfo.deliveryRequest.status.value,
@@ -327,7 +344,7 @@ const DeliveryState = ({ title, value, time, children }) => {
          <section data-type="status">
             <span>
                <span>
-                  {title}
+                  {title || 'N/A'}
                   <StyledTag status={value}>{STATUS[value]}</StyledTag>
                </span>
                <span>{time && formatDate(time)}</span>
