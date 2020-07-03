@@ -205,15 +205,15 @@ const DeliveryDetails = ({ details }) => {
             >
                <Marker
                   position={coordinates.organization}
-                  icon="https://www.dailykit.org/hubfs/official_dailykit_website/img/anims/output-onlinepngtools.png"
+                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png"
                />
                <Marker
                   position={coordinates.customer}
-                  icon="https://www.dailykit.org/hubfs/official_dailykit_website/img/anims/output-onlinepngtools.png"
+                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png"
                />
                <Marker
                   position={coordinates.driver}
-                  icon="https://www.dailykit.org/hubfs/official_dailykit_website/img/anims/marker.png"
+                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/driver.png"
                />
             </GoogleMap>
          </LoadScript>
