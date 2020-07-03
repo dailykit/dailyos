@@ -1193,7 +1193,6 @@
             "loader": {},
             "metricitem": {},
             "orderlistitem": {
-               "customer info": "Customer Info",
                "items": "Items",
                "inventory": "Inventory",
                "servings": "Servings",
@@ -1202,7 +1201,6 @@
                "ready by": "Ready By",
                "Delivery": "Delivery",
                "pickup": "Pick Up",
-               "billing info": "Billing Info",
                "tax": "Tax",
                "discount": "Discount",
                "delivery price": "Delivery Price",

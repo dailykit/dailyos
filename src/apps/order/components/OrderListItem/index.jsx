@@ -25,6 +25,7 @@ import {
    StyledHeader,
    StyledStat,
    StyledPrint,
+   StyledOrderType,
 } from './styled'
 
 import {
@@ -36,7 +37,10 @@ import {
    ArrowUpIcon,
    NewTabIcon,
    PrintIcon,
+   HomeIcon,
 } from '../../assets/icons'
+import deliveryIcon from '../../assets/svgs/delivery.png'
+import pickUpIcon from '../../assets/svgs/pickup.png'
 
 import { formatDate } from '../../utils'
 
@@ -104,7 +108,9 @@ const OrderListItem = ({ order }) => {
          <section>
             <ListBodyItem isOpen={currentPanel === 'customer'}>
                <header>
-                  <span>{t(address.concat('customer info'))}</span>
+                  <span>
+                     <CustomerName data={deliveryInfo?.dropoff?.dropoffInfo} />
+                  </span>
                   <ToggleButton
                      type="customer"
                      current={currentPanel}
@@ -115,16 +121,13 @@ const OrderListItem = ({ order }) => {
                   {deliveryInfo?.dropoff &&
                      Object.keys(deliveryInfo?.dropoff).length > 0 && (
                         <StyledConsumer>
-                           <CustomerName
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
-                           <CustomerAddress
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
                            <CustomerPhone
                               data={deliveryInfo?.dropoff?.dropoffInfo}
                            />
                            <CustomerEmail
+                              data={deliveryInfo?.dropoff?.dropoffInfo}
+                           />
+                           <CustomerAddress
                               data={deliveryInfo?.dropoff?.dropoffInfo}
                            />
                         </StyledConsumer>
@@ -133,7 +136,9 @@ const OrderListItem = ({ order }) => {
             </ListBodyItem>
             <ListBodyItem isOpen={currentPanel === 'billing'}>
                <header>
-                  <span>{t(address.concat('billing info'))}</span>
+                  <span style={{ fontSize: 15, fontWeight: 500 }}>
+                     Amount Paid: {rest.amountPaid}
+                  </span>
                   <ToggleButton
                      type="billing"
                      current={currentPanel}
@@ -162,6 +167,13 @@ const OrderListItem = ({ order }) => {
          </section>
          <StyledProducts>
             <StyledHeader>
+               <StyledOrderType>
+                  {isPickup(order.fulfillmentType) ? (
+                     <img alt="Pick Up" title="Pick Up" src={pickUpIcon} />
+                  ) : (
+                     <img alt="Delivery" title="Delivery" src={deliveryIcon} />
+                  )}
+               </StyledOrderType>
                <StyledButton type="button" onClick={() => createTab(id)}>
                   ORD{order.id}
                   <NewTabIcon size={14} />
@@ -473,7 +485,10 @@ const CustomerName = ({ data }) => {
 const CustomerAddress = ({ data }) => {
    return (
       <StyledConsumerAddress>
-         {normalize(data?.customerAddress)}
+         <span style={{ marginRight: 8 }}>
+            <HomeIcon size={14} color="#718096" />
+         </span>
+         <span>{normalize(data?.customerAddress)}</span>
       </StyledConsumerAddress>
    )
 }
