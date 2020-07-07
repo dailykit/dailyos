@@ -4,7 +4,7 @@ import {
    Tunnels,
    useTunnel,
    Text,
-   TextButton,
+   ComboButton,
    Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
@@ -14,7 +14,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { Context } from '../../../context/tabs'
 
-import { AddIcon } from '../../../assets/icons'
+import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
 import { PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
@@ -107,12 +107,13 @@ export default function Packagings() {
             <StyledHeader>
                <Text as="title">Packagings</Text>
                <FlexContainer>
-                  <TextButton
+                  <ComboButton
                      type="outline"
-                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                     onClick={() => addTab('Packaging Hub', 'packagingHub')}
                   >
-                     Clear Filters
-                  </TextButton>{' '}
+                     <PackagingHubIcon />
+                     EXPLORE PACKAGING HUB
+                  </ComboButton>
                   <span style={{ width: '10px' }} />
                   <IconButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />

@@ -14,6 +14,7 @@ import ClockIcon from './Clock'
 import CertificateIcon from './Certificate'
 import MessageBlue from './MessageBlue'
 import Call from './Call'
+import PackagingHubIcon from './packagingHub'
 
 export {
    MenuIcon,
@@ -31,5 +32,6 @@ export {
    ClockIcon,
    CertificateIcon,
    MessageBlue,
-   Call
+   Call,
+   PackagingHubIcon,
 }

@@ -20,6 +20,8 @@ import {
    SachetPackaging,
 } from '../../views'
 
+import PackagingHub from '../../packagingHub'
+
 const renderComponent = (type, view) => {
    // Listings
    if (type === 'listings' && view === 'suppliers') return <SupplierListing />
@@ -40,6 +42,7 @@ const renderComponent = (type, view) => {
       return <SachetPackaging />
    if (type === 'forms' && view === 'assemblyPackaging')
       return <SachetPackaging />
+   if (type === 'forms' && view === 'packagingHub') return <PackagingHub />
 }
 
 const MainWrapper = styled.main`
