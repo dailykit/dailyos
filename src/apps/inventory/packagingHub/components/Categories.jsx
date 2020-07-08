@@ -25,15 +25,18 @@ export default function Categories() {
       <Wrapper>
          <h2>Categories</h2>
 
-         {categories.map(category => {
-            return <Card key={category.id} category={category} />
-         })}
+         <Cards>
+            {categories.map(category => {
+               return <Card key={category.id} category={category} />
+            })}
+         </Cards>
       </Wrapper>
    )
 }
 
 const Wrapper = styled.div`
-   margin: 36px 0px 24px 3rem;
+   margin-top: 40px;
+
    position: relative;
 
    h2 {
@@ -41,5 +44,15 @@ const Wrapper = styled.div`
       font-size: 40px;
       line-height: 38px;
       color: #555b6e;
+      margin-left: 3rem;
+      margin-bottom: 32px;
    }
+`
+
+const Cards = styled.div`
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   grid-template-rows: auto;
+
+   grid-gap: 4px;
 `
