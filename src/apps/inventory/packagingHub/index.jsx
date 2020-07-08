@@ -1,11 +1,12 @@
 import React from 'react'
 
-import { Header } from './components'
+import { Header, Categories } from './components'
 
 export default function PackaginHub() {
    return (
       <>
          <Header />
+         <Categories />
       </>
    )
 }
