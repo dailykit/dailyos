@@ -300,3 +300,20 @@ export const StyledButton = styled.button`
    text-transform: uppercase;
    border: 1px solid rgba(0, 0, 0, 0.2);
 `
+
+export const StyledStatus = styled.div`
+   display: flex;
+   margin-right: 16px;
+   align-items: center;
+   span {
+      :first-child {
+         color: #a7a8a6;
+         display: block;
+         font-size: 14px;
+         font-weight: 500;
+      }
+      :last-child {
+         font-size: 16px;
+      }
+   }
+`
