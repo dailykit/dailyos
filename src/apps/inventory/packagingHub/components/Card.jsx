@@ -19,14 +19,31 @@ export default function Card({ category }) {
    }
 
    return (
-      <StyledCard onClick={openProductsView}>
+      <StyledCard assets={category.assets} onClick={openProductsView}>
          <h4>{category.name}</h4>
          <button onClick={openProductsView} type="button">
             {'>>'}
          </button>
+
+         <OverLay />
       </StyledCard>
    )
 }
+
+const OverLay = styled.div`
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   background-color: rgba(0, 0, 0, 0.7);
+   top: 0;
+   left: 0;
+
+   &:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+   }
+
+   z-index: 2;
+`
 
 const StyledCard = styled.div`
    flex: 1;
@@ -41,20 +58,21 @@ const StyledCard = styled.div`
 
    position: relative;
 
-   background: ${({ assets }) =>
-      (Array.isArray(assets) && `url(${assets[0]?.url}) no-repeat`) || ''};
+   background: ${({ assets: { images = [] } }) => {
+      const img = images.find(img => img.isFeatured)
+      if (img.url) return `url(${img.url})`
+   }};
+
+   background-repeat: no-repeat;
    background-size: cover;
 
-   &:hover {
-      filter: brightness(0.9);
-   }
-
-   h3 {
+   h4 {
       font-weight: 500;
       font-size: 28px;
       line-height: 27px;
 
       color: #ffffff;
+      z-index: 4;
    }
 
    button {
@@ -65,5 +83,6 @@ const StyledCard = styled.div`
 
       bottom: 2rem;
       right: 2rem;
+      z-index: 4;
    }
 `
