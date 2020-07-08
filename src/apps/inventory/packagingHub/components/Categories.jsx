@@ -19,7 +19,7 @@ export default function Categories() {
 
    if (loading) return <Loader />
 
-   const { packagingHub_packagingCompanyBrand: categories } = data
+   const { packagingHub_packagingType: categories } = data
 
    return (
       <Wrapper>
