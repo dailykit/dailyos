@@ -10,6 +10,15 @@ export const CATEGORIES = gql`
    }
 `
 
+export const Category = gql`
+   query Category($id: Int!) {
+      packagingHub_packagingType_by_pk(id: $id) {
+         name
+         id
+      }
+   }
+`
+
 export const PACKAGINGS = gql`
    query Packaging($id: Int!) {
       packagingHub_packaging(where: { packagingTypeId: { _eq: $id } }) {
@@ -19,12 +28,19 @@ export const PACKAGINGS = gql`
          height
          length
          width
+         packagingType {
+            id
+            name
+         }
          packagingCompanyBrand {
+            id
             name
          }
          thickness
          packagingPurchaseOptions(order_by: { quantity: asc }) {
-            salesPrice
+            id
+            quantity
+            unit
          }
       }
    }
