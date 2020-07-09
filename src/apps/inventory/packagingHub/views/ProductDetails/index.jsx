@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
 import styled from 'styled-components'
 
-import { Badge } from '../../components'
+import { Badge, ImageCarousel } from '../../components'
 import { Context } from '../../../context/tabs'
 
 import { PACKAGING } from '../../graphql'
@@ -31,7 +31,7 @@ export default function ProductDetailsPage() {
 
    if (loading) return <Loader />
 
-   const { packagingHub_packaging_by_pk: packaging } = data
+   const { packagingHub_packaging_by_pk: packaging = {} } = data
 
    return (
       <Wrapper>
@@ -43,12 +43,11 @@ export default function ProductDetailsPage() {
          <Main>
             {/* carousel and description */}
             <div>
-               <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptate quos voluptatem praesentium doloremque laborum illum
-                  sed accusantium vitae labore quae minima quia tenetur minus,
-                  velit architecto? Ab nobis quisquam aliquid?
-               </p>
+               {packaging.assets &&
+               packaging.assets.images &&
+               packaging.assets.images.length ? (
+                  <ImageCarousel images={packaging.assets.images} />
+               ) : null}
             </div>
 
             {/* specs and cta button */}
