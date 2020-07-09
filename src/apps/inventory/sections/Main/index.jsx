@@ -53,6 +53,7 @@ const renderComponent = (type, view) => {
 
 const MainWrapper = styled.main`
    overflow-x: auto;
+   position: relative;
 `
 
 const Main = () => {

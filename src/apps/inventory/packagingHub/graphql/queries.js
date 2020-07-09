@@ -20,7 +20,7 @@ export const Category = gql`
 `
 
 export const PACKAGINGS = gql`
-   query Packaging($id: Int!) {
+   query Packagings($id: Int!) {
       packagingHub_packaging(where: { packagingTypeId: { _eq: $id } }) {
          id
          packagingName
@@ -41,6 +41,36 @@ export const PACKAGINGS = gql`
             id
             quantity
             unit
+         }
+      }
+   }
+`
+
+export const PACKAGING = gql`
+   query Packaging($id: Int!) {
+      packagingHub_packaging_by_pk(id: $id) {
+         id
+         packagingName
+         assets
+         packagingDescription {
+            id
+            shortDescription
+         }
+         packagingCompanyBrand {
+            id
+            name
+         }
+         packagingPurchaseOptions {
+            id
+            quantity
+            unit
+         }
+         packagingSpecification {
+            id
+            fdaCompliant
+            compostable
+            microwaveable
+            recyclable
          }
       }
    }

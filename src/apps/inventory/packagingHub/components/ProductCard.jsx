@@ -44,7 +44,7 @@ export default function ProductCard({
             <CardImage>
                <img
                   style={{ width: '100%', height: '100%' }}
-                  src={assets.images[0].url}
+                  src={assets?.images[0]?.url}
                   alt="product"
                />
             </CardImage>
