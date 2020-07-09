@@ -61,7 +61,7 @@ export const PACKAGING = gql`
             id
             name
          }
-         packagingPurchaseOptions {
+         packagingPurchaseOptions(order_by: { quantity: asc }) {
             id
             quantity
             unit

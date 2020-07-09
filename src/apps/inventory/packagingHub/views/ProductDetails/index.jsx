@@ -3,7 +3,12 @@ import { useQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
 import styled from 'styled-components'
 
-import { Badge, ImageCarousel, ProductDescription } from '../../components'
+import {
+   Badge,
+   ImageCarousel,
+   ProductDescription,
+   ProductHeader,
+} from '../../components'
 import { Context } from '../../../context/tabs'
 
 import { PACKAGING } from '../../graphql'
@@ -55,13 +60,8 @@ export default function ProductDetailsPage() {
             </div>
 
             {/* specs and cta button */}
-            <div>
-               <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptate quos voluptatem praesentium doloremque laborum illum
-                  sed accusantium vitae labore quae minima quia tenetur minus,
-                  velit architecto? Ab nobis quisquam aliquid?
-               </p>
+            <div style={{ width: '100%' }}>
+               <ProductHeader product={packaging} />
             </div>
          </Main>
       </Wrapper>
@@ -73,6 +73,8 @@ const Header = styled.div`
    display: flex;
    justify-content: space-between;
    align-items: center;
+
+   margin: 0 24px;
 `
 
 const Wrapper = styled.div`

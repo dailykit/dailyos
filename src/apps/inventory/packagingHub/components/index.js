@@ -4,6 +4,7 @@ import Badge from './Badge'
 import Packagings from './Packagings'
 import ImageCarousel from './ImageCarousel'
 import ProductDescription from './ProductDescription'
+import ProductHeader from './ProductHeader'
 
 export {
    Header,
@@ -12,4 +13,5 @@ export {
    Packagings,
    ImageCarousel,
    ProductDescription,
+   ProductHeader,
 }
