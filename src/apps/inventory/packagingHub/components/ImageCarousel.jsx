@@ -12,7 +12,7 @@ export default function ImageCarousel({ images }) {
             src={images[current]?.url}
             alt="product"
             width="90%"
-            height="440px"
+            height="437px"
          />
 
          <Images>
@@ -35,6 +35,8 @@ export default function ImageCarousel({ images }) {
 const Images = styled.div`
    margin: 2rem 0;
    display: flex;
+   flex-wrap: wrap;
+   width: 90%;
 `
 const Image = styled.img`
    width: 4rem;

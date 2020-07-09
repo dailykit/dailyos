@@ -55,6 +55,7 @@ export const PACKAGING = gql`
          packagingDescription {
             id
             shortDescription
+            longDescription
          }
          packagingCompanyBrand {
             id

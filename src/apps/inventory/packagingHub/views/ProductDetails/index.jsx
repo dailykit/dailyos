@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
 import styled from 'styled-components'
 
-import { Badge, ImageCarousel } from '../../components'
+import { Badge, ImageCarousel, ProductDescription } from '../../components'
 import { Context } from '../../../context/tabs'
 
 import { PACKAGING } from '../../graphql'
@@ -42,12 +42,16 @@ export default function ProductDetailsPage() {
 
          <Main>
             {/* carousel and description */}
-            <div>
+            <div style={{ width: '100%' }}>
                {packaging.assets &&
                packaging.assets.images &&
                packaging.assets.images.length ? (
                   <ImageCarousel images={packaging.assets.images} />
                ) : null}
+
+               <ProductDescription
+                  description={packaging.packagingDescription}
+               />
             </div>
 
             {/* specs and cta button */}
@@ -78,7 +82,7 @@ const Wrapper = styled.div`
 `
 
 const Main = styled.div`
-   margin: 24px 0;
+   margin: 24px;
 
    display: grid;
    grid-gap: 2rem;
