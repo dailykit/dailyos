@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import {
    CardWrapper,
@@ -13,16 +13,33 @@ import {
 } from './styled'
 import { TruckIcon } from '../../assets/icons'
 
+import { Context } from '../../context/tabs'
+
 export default function ProductCard({
    product: {
+      id,
       packagingName,
       packagingCompanyBrand: { name: brandName } = {},
       packagingPurchaseOptions = [],
       assets = {},
    } = {},
 }) {
+   const { dispatch } = useContext(Context)
+
+   const openProductDetailsView = () => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: {
+            type: 'forms',
+            title: packagingName,
+            view: 'packagingHubProductDetailsView',
+            id,
+         },
+      })
+   }
+
    return (
-      <CardWrapper>
+      <CardWrapper onClick={openProductDetailsView}>
          <CardContent>
             <CardImage>
                <img

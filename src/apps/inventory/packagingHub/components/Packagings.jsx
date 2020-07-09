@@ -25,7 +25,7 @@ export default function Packagings() {
    return (
       <Wrapper>
          {packagings.map(packaging => (
-            <ProductCard product={packaging} />
+            <ProductCard key={packaging.id} product={packaging} />
          ))}
       </Wrapper>
    )

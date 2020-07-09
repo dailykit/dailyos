@@ -6,6 +6,8 @@ export const CardWrapper = styled.div`
    border: 1px solid #ececec;
    background: #fff;
    position: relative;
+
+   cursor: pointer;
 `
 
 export const CardContent = styled.div`
