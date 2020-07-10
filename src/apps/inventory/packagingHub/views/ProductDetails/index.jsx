@@ -8,6 +8,7 @@ import {
    ImageCarousel,
    ProductDescription,
    ProductHeader,
+   ProductSpecs,
 } from '../../components'
 import { Context } from '../../../context/tabs'
 
@@ -57,6 +58,8 @@ export default function ProductDetailsPage() {
                <ProductDescription
                   description={packaging.packagingDescription}
                />
+
+               <ProductSpecs product={packaging} />
             </div>
 
             {/* specs and cta button */}

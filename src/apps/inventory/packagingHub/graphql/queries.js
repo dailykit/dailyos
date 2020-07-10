@@ -72,6 +72,17 @@ export const PACKAGING = gql`
             compostable
             microwaveable
             recyclable
+            outerGreaseResistant
+            innerGreaseResistant
+            innerWaterResistant
+            outerWaterResistant
+            opacity
+            compressibility
+
+            packagingMaterial {
+               id
+               materials
+            }
          }
       }
    }
