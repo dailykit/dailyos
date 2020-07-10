@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { TruckIcon } from '../../assets/icons'
 import { FlexContainer } from '../../views/Forms/styled'
 
+import ProductPrice from './ProductPrice'
+
 export default function ProductHeader({ product }) {
    const {
       packagingName,
@@ -67,13 +69,15 @@ export default function ProductHeader({ product }) {
                </Lead>
             </div>
          </DimensionsGrid>
+
+         <ProductPrice product={product} />
       </Wrapper>
    )
 }
 
 const Wrapper = styled.div`
    position: fixed;
-   width: 48vw;
+   width: 36vw;
    h2 {
       font-size: 40px;
       line-height: 38px;

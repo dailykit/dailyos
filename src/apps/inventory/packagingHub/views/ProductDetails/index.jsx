@@ -91,6 +91,6 @@ const Main = styled.div`
 
    display: grid;
    grid-gap: 2rem;
-   grid-template-columns: 0.9fr 1.1fr;
+   grid-template-columns: 0.6fr 0.4fr;
    grid-template-rows: 1fr;
 `

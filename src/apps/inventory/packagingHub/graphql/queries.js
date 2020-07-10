@@ -73,6 +73,7 @@ export const PACKAGING = gql`
             id
             quantity
             unit
+            salesPrice
          }
          packagingSpecification {
             id
