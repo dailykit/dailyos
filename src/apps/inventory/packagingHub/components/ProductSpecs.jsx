@@ -175,6 +175,7 @@ const Container = styled(FlexContainer)`
 `
 const StatusText = styled.p`
    font-weight: bold;
+   width: 90%;
    font-size: 14px;
    margin-left: 12px;
 

@@ -52,6 +52,14 @@ export const PACKAGING = gql`
          id
          packagingName
          assets
+
+         length
+         width
+         thickness
+         loadCapacity
+         gusset
+         LWHUnit
+
          packagingDescription {
             id
             shortDescription
