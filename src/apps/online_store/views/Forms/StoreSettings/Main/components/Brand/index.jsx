@@ -1,17 +1,30 @@
 import React from 'react'
-import { Text, Input, TextButton, Loader, ButtonTile } from '@dailykit/ui'
+import {
+   Text,
+   Input,
+   TextButton,
+   Loader,
+   ButtonTile,
+   useTunnel,
+   Tunnels,
+   Tunnel,
+} from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 import { EditIcon } from '../../../../../../assets/icons'
 
 import { Container, Flex } from '../../../styled'
 import { ImageContainer } from '../../styled'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
-import { toast } from 'react-toastify'
+import { AddressTunnel } from '../../tunnels'
 
 const BrandSettings = ({ setUpdating, openTunnel }) => {
    const [name, setName] = React.useState('')
    const [logo, setLogo] = React.useState('')
+   const [address, setAddress] = React.useState({})
+
+   const [addressTunnel, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
 
    const populate = settings => {
       settings.forEach(setting => {
@@ -22,8 +35,11 @@ const BrandSettings = ({ setUpdating, openTunnel }) => {
             case 'Brand Logo': {
                return setLogo(setting.value.url)
             }
+            case 'Address': {
+               return setAddress(setting.value)
+            }
             default: {
-               return
+               return toast.error('Settings mismatch!')
             }
          }
       })
@@ -63,69 +79,108 @@ const BrandSettings = ({ setUpdating, openTunnel }) => {
    if (loading) return <Loader />
 
    return (
-      <Container bottom="80" id="brand">
-         <Text as="h2">Brand</Text>
-         <Container top="32" bottom="32" maxWidth="600">
-            <Flex direction="row">
-               <Input
-                  style={{ width: '350px' }}
-                  type="text"
-                  label="Name"
-                  name="name"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
+      <>
+         <Tunnels tunnels={addressTunnel}>
+            <Tunnel layer={1}>
+               <AddressTunnel
+                  closeTunnel={closeAddressTunnel}
+                  address={address}
                />
-               <TextButton
-                  type="solid"
-                  onClick={e =>
-                     save({
-                        identifier: 'Brand Name',
-                        value: { name },
-                     })
-                  }
-               >
-                  Update
-               </TextButton>
-            </Flex>
+            </Tunnel>
+         </Tunnels>
+         <Container bottom="80" id="brand">
+            <Text as="h2">Brand</Text>
+            <Container top="32" bottom="32" maxWidth="600">
+               <Flex direction="row">
+                  <Input
+                     style={{ width: '350px' }}
+                     type="text"
+                     label="Name"
+                     name="name"
+                     value={name}
+                     onChange={e => setName(e.target.value)}
+                  />
+                  <TextButton
+                     type="solid"
+                     onClick={() =>
+                        save({
+                           identifier: 'Brand Name',
+                           value: { name },
+                        })
+                     }
+                  >
+                     Update
+                  </TextButton>
+               </Flex>
+            </Container>
+            <Container bottom="32" maxWidth="600">
+               {logo ? (
+                  <>
+                     <Text as="subtitle">Logo</Text>
+                     <ImageContainer width="300px" height="300px">
+                        <div>
+                           <span
+                              role="button"
+                              tabIndex="0"
+                              onKeyDown={e =>
+                                 e.charCode === 13 &&
+                                 setUpdating({
+                                    type: 'brand',
+                                    identifier: 'Brand Logo',
+                                 })
+                              }
+                              onClick={() => {
+                                 setUpdating({
+                                    type: 'brand',
+                                    identifier: 'Brand Logo',
+                                 })
+                                 openTunnel(1)
+                              }}
+                           >
+                              <EditIcon />
+                           </span>
+                        </div>
+                        <img src={logo} alt="Brand Logo" />
+                     </ImageContainer>
+                  </>
+               ) : (
+                  <ButtonTile
+                     type="primary"
+                     size="sm"
+                     text="Add a Logo"
+                     helper="upto 1MB - only JPG, PNG, PDF allowed"
+                     onClick={() => {
+                        setUpdating({
+                           type: 'brand',
+                           identifier: 'Brand Logo',
+                        })
+                        openTunnel(1)
+                     }}
+                  />
+               )}
+            </Container>
+            <Container bottom="32" maxWidth="600">
+               {Object.keys(address).length ? (
+                  <>
+                     <Flex>
+                        <div>
+                           <Text as="subtitle">Address</Text>
+                           <Text as="p">{address.line1}</Text>
+                        </div>
+                        <TextButton type="solid">Update</TextButton>
+                     </Flex>
+                  </>
+               ) : (
+                  <ButtonTile
+                     noIcon
+                     type="secondary"
+                     text="Add Address"
+                     onClick={() => openAddressTunnel(1)}
+                  />
+               )}
+            </Container>
          </Container>
-         <Container bottom="32" maxWidth="600">
-            {logo ? (
-               <React.Fragment>
-                  <Text as="subtitle">Logo</Text>
-                  <ImageContainer width="300px" height="300px">
-                     <div>
-                        <span
-                           onClick={() => {
-                              setUpdating({
-                                 type: 'brand',
-                                 identifier: 'Brand Logo',
-                              })
-                              openTunnel(1)
-                           }}
-                        >
-                           <EditIcon />
-                        </span>
-                     </div>
-                     <img src={logo} alt="Brand Logo" />
-                  </ImageContainer>
-               </React.Fragment>
-            ) : (
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text="Add a Logo"
-                  helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => {
-                     setUpdating({
-                        type: 'brand',
-                        identifier: 'Brand Logo',
-                     })
-                     openTunnel(1)
-                  }}
-               />
-            )}
-         </Container>
-      </Container>
+      </>
    )
 }
 
