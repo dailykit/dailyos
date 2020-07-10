@@ -162,12 +162,24 @@ const BrandSettings = ({ setUpdating, openTunnel }) => {
             <Container bottom="32" maxWidth="600">
                {Object.keys(address).length ? (
                   <>
-                     <Flex>
+                     <Flex
+                        direction="row"
+                        align="center"
+                        justify="space-between"
+                     >
                         <div>
                            <Text as="subtitle">Address</Text>
                            <Text as="p">{address.line1}</Text>
+                           <Text as="p">{address.line2}</Text>
+                           <Text as="p">{`${address.city}, ${address.state}, ${address.country}`}</Text>
+                           <Text as="p">{address.zipcode}</Text>
                         </div>
-                        <TextButton type="solid">Update</TextButton>
+                        <TextButton
+                           type="solid"
+                           onClick={() => openAddressTunnel(1)}
+                        >
+                           Update
+                        </TextButton>
                      </Flex>
                   </>
                ) : (
