@@ -4,25 +4,46 @@ import {
    ListOptions,
    ListSearch,
    useSingleList,
+   Loader,
+   TunnelHeader,
 } from '@dailykit/ui'
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
+import { TunnelContainer } from '../../../../../components'
 import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
-import { UPDATE_PACKAGING } from '../../../../../graphql'
+   UPDATE_PACKAGING,
+   SUPPLIERS_SUBSCRIPTION,
+} from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
-export default function SuppliersTunnel({ close, suppliers, state }) {
+export default function SuppliersTunnel({ close, state }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
-   const [list, current, selectOption] = useSingleList(suppliers)
+   const [data, setData] = React.useState([])
+   const [list, current, selectOption] = useSingleList(data)
+
+   const { loading } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
+      onSubscriptionData: input => {
+         const newSuppliers = input.subscriptionData.data.suppliers.map(sup => {
+            return {
+               id: sup.id,
+               supplier: { title: sup.name },
+               contact: {
+                  title: `${sup.contactPerson?.firstName || ''} ${
+                     sup.contactPerson?.lastName || ''
+                  }`,
+                  img: '',
+               },
+            }
+         })
+
+         setData(newSuppliers)
+      },
+   })
 
    const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
       onError: error => {
@@ -46,49 +67,45 @@ export default function SuppliersTunnel({ close, suppliers, state }) {
       })
    }
 
+   if (loading) return <Loader />
+
    return (
       <>
+         <TunnelHeader
+            title={t(address.concat('select supplier'))}
+            close={() => close(1)}
+            right={{ title: 'Save', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title={t(address.concat('select supplier'))}
-               next={handleNext}
-               close={() => close(1)}
-               nextAction="Save"
-            />
-
-            <Spacer />
-
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem
-                     type="SSL2"
+                     type="SSL22"
                      content={{
-                        title: current.title,
-                        description: current.description,
+                        supplier: current.supplier,
+                        contact: current.contact,
                      }}
                   />
                ) : (
                   <ListSearch
                      onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat('type what you’re looking for')
-                     )}
+                     placeholder="type what you’re looking for..."
                   />
                )}
                <ListOptions>
                   {list
                      .filter(option =>
-                        option.title.toLowerCase().includes(search)
+                        option.supplier.title.toLowerCase().includes(search)
                      )
                      .map(option => (
                         <ListItem
-                           type="SSL2"
+                           type="SSL22"
                            key={option.id}
                            isActive={option.id === current.id}
                            onClick={() => selectOption('id', option.id)}
                            content={{
-                              title: option.title,
-                              description: option.description,
+                              supplier: option.supplier,
+                              contact: option.contact,
                            }}
                         />
                      ))}

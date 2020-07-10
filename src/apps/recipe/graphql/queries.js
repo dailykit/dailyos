@@ -1,20 +1,7 @@
 import gql from 'graphql-tag'
 
-export const INGREDIENTS = gql`
-   {
-      ingredients {
-         id
-         name
-         createdAt
-         ingredientProcessings {
-            id
-         }
-      }
-   }
-`
-
 export const CUISINES = gql`
-   {
+   query Cuisines {
       cuisineNames {
          id
          name
@@ -22,157 +9,70 @@ export const CUISINES = gql`
    }
 `
 
-// Issue: It should take ID, but is asking for Int
-export const INGREDIENT = gql`
-   query Ingredient($ID: Int!) {
-      ingredient(id: $ID) {
+export const INGREDIENTS = gql`
+   query Ingredients($where: ingredient_ingredient_bool_exp) {
+      ingredients(where: $where) {
+         id
+         title: name
          name
-         image
-         id
+         isValid
       }
    }
 `
 
-export const PROCESSINGS_OF_INGREDIENT = gql`
-   query Ingredient($ingredientId: Int!) {
-      ingredient(id: $ingredientId) {
+// TODO: add isValid on processing
+export const PROCESSINGS = gql`
+   query Processings($where: ingredient_ingredientProcessing_bool_exp) {
+      ingredientProcessings(where: $where) {
          id
-         ingredientProcessings {
-            id
-            processingName
-         }
-      }
-   }
-`
-
-export const SACHETS_OF_PROCESSING = gql`
-   query Processing($processingId: Int!, $ingredientId: Int!) {
-      ingredientSachets(
-         where: {
-            ingredientId: { _eq: $ingredientId }
-            ingredientProcessing: { id: { _eq: $processingId } }
-         }
-      ) {
-         id
-         quantity
-         unit
-         tracking
-         defaultNutritionalValues
-         liveMOF
-         modeOfFulfillments {
-            id
-            type
-            isLive
-            accuracy
-            station {
-               name
-            }
-            sachetItem {
-               unitSize
-            }
-            bulkItem {
-               processingName
-            }
-            labelTemplate {
-               name
-            }
-            packaging {
-               name
-            }
-         }
-      }
-   }
-`
-//  Issue: Don't use name, but title
-export const FETCH_PROCESSING_NAMES = gql`
-   {
-      masterProcessings {
-         id
-         name
-      }
-   }
-`
-
-export const FETCH_UNITS = gql`
-   {
-      units {
-         id
-         name
-      }
-   }
-`
-
-export const FETCH_STATIONS = gql`
-   {
-      stations {
-         id
-         name
-      }
-   }
-`
-
-export const FETCH_SACHET_ITEMS = gql`
-   {
-      sachetItems {
-         id
-         unitSize
-      }
-   }
-`
-
-export const FETCH_BULK_ITEMS = gql`
-   {
-      bulkItems {
-         id
+         title: processingName
          processingName
       }
    }
 `
 
-export const FETCH_PACKAGINGS = gql`
-   {
-      packaging_packaging {
+export const SACHETS = gql`
+   query Sachets($where: ingredient_ingredientSachet_bool_exp) {
+      ingredientSachets(where: $where) {
          id
-         name
-      }
-   }
-`
-
-export const FETCH_LABEL_TEMPLATES = gql`
-   {
-      deviceHub_labelTemplate {
-         id
-         name
-      }
-   }
-`
-
-export const RECIPES = gql`
-   {
-      simpleRecipes {
-         id
-         name
-         author
-         cookingTime
-         simpleRecipeYields {
+         isValid
+         quantity
+         unit
+         ingredient {
             id
+            name
          }
       }
    }
 `
 
-export const RECIPE = gql`
-   query Recipe($id: Int!) {
-      simpleRecipe(id: $id) {
+export const SACHET_ITEMS = gql`
+   query {
+      sachetItems {
          id
-         name
-         cookingTime
-         type
-         author
-         description
-         utensils
-         cookingTime
-         cuisine
+         unitSize
+         unit
+         bulkItem {
+            id
+            processingName
+            supplierItem {
+               id
+               name
+            }
+         }
+      }
+   }
+`
+
+export const BULK_ITEMS = gql`
+   query {
+      bulkItems {
+         id
+         processingName
+         supplierItem {
+            id
+            name
+         }
       }
    }
 `

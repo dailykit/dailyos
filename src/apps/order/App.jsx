@@ -1,5 +1,6 @@
 import React from 'react'
 import usePortal from 'react-useportal'
+import { Tunnels, Tunnel, useTunnel, TunnelHeader } from '@dailykit/ui'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // Context
@@ -14,6 +15,7 @@ import { StyledWrapper } from './styled'
 import {
    OrderSummary,
    ProcessOrder,
+   DeliveryConfig,
    Notifications,
    ProcessInventory,
    ProcessReadyToEat,
@@ -21,10 +23,17 @@ import {
 
 const App = () => {
    const { state } = useOrder()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('notifications'),
    })
+
+   React.useEffect(() => {
+      if (state.delivery_config.orderId) {
+         openTunnel(1)
+      }
+   }, [state.delivery_config])
 
    if (position === 'left')
       return (
@@ -53,11 +62,25 @@ const App = () => {
                   </Portal>
                )}
             </Router>
+            <Portal>
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer="1" size="md">
+                     <DeliveryConfig closeTunnel={closeTunnel} />
+                  </Tunnel>
+               </Tunnels>
+            </Portal>
          </StyledWrapper>
       )
    return (
       <StyledWrapper position={position}>
-         <Router basename={process.env.PUBLIC_URL}>
+         <Portal>
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer="1" size="md">
+                  <DeliveryConfig />
+               </Tunnel>
+            </Tunnels>
+         </Portal>
+         <Router>
             <div>
                <Header
                   isOpen={isOpen}

@@ -1,5 +1,7 @@
 import React from 'react'
 import { Text, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 import { CloseIcon } from '../../../../assets/icons'
 
@@ -12,9 +14,7 @@ import {
    AvailabilitySettings,
 } from './components'
 import { AssetUploader } from '../../../../../../shared/components'
-import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING } from '../../../../graphql'
-import { toast } from 'react-toastify'
 
 const Main = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -35,22 +35,30 @@ const Main = () => {
    })
 
    const addImage = image => {
-      updateSetting({
-         variables: {
-            type: updating.type,
-            identifier: updating.identifier,
-            value: {
-               url: image.url,
+      if (updating.identifier === 'Slides') {
+         updateSetting({
+            variables: {
+               type: updating.type,
+               identifier: updating.identifier,
+               value: [...updating.oldValue, image],
             },
-         },
-      })
+         })
+      } else {
+         updateSetting({
+            variables: {
+               type: updating.type,
+               identifier: updating.identifier,
+               value: image,
+            },
+         })
+      }
    }
 
    return (
-      <React.Fragment>
+      <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <React.Fragment>
+               <>
                   <TunnelHeader>
                      <div>
                         <span onClick={() => closeTunnel(1)}>
@@ -65,7 +73,7 @@ const Main = () => {
                         onAssetUpload={url => addImage(url)}
                      />
                   </TunnelBody>
-               </React.Fragment>
+               </>
             </Tunnel>
          </Tunnels>
          <Container paddingX="32" left="300">
@@ -82,7 +90,7 @@ const Main = () => {
                <AvailabilitySettings />
             </Container>
          </Container>
-      </React.Fragment>
+      </>
    )
 }
 

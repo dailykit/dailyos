@@ -11,6 +11,7 @@ import {
    S_INVENTORY_PRODUCTS,
    DELETE_INVENTORY_PRODUCTS,
 } from '../../../../../graphql'
+import tableOptions from '../../../tableOption'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -39,17 +40,6 @@ const InventoryProducts = () => {
          toast.error('Could not delete!')
       },
    })
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
 
    // Handler
    const deleteHandler = (e, product) => {
@@ -113,7 +103,7 @@ const InventoryProducts = () => {
             columns={columns}
             data={inventoryProducts}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

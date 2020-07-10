@@ -4,6 +4,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
+import tableOptions from '../tableOption'
 
 import ServingsCount from '../../../utils/countFormatter'
 
@@ -111,17 +112,6 @@ const RecipesListing = () => {
 function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    const columns = [
       { title: 'Name', field: 'name', headerFilter: true },
       { title: 'Author', field: 'author', headerFilter: true },
@@ -186,7 +176,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
                columns={columns}
                data={data}
                rowClick={rowClick}
-               options={options}
+               options={tableOptions}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
             />

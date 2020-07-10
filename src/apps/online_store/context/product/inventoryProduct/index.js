@@ -2,9 +2,9 @@ import React from 'react'
 
 export const InventoryProductContext = React.createContext()
 
-export const state = {
+export const initialState = {
    meta: {
-      productTypes: 'inventory',
+      productsType: 'inventory',
       itemType: 'inventory',
       accompanimentTabIndex: 0,
    },
@@ -12,7 +12,7 @@ export const state = {
    option: undefined,
 }
 
-export const reducers = (state, { type, payload }) => {
+export const reducers = (state = initialState, { type, payload }) => {
    switch (type) {
       case 'UPDATING': {
          return {

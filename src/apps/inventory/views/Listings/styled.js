@@ -16,6 +16,8 @@ export const StyledHeader = styled.div`
    display: flex;
    align-items: center;
    justify-content: space-between;
+   width: 90%;
+   margin: 0 auto;
 `
 
 export const StyledIconGroup = styled.div`
@@ -37,6 +39,8 @@ export const StyledTableHeader = styled.div`
    display: flex;
    align-items: center;
    justify-content: space-between;
+   width: 90%;
+   margin: 0 auto;
 `
 
 export const StyledTableActions = styled.div`

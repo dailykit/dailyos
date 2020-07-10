@@ -1,14 +1,20 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, RadioGroup, Select, Text, TextButton } from '@dailykit/ui'
+import {
+   Input,
+   RadioGroup,
+   Select,
+   TunnelHeader,
+   IconButton,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon, EditIcon } from '../../../../../assets/icons'
+import { EditIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { StyledInputWrapper, TunnelBody } from '../styled'
 import { StyledTable } from './styled'
 
-const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
+const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -21,14 +27,25 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
       { id: 3, title: "Don't Weigh", value: '0' },
    ]
 
+   const close = () => {
+      closeTunnel(2)
+      ingredientDispatch({
+         type: 'EDIT_MODE',
+         payload: undefined,
+      })
+      ingredientDispatch({
+         type: 'CURRENT_MODE',
+         payload: undefined,
+      })
+   }
+
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
       onCompleted: () => {
          toast.success('Mode updated!')
          close()
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -41,7 +58,7 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
          setBusy(true)
          if (
             !ingredientState.editMode.priority ||
-            isNaN(ingredientState.editMode.priority) ||
+            Number.isNaN(ingredientState.editMode.priority) ||
             parseInt(ingredientState.editMode.priority) === 0
          ) {
             throw Error('Invalid Priority!')
@@ -66,33 +83,14 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
          setBusy(false)
       }
    }
-   const close = () => {
-      closeTunnel(8)
-      ingredientDispatch({
-         type: 'EDIT_MODE',
-         payload: undefined,
-      })
-      ingredientDispatch({
-         type: 'CURRENT_MODE',
-         payload: undefined,
-      })
-   }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={close}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Edit Mode</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Edit Mode"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={close}
+         />
          <TunnelBody>
             <StyledTable cellSpacing={0}>
                <thead>
@@ -134,9 +132,9 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                         {ingredientState.editMode.station?.name ||
                            ingredientState.editMode.station?.title ||
                            '-'}
-                        <span onClick={() => openTunnel(9)}>
+                        <IconButton type="ghost" onClick={() => openTunnel(3)}>
                            <EditIcon color="#00A7E1" />
-                        </span>
+                        </IconButton>
                      </td>
                      <td>
                         {ingredientState.editMode.bulkItem
@@ -145,9 +143,9 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                         {ingredientState.editMode.sachetItem
                            ? ingredientState.editMode.sachetItem.title
                            : ''}
-                        <span onClick={() => openTunnel(10)}>
+                        <IconButton type="ghost" onClick={() => openTunnel(4)}>
                            <EditIcon color="#00A7E1" />
-                        </span>
+                        </IconButton>
                      </td>
                      <td>
                         <RadioGroup
@@ -155,7 +153,7 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                            active={
                               options.find(
                                  op =>
-                                    op.value ==
+                                    op.value ===
                                     ingredientState.editMode.accuracy
                               )?.id || 3
                            }
@@ -173,7 +171,7 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                      <td>
                         <Select
                            option={ingredientState.editMode.packaging || []}
-                           addOption={() => openTunnel(11)}
+                           addOption={() => openTunnel(5)}
                            removeOption={() =>
                               ingredientDispatch({
                                  type: 'EDIT_MODE',
@@ -188,7 +186,7 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                      <td>
                         <Select
                            option={ingredientState.editMode.labelTemplate || []}
-                           addOption={() => openTunnel(12)}
+                           addOption={() => openTunnel(6)}
                            removeOption={() =>
                               ingredientDispatch({
                                  type: 'EDIT_MODE',
@@ -204,7 +202,7 @@ const EditModeTunnel = ({ state, closeTunnel, openTunnel }) => {
                </tbody>
             </StyledTable>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

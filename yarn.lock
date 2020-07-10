@@ -1145,10 +1145,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
-"@dailykit/ui@^0.6.91":
-  version "0.6.91"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.6.91.tgz#85c7aa77e3aa0747da013cb343161c39c690bf17"
-  integrity sha512-ve1s4e6tOq+lYDbjHvFQ0qIBUao8dhqtZquYuYgUExdOjBywxhAjhq8JbZsp9IVzFW3Unmq+WnbzD8l5UG6wcg==
+"@dailykit/ui@^0.6.92":
+  version "0.6.92"
+  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.6.92.tgz#b15054e6a9db395743d554a415f08d83fda45a31"
+  integrity sha512-LY8HrbsgLLPedw7+u7oBvxf45vXUvSj4fN59XnF0L2+LX5J/BlrmOTYkuG9g61mMd15MS5j1dSFSocpK3hMzAA==
 
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
@@ -1410,6 +1410,27 @@
     "@types/warning" "^3.0.0"
     tslib "^1.11.2"
     warning "^4.0.3"
+
+"@react-google-maps/api@^1.9.7":
+  version "1.9.7"
+  resolved "https://registry.npmjs.org/@react-google-maps/api/-/api-1.9.7.tgz#337f95b0c59cdbdab5ba1824ce2761003c274f2a"
+  integrity sha512-o51/1RaN67R9I9atfwAbshh5xs1hxzvrTiysNWi8rnkUSF29Kip+1YMQ1wys+fWUmjAPCjfqzYvaJuBIkgu8mw==
+  dependencies:
+    "@react-google-maps/infobox" "1.9.6"
+    "@react-google-maps/marker-clusterer" "1.9.6"
+    acorn "7.3.1"
+    acorn-jsx "^5.2.0"
+    invariant "2.2.4"
+
+"@react-google-maps/infobox@1.9.6":
+  version "1.9.6"
+  resolved "https://registry.npmjs.org/@react-google-maps/infobox/-/infobox-1.9.6.tgz#02b894c7c10c0f5567184b54ff5b307eb1704c2c"
+  integrity sha512-fR+zAC673BijGd9IJuV8sD0zEy1cLddxgyrT/SHFlNRPsnyprbH5Ox4zmfNU6UTkrQ7ULedFK7hUrgLVYKpc+Q==
+
+"@react-google-maps/marker-clusterer@1.9.6":
+  version "1.9.6"
+  resolved "https://registry.npmjs.org/@react-google-maps/marker-clusterer/-/marker-clusterer-1.9.6.tgz#30087efc2594d85ffb4c6b2ccf709ad5d3590c29"
+  integrity sha512-bliu3CfMWLxMJaW8UK7+6Q1iPQoXbP9BK14yvid2pZL+OgqKgmnY6O9pazIi5Ca9NVTviNcN8WCz1TicUiABQw==
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
@@ -1991,6 +2012,11 @@ acorn-walk@^6.0.1:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-6.2.0.tgz#123cb8f3b84c2171f1f7fb252615b1c78a6b1a8c"
   integrity sha512-7evsyfH1cLOCdAzZAd43Cic04yKydNx0cF+7tiA19p1XnLLPU4dpCQOqpjqwokFe//vS0QqfqqjCS2JkiIs0cA==
+
+acorn@7.3.1:
+  version "7.3.1"
+  resolved "https://registry.npmjs.org/acorn/-/acorn-7.3.1.tgz#85010754db53c3fbaf3b9ea3e083aa5c5d147ffd"
+  integrity sha512-tLc0wSnatxAQHVHUapaHdz72pi9KUyHjq5KyHjGg9Y8Ifdc79pTh2XvI6I1/chZbnM7QtNKzh66ooDogPZSleA==
 
 acorn@^5.5.3:
   version "5.7.4"
@@ -5802,7 +5828,7 @@ internal-slot@^1.0.2:
     has "^1.0.3"
     side-channel "^1.0.2"
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==

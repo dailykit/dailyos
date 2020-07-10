@@ -49,6 +49,8 @@ export const ListBodyItem = styled.div(
       }
       main {
          padding: 4px 0;
+         overflow-y: auto;
+         max-height: 120px;
          border-top: 1px solid #dddada;
          display: ${isOpen ? 'block' : 'none'};
       }
@@ -61,16 +63,13 @@ export const StyledOrderItem = styled.div(
       height: 240px;
       display: grid;
       border-bottom: 1px solid #ececec;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 220px 1fr;
       border: 3px solid ${selectColor(status)};
       border-left-width: 8px;
       border-right-width: 8px;
       position: relative;
       margin-bottom: 16px;
       > section {
-         :first-child {
-            padding-right: 16px;
-         }
          :last-child {
             padding-left: 16px;
          }
@@ -89,7 +88,7 @@ export const StyledHeader = styled.header`
    }
 `
 
-export const StyledViewOrder = styled.button`
+export const StyledButton = styled.button`
    height: 28px;
    display: flex;
    padding: 0 8px;
@@ -333,4 +332,13 @@ export const StyledPrint = styled.button`
    align-items: center;
    justify-content: center;
    border: 1px solid rgba(0, 0, 0, 0.2);
+`
+
+export const StyledOrderType = styled.span`
+   width: 28px;
+   height: 28px;
+   display: flex;
+   margin-right: 8px;
+   align-items: center;
+   justify-content: center;
 `

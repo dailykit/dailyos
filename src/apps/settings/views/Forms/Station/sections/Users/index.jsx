@@ -16,6 +16,7 @@ import {
    useMultiList,
    Loader,
    ButtonGroup,
+   TunnelHeader,
 } from '@dailykit/ui'
 
 import {
@@ -33,7 +34,7 @@ import {
    DELETE_STATION_USER,
 } from '../../../../../graphql'
 
-import { TunnelHeader, TunnelMain, StyledInfo } from '../../styled'
+import { TunnelMain, StyledInfo } from '../../styled'
 
 import { Header } from './styled'
 
@@ -184,19 +185,13 @@ const AddUserTunnel = ({
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1} size="sm">
-            <TunnelHeader>
-               <h3>Add User</h3>
-               {selected.length > 0 && (
-                  <TextButton type="solid" onClick={() => handleSubmit()}>
-                     Save
-                  </TextButton>
-               )}
-               {list.length >= 0 && selected.length === 0 && (
-                  <IconButton type="outline" onClick={() => setIsOpen(false)}>
-                     <CloseIcon size={22} />
-                  </IconButton>
-               )}
-            </TunnelHeader>
+            <TunnelHeader
+               title="Add User"
+               right={
+                  selected.length > 0 && { action: handleSubmit, title: 'Save' }
+               }
+               close={() => setIsOpen(false)}
+            />
             <TunnelMain>
                {list.length > 0 && (
                   <List>

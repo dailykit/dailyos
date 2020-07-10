@@ -1,38 +1,56 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
-   TextButton,
    useSingleList,
+   TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
 import {
    CREATE_SIMPLE_RECIPE_YIELD_SACHET,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
+   SACHETS,
 } from '../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
 
-const SachetTunnel = ({ closeTunnel, sachets }) => {
+const SachetTunnel = ({ closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
+   const [sachets, setSachets] = React.useState([])
    const [busy, setBusy] = React.useState(false)
+
+   // Query
+   const { loading } = useQuery(SACHETS, {
+      variables: {
+         where: {
+            ingredientId: { _eq: recipeState.edit?.id },
+            ingredientProcessingId: {
+               _eq: recipeState.edit?.ingredientProcessing?.id,
+            },
+         },
+      },
+      onCompleted: data => {
+         const updatedSachets = data.ingredientSachets.map(sachet => ({
+            ...sachet,
+            title: `${sachet.quantity}  ${sachet.unit}`,
+         }))
+         setSachets(updatedSachets)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error: Cannot fetch Sachets!')
+      },
+      fetchPolicy: 'cache-and-network',
+   })
 
    // State for search input
    const [search, setSearch] = React.useState('')
-   const [list, current, selectOption] = useSingleList(
-      sachets
-         .filter(sachet => sachet.isValid.status)
-         .map(sachet => ({
-            ...sachet,
-            title: sachet.quantity + ' ' + sachet.unit,
-         }))
-   )
+   const [list, current, selectOption] = useSingleList(sachets)
 
    // Mutation
    const [createSachet] = useMutation(CREATE_SIMPLE_RECIPE_YIELD_SACHET, {
@@ -48,10 +66,9 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
       },
       onCompleted: () => {
          toast.success('Sachet added!')
-         closeTunnel(7)
+         closeTunnel(3)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error()
       },
    })
@@ -65,67 +82,59 @@ const SachetTunnel = ({ closeTunnel, sachets }) => {
       },
       onCompleted: () => {
          toast.success('Sachet updated!')
-         closeTunnel(7)
+         closeTunnel(3)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error()
       },
    })
 
-   //Handlers
    const save = () => {
       if (busy) return
       setBusy(true)
-      console.log(recipeState)
-      console.log(current)
       if (recipeState.updating) updateSachet()
       else createSachet()
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(7)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Sachet</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Select Sachet"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(3)}
+         />
          <TunnelBody>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.title} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.title}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {loading ? (
+               <Loader />
+            ) : (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

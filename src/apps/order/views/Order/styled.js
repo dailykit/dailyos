@@ -271,3 +271,49 @@ export const Legend = styled.div`
       }
    }
 `
+
+export const StyledPrint = styled.button`
+   width: 28px;
+   height: 28px;
+   display: flex;
+   cursor: pointer;
+   background: #fff;
+   background: white;
+   margin-left: 14px;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+`
+
+export const StyledButton = styled.button`
+   height: 28px;
+   display: flex;
+   padding: 0 8px;
+   color: #787d91;
+   cursor: pointer;
+   background: #fff;
+   font-weight: 500;
+   margin-left: 14px;
+   background: white;
+   margin-right: 14px;
+   align-items: center;
+   text-transform: uppercase;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+`
+
+export const StyledStatus = styled.div`
+   display: flex;
+   margin-right: 16px;
+   align-items: center;
+   span {
+      :first-child {
+         color: #a7a8a6;
+         display: block;
+         font-size: 14px;
+         font-weight: 500;
+      }
+      :last-child {
+         font-size: 16px;
+      }
+   }
+`

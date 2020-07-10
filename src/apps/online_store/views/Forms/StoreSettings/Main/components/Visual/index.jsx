@@ -1,19 +1,27 @@
 import React from 'react'
-import { Text, Input, TextButton, Loader, ButtonTile } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import {
+   Text,
+   Input,
+   TextButton,
+   Loader,
+   ButtonTile,
+   IconButton,
+} from '@dailykit/ui'
+import { toast } from 'react-toastify'
 
 import { EditIcon } from '../../../../../../assets/icons'
 
 import { Container, Flex } from '../../../styled'
 import { ImageContainer } from '../../styled'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
-import { toast } from 'react-toastify'
+import { DeleteIcon } from '../../../../../../../recipe/assets/icons'
 
 const VisualSettings = ({ setUpdating, openTunnel }) => {
    const [title, setTitle] = React.useState('')
    const [primaryColor, setPrimaryColor] = React.useState('')
    const [favicon, setFavicon] = React.useState('')
-   const [cover, setCover] = React.useState('')
+   const [slides, setSlides] = React.useState([])
 
    const populate = settings => {
       settings.forEach(setting => {
@@ -27,11 +35,11 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
             case 'Favicon': {
                return setFavicon(setting.value.url)
             }
-            case 'Cover': {
-               return setCover(setting.value.url)
+            case 'Slides': {
+               return setSlides(setting.value)
             }
             default: {
-               return
+               return console.log('No setting matched!')
             }
          }
       })
@@ -68,6 +76,21 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
       })
    }
 
+   const deleteSlide = index => {
+      if (slides.length === 1) {
+         toast.error('Atleast one slide should be there!')
+      } else {
+         slides.splice(index, 1)
+         updateSetting({
+            variables: {
+               type: 'visual',
+               identifier: 'Slides',
+               value: slides,
+            },
+         })
+      }
+   }
+
    if (loading) return <Loader />
 
    return (
@@ -85,7 +108,7 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
                />
                <TextButton
                   type="solid"
-                  onClick={e =>
+                  onClick={() =>
                      save({
                         identifier: 'App Title',
                         value: { title },
@@ -98,7 +121,7 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
          </Container>
          <Container bottom="32" maxWidth="600">
             {favicon ? (
-               <React.Fragment>
+               <>
                   <Text as="subtitle">Favicon</Text>
                   <ImageContainer width="80px" height="80px">
                      <div>
@@ -116,7 +139,7 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
                      </div>
                      <img src={favicon} alt="Favicon" />
                   </ImageContainer>
-               </React.Fragment>
+               </>
             ) : (
                <ButtonTile
                   type="primary"
@@ -133,42 +156,32 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
                />
             )}
          </Container>
+         {slides.map((slide, i) => (
+            <Container bottom="16" maxWidth="600">
+               <Text as="subtitle">{`Slide ${i + 1}`}</Text>
+               <ImageContainer width="600px" height="250px">
+                  <div>
+                     <IconButton type="ghost" onClick={() => deleteSlide(i)}>
+                        <DeleteIcon color="#FF5A52" />
+                     </IconButton>
+                  </div>
+                  <img src={slide.url} alt={slide.title} />
+               </ImageContainer>
+            </Container>
+         ))}
          <Container bottom="32" maxWidth="600">
-            {cover ? (
-               <React.Fragment>
-                  <Text as="subtitle">Cover</Text>
-                  <ImageContainer width="600px" height="250px">
-                     <div>
-                        <span
-                           onClick={() => {
-                              setUpdating({
-                                 type: 'visual',
-                                 identifier: 'Cover',
-                              })
-                              openTunnel(1)
-                           }}
-                        >
-                           <EditIcon />
-                        </span>
-                     </div>
-                     <img src={cover} alt="Cover" />
-                  </ImageContainer>
-               </React.Fragment>
-            ) : (
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text="Add a Cover"
-                  helper="upto 1MB - only JPG, PNG, PDF allowed"
-                  onClick={() => {
-                     setUpdating({
-                        type: 'visual',
-                        identifier: 'Cover',
-                     })
-                     openTunnel(1)
-                  }}
-               />
-            )}
+            <ButtonTile
+               type="secondary"
+               text="Add Slide"
+               onClick={() => {
+                  setUpdating({
+                     type: 'visual',
+                     identifier: 'Slides',
+                     oldValue: slides,
+                  })
+                  openTunnel(1)
+               }}
+            />
          </Container>
          <Container bottom="32" maxWidth="600">
             <Flex direction="row">
@@ -183,7 +196,7 @@ const VisualSettings = ({ setUpdating, openTunnel }) => {
                </Container>
                <TextButton
                   type="solid"
-                  onClick={e =>
+                  onClick={() =>
                      save({
                         identifier: 'Primary Color',
                         value: { color: primaryColor },

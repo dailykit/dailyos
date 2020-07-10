@@ -4,21 +4,33 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
+   TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
-import { CloseIcon } from '../../../../../assets/icons'
+import { useSubscription } from '@apollo/react-hooks'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
+import { FETCH_PACKAGINGS } from '../../../../../graphql'
 
-const PackagingTunnel = ({ openTunnel, closeTunnel, packagings }) => {
+const PackagingTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
-
+   const [packagings, setPackagings] = React.useState([])
    const [search, setSearch] = React.useState('')
 
    const [list, current, selectOption] = useSingleList(packagings)
+
+   // Subscription
+   const { loading } = useSubscription(FETCH_PACKAGINGS, {
+      onSubscriptionData: data => {
+         setPackagings([...data.subscriptionData.data.packagings])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    React.useEffect(() => {
       if (Object.keys(current).length) {
@@ -30,48 +42,45 @@ const PackagingTunnel = ({ openTunnel, closeTunnel, packagings }) => {
                value: current,
             },
          })
-         closeTunnel(5)
+         closeTunnel(4)
       }
    }, [current])
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(5)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Packaging</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader title="Select Packaging" close={() => closeTunnel(4)} />
          <TunnelBody>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.title} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.title}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {loading ? (
+               <Loader />
+            ) : (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

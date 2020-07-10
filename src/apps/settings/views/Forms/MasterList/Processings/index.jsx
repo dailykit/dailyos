@@ -1,37 +1,23 @@
-import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
-// Components
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   IconButton,
+   Loader,
    Text,
-   Table,
-   TableHead,
-   TableCell,
-   TableBody,
-   TableRow,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
-   IconButton,
 } from '@dailykit/ui'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { toast } from 'react-toastify'
 
-// Styled
-import { Layout, Card, Listing, ListingHeader } from '../styled'
-
-// Icons
-import {
-   EditIcon,
-   DeleteIcon,
-   AddIcon,
-} from '../../../../../../shared/assets/icons'
-
+import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import { DELETE_PROCESSINGS, PROCESSINGS } from '../../../../graphql'
+import tableOptions from '../../../Listings/tableOption'
+import { Card, Layout, Listing, ListingHeader } from '../styled'
 // Tunnels
 import { AddTypesTunnel } from './tunnels'
-
-import { useTranslation } from 'react-i18next'
-import { PROCESSINGS, DELETE_PROCESSINGS } from '../../../../graphql'
-import { toast } from 'react-toastify'
 
 const address = 'apps.settings.views.forms.processings.'
 
@@ -66,13 +52,40 @@ const ProcessingsForm = () => {
       }
    }
 
+   const columns = [
+      {
+         title: t(address.concat('name')),
+         field: 'name',
+         headerFilter: true,
+      },
+      {
+         title: t(address.concat('reference count')),
+         field: 'ingredientProcessings',
+         headerFilter: false,
+         formatter: reactFormatter(<ShowCount />),
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            const { id, name } = cell._cell.row.data
+            deleteHandler(e, { id, name })
+         },
+         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+      },
+   ]
+
    if (error) {
       console.log(error)
    }
    if (loading) return <Loader />
 
    return (
-      <React.Fragment>
+      <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <AddTypesTunnel closeTunnel={closeTunnel} />
@@ -100,38 +113,24 @@ const ProcessingsForm = () => {
                      <AddIcon size={24} />
                   </IconButton>
                </ListingHeader>
-               <Table>
-                  <TableHead>
-                     <TableRow>
-                        <TableCell>{t(address.concat('name'))}</TableCell>
-                        <TableCell>
-                           {t(address.concat('reference count'))}
-                        </TableCell>
-                        <TableCell></TableCell>
-                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                     {data.masterProcessings.map(processing => (
-                        <TableRow key={processing.id}>
-                           <TableCell>{processing.name}</TableCell>
-                           <TableCell>
-                              {processing.ingredientProcessings.length}
-                           </TableCell>
-                           <TableCell>
-                              <IconButton
-                                 onClick={e => deleteHandler(e, processing)}
-                              >
-                                 <DeleteIcon color="#FF5A52" />
-                              </IconButton>
-                           </TableCell>
-                        </TableRow>
-                     ))}
-                  </TableBody>
-               </Table>
+               <ReactTabulator
+                  columns={columns}
+                  data={data.masterProcessings}
+                  options={tableOptions}
+               />
             </Listing>
          </Layout>
-      </React.Fragment>
+      </>
    )
+}
+
+function ShowCount({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.length) return value.length
+   return '0'
 }
 
 export default ProcessingsForm

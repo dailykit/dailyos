@@ -13,12 +13,13 @@ import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
 import { Context } from '../../../context/tabs'
 import {
-   COLLECTIONS,
+   S_COLLECTIONS,
    CREATE_COLLECTION,
    DELETE_COLLECTIONS,
 } from '../../../graphql'
 // Styled
-import { StyledHeader, StyledWrapper } from '../styled'
+import { StyledHeader, StyledWrapper, Flexible } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
 
@@ -32,20 +33,9 @@ const CollectionsListing = () => {
 
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    // Queries
    const { data: { menuCollections = [] } = {}, loading } = useSubscription(
-      COLLECTIONS,
+      S_COLLECTIONS,
       {
          onError: error => {
             console.log(error)
@@ -58,7 +48,8 @@ const CollectionsListing = () => {
       variables: {
          name: `collection-${randomSuffix()}`,
          availability: {
-            rule: 'RRULE:FREQ=DAILY;COUNT=30;INTERVAL=1;WKST=MO',
+            rule:
+               'RRULE:FREQ=WEEKLY;INTERVAL=1;WKST=MO;BYDAY=TH,WE,TU,SU,SA,MO,FR',
             time: {
                end: '23:59',
                start: '00:00',
@@ -147,24 +138,26 @@ const CollectionsListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <h1>{t(address.concat('collections'))}</h1>
-            <IconButton type="solid" onClick={createCollection}>
-               <AddIcon color="#fff" size={24} />
-            </IconButton>
+            <Flexible style={{ alingItems: 'center' }}>
+               <TextButton
+                  type="outline"
+                  onClick={() => tableRef.current.table.clearHeaderFilter()}
+               >
+                  Clear Filters
+               </TextButton>
+               <span style={{ width: '10px' }} />
+               <IconButton type="solid" onClick={createCollection}>
+                  <AddIcon color="#fff" size={24} />
+               </IconButton>
+            </Flexible>
          </StyledHeader>
          <div style={{ width: '80%', margin: '0 auto' }}>
-            <TextButton
-               type="outline"
-               onClick={() => tableRef.current.table.clearHeaderFilter()}
-               style={{ marginBottom: '20px' }}
-            >
-               Clear Filters
-            </TextButton>
             <ReactTabulator
                ref={tableRef}
                columns={columns}
                data={menuCollections}
                rowClick={rowClick}
-               options={options}
+               options={tableOptions}
             />
          </div>
       </StyledWrapper>

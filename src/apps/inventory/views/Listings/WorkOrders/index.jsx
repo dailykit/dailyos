@@ -21,12 +21,16 @@ import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
+import tableOptions from '../tableOption'
+import { FlexContainer } from '../../Forms/styled'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
 export default function WorkOrders() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const tableRef = React.useRef()
+   const { dispatch } = React.useContext(Context)
 
    const {
       data: bulkWorkOrdersData,
@@ -37,6 +41,61 @@ export default function WorkOrders() {
       data: sachetWorkOrdersData,
       loading: sachetWorkOrderLoading,
    } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION)
+
+   const addTab = (title, view) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   }
+
+   const rowClick = (e, row) => {
+      const { id, type, status } = row._row.data
+      if (type === 'bulk') {
+         dispatch({
+            type: 'SET_BULK_WORK_ORDER',
+            payload: {
+               id,
+               status,
+            },
+         })
+         addTab('Bulk Work Order', 'bulkOrder')
+      } else {
+         dispatch({
+            type: 'SET_SACHET_WORK_ORDER',
+            payload: {
+               id,
+               status,
+            },
+         })
+         addTab('Sachet Work Order', 'sachetOrder')
+      }
+   }
+
+   const columns = [
+      { title: 'Status', field: 'status', headerFilter: true },
+      {
+         title: 'Scheduled On',
+         field: 'scheduledOn',
+         headerFilter: false,
+         formatter: reactFormatter(<ShowDate />),
+      },
+      {
+         title: 'User Assigned',
+         field: 'user',
+         formatter: reactFormatter(<UserName />),
+         headerFilter: false,
+      },
+      {
+         title: 'Station Assigned',
+         field: 'station',
+         formatter: reactFormatter(<StationName />),
+         headerFilter: false,
+      },
+      {
+         title: 'Type',
+         field: 'type',
+         formatter: reactFormatter(<FormatType />),
+         headerFilter: false,
+      },
+   ]
 
    if (bulkWorkOrderLoading && sachetWorkOrderLoading) return <Loader />
 
@@ -70,111 +129,37 @@ export default function WorkOrders() {
          <StyledWrapper>
             <StyledHeader>
                <Text as="h1">{t(address.concat('work orders'))}</Text>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
+               <FlexContainer>
+                  <TextButton
+                     type="outline"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  >
+                     Clear Filters
+                  </TextButton>
+                  <span style={{ width: '10px' }} />
+                  <IconButton
+                     type="solid"
+                     onClick={() => {
+                        openTunnel(1)
+                     }}
+                  >
+                     <AddIcon color="#fff" size={24} />
+                  </IconButton>
+               </FlexContainer>
             </StyledHeader>
 
-            <DataTable data={data} />
-
             <br />
+            <div style={{ width: '90%', margin: '0 auto' }}>
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={data}
+                  rowClick={rowClick}
+                  options={tableOptions}
+               />
+            </div>
          </StyledWrapper>
       </>
-   )
-}
-
-function DataTable({ data }) {
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
-   }
-
-   const rowClick = (e, row) => {
-      const { id, type, status } = row._row.data
-      if (type === 'bulk') {
-         dispatch({
-            type: 'SET_BULK_WORK_ORDER',
-            payload: {
-               id,
-               status,
-            },
-         })
-         addTab('Bulk Work Order', 'bulkOrder')
-      } else {
-         dispatch({
-            type: 'SET_SACHET_WORK_ORDER',
-            payload: {
-               id,
-               status,
-            },
-         })
-         addTab('Sachet Work Order', 'sachetOrder')
-      }
-   }
-
-   const tableRef = React.useRef()
-
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
-   const columns = [
-      { title: 'Status', field: 'status', headerFilter: true },
-      {
-         title: 'Scheduled On',
-         field: 'scheduledOn',
-         headerFilter: false,
-         hozAlign: 'center',
-         formatter: reactFormatter(<ShowDate />),
-      },
-      {
-         title: 'User Assigned',
-         field: 'user',
-         formatter: reactFormatter(<UserName />),
-         headerFilter: false,
-         hozAlign: 'center',
-      },
-      {
-         title: 'Station Assigned',
-         field: 'station',
-         formatter: reactFormatter(<StationName />),
-         headerFilter: false,
-         hozAlign: 'center',
-      },
-      {
-         title: 'Type',
-         field: 'type',
-         formatter: reactFormatter(<FormatType />),
-         headerFilter: false,
-         hozAlign: 'center',
-      },
-   ]
-
-   return (
-      <div style={{ width: '95%', margin: '0 auto' }}>
-         <TextButton
-            style={{ marginBottom: '20px' }}
-            type="outline"
-            onClick={() => tableRef.current.table.clearHeaderFilter()}
-         >
-            Clear Filters
-         </TextButton>
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={data}
-            rowClick={rowClick}
-            options={options}
-         />
-      </div>
    )
 }
 

@@ -1,13 +1,12 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Checkbox, Input, Text, TextButton } from '@dailykit/ui'
+import { Checkbox, Input, TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import { UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION } from '../../../../../../graphql'
 import { StyledTable } from '../../components/Recipe/styled'
-import { StyledInputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { StyledInputWrapper, TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
@@ -31,10 +30,9 @@ const PriceConfigurationTunnel = ({ close }) => {
       },
       onCompleted: () => {
          toast.success('Option updated!')
-         close(6)
+         close(1)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error')
          setBusy(false)
       },
@@ -48,29 +46,22 @@ const PriceConfigurationTunnel = ({ close }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(6)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('configure pricing for serving'))}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('configure pricing for serving'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(1)}
+         />
          <TunnelBody>
             <StyledTable full>
                <thead>
                   <tr>
-                     <th></th>
+                     <th> </th>
                      <th>{t(address.concat('visibility'))}</th>
                      <th>{t(address.concat('serving'))}</th>
                      <th>{t(address.concat('price'))}</th>
@@ -125,7 +116,7 @@ const PriceConfigurationTunnel = ({ close }) => {
                </tbody>
             </StyledTable>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

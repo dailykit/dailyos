@@ -6,6 +6,7 @@ import * as moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
+import tableOptions from '../tableOption'
 
 // Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
@@ -87,17 +88,6 @@ function DataTable({ data, addTab, deleteCheck }) {
 
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    const rowClick = (e, row) => {
       const { id } = row._row.data
       addTab('Check', 'check', id)
@@ -141,7 +131,7 @@ function DataTable({ data, addTab, deleteCheck }) {
             columns={columns}
             data={data}
             rowClick={rowClick}
-            options={options}
+            options={tableOptions}
          />
       </div>
    )

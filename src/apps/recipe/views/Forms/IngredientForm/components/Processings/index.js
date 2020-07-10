@@ -2,7 +2,8 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { ButtonTile } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { Sachets } from '../'
+// eslint-disable-next-line import/no-cycle
+import { Sachets } from '..'
 import { AddIcon, DeleteIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { DELETE_PROCESSING } from '../../../../../graphql'
@@ -16,7 +17,12 @@ import {
    StyledSection,
 } from './styled'
 
-const Processings = ({ state, openTunnel }) => {
+const Processings = ({
+   state,
+   openProcessingTunnel,
+   openSachetTunnel,
+   openEditSachetTunnel,
+}) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -60,7 +66,14 @@ const Processings = ({ state, openTunnel }) => {
                      <h3>
                         Processings ({state.ingredientProcessings?.length})
                      </h3>
-                     <span onClick={() => openTunnel(1)}>
+                     <span
+                        role="button"
+                        tabIndex="0"
+                        onClick={() => openProcessingTunnel(1)}
+                        onKeyDown={e =>
+                           e.charCode === 13 && openProcessingTunnel(1)
+                        }
+                     >
                         <AddIcon color="#555B6E" size="18" stroke="2.5" />
                      </span>
                   </StyledListingHeader>
@@ -76,7 +89,14 @@ const Processings = ({ state, openTunnel }) => {
                         }
                      >
                         <Actions active={ingredientState.processingIndex === i}>
-                           <span onClick={() => remove(processing)}>
+                           <span
+                              role="button"
+                              tabIndex="0"
+                              onClick={() => remove(processing)}
+                              onKeyDown={e =>
+                                 e.charCode === 13 && remove(processing)
+                              }
+                           >
                               <DeleteIcon />
                            </span>
                         </Actions>
@@ -88,11 +108,15 @@ const Processings = ({ state, openTunnel }) => {
                   <ButtonTile
                      type="primary"
                      size="lg"
-                     onClick={() => openTunnel(1)}
+                     onClick={() => openProcessingTunnel(1)}
                   />
                </StyledListing>
                <StyledDisplay>
-                  <Sachets state={state} openTunnel={openTunnel} />
+                  <Sachets
+                     state={state}
+                     openSachetTunnel={openSachetTunnel}
+                     openEditSachetTunnel={openEditSachetTunnel}
+                  />
                </StyledDisplay>
             </StyledSection>
          ) : (
@@ -100,7 +124,7 @@ const Processings = ({ state, openTunnel }) => {
                type="primary"
                size="lg"
                text="Add Processings"
-               onClick={() => openTunnel(1)}
+               onClick={() => openProcessingTunnel(1)}
             />
          )}
       </Container>

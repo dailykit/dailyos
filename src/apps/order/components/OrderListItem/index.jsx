@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import {
    StyledOrderItem,
-   StyledViewOrder,
+   StyledButton,
    StyledConsumer,
    StyledConsumerName,
    StyledConsumerAddress,
@@ -25,6 +25,7 @@ import {
    StyledHeader,
    StyledStat,
    StyledPrint,
+   StyledOrderType,
 } from './styled'
 
 import {
@@ -36,14 +37,19 @@ import {
    ArrowUpIcon,
    NewTabIcon,
    PrintIcon,
+   HomeIcon,
 } from '../../assets/icons'
+import deliveryIcon from '../../assets/svgs/delivery.png'
+import pickUpIcon from '../../assets/svgs/pickup.png'
 
 import { formatDate } from '../../utils'
 
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
-import { useTabs } from '../../context'
+import { useTabs, useOrder } from '../../context'
 
 const address = 'apps.order.components.orderlistitem.'
+
+const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 const normalize = address =>
    `${address.line1}, ${address.line2 ? `${address.line2}, ` : ''} ${
@@ -53,6 +59,7 @@ const normalize = address =>
 const OrderListItem = ({ order }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+   const { dispatch } = useOrder()
    const [currentPanel, setCurrentPanel] = React.useState('customer')
    const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
    const {
@@ -101,7 +108,9 @@ const OrderListItem = ({ order }) => {
          <section>
             <ListBodyItem isOpen={currentPanel === 'customer'}>
                <header>
-                  <span>{t(address.concat('customer info'))}</span>
+                  <span>
+                     <CustomerName data={deliveryInfo?.dropoff?.dropoffInfo} />
+                  </span>
                   <ToggleButton
                      type="customer"
                      current={currentPanel}
@@ -112,16 +121,13 @@ const OrderListItem = ({ order }) => {
                   {deliveryInfo?.dropoff &&
                      Object.keys(deliveryInfo?.dropoff).length > 0 && (
                         <StyledConsumer>
-                           <CustomerName
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
-                           <CustomerAddress
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
                            <CustomerPhone
                               data={deliveryInfo?.dropoff?.dropoffInfo}
                            />
                            <CustomerEmail
+                              data={deliveryInfo?.dropoff?.dropoffInfo}
+                           />
+                           <CustomerAddress
                               data={deliveryInfo?.dropoff?.dropoffInfo}
                            />
                         </StyledConsumer>
@@ -130,7 +136,9 @@ const OrderListItem = ({ order }) => {
             </ListBodyItem>
             <ListBodyItem isOpen={currentPanel === 'billing'}>
                <header>
-                  <span>{t(address.concat('billing info'))}</span>
+                  <span style={{ fontSize: 15, fontWeight: 500 }}>
+                     Amount Paid: {rest.amountPaid}
+                  </span>
                   <ToggleButton
                      type="billing"
                      current={currentPanel}
@@ -159,22 +167,58 @@ const OrderListItem = ({ order }) => {
          </section>
          <StyledProducts>
             <StyledHeader>
-               <StyledViewOrder type="button" onClick={() => createTab(id)}>
+               <StyledOrderType>
+                  {isPickup(order.fulfillmentType) ? (
+                     <img alt="Pick Up" title="Pick Up" src={pickUpIcon} />
+                  ) : (
+                     <img alt="Delivery" title="Delivery" src={deliveryIcon} />
+                  )}
+               </StyledOrderType>
+               <StyledButton type="button" onClick={() => createTab(id)}>
                   ORD{order.id}
                   <NewTabIcon size={14} />
-               </StyledViewOrder>
+               </StyledButton>
                <StyledPrint onClick={() => print()}>
                   <PrintIcon size={16} />
                </StyledPrint>
+               {['ONDEMAND_DELIVERY', 'PREORDER_DELIVERY'].includes(
+                  order.fulfillmentType
+               ) && (
+                  <StyledButton
+                     type="button"
+                     onClick={() =>
+                        dispatch({
+                           type: 'DELIVERY_PANEL',
+                           payload: { orderId: order.id },
+                        })
+                     }
+                  >
+                     {order?.deliveryInfo?.deliveryCompany?.name
+                        ? 'View'
+                        : 'Select'}{' '}
+                     Delivery
+                  </StyledButton>
+               )}
+
                <section>
                   <StyledStatus>
                      <span>{t(address.concat('ordered on'))}:&nbsp;</span>
                      <span>{formatDate(order?.created_at)}</span>
                   </StyledStatus>
                   &nbsp;|&nbsp;
-                  <ExpectedDelivery data={deliveryInfo?.pickup} />
+                  <ReadyBy data={deliveryInfo?.pickup} />
                   &nbsp;|&nbsp;
-                  <DeliveryOn data={deliveryInfo?.dropoff} />
+                  {isPickup(order.fulfillmentType) ? (
+                     <TimeSlot
+                        type={order.fulfillmentType}
+                        data={deliveryInfo?.pickup}
+                     />
+                  ) : (
+                     <TimeSlot
+                        type={order.fulfillmentType}
+                        data={deliveryInfo?.dropoff}
+                     />
+                  )}
                </section>
             </StyledHeader>
             <main>
@@ -441,7 +485,10 @@ const CustomerName = ({ data }) => {
 const CustomerAddress = ({ data }) => {
    return (
       <StyledConsumerAddress>
-         {normalize(data?.customerAddress)}
+         <span style={{ marginRight: 8 }}>
+            <HomeIcon size={14} color="#718096" />
+         </span>
+         <span>{normalize(data?.customerAddress)}</span>
       </StyledConsumerAddress>
    )
 }
@@ -487,11 +534,11 @@ const ToggleButton = ({ type, current, toggle }) => {
    )
 }
 
-const ExpectedDelivery = ({ data = {} }) => {
+const ReadyBy = ({ data = {} }) => {
    const { t } = useTranslation()
    return (
       <StyledStatus>
-         <span>{t(address.concat('expected dispatch'))}:&nbsp;</span>
+         <span>{t(address.concat('ready by'))}:&nbsp;</span>
          <span>
             {data?.window?.approved?.startsAt
                ? formatDate(data?.window?.approved?.startsAt)
@@ -501,14 +548,37 @@ const ExpectedDelivery = ({ data = {} }) => {
    )
 }
 
-const DeliveryOn = ({ data = {} }) => {
+const TimeSlot = ({ type, data = {} }) => {
    const { t } = useTranslation()
    return (
       <StyledStatus>
-         <span>{t(address.concat('delivery on'))}:&nbsp;</span>
          <span>
-            {data.window?.approved?.startsAt
-               ? formatDate(data.window?.approved?.startsAt)
+            {isPickup(type)
+               ? t(address.concat('pickup'))
+               : t(address.concat('Delivery'))}
+            :&nbsp;
+         </span>
+         <span>
+            {data?.window?.approved?.startsAt
+               ? formatDate(data?.window?.approved?.startsAt, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                 })
+               : 'N/A'}
+            ,&nbsp;
+            {data?.window?.approved?.startsAt
+               ? formatDate(data?.window?.approved?.startsAt, {
+                    minute: 'numeric',
+                    hour: 'numeric',
+                 })
+               : 'N/A'}
+            -
+            {data?.window?.approved?.endsAt
+               ? formatDate(data?.window?.approved?.endsAt, {
+                    minute: 'numeric',
+                    hour: 'numeric',
+                 })
                : 'N/A'}
          </span>
       </StyledStatus>

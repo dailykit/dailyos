@@ -44,10 +44,6 @@ export default function PurchaseOrderForm() {
    const [status, setStatus] = useState(
       state.purchaseOrder.status || purchaseOrderState.status || ''
    )
-
-   const { data: supplierItemsData, loading } = useSubscription(
-      SUPPLIER_ITEMS_SUBSCRIPTION
-   )
    const { data: purchaseItemsData, loading: orderLoading } = useSubscription(
       PURCHASE_ORDER_SUBSCRIPTION,
       {
@@ -146,7 +142,7 @@ export default function PurchaseOrderForm() {
       }
    }
 
-   if (loading || orderLoading) return <Loader />
+   if (orderLoading) return <Loader />
 
    return (
       <>
@@ -155,10 +151,7 @@ export default function PurchaseOrderForm() {
          >
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-                  <SelectSupplierItemTunnel
-                     supplierItems={supplierItemsData?.supplierItems}
-                     close={closeTunnel}
-                  />
+                  <SelectSupplierItemTunnel close={closeTunnel} />
                </Tunnel>
             </Tunnels>
             <StyledWrapper>
@@ -185,7 +178,7 @@ export default function PurchaseOrderForm() {
                   </FormActions>
                </FormHeading>
 
-               <StyledForm style={{ padding: '0px 60px' }}>
+               <StyledForm style={{ width: '90%', margin: '0 auto' }}>
                   <Text as="title">{t(address.concat('supplier item'))}</Text>
                   {purchaseOrderState.supplierItem?.name ||
                   purchaseItemsData?.purchaseOrderItem?.supplierItem?.id ? (

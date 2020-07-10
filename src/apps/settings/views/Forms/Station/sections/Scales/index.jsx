@@ -15,6 +15,7 @@ import {
    TagGroup,
    useMultiList,
    ButtonGroup,
+   TunnelHeader,
 } from '@dailykit/ui'
 
 import {
@@ -27,7 +28,7 @@ import {
 } from '../../../../../components'
 
 import { Header } from './styled'
-import { TunnelHeader, TunnelMain, StyledInfo } from '../../styled'
+import { TunnelMain, StyledInfo } from '../../styled'
 
 import { CloseIcon } from '../../../../../../../shared/assets/icons'
 import { UNASSIGNED_SCALES } from '../../../../../graphql/subscriptions'
@@ -181,19 +182,11 @@ const AddPrinterTunnel = ({
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1} size="sm">
-            <TunnelHeader>
-               <h3>Add Scales</h3>
-               {selected.length > 0 && (
-                  <TextButton type="solid" onClick={() => insert()}>
-                     Save
-                  </TextButton>
-               )}
-               {list.length >= 0 && selected.length === 0 && (
-                  <IconButton type="outline" onClick={() => setIsOpen(false)}>
-                     <CloseIcon size={22} />
-                  </IconButton>
-               )}
-            </TunnelHeader>
+            <TunnelHeader
+               title="Add Scales"
+               right={selected.length > 0 && { action: insert, title: 'Save' }}
+               close={() => setIsOpen(false)}
+            />
             <TunnelMain>
                {loading && <Loader />}
                {error && <div>{error.message}</div>}

@@ -1,11 +1,10 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, TextButton, Toggle } from '@dailykit/ui'
+import { Input, Text, Toggle, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { Container, Grid, TunnelBody, TunnelHeader } from '../styled'
+import { Container, Grid, TunnelBody } from '../styled'
 
 const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -20,14 +19,12 @@ const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
          toast.success('Updated!')
          closeTunnel(6)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error!')
          setBusy(false)
       },
    })
 
-   //Handlers
    const save = () => {
       if (busy) return
       setBusy(true)
@@ -45,20 +42,12 @@ const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(6)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Edit Ingredient Details</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Edit Ingredient Details"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(6)}
+         />
          <TunnelBody>
             <Container bottom="32">
                <Text as="h2">{_state.name}</Text>
@@ -89,7 +78,7 @@ const ConfigureIngredientTunnel = ({ state, closeTunnel }) => {
                />
             </Container>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

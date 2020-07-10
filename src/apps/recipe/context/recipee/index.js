@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from 'styled-components'
 
 export const RecipeContext = React.createContext()
 
@@ -11,6 +10,8 @@ export const state = {
    updating: false,
    stage: 0,
    preview: undefined,
+   procedureIndex: 0,
+   stepIndex: 0,
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -58,6 +59,13 @@ export const reducers = (state, { type, payload }) => {
                title: payload.title,
                img: payload.img,
             },
+         }
+      }
+      case 'STEP_PHOTO': {
+         return {
+            ...state,
+            procedureIndex: payload.procedureIndex,
+            stepIndex: payload.stepIndex,
          }
       }
       default:

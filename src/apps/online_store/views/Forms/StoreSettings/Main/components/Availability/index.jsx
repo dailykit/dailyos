@@ -162,7 +162,7 @@ const AvailabilitySettings = () => {
                         Available
                      </Checkbox>
                   </Container>
-                  <Container bottom="16">
+                  {/* <Container bottom="16">
                      <Flex justify="start" direction="row">
                         <Container>
                            <Text as="subtitle">From</Text>
@@ -186,7 +186,7 @@ const AvailabilitySettings = () => {
                            />
                         </Container>
                      </Flex>
-                  </Container>
+                  </Container> */}
                </Container>
                <TextButton
                   type="solid"
@@ -215,7 +215,7 @@ const AvailabilitySettings = () => {
                         Available
                      </Checkbox>
                   </Container>
-                  <Container bottom="16">
+                  {/* <Container bottom="16">
                      <Flex justify="start" direction="row">
                         <Container>
                            <Text as="subtitle">From</Text>
@@ -245,7 +245,7 @@ const AvailabilitySettings = () => {
                            />
                         </Container>
                      </Flex>
-                  </Container>
+                  </Container> */}
                </Container>
                <TextButton
                   type="solid"

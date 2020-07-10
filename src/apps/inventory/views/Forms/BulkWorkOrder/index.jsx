@@ -35,9 +35,6 @@ import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
 import {
-   SUPPLIER_ITEMS_SUBSCRIPTION,
-   SETTINGS_USERS_SUBSCRIPTION,
-   STATIONS_SUBSCRIPTION,
    CREATE_BULK_WORK_ORDER,
    UPDATE_BULK_WORK_ORDER_STATUS,
    BULK_WORK_ORDER_SUBSCRIPTION,
@@ -57,20 +54,23 @@ export default function BulkWorkOrderForm() {
       bulkOrderState.status || state.bulkWorkOrder.status || ''
    )
 
-   const [loading, setLoading] = useState(false)
-
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(5)
-
-   const {
-      data: supplierItemData,
-      loading: supplierItemLoading,
-   } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION)
-   const { data: userData, loading: userLoading } = useSubscription(
-      SETTINGS_USERS_SUBSCRIPTION
-   )
-   const { data: stationsData, loading: stationsLoading } = useSubscription(
-      STATIONS_SUBSCRIPTION
-   )
+   const [
+      supplierItemTunnel,
+      openSupplierItemTunnel,
+      closeSupplierItemTunnel,
+   ] = useTunnel(1)
+   const [
+      outputBulkItemTunnel,
+      openOutputBulkItemTunnel,
+      closeOutputBulkItemTunnel,
+   ] = useTunnel(1)
+   const [usersTunnels, openUserTunnel, closeUserTunnel] = useTunnel(1)
+   const [stationsTunnel, openStationTunnel, closeStationTunnel] = useTunnel(1)
+   const [
+      inputBulkItemTunnel,
+      openInputBulkItemTunnel,
+      closeInputBulkItemTunnel,
+   ] = useTunnel(1)
 
    const { data: bulkWorkOrderData, loading: orderLoading } = useSubscription(
       BULK_WORK_ORDER_SUBSCRIPTION,
@@ -79,9 +79,46 @@ export default function BulkWorkOrderForm() {
       }
    )
 
-   const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER)
+   const [createBulkWorkOrder, { loading }] = useMutation(
+      CREATE_BULK_WORK_ORDER,
+      {
+         onCompleted: data => {
+            toast.success('Work Order created successfully!')
+            setStatus(data.createBulkWorkOrder.returning[0].status)
+            bulkOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: data.createBulkWorkOrder.returning[0].id,
+                  status: data.createBulkWorkOrder.returning[0].status,
+               },
+            })
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! Please try again.')
+         },
+      }
+   )
    const [updateBulkWorkOrderStatus] = useMutation(
-      UPDATE_BULK_WORK_ORDER_STATUS
+      UPDATE_BULK_WORK_ORDER_STATUS,
+      {
+         onCompleted: data => {
+            console.log(data)
+            toast.info('Work Order updated successfully!')
+
+            bulkOrderDispatch({
+               type: 'SET_META',
+               payload: {
+                  id: data.updateBulkWorkOrder.returning[0].id,
+                  status: data.updateBulkWorkOrder.returning[0].status,
+               },
+            })
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error! Please try again.')
+         },
+      }
    )
 
    React.useEffect(() => {
@@ -126,122 +163,72 @@ export default function BulkWorkOrderForm() {
       return true
    }
 
-   const saveStatus = async status => {
-      try {
-         setLoading(true)
-         const response = await updateBulkWorkOrderStatus({
-            variables: { id: bulkOrderState.id, status },
+   const saveStatus = status => {
+      updateBulkWorkOrderStatus({
+         variables: { id: bulkOrderState.id, status },
+      })
+   }
+
+   const handlePublish = () => {
+      const isValid = checkForm()
+
+      if (isValid) {
+         // create work order
+         createBulkWorkOrder({
+            variables: {
+               object: {
+                  status: 'PENDING',
+                  inputQuantity: bulkOrderState.inputQuantity,
+                  inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
+                  outputQuantity:
+                     bulkOrderState.outputItemProcessing.outputQuantity,
+                  inputBulkItemId: bulkOrderState.inputItemProcessing.id,
+                  outputBulkItemId: bulkOrderState.outputItemProcessing.id,
+                  userId: bulkOrderState.assignedUser.id,
+                  stationId: bulkOrderState.selectedStation.id,
+                  scheduledOn: bulkOrderState.assignedDate,
+               },
+            },
          })
-
-         if (response?.data) {
-            setLoading(false)
-            toast.info('Work Order updated successfully!')
-
-            bulkOrderDispatch({
-               type: 'SET_META',
-               payload: {
-                  id: response.data.updateBulkWorkOrder.returning[0].id,
-                  status: response.data.updateBulkWorkOrder.returning[0].status,
-               },
-            })
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Errr! internal server error')
       }
    }
 
-   const handlePublish = async () => {
-      try {
-         setLoading(true)
-         const isValid = checkForm()
-
-         if (isValid) {
-            // create work order
-            const response = await createBulkWorkOrder({
-               variables: {
-                  object: {
-                     status: 'PENDING',
-                     inputQuantity: bulkOrderState.inputQuantity,
-                     inputQuantityUnit: bulkOrderState.inputItemProcessing.unit,
-                     outputQuantity:
-                        bulkOrderState.outputItemProcessing.outputQuantity,
-                     inputBulkItemId: bulkOrderState.inputItemProcessing.id,
-                     outputBulkItemId: bulkOrderState.outputItemProcessing.id,
-                     userId: bulkOrderState.assignedUser.id,
-                     stationId: bulkOrderState.selectedStation.id,
-                     scheduledOn: bulkOrderState.assignedDate,
-                  },
-               },
-            })
-
-            if (response?.data) {
-               setLoading(false)
-               toast.success('Work Order created successfully!')
-               setStatus(response.data.createBulkWorkOrder.returning[0].status)
-               bulkOrderDispatch({
-                  type: 'SET_META',
-                  payload: {
-                     id: response.data.createBulkWorkOrder.returning[0].id,
-                     status:
-                        response.data.createBulkWorkOrder.returning[0].status,
-                  },
-               })
-            }
-         } else {
-            setLoading(false)
-         }
-      } catch (error) {
-         setLoading(false)
-         toast.error('Errr! internal server error')
-      }
-   }
-
-   if (supplierItemLoading || orderLoading || loading) return <Loader />
-
-   if (bulkOrderState.outputItemProcessing?.processingName && userLoading)
-      return <Loader />
-
-   if (bulkOrderState.outputItemProcessing?.processingName && stationsLoading)
-      return <Loader />
+   if (orderLoading || loading) return <Loader />
 
    return (
       <BulkOrderContext.Provider value={{ bulkOrderState, bulkOrderDispatch }}>
-         <Tunnels tunnels={tunnels}>
+         <Tunnels tunnels={supplierItemTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-               <SelectSupplierItemTunnel
-                  close={closeTunnel}
-                  supplierItems={supplierItemData?.supplierItems}
-               />
+               <SelectSupplierItemTunnel close={closeSupplierItemTunnel} />
             </Tunnel>
-            <Tunnel layer={2}>
+         </Tunnels>
+         <Tunnels tunnels={outputBulkItemTunnel}>
+            <Tunnel layer={1}>
                <SelectOutputBulkItemTunnel
-                  close={closeTunnel}
-                  bulkItems={bulkOrderState.supplierItem?.bulkItems}
-               />
-            </Tunnel>
-            <Tunnel layer={3}>
-               <SelectUserTunnel
-                  close={closeTunnel}
-                  users={userData?.settings_user?.map(user => ({
-                     ...user,
-                     name: `${user.firstName} ${user.lastName}`,
-                  }))}
-               />
-            </Tunnel>
-            <Tunnel layer={4}>
-               <SelectStationTunnel
-                  close={closeTunnel}
-                  stations={stationsData?.stations}
-               />
-            </Tunnel>
-            <Tunnel layer={5}>
-               <SelectInputBulkItemTunnel
-                  close={closeTunnel}
+                  close={closeOutputBulkItemTunnel}
                   bulkItems={bulkOrderState.supplierItem?.bulkItems}
                />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={usersTunnels}>
+            <Tunnel layer={1}>
+               <SelectUserTunnel close={closeUserTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={stationsTunnel}>
+            <Tunnel layer={1}>
+               <SelectStationTunnel close={closeStationTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={inputBulkItemTunnel}>
+            <Tunnel layer={1}>
+               <SelectInputBulkItemTunnel
+                  close={closeInputBulkItemTunnel}
+                  bulkItems={bulkOrderState.supplierItem?.bulkItems}
+               />
+            </Tunnel>
+         </Tunnels>
+
          <StyledWrapper>
             <FormHeading>
                <div
@@ -290,7 +277,7 @@ export default function BulkWorkOrderForm() {
                               bulkWorkOrderData.bulkWorkOrder.outputBulkItem
                                  .supplierItem.name
                            }
-                           edit={() => openTunnel(1)}
+                           edit={() => openSupplierItemTunnel(1)}
                         />
                      )}
                   </>
@@ -299,7 +286,7 @@ export default function BulkWorkOrderForm() {
                      noIcon
                      type="secondary"
                      text={t(address.concat('select supplier item'))}
-                     onClick={e => openTunnel(1)}
+                     onClick={() => openSupplierItemTunnel(1)}
                   />
                )}
 
@@ -330,10 +317,10 @@ export default function BulkWorkOrderForm() {
                                        ?.inputBulkItem.onHand
                                  }
                                  shelfLife={
-                                    bulkOrderState.inputItemProcessing
-                                       .shelfLife ||
+                                    bulkOrderState.inputItemProcessing.shelfLife
+                                       ?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.inputBulkItem.shelfLife
+                                       ?.inputBulkItem.shelfLife?.value
                                  }
                               />
                            ) : (
@@ -350,12 +337,12 @@ export default function BulkWorkOrderForm() {
                                        ?.inputBulkItem.onHand
                                  }
                                  shelfLife={
-                                    bulkOrderState.inputItemProcessing
-                                       .shelfLife ||
+                                    bulkOrderState.inputItemProcessing.shelfLife
+                                       ?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.inputBulkItem.shelfLife
+                                       ?.inputBulkItem.shelfLife?.value
                                  }
-                                 edit={() => openTunnel(2)}
+                                 edit={() => openInputBulkItemTunnel(1)}
                               />
                            )}
                         </>
@@ -364,7 +351,7 @@ export default function BulkWorkOrderForm() {
                            noIcon
                            type="secondary"
                            text={t(address.concat('select input bulk item'))}
-                           onClick={() => openTunnel(5)}
+                           onClick={() => openInputBulkItemTunnel(1)}
                         />
                      )}
                   </>
@@ -399,9 +386,9 @@ export default function BulkWorkOrderForm() {
                                  }
                                  shelfLife={
                                     bulkOrderState.outputItemProcessing
-                                       .shelfLife ||
+                                       .shelfLife?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.outputBulkItem?.shelfLife
+                                       ?.outputBulkItem?.shelfLife?.value
                                  }
                               />
                            ) : (
@@ -420,11 +407,11 @@ export default function BulkWorkOrderForm() {
                                  }
                                  shelfLife={
                                     bulkOrderState.outputItemProcessing
-                                       .shelfLife ||
+                                       .shelfLife?.value ||
                                     bulkWorkOrderData?.bulkWorkOrder
-                                       ?.outputBulkItem?.shelfLife
+                                       ?.outputBulkItem?.shelfLife?.value
                                  }
-                                 edit={() => openTunnel(2)}
+                                 edit={() => openOutputBulkItemTunnel(1)}
                               />
                            )}
                         </>
@@ -433,7 +420,7 @@ export default function BulkWorkOrderForm() {
                            noIcon
                            type="secondary"
                            text={t(address.concat('select output bulk item'))}
-                           onClick={e => openTunnel(2)}
+                           onClick={() => openOutputBulkItemTunnel(1)}
                         />
                      )}
                   </>
@@ -441,7 +428,8 @@ export default function BulkWorkOrderForm() {
 
                {bulkOrderState.outputItemProcessing?.processingName && (
                   <Configurator
-                     open={openTunnel}
+                     openUserTunnel={openUserTunnel}
+                     openStationTunnel={openStationTunnel}
                      bulkWorkOrder={bulkWorkOrderData?.bulkWorkOrder}
                   />
                )}
@@ -451,7 +439,7 @@ export default function BulkWorkOrderForm() {
    )
 }
 
-function Configurator({ open, bulkWorkOrder }) {
+function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    const { t } = useTranslation()
    const { bulkOrderState, bulkOrderDispatch } = useContext(BulkOrderContext)
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -559,14 +547,14 @@ function Configurator({ open, bulkWorkOrder }) {
                      bulkOrderState.assignedUser.name ||
                      `${bulkWorkOrder?.user?.firstName} ${bulkWorkOrder?.user?.lastName}`
                   }
-                  edit={() => open(3)}
+                  edit={() => openUserTunnel(1)}
                />
             ) : (
                <ButtonTile
                   noIcon
                   type="secondary"
                   text={t(address.concat('select and assign user to work'))}
-                  onClick={e => open(3)}
+                  onClick={() => openUserTunnel(1)}
                />
             )}
          </>
@@ -610,7 +598,7 @@ function Configurator({ open, bulkWorkOrder }) {
                      bulkOrderState.selectedStation.name ||
                      bulkWorkOrder?.station?.name
                   }
-                  edit={() => open(4)}
+                  edit={() => openStationTunnel(1)}
                />
             ) : (
                <ButtonTile
@@ -619,7 +607,7 @@ function Configurator({ open, bulkWorkOrder }) {
                   text={t(
                      address.concat('select and assign station to route to')
                   )}
-                  onClick={e => open(4)}
+                  onClick={() => openStationTunnel(1)}
                />
             )}
          </>

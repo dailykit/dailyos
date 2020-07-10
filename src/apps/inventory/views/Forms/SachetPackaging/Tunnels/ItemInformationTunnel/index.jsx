@@ -1,14 +1,10 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, Loader } from '@dailykit/ui'
+import { Input, Text, Loader, TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 
-import {
-   Spacer,
-   TunnelContainer,
-   TunnelHeader,
-} from '../../../../../components'
+import { TunnelContainer } from '../../../../../components'
 import { FlexContainer } from '../../../styled'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
 
@@ -29,11 +25,12 @@ export default function ItemInformationTunnel({ close, state, next }) {
       onError: error => {
          console.log(error)
          toast.error('Error! Please try again')
+         close(1)
       },
       onCompleted: () => {
          toast.success('Information Added')
-         close(2)
-         next(3)
+         close(1)
+         next(2)
       },
    })
 
@@ -45,12 +42,12 @@ export default function ItemInformationTunnel({ close, state, next }) {
                name: itemName,
                sku: itemSku,
                dimensions: {
-                  width: itemWidth,
-                  height: itemHeight,
-                  depth: itemDepth,
+                  width: +itemWidth,
+                  height: +itemHeight,
+                  depth: +itemDepth,
                },
-               parLevel: itemPar,
-               maxLevel: itemMaxValue,
+               parLevel: +itemPar,
+               maxLevel: +itemMaxValue,
             },
          },
       })
@@ -60,16 +57,12 @@ export default function ItemInformationTunnel({ close, state, next }) {
 
    return (
       <>
+         <TunnelHeader
+            title="Item Information"
+            close={() => close(1)}
+            right={{ title: 'Next', action: handleNext }}
+         />
          <TunnelContainer>
-            <TunnelHeader
-               title="Item Information"
-               next={handleNext}
-               close={() => close(2)}
-               nextAction="Next"
-            />
-
-            <Spacer />
-
             <FlexContainer style={{ justifyContent: 'space-between' }}>
                <Input
                   type="text"

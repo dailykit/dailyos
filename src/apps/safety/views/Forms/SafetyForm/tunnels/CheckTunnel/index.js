@@ -1,13 +1,13 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Text, Checkbox, TextButton } from '@dailykit/ui'
+import { TunnelHeader, Input, Text, Checkbox, TextButton } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { CloseIcon } from '../../../../../assets/icons'
-import { TunnelBody, TunnelHeader, StyledInputWrapper } from '../styled'
+
+import { TunnelBody, StyledInputWrapper } from '../styled'
 import { SafetyCheckContext } from '../../../../../context/check'
 import { Grid, Container } from '../../../styled'
 import { CREATE_CHECKUP } from '../../../../../graphql'
-import { toast } from 'react-toastify'
 
 const address = 'apps.safety.views.forms.safetyform.tunnels.checktunnel.'
 
@@ -52,22 +52,18 @@ const CheckTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(2)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('enter checkup details for'))}: {checkState.user.title}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? t(address.concat('saving...')) : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={`
+            ${t(address.concat('enter checkup details for'))} : ${
+               checkState.user.title
+            }`}
+            close={() => closeTunnel(2)}
+            right={{
+               action: save,
+               title: busy ? 'Saving...' : 'Save',
+            }}
+         />
          <TunnelBody>
             <Grid>
                <Checkbox checked={mask} onChange={setMask}>
@@ -81,7 +77,7 @@ const CheckTunnel = ({ state, closeTunnel }) => {
                <StyledInputWrapper width="120">
                   <Input
                      type="text"
-                     label={t(address.concat("temprature"))}
+                     label={t(address.concat('temprature'))}
                      name="temp"
                      value={temp}
                      onChange={e => setTemp(e.target.value)}
@@ -90,7 +86,7 @@ const CheckTunnel = ({ state, closeTunnel }) => {
                </StyledInputWrapper>
             </Container>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

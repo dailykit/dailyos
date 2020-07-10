@@ -7,15 +7,42 @@ export const Container = styled.div`
 
 export const CircleButton = styled.button`
    background-color: #fff;
-   padding: 30px;
+   padding: 20px;
    border: 0;
    border-radius: 50%;
-   width: 9rem;
-   height: 9rem;
+   width: 8rem;
+   height: 8rem;
    box-shadow: -3px 4px 4px rgba(0, 0, 0, 0.05);
 
+   img {
+      width: 100%;
+   }
+
    &:hover {
-      background-color: #f4f4f4;
       cursor: pointer;
+   }
+`
+
+export const ImageContainer = styled.div`
+   width: 464px;
+   height: 128px;
+   position: relative;
+   margin: 0 auto;
+   img {
+      width: 464px;
+      height: 128px;
+      object-fit: auto;
+   }
+   div {
+      position: absolute;
+      padding: 12px;
+      right: 0;
+      left: 0;
+      text-align: right;
+      background: linear-gradient(to bottom, #111, transparent);
+      span {
+         margin-right: 16px;
+         cursor: pointer;
+      }
    }
 `

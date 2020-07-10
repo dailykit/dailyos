@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -7,35 +7,43 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { CloseIcon } from '../../../../../../assets/icons'
-import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { TunnelBody, TunnelHeader } from '../styled'
+import {
+   UPDATE_INVENTORY_PRODUCT,
+   S_ACCOMPANIMENT_TYPES,
+} from '../../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
 
-const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
+const AccompanimentTypeTunnel = ({ state, close }) => {
    const { t } = useTranslation()
 
    const [busy, setBusy] = React.useState(false)
 
    const [search, setSearch] = React.useState('')
+   const [accompanimentTypes, setAccompanimentTypes] = React.useState([])
    const [list, selected, selectOption] = useMultiList(accompanimentTypes)
 
-   //Mutation
+   // Subscription
+   const { loading } = useSubscription(S_ACCOMPANIMENT_TYPES, {
+      onSubscriptionData: data => {
+         setAccompanimentTypes([...data.subscriptionData.data.accompaniments])
+      },
+   })
+
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success(t(address.concat('accompaniment types added!')))
-         close(4)
+         close(1)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error(t(address.concat('error')))
          setBusy(false)
       },
@@ -60,65 +68,62 @@ const AccompanimentTypeTunnel = ({ state, close, accompanimentTypes }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(4)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(address.concat('select accompaniment type'))}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(address.concat('select accompaniment type'))}
+            right={{
+               action: save,
+               title: busy
+                  ? t(address.concat('saving'))
+                  : t(address.concat('save')),
+            }}
+            close={() => close(1)}
+         />
          <TunnelBody>
-            <List>
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder={t(
-                     address.concat("type what you're looking for")
+            {loading ? (
+               <Loader />
+            ) : (
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  {selected.length > 0 && (
+                     <TagGroup style={{ margin: '8px 0' }}>
+                        {selected.map(option => (
+                           <Tag
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                           >
+                              {option.title}
+                           </Tag>
+                        ))}
+                     </TagGroup>
                   )}
-               />
-               {selected.length > 0 && (
-                  <TagGroup style={{ margin: '8px 0' }}>
-                     {selected.map(option => (
-                        <Tag
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                        >
-                           {option.title}
-                        </Tag>
-                     ))}
-                  </TagGroup>
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="MSL1"
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                           isActive={selected.find(
-                              item => item.id === option.id
-                           )}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="MSL1"
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                              isActive={selected.find(
+                                 item => item.id === option.id
+                              )}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

@@ -6,24 +6,113 @@ import {
    ListSearch,
    Tag,
    TagGroup,
-   Text,
-   TextButton,
    useMultiList,
+   TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
+import { useLazyQuery } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
-import { CloseIcon } from '../../../../../assets/icons'
 import { CollectionContext } from '../../../../../context/collection'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
+import {
+   SIMPLE_RECIPE_PRODUCTS,
+   INVENTORY_PRODUCTS,
+   CUSTOMIZABLE_PRODUCTS,
+   COMBO_PRODUCTS,
+} from '../../../../../graphql'
 
 const address = 'apps.online_store.views.forms.collection.tunnels.products.'
 
-const ProductsTunnel = ({ close, products }) => {
+const ProductsTunnel = ({ close }) => {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
    const { collectionState, collectionDispatch } = React.useContext(
       CollectionContext
    )
+   const [products, setProducts] = React.useState([])
    const [list, selected, selectOption] = useMultiList(products)
+
+   // Queries for fetching products
+   const [
+      fetchSimpleRecipeProducts,
+      { loading: simpleRecipeProductsLoading },
+   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCTS, {
+      variables: {
+         where: {
+            isPublished: { _eq: true },
+         },
+      },
+      onCompleted: data => {
+         const updatedProducts = data.simpleRecipeProducts.filter(
+            pdct => pdct.isValid.status
+         )
+         setProducts([...updatedProducts])
+      },
+      onError: error => {
+         console.log(error)
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   const [
+      fetchInventoryProducts,
+      { loading: inventoryProductsLoading },
+   ] = useLazyQuery(INVENTORY_PRODUCTS, {
+      variables: {
+         where: {
+            isPublished: { _eq: true },
+         },
+      },
+      onCompleted: data => {
+         const updatedProducts = data.inventoryProducts.filter(
+            pdct => pdct.isValid.status
+         )
+         setProducts([...updatedProducts])
+      },
+      onError: error => {
+         console.log(error)
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   const [
+      fetchCustomizableProducts,
+      { loading: customizableProductsLoading },
+   ] = useLazyQuery(CUSTOMIZABLE_PRODUCTS, {
+      variables: {
+         where: {
+            isPublished: { _eq: true },
+         },
+      },
+      onCompleted: data => {
+         const updatedProducts = data.customizableProducts.filter(
+            pdct => pdct.isValid.status
+         )
+         setProducts([...updatedProducts])
+      },
+      onError: error => {
+         console.log(error)
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   const [fetchComboProducts, { loading: comboProductsLoading }] = useLazyQuery(
+      COMBO_PRODUCTS,
+      {
+         variables: {
+            where: {
+               isPublished: { _eq: true },
+            },
+         },
+         onCompleted: data => {
+            const updatedProducts = data.comboProducts.filter(
+               pdct => pdct.isValid.status
+            )
+            setProducts([...updatedProducts])
+         },
+         onError: error => {
+            console.log(error)
+         },
+         fetchPolicy: 'cache-and-network',
+      }
+   )
 
    const save = () => {
       collectionDispatch({
@@ -36,66 +125,75 @@ const ProductsTunnel = ({ close, products }) => {
       close(1)
    }
 
+   React.useEffect(() => {
+      if (collectionState.meta.productType === 'inventory') {
+         fetchInventoryProducts()
+      } else if (collectionState.meta.productType === 'simple') {
+         fetchSimpleRecipeProducts()
+      } else if (collectionState.meta.productType === 'combo') {
+         fetchComboProducts()
+      } else {
+         fetchCustomizableProducts()
+      }
+   }, [])
+
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => close(2)}>
-                  <CloseIcon color="#888D9D" />
-               </span>
-               <Text as="title">
-                  {t(
-                     address.concat('select and add products to the collection')
-                  )}
-               </Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {t(address.concat('save'))}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title={t(
+               address.concat('select and add products to the collection')
+            )}
+            right={{ action: save, title: t(address.concat('save')) }}
+            close={() => close(2)}
+         />
          <TunnelBody>
-            <List>
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder={t(
-                     address.concat("type what you're looking for")
+            {simpleRecipeProductsLoading ||
+            inventoryProductsLoading ||
+            customizableProductsLoading ||
+            comboProductsLoading ? (
+               <Loader />
+            ) : (
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  {selected.length > 0 && (
+                     <TagGroup style={{ margin: '8px 0' }}>
+                        {selected.map(option => (
+                           <Tag
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                           >
+                              {option.title}
+                           </Tag>
+                        ))}
+                     </TagGroup>
                   )}
-               />
-               {selected.length > 0 && (
-                  <TagGroup style={{ margin: '8px 0' }}>
-                     {selected.map(option => (
-                        <Tag
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                        >
-                           {option.title}
-                        </Tag>
-                     ))}
-                  </TagGroup>
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="MSL1"
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                           isActive={selected.find(
-                              item => item.id === option.id
-                           )}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="MSL1"
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                              isActive={selected.find(
+                                 item => item.id === option.id
+                              )}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

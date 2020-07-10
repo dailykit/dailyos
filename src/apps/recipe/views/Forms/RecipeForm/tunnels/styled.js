@@ -1,33 +1,7 @@
 import styled from 'styled-components'
 
-export const TunnelHeader = styled.div`
-   height: 56px;
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   padding: 0 16px;
-
-   > div {
-      display: flex;
-      align-items: center;
-      span:first-child {
-         width: 32px;
-         height: 32px;
-         display: flex;
-         cursor: pointer;
-         margin-right: 8px;
-         border-radius: 2px;
-         align-items: center;
-         justify-content: center;
-         :hover {
-            background: #e3e3e3;
-         }
-      }
-   }
-`
-
 export const TunnelBody = styled.div`
-   padding: 0 16px;
+   padding: 8px 16px;
    height: calc(100% - 106px);
    overflow: auto;
 `
@@ -84,12 +58,8 @@ export const Flex = styled.div`
 
 export const InputWrapper = styled.div`
    display: flex;
-   width: 100%;
    align-items: baseline;
-   justify-content: space-between;
-   input {
-      max-width: 240px;
-   }
+   margin-bottom: 16px;
    span {
       cursor: pointer;
    }

@@ -16,7 +16,8 @@
       "no-case-declarations": 0,
       "radix": 0,
       "camelcase": 0,
-      "no-alert": 0
+      "no-alert": 0,
+      "no-shadow": 0
    },
    "globals": {
       "window": true,

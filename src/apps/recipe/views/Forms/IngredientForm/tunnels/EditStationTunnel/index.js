@@ -4,21 +4,32 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
+   TunnelHeader,
+   Loader,
 } from '@dailykit/ui'
-import { CloseIcon } from '../../../../../assets/icons'
+import { useSubscription } from '@apollo/react-hooks'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody, TunnelHeader } from '../styled'
+import { TunnelBody } from '../styled'
+import { FETCH_STATIONS } from '../../../../../graphql'
 
-const EditStationTunnel = ({ closeTunnel, stations }) => {
+const EditStationTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
-
+   const [stations, setStations] = React.useState([])
    const [search, setSearch] = React.useState('')
 
    const [list, current, selectOption] = useSingleList(stations)
+
+   const { loading } = useSubscription(FETCH_STATIONS, {
+      onSubscriptionData: data => {
+         setStations([...data.subscriptionData.data.stations])
+      },
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    React.useEffect(() => {
       if (Object.keys(current).length) {
@@ -29,48 +40,45 @@ const EditStationTunnel = ({ closeTunnel, stations }) => {
                station: current,
             },
          })
-         closeTunnel(9)
+         closeTunnel(3)
       }
    }, [current])
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(9)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Select Station</Text>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader title="Select Station" close={() => closeTunnel(3)} />
          <TunnelBody>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.title} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.title}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {loading ? (
+               <Loader />
+            ) : (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

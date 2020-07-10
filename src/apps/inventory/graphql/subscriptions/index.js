@@ -7,6 +7,7 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
          name
          bulkItemAsShippedId
          supplier {
+            id
             name
             contactPerson
          }
@@ -35,19 +36,9 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          id
          name
          bulkItemAsShippedId
-         unit
-         unitSize
-         prices
-         sku
-
-         leadTime
-         supplier {
-            name
-            contactPerson
-         }
-         bulkItems {
+         bulkItemAsShipped {
             id
-            processingName
+            name: processingName
             awaiting
             onHand
             committed
@@ -56,7 +47,50 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             isAvailable
             shelfLife
             unit
+            yield
             consumed
+            image
+            labor
+            bulkDensity
+
+            sachetItems {
+               id
+               onHand
+               awaiting
+               consumed
+               unit
+               unitSize
+               parLevel
+               committed
+            }
+         }
+         unit
+         unitSize
+         prices
+         sku
+
+         leadTime
+         supplier {
+            id
+            name
+            contactPerson
+         }
+         bulkItems {
+            id
+            name: processingName
+            awaiting
+            onHand
+            committed
+            parLevel
+            maxLevel
+            isAvailable
+            shelfLife
+            unit
+            image
+            labor
+            yield
+            consumed
+            bulkDensity
 
             sachetItems {
                id
@@ -124,6 +158,7 @@ export const SUPPLIER_SUBSCRIPTION = gql`
       supplier(id: $id) {
          id
          name
+         logo
          contactPerson
          available
          address
@@ -187,6 +222,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          packagingType
          sealingType
          leadTime
+         image
          supplier {
             id
             name
@@ -221,6 +257,15 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
             name
             contactPerson
          }
+      }
+   }
+`
+
+export const PACKAGINGS_LIST_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
       }
    }
 `
@@ -301,11 +346,17 @@ export const UNITS_SUBSCRIPTION = gql`
 `
 
 export const MASTER_PROCESSINGS_SUBSCRIPTION = gql`
-   subscription {
-      masterProcessings {
-         id
-         name
-         description
+   subscription MasterProcessings($supplierItemId: Int!) {
+      masterProcessingsAggregate(
+         where: {
+            _not: { bulkItems: { supplierItemId: { _eq: $supplierItemId } } }
+         }
+      ) {
+         nodes {
+            id
+            title: name
+            description
+         }
       }
    }
 `
@@ -313,7 +364,7 @@ export const MASTER_ALLERGENS_SUBSCRIPTION = gql`
    subscription {
       masterAllergens {
          id
-         name
+         title: name
          description
       }
    }
@@ -428,6 +479,7 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          supplierItem {
             id
             name
+            unit
          }
          status
          orderQuantity

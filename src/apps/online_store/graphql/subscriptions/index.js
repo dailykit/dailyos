@@ -2,9 +2,9 @@ import gql from 'graphql-tag'
 
 export const S_ACCOMPANIMENT_TYPES = gql`
    subscription {
-      master_accompanimentType {
+      accompaniments {
          id
-         name
+         title: name
       }
    }
 `
@@ -119,33 +119,6 @@ export const S_INVENTORY_PRODUCT = gql`
             price
             quantity
          }
-      }
-   }
-`
-
-export const S_SACHET_ITEMS = gql`
-   subscription SachetItems {
-      sachetItems {
-         id
-         unitSize
-         unit
-         bulkItem {
-            processingName
-            supplierItem {
-               name
-            }
-         }
-      }
-   }
-`
-
-export const S_SUPPLIER_ITEMS = gql`
-   subscription SupplierItems {
-      supplierItems {
-         id
-         name
-         unitSize
-         unit
       }
    }
 `
@@ -290,6 +263,17 @@ export const COLLECTIONS_COUNT = gql`
    }
 `
 
+export const S_COLLECTIONS = gql`
+   subscription Collections {
+      menuCollections {
+         id
+         name
+         categories
+         availability
+      }
+   }
+`
+
 export const S_COLLECTION = gql`
    subscription Collection($id: Int!) {
       menuCollection(id: $id) {
@@ -337,9 +321,10 @@ export const RECURRENCES = gql`
                isActive
                charges {
                   id
+                  charge
                   orderValueFrom
                   orderValueUpto
-                  charge
+                  autoDeliverySelection
                }
             }
          }

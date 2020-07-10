@@ -1,27 +1,24 @@
 import React from 'react'
-import { Text, TextButton, Input } from '@dailykit/ui'
-
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody, StyledRow } from '../styled'
-import { Grid } from '../../../styled'
-import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { Text, Input, TunnelHeader, Toggle, HelperText } from '@dailykit/ui'
+
+import { TunnelBody, StyledRow } from '../styled'
+import { Grid } from '../../../styled'
 import { CREATE_CHARGES, UPDATE_CHARGE } from '../../../../../../graphql'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
-import { Context } from '../../../../../../context'
 
 const ChargesTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
-   const {
-      state: { current },
-   } = React.useContext(Context)
    const [busy, setBusy] = React.useState(false)
    const [from, setFrom] = React.useState(
       recurrenceState?.charge?.orderValueFrom || ''
    )
    const [to, setTo] = React.useState(
       recurrenceState?.charge?.orderValueUpto || ''
+   )
+   const [auto] = React.useState(
+      recurrenceState?.charge?.autoDeliverySelection || false
    )
    const [charge, setCharge] = React.useState(
       recurrenceState?.charge?.charge || ''
@@ -33,10 +30,9 @@ const ChargesTunnel = ({ closeTunnel }) => {
          toast.success('Charge added!')
          closeTunnel(4)
       },
-      onError: error => {
+      onError: () => {
          setBusy(false)
          toast.error('Error')
-         console.log(error)
       },
    })
 
@@ -45,30 +41,28 @@ const ChargesTunnel = ({ closeTunnel }) => {
          toast.success('Charge Updated!')
          closeTunnel(4)
       },
-      onError: error => {
+      onError: () => {
          setBusy(false)
          toast.error('Error')
-         console.log(error)
       },
    })
 
    // Handlers
    const save = () => {
       setBusy(true)
-      if (isNaN(charge) || charge == 0) {
+      if (Number.isNaN(charge) || charge === 0) {
          setBusy(false)
          return toast.error('Invalid charge!')
       }
-      if (isNaN(from) || from == 0) {
+      if (Number.isNaN(from) || from === 0) {
          setBusy(false)
          return toast.error('From value invalid!')
       }
-      if (isNaN(to) || to == 0) {
+      if (Number.isNaN(to) || to === 0) {
          setBusy(false)
          return toast.error('To value invalid!')
       }
       if (recurrenceState.charge) {
-         console.log(recurrenceState)
          updateCharge({
             variables: {
                id: recurrenceState.charge.id,
@@ -94,20 +88,12 @@ const ChargesTunnel = ({ closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(4)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Delivery Charges</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Delivery Charges"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(4)}
+         />
          <TunnelBody>
             <StyledRow>
                <Text as="p">Enter Order Value Range and Charges:</Text>
@@ -137,8 +123,16 @@ const ChargesTunnel = ({ closeTunnel }) => {
                   />
                </Grid>
             </StyledRow>
+            <section>
+               <Toggle
+                  checked={auto}
+                  setChecked={() => {}}
+                  label="Handle delivery automatically?"
+               />
+               <HelperText type="hint" message="Coming Soon!" />
+            </section>
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

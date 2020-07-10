@@ -1,14 +1,12 @@
+import RRule from 'rrule'
 import React from 'react'
-import { Text, TextButton, Checkbox } from '@dailykit/ui'
-import { RRule } from 'rrule'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { Text, Checkbox, TunnelHeader } from '@dailykit/ui'
 
-import { CloseIcon } from '../../../../../../assets/icons'
-
-import { TunnelHeader, TunnelBody } from '../styled'
+import { TunnelBody } from '../styled'
 import { Context } from '../../../../../../context/tabs'
 import { Container, Flex } from '../../../styled'
-import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
 import { CREATE_RECURRENCE } from '../../../../../../graphql'
 
 const ReccurenceTunnel = ({ closeTunnel }) => {
@@ -23,10 +21,9 @@ const ReccurenceTunnel = ({ closeTunnel }) => {
          toast.success('Recurrence added!')
          closeTunnel(1)
       },
-      onError: error => {
+      onError: () => {
          setBusy(false)
          toast.error('Error')
-         console.log(error)
       },
    })
 
@@ -63,20 +60,12 @@ const ReccurenceTunnel = ({ closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(1)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Reccurence</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Reccurence"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(1)}
+         />
          <TunnelBody>
             <Container bottom="32">
                <Text as="p">Select the days: </Text>
@@ -138,7 +127,7 @@ const ReccurenceTunnel = ({ closeTunnel }) => {
                </>
             )}
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

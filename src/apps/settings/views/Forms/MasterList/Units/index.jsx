@@ -1,37 +1,22 @@
-import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
-// Components
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   IconButton,
+   Loader,
    Text,
-   Table,
-   TableHead,
-   TableCell,
-   TableBody,
-   TableRow,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
-   IconButton,
 } from '@dailykit/ui'
-
-// Styled
-import { Layout, Card, Listing, ListingHeader } from '../styled'
-
-// Icons
-import {
-   EditIcon,
-   DeleteIcon,
-   AddIcon,
-} from '../../../../../../shared/assets/icons'
-
-// Tunnels
-import { AddTypesTunnel } from './tunnels'
-
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { UNITS, DELETE_UNITS } from '../../../../graphql'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
+
+import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import { DELETE_UNITS, UNITS } from '../../../../graphql'
+import tableOptions from '../../../Listings/tableOption'
+import { Card, Layout, Listing, ListingHeader } from '../styled'
+import { AddTypesTunnel } from './tunnels'
 
 const address = 'apps.settings.views.forms.units.'
 
@@ -48,8 +33,8 @@ const UnitsForm = () => {
       onCompleted: () => {
          toast.success('Deleted!')
       },
-      onError: error => {
-         console.log(error)
+      onError: err => {
+         console.log(err)
          toast.error('Error')
       },
    })
@@ -66,13 +51,35 @@ const UnitsForm = () => {
       }
    }
 
+   const columns = [
+      {
+         title: t(address.concat('name')),
+         field: 'name',
+         headerFilter: true,
+      },
+
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            const { id, name } = cell._cell.row.data
+            deleteHandler(e, { id, name })
+         },
+         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+      },
+   ]
+
    if (error) {
       console.log(error)
    }
    if (loading) return <Loader />
 
    return (
-      <React.Fragment>
+      <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <AddTypesTunnel closeTunnel={closeTunnel} />
@@ -99,29 +106,14 @@ const UnitsForm = () => {
                      <AddIcon size={24} />
                   </IconButton>
                </ListingHeader>
-               <Table>
-                  <TableHead>
-                     <TableRow>
-                        <TableCell>{t(address.concat('name'))}</TableCell>
-                        <TableCell></TableCell>
-                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                     {data.units.map(unit => (
-                        <TableRow key={unit.id}>
-                           <TableCell>{unit.name}</TableCell>
-                           <TableCell>
-                              <IconButton onClick={e => deleteHandler(e, unit)}>
-                                 <DeleteIcon color="#FF5A52" />
-                              </IconButton>
-                           </TableCell>
-                        </TableRow>
-                     ))}
-                  </TableBody>
-               </Table>
+               <ReactTabulator
+                  columns={columns}
+                  data={data.units}
+                  options={tableOptions}
+               />
             </Listing>
          </Layout>
-      </React.Fragment>
+      </>
    )
 }
 

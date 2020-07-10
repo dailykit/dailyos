@@ -1,11 +1,21 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Select, Text } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Select,
+   Text,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { DELETE_SIMPLE_RECIPE_YIELD } from '../../../../../graphql'
 import { Container } from '../styled'
+import { ServingsTunnel } from '../../tunnels'
 
-const Servings = ({ state, openTunnel }) => {
+const Servings = ({ state }) => {
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
    const options =
       state.simpleRecipeYields?.map(option => {
          return {
@@ -39,25 +49,32 @@ const Servings = ({ state, openTunnel }) => {
    }
 
    return (
-      <Container top="32" paddingX="32">
-         <Text as="subtitle">Servings</Text>
-         <Container>
-            {options.length ? (
-               <Select
-                  options={options}
-                  addOption={() => openTunnel(3)}
-                  placeholder="Add Servings"
-                  removeOption={remove}
-               />
-            ) : (
-               <ButtonTile
-                  type="secondary"
-                  text="Add Servings"
-                  onClick={() => openTunnel(3)}
-               />
-            )}
+      <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <ServingsTunnel state={state} closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Container top="32" paddingX="32">
+            <Text as="subtitle">Servings</Text>
+            <Container>
+               {options.length ? (
+                  <Select
+                     options={options}
+                     addOption={() => openTunnel(1)}
+                     placeholder="Add Servings"
+                     removeOption={remove}
+                  />
+               ) : (
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Servings"
+                     onClick={() => openTunnel(1)}
+                  />
+               )}
+            </Container>
          </Container>
-      </Container>
+      </>
    )
 }
 

@@ -7,6 +7,7 @@ import ConfigureIngredientTunnel from './ConfigureIngredientTunnel'
 import SachetTunnel from './SachetTunnel'
 import PhotoTunnel from './PhotoTunnel'
 import CardPreviewTunnel from './CardPreviewTunnel'
+import StepPhotoTunnel from './StepPhotoTunnel'
 
 export {
    InformationTunnel,
@@ -18,4 +19,5 @@ export {
    SachetTunnel,
    PhotoTunnel,
    CardPreviewTunnel,
+   StepPhotoTunnel,
 }

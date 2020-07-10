@@ -15,6 +15,8 @@ import {
    ALL_SUPPLIERS_SUBSCRIPTION,
 } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
+import { FlexContainer } from '../../Forms/styled'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -51,7 +53,7 @@ export default function SupplierListing() {
       },
    })
 
-   const [deleteSupplier, { loading }] = useMutation(DELETE_SUPPLIER, {
+   const [deleteSupplier] = useMutation(DELETE_SUPPLIER, {
       onCompleted: () => {
          toast.info('Supplier deleted!')
       },
@@ -77,23 +79,12 @@ export default function SupplierListing() {
 
    const tableRef = React.useRef()
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
    const columns = [
       { title: 'Name', field: 'name', headerFilter: true },
       {
          title: 'Person of Contact',
          field: 'contactPerson',
-         headerFilter: true,
+         headerFilter: false,
          formatter: reactFormatter(<ContactPerson />),
       },
       {
@@ -102,12 +93,14 @@ export default function SupplierListing() {
          formatter: 'tickCross',
          headerFilter: true,
          hozAlign: 'center',
+         cssClass: 'center-text',
       },
       {
          title: 'Actions',
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
+         cssClass: 'center-text',
          cellClick: (e, cell) => {
             e.stopPropagation()
             const { id } = cell._cell.row.data
@@ -124,32 +117,35 @@ export default function SupplierListing() {
       addTab(name, 'suppliers', id)
    }
 
-   if (loading || listLoading) return <Loader />
+   if (listLoading) return <Loader />
 
    return (
       <>
          <StyledWrapper>
             <StyledHeader>
                <h1>{t(address.concat('suppliers'))}</h1>
-               <IconButton type="solid" onClick={createSupplierHandler}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
+               <FlexContainer>
+                  <TextButton
+                     type="outline"
+                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                  >
+                     Clear Filters
+                  </TextButton>
+                  <span style={{ width: '10px' }} />
+                  <IconButton type="solid" onClick={createSupplierHandler}>
+                     <AddIcon color="#fff" size={24} />
+                  </IconButton>
+               </FlexContainer>
             </StyledHeader>
+            <br />
 
-            <div style={{ margin: '0 auto', width: '80%' }}>
-               <TextButton
-                  style={{ marginBottom: '20px' }}
-                  type="outline"
-                  onClick={() => tableRef.current.table.clearHeaderFilter()}
-               >
-                  Clear Filters
-               </TextButton>
+            <div style={{ margin: '0 auto', width: '90%' }}>
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
                   data={suppliers}
                   rowClick={rowClick}
-                  options={options}
+                  options={tableOptions}
                />
             </div>
          </StyledWrapper>

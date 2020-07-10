@@ -1,10 +1,12 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Input, Text, TextButton, Toggle } from '@dailykit/ui'
+import { ButtonTile, Input, Toggle, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon, DeleteIcon } from '../../../../../assets/icons'
+import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { Container, InputWrapper, TunnelBody, TunnelHeader } from '../styled'
+import { Container, InputWrapper, TunnelBody } from '../styled'
+import { RecipeContext } from '../../../../../context/recipee'
+import { ImageContainer, PhotoTileWrapper } from './styled'
 
 const reducer = (state, { type, payload }) => {
    switch (type) {
@@ -21,6 +23,10 @@ const reducer = (state, { type, payload }) => {
          updatedProcedures[payload.index].steps.push({
             title: '',
             isVisible: true,
+            assets: {
+               images: [],
+               videos: [],
+            },
             description: '',
          })
          return {
@@ -82,10 +88,25 @@ const reducer = (state, { type, payload }) => {
             procedures: updatedProcedures,
          }
       }
+      case 'REMOVE_STEP_PHOTO': {
+         const updatedProcedures = state.procedures
+         updatedProcedures[payload.index].steps[payload.stepIndex].assets = {
+            images: [],
+            videos: [],
+         }
+         return {
+            ...state,
+            procedures: updatedProcedures,
+         }
+      }
+      default:
+         return state
    }
 }
 
-const ProceduresTunnel = ({ state, closeTunnel }) => {
+const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
+   const { recipeDispatch } = React.useContext(RecipeContext)
+
    // State
    const [busy, setBusy] = React.useState(false)
    const [_state, _dispatch] = React.useReducer(reducer, state)
@@ -100,16 +121,25 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
       },
       onCompleted: () => {
          toast.success('Updated!')
-         closeTunnel(2)
+         closeTunnel(1)
       },
-      onError: error => {
-         console.log(error)
+      onError: () => {
          toast.error('Error!')
          setBusy(false)
       },
    })
 
-   //Handlers
+   const addPhoto = (procedureIndex, stepIndex) => {
+      recipeDispatch({
+         type: 'STEP_PHOTO',
+         payload: {
+            procedureIndex,
+            stepIndex,
+         },
+      })
+      openTunnel(2)
+   }
+
    const save = () => {
       if (busy) return
       setBusy(true)
@@ -117,37 +147,40 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
    }
 
    return (
-      <React.Fragment>
-         <TunnelHeader>
-            <div>
-               <span onClick={() => closeTunnel(2)}>
-                  <CloseIcon color="#888D9D" size="20" />
-               </span>
-               <Text as="title">Add Cooking Steps</Text>
-            </div>
-            <div>
-               <TextButton type="solid" onClick={save}>
-                  {busy ? 'Saving...' : 'Save'}
-               </TextButton>
-            </div>
-         </TunnelHeader>
+      <>
+         <TunnelHeader
+            title="Add Cooking Steps"
+            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            close={() => closeTunnel(1)}
+         />
          <TunnelBody>
             {_state.procedures?.map((procedure, index) => (
                <Container bottom="32">
                   <InputWrapper>
-                     <Input
-                        type="text"
-                        placeholder="Procedure Title"
-                        name={`procedure-${index}-title`}
-                        value={procedure.title}
-                        onChange={e =>
+                     <div style={{ marginRight: '16px', maxWidth: '240px' }}>
+                        <Input
+                           type="text"
+                           placeholder="Procedure Title"
+                           name={`procedure-${index}-title`}
+                           value={procedure.title}
+                           onChange={e =>
+                              _dispatch({
+                                 type: 'PROCEDURE_TITLE',
+                                 payload: { index, value: e.target.value },
+                              })
+                           }
+                        />
+                     </div>
+                     <span
+                        tabIndex="0"
+                        role="button"
+                        onKeyDown={e =>
+                           e.charCode === 13 &&
                            _dispatch({
-                              type: 'PROCEDURE_TITLE',
-                              payload: { index, value: e.target.value },
+                              type: 'DELETE_PROCEDURE',
+                              payload: { index },
                            })
                         }
-                     />
-                     <span
                         onClick={() =>
                            _dispatch({
                               type: 'DELETE_PROCEDURE',
@@ -159,25 +192,32 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                      </span>
                   </InputWrapper>
                   {procedure.steps?.map((step, stepIndex) => (
-                     <React.Fragment>
+                     <Container>
                         <Container bottom="16">
                            <InputWrapper>
-                              <Input
-                                 type="text"
-                                 placeholder="Step Title"
-                                 name={`step-${stepIndex}-title`}
-                                 value={step.title}
-                                 onChange={e => {
-                                    _dispatch({
-                                       type: 'STEP_TITLE',
-                                       payload: {
-                                          index,
-                                          stepIndex,
-                                          value: e.target.value,
-                                       },
-                                    })
+                              <div
+                                 style={{
+                                    marginRight: '16px',
+                                    maxWidth: '240px',
                                  }}
-                              />
+                              >
+                                 <Input
+                                    type="text"
+                                    placeholder="Step Title"
+                                    name={`step-${stepIndex}-title`}
+                                    value={step.title}
+                                    onChange={e => {
+                                       _dispatch({
+                                          type: 'STEP_TITLE',
+                                          payload: {
+                                             index,
+                                             stepIndex,
+                                             value: e.target.value,
+                                          },
+                                       })
+                                    }}
+                                 />
+                              </div>
                               <div>
                                  <Toggle
                                     checked={step.isVisible}
@@ -193,6 +233,15 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                                     }}
                                  />
                                  <span
+                                    tabIndex="0"
+                                    role="button"
+                                    onKeyDown={e =>
+                                       e.charCode === 13 &&
+                                       _dispatch({
+                                          type: 'DELETE_STEP',
+                                          payload: { index, stepIndex },
+                                       })
+                                    }
                                     onClick={() =>
                                        _dispatch({
                                           type: 'DELETE_STEP',
@@ -204,6 +253,60 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                                  </span>
                               </div>
                            </InputWrapper>
+                        </Container>
+                        <Container bottom="16">
+                           {step.assets.images.length ? (
+                              <ImageContainer>
+                                 <div>
+                                    <span
+                                       tabIndex="0"
+                                       role="button"
+                                       onKeyDown={e =>
+                                          e.charCode === 13 &&
+                                          addPhoto(index, stepIndex)
+                                       }
+                                       onClick={() =>
+                                          addPhoto(index, stepIndex)
+                                       }
+                                    >
+                                       <EditIcon />
+                                    </span>
+                                    <span
+                                       tabIndex="0"
+                                       role="button"
+                                       onKeyDown={e =>
+                                          e.charCode === 13 &&
+                                          _dispatch({
+                                             type: 'REMOVE_STEP_PHOTO',
+                                             payload: { index, stepIndex },
+                                          })
+                                       }
+                                       onClick={() =>
+                                          _dispatch({
+                                             type: 'REMOVE_STEP_PHOTO',
+                                             payload: { index, stepIndex },
+                                          })
+                                       }
+                                    >
+                                       <DeleteIcon />
+                                    </span>
+                                 </div>
+                                 <img
+                                    src={step.assets.images[0].url}
+                                    alt={step.assets.images[0].title}
+                                 />
+                              </ImageContainer>
+                           ) : (
+                              <PhotoTileWrapper>
+                                 <ButtonTile
+                                    type="primary"
+                                    size="sm"
+                                    text="Add Photo for this Step"
+                                    helper="upto 1MB - only JPG, PNG, PDF allowed"
+                                    onClick={() => addPhoto(index, stepIndex)}
+                                 />
+                              </PhotoTileWrapper>
+                           )}
                         </Container>
                         <Container bottom="16">
                            <Input
@@ -224,7 +327,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                               }}
                            />
                         </Container>
-                     </React.Fragment>
+                     </Container>
                   ))}
                   <ButtonTile
                      type="secondary"
@@ -248,7 +351,7 @@ const ProceduresTunnel = ({ state, closeTunnel }) => {
                }}
             />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }
 

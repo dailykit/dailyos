@@ -5,8 +5,9 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { useOrder } from '../../context'
 import { ORDER } from '../../graphql'
+import { formatDate } from '../../utils'
 import { Loader } from '../../components'
-import { UserIcon } from '../../assets/icons'
+import { UserIcon, PrintIcon } from '../../assets/icons'
 
 import {
    Wrapper,
@@ -22,15 +23,20 @@ import {
    StyledTab,
    StyledTabPanels,
    StyledTabPanel,
+   StyledPrint,
+   StyledButton,
+   StyledStatus,
 } from './styled'
 
 import MealKitProductDetails from './MealKitProductDetails'
+
+const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
-   const { switchView } = useOrder()
+   const { switchView, dispatch } = useOrder()
    const [order, setOrder] = React.useState(null)
    const [mealkits, setMealKits] = React.useState([])
    const [inventories, setInventories] = React.useState([])
@@ -59,6 +65,17 @@ const Order = () => {
       return () => switchView('SUMMARY')
    }, [])
 
+   const print = () => {
+      const template = encodeURIComponent(
+         JSON.stringify({ name: 'bill1', type: 'bill', format: 'pdf' })
+      )
+      const data = encodeURIComponent(JSON.stringify({ id: order.id }))
+      window.open(
+         `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
+         '_blank'
+      )
+   }
+
    if (loading || !order)
       return (
          <Wrapper>
@@ -73,18 +90,52 @@ const Order = () => {
             <h3>
                <span>{t(address.concat('order no'))}</span>: ORD{order.id}
             </h3>
+            <StyledPrint onClick={() => print()}>
+               <PrintIcon size={16} />
+            </StyledPrint>
+            {['ONDEMAND_DELIVERY', 'PREORDER_DELIVERY'].includes(
+               order.fulfillmentType
+            ) && (
+               <StyledButton
+                  type="button"
+                  onClick={() =>
+                     dispatch({
+                        type: 'DELIVERY_PANEL',
+                        payload: { orderId: order.id },
+                     })
+                  }
+               >
+                  View Delivery
+               </StyledButton>
+            )}
             <section>
                <section>
                   <span>{t(address.concat('ordered'))}:&nbsp;</span>
-                  <span>Feb 12, 2020</span>
+                  <span>{formatDate(order.created_at)}</span>
                </section>
                <section>
-                  <span>{t(address.concat('expected dispatch'))}:&nbsp;</span>
-                  <span>Feb 12, 2020</span>
+                  <span>{t(address.concat('ready by'))}:&nbsp;</span>
+                  <span>
+                     {order.deliveryInfo?.pickup?.window?.approved?.startsAt
+                        ? formatDate(
+                             order.deliveryInfo?.pickup?.window?.approved
+                                ?.startsAt
+                          )
+                        : 'N/A'}
+                  </span>
                </section>
                <section>
-                  <span>{t(address.concat('delivery'))}:&nbsp;</span>
-                  <span>Feb 12, 2020</span>
+                  {isPickup(order.fulfillmentType) ? (
+                     <TimeSlot
+                        type={order.fulfillmentType}
+                        data={order.deliveryInfo?.pickup}
+                     />
+                  ) : (
+                     <TimeSlot
+                        type={order.fulfillmentType}
+                        data={order.deliveryInfo?.dropoff}
+                     />
+                  )}
                </section>
             </section>
          </Header>
@@ -331,5 +382,36 @@ const ReadyToEats = ({ readytoeats }) => {
             </OrderItem>
          ))}
       </OrderItems>
+   )
+}
+
+const TimeSlot = ({ type, data = {} }) => {
+   return (
+      <StyledStatus>
+         <span>{isPickup(type) ? 'Pick Up' : 'Delivery'}:</span>
+         <span>
+            {data?.window?.approved?.startsAt
+               ? formatDate(data?.window?.approved?.startsAt, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                 })
+               : 'N/A'}
+            ,&nbsp;
+            {data?.window?.approved?.startsAt
+               ? formatDate(data?.window?.approved?.startsAt, {
+                    minute: 'numeric',
+                    hour: 'numeric',
+                 })
+               : 'N/A'}
+            -
+            {data?.window?.approved?.endsAt
+               ? formatDate(data?.window?.approved?.endsAt, {
+                    minute: 'numeric',
+                    hour: 'numeric',
+                 })
+               : 'N/A'}
+         </span>
+      </StyledStatus>
    )
 }

@@ -3,18 +3,10 @@ import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
+
 // Components
-import {
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   IconButton,
-   ButtonGroup,
-   Text,
-   Loader,
-} from '@dailykit/ui'
+import { IconButton, Text, Loader } from '@dailykit/ui'
 
 // State
 import { useTabs } from '../../../context'
@@ -26,10 +18,12 @@ import { StyledWrapper, StyledHeader } from '../styled'
 
 // Icons
 import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
+import tableOptions from '../tableOption'
 
 const StationsListing = () => {
    const history = useHistory()
    const { tabs, addTab } = useTabs()
+   const tableRef = React.useRef()
    const { error, loading, data: { stations } = {} } = useSubscription(STATIONS)
    const [remove] = useMutation(DELETE_STATION)
 
@@ -37,6 +31,28 @@ const StationsListing = () => {
       const hash = `stations${uuid().split('-')[0]}`
       addTab(hash, `/settings/stations/${hash}`)
    }
+
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+      addTab(name, `/settings/stations/${id}`)
+   }
+
+   const columns = [
+      { title: 'Station Name', field: 'name', headerFilter: true },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            const { id } = cell._cell.row.data
+            remove({ variables: { id } })
+         },
+         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+      },
+   ]
 
    React.useEffect(() => {
       const tab = tabs.find(item => item.path === `/settings/stations`) || {}
@@ -56,43 +72,14 @@ const StationsListing = () => {
          {loading && <Loader />}
          {error && <div>{error.message}</div>}
          {stations?.length === 0 && <div>No stations yet!</div>}
-         {stations?.length > 0 && (
-            <Table>
-               <TableHead>
-                  <TableRow>
-                     <TableCell>Station Name</TableCell>
-                     <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {stations.map(station => (
-                     <TableRow
-                        key={station.id}
-                        onClick={() =>
-                           addTab(
-                              station.name,
-                              `/settings/stations/${station.id}`
-                           )
-                        }
-                     >
-                        <TableCell>{station.name}</TableCell>
-                        <TableCell align="right">
-                           <ButtonGroup align="right">
-                              <IconButton
-                                 type="outline"
-                                 onClick={e =>
-                                    e.stopPropagation() ||
-                                    remove({ variables: { id: station.id } })
-                                 }
-                              >
-                                 <DeleteIcon />
-                              </IconButton>
-                           </ButtonGroup>
-                        </TableCell>
-                     </TableRow>
-                  ))}
-               </TableBody>
-            </Table>
+         {stations?.length && (
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={stations}
+               rowClick={rowClick}
+               options={tableOptions}
+            />
          )}
       </StyledWrapper>
    )
