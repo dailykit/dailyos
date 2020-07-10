@@ -39,7 +39,8 @@ const BrandSettings = ({ setUpdating, openTunnel }) => {
                return setAddress(setting.value)
             }
             default: {
-               return toast.error('Settings mismatch!')
+               // eslint-disable-next-line
+               return
             }
          }
       })
