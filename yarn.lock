@@ -9199,6 +9199,14 @@ react-error-overlay@^6.0.7:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
   integrity sha512-TAv1KJFh3RhqxNvhzxj6LeT5NWklP6rDr2a0jaTfsZ5wSZWHOGeqQyejUp3xxLfPt2UpyJEcVQB/zyPcmonNFA==
 
+react-google-places-autocomplete@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-google-places-autocomplete/-/react-google-places-autocomplete-2.1.0.tgz#c6081dc5dc9168ebbc02c8f415b56f6f47936b02"
+  integrity sha512-E64aeRZhx8+QCRKRrgOIyTE7gPSmrHD4XcDRTD4dwkmac+2OnnGQjukozSG6kdJVygbJGInSC9fiJOJnAwmiww==
+  dependencies:
+    prop-types "^15.6.2"
+    react "^16.13.1"
+
 react-i18next@^11.4.0:
   version "11.5.0"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.5.0.tgz#84a9bb535d44c0c1b336b94de164515c2cc2a714"
