@@ -12,7 +12,7 @@ export default function ImageCarousel({ images }) {
             src={images[current]?.url}
             alt="product"
             width="90%"
-            height="437px"
+            height="637px"
          />
 
          <Images>
