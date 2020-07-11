@@ -77,6 +77,9 @@ export default function ProductHeader({ product }) {
 
 const Wrapper = styled.div`
    position: fixed;
+   bottom: 1rem;
+   top: 10rem;
+   overflow-y: auto;
    width: 36vw;
    h2 {
       font-size: 40px;
