@@ -1,9 +1,16 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { Checkbox } from '@dailykit/ui'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 
 import { FlexContainer } from '../../views/Forms/styled'
 import { PriceTable, TableHead, TableBody, TableRow, TableCell } from './styled'
+
+import {
+   ORGANISATION_PURCHASE_ORDER,
+   REGISTER_PURCHASE_ORDER,
+} from '../graphql'
 
 export default function ProductPrice({ product }) {
    const { packagingPurchaseOptions } = product
@@ -16,7 +23,53 @@ export default function ProductPrice({ product }) {
       })) || []
    )
 
-   const registerOrder = useCallback(() => {}, [])
+   const checkout = orgId => {
+      console.log(orgId)
+   }
+
+   const [createPurchaseOrder] = useMutation(REGISTER_PURCHASE_ORDER, {
+      onCompleted: data => {
+         let orgId = null
+         if (
+            data &&
+            Array.isArray(
+               data.insert_organizationPurchaseOrders_purchaseOrder?.returning
+            ) &&
+            data.insert_organizationPurchaseOrders_purchaseOrder.returning[0]
+               ?.id
+         ) {
+            orgId =
+               data.insert_organizationPurchaseOrders_purchaseOrder.returning[0]
+                  ?.id
+            checkout(orgId)
+         }
+      },
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+   })
+
+   const [getPurchaseOrders] = useLazyQuery(ORGANISATION_PURCHASE_ORDER, {
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+
+      onCompleted: data => {
+         let orgId = null
+         if (
+            data &&
+            Array.isArray(data.organizationPurchaseOrders_purchaseOrder) &&
+            data.organizationPurchaseOrders_purchaseOrder[0]?.id
+         ) {
+            orgId = data.organizationPurchaseOrders_purchaseOrder[0].id
+            checkout(orgId)
+         } else {
+            createPurchaseOrder()
+         }
+      },
+   })
 
    const selectOption = index => {
       setPurchaseOptions(curr => {
@@ -117,7 +170,7 @@ export default function ProductPrice({ product }) {
             </TableBody>
          </PriceTable>
 
-         <ActionButton onClick={registerOrder}>
+         <ActionButton onClick={getPurchaseOrders}>
             ADD TO CART
             <span style={{ marginLeft: '16px' }}>
                (

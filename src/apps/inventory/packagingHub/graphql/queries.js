@@ -96,3 +96,12 @@ export const PACKAGING = gql`
       }
    }
 `
+
+export const ORGANISATION_PURCHASE_ORDER = gql`
+   query OrganisationPurchaseOrder {
+      organizationPurchaseOrders_purchaseOrder {
+         id
+         organizationId
+      }
+   }
+`
