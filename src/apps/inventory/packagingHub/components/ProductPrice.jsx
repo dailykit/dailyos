@@ -102,9 +102,12 @@ export default function ProductPrice({ product }) {
                         ) : null}
                      </Cell>
                      <Cell align="right">
-                        {opt.isSelected
-                           ? `${opt.multiplier * opt.salesPrice}`.slice(0, 5)
-                           : null}
+                        {opt.isSelected ? (
+                           <span>
+                              {`${opt.multiplier * opt.salesPrice}`.slice(0, 5)}{' '}
+                              $
+                           </span>
+                        ) : null}
                      </Cell>
                   </Row>
                ))}
