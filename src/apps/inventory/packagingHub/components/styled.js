@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const CardWrapper = styled.div`
    height: 238px;
@@ -88,3 +88,68 @@ export const ActionButton = styled.button`
    bottom: 0;
    left: 0;
 `
+
+export const PriceTable = styled.table`
+   width: 100%;
+   display: table;
+   border-collapse: separate;
+   border-spacing: 0 2px;
+`
+export const TableHead = styled.thead`
+   width: 100%;
+   display: table-header-group;
+   td {
+      height: 4rem;
+      color: #888d9d;
+      font-size: 14px;
+   }
+`
+export const TableBody = styled.tbody`
+   display: table-row-group;
+
+   tr {
+      background: #f3f3f3;
+      cursor: pointer;
+
+      &:hover {
+         background: #ececec;
+      }
+   }
+
+   td {
+      border-bottom: 1px solid #ececec;
+      border-top: 1px solid #ececec;
+      height: 48px;
+      color: #555b6e;
+      font-size: 14px;
+
+      &:first-child {
+         border-left: 1px solid #ececec;
+      }
+
+      &:last-child {
+         border: 0;
+         background: #fff;
+      }
+
+      &:nth-last-child(2) {
+         border-right: 1px solid #ececec;
+      }
+   }
+`
+export const TableRow = styled.tr`
+   display: table-row;
+   background: ${({ isSelected }) => (isSelected ? '#fff !important' : null)};
+   box-shadow: ${({ isSelected }) =>
+      isSelected ? '2px 4px 14px rgba(0, 0, 0, 0.07)' : null};
+`
+export const TableCell = styled.td(
+   ({ align }) => css`
+      padding: 0 12px;
+      display: table-cell;
+      text-align: ${align === 'right' ? align : 'left'};
+      > div {
+         float: ${align === 'right' ? align : 'left'};
+      }
+   `
+)
