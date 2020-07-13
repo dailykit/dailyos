@@ -10,6 +10,7 @@ import { PriceTable, TableHead, TableBody, TableRow, TableCell } from './styled'
 import {
    ORGANISATION_PURCHASE_ORDER,
    REGISTER_PURCHASE_ORDER,
+   CREATE_PURCHASE_ORDER_ITEMS,
 } from '../graphql'
 
 export default function ProductPrice({ product }) {
@@ -23,8 +24,41 @@ export default function ProductPrice({ product }) {
       })) || []
    )
 
+   const [createPurchaseOrderItems] = useMutation(CREATE_PURCHASE_ORDER_ITEMS, {
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+      onCompleted: () => {
+         const reset =
+            packagingPurchaseOptions.map(x => ({
+               ...x,
+               isSelected: false,
+               multiplier: 0,
+            })) || []
+
+         setPurchaseOptions(reset)
+         toast.success('Purchase Order successfullt created !')
+      },
+   })
+
    const checkout = orgId => {
-      console.log(orgId)
+      // create purchaseOrderItem for each purchaseOptions
+      const objects = purchaseOptions
+         .filter(opt => opt.isSelected && opt.multiplier > 0)
+         .map(opt => {
+            return {
+               packagingId: product.id,
+               packagingPurchaseOptionId: opt.id,
+               purchaseOrderId: orgId,
+               quantity: opt.multiplier,
+            }
+         })
+
+      if (!objects.length)
+         return toast.error("you haven't selected any purchase options !")
+
+      createPurchaseOrderItems({ variables: { objects } })
    }
 
    const [createPurchaseOrder] = useMutation(REGISTER_PURCHASE_ORDER, {
@@ -51,6 +85,7 @@ export default function ProductPrice({ product }) {
    })
 
    const [getPurchaseOrders] = useLazyQuery(ORGANISATION_PURCHASE_ORDER, {
+      fetchPolicy: 'network-only',
       onError: error => {
          console.log(error)
          toast.error(error.message)
@@ -171,7 +206,7 @@ export default function ProductPrice({ product }) {
          </PriceTable>
 
          <ActionButton onClick={getPurchaseOrders}>
-            ADD TO CART
+            ADD TO PURCHASE ORDER
             <span style={{ marginLeft: '16px' }}>
                (
                {purchaseOptions
@@ -191,30 +226,8 @@ export default function ProductPrice({ product }) {
 }
 
 const Multiplier = ({ value, onInc, onDec }) => {
-   const Wrapper = styled(FlexContainer)`
-      width: 95%;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin: 0 auto;
-
-      button {
-         border: 0;
-         cursor: pointer;
-         margin-bottom: 4px;
-         background: transparent;
-      }
-
-      span {
-         width: 100%;
-
-         border-bottom: 1px solid #888d9d;
-         text-align: center;
-         padding-bottom: 4px;
-      }
-   `
-
    return (
-      <Wrapper>
+      <MultiplierWrapper>
          <button style={{ marginBottom: '6px' }} type="button" onClick={onDec}>
             <DecIcon />
          </button>
@@ -224,9 +237,31 @@ const Multiplier = ({ value, onInc, onDec }) => {
          <button type="button" onClick={onInc}>
             <IncIcon />
          </button>
-      </Wrapper>
+      </MultiplierWrapper>
    )
 }
+
+const MultiplierWrapper = styled(FlexContainer)`
+   width: 95%;
+   align-items: flex-end;
+   justify-content: space-between;
+   margin: 0 auto;
+
+   button {
+      border: 0;
+      cursor: pointer;
+      margin-bottom: 4px;
+      background: transparent;
+   }
+
+   span {
+      width: 100%;
+
+      border-bottom: 1px solid #888d9d;
+      text-align: center;
+      padding-bottom: 4px;
+   }
+`
 
 const Wrapper = styled.div`
    margin-top: 39px;

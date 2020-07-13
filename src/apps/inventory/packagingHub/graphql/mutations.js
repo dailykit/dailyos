@@ -10,3 +10,15 @@ export const REGISTER_PURCHASE_ORDER = gql`
       }
    }
 `
+
+export const CREATE_PURCHASE_ORDER_ITEMS = gql`
+   mutation CreatePurchaseOrderItems(
+      $objects: [organizationPurchaseOrders_purchaseOrderItem_insert_input!]!
+   ) {
+      insert_organizationPurchaseOrders_purchaseOrderItem(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
