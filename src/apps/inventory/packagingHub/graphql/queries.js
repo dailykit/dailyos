@@ -114,6 +114,7 @@ export const CART_ITEMS = gql`
             id
             packagingName
             packagingCompanyBrand {
+               id
                name
             }
             assets

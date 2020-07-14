@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 
-import { FlexContainer } from '../../views/Forms/styled'
 import { PriceTable, TableHead, TableBody, TableRow, TableCell } from './styled'
+import QuantityHandler from './QuantityHandler'
 
 import {
    ORGANISATION_PURCHASE_ORDER,
@@ -185,7 +185,7 @@ export default function ProductPrice({ product }) {
                      <TableCell>$ {opt.salesPrice}</TableCell>
                      <TableCell>
                         {opt.isSelected ? (
-                           <Multiplier
+                           <QuantityHandler
                               onInc={e => incrementMultiplier(index, e)}
                               onDec={e => decrementMultiplier(index, e)}
                               value={opt.multiplier}
@@ -225,44 +225,6 @@ export default function ProductPrice({ product }) {
    )
 }
 
-const Multiplier = ({ value, onInc, onDec }) => {
-   return (
-      <MultiplierWrapper>
-         <button style={{ marginBottom: '6px' }} type="button" onClick={onDec}>
-            <DecIcon />
-         </button>
-
-         <span>{value}</span>
-
-         <button type="button" onClick={onInc}>
-            <IncIcon />
-         </button>
-      </MultiplierWrapper>
-   )
-}
-
-const MultiplierWrapper = styled(FlexContainer)`
-   width: 95%;
-   align-items: flex-end;
-   justify-content: space-between;
-   margin: 0 auto;
-
-   button {
-      border: 0;
-      cursor: pointer;
-      margin-bottom: 4px;
-      background: transparent;
-   }
-
-   span {
-      width: 100%;
-
-      border-bottom: 1px solid #888d9d;
-      text-align: center;
-      padding-bottom: 4px;
-   }
-`
-
 const Wrapper = styled.div`
    margin-top: 39px;
    h3 {
@@ -282,43 +244,3 @@ const ActionButton = styled.button`
    background: linear-gradient(180deg, #28c1f7 -4.17%, #00a7e1 100%);
    color: #fff;
 `
-
-const DecIcon = () => (
-   <svg
-      width="9"
-      height="3"
-      viewBox="0 0 9 3"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-   >
-      <path
-         d="M1.5 1.5H8"
-         stroke="#00A7E1"
-         strokeWidth="2"
-         strokeLinecap="round"
-      />
-   </svg>
-)
-
-const IncIcon = () => (
-   <svg
-      width="9"
-      height="9"
-      viewBox="0 0 9 9"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-   >
-      <path
-         d="M1 4.5H7.5"
-         stroke="#00A7E1"
-         strokeWidth="2"
-         strokeLinecap="round"
-      />
-      <path
-         d="M4.25 7.75L4.25 1.25"
-         stroke="#00A7E1"
-         strokeWidth="2"
-         strokeLinecap="round"
-      />
-   </svg>
-)

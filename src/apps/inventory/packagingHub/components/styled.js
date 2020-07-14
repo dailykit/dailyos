@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components'
 
+import { FlexContainer } from '../../views/Forms/styled'
+
 export const CardWrapper = styled.div`
    height: 238px;
    width: 475px;
@@ -153,3 +155,25 @@ export const TableCell = styled.td(
       }
    `
 )
+
+export const MultiplierWrapper = styled(FlexContainer)`
+   width: 95%;
+   align-items: flex-end;
+   justify-content: space-between;
+   margin: 0 auto;
+
+   button {
+      border: 0;
+      cursor: pointer;
+      margin-bottom: 4px;
+      background: transparent;
+   }
+
+   span {
+      width: 100%;
+
+      border-bottom: 1px solid #888d9d;
+      text-align: center;
+      padding-bottom: 4px;
+   }
+`

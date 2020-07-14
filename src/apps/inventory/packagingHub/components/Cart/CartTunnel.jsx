@@ -7,6 +7,7 @@ import {
    TableBody,
    TableRow,
    TableCell,
+   IconButton,
 } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
@@ -14,14 +15,17 @@ import styled from 'styled-components'
 
 import { TunnelContainer } from '../../../components'
 import { FlexContainer } from '../../../views/Forms/styled'
+import QuantityHandler from '../QuantityHandler'
 
 import { CART_ITEMS } from '../../graphql'
+import { DeleteIcon } from '../../../assets/icons'
 
 export default function AddressTunnel({ close }) {
    const {
       loading,
       data: { organizationPurchaseOrders_purchaseOrderItem: items = [] } = {},
    } = useQuery(CART_ITEMS, {
+      fetchPolicy: 'network-only',
       onError: error => {
          toast.error(error.message)
          console.log(error)
@@ -72,6 +76,7 @@ function Content({ items }) {
                                           }
                                           alt=""
                                           height="48px"
+                                          style={{ margin: '8px' }}
                                        />
                                        <span style={{ width: '8px' }} />
                                     </>
@@ -97,7 +102,13 @@ function Content({ items }) {
                                  <Pillar />$ {item.purchaseOption.salesPrice}
                               </p>
                            </TableCell>
-                           <TableCell>{item.multiplier}</TableCell>
+                           <TableCell>
+                              <QuantityHandler
+                                 value={item.multiplier}
+                                 onInc={() => {}}
+                                 onDec={() => {}}
+                              />
+                           </TableCell>
                            <TableCell>
                               ${' '}
                               {`${
@@ -105,7 +116,11 @@ function Content({ items }) {
                                  item.multiplier
                               }`.slice(0.5)}
                            </TableCell>
-                           <TableCell />
+                           <TableCell>
+                              <IconButton type="ghost">
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
+                           </TableCell>
                         </TableRow>
                      ))}
                   </TableBody>

@@ -17,6 +17,8 @@ import Call from './Call'
 import PackagingHubIcon from './packagingHub'
 import BlazeTruck from './BlazeTruck'
 import CartIcon from './Cart'
+import IncrementIcon from './IncrementIcon'
+import SubtractIcon from './SubtractIcon'
 
 export {
    MenuIcon,
@@ -38,4 +40,6 @@ export {
    PackagingHubIcon,
    BlazeTruck,
    CartIcon,
+   IncrementIcon,
+   SubtractIcon,
 }
