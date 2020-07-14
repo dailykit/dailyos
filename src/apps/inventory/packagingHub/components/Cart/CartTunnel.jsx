@@ -67,7 +67,6 @@ function Content({ items }) {
                               item.purchaseOption.salesPrice * item.multiplier
                            }`.slice(0.5)}
                         </TableCell>
-                        1
                         <TableCell />
                      </TableRow>
                   ))}
