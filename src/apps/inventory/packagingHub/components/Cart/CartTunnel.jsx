@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import styled from 'styled-components'
 
 import { TunnelContainer } from '../../../components'
+import { FlexContainer } from '../../../views/Forms/styled'
 
 import { CART_ITEMS } from '../../graphql'
 
@@ -41,37 +42,70 @@ export default function AddressTunnel({ close }) {
 function Content({ items }) {
    return (
       <Wrapper>
-         <h2>{items.length} items</h2>
-         <br />
-
-         {items.length ? (
-            <Table>
-               <TableHead>
-                  <TableRow>
-                     <TableCell>Packaging Item</TableCell>
-                     <TableCell>Package</TableCell>
-                     <TableCell>Quantity</TableCell>
-                     <TableCell>Total Price</TableCell>
-                     <TableCell />
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {items.map(item => (
-                     <TableRow key={item.id}>
-                        <TableCell>{item.packaging.packagingName}</TableCell>
-                        <TableCell>{item.purchaseOption.quantity}</TableCell>
-                        <TableCell>{item.multiplier}</TableCell>
-                        <TableCell>
-                           ${' '}
-                           {`${
-                              item.purchaseOption.salesPrice * item.multiplier
-                           }`.slice(0.5)}
-                        </TableCell>
+         {items && items.length ? (
+            <>
+               <h2>{items.length} items</h2>
+               <br />
+               <Table>
+                  <TableHead>
+                     <TableRow>
+                        <TableCell>Packaging Item</TableCell>
+                        <TableCell>Package</TableCell>
+                        <TableCell>Quantity</TableCell>
+                        <TableCell>Total Price</TableCell>
                         <TableCell />
                      </TableRow>
-                  ))}
-               </TableBody>
-            </Table>
+                  </TableHead>
+                  <TableBody>
+                     {items.map(item => (
+                        <TableRow key={item.id}>
+                           <TableCell>
+                              <FlexContainer style={{ alignItems: 'center' }}>
+                                 {Array.isArray(
+                                    item.packaging?.assets?.images
+                                 ) && item.packaging.assets.images.length ? (
+                                    <>
+                                       <img
+                                          src={
+                                             item.packaging?.assets?.images[0]
+                                                .url
+                                          }
+                                          alt=""
+                                          height="48px"
+                                       />
+                                       <span style={{ width: '8px' }} />
+                                    </>
+                                 ) : null}
+
+                                 <div>
+                                    <h1>{item.packaging.packagingName}</h1>
+                                    <p>
+                                       by{' '}
+                                       <span style={{ color: '#00A7E1' }}>
+                                          {
+                                             item.packaging
+                                                .packagingCompanyBrand?.name
+                                          }
+                                       </span>
+                                    </p>
+                                 </div>
+                              </FlexContainer>
+                           </TableCell>
+                           <TableCell>{item.purchaseOption.quantity}</TableCell>
+                           <TableCell>{item.multiplier}</TableCell>
+                           <TableCell>
+                              ${' '}
+                              {`${
+                                 item.purchaseOption.salesPrice *
+                                 item.multiplier
+                              }`.slice(0.5)}
+                           </TableCell>
+                           <TableCell />
+                        </TableRow>
+                     ))}
+                  </TableBody>
+               </Table>
+            </>
          ) : (
             <h1>Your Cart is empty. Go buy something !</h1>
          )}
@@ -81,10 +115,15 @@ function Content({ items }) {
 
 const Wrapper = styled.div`
    width: 100%;
+   color: #555b6e;
 
    h1,
    h2 {
       font-size: 16px;
-      color: #555b6e;
+   }
+
+   p {
+      font-size: 12px;
+      margin-top: 4px;
    }
 `
