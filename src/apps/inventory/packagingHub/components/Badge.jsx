@@ -16,9 +16,6 @@ const StyledBadge = styled.div`
    height: 51px;
    margin-right: 17rem;
 
-   background: #282440;
-   border-radius: 10px;
-
    display: flex;
    justify-content: space-between;
    align-items: center;
@@ -30,6 +27,6 @@ const StyledBadge = styled.div`
       font-size: 16px;
       line-height: 19px;
 
-      color: #ffffff;
+      color: #282440;
    }
 `
