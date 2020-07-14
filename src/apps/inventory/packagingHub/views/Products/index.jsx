@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { Context } from '../../../context/tabs'
 import { Category } from '../../graphql'
-import { Badge, Packagings } from '../../components'
+import { Badge, Packagings, CartButton } from '../../components'
 
 export default function PackagingHubProducts() {
    const {
@@ -24,14 +24,17 @@ export default function PackagingHubProducts() {
    const { packagingHub_packagingType_by_pk: category = {} } = data
 
    return (
-      <Wrapper>
-         <Header>
-            <h2>{category.name}</h2>
-            <Badge />
-         </Header>
+      <>
+         <CartButton />
+         <Wrapper>
+            <Header>
+               <h2>{category.name}</h2>
+               <Badge />
+            </Header>
 
-         <Packagings />
-      </Wrapper>
+            <Packagings />
+         </Wrapper>
+      </>
    )
 }
 

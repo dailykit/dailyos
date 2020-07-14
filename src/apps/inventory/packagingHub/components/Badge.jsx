@@ -14,6 +14,7 @@ export default function Badge() {
 const StyledBadge = styled.div`
    width: 186px;
    height: 51px;
+   margin-right: 17rem;
 
    background: #282440;
    border-radius: 10px;

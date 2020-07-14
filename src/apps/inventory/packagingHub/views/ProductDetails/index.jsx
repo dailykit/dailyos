@@ -9,6 +9,7 @@ import {
    ProductDescription,
    ProductHeader,
    ProductSpecs,
+   CartButton,
 } from '../../components'
 import { Context } from '../../../context/tabs'
 
@@ -40,34 +41,37 @@ export default function ProductDetailsPage() {
    const { packagingHub_packaging_by_pk: packaging = {} } = data
 
    return (
-      <Wrapper>
-         <Header>
-            <div />
-            <Badge />
-         </Header>
+      <>
+         <CartButton />
+         <Wrapper>
+            <Header>
+               <div />
+               <Badge />
+            </Header>
 
-         <Main>
-            {/* carousel and description */}
-            <div style={{ width: '100%' }}>
-               {packaging.assets &&
-               packaging.assets.images &&
-               packaging.assets.images.length ? (
-                  <ImageCarousel images={packaging.assets.images} />
-               ) : null}
+            <Main>
+               {/* carousel and description */}
+               <div style={{ width: '100%' }}>
+                  {packaging.assets &&
+                  packaging.assets.images &&
+                  packaging.assets.images.length ? (
+                     <ImageCarousel images={packaging.assets.images} />
+                  ) : null}
 
-               <ProductDescription
-                  description={packaging.packagingDescription}
-               />
+                  <ProductDescription
+                     description={packaging.packagingDescription}
+                  />
 
-               <ProductSpecs product={packaging} />
-            </div>
+                  <ProductSpecs product={packaging} />
+               </div>
 
-            {/* specs and cta button */}
-            <div style={{ width: '100%' }}>
-               <ProductHeader product={packaging} />
-            </div>
-         </Main>
-      </Wrapper>
+               {/* specs and cta button */}
+               <div style={{ width: '100%' }}>
+                  <ProductHeader product={packaging} />
+               </div>
+            </Main>
+         </Wrapper>
+      </>
    )
 }
 
