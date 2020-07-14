@@ -64,7 +64,8 @@ const StyledCard = styled.div`
    }};
 
    background-repeat: no-repeat;
-   background-size: cover;
+   background-size: contain;
+   background-position: center;
 
    h4 {
       font-weight: 500;
