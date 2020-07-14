@@ -91,7 +91,12 @@ function Content({ items }) {
                                  </div>
                               </FlexContainer>
                            </TableCell>
-                           <TableCell>{item.purchaseOption.quantity}</TableCell>
+                           <TableCell>
+                              <p style={{ margin: 0, fontSize: '14px' }}>
+                                 {item.purchaseOption.quantity} units
+                                 <Pillar />$ {item.purchaseOption.salesPrice}
+                              </p>
+                           </TableCell>
                            <TableCell>{item.multiplier}</TableCell>
                            <TableCell>
                               ${' '}
@@ -126,4 +131,9 @@ const Wrapper = styled.div`
       font-size: 12px;
       margin-top: 4px;
    }
+`
+
+const Pillar = styled.span`
+   margin: 0 8px;
+   border: 1px solid #ececec;
 `
