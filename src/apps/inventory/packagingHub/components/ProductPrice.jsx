@@ -38,7 +38,7 @@ export default function ProductPrice({ product }) {
             })) || []
 
          setPurchaseOptions(reset)
-         toast.success('Purchase Order successfullt created !')
+         toast.success('Purchase Order successfully created !')
       },
    })
 
