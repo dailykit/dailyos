@@ -105,3 +105,27 @@ export const ORGANISATION_PURCHASE_ORDER = gql`
       }
    }
 `
+
+export const CART_ITEMS = gql`
+   query CartItems {
+      organizationPurchaseOrders_purchaseOrderItem {
+         id
+         packaging {
+            id
+            packagingName
+            packagingCompanyBrand {
+               name
+            }
+            assets
+         }
+
+         purchaseOption {
+            id
+            quantity
+            salesPrice
+         }
+
+         multiplier: quantity
+      }
+   }
+`
