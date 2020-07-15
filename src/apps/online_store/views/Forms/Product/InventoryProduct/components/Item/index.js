@@ -80,11 +80,15 @@ export default function Item({ state }) {
       openPricingTunnel(1)
    }
    const remove = option => {
-      deleteOption({
-         variables: {
-            id: { _eq: option.id },
-         },
-      })
+      if (option.id === state.default) {
+         toast.error('Default option cannot be deleted!')
+      } else {
+         deleteOption({
+            variables: {
+               id: { _eq: option.id },
+            },
+         })
+      }
    }
    const deleteItem = async () => {
       try {
