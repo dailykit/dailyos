@@ -9,7 +9,7 @@ import {
    TableCell,
    IconButton,
 } from '@dailykit/ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 
@@ -17,13 +17,18 @@ import { TunnelContainer } from '../../../components'
 import { FlexContainer } from '../../../views/Forms/styled'
 import QuantityHandler from '../QuantityHandler'
 
-import { CART_ITEMS } from '../../graphql'
+import {
+   CART_ITEMS,
+   REMOVE_CART_ITEM,
+   CHANGE_CART_ITEM_QUANTITY,
+} from '../../graphql'
 import { DeleteIcon } from '../../../assets/icons'
 
-export default function AddressTunnel({ close }) {
+export default function CartTunnel({ close }) {
    const {
       loading,
       data: { organizationPurchaseOrders_purchaseOrderItem: items = [] } = {},
+      refetch,
    } = useQuery(CART_ITEMS, {
       fetchPolicy: 'network-only',
       onError: error => {
@@ -37,13 +42,52 @@ export default function AddressTunnel({ close }) {
          <TunnelHeader title="Purchase Orders" close={() => close(1)} />
 
          <TunnelContainer>
-            {loading ? <Loader /> : <Content items={items} />}
+            {loading ? <Loader /> : <Content items={items} refresh={refetch} />}
          </TunnelContainer>
       </>
    )
 }
 
-function Content({ items }) {
+function Content({ items, refresh }) {
+   const [deleteCartItem, { loading }] = useMutation(REMOVE_CART_ITEM, {
+      onCompleted: () => {
+         toast.success('product removed')
+         refresh()
+      },
+      onError: error => {
+         toast.error(error.message)
+      },
+   })
+
+   const [changeQuantity] = useMutation(CHANGE_CART_ITEM_QUANTITY, {
+      onCompleted: data => {
+         const {
+            update_organizationPurchaseOrders_purchaseOrderItem: {
+               affected_rows,
+            },
+         } = data
+
+         if (affected_rows > 0) refresh()
+      },
+      onError: error => {
+         toast.error(error.message)
+      },
+   })
+
+   const handleDelete = ({ id }) => {
+      deleteCartItem({ variables: { id } })
+   }
+
+   const handleItemIncrement = ({ id }) => {
+      changeQuantity({ variables: { id, quantity: +1 } })
+   }
+
+   const handleItemDecrement = ({ id }) => {
+      changeQuantity({ variables: { id, quantity: -1 } })
+   }
+
+   if (loading) return <Loader />
+
    return (
       <Wrapper>
          {items && items.length ? (
@@ -105,8 +149,8 @@ function Content({ items }) {
                            <TableCell>
                               <QuantityHandler
                                  value={item.multiplier}
-                                 onInc={() => {}}
-                                 onDec={() => {}}
+                                 onInc={() => handleItemIncrement(item)}
+                                 onDec={() => handleItemDecrement(item)}
                               />
                            </TableCell>
                            <TableCell>
@@ -117,7 +161,10 @@ function Content({ items }) {
                               }`.slice(0.5)}
                            </TableCell>
                            <TableCell>
-                              <IconButton type="ghost">
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => handleDelete(item)}
+                              >
                                  <DeleteIcon color="#FF5A52" />
                               </IconButton>
                            </TableCell>

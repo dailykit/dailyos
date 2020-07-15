@@ -12,7 +12,7 @@ export default function CartButton() {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="lg">
+            <Tunnel layer={1} size="lg" style={{ overflowY: 'auto' }}>
                <CartTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
