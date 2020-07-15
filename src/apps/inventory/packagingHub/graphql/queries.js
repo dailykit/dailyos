@@ -108,7 +108,7 @@ export const ORGANISATION_PURCHASE_ORDER = gql`
 
 export const CART_ITEMS = gql`
    query CartItems {
-      organizationPurchaseOrders_purchaseOrderItem {
+      organizationPurchaseOrders_purchaseOrderItem(order_by: { id: asc }) {
          id
          packaging {
             id
