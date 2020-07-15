@@ -92,15 +92,19 @@ export default function Recipe({ state }) {
       }
    }
    const changeDefault = option => {
-      if (option.id !== state.default) {
-         updateProduct({
-            variables: {
-               id: state.id,
-               set: {
-                  default: option.id,
+      if (option.isActive) {
+         if (option.id !== state.default) {
+            updateProduct({
+               variables: {
+                  id: state.id,
+                  set: {
+                     default: option.id,
+                  },
                },
-            },
-         })
+            })
+         }
+      } else {
+         toast.error('Option is hidden!')
       }
    }
    const editOption = option => {
