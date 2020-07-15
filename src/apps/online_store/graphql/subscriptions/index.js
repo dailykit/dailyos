@@ -96,6 +96,7 @@ export const S_INVENTORY_PRODUCT = gql`
          isPublished
          tags
          description
+         default
          supplierItem {
             id
             name
