@@ -6,10 +6,10 @@ export default function useCarousel(list) {
 
    useEffect(() => {
       if (Array.isArray(list)) setData(list)
-   }, [list, data.length])
+   }, [list])
 
    const setActive = index => {
-      if (index > data.length - 1) return
+      if (index > data.length - 1 || index < 0) return
 
       setCurrent(index)
    }
