@@ -120,7 +120,10 @@ export default function Recipe({ state }) {
          </Tunnels>
          <Tunnels tunnels={priceTunnels}>
             <Tunnel layer={1}>
-               <PriceConfigurationTunnel close={closePriceTunnel} />
+               <PriceConfigurationTunnel
+                  state={state}
+                  close={closePriceTunnel}
+               />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
