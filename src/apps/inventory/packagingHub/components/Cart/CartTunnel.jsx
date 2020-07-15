@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
    TunnelHeader,
    Loader,
@@ -8,6 +8,7 @@ import {
    TableRow,
    TableCell,
    IconButton,
+   TextButton,
 } from '@dailykit/ui'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
@@ -120,7 +121,7 @@ function Content({ items, refresh }) {
                                           }
                                           alt=""
                                           height="48px"
-                                          style={{ margin: '8px' }}
+                                          style={{ margin: '20px 8px' }}
                                        />
                                        <span style={{ width: '8px' }} />
                                     </>
@@ -172,6 +173,7 @@ function Content({ items, refresh }) {
                      ))}
                   </TableBody>
                </Table>
+               <Calculator items={items} />
             </>
          ) : (
             <h1>Your Cart is empty. Go buy something !</h1>
@@ -179,6 +181,41 @@ function Content({ items, refresh }) {
       </Wrapper>
    )
 }
+
+function Calculator({ items }) {
+   const price = useMemo(() => {
+      const price = items.reduce((acc, curr) => {
+         const currentPrice = curr.purchaseOption.salesPrice * curr.multiplier
+
+         return acc + currentPrice
+      }, 0)
+
+      return price.toString().slice(0, 5)
+   }, [items])
+
+   return (
+      <Wrapper style={{ backgroundColor: '#F3F3F3' }}>
+         <PriceBox>
+            <h2>
+               Total Payable:{' '}
+               <span style={{ marginLeft: '3rem' }}>$ {price}</span>
+            </h2>
+
+            <TextButton
+               style={{ width: '100%', marginTop: '14px' }}
+               type="solid"
+            >
+               Proceed To Pay
+            </TextButton>
+         </PriceBox>
+      </Wrapper>
+   )
+}
+
+const PriceBox = styled.div`
+   width: 30%;
+   padding: 24px;
+`
 
 const Wrapper = styled.div`
    width: 100%;
