@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next'
 
 import { AssetUploader } from '../../../../../../../../shared/components'
 import { TunnelBody } from '../styled'
-import { UPDATE_CUSTOMIZABLE_PRODUCT } from '../../../../../../graphql'
+import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.tunnels.assetstunnel.'
+   'apps.online_store.views.forms.product.comboproduct.tunnels.assetstunnel.'
 const AssetsTunnel = ({ state, closeTunnel }) => {
    const { t } = useTranslation()
-   const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
+   const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
       onCompleted: () => {
          toast.success(t(address.concat('image added!')))
          closeTunnel(1)
