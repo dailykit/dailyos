@@ -20,7 +20,7 @@ import {
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 // components
-import { Description, Products } from './components'
+import { Description, Products, Assets } from './components'
 
 const address = 'apps.online_store.views.forms.product.customizableproduct.'
 
@@ -143,7 +143,9 @@ export default function CustomizableProduct() {
                   <div>
                      <Description state={state} />
                   </div>
-                  <div> </div>
+                  <div>
+                     <Assets state={state} />
+                  </div>
                </StyledMeta>
                <StyledRule />
                <Products state={state} />
