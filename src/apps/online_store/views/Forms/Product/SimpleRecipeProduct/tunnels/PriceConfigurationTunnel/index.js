@@ -11,7 +11,7 @@ import { StyledInputWrapper, TunnelBody } from '../styled'
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
 
-const PriceConfigurationTunnel = ({ close }) => {
+const PriceConfigurationTunnel = ({ state, close }) => {
    const { t } = useTranslation()
    const { productState } = React.useContext(SimpleProductContext)
 
@@ -42,7 +42,12 @@ const PriceConfigurationTunnel = ({ close }) => {
    const save = () => {
       if (busy) return
       setBusy(true)
-      updateOption()
+      if (!isActive && productState.edit.id === state.default) {
+         toast.error('Default option cannot be hidden!')
+         setBusy(false)
+      } else {
+         updateOption()
+      }
    }
 
    return (

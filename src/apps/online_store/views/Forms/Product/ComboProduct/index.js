@@ -17,7 +17,7 @@ import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 // components
-import { Description, Items } from './components'
+import { Description, Items, Assets } from './components'
 
 const address = 'apps.online_store.views.forms.product.comboproduct.'
 
@@ -137,7 +137,9 @@ export default function ComboProduct() {
                   <div>
                      <Description state={state} />
                   </div>
-                  <div> </div>
+                  <div>
+                     <Assets state={state} />
+                  </div>
                </StyledMeta>
                <StyledRule />
                <Items state={state} />
