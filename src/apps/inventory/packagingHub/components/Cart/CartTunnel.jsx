@@ -156,10 +156,10 @@ function Content({ items, refresh }) {
                            </TableCell>
                            <TableCell>
                               ${' '}
-                              {`${
+                              {(
                                  item.purchaseOption.salesPrice *
                                  item.multiplier
-                              }`.slice(0.5)}
+                              ).toFixed(2)}
                            </TableCell>
                            <TableCell>
                               <IconButton
@@ -190,7 +190,7 @@ function Calculator({ items }) {
          return acc + currentPrice
       }, 0)
 
-      return price.toString().slice(0, 5)
+      return price.toFixed(2)
    }, [items])
 
    return (

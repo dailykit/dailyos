@@ -63,7 +63,6 @@ export default function ProductPrice({ product }) {
 
    const [createPurchaseOrder] = useMutation(REGISTER_PURCHASE_ORDER, {
       onCompleted: data => {
-         let orgId = null
          if (
             data &&
             Array.isArray(
@@ -72,7 +71,7 @@ export default function ProductPrice({ product }) {
             data.insert_organizationPurchaseOrders_purchaseOrder.returning[0]
                ?.id
          ) {
-            orgId =
+            const orgId =
                data.insert_organizationPurchaseOrders_purchaseOrder.returning[0]
                   ?.id
             checkout(orgId)
@@ -195,8 +194,7 @@ export default function ProductPrice({ product }) {
                      <TableCell align="right">
                         {opt.isSelected ? (
                            <span>
-                              {`${opt.multiplier * opt.salesPrice}`.slice(0, 5)}{' '}
-                              $
+                              {(opt.multiplier * opt.salesPrice).toFixed(2)} $
                            </span>
                         ) : null}
                      </TableCell>
@@ -216,8 +214,7 @@ export default function ProductPrice({ product }) {
                         : 0
                      return acc + price
                   }, 0)
-                  .toString()
-                  .slice(0, 5)}{' '}
+                  .toFixed(2)}{' '}
                $)
             </span>
          </ActionButton>
