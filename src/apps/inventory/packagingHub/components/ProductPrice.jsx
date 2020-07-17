@@ -24,6 +24,16 @@ export default function ProductPrice({ product }) {
       })) || []
    )
 
+   const calculateAmount = () =>
+      purchaseOptions
+         .reduce((acc, curr) => {
+            const price = curr.isSelected
+               ? curr.salesPrice * curr.multiplier
+               : 0
+            return acc + price
+         }, 0)
+         .toFixed(2)
+
    const [createPurchaseOrderItems] = useMutation(CREATE_PURCHASE_ORDER_ITEMS, {
       onError: error => {
          console.log(error)
@@ -52,6 +62,7 @@ export default function ProductPrice({ product }) {
                packagingPurchaseOptionId: opt.id,
                purchaseOrderId: orgId,
                quantity: opt.multiplier,
+               netSalesPrice: (opt.multiplier * opt.salesPrice).toFixed(2),
             }
          })
 
@@ -62,6 +73,9 @@ export default function ProductPrice({ product }) {
    }
 
    const [createPurchaseOrder] = useMutation(REGISTER_PURCHASE_ORDER, {
+      variables: {
+         amount: calculateAmount(),
+      },
       onCompleted: data => {
          if (
             data &&
@@ -205,18 +219,7 @@ export default function ProductPrice({ product }) {
 
          <ActionButton onClick={getPurchaseOrders}>
             ADD TO PURCHASE ORDER
-            <span style={{ marginLeft: '16px' }}>
-               (
-               {purchaseOptions
-                  .reduce((acc, curr) => {
-                     const price = curr.isSelected
-                        ? curr.salesPrice * curr.multiplier
-                        : 0
-                     return acc + price
-                  }, 0)
-                  .toFixed(2)}{' '}
-               $)
-            </span>
+            <span style={{ marginLeft: '16px' }}>({calculateAmount()} $)</span>
          </ActionButton>
       </Wrapper>
    )
