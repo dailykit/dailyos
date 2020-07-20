@@ -32,7 +32,7 @@ export default function ProductPrice({ product }) {
                : 0
             return acc + price
          }, 0)
-         .toFixed(2)
+         .toFixed(3)
 
    const [createPurchaseOrderItems] = useMutation(CREATE_PURCHASE_ORDER_ITEMS, {
       onError: error => {
@@ -206,7 +206,7 @@ export default function ProductPrice({ product }) {
                      <TableCell align="right">
                         {opt.isSelected ? (
                            <span>
-                              {(opt.multiplier * opt.salesPrice).toFixed(2)} $
+                              {(opt.multiplier * opt.salesPrice).toFixed(3)} $
                            </span>
                         ) : null}
                      </TableCell>

@@ -120,13 +120,10 @@ export const CART_ITEMS = gql`
             assets
          }
 
-         purchaseOption {
-            id
-            quantity
-            salesPrice
-         }
-
-         multiplier: quantity
+         quantity
+         salesPrice
+         multiplier
+         netChargeAmount
       }
    }
 `

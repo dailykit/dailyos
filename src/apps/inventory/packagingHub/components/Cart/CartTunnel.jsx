@@ -143,8 +143,8 @@ function Content({ items, refresh }) {
                            </TableCell>
                            <TableCell>
                               <p style={{ margin: 0, fontSize: '14px' }}>
-                                 {item.purchaseOption.quantity} units
-                                 <Pillar />$ {item.purchaseOption.salesPrice}
+                                 {item.quantity} units
+                                 <Pillar />$ {item.salesPrice}
                               </p>
                            </TableCell>
                            <TableCell>
@@ -154,13 +154,7 @@ function Content({ items, refresh }) {
                                  onDec={() => handleItemDecrement(item)}
                               />
                            </TableCell>
-                           <TableCell>
-                              ${' '}
-                              {(
-                                 item.purchaseOption.salesPrice *
-                                 item.multiplier
-                              ).toFixed(2)}
-                           </TableCell>
+                           <TableCell>$ {item.netChargeAmount}</TableCell>
                            <TableCell>
                               <IconButton
                                  type="ghost"
@@ -185,12 +179,12 @@ function Content({ items, refresh }) {
 function Calculator({ items }) {
    const price = useMemo(() => {
       const price = items.reduce((acc, curr) => {
-         const currentPrice = curr.purchaseOption.salesPrice * curr.multiplier
+         const currentPrice = curr.netChargeAmount
 
          return acc + currentPrice
       }, 0)
 
-      return price.toFixed(2)
+      return price.toFixed(3)
    }, [items])
 
    return (
