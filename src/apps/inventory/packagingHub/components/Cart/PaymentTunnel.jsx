@@ -1,17 +1,16 @@
 import React from 'react'
 import { TunnelHeader, Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
-
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 
 import { ORGANIZATION_PAYMENT_INFO } from '../../graphql'
-
 import { TunnelContainer } from '../../../components'
+import useOrganizationBalanceInfo from '../../hooks/useOrganizationBalance'
 
 export default function CartTunnel({ close }) {
    const {
-      data: { organizationPurchaseOrders_purchaseOrder: org } = {},
+      data: { organizationPurchaseOrders_purchaseOrder: org = [] } = {},
       loading,
    } = useQuery(ORGANIZATION_PAYMENT_INFO, {
       fetchPolicy: 'network-only',
@@ -21,7 +20,18 @@ export default function CartTunnel({ close }) {
       },
    })
 
-   if (loading) return <Loader />
+   const { loading: balanceLoading, error, data } = useOrganizationBalanceInfo(
+      org[0]?.organization?.stripeAccountId
+   )
+
+   console.log(data)
+
+   if (error) {
+      console.log(error)
+      return toast.error(error.message)
+   }
+
+   if (loading || balanceLoading) return <Loader />
 
    return (
       <>
@@ -29,8 +39,6 @@ export default function CartTunnel({ close }) {
 
          <Wrapper>
             <h2>Pay via:</h2>
-
-            {JSON.stringify(org[0])}
          </Wrapper>
       </>
    )
