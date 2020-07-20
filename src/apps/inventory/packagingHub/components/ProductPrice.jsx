@@ -62,7 +62,6 @@ export default function ProductPrice({ product }) {
                packagingPurchaseOptionId: opt.id,
                purchaseOrderId: orgId,
                quantity: opt.multiplier,
-               netSalesPrice: (opt.multiplier * opt.salesPrice).toFixed(2),
             }
          })
 
@@ -73,9 +72,6 @@ export default function ProductPrice({ product }) {
    }
 
    const [createPurchaseOrder] = useMutation(REGISTER_PURCHASE_ORDER, {
-      variables: {
-         amount: calculateAmount(),
-      },
       onCompleted: data => {
          if (
             data &&

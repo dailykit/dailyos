@@ -2,9 +2,7 @@ import gql from 'graphql-tag'
 
 export const REGISTER_PURCHASE_ORDER = gql`
    mutation RegisterPurchaseOrder($amount: numeric!) {
-      insert_organizationPurchaseOrders_purchaseOrder(
-         objects: { netChargeAmount: $amount }
-      ) {
+      insert_organizationPurchaseOrders_purchaseOrder {
          returning {
             id
             organizationId
