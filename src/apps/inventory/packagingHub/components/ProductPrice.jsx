@@ -61,7 +61,9 @@ export default function ProductPrice({ product }) {
                packagingId: product.id,
                packagingPurchaseOptionId: opt.id,
                purchaseOrderId: orgId,
-               quantity: opt.multiplier,
+               quantity: opt.quantity,
+               multiplier: opt.multiplier,
+               salesPrice: opt.salesPrice,
             }
          })
 
