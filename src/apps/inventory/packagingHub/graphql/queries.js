@@ -102,6 +102,7 @@ export const ORGANISATION_PURCHASE_ORDER = gql`
       organizationPurchaseOrders_purchaseOrder {
          id
          organizationId
+         netChargeAmount
       }
    }
 `

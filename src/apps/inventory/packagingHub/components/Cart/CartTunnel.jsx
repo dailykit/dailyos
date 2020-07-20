@@ -22,6 +22,7 @@ import {
    CART_ITEMS,
    REMOVE_CART_ITEM,
    CHANGE_CART_ITEM_QUANTITY,
+   ORGANISATION_PURCHASE_ORDER,
 } from '../../graphql'
 import { DeleteIcon } from '../../../assets/icons'
 
@@ -181,7 +182,7 @@ function Content({ items, refresh }) {
 }
 
 function Calculator({ items }) {
-   const price = useMemo(() => {
+   const totalPrice = useMemo(() => {
       const price = items.reduce((acc, curr) => {
          const currentPrice = curr.netChargeAmount
 
@@ -191,17 +192,39 @@ function Calculator({ items }) {
       return price.toFixed(3)
    }, [items])
 
+   const { data, loading } = useQuery(ORGANISATION_PURCHASE_ORDER, {
+      fetchPolicy: 'network-only',
+      onError: error => {
+         toast.error(error.message)
+         console.log(error)
+      },
+   })
+
+   const handleCheckout = () => {
+      const { organizationPurchaseOrders_purchaseOrder: org } = data
+
+      if (org[0].netChargeAmount === +totalPrice) {
+         // create transaction
+         console.log('transaction creating...')
+      } else {
+         toast.error('Error! Please try again.')
+      }
+   }
+
+   if (loading) return <Loader />
+
    return (
       <Wrapper style={{ backgroundColor: '#F3F3F3' }}>
          <PriceBox>
             <h2>
                Total Payable:{' '}
-               <span style={{ marginLeft: '3rem' }}>$ {price}</span>
+               <span style={{ marginLeft: '3rem' }}>$ {totalPrice}</span>
             </h2>
 
             <TextButton
                style={{ width: '100%', marginTop: '14px' }}
                type="solid"
+               onClick={handleCheckout}
             >
                Proceed To Pay
             </TextButton>
