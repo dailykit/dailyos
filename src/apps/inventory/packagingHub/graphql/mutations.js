@@ -35,7 +35,7 @@ export const CHANGE_CART_ITEM_QUANTITY = gql`
    mutation ChangeCartItemQuantity($id: Int!, $quantity: Int!) {
       update_organizationPurchaseOrders_purchaseOrderItem(
          where: { id: { _eq: $id } }
-         _inc: { quantity: $quantity }
+         _inc: { multiplier: $quantity }
       ) {
          affected_rows
       }
