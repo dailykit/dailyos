@@ -83,7 +83,11 @@ function Content({ items, refresh }) {
       changeQuantity({ variables: { id, quantity: +1 } })
    }
 
-   const handleItemDecrement = ({ id }) => {
+   const handleItemDecrement = ({ id, multiplier }) => {
+      if (multiplier === 1)
+         return toast.error(
+            'Quantity cannot be 0. Use the delete button instead.'
+         )
       changeQuantity({ variables: { id, quantity: -1 } })
    }
 
