@@ -20,11 +20,11 @@ export default function CartTunnel({ close }) {
       },
    })
 
-   const { loading: balanceLoading, error, data } = useOrganizationBalanceInfo(
-      org[0]?.organization?.stripeAccountId
-   )
-
-   console.log(data)
+   const {
+      loading: balanceLoading,
+      error,
+      data: { available: availableBalance = [] } = {},
+   } = useOrganizationBalanceInfo(org[0]?.organization?.stripeAccountId)
 
    if (error) {
       console.log(error)
@@ -39,6 +39,11 @@ export default function CartTunnel({ close }) {
 
          <Wrapper>
             <h2>Pay via:</h2>
+
+            <h1>
+               Payout Balance Available: {availableBalance[0]?.amount}{' '}
+               {availableBalance[0]?.currency}
+            </h1>
          </Wrapper>
       </>
    )
