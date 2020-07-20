@@ -3,17 +3,21 @@ import styled from 'styled-components'
 import { ComboButton, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 
 import CartTunnel from './CartTunnel'
+import PaymentTunnel from './PaymentTunnel'
 
 import { CartIcon } from '../../../assets/icons'
 
 export default function CartButton() {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
 
    return (
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="lg" style={{ overflowY: 'auto' }}>
-               <CartTunnel close={closeTunnel} />
+               <CartTunnel close={closeTunnel} open={openTunnel} />
+            </Tunnel>
+            <Tunnel layer={2} size="lg" style={{ overflowY: 'auto' }}>
+               <PaymentTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Wrapper>

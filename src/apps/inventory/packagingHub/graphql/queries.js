@@ -97,12 +97,26 @@ export const PACKAGING = gql`
    }
 `
 
-export const ORGANISATION_PURCHASE_ORDER = gql`
-   query OrganisationPurchaseOrder {
+export const ORGANIZATION_PURCHASE_ORDER = gql`
+   query OrganizationPurchaseOrder {
       organizationPurchaseOrders_purchaseOrder {
          id
          organizationId
          netChargeAmount
+      }
+   }
+`
+
+export const ORGANIZATION_PAYMENT_INFO = gql`
+   query OrganizationPaymentInfo {
+      organizationPurchaseOrders_purchaseOrder {
+         id
+         organizationId
+         netChargeAmount
+         organization {
+            id
+            stripeAccountId
+         }
       }
    }
 `

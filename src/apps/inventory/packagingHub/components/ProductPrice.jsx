@@ -8,7 +8,7 @@ import { PriceTable, TableHead, TableBody, TableRow, TableCell } from './styled'
 import QuantityHandler from './QuantityHandler'
 
 import {
-   ORGANISATION_PURCHASE_ORDER,
+   ORGANIZATION_PURCHASE_ORDER,
    REGISTER_PURCHASE_ORDER,
    CREATE_PURCHASE_ORDER_ITEMS,
 } from '../graphql'
@@ -95,7 +95,7 @@ export default function ProductPrice({ product }) {
       },
    })
 
-   const [getPurchaseOrders] = useLazyQuery(ORGANISATION_PURCHASE_ORDER, {
+   const [getPurchaseOrders] = useLazyQuery(ORGANIZATION_PURCHASE_ORDER, {
       fetchPolicy: 'network-only',
       onError: error => {
          console.log(error)

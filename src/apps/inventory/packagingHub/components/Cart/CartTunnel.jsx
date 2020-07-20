@@ -22,11 +22,11 @@ import {
    CART_ITEMS,
    REMOVE_CART_ITEM,
    CHANGE_CART_ITEM_QUANTITY,
-   ORGANISATION_PURCHASE_ORDER,
+   ORGANIZATION_PURCHASE_ORDER,
 } from '../../graphql'
 import { DeleteIcon } from '../../../assets/icons'
 
-export default function CartTunnel({ close }) {
+export default function CartTunnel({ close, open }) {
    const {
       loading,
       data: { organizationPurchaseOrders_purchaseOrderItem: items = [] } = {},
@@ -44,13 +44,17 @@ export default function CartTunnel({ close }) {
          <TunnelHeader title="Purchase Orders" close={() => close(1)} />
 
          <TunnelContainer>
-            {loading ? <Loader /> : <Content items={items} refresh={refetch} />}
+            {loading ? (
+               <Loader />
+            ) : (
+               <Content open={open} items={items} refresh={refetch} />
+            )}
          </TunnelContainer>
       </>
    )
 }
 
-function Content({ items, refresh }) {
+function Content({ items, refresh, open }) {
    const [deleteCartItem, { loading }] = useMutation(REMOVE_CART_ITEM, {
       onCompleted: () => {
          toast.success('product removed')
@@ -172,7 +176,7 @@ function Content({ items, refresh }) {
                      ))}
                   </TableBody>
                </Table>
-               <Calculator items={items} />
+               <Calculator items={items} open={open} />
             </>
          ) : (
             <h1>Your Cart is empty. Go buy something !</h1>
@@ -181,7 +185,7 @@ function Content({ items, refresh }) {
    )
 }
 
-function Calculator({ items }) {
+function Calculator({ items, open }) {
    const totalPrice = useMemo(() => {
       const price = items.reduce((acc, curr) => {
          const currentPrice = curr.netChargeAmount
@@ -192,7 +196,7 @@ function Calculator({ items }) {
       return price.toFixed(3)
    }, [items])
 
-   const { data, loading } = useQuery(ORGANISATION_PURCHASE_ORDER, {
+   const { data, loading } = useQuery(ORGANIZATION_PURCHASE_ORDER, {
       fetchPolicy: 'network-only',
       onError: error => {
          toast.error(error.message)
@@ -204,8 +208,7 @@ function Calculator({ items }) {
       const { organizationPurchaseOrders_purchaseOrder: org } = data
 
       if (org[0].netChargeAmount === +totalPrice) {
-         // create transaction
-         console.log('transaction creating...')
+         open(2)
       } else {
          toast.error('Error! Please try again.')
       }
