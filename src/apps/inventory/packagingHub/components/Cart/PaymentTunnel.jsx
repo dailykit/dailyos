@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TunnelHeader, Loader, Checkbox } from '@dailykit/ui'
+import { TunnelHeader, Loader, Checkbox, TextButton } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import styled, { css } from 'styled-components'
@@ -14,6 +14,13 @@ export default function CartTunnel({ close }) {
 
    const handleBalanceCheck = () => {
       setBalanceChecked(checked => !checked)
+   }
+
+   const handlePayment = () => {
+      // add other payment checked here.
+      if (!balanceChecked) return toast.error('Please select a payment method.')
+
+      console.log('transacting...')
    }
 
    const {
@@ -54,8 +61,38 @@ export default function CartTunnel({ close }) {
                checked={balanceChecked}
                setChecked={handleBalanceCheck}
             />
+
+            <PaymentDetails
+               chargeAmount={org[0]?.netChargeAmount}
+               handlePayment={handlePayment}
+            />
          </Wrapper>
       </>
+   )
+}
+
+function PaymentDetails({ chargeAmount, handlePayment }) {
+   return (
+      <div>
+         <FlexContainer
+            style={{
+               padding: '20px 28px',
+               backgroundColor: '#F3F3F3',
+               justifyContent: 'space-between',
+               marginTop: '20px',
+            }}
+         >
+            <p>Total Payable:</p>
+            <p>$ {chargeAmount}</p>
+         </FlexContainer>
+         <TextButton
+            style={{ width: '100%' }}
+            type="solid"
+            onClick={handlePayment}
+         >
+            Confirm and Pay
+         </TextButton>
+      </div>
    )
 }
 
@@ -90,6 +127,11 @@ const Wrapper = styled(TunnelContainer)`
 
    h2 {
       font-size: 16px;
+   }
+
+   p {
+      font-size: 14px;
+      font-weight: 500;
    }
 `
 const BalanceCard = styled.div`
