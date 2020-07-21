@@ -16,11 +16,11 @@ import { toast } from 'react-toastify'
 
 import { Container, Flex } from '../../../styled'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
-import { Context } from '../../../../../../context'
+import { useTabs } from '../../../../../../context'
 import { AddressTunnel } from '../../tunnels'
 
 const AvailabilitySettings = () => {
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
    const [store, setStore] = React.useState(undefined)
    const [pickup, setPickup] = React.useState(undefined)
    const [delivery, setDelivery] = React.useState(undefined)
@@ -78,23 +78,6 @@ const AvailabilitySettings = () => {
             type: 'availability',
             identifier,
             value,
-         },
-      })
-   }
-   const addTab = (type, title, view, fulfillment) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: {
-            type,
-            title:
-               title +
-               ' - ' +
-               fulfillment
-                  .split('_')
-                  .map(word => word[0])
-                  .join(''),
-            view,
-            fulfillment,
          },
       })
    }
@@ -329,10 +312,8 @@ const AvailabilitySettings = () => {
                   <span
                      onClick={() =>
                         addTab(
-                           'forms',
                            'Recurrences',
-                           'recurrences',
-                           'PREORDER_DELIVERY'
+                           `/online-store/settings/recurrences/PREORDER_DELIVERY`
                         )
                      }
                      style={{ cursor: 'pointer' }}
@@ -344,10 +325,8 @@ const AvailabilitySettings = () => {
                   <span
                      onClick={() =>
                         addTab(
-                           'forms',
                            'Recurrences',
-                           'recurrences',
-                           'PREORDER_PICKUP'
+                           `/online-store/settings/recurrences/PREORDER_PICKUP`
                         )
                      }
                      style={{ cursor: 'pointer' }}
@@ -359,10 +338,8 @@ const AvailabilitySettings = () => {
                   <span
                      onClick={() =>
                         addTab(
-                           'forms',
                            'Recurrences',
-                           'recurrences',
-                           'ONDEMAND_DELIVERY'
+                           `/online-store/settings/recurrences/ONDEMAND_DELIVERY`
                         )
                      }
                      style={{ cursor: 'pointer' }}
@@ -374,10 +351,8 @@ const AvailabilitySettings = () => {
                   <span
                      onClick={() =>
                         addTab(
-                           'forms',
                            'Recurrences',
-                           'recurrences',
-                           'ONDEMAND_PICKUP'
+                           `/online-store/settings/recurrences/ONDEMAND_PICKUP`
                         )
                      }
                      style={{ cursor: 'pointer' }}

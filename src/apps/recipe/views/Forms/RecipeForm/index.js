@@ -1,9 +1,10 @@
 import React from 'react'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle } from '@dailykit/ui'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import {
    state as initialState,
    reducers,
@@ -30,7 +31,8 @@ import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
 
 const RecipeForm = () => {
    // Context
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { setTitle: setTabTitle } = useTabs()
+   const { id: recipeId } = useParams()
    const [recipeState, recipeDispatch] = React.useReducer(
       reducers,
       initialState
@@ -43,7 +45,7 @@ const RecipeForm = () => {
    // Subscription
    const { loading } = useSubscription(S_RECIPE, {
       variables: {
-         id: tabs.current.id,
+         id: recipeId,
       },
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.simpleRecipe)
@@ -73,10 +75,7 @@ const RecipeForm = () => {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }

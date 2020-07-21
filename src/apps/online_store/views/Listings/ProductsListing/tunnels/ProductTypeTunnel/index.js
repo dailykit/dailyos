@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { randomSuffix } from '../../../../../../../shared/utils'
 import { TunnelBody, SolidTile } from '../styled'
-import { Context } from '../../../../../context/tabs'
+import { useTabs } from '../../../../../context'
 import {
    CREATE_COMBO_PRODUCT,
    CREATE_CUSTOMIZABLE_PRODUCT,
@@ -17,11 +17,7 @@ const address = 'apps.online_store.views.listings.productslisting.'
 
 export default function ProductTypeTunnel({ close }) {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
+   const { addTab } = useTabs()
 
    // Mutations
    const [createComboProduct] = useMutation(CREATE_COMBO_PRODUCT, {
@@ -29,8 +25,7 @@ export default function ProductTypeTunnel({ close }) {
          toast.success('Product created!')
          addTab(
             data.createComboProduct.returning[0].name,
-            'comboProduct',
-            data.createComboProduct.returning[0].id
+            `/online-store/combo-products/${data.createComboProduct.returning[0].id}`
          )
       },
    })
@@ -39,8 +34,7 @@ export default function ProductTypeTunnel({ close }) {
          toast.success('Product created!')
          addTab(
             data.createInventoryProduct.returning[0].name,
-            'inventoryProduct',
-            data.createInventoryProduct.returning[0].id
+            `/online-store/inventory-products/${data.createInventoryProduct.returning[0].id}`
          )
       },
    })
@@ -49,8 +43,7 @@ export default function ProductTypeTunnel({ close }) {
          toast.success('Product created!')
          addTab(
             data.createSimpleRecipeProduct.returning[0].name,
-            'simpleRecipeProduct',
-            data.createSimpleRecipeProduct.returning[0].id
+            `/online-store/simple-recipe-products/${data.createSimpleRecipeProduct.returning[0].id}`
          )
       },
    })
@@ -61,8 +54,7 @@ export default function ProductTypeTunnel({ close }) {
             toast.success('Product created!')
             addTab(
                data.createCustomizableProduct.returning[0].name,
-               'customizableProduct',
-               data.createCustomizableProduct.returning[0].id
+               `/online-store/customizable-products/${data.createCustomizableProduct.returning[0].id}`
             )
          },
       }
@@ -106,7 +98,7 @@ export default function ProductTypeTunnel({ close }) {
             break
          }
          default:
-            return
+            break
       }
    }
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useParams } from 'react-router-dom'
 import { Input, Loader, Text, Toggle } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -9,7 +10,7 @@ import {
    reducers,
    initialState,
 } from '../../../../context/product/inventoryProduct'
-import { Context } from '../../../../context/tabs'
+import { useTabs } from '../../../../context'
 import {
    S_INVENTORY_PRODUCT,
    UPDATE_INVENTORY_PRODUCT,
@@ -22,13 +23,14 @@ const address = 'apps.online_store.views.forms.product.inventoryproduct.'
 
 export default function InventoryProduct() {
    const { t } = useTranslation()
+   const { id: productId } = useParams()
 
    // Context
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
    )
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { setTitle: setTabTitle } = useTabs()
 
    // State
    const [title, setTitle] = React.useState('')
@@ -37,7 +39,7 @@ export default function InventoryProduct() {
    // Subscription
    const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
       variables: {
-         id: tabs.current.id,
+         id: productId,
       },
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.inventoryProduct)
@@ -71,10 +73,7 @@ export default function InventoryProduct() {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }

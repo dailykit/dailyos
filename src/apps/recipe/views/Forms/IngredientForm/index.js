@@ -1,6 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useParams } from 'react-router-dom'
 import {
    Input,
    Loader,
@@ -17,7 +18,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../context/ingredient'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 import {
    InputWrapper,
@@ -45,7 +46,8 @@ import {
 import StationTunnel from './tunnels/StationTunnel'
 
 const IngredientForm = () => {
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { setTitle: setTabTitle } = useTabs()
+   const { id: ingredientId } = useParams()
    const [ingredientState, ingredientDispatch] = React.useReducer(
       reducers,
       initialState
@@ -71,7 +73,7 @@ const IngredientForm = () => {
    // Subscriptions
    const { loading } = useSubscription(S_INGREDIENT, {
       variables: {
-         id: tabs.current.id,
+         id: ingredientId,
       },
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.ingredient)
@@ -105,13 +107,7 @@ const IngredientForm = () => {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: {
-                  oldTitle: tabs.current.title,
-                  title,
-               },
-            })
+            setTabTitle(title)
          }
       }
    }

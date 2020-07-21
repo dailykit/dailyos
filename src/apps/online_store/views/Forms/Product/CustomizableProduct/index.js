@@ -2,6 +2,7 @@ import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
 // context
@@ -10,7 +11,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../../context/product/customizableProduct'
-import { Context } from '../../../../context/tabs'
+import { useTabs } from '../../../../context'
 // graphql
 import {
    S_CUSTOMIZABLE_PRODUCT,
@@ -27,7 +28,10 @@ const address = 'apps.online_store.views.forms.product.customizableproduct.'
 export default function CustomizableProduct() {
    const { t } = useTranslation()
 
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { setTitle: setTabTitle } = useTabs()
+
+   const { id: productId } = useParams()
+
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -39,7 +43,7 @@ export default function CustomizableProduct() {
    // Subscription
    const { loading } = useSubscription(S_CUSTOMIZABLE_PRODUCT, {
       variables: {
-         id: tabs.current.id,
+         id: productId,
       },
       onSubscriptionData: data => {
          console.log(data)
@@ -75,10 +79,7 @@ export default function CustomizableProduct() {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }

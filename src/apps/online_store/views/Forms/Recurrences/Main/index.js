@@ -1,4 +1,7 @@
 import React from 'react'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { rrulestr } from 'rrule'
 import {
    Text,
@@ -22,7 +25,6 @@ import {
    MileRangeTunnel,
    ChargesTunnel,
 } from './tunnels'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    RECURRENCES,
    UPDATE_RECURRENCE,
@@ -34,14 +36,10 @@ import {
    state as initialState,
 } from '../../../../context/recurrence'
 import { DeleteIcon } from '../../../../assets/icons'
-import { Context } from '../../../../context'
-import { toast } from 'react-toastify'
 
 const Main = () => {
    const [recurrences, setRecurrences] = React.useState(undefined)
-   const {
-      state: { current },
-   } = React.useContext(Context)
+   const { type } = useParams()
    const [recurrenceState, recurrenceDispatch] = React.useReducer(
       reducers,
       initialState
@@ -52,7 +50,7 @@ const Main = () => {
    // Subscription
    const { loading, error } = useSubscription(RECURRENCES, {
       variables: {
-         type: current.fulfillment,
+         type,
       },
       onSubscriptionData: data => {
          setRecurrences(data.subscriptionData.data.recurrences)
@@ -128,7 +126,7 @@ const Main = () => {
                   <Grid cols="2" style={{ alignItems: 'baseline' }}>
                      <Text as="h1">Recurrences</Text>
                      <div as="title">
-                        {current.fulfillment.split('_').map(word => (
+                        {type.split('_').map(word => (
                            <Tag>{word[0] + word.slice(1).toLowerCase()}</Tag>
                         ))}
                      </div>
@@ -145,22 +143,17 @@ const Main = () => {
                         <span>Recurrences</span>
                         <span>Availability</span>
                         <span>Time Slots</span>
-                        {current.fulfillment.includes('PICKUP') && (
+                        {type.includes('PICKUP') && (
                            <span>
-                              {current.fulfillment.includes('PREORDER')
-                                 ? 'Lead'
-                                 : 'Prep'}{' '}
-                              Time
+                              {type.includes('PREORDER') ? 'Lead' : 'Prep'} Time
                            </span>
                         )}
                         <span>Availability</span>
-                        {current.fulfillment.includes('DELIVERY') && (
+                        {type.includes('DELIVERY') && (
                            <>
                               <span>Delivery Range</span>
                               <span>
-                                 {current.fulfillment.includes('PREORDER')
-                                    ? 'Lead'
-                                    : 'Prep'}{' '}
+                                 {type.includes('PREORDER') ? 'Lead' : 'Prep'}{' '}
                                  Time
                               </span>
                               <span>Availability</span>

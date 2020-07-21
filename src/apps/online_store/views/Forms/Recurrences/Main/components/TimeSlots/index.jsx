@@ -1,5 +1,8 @@
 import React from 'react'
 import { ButtonTile, Toggle } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
 
 import { TableRecord } from './styled'
 
@@ -7,16 +10,11 @@ import { DeliveryRanges } from '../'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon } from '../../../../../../assets/icons'
-import { useMutation } from '@apollo/react-hooks'
 import { UPDATE_TIME_SLOT, DELETE_TIME_SLOT } from '../../../../../../graphql'
-import { toast } from 'react-toastify'
-import { Context } from '../../../../../../context'
 
 const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
-   const {
-      state: { current },
-   } = React.useContext(Context)
+   const { type } = useParams()
 
    // Mutations
    const [updateTimeSlot] = useMutation(UPDATE_TIME_SLOT, {
@@ -67,9 +65,9 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                      <div style={{ padding: '16px' }}>
                         {timeSlot.from} - {timeSlot.to}
                      </div>
-                     {current.fulfillment.includes('PICKUP') && (
+                     {type.includes('PICKUP') && (
                         <div style={{ padding: '16px' }}>
-                           {current.fulfillment.includes('ONDEMAND')
+                           {type.includes('ONDEMAND')
                               ? timeSlot.pickUpPrepTime
                               : timeSlot.pickUpLeadTime}{' '}
                            mins.
@@ -96,7 +94,7 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                            <DeleteIcon color=" #FF5A52" />
                         </span>
                      </Flex>
-                     {current.fulfillment.includes('DELIVERY') && (
+                     {type.includes('DELIVERY') && (
                         <div>
                            <DeliveryRanges
                               timeSlotId={timeSlot.id}
