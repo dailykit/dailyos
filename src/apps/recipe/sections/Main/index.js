@@ -1,9 +1,5 @@
 import React from 'react'
-
-import styled from 'styled-components'
-
-// State
-import { Context } from '../../context/tabs'
+import { Switch, Route } from 'react-router-dom'
 
 // Views
 import {
@@ -14,27 +10,27 @@ import {
    IngredientForm,
 } from '../../views'
 
-const renderComponent = (type, view) => {
-   // Listings
-   if (type === 'listings' && view === 'recipes') return <RecipesListing />
-   if (type === 'listings' && view === 'ingredients')
-      return <IngredientsListing />
-   // Forms
-   if (type === 'forms' && view === 'recipe') return <RecipeForm />
-   if (type === 'forms' && view === 'ingredient') return <IngredientForm />
-}
-
-const MainWrapper = styled.main`
-   overflow-x: auto;
-`
-
 const Main = () => {
-   const { state } = React.useContext(Context)
-   if (state.listings.length === 0 && state.forms.length === 0) return <Home />
    return (
-      <MainWrapper>
-         {renderComponent(state.current.type, state.current.view)}
-      </MainWrapper>
+      <main>
+         <Switch>
+            <Route path="/recipe-app" exact>
+               <Home />
+            </Route>
+            <Route path="/recipe-app/recipes" exact>
+               <RecipesListing />
+            </Route>
+            <Route path="/recipe-app/recipes/:id" exact>
+               <RecipeForm />
+            </Route>
+            <Route path="/recipe-app/ingredients" exact>
+               <IngredientsListing />
+            </Route>
+            <Route path="/recipe-app/ingredients/:id" exact>
+               <IngredientForm />
+            </Route>
+         </Switch>
+      </main>
    )
 }
 

@@ -11,7 +11,7 @@ import ProcessingCount from '../../../utils/countFormatter'
 
 import { randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import {
    CREATE_INGREDIENT,
    DELETE_INGREDIENTS,
@@ -30,11 +30,7 @@ const address = 'apps.recipe.views.listings.ingredientslisting.'
 
 const IngredientsListing = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
+   const { addTab } = useTabs()
 
    const { loading, data: { ingredients = [] } = {} } = useSubscription(
       S_INGREDIENTS,
@@ -51,8 +47,7 @@ const IngredientsListing = () => {
          toast.success('Ingredient created!')
          addTab(
             data.createIngredient.returning[0].name,
-            'ingredient',
-            data.createIngredient.returning[0].id
+            `/recipe-app/ingredients/${data.createIngredient.returning[0].id}`
          )
       },
       onError: error => {
@@ -147,7 +142,7 @@ function DataTable({
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, 'ingredient', id)
+      addTab(name, `/recipe-app/ingredients/${id}`)
    }
 
    return (
