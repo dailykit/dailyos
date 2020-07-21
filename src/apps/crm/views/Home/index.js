@@ -2,15 +2,12 @@ import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 
 // State
-import { Context } from '../../context/tabs'
+import { useTabs } from '../../context'
 
 import { StyledHome, StyledCardList } from './styled'
 
 const Home = () => {
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
-   }
+   const { addTab } = useTabs()
 
    return (
       <StyledHome>
@@ -20,13 +17,13 @@ const Home = () => {
                title="Customers"
                count={10000}
                conf="All available"
-               onClick={() => addTab('Customers', 'customer')}
+               onClick={() => addTab('Customers', '/crm/customers')}
             />
             <DashboardTile
                title="Referral Plans"
                count={22}
                conf="All available"
-               onClick={() => addTab('Referral Plans', 'referral-plan')}
+               onClick={() => addTab('Referral Plans', '/crm/referral-plans')}
             />
          </StyledCardList>
       </StyledHome>

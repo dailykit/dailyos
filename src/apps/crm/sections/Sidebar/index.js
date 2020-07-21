@@ -1,7 +1,7 @@
 import React from 'react'
 
 // State
-import { Context } from '../../context/tabs'
+import { useTabs } from '../../context'
 
 // Styled
 import {
@@ -12,20 +12,26 @@ import {
 } from './styled'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
+   const { addTab } = useTabs()
+
+   const addTabHandler = (title, path) => {
       toggleSidebar(visible => !visible)
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
+      addTab(title, path)
    }
+
    return (
       <StyledSidebar visible={visible}>
          <StyledHeading>Listings</StyledHeading>
          <StyledList>
-            <StyledListItem onClick={() => addTab('Customers', 'customer')}>
+            <StyledListItem
+               onClick={() => addTabHandler('Customers', '/crm/customers')}
+            >
                Customers
             </StyledListItem>
             <StyledListItem
-               onClick={() => addTab('Referral Plans', 'referral-plan')}
+               onClick={() =>
+                  addTabHandler('Referral Plans', '/crm/referral-plans')
+               }
             >
                Referral Plan
             </StyledListItem>

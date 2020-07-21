@@ -1,31 +1,22 @@
 import React from 'react'
-
-import styled from 'styled-components'
-
-// State
-import { Context } from '../../context/tabs'
+import { Switch, Route } from 'react-router-dom'
 
 // Views
 import { Home, CustomerListing } from '../../views'
 
-const renderComponent = (type, view) => {
-   // Listings
-   if (type === 'listings' && view === 'customer') return <CustomerListing />
-   // Forms
-   // if (type === 'forms' && view === 'customer') return <CustomerForm />
-}
-
-const MainWrapper = styled.main`
-   overflow-x: auto;
-`
-
 const Main = () => {
-   const { state } = React.useContext(Context)
-   if (state.listings.length === 0 && state.forms.length === 0) return <Home />
    return (
-      <MainWrapper>
-         {renderComponent(state.current.type, state.current.view)}
-      </MainWrapper>
+      <main>
+         <Switch>
+            <Route path="/crm" exact>
+               <Home />
+            </Route>
+            <Route path="/crm/customers" exact>
+               <CustomerListing />
+            </Route>
+            {/* <Route path="/crm/referral-plans" exact></Route> */}
+         </Switch>
+      </main>
    )
 }
 
