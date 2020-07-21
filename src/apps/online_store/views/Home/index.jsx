@@ -1,13 +1,12 @@
 import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
+import { useTranslation } from 'react-i18next'
 
 // State
-import { Context } from '../../context/tabs'
+import { useTabs } from '../../context'
 
-import { StyledHome, StyledCardList, StyledCard } from './styled'
-
-import { useTranslation, Trans } from 'react-i18next'
+import { StyledHome, StyledCardList } from './styled'
 
 import {
    COLLECTIONS_COUNT,
@@ -21,10 +20,7 @@ const address = 'apps.online_store.views.home.'
 
 const Home = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
-   }
+   const { addTab } = useTabs()
 
    const { data: collectionsData } = useSubscription(COLLECTIONS_COUNT)
    const { data: simpleRecipeProductData } = useSubscription(SRP_COUNT)
@@ -43,7 +39,9 @@ const Home = () => {
                   '...'
                }
                conf="All available"
-               onClick={() => addTab('Collections', 'collections')}
+               onClick={() =>
+                  addTab('Collections', '/online-store/collections')
+               }
             />
             <DashboardTile
                title={t(address.concat('products'))}
@@ -58,7 +56,7 @@ const Home = () => {
                   '...'
                }
                conf="All available"
-               onClick={() => addTab('Products', 'products')}
+               onClick={() => addTab('Products', '/online-store/products')}
             />
          </StyledCardList>
       </StyledHome>
