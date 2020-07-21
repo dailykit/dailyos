@@ -123,7 +123,10 @@ export const ORGANIZATION_PAYMENT_INFO = gql`
 
 export const CART_ITEMS = gql`
    query CartItems {
-      organizationPurchaseOrders_purchaseOrderItem(order_by: { id: asc }) {
+      organizationPurchaseOrders_purchaseOrderItem(
+         order_by: { id: asc }
+         where: { status: { _eq: "PENDING" } }
+      ) {
          id
          packaging {
             id

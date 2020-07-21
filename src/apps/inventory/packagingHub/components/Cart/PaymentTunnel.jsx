@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import { TunnelHeader, Loader } from '@dailykit/ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 
-import { ORGANIZATION_PAYMENT_INFO } from '../../graphql'
+import {
+   ORGANIZATION_PAYMENT_INFO,
+   CREATE_ORDER_TRANSACTION,
+} from '../../graphql'
 import { TunnelContainer } from '../../../components'
 import useOrganizationBalanceInfo from '../../hooks/useOrganizationBalance'
 
@@ -14,15 +17,23 @@ import PaymentDetails from './PaymentDetails'
 export default function CartTunnel({ close }) {
    const [balanceChecked, setBalanceChecked] = useState(false)
 
+   const [createTransaction, { loading: transactionLoading }] = useMutation(
+      CREATE_ORDER_TRANSACTION,
+      {
+         onError: error => {
+            toast.error(error.message)
+            console.log(error)
+         },
+         onCompleted: () => {
+            toast.success('Order received!')
+            close(2)
+            close(1)
+         },
+      }
+   )
+
    const handleBalanceCheck = () => {
       setBalanceChecked(checked => !checked)
-   }
-
-   const handlePayment = () => {
-      // add other payment checked here.
-      if (!balanceChecked) return toast.error('Please select a payment method.')
-
-      console.log('transacting...')
    }
 
    const {
@@ -36,6 +47,25 @@ export default function CartTunnel({ close }) {
       },
    })
 
+   const handlePayment = () => {
+      // add other payment checked here.
+      if (!balanceChecked) return toast.error('Please select a payment method.')
+
+      // later object will be Array of multiple payment methods selected by the user.
+
+      createTransaction({
+         variables: {
+            objects: {
+               chargeAmount: org[0]?.netChargeAmount,
+               connectedAccountId: org[0]?.organization?.stripeAccountId,
+               purchaseOrderId: org[0]?.id,
+               // if the selceted method is balance then 'BALANCE', default is 'CARD'
+               type: 'BALANCE',
+            },
+         },
+      })
+   }
+
    const {
       loading: balanceLoading,
       error,
@@ -47,7 +77,7 @@ export default function CartTunnel({ close }) {
       return toast.error(error.message)
    }
 
-   if (loading || balanceLoading) return <Loader />
+   if (loading || balanceLoading || transactionLoading) return <Loader />
 
    return (
       <>

@@ -41,3 +41,15 @@ export const CHANGE_CART_ITEM_QUANTITY = gql`
       }
    }
 `
+
+export const CREATE_ORDER_TRANSACTION = gql`
+   mutation CreateTransaction(
+      $objects: [organizationPurchaseOrders_purchaseOrderTransaction_insert_input!]!
+   ) {
+      insert_organizationPurchaseOrders_purchaseOrderTransaction(
+         objects: $objects
+      ) {
+         affected_rows
+      }
+   }
+`
