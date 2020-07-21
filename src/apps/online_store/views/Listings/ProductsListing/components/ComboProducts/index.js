@@ -6,7 +6,7 @@ import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { toast } from 'react-toastify'
 
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
-import { Context } from '../../../../../context/tabs'
+import { useTabs } from '../../../../../context/tabs'
 import { DELETE_COMBO_PRODUCTS, S_COMBO_PRODUCTS } from '../../../../../graphql'
 import tableOptions from '../../../tableOption'
 
@@ -14,7 +14,7 @@ const address = 'apps.online_store.views.listings.productslisting.'
 
 const ComboProducts = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
 
    const tableRef = React.useRef()
 
@@ -23,10 +23,6 @@ const ComboProducts = () => {
       loading,
       error,
    } = useSubscription(S_COMBO_PRODUCTS)
-
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
 
    const [deleteProducts] = useMutation(DELETE_COMBO_PRODUCTS, {
       onCompleted: () => {
@@ -81,13 +77,13 @@ const ComboProducts = () => {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, 'comboProduct', id)
+      addTab(name, `/online-store/combo-products/${id}`)
    }
 
    if (loading) return <Loader />
    if (error) {
       console.log(error)
-      return <Text as="p">Error: Could'nt fetch products!</Text>
+      return <Text as="p">Error: Could not fetch products!</Text>
    }
 
    return (

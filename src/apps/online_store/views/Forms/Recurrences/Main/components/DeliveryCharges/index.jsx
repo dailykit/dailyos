@@ -1,12 +1,12 @@
 import React from 'react'
 import { ButtonTile } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
 
 import { TableRecord } from './styled'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
-import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
 import { DELETE_CHARGE } from '../../../../../../graphql'
 
 const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {

@@ -1,7 +1,5 @@
 import React from 'react'
-
-// State
-import { Context } from '../../context/tabs'
+import { Switch, Route } from 'react-router-dom'
 
 // Views
 import {
@@ -17,28 +15,43 @@ import {
    RecurrencesForm,
 } from '../../views'
 
-const renderComponent = (type, view) => {
-   // Listings
-   if (type === 'listings' && view === 'products') return <ProductsListing />
-   if (type === 'listings' && view === 'collections')
-      return <CollectionsListing />
-   // Forms
-   if (type === 'forms' && view === 'collection') return <CollectionForm />
-   if (type === 'forms' && view === 'inventoryProduct')
-      return <InventoryProductForm />
-   if (type === 'forms' && view === 'simpleRecipeProduct')
-      return <SimpleRecipeProductForm />
-   if (type === 'forms' && view === 'customizableProduct')
-      return <CustomizableProductForm />
-   if (type === 'forms' && view === 'comboProduct') return <ComboProductForm />
-   if (type === 'forms' && view === 'settings') return <StoreSettingsForm />
-   if (type === 'forms' && view === 'recurrences') return <RecurrencesForm />
-}
-
 const Main = () => {
-   const { state } = React.useContext(Context)
-   if (state.listings.length === 0 && state.forms.length === 0) return <Home />
-   return <main>{renderComponent(state.current.type, state.current.view)}</main>
+   return (
+      <main>
+         <Switch>
+            <Route path="/online-store" exact>
+               <Home />
+            </Route>
+            <Route path="/online-store/products" exact>
+               <ProductsListing />
+            </Route>
+            <Route path="/online-store/inventory-products/:id" exact>
+               <InventoryProductForm />
+            </Route>
+            <Route path="/online-store/simple-recipe-products/:id" exact>
+               <SimpleRecipeProductForm />
+            </Route>
+            <Route path="/online-store/customizable-products/:id" exact>
+               <CustomizableProductForm />
+            </Route>
+            <Route path="/online-store/combo-products/:id" exact>
+               <ComboProductForm />
+            </Route>
+            <Route path="/online-store/collections" exact>
+               <CollectionsListing />
+            </Route>
+            <Route path="/online-store/collections/:id" exact>
+               <CollectionForm />
+            </Route>
+            <Route path="/online-store/settings" exact>
+               <StoreSettingsForm />
+            </Route>
+            <Route path="/online-store/settings/recurrences/:type" exact>
+               <RecurrencesForm />
+            </Route>
+         </Switch>
+      </main>
+   )
 }
 
 export default Main
