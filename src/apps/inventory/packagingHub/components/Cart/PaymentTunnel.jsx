@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { TunnelHeader, Loader, Checkbox, TextButton } from '@dailykit/ui'
+import { TunnelHeader, Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { ORGANIZATION_PAYMENT_INFO } from '../../graphql'
 import { TunnelContainer } from '../../../components'
-import { FlexContainer } from '../../../views/Forms/styled'
 import useOrganizationBalanceInfo from '../../hooks/useOrganizationBalance'
+
+import StripeBalance from './StripeBalance'
+import PaymentDetails from './PaymentDetails'
 
 export default function CartTunnel({ close }) {
    const [balanceChecked, setBalanceChecked] = useState(false)
@@ -71,54 +73,6 @@ export default function CartTunnel({ close }) {
    )
 }
 
-function PaymentDetails({ chargeAmount, handlePayment }) {
-   return (
-      <div>
-         <FlexContainer
-            style={{
-               padding: '20px 28px',
-               backgroundColor: '#F3F3F3',
-               justifyContent: 'space-between',
-               marginTop: '20px',
-            }}
-         >
-            <p>Total Payable:</p>
-            <p>$ {chargeAmount}</p>
-         </FlexContainer>
-         <TextButton
-            style={{ width: '100%' }}
-            type="solid"
-            onClick={handlePayment}
-         >
-            Confirm and Pay
-         </TextButton>
-      </div>
-   )
-}
-
-function StripeBalance({ availableBalance, checked, setChecked }) {
-   const totalBalance = availableBalance.reduce(
-      (acc, curr) => acc + curr.amount,
-      0
-   )
-
-   return (
-      <BalanceCard selectable={totalBalance} onClick={setChecked}>
-         <FlexContainer>
-            {totalBalance && <Checkbox checked={checked} onChange={() => {}} />}
-            <span style={{ width: '14px' }} />
-            <h1>Payout Balance</h1>
-         </FlexContainer>
-         <div>
-            <span style={{ fontSize: '14px', fontStyle: 'italic' }}>
-               Available
-            </span>
-            <h1 style={{ color: '#53C22B' }}>$ {totalBalance / 100}</h1>
-         </div>
-      </BalanceCard>
-   )
-}
-
 const Wrapper = styled(TunnelContainer)`
    width: 50%;
    color: #555b6e;
@@ -132,29 +86,5 @@ const Wrapper = styled(TunnelContainer)`
    p {
       font-size: 14px;
       font-weight: 500;
-   }
-`
-const BalanceCard = styled.div`
-   margin-top: 16px;
-   border: 1px solid #cecece;
-   padding: 16px 32px;
-
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-
-   ${({ selectable }) =>
-      selectable &&
-      css`
-         cursor: pointer;
-
-         &:hover {
-            background-color: #f3f3f3;
-         }
-      `}
-
-   h1 {
-      font-size: 20px;
-      color: #555b6e;
    }
 `
