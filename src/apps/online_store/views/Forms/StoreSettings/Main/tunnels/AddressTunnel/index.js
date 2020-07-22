@@ -75,9 +75,9 @@ const AddressTunnel = ({ closeTunnel, address }) => {
          setBusy(true)
          updateSetting({
             variables: {
-               type: 'brand',
-               identifier: 'Address',
-               value: populated,
+               type: 'availability',
+               identifier: 'Location',
+               value: { address: populated },
             },
          })
       } catch (error) {

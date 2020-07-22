@@ -2,18 +2,16 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 import { Text, Input, TunnelHeader } from '@dailykit/ui'
+import { useParams } from 'react-router-dom'
 
 import { TunnelBody, StyledRow } from '../styled'
 import { Grid } from '../../../styled'
 import { CREATE_MILE_RANGES } from '../../../../../../graphql'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
-import { Context } from '../../../../../../context'
 
 const MileRangeTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
-   const {
-      state: { current },
-   } = React.useContext(Context)
+   const { type } = useParams()
    const [busy, setBusy] = React.useState(false)
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
@@ -34,15 +32,15 @@ const MileRangeTunnel = ({ closeTunnel }) => {
    // Handlers
    const save = () => {
       setBusy(true)
-      if (isNaN(time)) {
+      if (Number.isNaN(time)) {
          setBusy(false)
          return toast.error('Invalid time!')
       }
-      if (isNaN(from)) {
+      if (Number.isNaN(from)) {
          setBusy(false)
          return toast.error('From value invalid!')
       }
-      if (isNaN(to)) {
+      if (Number.isNaN(to)) {
          setBusy(false)
          return toast.error('To value invalid!')
       }
@@ -53,12 +51,8 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                   timeSlotId: recurrenceState.timeSlotId,
                   from,
                   to,
-                  prepTime: current.fulfillment.includes('ONDEMAND')
-                     ? time
-                     : null,
-                  leadTime: current.fulfillment.includes('PREORDER')
-                     ? time
-                     : null,
+                  prepTime: type.includes('ONDEMAND') ? time : null,
+                  leadTime: type.includes('PREORDER') ? time : null,
                },
             ],
          },
@@ -76,8 +70,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
             <StyledRow>
                <Text as="p">
                   Enter Mile Range and{' '}
-                  {current.fulfillment.includes('PREORDER') ? 'Lead' : 'Prep'}{' '}
-                  Time:
+                  {type.includes('PREORDER') ? 'Lead' : 'Prep'} Time:
                </Text>
             </StyledRow>
             <StyledRow>
@@ -99,7 +92,7 @@ const MileRangeTunnel = ({ closeTunnel }) => {
                   <Input
                      type="text"
                      label={
-                        current.fulfillment.includes('PREORDER')
+                        type.includes('PREORDER')
                            ? 'Lead Time(minutes)'
                            : 'Prep Time(minutes)'
                      }

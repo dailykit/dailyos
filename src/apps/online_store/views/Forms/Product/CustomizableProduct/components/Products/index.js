@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
-import { Context } from '../../../../../../context/tabs'
+import { useTabs } from '../../../../../../context'
 import {
    DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
    UPDATE_CUSTOMIZABLE_PRODUCT,
@@ -39,7 +39,7 @@ const address =
 
 const Products = ({ state }) => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
    const { productState, productDispatch } = React.useContext(
       CustomizableProductContext
    )
@@ -98,9 +98,6 @@ const Products = ({ state }) => {
             },
          },
       })
-   }
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
    return (
@@ -170,19 +167,21 @@ const Products = ({ state }) => {
                                       state.customizableProductOptions[
                                          productState.productIndex
                                       ].inventoryProduct.name,
-                                      'inventoryProduct',
-                                      state.customizableProductOptions[
-                                         productState.productIndex
-                                      ].inventoryProduct.id
+                                      `/online-store/inventory-products/${
+                                         state.customizableProductOptions[
+                                            productState.productIndex
+                                         ].inventoryProduct.id
+                                      }`
                                    )
                                  : addTab(
                                       state.customizableProductOptions[
                                          productState.productIndex
                                       ].simpleRecipeProduct.name,
-                                      'simpleRecipeProduct',
-                                      state.customizableProductOptions[
-                                         productState.productIndex
-                                      ].simpleRecipeProduct.id
+                                      `/online-store/simple-recipe-products/${
+                                         state.customizableProductOptions[
+                                            productState.productIndex
+                                         ].simpleRecipeProduct.id
+                                      }`
                                    )
                            }
                         >

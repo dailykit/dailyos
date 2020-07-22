@@ -96,6 +96,7 @@ export const S_INVENTORY_PRODUCT = gql`
          isPublished
          tags
          description
+         default
          supplierItem {
             id
             name
@@ -154,6 +155,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          isPublished
          description
          tags
+         assets
          customizableProductOptions {
             id
             inventoryProduct {
@@ -218,6 +220,7 @@ export const S_COMBO_PRODUCT = gql`
          tags
          isValid
          isPublished
+         assets
          comboProductComponents {
             id
             label

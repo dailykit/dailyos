@@ -50,15 +50,15 @@ const ChargesTunnel = ({ closeTunnel }) => {
    // Handlers
    const save = () => {
       setBusy(true)
-      if (Number.isNaN(charge) || charge === 0) {
+      if (Number.isNaN(charge)) {
          setBusy(false)
          return toast.error('Invalid charge!')
       }
-      if (Number.isNaN(from) || from === 0) {
+      if (Number.isNaN(from)) {
          setBusy(false)
          return toast.error('From value invalid!')
       }
-      if (Number.isNaN(to) || to === 0) {
+      if (Number.isNaN(to)) {
          setBusy(false)
          return toast.error('To value invalid!')
       }

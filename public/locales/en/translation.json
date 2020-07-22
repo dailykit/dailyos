@@ -3,6 +3,7 @@
    "recipe": "Recipe",
    "online store": "Online Store",
    "settings": "Settings",
+   "crm": "CRM",
    "units": {
       "gm": "gm",
       "gms": "gms",
@@ -624,6 +625,11 @@
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "saving": "Saving...",
@@ -714,6 +720,11 @@
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
@@ -784,6 +795,7 @@
                            "unit size": "Unit Size",
                            "pricing": "Pricing",
                            "accompaniments": "Accompaniments",
+                           "default": "Default",
                            "options": "Options",
                            "quantity": "Quantity",
                            "price": "Price",

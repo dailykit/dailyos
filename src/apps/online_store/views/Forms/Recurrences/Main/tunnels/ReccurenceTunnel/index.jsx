@@ -1,16 +1,16 @@
 import RRule from 'rrule'
+import { useParams } from 'react-router-dom'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 import { Text, Checkbox, TunnelHeader } from '@dailykit/ui'
 
 import { TunnelBody } from '../styled'
-import { Context } from '../../../../../../context/tabs'
 import { Container, Flex } from '../../../styled'
 import { CREATE_RECURRENCE } from '../../../../../../graphql'
 
 const ReccurenceTunnel = ({ closeTunnel }) => {
-   const { state: tabs } = React.useContext(Context)
+   const { type } = useParams()
    const [busy, setBusy] = React.useState(false)
    const [daily, setDaily] = React.useState(false)
    const [days, setDays] = React.useState([])
@@ -45,7 +45,7 @@ const ReccurenceTunnel = ({ closeTunnel }) => {
          variables: {
             object: {
                rrule: rrule.toString(),
-               type: tabs.current.fulfillment,
+               type,
             },
          },
       })

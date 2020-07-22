@@ -63,15 +63,6 @@ export default function Item({ state }) {
       },
    })
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
-      onCompleted: () => {
-         toast.success(t(address.concat('item deleted!')))
-         const ids = state.inventoryProductOptions.map(op => op.id)
-         deleteOption({
-            variables: {
-               id: { _in: ids },
-            },
-         })
-      },
       onError: error => {
          console.log(error)
          toast.error(t(address.concat('error')))
@@ -89,22 +80,55 @@ export default function Item({ state }) {
       openPricingTunnel(1)
    }
    const remove = option => {
-      deleteOption({
-         variables: {
-            id: { _eq: option.id },
-         },
-      })
-   }
-   const deleteItem = () => {
-      updateProduct({
-         variables: {
-            id: state.id,
-            set: {
-               sachetItemId: null,
-               supplierItemId: null,
+      if (option.id === state.default) {
+         toast.error('Default option cannot be deleted!')
+      } else {
+         deleteOption({
+            variables: {
+               id: { _eq: option.id },
             },
-         },
-      })
+         })
+      }
+   }
+   const deleteItem = async () => {
+      try {
+         const response = await updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  sachetItemId: null,
+                  supplierItemId: null,
+               },
+            },
+         })
+         if (response.data) {
+            toast.success(t(address.concat('item deleted!')))
+            const ids = state.inventoryProductOptions.map(op => op.id)
+            deleteOption({
+               variables: {
+                  id: { _in: ids },
+               },
+            })
+         }
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const changeDefault = async option => {
+      if (option.id !== state.default) {
+         const response = await updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  default: option.id,
+               },
+            },
+         })
+         if (response.data) {
+            toast.success('Default updated!')
+         }
+      }
    }
 
    return (
@@ -176,6 +200,7 @@ export default function Item({ state }) {
                               <StyledTable>
                                  <thead>
                                     <tr>
+                                       <th>{t(address.concat('default'))}</th>
                                        <th>{t(address.concat('options'))}</th>
                                        <th>{t(address.concat('quantity'))}</th>
                                        <th>{t(address.concat('price'))}</th>
@@ -192,6 +217,18 @@ export default function Item({ state }) {
                                     {state.inventoryProductOptions?.map(
                                        option => (
                                           <tr key={option.id}>
+                                             <td>
+                                                <input
+                                                   type="radio"
+                                                   checked={
+                                                      option.id ===
+                                                      state.default
+                                                   }
+                                                   onClick={() =>
+                                                      changeDefault(option)
+                                                   }
+                                                />
+                                             </td>
                                              <td>{option.label}</td>
                                              <td>{option.quantity}</td>
                                              <td>${option.price[0].value}</td>

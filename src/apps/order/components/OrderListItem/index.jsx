@@ -127,9 +127,12 @@ const OrderListItem = ({ order }) => {
                            <CustomerEmail
                               data={deliveryInfo?.dropoff?.dropoffInfo}
                            />
-                           <CustomerAddress
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
+                           {deliveryInfo?.dropoff?.dropoffInfo
+                              ?.customerAddress && (
+                              <CustomerAddress
+                                 data={deliveryInfo?.dropoff?.dropoffInfo}
+                              />
+                           )}
                         </StyledConsumer>
                      )}
                </main>
