@@ -10,7 +10,7 @@ import ServingsCount from '../../../utils/countFormatter'
 
 import { randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import {
    CREATE_SIMPLE_RECIPE,
    DELETE_SIMPLE_RECIPES,
@@ -28,15 +28,8 @@ const address = 'apps.recipe.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
    const [recipes, setRecipes] = React.useState([])
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
 
    // Queries and Mutations
    const { loading, data } = useSubscription(S_RECIPES)
@@ -44,8 +37,7 @@ const RecipesListing = () => {
       onCompleted: input => {
          addTab(
             input.createSimpleRecipe.returning[0].name,
-            'recipe',
-            input.createSimpleRecipe.returning[0].id
+            `/recipe-app/recipes/${input.createSimpleRecipe.returning[0].id}`
          )
          toast.success('Recipe added!')
       },
@@ -151,7 +143,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, 'recipe', id)
+      addTab(name, `/recipe-app/recipes/${id}`)
    }
 
    return (

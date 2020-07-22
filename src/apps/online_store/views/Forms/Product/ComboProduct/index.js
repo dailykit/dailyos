@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
@@ -10,7 +11,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../../context/product/comboProduct'
-import { Context } from '../../../../context/tabs'
+import { useTabs } from '../../../../context'
 // graphql
 import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
 // styles
@@ -24,7 +25,9 @@ const address = 'apps.online_store.views.forms.product.comboproduct.'
 export default function ComboProduct() {
    const { t } = useTranslation()
 
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { id: productId } = useParams()
+
+   const { setTitle: setTabTitle } = useTabs()
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -36,7 +39,7 @@ export default function ComboProduct() {
    // Subscriptions
    const { loading } = useSubscription(S_COMBO_PRODUCT, {
       variables: {
-         id: tabs.current.id,
+         id: productId,
       },
       onSubscriptionData: data => {
          console.log('ComboProduct -> data', data)
@@ -71,10 +74,7 @@ export default function ComboProduct() {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }

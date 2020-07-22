@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
@@ -9,7 +10,7 @@ import {
    SimpleProductContext,
    state as initialState,
 } from '../../../../context/product/simpleProduct'
-import { Context } from '../../../../context/tabs'
+import { useTabs } from '../../../../context'
 import {
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
@@ -23,7 +24,9 @@ const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()
 
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { id: productId } = useParams()
+
+   const { setTitle: setTabTitle } = useTabs()
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -35,7 +38,7 @@ export default function SimpleRecipeProduct() {
    // Subscription
    const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
       variables: {
-         id: tabs.current.id,
+         id: productId,
       },
       onSubscriptionData: data => {
          console.log(data)
@@ -67,10 +70,7 @@ export default function SimpleRecipeProduct() {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }

@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
-import { Context } from '../../../../../../context/tabs'
+import { useTabs } from '../../../../../../context'
 import {
    DELETE_COMBO_PRODUCT_COMPONENT,
    UPDATE_COMBO_PRODUCT_COMPONENT,
@@ -172,7 +172,7 @@ const Items = ({ state }) => {
 
 const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
    const { productDispatch } = React.useContext(ComboProductContext)
 
    const [active, setActive] = React.useState('')
@@ -233,9 +233,6 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
             },
          })
       }
-   }
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
    return (
@@ -303,19 +300,16 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                            active.inventoryProduct
                               ? addTab(
                                    active.inventoryProduct.name,
-                                   'inventoryProduct',
-                                   active.inventoryProduct.id
+                                   `/online-store/inventory-products/${active.inventoryProduct.id}`
                                 )
                               : active.simpleRecipeProduct
                               ? addTab(
                                    active.simpleRecipeProduct.name,
-                                   'simpleRecipeProduct',
-                                   active.simpleRecipeProduct.id
+                                   `/online-store/simple-recipe-products/${active.simpleRecipeProduct.id}`
                                 )
                               : addTab(
                                    active.customizableProduct.name,
-                                   'customizableProduct',
-                                   active.customizableProduct.id
+                                   `/online-store/customizable-products/${active.customizableProduct.id}`
                                 )
                         }
                      >
