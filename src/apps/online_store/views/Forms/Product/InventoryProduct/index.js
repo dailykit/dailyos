@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
-import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
@@ -90,6 +90,16 @@ export default function InventoryProduct() {
          },
       })
    }
+   const togglePopup = val => {
+      return updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               isPopupAllowed: val,
+            },
+         },
+      })
+   }
 
    if (loading) return <Loader />
 
@@ -123,7 +133,14 @@ export default function InventoryProduct() {
                         </>
                      )}
                   </div>
-                  <div>
+                  <div className="settings">
+                     <Checkbox
+                        id="label"
+                        checked={state.isPopupAllowed}
+                        onChange={togglePopup}
+                     >
+                        Popup Allowed
+                     </Checkbox>
                      <Toggle
                         checked={state.isPublished}
                         setChecked={togglePublish}

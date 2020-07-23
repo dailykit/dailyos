@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
@@ -88,6 +88,16 @@ export default function SimpleRecipeProduct() {
          },
       })
    }
+   const togglePopup = val => {
+      return updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               isPopupAllowed: val,
+            },
+         },
+      })
+   }
 
    if (loading) return <Loader />
 
@@ -120,6 +130,13 @@ export default function SimpleRecipeProduct() {
                      )}
                   </div>
                   <div>
+                     <Checkbox
+                        id="label"
+                        checked={state.isPopupAllowed}
+                        onChange={togglePopup}
+                     >
+                        Popup Allowed
+                     </Checkbox>
                      <Toggle
                         checked={state.isPublished}
                         setChecked={togglePublish}
