@@ -33,6 +33,7 @@ export default function Packagings() {
 
 const Wrapper = styled.div`
    margin: 24px 0;
+   flex: 4;
 
    display: grid;
    grid-gap: 2rem;

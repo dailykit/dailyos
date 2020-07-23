@@ -6,6 +6,9 @@ import styled from 'styled-components'
 import { Context } from '../../../context/tabs'
 import { Category } from '../../graphql'
 import { Badge, Packagings, CartButton } from '../../components'
+import { FlexContainer } from '../../../views/Forms/styled'
+
+import Filters from './Filters'
 
 export default function PackagingHubProducts() {
    const {
@@ -31,8 +34,10 @@ export default function PackagingHubProducts() {
                <h2>{category.name}</h2>
                <Badge />
             </Header>
-
-            <Packagings />
+            <FlexContainer>
+               <Filters />
+               <Packagings />
+            </FlexContainer>
          </Wrapper>
       </>
    )
@@ -42,10 +47,12 @@ const Wrapper = styled.div`
    height: 100%;
    width: 100%;
    padding: 2rem;
+   padding-left: 0;
 `
 
 const Header = styled.div`
    padding-bottom: 2rem;
+   padding-left: 2rem;
    display: flex;
    justify-content: space-between;
    align-items: center;
