@@ -81,7 +81,7 @@ export default function ProductCard({
                   <div>
                      <span>Thickness</span>
                      <p>
-                        {thickness} {LWHUnit}
+                        {thickness || 'N/A'} {thickness ? LWHUnit : null}
                      </p>
                   </div>
                </FlexiSpaced>
