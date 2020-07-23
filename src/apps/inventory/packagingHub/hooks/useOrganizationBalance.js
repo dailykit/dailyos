@@ -8,7 +8,7 @@ export default function useOrganizationBalance(accountId) {
    const [error, setError] = useState()
 
    useEffect(() => {
-      const abortController = new AbortController()
+      const abortController = new window.AbortController()
 
       if (accountId) {
          const url = `${PAYMENTS_URL}/${
