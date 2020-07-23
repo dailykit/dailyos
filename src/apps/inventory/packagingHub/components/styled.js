@@ -3,11 +3,10 @@ import styled, { css } from 'styled-components'
 import { FlexContainer } from '../../views/Forms/styled'
 
 export const CardWrapper = styled.div`
-   height: 238px;
+   height: 267px;
    width: 475px;
    border: 1px solid #ececec;
    background: #fff;
-   position: relative;
 
    cursor: pointer;
 `
@@ -82,13 +81,10 @@ export const ActionButton = styled.button`
    border: 0;
    color: #fff;
    font-size: 14px;
+   margin-top: 20px;
    padding: 8px;
    background: linear-gradient(180deg, #28c1f7 -4.17%, #00a7e1 100%);
    cursor: pointer;
-
-   position: absolute;
-   bottom: 0;
-   left: 0;
 `
 
 export const PriceTable = styled.table`

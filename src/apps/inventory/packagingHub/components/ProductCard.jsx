@@ -20,6 +20,10 @@ export default function ProductCard({
       id,
       packagingName,
       packagingCompanyBrand: { name: brandName } = {},
+      length,
+      thickness,
+      width,
+      LWHUnit,
       packagingPurchaseOptions = [],
       assets = {},
    } = {},
@@ -67,18 +71,25 @@ export default function ProductCard({
                      </p>
                   </div>
                </Flexi>
-               {/* <FlexiSpaced>
+               <FlexiSpaced>
                   <div>
                      <span>Size</span>
-                     <p>2*2 in</p>
+                     <p>
+                        {length}*{width} {LWHUnit}
+                     </p>
                   </div>
                   <div>
                      <span>Thickness</span>
-                     <p>3 in</p>
+                     <p>
+                        {thickness} {LWHUnit}
+                     </p>
                   </div>
-               </FlexiSpaced> */}
+               </FlexiSpaced>
 
-               {/* <CardPrice>Price start from $1.2 per item</CardPrice> */}
+               <CardPrice>
+                  Price start from $
+                  {packagingPurchaseOptions[0]?.salesPrice || 'N/a'}
+               </CardPrice>
             </CardData>
          </CardContent>
          <ActionButton>CREATE PURCHASE ORDE</ActionButton>

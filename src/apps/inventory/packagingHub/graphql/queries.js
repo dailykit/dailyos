@@ -28,6 +28,9 @@ export const PACKAGINGS = gql`
          height
          length
          width
+         thickness
+         LWHUnit
+
          packagingType {
             id
             name
@@ -41,6 +44,7 @@ export const PACKAGINGS = gql`
             id
             quantity
             unit
+            salesPrice
          }
       }
    }
