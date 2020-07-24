@@ -47,7 +47,7 @@ const IngredientsListing = () => {
          toast.success('Ingredient created!')
          addTab(
             data.createIngredient.returning[0].name,
-            `/recipe-app/ingredients/${data.createIngredient.returning[0].id}`
+            `/recipe/ingredients/${data.createIngredient.returning[0].id}`
          )
       },
       onError: error => {
@@ -142,7 +142,7 @@ function DataTable({
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, `/recipe-app/ingredients/${id}`)
+      addTab(name, `/recipe/ingredients/${id}`)
    }
 
    return (
