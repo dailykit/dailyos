@@ -41,6 +41,11 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             >
                {t(address.concat('station'))}
             </StyledListItem>
+            <StyledListItem
+               onClick={() => addTab('Notifications', '/settings/notifications')}
+            >
+               Notifications
+            </StyledListItem>
          </StyledList>
       </StyledSidebar>
    )

@@ -6,6 +6,7 @@ import {
    DevicesListing,
    StationsListing,
    MasterList,
+   Notifications
 } from './Listings'
 
 import {
@@ -29,4 +30,5 @@ export {
    DeviceForm,
    StationForm,
    MasterListForm,
+   Notifications
 }

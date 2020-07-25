@@ -58,6 +58,12 @@ const Home = () => {
                conf="All active"
                onClick={() => addTab('Master Lists', '/settings/master-lists')}
             />
+            <DashboardTile
+               title='Notifications'
+               count="5"
+               conf="All active"
+               onClick={() => addTab('Notifications', '/settings/notifications')}
+            />
          </StyledCardList>
       </StyledHome>
    )

@@ -1,5 +1,31 @@
 import gql from 'graphql-tag'
 
+export const UPDATE_NOTIFICATION = gql`
+   mutation MyMutation(
+      $isActive: Boolean!
+      $isGlobal: Boolean!
+      $isLocal: Boolean!
+      $playAudio: Boolean!
+      $id: uuid!
+   ) {
+      updateNotificationType(
+         _set: {
+            isActive: $isActive
+            isGlobal: $isGlobal
+            isLocal: $isLocal
+            playAudio: $playAudio
+         }
+         pk_columns: { id: $id }
+      ) {
+         id
+         isActive
+         isGlobal
+         isLocal
+         playAudio
+      }
+   }
+`
+
 export const REMOVE_SCALE_STATION = gql`
    mutation updateScale(
       $deviceNum: Int!

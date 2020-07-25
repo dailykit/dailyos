@@ -1,5 +1,31 @@
 import gql from 'graphql-tag'
 
+export const NOTIFICATIONS = gql`
+   subscription MyQuery {
+      notificationTypes(order_by: { app: asc }) {
+         name
+         description
+         app
+         isActive
+         isGlobal
+         isLocal
+         id
+         playAudio
+         smsConfigs_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               phoneNo
+               isActive
+               id
+            }
+         }
+         template
+      }
+   }
+`
+
 export const LABEL_PRINTERS = gql`
    subscription labelPrinters($type: String!, $stationId: Int!) {
       labelPrinters: printers(
