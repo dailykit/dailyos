@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { Section } from './styled'
 
 import Sizes from './Sizes'
-import PackagingMaterial from './PackagingMaterial'
 import FDACompliant from './FDACompliant'
 import Recylable from './Recylable'
 import Compostable from './Compostable'
@@ -20,7 +19,6 @@ export default function Filters() {
          </Section>
 
          <Sizes />
-         <PackagingMaterial />
          <FDACompliant />
          <Recylable />
          <Compostable />

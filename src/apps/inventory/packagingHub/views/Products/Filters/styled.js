@@ -13,7 +13,7 @@ export const Section = styled.div`
    h5 {
       font-size: 14px;
       font-weight: 500;
-      color: #888d9d;
+      color: #555b6e;
    }
 
    p {
