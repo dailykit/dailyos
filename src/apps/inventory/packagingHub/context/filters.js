@@ -9,6 +9,10 @@ const reducers = (state, { type, payload }) => {
       case 'SELECT_OPTION':
          const { value } = payload
          return { ...state, ...value }
+
+      case 'CLEAR_OPTIONS':
+         return {}
+
       default:
          return state
    }

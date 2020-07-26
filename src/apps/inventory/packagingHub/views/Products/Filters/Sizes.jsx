@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import { Context } from '../../../../context/tabs'
 import { useFilters } from '../../../context/filters'
+import { FlexContainer } from '../../../../views/Forms/styled'
 
 import {
    PACKAGE_LENGTH_FILTER_OPTIONS,
@@ -47,6 +48,12 @@ export default function Sizes() {
       })
    }
 
+   const clearFilters = () => {
+      dispatch({
+         type: 'CLEAR_OPTIONS',
+      })
+   }
+
    return (
       <Section>
          <SectionHeader>
@@ -57,9 +64,15 @@ export default function Sizes() {
          <WidthOptions handleWidthSelect={handleWidthSelect} />
 
          {selectedOption.height || selectedOption.width ? (
-            <TextButton style={style} onClick={applyFilters} type="outline">
-               Apply
-            </TextButton>
+            <FlexContainer>
+               <TextButton style={style} onClick={applyFilters} type="outline">
+                  Apply
+               </TextButton>
+
+               <TextButton style={style} onClick={clearFilters} type="ghost">
+                  Clear
+               </TextButton>
+            </FlexContainer>
          ) : null}
       </Section>
    )
