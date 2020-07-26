@@ -149,3 +149,32 @@ export const CART_ITEMS = gql`
       }
    }
 `
+
+export const PACKAGE_HEIGHT_FILTER_OPTIONS = gql`
+   query {
+      packagingHub_packaging_aggregate(
+         distinct_on: height
+         where: { height: { _is_null: false } }
+      ) {
+         nodes {
+            id
+            height
+            LWHUnit
+         }
+      }
+   }
+`
+export const PACKAGE_WIDTH_FILTER_OPTIONS = gql`
+   query {
+      packagingHub_packaging_aggregate(
+         distinct_on: width
+         where: { width: { _is_null: false } }
+      ) {
+         nodes {
+            id
+            width
+            LWHUnit
+         }
+      }
+   }
+`

@@ -4,6 +4,8 @@ import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
 import { Context } from '../../../context/tabs'
+import FiltersProvider from '../../context/filters'
+
 import { Category } from '../../graphql'
 import { Badge, Packagings, CartButton } from '../../components'
 import { FlexContainer } from '../../../views/Forms/styled'
@@ -35,8 +37,10 @@ export default function PackagingHubProducts() {
                <Badge />
             </Header>
             <FlexContainer>
-               <Filters />
-               <Packagings />
+               <FiltersProvider>
+                  <Filters />
+                  <Packagings />
+               </FiltersProvider>
             </FlexContainer>
          </Wrapper>
       </>

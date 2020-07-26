@@ -8,9 +8,12 @@ export const Section = styled.div`
 
    border: 1px solid #fff;
 
+   position: relative;
+
    h5 {
       font-size: 14px;
       font-weight: 500;
+      color: #888d9d;
    }
 
    p {
