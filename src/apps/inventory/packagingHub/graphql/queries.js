@@ -20,8 +20,14 @@ export const Category = gql`
 `
 
 export const PACKAGINGS = gql`
-   query Packagings($id: Int!) {
-      packagingHub_packaging(where: { packagingTypeId: { _eq: $id } }) {
+   query Packagings($id: Int!, $height: numeric, $width: numeric) {
+      packagingHub_packaging(
+         where: {
+            packagingTypeId: { _eq: $id }
+            height: { _eq: $height }
+            width: { _eq: $width }
+         }
+      ) {
          id
          packagingName
          assets
@@ -151,12 +157,13 @@ export const CART_ITEMS = gql`
 `
 
 export const PACKAGE_HEIGHT_FILTER_OPTIONS = gql`
-   query HeightFilters($categoryId: Int!) {
+   query HeightFilters($categoryId: Int!, $width: numeric) {
       packagingHub_packaging_aggregate(
          distinct_on: height
          where: {
             height: { _is_null: false }
             packagingTypeId: { _eq: $categoryId }
+            width: { _eq: $width, _is_null: false }
          }
       ) {
          nodes {
@@ -168,12 +175,13 @@ export const PACKAGE_HEIGHT_FILTER_OPTIONS = gql`
    }
 `
 export const PACKAGE_WIDTH_FILTER_OPTIONS = gql`
-   query WidthFilters($categoryId: Int!) {
+   query WidthFilters($categoryId: Int!, $height: numeric) {
       packagingHub_packaging_aggregate(
          distinct_on: width
          where: {
             width: { _is_null: false }
             packagingTypeId: { _eq: $categoryId }
+            height: { _eq: $height, _is_null: false }
          }
       ) {
          nodes {

@@ -2,12 +2,13 @@ import React, { useReducer, useContext } from 'react'
 
 const FiltersContext = React.createContext()
 
-const initialState = {
-   refetchProduct: () => {},
-}
+const initialState = {}
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'SELECT_OPTION':
+         const { value } = payload
+         return { ...state, ...value }
       default:
          return state
    }

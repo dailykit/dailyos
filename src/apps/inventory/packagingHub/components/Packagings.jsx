@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
 import { Context } from '../../context/tabs'
+import { useFilters } from '../context/filters'
 import { PACKAGINGS } from '../graphql'
 
 import ProductCard from './ProductCard'
@@ -14,8 +15,11 @@ export default function Packagings() {
          current: { id },
       },
    } = useContext(Context)
+   const { filters } = useFilters()
 
-   const { data, loading, error } = useQuery(PACKAGINGS, { variables: { id } })
+   const { data, loading, error } = useQuery(PACKAGINGS, {
+      variables: { id, ...filters },
+   })
 
    if (error) return <p>{error.message}</p>
    if (loading) return <Loader />
