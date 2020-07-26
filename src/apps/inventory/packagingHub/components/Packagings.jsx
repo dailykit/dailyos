@@ -26,6 +26,19 @@ export default function Packagings() {
 
    const { packagingHub_packaging: packagings = [] } = data
 
+   if (!packagings.length) {
+      return (
+         <Wrapper>
+            <h2>
+               No packagings found{' '}
+               {filters.length || filters.width
+                  ? 'with the provided dimension.'
+                  : '.'}
+            </h2>
+         </Wrapper>
+      )
+   }
+
    return (
       <Wrapper>
          {packagings.map(packaging => (
@@ -46,4 +59,8 @@ const Wrapper = styled.div`
 
    grid-template-columns: 1fr 1fr;
    grid-template-rows: auto;
+
+   h2 {
+      color: #555b6e;
+   }
 `
