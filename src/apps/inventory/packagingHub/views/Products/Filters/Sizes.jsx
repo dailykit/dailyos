@@ -8,7 +8,7 @@ import { Context } from '../../../../context/tabs'
 import { useFilters } from '../../../context/filters'
 
 import {
-   PACKAGE_HEIGHT_FILTER_OPTIONS,
+   PACKAGE_LENGTH_FILTER_OPTIONS,
    PACKAGE_WIDTH_FILTER_OPTIONS,
 } from '../../../graphql'
 
@@ -22,14 +22,14 @@ export default function Sizes() {
    const { dispatch } = useFilters()
 
    const [selectedOption, setSelectedOption] = useState({
-      height: null,
+      length: null,
       width: null,
    })
 
-   const handleHeightSelect = e => {
+   const handleLengthSelect = e => {
       const selectedOption = e.target.value
 
-      setSelectedOption(option => ({ ...option, height: selectedOption }))
+      setSelectedOption(option => ({ ...option, length: selectedOption }))
    }
 
    const handleWidthSelect = e => {
@@ -53,7 +53,7 @@ export default function Sizes() {
             <p>Sizes</p>
          </SectionHeader>
 
-         <HeightOptions handleHeightSelect={handleHeightSelect} />
+         <LengthOptions handleLengthSelect={handleLengthSelect} />
          <WidthOptions handleWidthSelect={handleWidthSelect} />
 
          {selectedOption.height || selectedOption.width ? (
@@ -65,7 +65,7 @@ export default function Sizes() {
    )
 }
 
-function HeightOptions({ handleHeightSelect }) {
+function LengthOptions({ handleLengthSelect }) {
    const {
       state: {
          current: { id: categoryId },
@@ -75,9 +75,9 @@ function HeightOptions({ handleHeightSelect }) {
    const {
       loading: heightsLoading,
       data: {
-         packagingHub_packaging_aggregate: { nodes: heightOptions = [] } = {},
+         packagingHub_packaging_aggregate: { nodes: lengthOptions = [] } = {},
       } = {},
-   } = useQuery(PACKAGE_HEIGHT_FILTER_OPTIONS, {
+   } = useQuery(PACKAGE_LENGTH_FILTER_OPTIONS, {
       onError: error => {
          toast.error(error.message)
       },
@@ -88,13 +88,13 @@ function HeightOptions({ handleHeightSelect }) {
 
    return (
       <>
-         <h5 style={style}>Height</h5>
-         <StyledSelect onChange={handleHeightSelect}>
-            <option value="">Choose height...</option>
+         <h5 style={style}>Length</h5>
+         <StyledSelect onChange={handleLengthSelect}>
+            <option value="">Choose length...</option>
 
-            {heightOptions.map(option => (
-               <option key={option.id} value={option.height}>
-                  {option.height} {option.LWHUnit}
+            {lengthOptions.map(option => (
+               <option key={option.id} value={option.length}>
+                  {option.length} {option.LWHUnit}
                </option>
             ))}
          </StyledSelect>
