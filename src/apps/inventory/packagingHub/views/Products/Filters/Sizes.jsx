@@ -1,8 +1,10 @@
-import React from 'react'
-import { SearchBox, Loader } from '@dailykit/ui'
+import React, { useContext } from 'react'
+import { Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
+
+import { Context } from '../../../../context/tabs'
 
 import {
    PACKAGE_HEIGHT_FILTER_OPTIONS,
@@ -13,6 +15,12 @@ import { Section, SectionHeader } from './styled'
 
 export default function Sizes() {
    const {
+      state: {
+         current: { id: categoryId },
+      },
+   } = useContext(Context)
+
+   const {
       loading: heightsLoading,
       data: {
          packagingHub_packaging_aggregate: { nodes: heightOptions = [] } = {},
@@ -21,6 +29,7 @@ export default function Sizes() {
       onError: error => {
          toast.error(error.message)
       },
+      variables: { categoryId },
    })
 
    const {
@@ -32,6 +41,7 @@ export default function Sizes() {
       onError: error => {
          toast.error(error.message)
       },
+      variables: { categoryId },
    })
 
    const handleHeightSelect = e => {
@@ -49,8 +59,6 @@ export default function Sizes() {
          <SectionHeader>
             <p>Sizes</p>
          </SectionHeader>
-
-         <SearchBox placeholder="Search" value={''} onChange={() => {}} />
 
          <h5 style={{ marginTop: '1rem' }}>Height</h5>
          <StyledSelect onChange={handleHeightSelect}>
