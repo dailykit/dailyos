@@ -2,13 +2,16 @@ import React from 'react'
 import { Checkbox } from '@dailykit/ui'
 
 import { Section } from './styled'
+import { FlexContainer } from '../../../../views/Forms/styled'
 
 export default function GreaseResistance() {
    return (
       <Section>
-         <Checkbox id="label" checked={false} onChange={() => {}}>
-            Grease Resistant
-         </Checkbox>
+         <FlexContainer>
+            <Checkbox checked={false} onChange={() => {}} />
+            <span style={{ width: '12px' }} />
+            <h5>Grease Resistant</h5>
+         </FlexContainer>
       </Section>
    )
 }

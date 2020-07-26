@@ -2,13 +2,16 @@ import React from 'react'
 import { Checkbox } from '@dailykit/ui'
 
 import { Section } from './styled'
+import { FlexContainer } from '../../../../views/Forms/styled'
 
 export default function Compostable() {
    return (
       <Section>
-         <Checkbox id="label" checked={false} onChange={() => {}}>
-            Compostable
-         </Checkbox>
+         <FlexContainer>
+            <Checkbox checked={false} onChange={() => {}} />
+            <span style={{ width: '12px' }} />
+            <h5>Compostable</h5>
+         </FlexContainer>
       </Section>
    )
 }

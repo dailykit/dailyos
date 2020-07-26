@@ -2,13 +2,16 @@ import React from 'react'
 import { Checkbox } from '@dailykit/ui'
 
 import { Section } from './styled'
+import { FlexContainer } from '../../../../views/Forms/styled'
 
 export default function Recyclable() {
    return (
       <Section>
-         <Checkbox id="label" checked={false} onChange={() => {}}>
-            Recyclable
-         </Checkbox>
+         <FlexContainer>
+            <Checkbox checked={false} onChange={() => {}} />
+            <span style={{ width: '12px' }} />
+            <h5>Recyclable</h5>
+         </FlexContainer>
       </Section>
    )
 }
