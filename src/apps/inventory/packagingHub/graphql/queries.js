@@ -26,6 +26,7 @@ export const PACKAGINGS = gql`
       $width: numeric
       $isFDACompliant: Boolean
       $isRecylable: Boolean
+      $isCompostable: Boolean
    ) {
       packagingHub_packaging(
          where: {
@@ -35,6 +36,7 @@ export const PACKAGINGS = gql`
             packagingSpecification: {
                fdaCompliant: { _eq: $isFDACompliant }
                recyclable: { _eq: $isRecylable }
+               compostable: { _eq: $isCompostable }
             }
          }
       ) {
