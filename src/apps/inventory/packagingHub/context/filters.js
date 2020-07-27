@@ -8,6 +8,7 @@ const initialState = {
    isFDACompliant: null,
    isRecylable: null,
    isCompostable: null,
+   isCompressable: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -27,6 +28,9 @@ const reducers = (state, { type, payload }) => {
 
       case 'TOGGLE_COMPOSTABLE':
          return { ...state, isCompostable: payload.value ? null : true }
+
+      case 'TOGGLE_COMPRESSABLE':
+         return { ...state, isCompressable: payload.value ? null : true }
 
       default:
          return state
