@@ -6,6 +6,7 @@ export const PaymentCard = styled.div`
    box-sizing: border-box;
    display: flex;
    flex-direction: column;
+   margin: 0 32px 16px 0;
 `
 export const CardInfo = styled.div`
    padding: 4px 16px;

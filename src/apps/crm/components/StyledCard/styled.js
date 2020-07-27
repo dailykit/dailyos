@@ -1,9 +1,12 @@
 import styled from 'styled-components'
 
 export const StyledCard = styled.div`
-   background: rgba(255, 255, 255, 0.7);
+   // background: rgba(255, 255, 255, 0.7);
+   background: #ffffff;
    border: 1px dashed #f3f3f3;
    box-shadow: 3px 3px 16px rgba(0, 0, 0, 0.06);
+   margin: 0 32px 32px 0;
+   width: 100%;
 `
 export const CardHeading = styled.div`
    padding: 16px;

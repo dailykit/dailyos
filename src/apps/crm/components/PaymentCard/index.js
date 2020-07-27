@@ -7,7 +7,7 @@ import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
 const contactInfoCard = props => (
    <PaymentCard>
       <CardInfo>
-         <Text as="h1">Payment Card</Text>
+         <Text as="subtitle">Payment Card</Text>
       </CardInfo>
       <CardInfo>
          <Text as="subtitle">mastreo</Text>

@@ -6,6 +6,10 @@ export const ContactCard = styled.div`
    box-sizing: border-box;
    display: flex;
    flex-direction: column;
+   margin: 0 32px 16px 0;
+`
+export const StyledHeading = styled.div`
+   padding: 8px 16px;
 `
 export const ContactInfo = styled.div`
    padding: 16px;

@@ -4,7 +4,7 @@ export const CustomerCard = styled.div`
    background: #ffffff;
    border: 1px solid #ececec;
    box-sizing: border-box;
-   width: 100%;
+   margin: 0 32px 16px 0;
 `
 export const CustomerInfo = styled.div`
    display: flex;

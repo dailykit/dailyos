@@ -1,18 +1,78 @@
+/* eslint-disable import/imports-first */
+/* eslint-disable import/order */
 import React from 'react'
-import { Avatar, Text, IconButton, PlusIcon } from '@dailykit/ui'
-import { StyledWrapper, StyledContainer, StyledDiv } from './styled'
+import { Text } from '@dailykit/ui'
+import { useTabs } from '../../../context'
+import {
+   StyledWrapper,
+   StyledContainer,
+   StyledSideBar,
+   StyledMainBar,
+   StyledTable,
+} from './styled'
 import {
    CustomerCard,
    ContactInfoCard,
    PaymentCard,
    StyledCard,
 } from '../../../components'
+import { reactFormatter, ReactTabulator } from 'react-tabulator'
 
-const customerRelation = () => {
+const CustomerRelation = () => {
+   const { addTab } = useTabs()
+   const columns = [
+      { title: 'Order Id', field: 'id', headerFilter: true },
+      { title: 'Products', field: 'products' },
+      { title: 'Wallet Used', field: 'walletUsed' },
+      { title: 'Discount', field: 'discount' },
+      { title: 'Total Paid', field: 'paid' },
+      { title: 'Channel', field: 'channel' },
+      { title: 'Ordered On', field: 'orderedOn' },
+      { title: 'Delivered On', field: 'deliveredOn' },
+   ]
+   const data = [
+      {
+         id: '#134233445',
+         products: '3',
+         walletUsed: '$1.22',
+         discount: '$1',
+         paid: '8',
+         channel: 'RMK',
+         orderedOn: 'Feb 20, 2020, 15:00',
+         deliveredOn: 'Feb 20, 2020, 17:00',
+      },
+      {
+         id: '#134233445',
+         products: '3',
+         walletUsed: '$1.22',
+         discount: '$1',
+         paid: '8',
+         channel: 'RMK',
+         orderedOn: 'Feb 20, 2020, 15:00',
+         deliveredOn: 'Feb 20, 2020, 17:00',
+      },
+      {
+         id: '#134233445',
+         products: '3',
+         walletUsed: '$1.22',
+         discount: '$1',
+         paid: '8',
+         channel: 'RMK',
+         orderedOn: 'Feb 20, 2020, 15:00',
+         deliveredOn: 'Feb 20, 2020, 17:00',
+      },
+   ]
+   const rowClick = (e, row) => {
+      const { id, name } = row._row.data
+
+      const param = '/crm/customers/'.concat(name)
+      addTab(name, param)
+   }
    return (
       <StyledWrapper>
          <StyledContainer>
-            <StyledDiv>
+            <StyledSideBar>
+               {/* <StyledDiv> */}
                <CustomerCard
                   CustomerName="Phil Dunphey"
                   CustomerInfo="Lead Type: Organic"
@@ -29,8 +89,9 @@ const customerRelation = () => {
                   cardCVV="012"
                   address="ABC Building No. 123 first floor sector - x, unknow street "
                />
-            </StyledDiv>
-            <StyledDiv>
+               {/* </StyledDiv> */}
+            </StyledSideBar>
+            <StyledMainBar>
                <StyledContainer>
                   <StyledCard
                      heading="Revenue and Sales"
@@ -39,6 +100,7 @@ const customerRelation = () => {
                      subheading2="Total Orders"
                      value2="20"
                   />
+
                   <StyledCard
                      heading="Referrals"
                      subheading1="Total Referrals Sent"
@@ -52,10 +114,23 @@ const customerRelation = () => {
                      value1="$12.3"
                   />
                </StyledContainer>
-            </StyledDiv>
+               <StyledTable>
+                  <div style={{ padding: '16px' }}>
+                     <Text as="title">Orders(20)</Text>
+                  </div>
+                  <div style={{ overflowX: 'scroll' }}>
+                     <ReactTabulator
+                        columns={columns}
+                        data={data}
+                        rowClick={rowClick}
+                        // options={tableOptions}
+                     />
+                  </div>
+               </StyledTable>
+            </StyledMainBar>
          </StyledContainer>
       </StyledWrapper>
    )
 }
 
-export default customerRelation
+export default CustomerRelation

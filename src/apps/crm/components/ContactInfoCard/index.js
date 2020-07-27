@@ -1,11 +1,19 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react'
 import { Text } from '@dailykit/ui'
-import { ContactCard, CustomerAddress, ContactInfo } from './styled'
+import {
+   ContactCard,
+   CustomerAddress,
+   ContactInfo,
+   StyledHeading,
+} from './styled'
 import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
 
 const contactInfoCard = props => (
    <ContactCard>
+      <StyledHeading>
+         <Text as="subtitle">Contact Details</Text>
+      </StyledHeading>
       <ContactInfo>
          <Text as="title">{props.email}</Text>
          <MailIcon color="#00a7e1" />
