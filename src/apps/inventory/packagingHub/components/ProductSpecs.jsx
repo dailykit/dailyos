@@ -103,10 +103,8 @@ export default function ProductSpecs({ product }) {
             </div>
             <div>
                <FlexContainer style={{ alignItems: 'center' }}>
-                  <RenderIcon
-                     check={packagingSpecification?.outerGreaseResistant}
-                  />
-                  <StatusText>Outer Grease Resistant</StatusText>
+                  <RenderIcon check={packagingSpecification?.compressibility} />
+                  <StatusText>Compressable</StatusText>
                </FlexContainer>
             </div>
          </Container>
