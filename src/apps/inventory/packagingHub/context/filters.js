@@ -2,7 +2,11 @@ import React, { useReducer, useContext } from 'react'
 
 const FiltersContext = React.createContext()
 
-const initialState = {}
+const initialState = {
+   length: null,
+   width: null,
+   isFDACompliant: null,
+}
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
@@ -12,6 +16,9 @@ const reducers = (state, { type, payload }) => {
 
       case 'CLEAR_OPTIONS':
          return {}
+
+      case 'TOGGLE_FDACOMPLIANT':
+         return { ...state, isFDACompliant: !state.isFDACompliant }
 
       default:
          return state

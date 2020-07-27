@@ -20,12 +20,18 @@ export const Category = gql`
 `
 
 export const PACKAGINGS = gql`
-   query Packagings($id: Int!, $length: numeric, $width: numeric) {
+   query Packagings(
+      $id: Int!
+      $length: numeric
+      $width: numeric
+      $isFDACompliant: Boolean
+   ) {
       packagingHub_packaging(
          where: {
             packagingTypeId: { _eq: $id }
             length: { _eq: $length }
             width: { _eq: $width }
+            packagingSpecification: { fdaCompliant: { _eq: $isFDACompliant } }
          }
       ) {
          id

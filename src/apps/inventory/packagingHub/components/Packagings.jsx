@@ -30,9 +30,9 @@ export default function Packagings() {
       return (
          <Wrapper>
             <h2>
-               No packagings found{' '}
-               {filters.length || filters.width
-                  ? 'with the provided dimension.'
+               No packagings found
+               {filters.length || filters.width || filters.isFDACompliant
+                  ? ' with the provided filters.'
                   : '.'}
             </h2>
          </Wrapper>
