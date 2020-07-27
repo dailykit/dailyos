@@ -25,13 +25,17 @@ export const PACKAGINGS = gql`
       $length: numeric
       $width: numeric
       $isFDACompliant: Boolean
+      $isRecylable: Boolean
    ) {
       packagingHub_packaging(
          where: {
             packagingTypeId: { _eq: $id }
             length: { _eq: $length }
             width: { _eq: $width }
-            packagingSpecification: { fdaCompliant: { _eq: $isFDACompliant } }
+            packagingSpecification: {
+               fdaCompliant: { _eq: $isFDACompliant }
+               recyclable: { _eq: $isRecylable }
+            }
          }
       ) {
          id

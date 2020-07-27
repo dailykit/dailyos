@@ -6,6 +6,7 @@ const initialState = {
    length: null,
    width: null,
    isFDACompliant: null,
+   isRecylable: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -18,7 +19,10 @@ const reducers = (state, { type, payload }) => {
          return {}
 
       case 'TOGGLE_FDACOMPLIANT':
-         return { ...state, isFDACompliant: !state.isFDACompliant }
+         return { ...state, isFDACompliant: payload.value ? null : true }
+
+      case 'TOGGLE_RECYLABLE':
+         return { ...state, isRecylable: payload.value ? null : true }
 
       default:
          return state

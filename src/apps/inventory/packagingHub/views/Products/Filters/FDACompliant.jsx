@@ -10,7 +10,10 @@ export default function FDACompliant() {
    const { filters, dispatch } = useFilters()
 
    const toggleFDACompliant = () => {
-      dispatch({ type: 'TOGGLE_FDACOMPLIANT' })
+      dispatch({
+         type: 'TOGGLE_FDACOMPLIANT',
+         payload: { value: filters.isFDACompliant },
+      })
    }
 
    return (
