@@ -60,6 +60,11 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
                id
                yield
             }
+            modifier {
+               id
+               name
+               data
+            }
          }
       }
    }

@@ -184,6 +184,7 @@ export default function Recipe({ state }) {
                                     <th>
                                        {t(address.concat('discounted price'))}
                                     </th>
+                                    <th> Modifiers </th>
                                     <th> </th>
                                  </tr>
                               </thead>
@@ -241,6 +242,11 @@ export default function Recipe({ state }) {
                                                    ) /
                                                       100)
                                              ).toFixed(2) || ''}
+                                          </td>
+                                          <td>
+                                             {' '}
+                                             {option?.modifier?.name ||
+                                                'None Selected'}{' '}
                                           </td>
                                           <td>
                                              <IconButton
@@ -310,6 +316,11 @@ export default function Recipe({ state }) {
                                                    ) /
                                                       100)
                                              ).toFixed(2) || ''}
+                                          </td>
+                                          <td>
+                                             {' '}
+                                             {option?.modifier?.name ||
+                                                'None Selected'}{' '}
                                           </td>
                                           <td>
                                              <IconButton
