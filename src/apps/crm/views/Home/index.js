@@ -1,28 +1,40 @@
 import React from 'react'
-import { DashboardTile } from '@dailykit/ui'
+import { DashboardTile, SearchBox, Text } from '@dailykit/ui'
+import { useSubscription } from '@apollo/react-hooks'
 
 // State
 import { useTabs } from '../../context'
-
-import { StyledHome, StyledCardList } from './styled'
+import { StyledHome, StyledCardList, StyledHeader } from './styled'
+import { CUSTOMERS_COUNT } from '../../graphql'
 
 const Home = () => {
    const { addTab } = useTabs()
+   // const { t } = useTranslation()
+   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
 
+   const [search, setSearch] = React.useState('')
    return (
       <StyledHome>
-         <h1>CRM</h1>
+         <StyledHeader>
+            <Text as="h1">Customer Relation Manager</Text>
+            <SearchBox
+               placeholder="Search"
+               value={search}
+               onChange={e => setSearch(e.target.value)}
+            />
+         </StyledHeader>
+
          <StyledCardList>
             <DashboardTile
                title="Customers"
-               count={10000}
-               conf="All available"
+               count={
+                  customersCount?.customers_aggregate.aggregate.count || '...'
+               }
                onClick={() => addTab('Customers', '/crm/customers')}
             />
             <DashboardTile
                title="Referral Plans"
                count={22}
-               conf="All available"
                onClick={() => addTab('Referral Plans', '/crm/referral-plans')}
             />
          </StyledCardList>

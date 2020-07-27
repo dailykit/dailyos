@@ -7,7 +7,7 @@ import { Tabs } from '../../components'
 import { StyledHeader, StyledMenu } from './styled'
 
 // Icons
-import { MenuIcon } from '../../assets/icons'
+import { MenuIcon } from '../../../../shared/assets/icons/'
 
 const Header = ({ toggleSidebar }) => {
    return (

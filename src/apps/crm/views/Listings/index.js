@@ -1,3 +1,4 @@
 import CustomerListing from './CustomerListing'
+import ReferralPlansListing from './ReferralPlansListing'
 
-export { CustomerListing }
+export { CustomerListing, ReferralPlansListing }
