@@ -3,12 +3,12 @@ import { Link, animateScroll as scroll } from 'react-scroll'
 import { ArrowDownIcon, ArrowRightIcon, Text } from '@dailykit/ui'
 import { Container } from '../styled'
 import { StyledContainer, List, Icon, Accordion } from './styled'
-import { NOTIFICATIONS } from '../../../../graphql/subscriptions'
+import { NOTIFICATION_TYPES } from '../../../../graphql/subscriptions'
 import { useSubscription } from '@apollo/react-hooks'
 import { Loader } from '../../../../components'
 
 const SideNav = () => {
-   const { loading, error, data } = useSubscription(NOTIFICATIONS)
+   const { loading, error, data } = useSubscription(NOTIFICATION_TYPES)
    if (loading)
       return (
          <StyledContainer>

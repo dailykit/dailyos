@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const NOTIFICATIONS = gql`
+export const NOTIFICATION_TYPES = gql`
    subscription MyQuery {
       notificationTypes(order_by: { app: asc }) {
          name

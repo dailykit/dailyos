@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTabs } from '../../../context'
 import { useHistory } from 'react-router-dom'
-import { NOTIFICATIONS, UPDATE_NOTIFICATION } from '../../../graphql'
+import { NOTIFICATION_TYPES, UPDATE_NOTIFICATION_TYPE } from '../../../graphql'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { Container, Flex } from './styled'
@@ -28,7 +28,7 @@ import {
 
 const NotificationsTable = ({ id, title, data }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
-   const [updateNotification] = useMutation(UPDATE_NOTIFICATION)
+   const [updateNotificationType] = useMutation(UPDATE_NOTIFICATION_TYPE)
    return (
       <>
          <Container left="180" id={id} height="100">
@@ -61,7 +61,7 @@ const NotificationsTable = ({ id, title, data }) => {
                                     checked={row.isGlobal}
                                     label="Show on DailyOS"
                                     setChecked={e => {
-                                       updateNotification({
+                                       updateNotificationType({
                                           variables: {
                                              id: row.id,
                                              _set: {
@@ -79,7 +79,7 @@ const NotificationsTable = ({ id, title, data }) => {
                                     checked={row.isLocal}
                                     label="Show on App"
                                     setChecked={e => {
-                                       updateNotification({
+                                       updateNotificationType({
                                           variables: {
                                              id: row.id,
                                              _set: {
@@ -98,7 +98,7 @@ const NotificationsTable = ({ id, title, data }) => {
                                  checked={row.playAudio}
                                  label="Play"
                                  setChecked={e => {
-                                    updateNotification({
+                                    updateNotificationType({
                                        variables: {
                                           id: row.id,
                                           _set: {
@@ -191,7 +191,7 @@ const NotificationsTable = ({ id, title, data }) => {
                            <Toggle
                               checked={row.isActive}
                               setChecked={e => {
-                                 updateNotification({
+                                 updateNotificationType({
                                     variables: {
                                        id: row.id,
                                        _set: {
@@ -212,7 +212,7 @@ const NotificationsTable = ({ id, title, data }) => {
 }
 
 const Notifications = () => {
-   const { loading, error, data } = useSubscription(NOTIFICATIONS)
+   const { loading, error, data } = useSubscription(NOTIFICATION_TYPES)
    const history = useHistory()
    const { tabs, addTab } = useTabs()
    React.useEffect(() => {

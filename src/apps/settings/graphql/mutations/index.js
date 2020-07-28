@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const UPDATE_NOTIFICATION = gql`
+export const UPDATE_NOTIFICATION_TYPE = gql`
    mutation MyMutation($id: uuid!, $_set: notifications_type_set_input!) {
       updateNotificationType(pk_columns: { id: $id }, _set: $_set) {
          id
