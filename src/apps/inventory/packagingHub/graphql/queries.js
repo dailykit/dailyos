@@ -28,6 +28,8 @@ export const PACKAGINGS = gql`
       $isRecylable: Boolean
       $isCompostable: Boolean
       $isCompressable: Boolean
+      $isInnerWaterResistant: Boolean
+      $isOuterWaterResistant: Boolean
    ) {
       packagingHub_packaging(
          where: {
@@ -39,6 +41,8 @@ export const PACKAGINGS = gql`
                recyclable: { _eq: $isRecylable }
                compostable: { _eq: $isCompostable }
                compressibility: { _eq: $isCompressable }
+               innerWaterResistant: { _eq: $isInnerWaterResistant }
+               outerWaterResistant: { _eq: $isOuterWaterResistant }
             }
          }
       ) {

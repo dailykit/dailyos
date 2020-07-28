@@ -9,6 +9,8 @@ const initialState = {
    isRecylable: null,
    isCompostable: null,
    isCompressable: null,
+   isInnerWaterResistant: null,
+   isOuterWaterResistant: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -31,6 +33,22 @@ const reducers = (state, { type, payload }) => {
 
       case 'TOGGLE_COMPRESSABLE':
          return { ...state, isCompressable: payload.value ? null : true }
+
+      case 'TOGGLE_WATER_RESITANCE':
+         const { isInnerWaterResistant } = payload.value
+         const resistanceValue = isInnerWaterResistant ? null : true
+
+         return {
+            ...state,
+            isInnerWaterResistant: resistanceValue,
+            isOuterWaterResistant: resistanceValue,
+         }
+
+      case 'TOGGLE_INNER_WATER_RESISTANCE':
+         return { ...state, isInnerWaterResistant: payload.value ? null : true }
+
+      case 'TOGGLE_OUTER_WATER_RESISTANCE':
+         return { ...state, isOuterWaterResistant: payload.value ? null : true }
 
       default:
          return state
