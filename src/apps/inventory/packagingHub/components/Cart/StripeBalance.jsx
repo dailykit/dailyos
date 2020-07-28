@@ -17,7 +17,9 @@ export default function StripeBalance({
    return (
       <BalanceCard selectable={totalBalance} onClick={setChecked}>
          <FlexContainer>
-            {totalBalance && <Checkbox checked={checked} onChange={() => {}} />}
+            {totalBalance ? (
+               <Checkbox checked={checked} onChange={() => {}} />
+            ) : null}
             <span style={{ width: '14px' }} />
             <h1>Payout Balance</h1>
          </FlexContainer>

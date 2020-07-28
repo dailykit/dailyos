@@ -7,6 +7,8 @@ import styled from 'styled-components'
 import {
    ORGANIZATION_PAYMENT_INFO,
    CREATE_ORDER_TRANSACTION,
+   REGISTER_PACKAGING,
+   CART_ITEMS_FOR_REGISTERING,
 } from '../../graphql'
 import { TunnelContainer } from '../../../components'
 import useOrganizationBalanceInfo from '../../hooks/useOrganizationBalance'
@@ -32,6 +34,16 @@ export default function CartTunnel({ close }) {
       }
    )
 
+   const [registerPackaging] = useMutation(REGISTER_PACKAGING, {
+      onError: error => {
+         toast.error(error.message)
+         console.log(error)
+      },
+      onCompleted: () => {
+         toast.success('Packaging registered in inventory!')
+      },
+   })
+
    const handleBalanceCheck = () => {
       setBalanceChecked(checked => !checked)
    }
@@ -40,6 +52,18 @@ export default function CartTunnel({ close }) {
       data: { organizationPurchaseOrders_purchaseOrder: org = [] } = {},
       loading,
    } = useQuery(ORGANIZATION_PAYMENT_INFO, {
+      fetchPolicy: 'network-only',
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+   })
+
+   const {
+      data: {
+         organizationPurchaseOrders_purchaseOrderItem: cartItems = [],
+      } = {},
+   } = useQuery(CART_ITEMS_FOR_REGISTERING, {
       fetchPolicy: 'network-only',
       onError: error => {
          console.log(error)
@@ -62,6 +86,41 @@ export default function CartTunnel({ close }) {
                // if the selceted method is balance then 'BALANCE', default is 'CARD'
                type: 'BALANCE',
             },
+         },
+      })
+
+      // also create a local copy with supplier info, packaging info and a purchaseOrdetItem entry for local management in dailyos.
+
+      const objects = cartItems.map(item => ({
+         name:
+            item.packaging.packagingCompanyBrand.packagingCompany.supplierName,
+         mandiSupplierId:
+            item.packaging.packagingCompanyBrand.packagingCompany.id,
+         packagings: {
+            data: {
+               name: item.packaging.packagingName,
+               mandiPackagingId: item.packaging.id,
+            },
+            on_conflict: {
+               constraint: 'packaging_mandiPackagingId_key',
+               update_columns: ['name'],
+            },
+         },
+
+         purchaseOrderItems: {
+            data: {
+               orderQuantity: (item.quantity * item.multiplier).toFixed(3),
+            },
+            on_conflict: {
+               constraint: 'purchaseOrderItem_mandiPurchaseOrderItemId_key',
+               update_columns: ['orderQuantity'],
+            },
+         },
+      }))
+
+      registerPackaging({
+         variables: {
+            objects,
          },
       })
    }

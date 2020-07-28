@@ -53,3 +53,16 @@ export const CREATE_ORDER_TRANSACTION = gql`
       }
    }
 `
+export const REGISTER_PACKAGING = gql`
+   mutation RegisterPackaging($objects: [inventory_supplier_insert_input!]!) {
+      createSupplier(
+         objects: $objects
+         on_conflict: {
+            constraint: supplier_mandiSupplierId_key
+            update_columns: [name]
+         }
+      ) {
+         affected_rows
+      }
+   }
+`

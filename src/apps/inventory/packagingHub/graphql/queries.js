@@ -178,6 +178,30 @@ export const CART_ITEMS = gql`
    }
 `
 
+export const CART_ITEMS_FOR_REGISTERING = gql`
+   query CartItems {
+      organizationPurchaseOrders_purchaseOrderItem(
+         order_by: { id: asc }
+         where: { status: { _eq: "PENDING" } }
+      ) {
+         id
+         packaging {
+            id
+            packagingName
+            packagingCompanyBrand {
+               id
+               packagingCompany {
+                  id
+                  supplierName: name
+               }
+            }
+         }
+         quantity
+         multiplier
+      }
+   }
+`
+
 export const PACKAGE_LENGTH_FILTER_OPTIONS = gql`
    query HeightFilters($categoryId: Int!, $width: numeric) {
       packagingHub_packaging_aggregate(
