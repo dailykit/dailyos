@@ -30,6 +30,8 @@ export const PACKAGINGS = gql`
       $isCompressable: Boolean
       $isInnerWaterResistant: Boolean
       $isOuterWaterResistant: Boolean
+      $isInnerGreaseResistant: Boolean
+      $isOuterGreaseResistant: Boolean
    ) {
       packagingHub_packaging(
          where: {
@@ -43,6 +45,8 @@ export const PACKAGINGS = gql`
                compressibility: { _eq: $isCompressable }
                innerWaterResistant: { _eq: $isInnerWaterResistant }
                outerWaterResistant: { _eq: $isOuterWaterResistant }
+               innerGreaseResistant: { _eq: $isInnerGreaseResistant }
+               outerGreaseResistant: { _eq: $isOuterGreaseResistant }
             }
          }
       ) {

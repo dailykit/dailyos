@@ -31,7 +31,7 @@ export default function Packagings() {
          <Wrapper>
             <h2>
                No packagings found
-               {filters.length || filters.width || filters.isFDACompliant
+               {!Object.values(filters).every(x => x === null)
                   ? ' with the provided filters.'
                   : '.'}
             </h2>

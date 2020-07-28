@@ -11,6 +11,8 @@ const initialState = {
    isCompressable: null,
    isInnerWaterResistant: null,
    isOuterWaterResistant: null,
+   isInnerGreaseResistant: null,
+   isOuterGreaseResistant: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -36,12 +38,12 @@ const reducers = (state, { type, payload }) => {
 
       case 'TOGGLE_WATER_RESITANCE':
          const { isInnerWaterResistant } = payload.value
-         const resistanceValue = isInnerWaterResistant ? null : true
+         const waterResistanceValue = isInnerWaterResistant ? null : true
 
          return {
             ...state,
-            isInnerWaterResistant: resistanceValue,
-            isOuterWaterResistant: resistanceValue,
+            isInnerWaterResistant: waterResistanceValue,
+            isOuterWaterResistant: waterResistanceValue,
          }
 
       case 'TOGGLE_INNER_WATER_RESISTANCE':
@@ -49,6 +51,28 @@ const reducers = (state, { type, payload }) => {
 
       case 'TOGGLE_OUTER_WATER_RESISTANCE':
          return { ...state, isOuterWaterResistant: payload.value ? null : true }
+
+      case 'TOGGLE_GREASE_RESITANCE':
+         const { isInnerGreaseResistant } = payload.value
+         const greaseResistanceValue = isInnerGreaseResistant ? null : true
+
+         return {
+            ...state,
+            isInnerGreaseResistant: greaseResistanceValue,
+            isOuterGreaseResistant: greaseResistanceValue,
+         }
+
+      case 'TOGGLE_OUTER_GREASE_RESISTANCE':
+         return {
+            ...state,
+            isOuterGreaseResistant: payload.value ? null : true,
+         }
+
+      case 'TOGGLE_INNER_GREASE_RESISTANCE':
+         return {
+            ...state,
+            isInnerGreaseResistant: payload.value ? null : true,
+         }
 
       default:
          return state
