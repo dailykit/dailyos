@@ -23,7 +23,6 @@ export const Container = styled.div`
    width: ${props => (props.width ? props.width + 'px' : 'auto')};
    height: ${props => (props.height ? props.height + 'vh' : 'auto')};
    max-width: ${props => (props.maxWidth ? props.maxWidth + 'px' : '100%')};
-   position: relative;
 `
 
 export const Flex = styled.div`

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { NOTIFICATIONS, UPDATE_NOTIFICATION } from '../../../graphql'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { StyledWrapper, StyledHeader } from '../styled'
-import { Container } from './styled'
+import { Container, Flex } from './styled'
 import { Loader } from '../../../components'
 import SideNav from './SideNav'
 import {
@@ -31,9 +31,11 @@ const NotificationsTable = ({ id, title, data }) => {
    const [updateNotification] = useMutation(UPDATE_NOTIFICATION)
    return (
       <>
-         <Container paddingX="32" left="250" id={id} height="100">
+         <Container left="180" id={id} height="100">
             <StyledHeader>
-               <Text as="h2">{title}</Text>
+               <Container left="32">
+                  <Text as="h1">{title}</Text>
+               </Container>
             </StyledHeader>
             <Table>
                <TableHead>
@@ -230,27 +232,29 @@ const Notifications = () => {
    return (
       <>
          <SideNav />
-         <NotificationsTable
-            id="order"
-            title="Orders App"
-            data={data.notificationTypes.filter(row => {
-               return row.app == 'Order'
-            })}
-         />
-         <NotificationsTable
-            id="setting"
-            title="Settings App"
-            data={data.notificationTypes.filter(row => {
-               return row.app == 'Setting'
-            })}
-         />
-         <NotificationsTable
-            id="recipe"
-            title="Recipe App"
-            data={data.notificationTypes.filter(row => {
-               return row.app == 'Recipe'
-            })}
-         />
+         <Container>
+            <NotificationsTable
+               id="order"
+               title="Order App"
+               data={data.notificationTypes.filter(row => {
+                  return row.app == 'Order'
+               })}
+            />
+            <NotificationsTable
+               id="setting"
+               title="Settings App"
+               data={data.notificationTypes.filter(row => {
+                  return row.app == 'Setting'
+               })}
+            />
+            <NotificationsTable
+               id="recipe"
+               title="Recipe App"
+               data={data.notificationTypes.filter(row => {
+                  return row.app == 'Recipe'
+               })}
+            />
+         </Container>
       </>
    )
 }
