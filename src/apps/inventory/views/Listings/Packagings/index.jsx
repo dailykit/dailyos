@@ -45,8 +45,8 @@ export default function Packagings() {
    const tableRef = React.useRef()
 
    const rowClick = (_, row) => {
-      const { id, name } = row._row.data
-      addTab(name, 'sachetPackaging', id)
+      const { id, packagingName } = row._row.data
+      addTab(packagingName, 'sachetPackaging', id)
    }
 
    const columns = [
