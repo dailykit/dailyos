@@ -100,10 +100,41 @@ export default function CartTunnel({ close }) {
             data: {
                name: item.packaging.packagingName,
                mandiPackagingId: item.packaging.id,
+               unitQuantity:
+                  item.packaging.packagingPurchaseOptions[0]?.quantity,
+               minOrderValue:
+                  item.packaging.packagingPurchaseOptions[0]?.quantity,
+               innWaterRes:
+                  item.packaging.packagingSpecification.innerWaterResistant,
+               outWaterRes:
+                  item.packaging.packagingSpecification.outerWaterResistant,
+               recyclable: item.packaging.packagingSpecification.recyclable,
+               compostable: item.packaging.packagingSpecification.compostable,
+               fdaComp: item.packaging.packagingSpecification.fdaCompliant,
+               innGreaseRes:
+                  item.packaging.packagingSpecification.innerGreaseResistant,
+               outGreaseRes:
+                  item.packaging.packagingSpecification.outerGreaseResistant,
+               image:
+                  item.packaging.assets && item.packaging.assets?.length
+                     ? item.packaging.assets[0]?.url
+                     : null,
             },
             on_conflict: {
                constraint: 'packaging_mandiPackagingId_key',
-               update_columns: ['name'],
+               update_columns: [
+                  'name',
+                  'unitQuantity',
+                  'minOrderValue',
+                  'innWaterRes',
+                  'outWaterRes',
+                  'recyclable',
+                  'compostable',
+                  'fdaComp',
+                  'innGreaseRes',
+                  'outGreaseRes',
+                  'image',
+               ],
             },
          },
 

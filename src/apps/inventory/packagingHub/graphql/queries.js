@@ -188,6 +188,23 @@ export const CART_ITEMS_FOR_REGISTERING = gql`
          packaging {
             id
             packagingName
+            assets(path: "images")
+            packagingPurchaseOptions(
+               order_by: { quantity: asc }
+               where: { quantity: { _is_null: false } }
+               limit: 1
+            ) {
+               quantity
+            }
+            packagingSpecification {
+               innerWaterResistant
+               outerWaterResistant
+               recyclable
+               compostable
+               fdaCompliant
+               innerGreaseResistant
+               outerGreaseResistant
+            }
             packagingCompanyBrand {
                id
                packagingCompany {
