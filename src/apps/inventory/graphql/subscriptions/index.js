@@ -487,3 +487,23 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
+   subscription PackagingsListings {
+      packagings {
+         id
+         packagingName
+         supplier {
+            name
+         }
+
+         type
+
+         parLevel
+         onHand
+         maxLevel
+         awaiting
+         committed
+      }
+   }
+`
