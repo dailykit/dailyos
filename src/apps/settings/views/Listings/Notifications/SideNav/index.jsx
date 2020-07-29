@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, animateScroll as scroll } from 'react-scroll'
 import { ArrowDownIcon, ArrowRightIcon, Text } from '@dailykit/ui'
 import { Container } from '../styled'
-import { StyledContainer, List, Icon, Accordion } from './styled'
+import { StyledContainer, List, Icon } from './styled'
 import { NOTIFICATION_TYPES } from '../../../../graphql/subscriptions'
 import { useSubscription } from '@apollo/react-hooks'
 import { Loader } from '../../../../components'
@@ -37,25 +37,7 @@ const SideNav = () => {
                            duration={500}
                         >
                            {app} App
-                           <Icon>
-                              <ArrowDownIcon />
-                           </Icon>
                         </Link>
-
-                        {content.map(row => (
-                           <Accordion>
-                              <Link
-                                 to={row.id}
-                                 activeClass="active"
-                                 spy={true}
-                                 smooth={true}
-                                 offset={-70}
-                                 duration={500}
-                              >
-                                 <Text as="subtitle">{row.template.title}</Text>
-                              </Link>
-                           </Accordion>
-                        ))}
                      </>
                   )
                })}

@@ -23,6 +23,7 @@ export const Container = styled.div`
    width: ${props => (props.width ? props.width + 'px' : 'auto')};
    height: ${props => (props.height ? props.height + 'vh' : 'auto')};
    max-width: ${props => (props.maxWidth ? props.maxWidth + 'px' : '100%')};
+   flex: 4;
 `
 
 export const Flex = styled.div`
@@ -30,4 +31,5 @@ export const Flex = styled.div`
    flex-direction: ${props => props.direction || 'column'};
    justify-content: ${props => props.justify || 'flex-start'};
    align-items: ${props => props.align || 'flex-start'};
+   flex: ${props => props.flex || '1'};
 `
