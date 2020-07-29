@@ -63,18 +63,6 @@ export const REGISTER_PACKAGING = gql`
          }
       ) {
          affected_rows
-         returning {
-            packagings {
-               fdaComp
-               image
-               unitQuantity
-               minOrderValue
-               innWaterRes
-               outWaterRes
-               innGreaseRes
-               outGreaseRes
-            }
-         }
       }
    }
 `

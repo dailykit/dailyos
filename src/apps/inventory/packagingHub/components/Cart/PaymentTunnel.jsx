@@ -98,42 +98,72 @@ export default function CartTunnel({ close }) {
             item.packaging.packagingCompanyBrand.packagingCompany.id,
          packagings: {
             data: {
-               name: item.packaging.packagingName,
+               packagingName: item.packaging.packagingName,
                mandiPackagingId: item.packaging.id,
                unitQuantity:
                   item.packaging.packagingPurchaseOptions[0]?.quantity,
                minOrderValue:
                   item.packaging.packagingPurchaseOptions[0]?.quantity,
-               innWaterRes:
-                  item.packaging.packagingSpecification.innerWaterResistant,
-               outWaterRes:
-                  item.packaging.packagingSpecification.outerWaterResistant,
-               recyclable: item.packaging.packagingSpecification.recyclable,
-               compostable: item.packaging.packagingSpecification.compostable,
-               fdaComp: item.packaging.packagingSpecification.fdaCompliant,
-               innGreaseRes:
-                  item.packaging.packagingSpecification.innerGreaseResistant,
-               outGreaseRes:
-                  item.packaging.packagingSpecification.outerGreaseResistant,
-               image:
-                  item.packaging.assets && item.packaging.assets?.length
-                     ? item.packaging.assets[0]?.url
-                     : null,
+               assets: item.packaging.assets,
+               length: item.packaging.length,
+               width: item.packaging.width,
+               height: item.packaging.height,
+               gusset: item.packaging.gusset,
+               thickness: item.packaging.thickness,
+               LWHUnit: item.packaging.LWHUnit,
+               loadVolume: item.packaging.loadVolume,
+               loadCapacity: item.packaging.loadCapacity,
+               packagingSpecification: {
+                  data: {
+                     mandiPackagingId: item.packaging.id,
+                     innerWaterResistant:
+                        item.packaging.packagingSpecification
+                           .innerWaterResistant,
+                     outerWaterResistant:
+                        item.packaging.packagingSpecification
+                           .outerWaterResistant,
+                     recyclable:
+                        item.packaging.packagingSpecification.recyclable,
+                     compostable:
+                        item.packaging.packagingSpecification.compostable,
+                     fdaCompliant:
+                        item.packaging.packagingSpecification.fdaCompliant,
+                     innerGreaseResistant:
+                        item.packaging.packagingSpecification
+                           .innerGreaseResistant,
+                     outerGreaseResistant:
+                        item.packaging.packagingSpecification
+                           .outerGreaseResistant,
+                  },
+                  on_conflict: {
+                     constraint: 'packagingSpecifications_mandiPackagingId_key',
+                     update_columns: [
+                        'innerWaterResistant',
+                        'outerWaterResistant',
+                        'recyclable',
+                        'compostable',
+                        'fdaCompliant',
+                        'innerGreaseResistant',
+                        'outerGreaseResistant',
+                     ],
+                  },
+               },
             },
             on_conflict: {
                constraint: 'packaging_mandiPackagingId_key',
                update_columns: [
-                  'name',
+                  'packagingName',
                   'unitQuantity',
                   'minOrderValue',
-                  'innWaterRes',
-                  'outWaterRes',
-                  'recyclable',
-                  'compostable',
-                  'fdaComp',
-                  'innGreaseRes',
-                  'outGreaseRes',
-                  'image',
+                  'assets',
+                  'length',
+                  'width',
+                  'height',
+                  'gusset',
+                  'thickness',
+                  'LWHUnit',
+                  'loadVolume',
+                  'loadCapacity',
                ],
             },
          },

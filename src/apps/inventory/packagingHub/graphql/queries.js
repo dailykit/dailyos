@@ -188,7 +188,16 @@ export const CART_ITEMS_FOR_REGISTERING = gql`
          packaging {
             id
             packagingName
-            assets(path: "images")
+
+            length
+            width
+            height
+            gusset
+            thickness
+            LWHUnit
+            loadVolume
+            loadCapacity
+            assets
             packagingPurchaseOptions(
                order_by: { quantity: asc }
                where: { quantity: { _is_null: false } }
