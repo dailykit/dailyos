@@ -205,6 +205,9 @@ export const CART_ITEMS_FOR_REGISTERING = gql`
                innerGreaseResistant
                outerGreaseResistant
             }
+            purchaseOrderItems {
+               id
+            }
             packagingCompanyBrand {
                id
                packagingCompany {
