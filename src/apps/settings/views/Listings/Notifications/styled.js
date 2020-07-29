@@ -28,6 +28,6 @@ export const Container = styled.div`
 export const Flex = styled.div`
    display: flex;
    flex-direction: ${props => props.direction || 'column'};
-   justify-content: ${props => props.justify || 'space-between'};
+   justify-content: ${props => props.justify || 'flex-start'};
    align-items: ${props => props.align || 'flex-start'};
 `

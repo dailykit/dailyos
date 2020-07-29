@@ -2,12 +2,11 @@ import styled from 'styled-components'
 
 export const StyledContainer = styled.div`
    background: #f3f3f3;
-   position: fixed;
+   position: sticky;
    width: 180px;
-   z-index: -1;
    height: 100vh;
+   padding: 50px 0;
    top: 0;
-   padding: 60px 0;
 `
 
 export const List = styled.div`
@@ -35,10 +34,18 @@ export const Icon = styled.span`
 `
 
 export const Accordion = styled.div`
-   display: none;
    overflow: hidden;
    font-size: 10px;
    background-color: white;
+   a {
+      color: #555b6e;
+      cursor: pointer;
+
+      &.active {
+         color: #00a7e1;
+         border: none;
+      }
+   }
 `
 
 export const ListItem = styled.li``

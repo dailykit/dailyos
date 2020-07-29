@@ -31,7 +31,7 @@ const NotificationsTable = ({ id, title, data }) => {
    const [updateNotificationType] = useMutation(UPDATE_NOTIFICATION_TYPE)
    return (
       <>
-         <Container left="180" id={id} height="100">
+         <Container id={id} height="100">
             <StyledHeader>
                <Container left="32">
                   <Text as="h1">{title}</Text>
@@ -51,7 +51,7 @@ const NotificationsTable = ({ id, title, data }) => {
                </TableHead>
                <TableBody>
                   {data.map(row => (
-                     <TableRow key={row.id}>
+                     <TableRow key={row.id} id={row.id}>
                         <TableCell>{row.description}</TableCell>
                         <TableCell>{row.template.title}</TableCell>
                         <TableCell>
@@ -266,7 +266,7 @@ const Notifications = () => {
    if (error) return <StyledWrapper>{error.message}</StyledWrapper>
    const apps = [...new Set(data.notificationTypes.map(row => row.app))]
    return (
-      <>
+      <Flex direction="row">
          <SideNav />
          <Container>
             {apps.map(app => {
@@ -274,15 +274,17 @@ const Notifications = () => {
                   row => row.app == app
                )
                return (
-                  <NotificationsTable
-                     id={app}
-                     title={`${app} App`}
-                     data={content}
-                  />
+                  <Container>
+                     <NotificationsTable
+                        id={app}
+                        title={`${app} App`}
+                        data={content}
+                     />
+                  </Container>
                )
             })}
          </Container>
-      </>
+      </Flex>
    )
 }
 

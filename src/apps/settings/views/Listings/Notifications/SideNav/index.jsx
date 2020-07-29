@@ -41,24 +41,21 @@ const SideNav = () => {
                               <ArrowDownIcon />
                            </Icon>
                         </Link>
-                        <Accordion>
-                           {content.map(row => (
-                              <List>
-                                 <Link
-                                    to={row.template.title}
-                                    activeClass="active"
-                                    spy={true}
-                                    smooth={true}
-                                    offset={-70}
-                                    duration={500}
-                                 >
-                                    <Text as="subtitle">
-                                       {row.template.title}
-                                    </Text>
-                                 </Link>
-                              </List>
-                           ))}
-                        </Accordion>
+
+                        {content.map(row => (
+                           <Accordion>
+                              <Link
+                                 to={row.id}
+                                 activeClass="active"
+                                 spy={true}
+                                 smooth={true}
+                                 offset={-70}
+                                 duration={500}
+                              >
+                                 <Text as="subtitle">{row.template.title}</Text>
+                              </Link>
+                           </Accordion>
+                        ))}
                      </>
                   )
                })}
