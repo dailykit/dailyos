@@ -2,26 +2,21 @@ import gql from 'graphql-tag'
 
 export const NOTIFICATION_TYPES = gql`
    subscription MyQuery {
-      notificationTypes(order_by: { app: asc }) {
-         name
-         description
-         app
+      notificationTypes {
+         id
          isActive
          isGlobal
          isLocal
-         id
          playAudio
-         smsConfigs_aggregate {
-            aggregate {
-               count
-            }
-            nodes {
-               phoneNo
-               isActive
-               id
-            }
-         }
+         app
          template
+         description
+         emailConfigs {
+            email
+         }
+         smsConfigs {
+            phoneNo
+         }
       }
    }
 `

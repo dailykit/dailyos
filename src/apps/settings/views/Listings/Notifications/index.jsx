@@ -129,11 +129,32 @@ const NotificationsTable = ({ id, title, data }) => {
                                        }}
                                        close={() => closeTunnel(1)}
                                     />
-
+                                    <ol type="1">
+                                       {row.emailConfigs.map(email => (
+                                          <li>{email}</li>
+                                       ))}
+                                       <li>
+                                          <Input
+                                             type="text"
+                                             placeholder="enter email address"
+                                             name="email"
+                                             id="email"
+                                          />
+                                       </li>
+                                    </ol>
                                     <ButtonTile
                                        type="primary"
                                        text="Add an email address"
-                                       //onClick={ e => console.log('Tile clicked') }
+                                       onClick={e => {
+                                          updateNotificationType({
+                                             variables: {
+                                                id: row.id,
+                                                _set: {
+                                                   isLocal: !row.isLocal,
+                                                },
+                                             },
+                                          })
+                                       }}
                                        style={{ margin: '20px 0' }}
                                     />
                                  </Tunnel>
@@ -146,11 +167,25 @@ const NotificationsTable = ({ id, title, data }) => {
                                        }}
                                        close={() => closeTunnel(2)}
                                     />
+                                    <ol type="1">
+                                       {row.smsConfigs.map(phno => (
+                                          <li>{phno}</li>
+                                       ))}
+                                    </ol>
 
                                     <ButtonTile
                                        type="primary"
                                        text="Add a phone number"
-                                       //onClick={ e => console.log('Tile clicked') }
+                                       /*onClick={ e => {
+                                          updateNotificationType({
+                                             variables: {
+                                                id: row.id,
+                                                _set: {
+                                                   isLocal: !row.isLocal,
+                                                },
+                                             },
+                                          })
+                                       } }*/
                                        style={{ margin: '20px 0' }}
                                     />
                                  </Tunnel>
@@ -229,31 +264,23 @@ const Notifications = () => {
          </StyledWrapper>
       )
    if (error) return <StyledWrapper>{error.message}</StyledWrapper>
+   const apps = [...new Set(data.notificationTypes.map(row => row.app))]
    return (
       <>
          <SideNav />
          <Container>
-            <NotificationsTable
-               id="order"
-               title="Order App"
-               data={data.notificationTypes.filter(row => {
-                  return row.app == 'Order'
-               })}
-            />
-            <NotificationsTable
-               id="setting"
-               title="Settings App"
-               data={data.notificationTypes.filter(row => {
-                  return row.app == 'Setting'
-               })}
-            />
-            <NotificationsTable
-               id="recipe"
-               title="Recipe App"
-               data={data.notificationTypes.filter(row => {
-                  return row.app == 'Recipe'
-               })}
-            />
+            {apps.map(app => {
+               const content = data.notificationTypes.filter(
+                  row => row.app == app
+               )
+               return (
+                  <NotificationsTable
+                     id={app}
+                     title={`${app} App`}
+                     data={content}
+                  />
+               )
+            })}
          </Container>
       </>
    )

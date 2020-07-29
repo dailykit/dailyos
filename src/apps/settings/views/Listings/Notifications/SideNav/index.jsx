@@ -16,102 +16,52 @@ const SideNav = () => {
          </StyledContainer>
       )
    if (error) return <StyledContainer>{error.message}</StyledContainer>
-   const orders = data.notificationTypes.filter(row => {
-      return row.app == 'Order'
-   })
-   const recipes = data.notificationTypes.filter(row => {
-      return row.app == 'Recipe'
-   })
-   const settings = data.notificationTypes.filter(row => {
-      return row.app == 'Setting'
-   })
+   const apps = [...new Set(data.notificationTypes.map(row => row.app))]
 
    return (
       <StyledContainer>
          <Container paddingY="32">
             <List>
-               <Link
-                  to="order"
-                  activeClass="active"
-                  spy={true}
-                  smooth={true}
-                  offset={-70}
-                  duration={500}
-               >
-                  Order App{' '}
-                  <Icon>
-                     <ArrowDownIcon />
-                  </Icon>
-               </Link>
-               <Accordion>
-                  {orders.map(row => (
-                     <List>
+               {apps.map(app => {
+                  const content = data.notificationTypes.filter(
+                     row => row.app == app
+                  )
+                  return (
+                     <>
                         <Link
-                           to={row.template.title}
+                           to={app}
                            activeClass="active"
                            spy={true}
                            smooth={true}
                            offset={-70}
                            duration={500}
                         >
-                           <Text as="subtitle">{row.template.title}</Text>
+                           {app} App
+                           <Icon>
+                              <ArrowDownIcon />
+                           </Icon>
                         </Link>
-                     </List>
-                  ))}
-               </Accordion>
-
-               <Link
-                  to="setting"
-                  activeClass="active"
-                  spy={true}
-                  smooth={true}
-                  offset={-70}
-                  duration={500}
-               >
-                  Settings App
-                  <Icon>
-                     <ArrowDownIcon />
-                  </Icon>
-               </Link>
-               {settings.map(row => (
-                  <Link
-                     to={row.template.title}
-                     activeClass="active"
-                     spy={true}
-                     smooth={true}
-                     offset={-70}
-                     duration={500}
-                  >
-                     <Text as="p">{row.template.title}</Text>
-                  </Link>
-               ))}
-               <Link
-                  to="recipe"
-                  activeClass="active"
-                  spy={true}
-                  smooth={true}
-                  offset={-70}
-                  duration={500}
-               >
-                  Recipe App
-                  <Icon>
-                     <ArrowDownIcon />
-                  </Icon>
-               </Link>
-               <Accordion>
-                  {recipes.map(row => (
-                     <Link
-                        to={row.template.title}
-                        activeClass="active"
-                        spy={true}
-                        smooth={true}
-                        offset={-70}
-                        duration={500}
-                     >
-                        <Text as="subtitle">{row.template.title}</Text>
-                     </Link>
-                  ))}
-               </Accordion>
+                        <Accordion>
+                           {content.map(row => (
+                              <List>
+                                 <Link
+                                    to={row.template.title}
+                                    activeClass="active"
+                                    spy={true}
+                                    smooth={true}
+                                    offset={-70}
+                                    duration={500}
+                                 >
+                                    <Text as="subtitle">
+                                       {row.template.title}
+                                    </Text>
+                                 </Link>
+                              </List>
+                           ))}
+                        </Accordion>
+                     </>
+                  )
+               })}
             </List>
          </Container>
       </StyledContainer>
