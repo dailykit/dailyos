@@ -7,7 +7,7 @@ export default function ProductSpecs({ product }) {
    const { packagingSpecification } = product
 
    const { materials } = packagingSpecification.packagingMaterial
-   const packagingMaterial = Object.entries(materials).join(', ')
+   const packagingMaterial = Object.values(materials).join(', ')
 
    const RenderIcon = ({ check }) => {
       return check ? (

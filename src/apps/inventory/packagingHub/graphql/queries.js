@@ -213,6 +213,10 @@ export const CART_ITEMS_FOR_REGISTERING = gql`
                fdaCompliant
                innerGreaseResistant
                outerGreaseResistant
+
+               packagingMaterial {
+                  materials
+               }
             }
             purchaseOrderItems {
                id

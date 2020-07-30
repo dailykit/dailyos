@@ -134,6 +134,10 @@ export default function CartTunnel({ close }) {
                      outerGreaseResistant:
                         item.packaging.packagingSpecification
                            .outerGreaseResistant,
+                     packagingMaterial: Object.values(
+                        item.packaging.packagingSpecification.packagingMaterial
+                           .materials
+                     ).join(', '),
                   },
                   on_conflict: {
                      constraint: 'packagingSpecifications_mandiPackagingId_key',
@@ -145,6 +149,7 @@ export default function CartTunnel({ close }) {
                         'fdaCompliant',
                         'innerGreaseResistant',
                         'outerGreaseResistant',
+                        'packagingMaterial',
                      ],
                   },
                },
