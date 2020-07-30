@@ -509,6 +509,9 @@ export const PACKAGING_SPECS_SUBSCRIPTION = gql`
             compostable
             recyclable
             microwaveable
+            recycled
+            opacity
+            compressibility
          }
       }
    }
