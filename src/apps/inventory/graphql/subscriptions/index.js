@@ -196,6 +196,8 @@ export const PACKAGING_SUBSCRIPTION = gql`
          packagingName
          packagingSku
 
+         images: assets(path: "images")
+
          supplier {
             name
             contactPerson
@@ -206,6 +208,13 @@ export const PACKAGING_SUBSCRIPTION = gql`
          unitPrice
          caseQuantity
          unitQuantity
+
+         parLevel
+         maxLevel
+         onHand
+         awaiting
+         committed
+         consumed
       }
    }
 `
