@@ -200,6 +200,12 @@ export const PACKAGING_SUBSCRIPTION = gql`
             name
             contactPerson
          }
+
+         leadTime
+         minOrderValue
+         unitPrice
+         caseQuantity
+         unitQuantity
       }
    }
 `

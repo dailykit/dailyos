@@ -16,7 +16,6 @@ export default function InfoBar({ open, state }) {
       !state.unitQuantity &&
       !state.unitPrice &&
       !state.caseQuantity &&
-      !state.unitPrice &&
       !state.minOrderValue &&
       !state.leadTime?.value &&
       !state.leadTime?.unit
