@@ -512,6 +512,7 @@ export const PACKAGING_SPECS_SUBSCRIPTION = gql`
             recycled
             opacity
             compressibility
+            packagingMaterial
          }
       }
    }
