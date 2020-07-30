@@ -193,38 +193,10 @@ export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packaging($id: Int!) {
       packaging(id: $id) {
          id
-         name
-         unitPrice
-         dimensions
-         sku
-         parLevel
-         maxLevel
-         awaiting
-         onHand
-         consumed
-         innWaterRes
-         heatSafe
-         outWaterRes
-         recyclable
-         compostable
-         fdaComp
-         type
-         innGreaseRes
-         outGreaseRes
-         leakResistance
-         compressableFrom
-         packOpacity
-         committed
-         unitQuantity
-         caseQuantity
-         unitPrice
-         minOrderValue
-         packagingType
-         sealingType
-         leadTime
-         image
+         packagingName
+         packagingSku
+
          supplier {
-            id
             name
             contactPerson
          }
