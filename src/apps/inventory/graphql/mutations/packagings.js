@@ -5,17 +5,7 @@ export const CREATE_PACKAGING = gql`
       createPackaging(objects: [$object]) {
          returning {
             id
-            name
-            unitPrice
-            dimensions
-            sku
-            parLevel
-            maxLevel
-            unitQuantity
-            caseQuantity
-            unitPrice
-            minOrderValue
-            leadTime
+            packagingName
          }
       }
    }
