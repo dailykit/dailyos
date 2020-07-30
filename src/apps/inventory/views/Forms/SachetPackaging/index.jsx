@@ -35,8 +35,6 @@ export default function SachetPackaging() {
 
    if (loading) return <Loader />
 
-   console.log(packaging)
-
    return (
       <>
          <SachetPackagingContext.Provider
