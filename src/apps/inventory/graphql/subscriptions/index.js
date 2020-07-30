@@ -209,6 +209,11 @@ export const PACKAGING_SUBSCRIPTION = gql`
          caseQuantity
          unitQuantity
 
+         length
+         width
+         height
+         LWHUnit
+
          parLevel
          maxLevel
          onHand
