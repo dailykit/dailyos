@@ -27,3 +27,17 @@ export const UPDATE_PACKAGING = gql`
       }
    }
 `
+
+export const UPDATE_PACKAGING_SPECS = gql`
+   mutation UpdateSpecs(
+      $id: Int!
+      $object: packaging_packagingSpecifications_set_input
+   ) {
+      update_packaging_packagingSpecifications(
+         where: { id: { _eq: $id } }
+         _set: $object
+      ) {
+         affected_rows
+      }
+   }
+`

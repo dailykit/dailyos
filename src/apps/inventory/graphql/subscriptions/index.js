@@ -485,3 +485,22 @@ export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const PACKAGING_SPECS_SUBSCRIPTION = gql`
+   subscription Packaging($id: Int!) {
+      packaging(id: $id) {
+         id
+         packagingSpecification {
+            id
+            fdaCompliant
+            innerWaterResistant
+            outerWaterResistant
+            innerGreaseResistant
+            outerGreaseResistant
+            compostable
+            recyclable
+            microwaveable
+         }
+      }
+   }
+`

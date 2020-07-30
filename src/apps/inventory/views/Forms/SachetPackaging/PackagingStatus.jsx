@@ -172,7 +172,7 @@ export default function PackagingStats({ state }) {
          <br />
          <FlexContainer style={{ padding: '0 30px', margin: '0 20px' }}>
             <Flexible width="2">
-               <AdditionalInfo state={state} />
+               <AdditionalInfo id={state.id} />
             </Flexible>
             <span style={{ width: '20px' }} />
             <Flexible width="3">
