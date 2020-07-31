@@ -1,5 +1,21 @@
 import gql from 'graphql-tag'
 
+export const CREATE_NOTIFICATION_EMAIL_CONFIGS = gql`
+   mutation MyMutation($objects: [notifications_emailConfig_insert_input!]!) {
+      createNotificationEmailConfigs(objects: $objects) {
+         affected_rows
+      }
+   }
+`
+
+export const CREATE_NOTIFICATION_SMS_CONFIGS = gql`
+   mutation MyMutation($objects: [notifications_smsConfig_insert_input!]!) {
+      createNotificationSmsConfigs(objects: $objects) {
+         affected_rows
+      }
+   }
+`
+
 export const UPDATE_NOTIFICATION_TYPE = gql`
    mutation MyMutation($id: uuid!, $_set: notifications_type_set_input!) {
       updateNotificationType(pk_columns: { id: $id }, _set: $_set) {

@@ -33,3 +33,9 @@ export const Flex = styled.div`
    align-items: ${props => props.align || 'flex-start'};
    flex: ${props => props.flex || '1'};
 `
+
+export const TunnelBody = styled.div`
+   padding: 32px;
+   height: calc(100% - 106px);
+   overflow: auto;
+`
