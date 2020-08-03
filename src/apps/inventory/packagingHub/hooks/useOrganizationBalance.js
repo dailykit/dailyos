@@ -11,11 +11,7 @@ export default function useOrganizationBalance(accountId) {
       const abortController = new window.AbortController()
 
       if (accountId) {
-         const url = `${PAYMENTS_URL}/${
-            process.env.NODE_ENV === 'development'
-               ? 'payments-test'
-               : 'payments'
-         }/api/balance`
+         const url = `${PAYMENTS_URL}/api/balance`
 
          fetch(`${url}?accountId=${accountId}`, {
             signal: abortController.signal,
