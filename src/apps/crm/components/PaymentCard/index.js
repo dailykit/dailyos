@@ -2,15 +2,20 @@
 import React from 'react'
 import { Text } from '@dailykit/ui'
 import { PaymentCard, BillingAddress, CardInfo, CardInfo2 } from './styled'
-import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
+import {
+   MailIcon,
+   PhoneIcon,
+   MaestroIcon,
+} from '../../../../shared/assets/icons'
 
 const contactInfoCard = props => (
-   <PaymentCard>
+   <PaymentCard bgColor={props.bgColor} margin={props.margin}>
       <CardInfo>
          <Text as="subtitle">Payment Card</Text>
       </CardInfo>
       <CardInfo>
-         <Text as="subtitle">mastreo</Text>
+         <MaestroIcon size="25" />
+         <Text as="subtitle">&nbsp;&nbsp;maestro</Text>
       </CardInfo>
       <CardInfo>
          <Text as="p">{props.cardNumber}</Text>

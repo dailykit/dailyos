@@ -6,16 +6,6 @@ export const CUSTOMERS_COUNT = gql`
          aggregate {
             count
          }
-         nodes {
-            orders_aggregate {
-               aggregate {
-                  count
-                  sum {
-                     amountPaid
-                  }
-               }
-            }
-         }
       }
    }
 `

@@ -10,6 +10,7 @@ import InfoIcon from './Info'
 import SlidersIcon from './Slider'
 import MailIcon from './Mail'
 import PhoneIcon from './phone'
+import MaestroIcon from './Maestro'
 
 export {
    MenuIcon,
@@ -24,4 +25,5 @@ export {
    SlidersIcon,
    MailIcon,
    PhoneIcon,
+   MaestroIcon,
 }
