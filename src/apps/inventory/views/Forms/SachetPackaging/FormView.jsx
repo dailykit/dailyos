@@ -27,11 +27,12 @@ import {
 } from './Tunnels'
 import { UPDATE_PACKAGING } from '../../../graphql'
 
+// Props<{state: Packaging}>
 export default function FormView({ state }) {
    const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
       2
    )
-   const [itemName, setItemName] = React.useState(state.name)
+   const [itemName, setItemName] = React.useState(state.packagingName)
 
    const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
@@ -59,7 +60,7 @@ export default function FormView({ state }) {
          </Tunnels>
 
          <StyledHeader>
-            {state.name && (
+            {state.packagingName && (
                <>
                   <StyledInfo>
                      <div style={{ marginRight: '10px' }}>
@@ -68,7 +69,7 @@ export default function FormView({ state }) {
                            type="text"
                            name="itemName"
                            value={itemName}
-                           label="Item Name"
+                           label="Packaging Name"
                            onChange={e => setItemName(e.target.value)}
                            onBlur={() => {
                               if (!itemName.length) {
@@ -80,12 +81,12 @@ export default function FormView({ state }) {
                                  updatePackaging({
                                     variables: {
                                        id: state.id,
-                                       object: { name: itemName },
+                                       object: { packagingName: itemName },
                                     },
                                  })
                            }}
                         />
-                        <span>sku: {state.sku || 'N/A'}</span>
+                        <span>sku: {state.packagingSku || 'N/A'}</span>
                      </div>
                   </StyledInfo>
                   <SupplierInfo state={state} />
@@ -116,18 +117,25 @@ function SupplierInfo({ state }) {
       </Tunnels>
    )
 
+   const renderAvatar = contactPerson => {
+      if (contactPerson && contactPerson.firstName)
+         return (
+            <Avatar
+               withName
+               title={`${state.supplier?.contactPerson?.firstName} ${
+                  state.supplier?.contactPerson?.lastName || ''
+               }`}
+            />
+         )
+   }
+
    if (state.supplier && state.supplier.name)
       return (
          <>
             {TunnelContainer}
             <StyledSupplier>
                <span>{state.supplier.name}</span>
-               <Avatar
-                  withName
-                  title={`${state.supplier?.contactPerson?.firstName} ${
-                     state.supplier?.contactPerson?.lastName || ''
-                  }`}
-               />
+               {renderAvatar(state.supplier?.contactPerson)}
                <TransparentIconButton onClick={() => openSuppliersTunnel(1)}>
                   <EditIcon size="18" color="#555B6E" />
                </TransparentIconButton>

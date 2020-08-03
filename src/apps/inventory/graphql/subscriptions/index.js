@@ -193,41 +193,33 @@ export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packaging($id: Int!) {
       packaging(id: $id) {
          id
-         name
-         unitPrice
-         dimensions
-         sku
-         parLevel
-         maxLevel
-         awaiting
-         onHand
-         consumed
-         innWaterRes
-         heatSafe
-         outWaterRes
-         recyclable
-         compostable
-         fdaComp
-         type
-         innGreaseRes
-         outGreaseRes
-         leakResistance
-         compressableFrom
-         packOpacity
-         committed
-         unitQuantity
-         caseQuantity
-         unitPrice
-         minOrderValue
-         packagingType
-         sealingType
-         leadTime
-         image
+         packagingName
+         packagingSku
+
+         images: assets(path: "images")
+
          supplier {
-            id
             name
             contactPerson
          }
+
+         leadTime
+         minOrderValue
+         unitPrice
+         caseQuantity
+         unitQuantity
+
+         length
+         width
+         height
+         LWHUnit
+
+         parLevel
+         maxLevel
+         onHand
+         awaiting
+         committed
+         consumed
       }
    }
 `
@@ -484,6 +476,49 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          status
          orderQuantity
          unit
+      }
+   }
+`
+
+export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
+   subscription PackagingsListings {
+      packagings {
+         id
+         packagingName
+         supplier {
+            name
+         }
+
+         type
+
+         parLevel
+         onHand
+         maxLevel
+         awaiting
+         committed
+      }
+   }
+`
+
+export const PACKAGING_SPECS_SUBSCRIPTION = gql`
+   subscription Packaging($id: Int!) {
+      packaging(id: $id) {
+         id
+         packagingSpecification {
+            id
+            fdaCompliant
+            innerWaterResistant
+            outerWaterResistant
+            innerGreaseResistant
+            outerGreaseResistant
+            compostable
+            recyclable
+            microwaveable
+            recycled
+            opacity
+            compressibility
+            packagingMaterial
+         }
       }
    }
 `
