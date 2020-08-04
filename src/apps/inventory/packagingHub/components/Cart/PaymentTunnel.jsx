@@ -113,6 +113,23 @@ export default function CartTunnel({ close }) {
                LWHUnit: item.packaging.LWHUnit,
                loadVolume: item.packaging.loadVolume,
                loadCapacity: item.packaging.loadCapacity,
+               purchaseOrderItems: {
+                  data: {
+                     orderQuantity: (item.quantity * item.multiplier).toFixed(
+                        3
+                     ),
+                     mandiPurchaseOrderItemId:
+                        item.packaging.purchaseOrderItems &&
+                        item.packaging.purchaseOrderItems.length
+                           ? item.packaging.purchaseOrderItems[0].id
+                           : null,
+                  },
+                  on_conflict: {
+                     constraint:
+                        'purchaseOrderItem_mandiPurchaseOrderItemId_key',
+                     update_columns: ['orderQuantity', 'packagingId'],
+                  },
+               },
                packagingSpecification: {
                   data: {
                      mandiPackagingId: item.packaging.id,
@@ -170,21 +187,6 @@ export default function CartTunnel({ close }) {
                   'loadVolume',
                   'loadCapacity',
                ],
-            },
-         },
-
-         purchaseOrderItems: {
-            data: {
-               orderQuantity: (item.quantity * item.multiplier).toFixed(3),
-               mandiPurchaseOrderItemId:
-                  item.packaging.purchaseOrderItems &&
-                  item.packaging.purchaseOrderItems.length
-                     ? item.packaging.purchaseOrderItems[0].id
-                     : null,
-            },
-            on_conflict: {
-               constraint: 'purchaseOrderItem_mandiPurchaseOrderItemId_key',
-               update_columns: ['orderQuantity', 'packagingId'],
             },
          },
       }))
