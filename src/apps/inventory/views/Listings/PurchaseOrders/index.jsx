@@ -18,8 +18,11 @@ export default function PurchaseOrders() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const addTab = (title, view, id) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view, id },
+      })
    }
 
    const { loading, data: { purchaseOrderItems = [] } = {} } = useSubscription(
@@ -34,16 +37,22 @@ export default function PurchaseOrders() {
 
    const tableRef = React.useRef()
 
-   const rowClick = (e, row) => {
-      const { id, status } = row._row.data
-      dispatch({
-         type: 'SET_PURCHASE_WORK_ORDER',
-         payload: {
-            id,
-            status,
-         },
-      })
-      addTab('Purchase Order', 'purchaseOrder')
+   const rowClick = (_, row) => {
+      const { id, status, packaging, supplierItem } = row._row.data
+      if (supplierItem) {
+         dispatch({
+            type: 'SET_PURCHASE_WORK_ORDER',
+            payload: {
+               id,
+               status,
+            },
+         })
+         addTab('Purchase Order', 'purchaseOrder')
+      }
+
+      if (packaging) {
+         addTab('Purchase Order', 'packagingPurchaseOrder', id)
+      }
    }
 
    const columns = [
@@ -109,7 +118,6 @@ function SupplierItemName({
       },
    },
 }) {
-   console.log(data)
    if (data.supplierItem && data.supplierItem.name)
       return data.supplierItem.name
    if (data.packaging && data.packaging.packagingName)
