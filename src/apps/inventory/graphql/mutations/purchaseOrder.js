@@ -26,3 +26,11 @@ export const UPDATE_PURCHASE_ORDER = gql`
       }
    }
 `
+
+export const CREATE_PACKAGING_PURCHASE_ORDER = gql`
+   mutation CreatePurchaseOrder {
+      item: insert_inventory_purchaseOrderItem_one(object: {}) {
+         id
+      }
+   }
+`
