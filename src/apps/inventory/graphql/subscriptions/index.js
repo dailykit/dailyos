@@ -483,6 +483,22 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
    }
 `
 
+export const PACKAGING_PURCHASE_ORDER_SUBSCRIPTION = gql`
+   subscription PurchaseOrderItem($id: Int!) {
+      purchaseOrderItem(id: $id) {
+         id
+         packaging {
+            id
+            packagingName
+            onHand
+         }
+         status
+         orderQuantity
+         unit
+      }
+   }
+`
+
 export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
    subscription PackagingsListings {
       packagings {
