@@ -18,10 +18,11 @@ import FormHeading from '../../../components/FormHeading'
 
 import { Context } from '../../../context/tabs'
 import { FormActions, StyledForm, StyledWrapper } from '../styled'
+import PackagingTunnel from './PackagingTunnel'
 
 import {
-   CREATE_PURCHASE_ORDER,
    UPDATE_PURCHASE_ORDER,
+   UPDATE_PURCHASE_ORDER_ITEM,
    PACKAGING_PURCHASE_ORDER_SUBSCRIPTION,
 } from '../../../graphql'
 
@@ -112,8 +113,28 @@ export default function PackagingPurchaseOrderForm() {
 
 function Content({ item, orderQuantity, setOrderQuantity }) {
    const { t } = useTranslation()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
+
+   const [updatePurchaseOrderItem] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
+      onError,
+      onCompleted: () => {
+         toast.success('quantity updated.')
+      },
+   })
+
+   const updateOrderQuantity = value => {
+      updatePurchaseOrderItem({
+         variables: { id: item.id, set: { orderQuantity: +value } },
+      })
+   }
+
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <PackagingTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Text as="title">Select Packaging</Text>
 
          {item && item.packaging ? (
@@ -135,11 +156,12 @@ function Content({ item, orderQuantity, setOrderQuantity }) {
                >
                   <div style={{ width: '60%' }}>
                      <Input
-                        disabled={item.status}
+                        disabled={item.status !== 'PENDING'}
                         type="number"
                         placeholder={t(address.concat('enter order quantity'))}
                         value={orderQuantity}
                         onChange={e => setOrderQuantity(e.target.value)}
+                        onBlur={e => updateOrderQuantity(e.target.value)}
                      />
                   </div>
 
@@ -151,7 +173,7 @@ function Content({ item, orderQuantity, setOrderQuantity }) {
                noIcon
                type="secondary"
                text="Select Packaging"
-               onClick={() => {}}
+               onClick={() => openTunnel(1)}
                style={{ margin: '20px 0' }}
             />
          )}
