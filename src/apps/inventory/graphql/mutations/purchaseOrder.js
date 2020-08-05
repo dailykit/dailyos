@@ -34,3 +34,14 @@ export const CREATE_PACKAGING_PURCHASE_ORDER = gql`
       }
    }
 `
+
+export const UPDATE_PURCHASE_ORDER_ITEM = gql`
+   mutation UpdatePurchaseOrdetItem(
+      $id: Int!
+      $set: inventory_purchaseOrderItem_set_input
+   ) {
+      updatePurchaseOrderItem(where: { id: { _eq: $id } }, _set: $set) {
+         affected_rows
+      }
+   }
+`
