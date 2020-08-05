@@ -18,6 +18,7 @@ import {
    SachetOrderForm,
    Packagings,
    SachetPackaging,
+   PackagingPurchaseOrderForm,
 } from '../../views'
 
 import PackagingHub from '../../packagingHub'
@@ -49,6 +50,8 @@ const renderComponent = (type, view) => {
       return <PackagingHubProducts />
    if (type === 'forms' && view === 'packagingHubProductDetailsView')
       return <PackagingHubProductDetails />
+   if (type === 'forms' && view === 'packagingPurchaseOrder')
+      return <PackagingPurchaseOrderForm />
 }
 
 const MainWrapper = styled.main`
