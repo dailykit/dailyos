@@ -116,7 +116,7 @@ function Content({ item, orderQuantity, setOrderQuantity }) {
       <>
          <Text as="title">Select Packaging</Text>
 
-         {item ? (
+         {item && item.packaging ? (
             <>
                <ItemCard
                   title={item.packaging.packagingName}
