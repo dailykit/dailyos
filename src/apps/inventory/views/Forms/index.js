@@ -4,6 +4,7 @@ import BulkOrderForm from './BulkWorkOrder'
 import PurchaseOrderForm from './PurchaseOrders'
 import SachetOrderForm from './SachetWorkOrder'
 import SachetPackaging from './SachetPackaging'
+import PackagingPurchaseOrderForm from './PackagingPurchaseOrders'
 
 export {
    SupplierForm,
@@ -12,4 +13,5 @@ export {
    PurchaseOrderForm,
    SachetOrderForm,
    SachetPackaging,
+   PackagingPurchaseOrderForm,
 }

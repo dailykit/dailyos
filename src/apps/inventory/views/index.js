@@ -14,6 +14,7 @@ import {
    PurchaseOrderForm,
    SachetOrderForm,
    SachetPackaging,
+   PackagingPurchaseOrderForm,
 } from './Forms'
 
 export {
@@ -29,4 +30,5 @@ export {
    SachetOrderForm,
    Packagings,
    SachetPackaging,
+   PackagingPurchaseOrderForm,
 }

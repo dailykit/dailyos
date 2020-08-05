@@ -30,6 +30,19 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
    }
 `
 
+export const PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name: packagingName
+
+         supplier {
+            id
+         }
+      }
+   }
+`
+
 export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
    subscription SupplierItem($id: Int!) {
       supplierItem(id: $id) {
@@ -149,6 +162,9 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
             name
          }
          status
+         packaging {
+            packagingName
+         }
       }
    }
 `
@@ -228,7 +244,7 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
    subscription Packagings {
       packagings {
          id
-         name
+         name: packagingName
          unitPrice
          dimensions
          sku
@@ -472,6 +488,22 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
             id
             name
             unit
+         }
+         status
+         orderQuantity
+         unit
+      }
+   }
+`
+
+export const PACKAGING_PURCHASE_ORDER_SUBSCRIPTION = gql`
+   subscription PurchaseOrderItem($id: Int!) {
+      purchaseOrderItem(id: $id) {
+         id
+         packaging {
+            id
+            packagingName
+            onHand
          }
          status
          orderQuantity
