@@ -30,6 +30,19 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
    }
 `
 
+export const PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name: packagingName
+
+         supplier {
+            id
+         }
+      }
+   }
+`
+
 export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
    subscription SupplierItem($id: Int!) {
       supplierItem(id: $id) {
@@ -231,7 +244,7 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
    subscription Packagings {
       packagings {
          id
-         name
+         name: packagingName
          unitPrice
          dimensions
          sku
