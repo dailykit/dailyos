@@ -1,4 +1,13 @@
-import { IconButton, Loader, TextButton, Text, Tag } from '@dailykit/ui'
+import {
+   IconButton,
+   Loader,
+   TextButton,
+   Text,
+   Tag,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+} from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
@@ -11,12 +20,15 @@ import { StyledHeader, StyledWrapper } from '../styled'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
+import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
 
 export default function PurchaseOrders() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
+
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const addTab = (title, view, id) => {
       dispatch({
@@ -75,6 +87,11 @@ export default function PurchaseOrders() {
 
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <SelectPurchaseOrderTypeTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
          <StyledWrapper>
             <StyledHeader>
                <Text as="title">{t(address.concat('purchase orders'))}</Text>
@@ -86,12 +103,7 @@ export default function PurchaseOrders() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton
-                     type="solid"
-                     onClick={() =>
-                        addTab('New Purchase Order', 'purchaseOrder')
-                     }
-                  >
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
                   </IconButton>
                </FlexContainer>
