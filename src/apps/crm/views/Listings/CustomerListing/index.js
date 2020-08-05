@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-console */
 import React from 'react'
 import { Text, ButtonGroup, IconButton, PlusIcon, Loader } from '@dailykit/ui'
@@ -23,17 +24,18 @@ const CustomerListing = () => {
    }
    const columns = [
       { title: 'Customer Name', field: 'name', headerFilter: true },
-      { title: 'Lead Type', field: 'leadType' },
+      { title: 'Source', field: 'source' },
       { title: 'Referrals Sent', field: 'refSent' },
       { title: 'Total Paid', field: 'paid' },
       { title: 'Total Orders', field: 'orders' },
-      { title: 'Sales Channels', field: 'sales' },
       { title: 'Discounts availed', field: 'discounts' },
    ]
    const data = []
    if (customerData) {
+
       customerData.customers.map(customer => {
          const key = customer.keycloakId
+         const source = customer.source
          const firstName = customer.platform_customer
             ? customer.platform_customer.firstName
             : ' N/A'
@@ -49,11 +51,10 @@ const CustomerListing = () => {
          return data.push({
             keycloakId: key,
             name: fullName,
-            leadType: 'Organic',
+            source,
             refSent: '20',
             paid: amountPaid !== null ? amountPaid : 0,
             orders: count,
-            sales: '20',
             discounts: discount || 0,
          })
       })

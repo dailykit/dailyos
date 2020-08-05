@@ -48,19 +48,24 @@ const OrderInfo = props => {
    let expiryMonth = "N/A"
    let expiryYear = "N/A"   
    let expiryDate =  "N/A"
-   
+   let deliveryCompanyInfo = null;
+   let driverInfo = null;
+   if(orderData){
+      deliveryCompanyInfo = orderData.customer.orders[0].deliveryService
+       driverInfo = orderData.customer.orders[0].driverInfo
+   }
+
    if(orderData && orderData.customer.orders[0].orderCart !==null ){
       console.log(orderData.customer.orders[0].deliveryInfo);
-       orderDate =orderData ? orderData.customer.orders[0].created_at.substr(0,16) :"N/A"
+       orderDate = orderData.customer.orders[0].created_at.substr(0,16) 
        totalProductAmount =   orderData.customer.orders[0].orderCart.cartInfo.total
-       amountPaid = orderData ? orderData.customer.orders[0].amountPaid :"N/A"
-       discount = orderData ? orderData.customer.orders[0].discount :"N/A"
+       amountPaid =  orderData.customer.orders[0].amountPaid 
+       discount =  orderData.customer.orders[0].discount 
        cardNumber = `XXXX XXXX XXXX ${orderData.customer.orders[0].orderCart.paymentCard.last4}`
        expiryMonth =  orderData.customer.orders[0].orderCart.paymentCard.expMonth 
        expiryYear =  orderData.customer.orders[0].orderCart.paymentCard.expYear    
        expiryDate = `${expiryMonth} / ${expiryYear}` || "N/A"
-
-
+       
       orderData.customer.orders[0].orderCart.cartInfo.products.map(product=>{
          return data.push({
             products: product.name,
@@ -72,6 +77,12 @@ const OrderInfo = props => {
 
    }
 
+   if(deliveryCompanyInfo){
+      console.log(deliveryCompanyInfo);
+   }
+   if(driverInfo){
+      console.log(driverInfo);
+   }
 
    //    const rowClick = (e, row) => {
    //       const { id, name } = row._row.data
@@ -79,10 +90,58 @@ const OrderInfo = props => {
    //       const param = '/crm/customers/'.concat(name)
    //       addTab(name, param)
    //    }
+   let deliveryPartner = null;
+   let deliveryAgent = null;
+   if(deliveryCompanyInfo!==null){
+      deliveryPartner = 
+         <React.Fragment>
+            <Text as="subtitle">Delivery Partner: </Text>
+                  <Card>
+                     <Avatar
+                        withName
+                        type="round"
+                        title={deliveryCompanyInfo!==null ? `${deliveryCompanyInfo.companyName}` : "N/A"}
+                        url={deliveryCompanyInfo!==null ? `${deliveryCompanyInfo.logo}` : ""}
+                     />
+                     <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
+                        <Text as="p">Total Paid:</Text>
+                        <Text as="p">${amountPaid}</Text>
+                     </CardInfo>
+                  </Card>
+         </React.Fragment>
+   }
+   if(driverInfo!==null){
+      deliveryAgent = 
+      <React.Fragment>
+         <Text as="subtitle">Delivery Assign To:</Text>
+                  <Card>
+                     <Avatar
+                        withName
+                        type="round"
+                        title={driverInfo!==null ? `${driverInfo.driverFirstName} ${driverInfo.driverLastName}` : "N/A"}
+                        url={driverInfo!==null ? `${driverInfo.driverPicture}` : ""}
+                     />
+                     <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
+                        <Text as="p">Total Paid:</Text>
+                        <Text as="p">${amountPaid}</Text>
+                     </CardInfo>
+                  </Card>
+      </React.Fragment>
+   }
+
+   let deliveryInfoCard = null;
+   if(deliveryPartner!==null || deliveryAgent!==null )
+     deliveryInfoCard =  
+        <SideCard>
+            {deliveryPartner}
+            {deliveryAgent}
+         </SideCard>
+
    return (
       <StyledWrapper>
          <span style={{ margin: '16px', boxSizing:"border-box"}}>
-            <span style={ {color:"#00A7E1",cursor:"pointer"}} onClick={props.backToOrders}>Orders</span> <ChevronRight size="20" /> #{props.orderId}
+            <span style={ {color:"#00A7E1",cursor:"pointer"}} onClick={props.backToOrders}>Orders</span>
+             <ChevronRight size="20" /> #{props.orderId}
          </span>
          <Text as="h1">#{props.orderId}</Text>
          <StyledContainer>
@@ -141,29 +200,11 @@ const OrderInfo = props => {
                <PaymentCard
                   cardNumber={cardNumber}
                   cardDate={expiryDate}
-                  address="ABC Building No. 123 first floor sector - x, unknow street "
+                  billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"
                />
-               <SideCard>
-                  <Text as="subtitle">Invoice Sent To:</Text>
-                  <Text as="title">johndoe@gmail.com</Text>
-               </SideCard>
-               <SideCard>
-                  <Text as="subtitle">Delivery Partner:</Text>
-                  <Card>
-                     <Avatar
-                        withName
-                        type="round"
-                        title="John Doe"
-                        url="https://randomuser.me/api/portraits/men/61.jpg"
-                     />
-                     <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
-                        <Text as="p">Total Paid:</Text>
-                        <Text as="p">${amountPaid}</Text>
-                     </CardInfo>
-                  </Card>
-               </SideCard>
+               {deliveryInfoCard}
             </StyledSideBar>
          </StyledContainer>
       </StyledWrapper>

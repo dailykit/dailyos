@@ -4,6 +4,7 @@ export const CUSTOMERS_DATA = gql`
    query CUSTOMER_DATA {
       customers {
          keycloakId
+         source
          platform_customer {
             firstName
             lastName
@@ -69,6 +70,11 @@ query CUSTOMER($keycloakId: String!, $orderId: oid) {
         expYear
       }
        }
+       deliveryService {
+        logo
+        companyName
+      }
+     driverInfo: deliveryInfo(path: "assigned.driverInfo")
      }
    }
  }

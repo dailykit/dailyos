@@ -40,6 +40,7 @@ const CustomerRelation = (props) => {
    let count = "N/A";
    let totalAmount = "N/A";
    let orders = [];
+  
    if(customerData &&  customerData.customer.platform_customer!==null){
       console.log(customerData);
 
@@ -92,14 +93,17 @@ const CustomerRelation = (props) => {
                   WalletAmount="N/A"
                />
                <ContactInfoCard
+                  defaultTag = "(Default)"
                   email={email}
                   phone={phone}
                   address={deliveryAddress}
                />
                <PaymentCard
+                  defaultTag = "(Default)"
                   cardNumber={cardNumber}
                   cardDate={expireDate}
                   address={deliveryAddress}
+                  billingAddDisplay="none"
                />
                {/* </StyledDiv> */}
             </StyledSideBar>

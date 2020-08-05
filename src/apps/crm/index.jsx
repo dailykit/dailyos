@@ -5,11 +5,11 @@ import { AuthProvider, TabProvider } from './context'
 import App from './App'
 
 const CRM = () => (
-   <AuthProvider>
+   // <AuthProvider>
    <TabProvider>
       <App />
    </TabProvider>
-   </AuthProvider>
+   // </AuthProvider> 
 )
 
 export default CRM

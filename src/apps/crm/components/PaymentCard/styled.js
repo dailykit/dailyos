@@ -17,6 +17,7 @@ export const CardInfo = styled.div`
 //    justify-content: space-between;
 // `
 export const BillingAddress = styled.div`
+   display: ${props=>props.display || "block"};
    padding: 16px;
    border-top: 1px solid #ececec;
 `

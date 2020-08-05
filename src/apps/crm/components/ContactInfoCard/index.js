@@ -12,7 +12,7 @@ import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
 const contactInfoCard = props => (
    <ContactCard>
       <StyledHeading>
-         <Text as="subtitle">Contact Details</Text>
+<Text as="subtitle">Contact Details{props.defaultTag}</Text>
       </StyledHeading>
       <ContactInfo>
          <Text as="title">{props.email}</Text>

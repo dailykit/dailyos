@@ -11,7 +11,7 @@ import {
 const contactInfoCard = props => (
    <PaymentCard bgColor={props.bgColor} margin={props.margin}>
       <CardInfo>
-         <Text as="subtitle">Payment Card</Text>
+         <Text as="subtitle">Payment Card{props.defaultTag}</Text>
       </CardInfo>
       <CardInfo>
          <MaestroIcon size="25" />
@@ -26,7 +26,7 @@ const contactInfoCard = props => (
             {props.cardDate}
          </Text>
       </CardInfo>
-      <BillingAddress>
+      <BillingAddress display={props.billingAddDisplay}>
          <Text as="subtitle">Billing Address</Text>
          <Text as="title">{props.address}</Text>
       </BillingAddress>
