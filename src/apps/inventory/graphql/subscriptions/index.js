@@ -149,6 +149,9 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
             name
          }
          status
+         packaging {
+            packagingName
+         }
       }
    }
 `

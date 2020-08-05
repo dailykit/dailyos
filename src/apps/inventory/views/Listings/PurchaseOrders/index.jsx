@@ -1,4 +1,4 @@
-import { IconButton, Loader, TextButton, Text } from '@dailykit/ui'
+import { IconButton, Loader, TextButton, Text, Tag } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
@@ -49,10 +49,16 @@ export default function PurchaseOrders() {
    const columns = [
       { title: 'Status', field: 'status', headerFilter: true },
       {
-         title: 'Supplier Item',
+         title: 'Item',
          field: 'supplierItem',
          headerFilter: false,
          formatter: reactFormatter(<SupplierItemName />),
+      },
+      {
+         title: 'Type',
+         field: 'packaging',
+         headerFilter: false,
+         formatter: reactFormatter(<LabelItem />),
       },
    ]
 
@@ -98,9 +104,29 @@ export default function PurchaseOrders() {
 
 function SupplierItemName({
    cell: {
-      _cell: { value },
+      _cell: {
+         row: { data },
+      },
    },
 }) {
-   if (value && value.name) return <>{value.name}</>
+   console.log(data)
+   if (data.supplierItem && data.supplierItem.name)
+      return data.supplierItem.name
+   if (data.packaging && data.packaging.packagingName)
+      return data.packaging.packagingName
    return 'NA'
+}
+
+function LabelItem({
+   cell: {
+      _cell: {
+         row: { data },
+      },
+   },
+}) {
+   if (data.supplierItem && data.supplierItem.name)
+      return <Tag color="primary">Supplier Item</Tag>
+   if (data.packaging && data.packaging.packagingName)
+      return <Tag color="success">Packaging</Tag>
+   return <Tag color="danger">NA</Tag>
 }
