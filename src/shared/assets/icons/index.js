@@ -11,13 +11,15 @@ import SlidersIcon from './Slider'
 import MailIcon from './Mail'
 import PhoneIcon from './phone'
 import MaestroIcon from './Maestro'
+import ChevronRight from './ChevronRight';
 
 export {
+   AddIcon,
    MenuIcon,
    CloseIcon,
+   ChevronRight,
    EditIcon,
    DeleteIcon,
-   AddIcon,
    LeftIcon,
    RightIcon,
    InfoIcon,

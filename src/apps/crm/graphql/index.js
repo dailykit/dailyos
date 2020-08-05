@@ -1,4 +1,4 @@
 import { CUSTOMERS_COUNT, TOTAL_REVENUE } from './subscriptions'
-import { CUSTOMER_DATA } from './queries'
+import { CUSTOMERS_DATA, CUSTOMER } from './queries'
 
-export { CUSTOMERS_COUNT, TOTAL_REVENUE, CUSTOMER_DATA }
+export { CUSTOMERS_COUNT, TOTAL_REVENUE, CUSTOMERS_DATA,CUSTOMER }

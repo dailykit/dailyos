@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const CUSTOMER_DATA = gql`
+export const CUSTOMERS_DATA = gql`
    query CUSTOMER_DATA {
       customers {
          keycloakId
@@ -20,3 +20,78 @@ export const CUSTOMER_DATA = gql`
       }
    }
 `
+export const CUSTOMER= gql`
+query CUSTOMER($keycloakId: String!, $orderId: oid) {
+   customer(keycloakId:$keycloakId) {
+     source
+     platform_customer {
+       firstName
+       lastName
+       email
+       phoneNumber
+       defaultStripePaymentMethod {
+         brand
+         last4
+         expMonth
+         expYear
+       }
+       defaultCustomerAddress {
+         line1
+         line2
+         city
+         state
+         zipcode
+         country
+       }
+     }
+     orders_aggregate {
+       aggregate {
+         count
+         sum {
+           amountPaid
+         }
+       }
+     }
+     orders(where: {id: {_eq: $orderId}}) {
+       id
+       itemTotal
+       discount
+       deliveryInfo
+       amountPaid
+       created_at
+       orderCart{
+         cartInfo
+         paymentMethodId
+      paymentCard {
+        brand
+        last4
+        expMonth
+        expYear
+      }
+       }
+     }
+   }
+ }
+ 
+`
+
+// query MyQuery($id: oid!) {
+//    order(id: $id) {
+//      created_at
+//      orderCart {
+//        cartInfo
+//        customerInfo
+//        deliveryPrice
+//        orderId
+//        paymentCard {
+//          brand
+//          expMonth
+//          expYear
+//          last4
+//        }
+//        paymentMethodId
+//        paymentStatus
+//      }
+//    }
+//  }
+ 

@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react'
 import { Text } from '@dailykit/ui'
-import { PaymentCard, BillingAddress, CardInfo, CardInfo2 } from './styled'
+import { PaymentCard, BillingAddress, CardInfo } from './styled'
 import {
    MailIcon,
    PhoneIcon,
@@ -21,12 +21,11 @@ const contactInfoCard = props => (
          <Text as="p">{props.cardNumber}</Text>
       </CardInfo>
 
-      <CardInfo2>
+      <CardInfo>
          <Text as="p" className="date">
             {props.cardDate}
          </Text>
-         <Text as="p">{props.cardCVV}</Text>
-      </CardInfo2>
+      </CardInfo>
       <BillingAddress>
          <Text as="subtitle">Billing Address</Text>
          <Text as="title">{props.address}</Text>

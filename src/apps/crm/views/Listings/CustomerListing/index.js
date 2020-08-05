@@ -6,20 +6,20 @@ import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
-import { CUSTOMERS_COUNT, TOTAL_REVENUE, CUSTOMER_DATA } from '../../../graphql'
+import { CUSTOMERS_COUNT, TOTAL_REVENUE, CUSTOMERS_DATA } from '../../../graphql'
 
 const CustomerListing = () => {
    const { addTab } = useTabs()
    const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
-   const { loading: listLoading, data: customerData } = useQuery(CUSTOMER_DATA)
-   if (customerData) {
-      console.log(customerData)
-   }
+   const { loading: listLoading, data: customerData } = useQuery(CUSTOMERS_DATA)
+   // if (customerData) {
+   //    console.log(customerData)
+   // }
    const { data: totalRevenue } = useSubscription(TOTAL_REVENUE)
    const rowClick = (e, row) => {
-      const { keyCloakId, name } = row._row.data
-      const param = '/crm/customers/'.concat(name)
-      addTab(name, param, keyCloakId)
+      const { keycloakId, name } = row._row.data
+      const param = '/crm/customers/'.concat(keycloakId)
+      addTab(name, param)
    }
    const columns = [
       { title: 'Customer Name', field: 'name', headerFilter: true },
@@ -33,7 +33,7 @@ const CustomerListing = () => {
    const data = []
    if (customerData) {
       customerData.customers.map(customer => {
-         const key = customer.keyCloakId
+         const key = customer.keycloakId
          const firstName = customer.platform_customer
             ? customer.platform_customer.firstName
             : ' N/A'
@@ -103,103 +103,7 @@ const CustomerListing = () => {
             // options={tableOptions}
          />
 
-         {/* <StyledHeader gridCol="5fr 1fr 2fr ">
-            <Text as="title">
-               <SlidersIcon size="18" color="#555b6e" /> Filters
-            </Text>
-            <Dropdown
-               type="single"
-               options={options}
-               searchedOption={searchedOption}
-               selectedOption={selectedOption}
-               placeholder="Last updates"
-            />
-
-            <ButtonGroup align="right">
-               <SearchBox
-                  placeholder="Search"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-               />
-               <IconButton type="solid">
-                  <PlusIcon />
-               </IconButton>
-            </ButtonGroup>
-         </StyledHeader> */}
-
-         {/* <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>
-                     <Checkbox
-                        id="label"
-                        checked={checked}
-                        onChange={setChecked}
-                     />
-                  </TableCell>
-                  <TableCell>Customer Name</TableCell>
-                  <TableCell>Lead Type</TableCell>
-                  <TableCell>Referrals Sent</TableCell>
-                  <TableCell>Total Paid</TableCell>
-                  <TableCell>Total Orders</TableCell>
-                  <TableCell>Sales Channels</TableCell>
-                  <TableCell>Discount Availed</TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               {customersCount?.customers_aggregate.nodes.map(customer => {
-                  console.log(customer)
-               })}
-               <TableRow>
-                  <TableCell>
-                     <Checkbox
-                        id="label"
-                        checked={checked}
-                        onChange={setChecked}
-                     />
-                  </TableCell>
-                  <TableCell>John Doe</TableCell>
-                  <TableCell>Organic</TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-                  <TableCell>$ 123.4</TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-               </TableRow>
-               <TableRow>
-                  <TableCell>
-                     <Checkbox
-                        id="label"
-                        checked={checked}
-                        onChange={setChecked}
-                     />
-                  </TableCell>
-                  <TableCell>John Doe</TableCell>
-                  <TableCell>Referral</TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-                  <TableCell>$ 1200</TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-                  <TableCell>
-                     <CircularSpan>20</CircularSpan>
-                  </TableCell>
-               </TableRow>
-            </TableBody>
-         </Table> */}
+         
       </StyledWrapper>
    )
 }
