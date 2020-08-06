@@ -82,10 +82,13 @@ const Upload = ({ onAssetUpload }) => {
          </StyledForm>
          {file.preview && (
             <StyledSection>
-               <StyledImage src={file.preview} alt="bleh" />
+               {file.raw.type && (
+                  <StyledImage src={file.preview} alt={file.raw.name} />
+               )}
                <button type="button" onClick={() => clearSelected()}>
                   <Trash />
                </button>
+               <p>{file.raw.name}</p>
             </StyledSection>
          )}
       </div>
@@ -94,12 +97,15 @@ const Upload = ({ onAssetUpload }) => {
 
 const StyledSection = styled.section(css`
    width: 180px;
-   margin-top: 16px;
+   margin: 16px;
    position: relative;
    :hover {
       button {
          display: flex;
       }
+   }
+   p {
+      margin: 0;
    }
    button {
       border: none;
@@ -118,13 +124,13 @@ const StyledSection = styled.section(css`
 
 const StyledForm = styled.div(css`
    display: flex;
+   margin-top: 12px;
    flex-direction: column;
-   padding: 8px;
    fieldset {
       border: none;
       margin-bottom: 16px;
       [type='file'] {
-         width: 100%;
+         width: inherit;
          padding: 8px;
          border: 1px solid #e3e3e3;
       }
@@ -135,6 +141,7 @@ const StyledForm = styled.div(css`
       color: #fff;
       font-size: 16px;
       padding: 0 14px;
+      margin-left: 16px;
       border-radius: 3px;
       background: #37d0b3;
       align-self: flex-start;
@@ -142,10 +149,10 @@ const StyledForm = styled.div(css`
 `)
 
 const StyledImage = styled.img(css`
-   width: 100%;
-   height: 100%;
+   height: 64px;
    object-fit: cover;
    border-radius: 8px;
+   border: 1px solid #e3e3e3;
 `)
 
 const Trash = ({ size = 18, color = '#ffffff' }) => (
