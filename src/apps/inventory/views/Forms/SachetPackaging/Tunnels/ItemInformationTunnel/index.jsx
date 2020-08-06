@@ -39,7 +39,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
          variables: {
             id: state.id,
             object: {
-               packagingName: itemName,
+               name: itemName,
                packagingSku: itemSku,
                width: +itemWidth,
                height: +itemHeight,
