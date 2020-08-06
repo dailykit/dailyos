@@ -98,7 +98,7 @@ export default function CartTunnel({ close }) {
             item.packaging.packagingCompanyBrand.packagingCompany.id,
          packagings: {
             data: {
-               packagingName: item.packaging.packagingName,
+               name: item.packaging.packagingName,
                mandiPackagingId: item.packaging.id,
                unitQuantity:
                   item.packaging.packagingPurchaseOptions[0]?.quantity,
@@ -174,7 +174,7 @@ export default function CartTunnel({ close }) {
             on_conflict: {
                constraint: 'packaging_mandiPackagingId_key',
                update_columns: [
-                  'packagingName',
+                  'name',
                   'unitQuantity',
                   'minOrderValue',
                   'assets',
