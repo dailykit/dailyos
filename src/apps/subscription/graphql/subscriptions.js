@@ -43,7 +43,7 @@ export const SUBSCRIPTION_OCCURENCES = gql`
                      count
                   }
                }
-               subscriptionItemCount {
+               itemCount: subscriptionItemCount {
                   count
                   price
                   serving: subscriptionServing {
@@ -59,30 +59,34 @@ export const SUBSCRIPTION_OCCURENCES = gql`
    }
 `
 
-export const SIMPLE_RECIPE_PRODUCTS = gql`
-   query simpleRecipeProducts($productType: String_comparison_exp!) {
-      simpleRecipeProducts: simpleRecipeProductsAggregate(
-         where: { isPublished: { _eq: true } }
+export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
+   query productOptions($type: String_comparison_exp!) {
+      productOptions: simpleRecipeProductOptionsAggregate(
+         where: {
+            type: $type
+            simpleRecipeProduct: { isPublished: { _eq: true } }
+         }
       ) {
          aggregate {
             count
          }
          nodes {
             id
-            name
-            tags
-            recipe: simpleRecipe {
-               id
-               type
-            }
-            productOptions: simpleRecipeProductOptions(
-               where: { type: $productType }
-            ) {
-               id
-               price
-               yield: simpleRecipeYield {
-                  size: yield(path: "serving")
+            isActive
+            price
+            type
+            recipeYield: simpleRecipeYield {
+               size: yield(path: "serving")
+               recipe: simpleRecipe {
+                  cuisine
+                  cookingTime
+                  author
+                  assets
+                  image
                }
+            }
+            recipeProduct: simpleRecipeProduct {
+               name
             }
          }
       }

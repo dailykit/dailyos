@@ -4,12 +4,42 @@ const MenuContext = React.createContext()
 
 const initialState = {
    date: null,
+   plans: { selected: [] },
+   products: { selected: [] },
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_DATE':
          return { ...state, date: payload }
+      case 'SET_PLAN':
+         return {
+            ...state,
+            plans: { selected: [...state.plans.selected, payload] },
+         }
+      case 'REMOVE_PLAN':
+         return {
+            ...state,
+            plans: {
+               selected: state.plans.selected.filter(
+                  node => node.occurence.id !== payload
+               ),
+            },
+         }
+      case 'SET_PRODUCT':
+         return {
+            ...state,
+            products: { selected: [...state.products.selected, payload] },
+         }
+      case 'REMOVE_PRODUCT':
+         return {
+            ...state,
+            products: {
+               selected: state.products.selected.filter(
+                  node => node.product.id !== payload
+               ),
+            },
+         }
       default:
          return state
    }

@@ -11,11 +11,35 @@ import {
 import { useQuery } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from 'react-tabulator'
 
+import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
-import { SIMPLE_RECIPE_PRODUCTS } from '../../../graphql'
+import { SIMPLE_RECIPE_PRODUCT_OPTIONS } from '../../../graphql'
 import { InlineLoader } from '../../../../../shared/components'
 
 const ProductsSection = () => {
+   const columns = [
+      {
+         hozAlign: 'center',
+         headerSort: false,
+         formatter: 'rowSelection',
+      },
+      {
+         title: 'Product',
+         headerFilter: true,
+         field: 'recipeProduct.name',
+         headerFilterPlaceholder: 'Search products...',
+      },
+      {
+         title: 'Serving',
+         field: 'recipeYield.size',
+      },
+      {
+         title: 'Author',
+         headerFilter: true,
+         field: 'recipeYield.recipe.author',
+      },
+   ]
+
    return (
       <Wrapper>
          <Text as="h2">Products</Text>
@@ -26,10 +50,10 @@ const ProductsSection = () => {
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel style={{ padding: '14px 0' }}>
-                  <MealKits />
+                  <MealKits columns={columns} />
                </HorizontalTabPanel>
                <HorizontalTabPanel style={{ padding: '14px 0' }}>
-                  <ReadyToEats />
+                  <ReadyToEats columns={columns} />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
@@ -39,38 +63,37 @@ const ProductsSection = () => {
 
 export default ProductsSection
 
-const MealKits = () => {
+const MealKits = ({ columns }) => {
    const tableRef = React.useRef()
-   const { loading, data: { simpleRecipeProducts = {} } = {} } = useQuery(
-      SIMPLE_RECIPE_PRODUCTS,
+   const { state, dispatch } = useMenu()
+   const { loading, data: { productOptions = {} } = {} } = useQuery(
+      SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
          variables: {
-            productType: {
+            type: {
                _eq: 'mealKit',
             },
          },
       }
    )
 
-   const columns = [
-      {
-         title: 'Product',
-         field: 'name',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search products...',
-      },
-      {
-         title: 'Servings',
-         headerSort: false,
-         formatter: reactFormatter(<Servings />),
-      },
-      {
-         title: 'Type',
-         field: 'recipe.type',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search types...',
-      },
-   ]
+   const handleRowSelection = row => {
+      const data = row.getData()
+
+      if (row.isSelected()) {
+         dispatch({
+            type: 'SET_PRODUCT',
+            payload: {
+               product: { id: data.id },
+            },
+         })
+      } else {
+         dispatch({
+            type: 'REMOVE_PRODUCT',
+            payload: data.id,
+         })
+      }
+   }
 
    if (loading) return <InlineLoader />
    return (
@@ -78,93 +101,49 @@ const MealKits = () => {
          <ReactTabulator
             ref={tableRef}
             columns={columns}
-            options={tableOptions}
-            data={simpleRecipeProducts.nodes}
+            data={productOptions.nodes}
+            rowSelected={handleRowSelection}
+            rowDeselected={handleRowSelection}
+            options={{
+               ...tableOptions,
+               selectable: true,
+               groupBy: 'recipeProduct.name',
+            }}
          />
       </div>
    )
 }
 
-const ReadyToEats = () => {
+const ReadyToEats = ({ columns }) => {
    const tableRef = React.useRef()
-   const { loading, data: { simpleRecipeProducts = {} } = {} } = useQuery(
-      SIMPLE_RECIPE_PRODUCTS,
+   const { loading, data: { productOptions = {} } = {} } = useQuery(
+      SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
          variables: {
-            productType: {
+            type: {
                _eq: 'readyToEat',
             },
          },
       }
    )
 
-   const columns = [
-      {
-         title: 'Product',
-         field: 'name',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search products...',
-      },
-      {
-         title: 'Servings',
-         headerSort: false,
-         formatter: reactFormatter(<Servings />),
-      },
-      {
-         title: 'Type',
-         field: 'recipe.type',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search types...',
-      },
-   ]
-
    if (loading) return <InlineLoader />
    return (
       <div>
          <ReactTabulator
             ref={tableRef}
             columns={columns}
-            options={tableOptions}
-            data={simpleRecipeProducts.nodes}
+            data={productOptions.nodes}
+            options={{
+               ...tableOptions,
+               selectable: true,
+               groupBy: 'recipeProduct.name',
+            }}
          />
       </div>
    )
 }
 
-const Servings = ({ cell }) => {
-   const { productOptions } = cell._cell.row.data
-   return (
-      <List>
-         {productOptions.map(option => (
-            <ListItem key={option.id}>{option.yield.size}</ListItem>
-         ))}
-      </List>
-   )
-}
-
 const Wrapper = styled.main`
    padding: 0 16px;
-`
-
-const List = styled.ul`
-   display: flex;
-   align-items: center;
-   border: 1px solid #e3e3e3;
-   padding: 2px;
-   border-radius: 2px;
-`
-
-const ListItem = styled.li`
-   height: 28px;
-   width: 28px;
-   list-style: none;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   border-radius: 2px;
-   &:hover,
-   &.active {
-      color: #fff;
-      background: linear-gradient(180deg, #28c1f7 -4.17%, #00a7e1 100%);
-   }
 `

@@ -11,7 +11,7 @@ import { SUBSCRIPTION_OCCURENCES } from '../../../graphql'
 
 const PlansSection = () => {
    const tableRef = React.useRef()
-   const { state } = useMenu()
+   const { state, dispatch } = useMenu()
    const {
       loading,
       data: { subscriptionOccurences = {} } = {},
@@ -25,23 +25,27 @@ const PlansSection = () => {
 
    const columns = [
       {
+         hozAlign: 'center',
+         headerSort: false,
+         formatter: 'rowSelection',
+      },
+      {
          title: 'Servings',
          headerFilter: true,
          headerFilterPlaceholder: 'Search servings...',
-         field: 'subscription.subscriptionItemCount.serving.size',
+         field: 'subscription.itemCount.serving.size',
       },
       {
          title: 'Title',
          headerFilter: true,
          headerFilterPlaceholder: 'Search titles...',
-         field:
-            'subscription.subscriptionItemCount.serving.subscriptionTitle.title',
+         field: 'subscription.itemCount.serving.subscriptionTitle.title',
       },
       {
          title: 'Item Count',
          headerFilter: true,
          headerFilterPlaceholder: 'Search item counts...',
-         field: 'subscription.subscriptionItemCount.count',
+         field: 'subscription.itemCount.count',
       },
       {
          title: 'Cut Off',
@@ -65,6 +69,26 @@ const PlansSection = () => {
       },
    ]
 
+   const handleRowSelection = row => {
+      const data = row.getData()
+
+      if (row.isSelected()) {
+         dispatch({
+            type: 'SET_PLAN',
+            payload: {
+               occurence: { id: data.id },
+               subscription: { id: data.subscription.id },
+               serving: { size: data.subscription.itemCount.serving.size },
+            },
+         })
+      } else {
+         dispatch({
+            type: 'REMOVE_PLAN',
+            payload: data.id,
+         })
+      }
+   }
+
    return (
       <Wrapper>
          <Text as="h2">Plans</Text>
@@ -73,8 +97,15 @@ const PlansSection = () => {
             <ReactTabulator
                ref={tableRef}
                columns={columns}
-               options={tableOptions}
+               rowSelected={handleRowSelection}
+               rowDeselected={handleRowSelection}
                data={subscriptionOccurences.nodes}
+               options={{
+                  ...tableOptions,
+                  selectable: true,
+                  groupBy:
+                     'subscription.itemCount.serving.subscriptionTitle.title',
+               }}
             />
          )}
       </Wrapper>
