@@ -6,6 +6,7 @@ const url = `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
 const useAssets = type => {
    const [images, setImages] = React.useState([])
    const [videos, setVideos] = React.useState([])
+   const [misc, setMisc] = React.useState([])
    const [error, setError] = React.useState('')
    const [status, setStatus] = React.useState('LOADING')
 
@@ -19,6 +20,8 @@ const useAssets = type => {
                   return setImages(data.data)
                case 'videos':
                   return setVideos(data.data)
+               case 'misc':
+                  return setMisc(data.data)
                default:
                   throw Error('Unknown File Type')
             }
@@ -63,7 +66,7 @@ const useAssets = type => {
       }
    }
 
-   return { status, images, videos, error, remove, upload }
+   return { status, misc, images, videos, error, remove, upload }
 }
 
 export default useAssets
