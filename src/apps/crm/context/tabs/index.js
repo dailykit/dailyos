@@ -17,8 +17,27 @@ const reducers = (state, { type, payload }) => {
          }
          return {
             ...state,
-            tabs: [...state.tabs, { title: payload.title, path: payload.path }],
+            tabs: [
+               ...state.tabs,
+               { title: payload.title, path: payload.path, data: {} },
+            ],
          }
+      }
+      // Store Tab Data
+      case 'STORE_TAB_DATA': {
+         const tabs = state.tabs
+         const tabIndex = tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex].data = {
+               ...tabs[tabIndex].data,
+               ...payload.data,
+            }
+            return {
+               ...state,
+               tabs,
+            }
+         }
+         return state
       }
       // Delete Tab
       case 'DELETE_TAB': {
@@ -79,6 +98,8 @@ export const useTabs = () => {
       })
    }
 
+   const tab = tabs.find(tab => tab.path === location.pathname)
+
    const switchTab = path => history.push(path)
 
    const removeTab = (e, { tab, index }) => {
@@ -102,5 +123,14 @@ export const useTabs = () => {
 
    const doesTabExists = path => tabs.find(tab => tab.path === path) || false
 
-   return { tabs, addTab, switchTab, removeTab, doesTabExists, setTitle }
+   return {
+      tabs,
+      addTab,
+      switchTab,
+      removeTab,
+      doesTabExists,
+      setTitle,
+      dispatch,
+      tab,
+   }
 }

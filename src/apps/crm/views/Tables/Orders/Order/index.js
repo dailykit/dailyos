@@ -3,7 +3,9 @@ import React from 'react'
 import { Text, Avatar } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
-import {CUSTOMER} from "../../../../graphql"
+import { ORDER } from '../../../../graphql'
+import { useTabs } from '../../../../context'
+
 import {
    CustomerCard,
    ContactInfoCard,
@@ -18,132 +20,129 @@ import {
    StyledTable,
    StyledDiv,
    SideCard,
+   StyledInput,
    Card,
    CardInfo,
 } from './styled'
 
-import { ChevronRight} from '../../../../../../shared/assets/icons';
-// import { useTabs } from '../../../../context'
+import { ChevronRight } from '../../../../../../shared/assets/icons'
+
 const OrderInfo = props => {
-   const { data: orderData } = useQuery(CUSTOMER,{
-      variables:{
-         keycloakId: props.keycloakId,
-         orderId:props.orderId
-      }
+   const { addTab, dispatch, tab } = useTabs()
+   const { data: orderData } = useQuery(ORDER, {
+      variables: {
+         orderId: tab.data.orderId,
+      },
    })
-   //    const { addTab } = useTabs()
+
+   const setOrderId = orderId => {
+      dispatch({
+         type: 'STORE_TAB_DATA',
+         payload: {
+            path: tab.path,
+            data: { orderId },
+         },
+      })
+   }
+
+   const setOrder = order => {
+      dispatch({
+         type: 'STORE_TAB_DATA',
+         payload: {
+            path: tab.path,
+            data: { isOrderClicked: order },
+         },
+      })
+   }
+   const setData = () => {
+      setOrder(false)
+      setOrderId('')
+   }
    const columns = [
       { title: 'Products', field: 'products' },
       { title: 'Servings', field: 'servings' },
       { title: 'Discount', field: 'discount' },
       { title: 'Discounted Price', field: 'discountedPrice' },
    ]
-   
-   const data = []
-   let orderDate ="N/A"
-   let totalProductAmount = "N/A"
-   let amountPaid = "N/A"
-   let discount = "N/A"
-   let cardNumber ="XXXX XXXX XXXX XXXX"
-   let expiryMonth = "N/A"
-   let expiryYear = "N/A"   
-   let expiryDate =  "N/A"
-   let deliveryCompanyInfo = null;
-   let driverInfo = null;
-   if(orderData){
-      deliveryCompanyInfo = orderData.customer.orders[0].deliveryService
-       driverInfo = orderData.customer.orders[0].driverInfo
-   }
 
-   if(orderData && orderData.customer.orders[0].orderCart !==null ){
-      console.log(orderData.customer.orders[0].deliveryInfo);
-       orderDate = orderData.customer.orders[0].created_at.substr(0,16) 
-       totalProductAmount =   orderData.customer.orders[0].orderCart.cartInfo.total
-       amountPaid =  orderData.customer.orders[0].amountPaid 
-       discount =  orderData.customer.orders[0].discount 
-       cardNumber = `XXXX XXXX XXXX ${orderData.customer.orders[0].orderCart.paymentCard.last4}`
-       expiryMonth =  orderData.customer.orders[0].orderCart.paymentCard.expMonth 
-       expiryYear =  orderData.customer.orders[0].orderCart.paymentCard.expYear    
-       expiryDate = `${expiryMonth} / ${expiryYear}` || "N/A"
-       
-      orderData.customer.orders[0].orderCart.cartInfo.products.map(product=>{
+   const data = []
+   if (orderData && orderData.order.orderCart !== null) {
+      orderData.order.orderCart.cartInfo.products.map(product => {
          return data.push({
-            products: product.name,
-         servings: product.quantity,
-         discount: product.discount,
-         discountedPrice: product.totalPrice
+            products: product?.name || 'N/A',
+            servings: product?.quantity || 'N/A',
+            discount: product.discount || 'N/A',
+            discountedPrice: product?.totalPrice || 'N/A',
          })
       })
-
    }
-
-   if(deliveryCompanyInfo){
-      console.log(deliveryCompanyInfo);
-   }
-   if(driverInfo){
-      console.log(driverInfo);
-   }
-
    //    const rowClick = (e, row) => {
    //       const { id, name } = row._row.data
 
    //       const param = '/crm/customers/'.concat(name)
    //       addTab(name, param)
    //    }
-   let deliveryPartner = null;
-   let deliveryAgent = null;
-   if(deliveryCompanyInfo!==null){
-      deliveryPartner = 
+   let deliveryPartner = null
+   let deliveryAgent = null
+   if (orderData?.order?.deliveryService !== null) {
+      deliveryPartner = (
          <React.Fragment>
             <Text as="subtitle">Delivery Partner: </Text>
-                  <Card>
-                     <Avatar
-                        withName
-                        type="round"
-                        title={deliveryCompanyInfo!==null ? `${deliveryCompanyInfo.companyName}` : "N/A"}
-                        url={deliveryCompanyInfo!==null ? `${deliveryCompanyInfo.logo}` : ""}
-                     />
-                     <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
-                        <Text as="p">Total Paid:</Text>
-                        <Text as="p">${amountPaid}</Text>
-                     </CardInfo>
-                  </Card>
+            <Card>
+               <Avatar
+                  withName
+                  type="round"
+                  title={
+                     orderData?.order?.deliveryService?.companyName || 'N/A'
+                  }
+                  url={orderData?.order?.deliveryService?.logo || ''}
+               />
+               <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
+                  <Text as="p">Total Paid:</Text>
+                  <Text as="p">${orderData?.order?.amountPaid || 'N/A'}</Text>
+               </CardInfo>
+            </Card>
          </React.Fragment>
+      )
    }
-   if(driverInfo!==null){
-      deliveryAgent = 
-      <React.Fragment>
-         <Text as="subtitle">Delivery Assign To:</Text>
-                  <Card>
-                     <Avatar
-                        withName
-                        type="round"
-                        title={driverInfo!==null ? `${driverInfo.driverFirstName} ${driverInfo.driverLastName}` : "N/A"}
-                        url={driverInfo!==null ? `${driverInfo.driverPicture}` : ""}
-                     />
-                     <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
-                        <Text as="p">Total Paid:</Text>
-                        <Text as="p">${amountPaid}</Text>
-                     </CardInfo>
-                  </Card>
-      </React.Fragment>
+   if (orderData?.order?.driverInfo !== null) {
+      deliveryAgent = (
+         <React.Fragment>
+            <Text as="subtitle">Delivery Assign To:</Text>
+            <Card>
+               <Avatar
+                  withName
+                  type="round"
+                  title={`${
+                     orderData?.order?.driverInfo?.driverFirstName || ''
+                  } ${orderData?.order?.driverInfo?.driverLastName || 'N/A'}`}
+                  url={orderData?.order?.driverInfo?.driverPicture || ''}
+               />
+               <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
+                  <Text as="p">Total Paid:</Text>
+                  <Text as="p">${orderData?.order?.amountPaid || 'N/A'}</Text>
+               </CardInfo>
+            </Card>
+         </React.Fragment>
+      )
    }
 
-   let deliveryInfoCard = null;
-   if(deliveryPartner!==null || deliveryAgent!==null )
-     deliveryInfoCard =  
-        <SideCard>
+   let deliveryInfoCard = null
+   if (deliveryPartner !== null || deliveryAgent !== null)
+      deliveryInfoCard = (
+         <SideCard>
             {deliveryPartner}
             {deliveryAgent}
          </SideCard>
+      )
 
    return (
       <StyledWrapper>
-         <span style={{ margin: '16px', boxSizing:"border-box"}}>
-            <span style={ {color:"#00A7E1",cursor:"pointer"}} onClick={props.backToOrders}>Orders</span>
-             <ChevronRight size="20" /> #{props.orderId}
+         <span style={{ margin: '16px', boxSizing: 'border-box' }}>
+            <StyledInput type="button" onClick={setData} value="Orders" />
+            <ChevronRight size="20" /> #{tab.data.orderId}
          </span>
-         <Text as="h1">#{props.orderId}</Text>
+         <Text as="h1">#{tab.data.orderId}</Text>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
@@ -153,7 +152,8 @@ const OrderInfo = props => {
                         borderRight: '1px solid #ececec',
                      }}
                   >
-                     Ordered on: {orderDate}
+                     Ordered on:{' '}
+                     {orderData?.order?.created_at.substr(0, 16) || 'N/A'}
                   </div>
                   <div
                      style={{
@@ -180,11 +180,15 @@ const OrderInfo = props => {
                   />
                   <CardInfo>
                      <Text as="title">Total</Text>
-                     <Text as="title">${totalProductAmount}</Text>
+                     <Text as="title">
+                        ${orderData?.order?.orderCart?.cartInfo?.total || 'N/A'}
+                     </Text>
                   </CardInfo>
                   <CardInfo>
                      <Text as="title">Overall Discount</Text>
-                     <Text as="title">${discount}</Text>
+                     <Text as="title">
+                        ${orderData?.order?.discount || 'N/A'}
+                     </Text>
                   </CardInfo>
                   <CardInfo>
                      <Text as="title">Wallet Used</Text>
@@ -192,14 +196,22 @@ const OrderInfo = props => {
                   </CardInfo>
                   <CardInfo bgColor="#f3f3f3">
                      <Text as="h2">Total Paid</Text>
-                     <Text as="h2">${amountPaid}</Text>
+                     <Text as="h2">
+                        ${orderData?.order?.amountPaid || 'N/A'}
+                     </Text>
                   </CardInfo>
                </StyledTable>
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardNumber={cardNumber}
-                  cardDate={expiryDate}
+                  cardNumber={`XXXX XXXX XXXX ${
+                     orderData?.order?.orderCart?.paymentCard?.last4 || 'XXXX'
+                  }`}
+                  cardDate={`${
+                     orderData?.order?.orderCart?.paymentCard?.expMonth || 'N'
+                  }/${
+                     orderData?.order?.orderCart?.paymentCard?.expYear || 'A'
+                  }`}
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"

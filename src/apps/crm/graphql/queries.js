@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const CUSTOMERS_DATA = gql`
-   query CUSTOMER_DATA {
+export const CUSTOMERS_LISTING = gql`
+   query CUSTOMER_LISTING {
       customers {
          keycloakId
          source
@@ -21,83 +21,87 @@ export const CUSTOMERS_DATA = gql`
       }
    }
 `
-export const CUSTOMER= gql`
-query CUSTOMER($keycloakId: String!, $orderId: oid) {
-   customer(keycloakId:$keycloakId) {
-     source
-     platform_customer {
-       firstName
-       lastName
-       email
-       phoneNumber
-       defaultStripePaymentMethod {
-         brand
-         last4
-         expMonth
-         expYear
-       }
-       defaultCustomerAddress {
-         line1
-         line2
-         city
-         state
-         zipcode
-         country
-       }
-     }
-     orders_aggregate {
-       aggregate {
-         count
-         sum {
-           amountPaid
+export const CUSTOMER_DATA = gql`
+   query CUSTOMER_DATA($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         source
+         platform_customer {
+            firstName
+            lastName
+            email
+            phoneNumber
+            defaultStripePaymentMethod {
+               brand
+               last4
+               expMonth
+               expYear
+            }
+            defaultCustomerAddress {
+               line1
+               line2
+               city
+               state
+               zipcode
+               country
+            }
          }
-       }
-     }
-     orders(where: {id: {_eq: $orderId}}) {
-       id
-       itemTotal
-       discount
-       deliveryInfo
-       amountPaid
-       created_at
-       orderCart{
-         cartInfo
-         paymentMethodId
-      paymentCard {
-        brand
-        last4
-        expMonth
-        expYear
+         orders_aggregate {
+            aggregate {
+               count
+               sum {
+                  amountPaid
+               }
+            }
+         }
       }
-       }
-       deliveryService {
-        logo
-        companyName
-      }
-     driverInfo: deliveryInfo(path: "assigned.driverInfo")
-     }
    }
- }
- 
 `
 
-// query MyQuery($id: oid!) {
-//    order(id: $id) {
-//      created_at
-//      orderCart {
-//        cartInfo
-//        customerInfo
-//        deliveryPrice
-//        orderId
-//        paymentCard {
-//          brand
-//          expMonth
-//          expYear
-//          last4
-//        }
-//        paymentMethodId
-//        paymentStatus
-//      }
-//    }
-//  }
- 
+export const ORDERS_LISTING = gql`
+   query ORDERS_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         orders {
+            id
+            itemTotal
+            products: deliveryInfo(path: "orderInfo.products")
+            discount
+            discount
+            amountPaid
+            created_at
+         }
+         orders_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   }
+`
+
+export const ORDER = gql`
+   query ORDER($orderId: oid!) {
+      order(id: $orderId) {
+         id
+         itemTotal
+         discount
+
+         amountPaid
+         created_at
+         orderCart {
+            cartInfo
+            paymentMethodId
+            paymentCard {
+               brand
+               last4
+               expMonth
+               expYear
+            }
+         }
+         deliveryService {
+            logo
+            companyName
+         }
+         driverInfo: deliveryInfo(path: "assigned.driverInfo")
+      }
+   }
+`

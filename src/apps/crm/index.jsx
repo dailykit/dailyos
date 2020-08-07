@@ -9,7 +9,7 @@ const CRM = () => (
       <TabProvider>
          <App />
       </TabProvider>
-    </AuthProvider> 
+   </AuthProvider>
 )
 
 export default CRM

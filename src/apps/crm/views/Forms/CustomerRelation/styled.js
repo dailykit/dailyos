@@ -10,7 +10,7 @@ export const StyledContainer = styled.div`
    flex-direction: row;
 `
 export const StyledTable = styled.div`
-   padding: 32px 32px 20em 32px;
+   padding: 32px 16px 10em 32px;
    background: #ffffff;
    width: 97%;
 `

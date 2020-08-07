@@ -2,21 +2,33 @@
 /* eslint-disable no-console */
 import React from 'react'
 import { Text, ButtonGroup, IconButton, PlusIcon, Loader } from '@dailykit/ui'
+import { useHistory } from 'react-router-dom'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
-import { CUSTOMERS_COUNT, TOTAL_REVENUE, CUSTOMERS_DATA } from '../../../graphql'
+import tableOptions from '../tableOptions'
+import {
+   CUSTOMERS_COUNT,
+   TOTAL_REVENUE,
+   CUSTOMERS_LISTING,
+} from '../../../graphql'
 
 const CustomerListing = () => {
-   const { addTab } = useTabs()
-   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
-   const { loading: listLoading, data: customerData } = useQuery(CUSTOMERS_DATA)
-   // if (customerData) {
-   //    console.log(customerData)
-   // }
+   const { addTab, tab } = useTabs()
    const { data: totalRevenue } = useSubscription(TOTAL_REVENUE)
+   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
+   const { loading: listLoading, data: customersListing } = useQuery(
+      CUSTOMERS_LISTING
+   )
+
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Customers', '/crm/customers')
+      }
+   }, [addTab, tab])
+
    const rowClick = (e, row) => {
       const { keycloakId, name } = row._row.data
       const param = '/crm/customers/'.concat(keycloakId)
@@ -31,31 +43,20 @@ const CustomerListing = () => {
       { title: 'Discounts availed', field: 'discounts' },
    ]
    const data = []
-   if (customerData) {
-
-      customerData.customers.map(customer => {
-         const key = customer.keycloakId
-         const source = customer.source
-         const firstName = customer.platform_customer
-            ? customer.platform_customer.firstName
-            : ' N/A'
-         const lastName = customer.platform_customer
-            ? customer.platform_customer.lastName
-            : ' '
-         const fullName =
-            firstName && lastName ? firstName.concat(' ') + lastName : 'N/A'
-         const {
-            count,
-            sum: { amountPaid, discount },
-         } = customer.orders_aggregate.aggregate
+   if (customersListing) {
+      customersListing.customers.map(customer => {
          return data.push({
-            keycloakId: key,
-            name: fullName,
-            source,
+            keycloakId: customer.keycloakId,
+            name: `${customer?.platform_customer?.firstName || ''} ${
+               customer?.platform_customer?.lastName || 'N/A'
+            }`,
+            source: customer.source || 'N/A',
             refSent: '20',
-            paid: amountPaid !== null ? amountPaid : 0,
-            orders: count,
-            discounts: discount || 0,
+            paid:
+               customer?.orders_aggregate?.aggregate?.sum?.amountPaid || 'N/A',
+            orders: customer?.orders_aggregate?.aggregate?.count || 'N/A',
+            discounts:
+               customer?.orders_aggregate?.aggregate?.sum?.discount || 'N/A',
          })
       })
    }
@@ -66,29 +67,26 @@ const CustomerListing = () => {
             <HeadingTile
                title="Total Customers"
                value={
-                  customersCount?.customers_aggregate.aggregate.count ||
-                  'Loading...'
+                  customersCount?.customers_aggregate?.aggregate?.count || '...'
                }
             />
             <HeadingTile
                title="Total Revenue generated"
                value={'$'.concat(
-                  totalRevenue?.ordersAggregate.aggregate.sum.amountPaid ||
-                     'Loading...'
+                  totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid ||
+                     '...'
                )}
             />
          </StyledHeader>
          <StyledHeader gridCol="10fr 1fr 0fr">
             <Text as="title">
                Customers(
-               {customersCount?.customers_aggregate.aggregate.count ||
-                  'Loading...'}
-               )
+               {customersCount?.customers_aggregate?.aggregate?.count || '...'})
             </Text>
             <Text as="subtitle">
-               10 of{' '}
-               {customersCount?.customers_aggregate.aggregate.count ||
-                  'Loading...'}
+               {`10 of ${
+                  customersCount?.customers_aggregate?.aggregate?.count || '...'
+               }`}
             </Text>
             <ButtonGroup>
                <IconButton type="solid">
@@ -101,10 +99,8 @@ const CustomerListing = () => {
             columns={columns}
             data={data}
             rowClick={rowClick}
-            // options={tableOptions}
+            options={tableOptions}
          />
-
-         
       </StyledWrapper>
    )
 }
