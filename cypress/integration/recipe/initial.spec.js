@@ -8,7 +8,7 @@ context('Actions', () => {
    it('click on recipe', () => {
       cy.findByText(/recipe/i)
          .click()
-         .wait(1000)
-         .get('h1')
+         .location('pathname')
+         .should('include', 'recipe')
    })
 })

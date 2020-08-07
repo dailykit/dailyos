@@ -8,7 +8,7 @@ context('Actions', () => {
    it('click on inventory', () => {
       cy.findByText(/inventory/i)
          .click()
-         .wait(1000)
-         .get('h1')
+         .location('pathname')
+         .should('include', '/inventory')
    })
 })
