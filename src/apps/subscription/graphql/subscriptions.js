@@ -86,9 +86,19 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
                }
             }
             recipeProduct: simpleRecipeProduct {
+               id
                name
             }
          }
+      }
+   }
+`
+
+export const PRODUCT_CATEGORIES = gql`
+   query productCategories {
+      productCategories {
+         id: name
+         title: name
       }
    }
 `

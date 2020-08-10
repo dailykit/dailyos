@@ -36,9 +36,15 @@ const reducers = (state, { type, payload }) => {
             ...state,
             products: {
                selected: state.products.selected.filter(
-                  node => node.product.id !== payload
+                  node => node.option.id !== payload
                ),
             },
+         }
+      case 'CLEAR_STATE':
+         return {
+            ...state,
+            plans: { selected: [] },
+            products: { selected: [] },
          }
       default:
          return state
