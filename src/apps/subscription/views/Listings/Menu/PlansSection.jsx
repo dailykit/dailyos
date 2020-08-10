@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
-import { Text } from '@dailykit/ui'
 import styled from 'styled-components'
+import { Text, Toggle } from '@dailykit/ui'
 import { ReactTabulator } from 'react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
 
@@ -91,7 +91,14 @@ const PlansSection = () => {
 
    return (
       <Wrapper>
-         <Text as="h2">Plans</Text>
+         <Header>
+            <Text as="h2">Plans</Text>
+            <Toggle
+               label="Add Permanently"
+               checked={state.plans.isPermanent}
+               setChecked={() => dispatch({ type: 'TOGGLE_PERMANENT' })}
+            />
+         </Header>
          {!state.date && <span>Select a date to view plans.</span>}
          {!loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
@@ -116,4 +123,10 @@ export default PlansSection
 
 const Wrapper = styled.main`
    padding: 0 16px;
+`
+
+const Header = styled.header`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
 `

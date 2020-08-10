@@ -224,7 +224,9 @@ const SaveTunnel = ({
                simpleRecipeProductId: product.id,
                addonPrice: Number(form.addonPrice),
                productCategory: form.productCategory,
-               subscriptionOccurenceId: plan.occurence.id,
+               ...(state.plans.isPermanent
+                  ? { subscriptionId: plan.subscription.id }
+                  : { subscriptionOccurenceId: plan.occurence.id }),
                simpleRecipeProductOptionId: product.option.id,
             }))
             return result

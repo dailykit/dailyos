@@ -4,8 +4,8 @@ const MenuContext = React.createContext()
 
 const initialState = {
    date: null,
-   plans: { selected: [] },
    products: { selected: [] },
+   plans: { isPermanent: false, selected: [] },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -24,6 +24,14 @@ const reducers = (state, { type, payload }) => {
                selected: state.plans.selected.filter(
                   node => node.occurence.id !== payload
                ),
+            },
+         }
+      case 'TOGGLE_PERMANENT':
+         return {
+            ...state,
+            plans: {
+               ...state.plans,
+               isPermanent: !state.plans.isPermanent,
             },
          }
       case 'SET_PRODUCT':
