@@ -10,6 +10,9 @@ export const ContactCard = styled.div`
 `
 export const StyledHeading = styled.div`
    padding: 8px 16px;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
 `
 export const ContactInfo = styled.div`
    padding: 16px;
@@ -20,4 +23,13 @@ export const ContactInfo = styled.div`
 export const CustomerAddress = styled.div`
    padding: 16px;
    border-top: 1px solid #ececec;
+`
+
+export const SmallText = styled.small`
+   color: #00a7e1;
+   font-size: 12px;
+   cursor: pointer;
+   &:hover {
+      text-decoration: underline;
+   }
 `

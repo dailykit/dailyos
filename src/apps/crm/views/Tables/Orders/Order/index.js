@@ -5,7 +5,7 @@ import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
 import { useTabs } from '../../../../context'
-
+import { Capitalize } from '../../../Forms/Utils'
 import {
    CustomerCard,
    ContactInfoCard,
@@ -97,10 +97,6 @@ const OrderInfo = props => {
                   }
                   url={orderData?.order?.deliveryService?.logo || ''}
                />
-               <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
-                  <Text as="p">Total Paid:</Text>
-                  <Text as="p">${orderData?.order?.amountPaid || 'N/A'}</Text>
-               </CardInfo>
             </Card>
          </React.Fragment>
       )
@@ -120,7 +116,9 @@ const OrderInfo = props => {
                />
                <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
                   <Text as="p">Total Paid:</Text>
-                  <Text as="p">${orderData?.order?.amountPaid || 'N/A'}</Text>
+                  <Text as="p">
+                     ${orderData?.order?.deliveryFee?.value || 'N/A'}
+                  </Text>
                </CardInfo>
             </Card>
          </React.Fragment>
@@ -140,9 +138,10 @@ const OrderInfo = props => {
       <StyledWrapper>
          <span style={{ margin: '16px', boxSizing: 'border-box' }}>
             <StyledInput type="button" onClick={setData} value="Orders" />
-            <ChevronRight size="20" /> #{tab.data.orderId}
+            <ChevronRight size="20" />
+            Order Id: #{tab.data.orderId}
          </span>
-         <Text as="h1">#{tab.data.orderId}</Text>
+         <Text as="h1">Order Id: #{tab.data.orderId}</Text>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
@@ -204,17 +203,11 @@ const OrderInfo = props => {
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardNumber={`XXXX XXXX XXXX ${
-                     orderData?.order?.orderCart?.paymentCard?.last4 || 'XXXX'
-                  }`}
-                  cardDate={`${
-                     orderData?.order?.orderCart?.paymentCard?.expMonth || 'N'
-                  }/${
-                     orderData?.order?.orderCart?.paymentCard?.expYear || 'A'
-                  }`}
+                  cardData={orderData?.order?.orderCart?.paymentCard || 'N/A'}
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"
+                  defaultTag="(Used for this order)"
                />
                {deliveryInfoCard}
             </StyledSideBar>

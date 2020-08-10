@@ -3,7 +3,7 @@
 /* eslint-disable import/imports-first */
 /* eslint-disable import/order */
 import React, { useState, useEffect } from 'react'
-import { Text, Loader } from '@dailykit/ui'
+import { Text, Loader, useTunnel } from '@dailykit/ui'
 import { useTabs } from '../../../context'
 import { useQuery } from '@apollo/react-hooks'
 import { CUSTOMER_DATA } from '../../../graphql'
@@ -23,9 +23,12 @@ import {
 } from '../../../components'
 // import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { OrdersTable, ReferralTable, WalletTable } from '../../index'
-import { UpperCase } from '../Utils'
+import { Capitalize } from '../Utils'
+import { PaymentTunnel, AddressTunnel } from './Tunnel'
 
 const CustomerRelation = props => {
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const { addTab, dispatch, tab } = useTabs()
    const history = useHistory()
    // const [activeCard, setActiveCard] = useState('Orders')
@@ -81,52 +84,23 @@ const CustomerRelation = props => {
                      'N/A'
                   }`}
                   CustomerInfo={`Source: ${
-                     UpperCase(customerData?.customer?.source) || ''
+                     Capitalize(customerData?.customer?.source) || ''
                   }`}
                   WalletAmount="N/A"
                />
                <ContactInfoCard
-                  defaultTag="(Default)"
-                  email={
-                     customerData?.customer?.platform_customer?.email || 'N/A'
-                  }
-                  phone={
-                     customerData?.customer?.platform_customer?.phoneNumber ||
-                     'N/A'
-                  }
-                  address={`${
-                     customerData?.customer?.platform_customer
-                        ?.defaultCustomerAddress?.line1 || ''
-                  }, ${
-                     customerData?.customer?.platform_customer
-                        ?.defaultCustomerAddress?.line2 || ''
-                  }, ${
-                     customerData?.customer?.platform_customer
-                        ?.defaultCustomerAddress?.city || ''
-                  }, ${
-                     customerData?.customer?.platform_customer
-                        ?.defaultCustomerAddress?.zipcode || ''
-                  }, ${
-                     customerData?.customer?.platform_customer
-                        ?.defaultCustomerAddress?.state || ''
-                  }, ${
-                     customerData?.customer?.platform_customer
-                        ?.defaultCustomerAddress?.country || 'N/A'
-                  }`}
+                  defaultTag2="(Default)"
+                  customerData={customerData?.customer?.platform_customer}
+                  onClick={() => openTunnel1(1)}
                />
                <PaymentCard
                   defaultTag="(Default)"
-                  cardNumber={`XXXX XXXX XXXX ${
+                  linkedTo="view all cards"
+                  onClick={() => openTunnel(1)}
+                  cardData={
                      customerData?.customer?.platform_customer
-                        ?.defaultStripePaymentMethod?.last4 || 'XXXX'
-                  }`}
-                  cardDate={`${
-                     customerData?.customer?.platform_customer
-                        ?.defaultStripePaymentMethod?.expMonth || 'N'
-                  }/${
-                     customerData?.customer?.platform_customer
-                        ?.defaultStripePaymentMethod?.expYear || 'A'
-                  }`}
+                        ?.defaultStripePaymentMethod || 'N/A'
+                  }
                   billingAddDisplay="none"
                />
                {/* </StyledDiv> */}
@@ -136,15 +110,8 @@ const CustomerRelation = props => {
                   <StyledCard
                      heading="Orders"
                      subheading1="Total Amount"
-                     value1={`$ ${
-                        customerData?.customer?.orders_aggregate?.aggregate?.sum
-                           ?.amountPaid || 'N/A'
-                     }`}
+                     data={customerData?.customer?.orders_aggregate?.aggregate}
                      subheading2="Total Orders"
-                     value2={
-                        customerData?.customer?.orders_aggregate?.aggregate
-                           ?.count || 'N/A'
-                     }
                      click={() => setActiveCard('Orders')}
                      active={tab.data.activeCard}
                   />
@@ -152,9 +119,7 @@ const CustomerRelation = props => {
                   <StyledCard
                      heading="Referrals"
                      subheading1="Total Referrals Sent"
-                     value1="N/A"
                      subheading2="Total Signed up"
-                     value2="N/A"
                      click={() => setActiveCard('Referrals')}
                      active={tab.data.activeCard}
                   />
@@ -169,6 +134,19 @@ const CustomerRelation = props => {
                <StyledTable>{table}</StyledTable>
             </StyledMainBar>
          </StyledContainer>
+
+         <PaymentTunnel
+            tunnels={tunnels}
+            openTunnel={openTunnel}
+            closeTunnel={closeTunnel}
+            id={props.match.params.id}
+         />
+         <AddressTunnel
+            tunnels={tunnels1}
+            openTunnel={openTunnel1}
+            closeTunnel={closeTunnel1}
+            id={props.match.params.id}
+         />
       </StyledWrapper>
    )
 }

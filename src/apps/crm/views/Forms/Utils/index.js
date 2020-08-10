@@ -1,3 +1,4 @@
-import UpperCase from './UpperCase'
+import Capitalize from './Capitalize'
+import ConcatAddress from './ConcatAddress'
 
-export { UpperCase }
+export { Capitalize, ConcatAddress }

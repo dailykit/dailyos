@@ -28,4 +28,7 @@ export const ViewTab = styled.span`
    font-family: Roboto;
    line-height: 14px;
    cursor: pointer;
+   &:hover {
+      text-decoration: underline;
+   }
 `

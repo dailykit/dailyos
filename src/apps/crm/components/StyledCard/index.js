@@ -16,11 +16,11 @@ const StyleCard = props => {
          <CardContent>
             <span>
                <Text as="subtitle">{props.subheading1}</Text>
-               <Text as="title">{props.value1}</Text>
+               <Text as="title">{props?.data?.sum?.amountPaid || 'N/A'}</Text>
             </span>
             <span>
                <Text as="subtitle">{props.subheading2}</Text>
-               <Text as="title">{props.value2}</Text>
+               <Text as="title">{props?.data?.count || 'N/A'}</Text>
             </span>
          </CardContent>
       </StyledCard>

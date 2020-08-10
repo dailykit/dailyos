@@ -13,11 +13,19 @@ export const CardInfo = styled.div`
    display: flex;
    flex-direction: row;
 `
-// export const CardInfo2 = styled(CardInfo)`
-//    justify-content: space-between;
-// `
+export const CardInfo2 = styled(CardInfo)`
+   justify-content: space-between;
+`
 export const BillingAddress = styled.div`
-   display: ${props=>props.display || "block"};
+   display: ${props => props.display || 'block'};
    padding: 16px;
    border-top: 1px solid #ececec;
+`
+export const SmallText = styled.small`
+   color: #00a7e1;
+   font-size: 12px;
+   cursor: pointer;
+   &:hover {
+      text-decoration: underline;
+   }
 `

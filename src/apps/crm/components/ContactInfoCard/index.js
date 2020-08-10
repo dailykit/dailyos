@@ -6,25 +6,32 @@ import {
    CustomerAddress,
    ContactInfo,
    StyledHeading,
+   SmallText,
 } from './styled'
 import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
+import { ConcatAddress } from '../../views/Forms/Utils'
 
 const contactInfoCard = props => (
    <ContactCard>
       <StyledHeading>
-<Text as="subtitle">Contact Details{props.defaultTag}</Text>
+         <Text as="subtitle">Contact Details{props.defaultTag1}</Text>
+         <SmallText onClick={props.onClick}>view all address</SmallText>
       </StyledHeading>
       <ContactInfo>
-         <Text as="title">{props.email}</Text>
+         <Text as="title">{props?.customerData?.email || 'N/A'}</Text>
          <MailIcon color="#00a7e1" />
       </ContactInfo>
       <ContactInfo>
-         <Text as="title">{props.phone}</Text>
+         <Text as="title">{props?.customerData?.phoneNumber || 'N/A'}</Text>
          <PhoneIcon color="#00a7e1" />
       </ContactInfo>
       <CustomerAddress>
-         <Text as="subtitle">Delivery Address</Text>
-         <Text as="title">{props.address}</Text>
+         <Text as="subtitle">Delivery Address{props.defaultTag2}</Text>
+         <Text as="title">
+            {ConcatAddress(
+               props?.customerData?.defaultCustomerAddress || 'N/A'
+            )}
+         </Text>
       </CustomerAddress>
    </ContactCard>
 )

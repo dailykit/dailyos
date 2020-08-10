@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { Text, Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from 'react-tabulator'
 import { useTabs } from '../../../context'
 import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
@@ -63,16 +63,14 @@ const OrdersTable = props => {
    const data = []
    if (ordersListing) {
       ordersListing.customer.orders.map(order => {
-         const productsCount = order.products.length || '0'
          return data.push({
-            id: order.id,
-            products: productsCount,
+            id: order?.id,
+            products: order?.products?.length || '0',
             walletUsed: 'N/A',
-            discount: order.discount,
-            amountPaid:
-               order.amountPaid !== null ? `$ ${order.amountPaid}` : '$0',
-            channel: 'RMK',
-            orderedOn: order.created_at.substr(0, 16),
+            discount: order?.discount,
+            amountPaid: `$ ${order?.amountPaid || 'N/A'}`,
+            channel: order?.channel?.cartSource || 'N/A',
+            orderedOn: order?.created_at?.substr(0, 16) || 'N/A',
             deliveredOn: 'N/A',
          })
       })

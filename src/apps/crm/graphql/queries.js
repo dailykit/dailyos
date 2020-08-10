@@ -8,6 +8,8 @@ export const CUSTOMERS_LISTING = gql`
          platform_customer {
             firstName
             lastName
+            email
+            phoneNumber
          }
          orders_aggregate {
             aggregate {
@@ -68,6 +70,9 @@ export const ORDERS_LISTING = gql`
             discount
             amountPaid
             created_at
+            channel: orderCart {
+               cartSource
+            }
          }
          orders_aggregate {
             aggregate {
@@ -102,6 +107,30 @@ export const ORDER = gql`
             companyName
          }
          driverInfo: deliveryInfo(path: "assigned.driverInfo")
+         deliveryFee: deliveryInfo(path: "deliveryFee")
+      }
+   }
+`
+
+export const ALL_DATA = gql`
+   query ALL_DATA($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         platform_customers {
+            customerAddresses {
+               line1
+               line2
+               city
+               zipcode
+               state
+               country
+            }
+            stripePaymentMethods {
+               brand
+               last4
+               expMonth
+               expYear
+            }
+         }
       }
    }
 `
