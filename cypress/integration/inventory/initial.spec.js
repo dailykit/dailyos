@@ -1,14 +1,18 @@
+/* eslint-disable no-undef */
+/* eslint-disable spaced-comment */
 /// <reference types="cypress" />
 
 context('Actions', () => {
    beforeEach(() => {
-      cy.visit('/apps')
+      cy.logout()
+      cy.login('test@test.com', 'test', 'inventory')
    })
 
-   it('click on inventory', () => {
-      cy.findByText(/inventory/i)
-         .click()
-         .location('pathname')
-         .should('include', '/inventory')
+   afterEach(() => {
+      cy.logout()
+   })
+
+   it('should visit inventory', () => {
+      cy.visit('/apps/inventory').get('h1')
    })
 })
