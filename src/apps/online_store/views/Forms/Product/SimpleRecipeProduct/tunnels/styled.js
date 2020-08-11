@@ -30,3 +30,9 @@ export const StyledInputWrapper = styled.div`
    display: flex;
    align-items: center;
 `
+
+export const Grid = styled.div`
+   display: grid;
+   grid-gap: 16px;
+   grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
+`

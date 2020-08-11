@@ -11,7 +11,12 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 // eslint-disable-next-line import/no-cycle
 import { Accompaniments } from '..'
-import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
+import {
+   DeleteIcon,
+   EditIcon,
+   EyeIcon,
+   AddIcon,
+} from '../../../../../../assets/icons'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import {
    DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
@@ -29,7 +34,12 @@ import {
    StyledTabView,
    StyledWrapper,
 } from './styled'
-import { RecipeTunnel, PriceConfigurationTunnel } from '../../tunnels'
+import {
+   RecipeTunnel,
+   PriceConfigurationTunnel,
+   ModifierModeTunnel,
+   ModifierFormTunnel,
+} from '../../tunnels'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -44,6 +54,11 @@ export default function Recipe({ state }) {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [priceTunnels, openPriceTunnel, closePriceTunnel] = useTunnel(1)
+   const [
+      modifiersTunnel,
+      openModifiersTunnel,
+      closeModifiersTunnel,
+   ] = useTunnel(3)
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -127,6 +142,20 @@ export default function Recipe({ state }) {
                <PriceConfigurationTunnel
                   state={state}
                   close={closePriceTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={modifiersTunnel}>
+            <Tunnel layer={1}>
+               <ModifierModeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
                />
             </Tunnel>
          </Tunnels>
@@ -244,9 +273,18 @@ export default function Recipe({ state }) {
                                              ).toFixed(2) || ''}
                                           </td>
                                           <td>
-                                             {' '}
-                                             {option?.modifier?.name ||
-                                                'None Selected'}{' '}
+                                             {option.modifier?.name ? (
+                                                `${option.modifier.name}`
+                                             ) : (
+                                                <IconButton
+                                                   type="ghost"
+                                                   onClick={() =>
+                                                      openModifiersTunnel(1)
+                                                   }
+                                                >
+                                                   <AddIcon color="#36B6E2" />
+                                                </IconButton>
+                                             )}
                                           </td>
                                           <td>
                                              <IconButton

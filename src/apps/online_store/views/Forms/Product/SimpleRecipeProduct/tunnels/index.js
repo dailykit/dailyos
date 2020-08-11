@@ -5,6 +5,8 @@ import ProductsTunnel from './ProductsTunnel'
 import AccompanimentTypeTunnel from './AccompanimentTypeTunnel'
 import PriceConfigurationTunnel from './PriceConfigurationTunnel'
 import AssetsTunnel from './AssetsTunnel'
+import ModifierModeTunnel from './ModifierModeTunnel'
+import ModifierFormTunnel from './ModifierFormTunnel'
 
 export {
    RecipeTunnel,
@@ -14,4 +16,6 @@ export {
    AccompanimentTypeTunnel,
    PriceConfigurationTunnel,
    AssetsTunnel,
+   ModifierModeTunnel,
+   ModifierFormTunnel,
 }
