@@ -33,6 +33,7 @@ export const INVENTORY_PRODUCTS = gql`
          id
          name
          title: name
+         assets
          isValid
          isPublished
       }
@@ -47,6 +48,7 @@ export const SIMPLE_RECIPE_PRODUCTS = gql`
          id
          name
          title: name
+         assets
          isValid
          isPublished
          simpleRecipe {

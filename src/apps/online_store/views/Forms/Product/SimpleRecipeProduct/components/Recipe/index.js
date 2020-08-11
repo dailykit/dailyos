@@ -39,7 +39,10 @@ import {
    PriceConfigurationTunnel,
    ModifierModeTunnel,
    ModifierFormTunnel,
+   ModifierOptionsTunnel,
 } from '../../tunnels'
+import ModifierTypeTunnel from '../../tunnels/ModifierTypeTunnel'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -47,6 +50,7 @@ const address =
 export default function Recipe({ state }) {
    const { t } = useTranslation()
    const { productDispatch } = React.useContext(SimpleProductContext)
+   const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
@@ -157,6 +161,15 @@ export default function Recipe({ state }) {
                   open={openModifiersTunnel}
                   close={closeModifiersTunnel}
                />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ModifierTypeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ModifierOptionsTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -278,9 +291,16 @@ export default function Recipe({ state }) {
                                              ) : (
                                                 <IconButton
                                                    type="ghost"
-                                                   onClick={() =>
+                                                   onClick={() => {
+                                                      modifiersDispatch({
+                                                         type: 'META',
+                                                         payload: {
+                                                            name: 'optionId',
+                                                            value: option.id,
+                                                         },
+                                                      })
                                                       openModifiersTunnel(1)
-                                                   }
+                                                   }}
                                                 >
                                                    <AddIcon color="#36B6E2" />
                                                 </IconButton>
@@ -356,9 +376,25 @@ export default function Recipe({ state }) {
                                              ).toFixed(2) || ''}
                                           </td>
                                           <td>
-                                             {' '}
-                                             {option?.modifier?.name ||
-                                                'None Selected'}{' '}
+                                             {option.modifier?.name ? (
+                                                `${option.modifier.name}`
+                                             ) : (
+                                                <IconButton
+                                                   type="ghost"
+                                                   onClick={() => {
+                                                      modifiersDispatch({
+                                                         type: 'META',
+                                                         payload: {
+                                                            name: 'optionId',
+                                                            value: option.id,
+                                                         },
+                                                      })
+                                                      openModifiersTunnel(1)
+                                                   }}
+                                                >
+                                                   <AddIcon color="#36B6E2" />
+                                                </IconButton>
+                                             )}
                                           </td>
                                           <td>
                                              <IconButton

@@ -7,6 +7,8 @@ import PriceConfigurationTunnel from './PriceConfigurationTunnel'
 import AssetsTunnel from './AssetsTunnel'
 import ModifierModeTunnel from './ModifierModeTunnel'
 import ModifierFormTunnel from './ModifierFormTunnel'
+import ModifierTypeTunnel from './ModifierTypeTunnel'
+import ModifierOptionsTunnel from './ModifierOptionsTunnel'
 
 export {
    RecipeTunnel,
@@ -18,4 +20,6 @@ export {
    AssetsTunnel,
    ModifierModeTunnel,
    ModifierFormTunnel,
+   ModifierTypeTunnel,
+   ModifierOptionsTunnel,
 }

@@ -435,3 +435,11 @@ export const DELETE_CHARGE = gql`
       }
    }
 `
+
+export const CREATE_MODIFIER = gql`
+   mutation CreateModifier($object: onlineStore_modifier_insert_input!) {
+      createModifier(object: $object) {
+         id
+      }
+   }
+`

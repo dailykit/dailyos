@@ -1,4 +1,6 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    TunnelHeader,
    Input,
@@ -14,103 +16,89 @@ import {
    OptionTop,
    OptionBottom,
 } from './styled'
-
-const reducer = (state, { type, payload }) => {
-   switch (type) {
-      case 'NAME': {
-         return {
-            name: payload.value,
-            ...state,
-         }
-      }
-      case 'ADD_CATEGORY': {
-         return {
-            categories: [
-               ...state.categories,
-               {
-                  name: '',
-                  type: 'single',
-                  options: [
-                     {
-                        image: 'https://via.placeholder.com/150',
-                        name: 'Cheese',
-                        price: 0,
-                        discount: 10,
-                        quantity: 1,
-                     },
-                  ],
-               },
-            ],
-         }
-      }
-      case 'DELETE_CATEGORY': {
-         const updatedCategories = state.categories
-         updatedCategories.splice(payload.index, 1)
-         return {
-            ...state,
-            categories: updatedCategories,
-         }
-      }
-      case 'CATEGORY_NAME': {
-         const updatedCategories = state.categories
-         updatedCategories[payload.index].name = payload.value
-         return {
-            ...state,
-            categories: updatedCategories,
-         }
-      }
-      case 'CATEGORY_TYPE': {
-         const updatedCategories = state.categories
-         updatedCategories[payload.index].type = payload.value
-         if (payload.value === 'multiple') {
-            updatedCategories[payload.index].limits = { min: 1, max: 1 }
-         } else {
-            delete updatedCategories[payload.index].limits
-         }
-         return {
-            ...state,
-            categories: updatedCategories,
-         }
-      }
-      case 'CATEGORY_OPTION': {
-         const updatedCategories = state.categories
-         updatedCategories[payload.index].options[payload.optionIndex][
-            payload.label
-         ] = payload.value
-         return {
-            ...state,
-            categories: updatedCategories,
-         }
-      }
-      case 'DELETE_CATEGORY_OPTION': {
-         const updatedCategories = state.categories
-         updatedCategories[payload.index].options.splice(payload.optionIndex, 1)
-         return {
-            ...state,
-            categories: updatedCategories,
-         }
-      }
-      default:
-         return state
-   }
-}
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import {
+   CREATE_MODIFIER,
+   UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+} from '../../../../../../graphql'
 
 const ModifierFormTunnel = ({ open, close }) => {
-   const [modifier, setModifier] = React.useReducer(reducer, {
-      name: '',
-      categories: [],
-   })
+   const {
+      modifiersState: { modifier, meta },
+      modifiersDispatch,
+   } = React.useContext(ModifiersContext)
+
+   const [saving, setSaving] = React.useState(false)
 
    const options = [
       { id: 1, title: 'Single' },
       { id: 2, title: 'Multiple' },
    ]
 
+   // Mutations
+   const [createModifier] = useMutation(CREATE_MODIFIER)
+   const [updateSimpleRecipeProductOption] = useMutation(
+      UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+      {
+         onCompleted: () => {
+            toast.success('Modifier added to option!')
+            close(2)
+            close(1)
+         },
+         onError: error => {
+            toast.error('Error')
+            console.log(error)
+         },
+      }
+   )
+
+   const save = async () => {
+      try {
+         if (saving) return
+         setSaving(true)
+         if (modifier.id) {
+            // update
+         } else {
+            const { data } = await createModifier({
+               variables: {
+                  object: {
+                     name: modifier.name,
+                     data: {
+                        categories: modifier.categories,
+                     },
+                  },
+               },
+            })
+            if (data.createModifier?.id) {
+               toast.success('Modifier created')
+               if (meta.optionId) {
+                  updateSimpleRecipeProductOption({
+                     variables: {
+                        id: meta.optionId,
+                        set: {
+                           modifierId: data.createModifier.id,
+                        },
+                     },
+                  })
+               }
+            }
+         }
+      } catch (err) {
+         console.log(err)
+      } finally {
+         setSaving(false)
+      }
+   }
+
    return (
       <>
          <TunnelHeader
             title="Create New Modifier Template"
-            close={() => close(1)}
+            close={() => close(2)}
+            right={{
+               action: save,
+               title: saving ? 'Saving...' : 'Save',
+            }}
          />
          <TunnelBody>
             <Input
@@ -119,7 +107,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                name="template-name"
                value={modifier.name}
                onChange={e =>
-                  setModifier({
+                  modifiersDispatch({
                      type: 'NAME',
                      payload: { value: e.target.value },
                   })
@@ -134,7 +122,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                      value={category.name}
                      style={{ marginBottom: '16px' }}
                      onChange={e =>
-                        setModifier({
+                        modifiersDispatch({
                            type: 'CATEGORY_NAME',
                            payload: { value: e.target.value, index },
                         })
@@ -150,7 +138,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                         ).id
                      }
                      onChange={option =>
-                        setModifier({
+                        modifiersDispatch({
                            type: 'CATEGORY_TYPE',
                            payload: {
                               value: option.title.toLowerCase(),
@@ -169,7 +157,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                               name="min"
                               value={category.limits.min}
                               onChange={e =>
-                                 setModifier({
+                                 modifiersDispatch({
                                     type: 'CATEGORY_LIMIT',
                                     payload: {
                                        value: e.target.value,
@@ -185,7 +173,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                               name="max"
                               value={category.limits.max}
                               onChange={e =>
-                                 setModifier({
+                                 modifiersDispatch({
                                     type: 'CATEGORY_LIMIT',
                                     payload: {
                                        value: e.target.value,
@@ -196,137 +184,146 @@ const ModifierFormTunnel = ({ open, close }) => {
                               }
                            />
                         </Grid>
-                        <Text as="subtitle">Options</Text>
-                        {category.options.map((option, optionIndex) => (
-                           <OptionWrapper>
-                              <OptionTop>
-                                 <img src={option.image} alt="Option" />
-                                 <div>
-                                    <Text as="p">{option.name}</Text>
-                                    <Grid cols="3">
-                                       <Input
-                                          type="number"
-                                          label="Price"
-                                          name={`price-${optionIndex}`}
-                                          value={option.price}
-                                          onChange={e =>
-                                             setModifier({
-                                                type: 'CATEGORY_OPTION',
-                                                payload: {
-                                                   value: e.target.value,
-                                                   index,
-                                                   optionIndex,
-                                                   label: 'price',
-                                                },
-                                             })
-                                          }
-                                       />
-                                       <Input
-                                          type="number"
-                                          label="Discount"
-                                          name={`discount-${optionIndex}`}
-                                          value={option.discount}
-                                          onChange={e =>
-                                             setModifier({
-                                                type: 'CATEGORY_OPTION',
-                                                payload: {
-                                                   value: e.target.value,
-                                                   index,
-                                                   optionIndex,
-                                                   label: 'discount',
-                                                },
-                                             })
-                                          }
-                                       />
-                                       <Input
-                                          type="number"
-                                          label="Quantity"
-                                          name={`qty-${optionIndex}`}
-                                          value={option.quantity}
-                                          onChange={e =>
-                                             setModifier({
-                                                type: 'CATEGORY_OPTION',
-                                                payload: {
-                                                   value: e.target.value,
-                                                   index,
-                                                   optionIndex,
-                                                   label: 'quantity',
-                                                },
-                                             })
-                                          }
-                                       />
-                                    </Grid>
-                                 </div>
-                              </OptionTop>
-                              <OptionBottom>
-                                 <div> </div>
-                                 <Checkbox
-                                    id="label"
-                                    checked={option.isAlwaysCharged}
-                                    onChange={value =>
-                                       setModifier({
-                                          type: 'CATEGORY_OPTION',
-                                          payload: {
-                                             value,
-                                             index,
-                                             optionIndex,
-                                             label: 'isAlwaysCharged',
-                                          },
-                                       })
-                                    }
-                                 >
-                                    Always Charge
-                                 </Checkbox>
-                                 <Checkbox
-                                    id="label"
-                                    checked={option.isActive}
-                                    onChange={value =>
-                                       setModifier({
-                                          type: 'CATEGORY_OPTION',
-                                          payload: {
-                                             value,
-                                             index,
-                                             optionIndex,
-                                             label: 'isActive',
-                                          },
-                                       })
-                                    }
-                                 >
-                                    Active
-                                 </Checkbox>
-                                 <Checkbox
-                                    id="label"
-                                    checked={option.isVisible}
-                                    onChange={value =>
-                                       setModifier({
-                                          type: 'CATEGORY_OPTION',
-                                          payload: {
-                                             value,
-                                             index,
-                                             optionIndex,
-                                             label: 'isVisible',
-                                          },
-                                       })
-                                    }
-                                 >
-                                    Visible
-                                 </Checkbox>
-                              </OptionBottom>
-                           </OptionWrapper>
-                        ))}
-                        <ButtonTile
-                           type="secondary"
-                           text="Add Option"
-                           onClick={() => open(3)}
-                        />
                      </>
                   )}
+                  <Text as="subtitle">Options</Text>
+                  {category.options.map((option, optionIndex) => (
+                     <OptionWrapper>
+                        <OptionTop>
+                           <img src={option.image} alt="Option" />
+                           <div>
+                              <Text as="p">{option.name}</Text>
+                              <Grid cols="3">
+                                 <Input
+                                    type="number"
+                                    label="Price"
+                                    name={`price-${optionIndex}`}
+                                    value={option.price}
+                                    onChange={e =>
+                                       modifiersDispatch({
+                                          type: 'EDIT_CATEGORY_OPTION',
+                                          payload: {
+                                             value: e.target.value,
+                                             index,
+                                             optionIndex,
+                                             label: 'price',
+                                          },
+                                       })
+                                    }
+                                 />
+                                 <Input
+                                    type="number"
+                                    label="Discount"
+                                    name={`discount-${optionIndex}`}
+                                    value={option.discount}
+                                    onChange={e =>
+                                       modifiersDispatch({
+                                          type: 'EDIT_CATEGORY_OPTION',
+                                          payload: {
+                                             value: e.target.value,
+                                             index,
+                                             optionIndex,
+                                             label: 'discount',
+                                          },
+                                       })
+                                    }
+                                 />
+                                 <Input
+                                    type="number"
+                                    label="Quantity"
+                                    name={`qty-${optionIndex}`}
+                                    value={option.productQuantity}
+                                    onChange={e =>
+                                       modifiersDispatch({
+                                          type: 'EDIT_CATEGORY_OPTION',
+                                          payload: {
+                                             value: e.target.value,
+                                             index,
+                                             optionIndex,
+                                             label: 'productQuantity',
+                                          },
+                                       })
+                                    }
+                                 />
+                              </Grid>
+                           </div>
+                        </OptionTop>
+                        <OptionBottom>
+                           <div> </div>
+                           <Checkbox
+                              id="label"
+                              checked={option.isAlwaysCharged}
+                              onChange={value =>
+                                 modifiersDispatch({
+                                    type: 'EDIT_CATEGORY_OPTION',
+                                    payload: {
+                                       value,
+                                       index,
+                                       optionIndex,
+                                       label: 'isAlwaysCharged',
+                                    },
+                                 })
+                              }
+                           >
+                              Always Charge
+                           </Checkbox>
+                           <Checkbox
+                              id="label"
+                              checked={option.isActive}
+                              onChange={value =>
+                                 modifiersDispatch({
+                                    type: 'EDIT_CATEGORY_OPTION',
+                                    payload: {
+                                       value,
+                                       index,
+                                       optionIndex,
+                                       label: 'isActive',
+                                    },
+                                 })
+                              }
+                           >
+                              Active
+                           </Checkbox>
+                           <Checkbox
+                              id="label"
+                              checked={option.isVisible}
+                              onChange={value =>
+                                 modifiersDispatch({
+                                    type: 'EDIT_CATEGORY_OPTION',
+                                    payload: {
+                                       value,
+                                       index,
+                                       optionIndex,
+                                       label: 'isVisible',
+                                    },
+                                 })
+                              }
+                           >
+                              Visible
+                           </Checkbox>
+                        </OptionBottom>
+                     </OptionWrapper>
+                  ))}
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Option"
+                     onClick={() => {
+                        modifiersDispatch({
+                           type: 'META',
+                           payload: {
+                              name: 'selectedCategoryIndex',
+                              value: index,
+                           },
+                        })
+                        open(3)
+                     }}
+                  />
                </CategoryWrapper>
             ))}
             <ButtonTile
                type="secondary"
                text="Add Category"
-               onClick={() => setModifier({ type: 'ADD_CATEGORY' })}
+               onClick={() => modifiersDispatch({ type: 'ADD_CATEGORY' })}
             />
          </TunnelBody>
       </>

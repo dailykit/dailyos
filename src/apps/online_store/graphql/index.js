@@ -48,6 +48,7 @@ import {
    DELETE_TIME_SLOT,
    DELETE_MILE_RANGE,
    DELETE_CHARGE,
+   CREATE_MODIFIER,
 } from './mutations'
 
 import {
@@ -136,4 +137,5 @@ export {
    DELETE_TIME_SLOT,
    DELETE_MILE_RANGE,
    DELETE_CHARGE,
+   CREATE_MODIFIER,
 }
