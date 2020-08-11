@@ -1,12 +1,14 @@
 import React from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import styled, { css } from 'styled-components'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import {
    Text,
    Input,
    Tunnel,
+   Toggle,
    Tunnels,
+   Dropdown,
    useTunnel,
    TextButton,
    TunnelHeader,
@@ -15,8 +17,6 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
-   Toggle,
-   Dropdown,
 } from '@dailykit/ui'
 
 import { useMenu } from './state'
@@ -34,11 +34,6 @@ const ProductsSection = () => {
    const readyToEatTableRef = React.useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const columns = [
-      {
-         hozAlign: 'center',
-         headerSort: false,
-         formatter: 'rowSelection',
-      },
       {
          title: 'Product',
          headerFilter: true,
@@ -75,6 +70,13 @@ const ProductsSection = () => {
       }
    }
 
+   const handleRowValidation = row => {
+      if (!localStorage.getItem('serving_size')) return true
+      return (
+         row.getData().recipeYield.size === localStorage.getItem('serving_size')
+      )
+   }
+
    return (
       <Wrapper>
          <Header>
@@ -94,6 +96,7 @@ const ProductsSection = () => {
                      columns={columns}
                      readyToEatTableRef={readyToEatTableRef}
                      handleRowSelection={handleRowSelection}
+                     handleRowValidation={handleRowValidation}
                   />
                </HorizontalTabPanel>
                <HorizontalTabPanel style={{ padding: '14px 0' }}>
@@ -101,6 +104,7 @@ const ProductsSection = () => {
                      columns={columns}
                      mealKitTableRef={mealKitTableRef}
                      handleRowSelection={handleRowSelection}
+                     handleRowValidation={handleRowValidation}
                   />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
@@ -118,7 +122,12 @@ const ProductsSection = () => {
 
 export default ProductsSection
 
-const MealKits = ({ columns, handleRowSelection, mealKitTableRef }) => {
+const MealKits = ({
+   columns,
+   mealKitTableRef,
+   handleRowSelection,
+   handleRowValidation,
+}) => {
    const { loading, data: { productOptions = {} } = {} } = useQuery(
       SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
@@ -139,6 +148,7 @@ const MealKits = ({ columns, handleRowSelection, mealKitTableRef }) => {
             data={productOptions.nodes}
             rowSelected={handleRowSelection}
             rowDeselected={handleRowSelection}
+            selectableCheck={handleRowValidation}
             options={{
                ...tableOptions,
                selectable: true,
@@ -149,7 +159,12 @@ const MealKits = ({ columns, handleRowSelection, mealKitTableRef }) => {
    )
 }
 
-const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
+const ReadyToEats = ({
+   columns,
+   handleRowSelection,
+   readyToEatTableRef,
+   handleRowValidation,
+}) => {
    const { loading, data: { productOptions = {} } = {} } = useQuery(
       SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
@@ -170,6 +185,7 @@ const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
             data={productOptions.nodes}
             rowSelected={handleRowSelection}
             rowDeselected={handleRowSelection}
+            selectableCheck={handleRowValidation}
             options={{
                ...tableOptions,
                selectable: true,
@@ -209,6 +225,7 @@ const SaveTunnel = ({
          const readyToEatRows = readyToEatTableRef.current.table.getSelectedRows()
          mealKitRows.forEach(row => row.deselect())
          readyToEatRows.forEach(row => row.deselect())
+         localStorage.removeItem('serving_size')
       },
    })
 

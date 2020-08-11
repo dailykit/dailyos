@@ -11,21 +11,38 @@ const initialState = {
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_DATE':
-         return { ...state, date: payload }
-      case 'SET_PLAN':
          return {
             ...state,
-            plans: { selected: [...state.plans.selected, payload] },
+            date: payload,
+            products: { selected: [] },
+            plans: { selected: [], isPermanent: false },
          }
-      case 'REMOVE_PLAN':
+      case 'SET_PLAN': {
+         if (state.plans.selected.length === 0) {
+            localStorage.setItem('serving_size', payload.serving.size)
+         }
          return {
             ...state,
             plans: {
+               ...state.plans,
+               selected: [...state.plans.selected, payload],
+            },
+         }
+      }
+      case 'REMOVE_PLAN': {
+         if (state.plans.selected.length === 1) {
+            localStorage.removeItem('serving_size')
+         }
+         return {
+            ...state,
+            plans: {
+               ...state.plans,
                selected: state.plans.selected.filter(
                   node => node.occurence.id !== payload
                ),
             },
          }
+      }
       case 'TOGGLE_PERMANENT':
          return {
             ...state,

@@ -18,7 +18,7 @@ const DateSection = () => {
 
    return (
       <aside>
-         <Text as="h2">Products</Text>
+         <Text as="h2">Date</Text>
          <DatePicker
             inline
             selected={state.date}

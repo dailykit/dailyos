@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
 import { Text, Toggle } from '@dailykit/ui'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { useMenu } from './state'
@@ -24,11 +24,6 @@ const PlansSection = () => {
    })
 
    const columns = [
-      {
-         hozAlign: 'center',
-         headerSort: false,
-         formatter: 'rowSelection',
-      },
       {
          title: 'Servings',
          headerFilter: true,
@@ -89,6 +84,14 @@ const PlansSection = () => {
       }
    }
 
+   const handleRowValidation = row => {
+      if (!localStorage.getItem('serving_size')) return true
+      return (
+         row.getData().subscription.itemCount.serving.size ===
+         Number(localStorage.getItem('serving_size'))
+      )
+   }
+
    return (
       <Wrapper>
          <Header>
@@ -107,9 +110,11 @@ const PlansSection = () => {
                rowSelected={handleRowSelection}
                rowDeselected={handleRowSelection}
                data={subscriptionOccurences.nodes}
+               selectableCheck={handleRowValidation}
                options={{
                   ...tableOptions,
                   selectable: true,
+                  reactiveData: true,
                   groupBy:
                      'subscription.itemCount.serving.subscriptionTitle.title',
                }}

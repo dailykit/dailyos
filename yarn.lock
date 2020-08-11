@@ -1145,6 +1145,18 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@dailykit/react-tabulator@^0.13.4":
+  version "0.13.4"
+  resolved "https://registry.npmjs.org/@dailykit/react-tabulator/-/react-tabulator-0.13.4.tgz#8c8ac0393f48e5eae0322326fc278336990a0a18"
+  integrity sha512-1NWbRTuKOuRdLjyH1UmpaqmX22GHRg0fHeGZ9dP7PqM4sKAAkSfJvdVsgQRB8AdjIm/lDLmH0JSyI3HQ3CeKSQ==
+  dependencies:
+    "@types/react-tag-autocomplete" "^5.6.0"
+    dotenv "^8.2.0"
+    es6-promise "^4.2.8"
+    pick-react-known-prop "^0.1.5"
+    react-tag-autocomplete "^5.7.1"
+    tabulator-tables "^4.7.2"
+
 "@dailykit/ui@^0.7.1":
   version "0.7.1"
   resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.7.1.tgz#23fb082fe6e2f4aecaba8275d499e395b956a372"
@@ -10737,6 +10749,11 @@ tabulator-tables@^4.6.2:
   version "4.6.3"
   resolved "https://registry.yarnpkg.com/tabulator-tables/-/tabulator-tables-4.6.3.tgz#3f85b7058b5faa0d55dc07e9d09214a532260650"
   integrity sha512-e/SeG1jU5ryg0OlBpKo89ZmKTYdgfRYLRT366Vu17jIrTFxtyaAhgg95N7L0vzvnvQHuSATUY3UynHzYh2iDYw==
+
+tabulator-tables@^4.7.2:
+  version "4.7.2"
+  resolved "https://registry.npmjs.org/tabulator-tables/-/tabulator-tables-4.7.2.tgz#9897b123a9486692ed899c575ac04b672e16b831"
+  integrity sha512-UbG3/ylOfTmyJHk6EGpuO6hrTlfsKAmiNRz1hYZwhBzL2y9O3QnykVGhMTBSdaz4Cm38Ed4+Ez848dagzSg1qA==
 
 tapable@^1.0.0, tapable@^1.1.3:
   version "1.1.3"
