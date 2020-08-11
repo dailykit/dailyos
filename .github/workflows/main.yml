@@ -1,0 +1,26 @@
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ 'feat/**' ]
+  pull_request:
+    branches: [ master, staging ]
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Cypress run
+      uses: cypress-io/github-action@v2
+      with: 
+        browser: chrome
+        headless: true
+        config-file: cypress.json
+        start: npm start 
+        wait-on: 'http://localhost:3000'
+
