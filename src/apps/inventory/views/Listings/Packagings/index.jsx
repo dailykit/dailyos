@@ -4,7 +4,7 @@ import {
    Tunnels,
    useTunnel,
    Text,
-   TextButton,
+   ComboButton,
    Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
@@ -14,10 +14,10 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { Context } from '../../../context/tabs'
 
-import { AddIcon } from '../../../assets/icons'
+import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
-import { PACKAGINGS_SUBSCRIPTION } from '../../../graphql'
+import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
 
@@ -27,7 +27,7 @@ export default function Packagings() {
    const {
       loading: subLoading,
       data: { packagings = [] } = {},
-   } = useSubscription(PACKAGINGS_SUBSCRIPTION, {
+   } = useSubscription(PACKAGINGS_LISTINGS_SUBSCRIPTION, {
       onError: error => {
          toast.error('Error! Please try reloading the page')
          console.log(error)
@@ -44,13 +44,13 @@ export default function Packagings() {
    }
    const tableRef = React.useRef()
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, 'sachetPackaging', id)
+   const rowClick = (_, row) => {
+      const { id, packagingName } = row._row.data
+      addTab(packagingName, 'sachetPackaging', id)
    }
 
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true },
+      { title: 'Name', field: 'packagingName', headerFilter: true },
       {
          title: 'Supplier',
          field: 'supplier',
@@ -60,12 +60,13 @@ export default function Packagings() {
       {
          title: 'Type',
          field: 'type',
-         headerFilter: true,
+         headerFilter: false,
       },
       {
          title: 'Par Level',
          field: 'parLevel',
-         headerFilter: true,
+         headerFilter: false,
+         headerSort: false,
          hozAlign: 'right',
       },
       {
@@ -86,12 +87,6 @@ export default function Packagings() {
          headerFilter: true,
          hozAlign: 'right',
       },
-      {
-         title: 'Committed',
-         field: 'committed',
-         headerFilter: true,
-         hozAlign: 'right',
-      },
    ]
 
    if (subLoading) return <Loader />
@@ -107,12 +102,13 @@ export default function Packagings() {
             <StyledHeader>
                <Text as="title">Packagings</Text>
                <FlexContainer>
-                  <TextButton
+                  <ComboButton
                      type="outline"
-                     onClick={() => tableRef.current.table.clearHeaderFilter()}
+                     onClick={() => addTab('Packaging Hub', 'packagingHub')}
                   >
-                     Clear Filters
-                  </TextButton>{' '}
+                     <PackagingHubIcon />
+                     EXPLORE PACKAGING HUB
+                  </ComboButton>
                   <span style={{ width: '10px' }} />
                   <IconButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />

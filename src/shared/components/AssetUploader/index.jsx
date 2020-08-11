@@ -4,13 +4,19 @@ import { Tabs, TabList, Tab, TabPanel, TabPanels } from '@reach/tabs'
 
 import Images from './Images'
 import Upload from './Upload'
+import Misc from './Misc'
 
-export const AssetUploader = ({ onAssetUpload, onImageSelect }) => {
+export const AssetUploader = ({
+   onAssetUpload,
+   onImageSelect,
+   onMiscSelect,
+}) => {
    return (
       <StyledTabs defaultIndex={0}>
          <StyledTabList>
             <StyledTab>Upload</StyledTab>
-            <StyledTab>images</StyledTab>
+            <StyledTab>Images</StyledTab>
+            <StyledTab>Misc</StyledTab>
          </StyledTabList>
          <StyledTabPanels>
             <StyledTabPanel>
@@ -18,6 +24,9 @@ export const AssetUploader = ({ onAssetUpload, onImageSelect }) => {
             </StyledTabPanel>
             <StyledTabPanel>
                <Images onImageSelect={onImageSelect} />
+            </StyledTabPanel>
+            <StyledTabPanel>
+               <Misc onMiscSelect={onMiscSelect} />
             </StyledTabPanel>
          </StyledTabPanels>
       </StyledTabs>

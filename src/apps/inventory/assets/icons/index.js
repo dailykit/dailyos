@@ -14,6 +14,11 @@ import ClockIcon from './Clock'
 import CertificateIcon from './Certificate'
 import MessageBlue from './MessageBlue'
 import Call from './Call'
+import PackagingHubIcon from './packagingHub'
+import BlazeTruck from './BlazeTruck'
+import CartIcon from './Cart'
+import IncrementIcon from './IncrementIcon'
+import SubtractIcon from './SubtractIcon'
 
 export {
    MenuIcon,
@@ -31,5 +36,10 @@ export {
    ClockIcon,
    CertificateIcon,
    MessageBlue,
-   Call
+   Call,
+   PackagingHubIcon,
+   BlazeTruck,
+   CartIcon,
+   IncrementIcon,
+   SubtractIcon,
 }
