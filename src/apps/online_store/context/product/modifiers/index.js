@@ -70,6 +70,17 @@ export const reducers = (state, { type, payload }) => {
             },
          }
       }
+      case 'CATEGORY_LIMIT': {
+         const updatedCategories = state.modifier.categories
+         updatedCategories[payload.index].limits[payload.label] = payload.value
+         return {
+            ...state,
+            modifier: {
+               ...state.modifier,
+               categories: updatedCategories,
+            },
+         }
+      }
       case 'CATEGORY_TYPE': {
          const updatedCategories = state.modifier.categories
          updatedCategories[payload.index].type = payload.value
