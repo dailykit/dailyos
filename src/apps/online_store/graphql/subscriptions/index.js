@@ -343,3 +343,13 @@ export const RECURRENCES = gql`
       }
    }
 `
+
+export const MODIFIERS = gql`
+   subscription Modifiers {
+      modifiers {
+         id
+         title: name
+         data
+      }
+   }
+`

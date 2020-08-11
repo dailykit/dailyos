@@ -40,6 +40,7 @@ import {
    ModifierModeTunnel,
    ModifierFormTunnel,
    ModifierOptionsTunnel,
+   ModifierTemplatesTunnel,
 } from '../../tunnels'
 import ModifierTypeTunnel from '../../tunnels/ModifierTypeTunnel'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
@@ -62,7 +63,7 @@ export default function Recipe({ state }) {
       modifiersTunnel,
       openModifiersTunnel,
       closeModifiersTunnel,
-   ] = useTunnel(3)
+   ] = useTunnel(6)
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -170,6 +171,12 @@ export default function Recipe({ state }) {
             </Tunnel>
             <Tunnel layer={4}>
                <ModifierOptionsTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ModifierOptionsTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>

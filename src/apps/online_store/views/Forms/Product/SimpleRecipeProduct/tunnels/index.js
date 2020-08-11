@@ -9,6 +9,7 @@ import ModifierModeTunnel from './ModifierModeTunnel'
 import ModifierFormTunnel from './ModifierFormTunnel'
 import ModifierTypeTunnel from './ModifierTypeTunnel'
 import ModifierOptionsTunnel from './ModifierOptionsTunnel'
+import ModifierTemplatesTunnel from './ModifierTemplatesTunnel'
 
 export {
    RecipeTunnel,
@@ -22,4 +23,5 @@ export {
    ModifierFormTunnel,
    ModifierTypeTunnel,
    ModifierOptionsTunnel,
+   ModifierTemplatesTunnel,
 }

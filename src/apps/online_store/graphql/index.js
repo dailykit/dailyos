@@ -70,6 +70,7 @@ import {
    S_COLLECTION,
    STORE_SETTINGS,
    RECURRENCES,
+   MODIFIERS,
 } from './subscriptions'
 
 export {
@@ -138,4 +139,5 @@ export {
    DELETE_MILE_RANGE,
    DELETE_CHARGE,
    CREATE_MODIFIER,
+   MODIFIERS,
 }

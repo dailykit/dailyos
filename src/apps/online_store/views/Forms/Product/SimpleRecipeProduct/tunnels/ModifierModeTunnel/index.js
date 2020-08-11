@@ -7,7 +7,7 @@ const ModifierModeTunnel = ({ open, close }) => {
       <>
          <TunnelHeader title="Choose Method" close={() => close(1)} />
          <TunnelBody>
-            <SolidTile onClick={() => open(2)}>
+            <SolidTile onClick={() => open(6)}>
                <Text as="h1">Choose Existing Template</Text>
             </SolidTile>
             <br />
