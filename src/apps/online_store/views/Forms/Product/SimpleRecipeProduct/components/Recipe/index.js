@@ -294,7 +294,9 @@ export default function Recipe({ state }) {
                                           </td>
                                           <td>
                                              {option.modifier?.name ? (
-                                                `${option.modifier.name}`
+                                                <span>
+                                                   {option.modifier.name}
+                                                </span>
                                              ) : (
                                                 <IconButton
                                                    type="ghost"

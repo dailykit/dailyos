@@ -1,5 +1,18 @@
 import gql from 'graphql-tag'
 
+export const BULK_ITEMS = gql`
+   query BulkItems {
+      bulkItems {
+         id
+         unit
+         processingName
+         supplierItem {
+            name
+         }
+      }
+   }
+`
+
 export const SACHET_ITEMS = gql`
    query SachetItems {
       sachetItems {
@@ -21,6 +34,7 @@ export const SUPPLIER_ITEMS = gql`
       supplierItems {
          id
          name
+         title: name
          unitSize
          unit
       }

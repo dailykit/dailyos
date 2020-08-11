@@ -9,7 +9,7 @@ import {
    Text,
    Checkbox,
 } from '@dailykit/ui'
-import { TunnelBody, Grid } from '../styled'
+import { TunnelBody, Grid, StyledInputWrapper, Flex } from '../styled'
 import {
    CategoryWrapper,
    OptionWrapper,
@@ -192,59 +192,78 @@ const ModifierFormTunnel = ({ open, close }) => {
                         <OptionTop>
                            <img src={option.image} alt="Option" />
                            <div>
-                              <Text as="p">{option.name}</Text>
+                              <Flex>
+                                 <Text as="p">{option.name}</Text>
+                                 {['supplierItem', 'sachetItem'].includes(
+                                    option.productType
+                                 ) && (
+                                    <Text as="subtitle">
+                                       Unit size: {option.unit}
+                                    </Text>
+                                 )}
+                              </Flex>
                               <Grid cols="3">
-                                 <Input
-                                    type="number"
-                                    label="Price"
-                                    name={`price-${optionIndex}`}
-                                    value={option.price}
-                                    onChange={e =>
-                                       modifiersDispatch({
-                                          type: 'EDIT_CATEGORY_OPTION',
-                                          payload: {
-                                             value: e.target.value,
-                                             index,
-                                             optionIndex,
-                                             label: 'price',
-                                          },
-                                       })
-                                    }
-                                 />
-                                 <Input
-                                    type="number"
-                                    label="Discount"
-                                    name={`discount-${optionIndex}`}
-                                    value={option.discount}
-                                    onChange={e =>
-                                       modifiersDispatch({
-                                          type: 'EDIT_CATEGORY_OPTION',
-                                          payload: {
-                                             value: e.target.value,
-                                             index,
-                                             optionIndex,
-                                             label: 'discount',
-                                          },
-                                       })
-                                    }
-                                 />
-                                 <Input
-                                    type="number"
-                                    label="Quantity"
-                                    name={`qty-${optionIndex}`}
-                                    value={option.productQuantity}
-                                    onChange={e =>
-                                       modifiersDispatch({
-                                          type: 'EDIT_CATEGORY_OPTION',
-                                          payload: {
-                                             value: e.target.value,
-                                             index,
-                                             optionIndex,
-                                             label: 'productQuantity',
-                                          },
-                                       })
-                                    }
-                                 />
+                                 <StyledInputWrapper>
+                                    $
+                                    <Input
+                                       type="number"
+                                       label="Price"
+                                       name={`price-${optionIndex}`}
+                                       value={option.price}
+                                       onChange={e =>
+                                          modifiersDispatch({
+                                             type: 'EDIT_CATEGORY_OPTION',
+                                             payload: {
+                                                value: e.target.value,
+                                                index,
+                                                optionIndex,
+                                                label: 'price',
+                                             },
+                                          })
+                                       }
+                                    />
+                                 </StyledInputWrapper>
+                                 <StyledInputWrapper>
+                                    <Input
+                                       type="number"
+                                       label="Discount"
+                                       name={`discount-${optionIndex}`}
+                                       value={option.discount}
+                                       onChange={e =>
+                                          modifiersDispatch({
+                                             type: 'EDIT_CATEGORY_OPTION',
+                                             payload: {
+                                                value: e.target.value,
+                                                index,
+                                                optionIndex,
+                                                label: 'discount',
+                                             },
+                                          })
+                                       }
+                                    />
+                                    %
+                                 </StyledInputWrapper>
+                                 <StyledInputWrapper>
+                                    <Input
+                                       type="number"
+                                       label="Quantity"
+                                       name={`qty-${optionIndex}`}
+                                       value={option.productQuantity}
+                                       onChange={e =>
+                                          modifiersDispatch({
+                                             type: 'EDIT_CATEGORY_OPTION',
+                                             payload: {
+                                                value: e.target.value,
+                                                index,
+                                                optionIndex,
+                                                label: 'productQuantity',
+                                             },
+                                          })
+                                       }
+                                    />
+                                    {option.productType === 'bulkItem' &&
+                                       `${option.unit}`}
+                                 </StyledInputWrapper>
                               </Grid>
                            </div>
                         </OptionTop>

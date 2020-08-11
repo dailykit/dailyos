@@ -36,3 +36,9 @@ export const Grid = styled.div`
    grid-gap: 16px;
    grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
 `
+
+export const Flex = styled.div`
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+`

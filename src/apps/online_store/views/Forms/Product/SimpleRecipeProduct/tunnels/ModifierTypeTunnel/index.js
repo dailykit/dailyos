@@ -36,6 +36,10 @@ const ModifierTypeTunnel = ({ open, close }) => {
             <SolidTile onClick={() => select('bulkItem')}>
                <Text as="h1">Bulk Item</Text>
             </SolidTile>
+            <br />
+            <SolidTile onClick={() => select('supplierItem')}>
+               <Text as="h1">Supplier Item</Text>
+            </SolidTile>
          </TunnelBody>
       </>
    )

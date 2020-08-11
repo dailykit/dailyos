@@ -14,6 +14,8 @@ import {
    INVENTORY_PRODUCTS,
    SIMPLE_RECIPE_PRODUCTS,
    SACHET_ITEMS,
+   BULK_ITEMS,
+   SUPPLIER_ITEMS,
 } from '../../../../../../graphql'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
@@ -66,10 +68,46 @@ const ModifierOptionsTunnel = ({ close }) => {
       SACHET_ITEMS,
       {
          onCompleted: data => {
-            setOptions([...data.sachetItems])
+            const updatedOptions = data.sachetItems.map(item => ({
+               ...item,
+               title: `${item.bulkItem.supplierItem.name} - ${item.bulkItem.processingName}`,
+               unit: `${item.unitSize} ${item.unit}`,
+            }))
+            setOptions([...updatedOptions])
          },
          onError: error => {
-            console.log('Error in fetching Simple Recipe Products: ', error)
+            console.log('Error in fetching Sachet Items: ', error)
+         },
+         fetchPolicy: 'cache-and-network',
+      }
+   )
+
+   const [bulkItems, { loading: bulkItemsLoading }] = useLazyQuery(BULK_ITEMS, {
+      onCompleted: data => {
+         const updatedOptions = data.bulkItems.map(item => ({
+            ...item,
+            title: `${item.supplierItem.name} - ${item.processingName}`,
+         }))
+         setOptions([...updatedOptions])
+      },
+      onError: error => {
+         console.log('Error in fetching Bulk Items: ', error)
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+
+   const [supplierItems, { loading: supplierItemsLoading }] = useLazyQuery(
+      SUPPLIER_ITEMS,
+      {
+         onCompleted: data => {
+            const updatedOptions = data.supplierItems.map(item => ({
+               ...item,
+               unit: `${item.unitSize} ${item.unit}`,
+            }))
+            setOptions([...updatedOptions])
+         },
+         onError: error => {
+            console.log('Error in fetching Supplier Items: ', error)
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -84,8 +122,10 @@ const ModifierOptionsTunnel = ({ close }) => {
          simpleRecipeProducts()
       } else if (modifiersState.meta.modifierProductType === 'sachetItem') {
          sachetItems()
+      } else if (modifiersState.meta.modifierProductType === 'bulkItem') {
+         bulkItems()
       } else {
-         inventoryProducts()
+         supplierItems()
       }
    }, [])
 
@@ -97,7 +137,7 @@ const ModifierOptionsTunnel = ({ close }) => {
             option: {
                productId: option.id,
                productType: modifiersState.meta.modifierProductType,
-               name: option.name,
+               name: option.title,
                image: option.assets?.images[0] || '',
                isActive: true,
                isVisible: true,
@@ -105,6 +145,7 @@ const ModifierOptionsTunnel = ({ close }) => {
                price: 0.5,
                discount: 0,
                isAlwaysCharged: false,
+               unit: option.unit || null,
             },
          },
       })
@@ -120,6 +161,8 @@ const ModifierOptionsTunnel = ({ close }) => {
                inventoryProductsLoading,
                simpleRecipeProductsLoading,
                sachetItemsLoading,
+               bulkItemsLoading,
+               supplierItemsLoading,
             ].some(loading => loading) ? (
                <Loader />
             ) : (
