@@ -1,14 +1,21 @@
 import React from 'react'
-import { RRule } from 'rrule'
 import moment from 'moment'
+import { RRule } from 'rrule'
+import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
 import {
    Input,
    Text,
+   Tunnel,
+   Toggle,
+   Tunnels,
+   PlusIcon,
+   useTunnel,
+   IconButton,
    SectionTab,
    SectionTabs,
+   TunnelHeader,
    SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
@@ -31,6 +38,7 @@ import {
    SUBSCRIPTION_ZIPCODES,
    SUBSCRIPTION_CUSTOMERS,
    UPSERT_SUBSCRIPTION_TITLE,
+   UPSERT_SUBSCRIPTION_SERVING,
    SUBSCRIPTION_OCCURENCES_LIST,
 } from '../../../graphql'
 import {
@@ -43,13 +51,22 @@ import {
    ItemCountsSection,
    DeliveryDaySection,
 } from './styled'
+import { PlanProvider, usePlan } from './state'
 
 export const Subscription = () => {
+   return (
+      <PlanProvider>
+         <Title />
+      </PlanProvider>
+   )
+}
+
+const Title = () => {
    const params = useParams()
-   const history = useHistory()
-   const location = useLocation()
-   const { tab, tabs, setTabTitle } = useTabs()
+   const { dispatch } = usePlan()
+   const { tab, tabs, addTab, setTabTitle } = useTabs()
    const [form, setForm] = React.useState({ title: '' })
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
       onCompleted: () => {
          setTabTitle(form.title)
@@ -62,10 +79,14 @@ export const Subscription = () => {
    })
 
    React.useEffect(() => {
-      if (!tab) {
-         history.push('/subscription/subscriptions')
+      if (!loading && !tab) {
+         addTab(title.title, `/subscription/subscriptions/${params.id}`)
+         dispatch({
+            type: 'SET_TITLE',
+            payload: { id: title.id, title: title.title },
+         })
       }
-   }, [history, tabs])
+   }, [tabs, loading])
 
    const handleChange = e => {
       const { name, value } = e.target
@@ -84,6 +105,7 @@ export const Subscription = () => {
    }
 
    if (loading) return <InlineLoader />
+
    if (params.id.includes('form'))
       return (
          <Wrapper>
@@ -116,6 +138,9 @@ export const Subscription = () => {
                <SectionTabList>
                   <SectionTabsListHeader>
                      <Text as="title">Servings</Text>
+                     <IconButton type="outline" onClick={() => openTunnel(1)}>
+                        <PlusIcon />
+                     </IconButton>
                   </SectionTabsListHeader>
                   {title?.servings.map(serving => (
                      <SectionTab key={serving.id}>
@@ -132,6 +157,7 @@ export const Subscription = () => {
                </SectionTabPanels>
             </SectionTabs>
          </Section>
+         <CreateServingTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
       </Wrapper>
    )
 }
@@ -390,5 +416,67 @@ const CustomerName = ({ cell: { _cell } }) => {
       <div>
          {data.customer?.firstName} {data.customer?.lastName}
       </div>
+   )
+}
+
+const CreateServingTunnel = ({ tunnels, closeTunnel }) => {
+   const { state } = usePlan()
+   const [serving, setServing] = React.useState('')
+   const [isDefault, setIsDefault] = React.useState(false)
+   const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
+   const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING, {
+      onCompleted: ({ upsertSubscriptionServing = {} }) => {
+         closeTunnel(1)
+         if (isDefault) {
+            const { id } = upsertSubscriptionServing
+            upsertTitle({
+               variables: {
+                  object: {
+                     id: state.title.id,
+                     title: state.title.title,
+                     defaultSubscriptionServingId: id,
+                  },
+               },
+            })
+         }
+      },
+   })
+
+   const createServing = () => {
+      upsertServing({
+         variables: {
+            object: {
+               servingSize: Number(serving),
+               subscriptionTitleId: state.title.id,
+            },
+         },
+      })
+   }
+
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel layer={1}>
+            <TunnelHeader
+               title="Add Serving"
+               close={() => closeTunnel(1)}
+               right={{ action: () => createServing(), title: 'Save' }}
+            />
+            <main style={{ padding: 16 }}>
+               <Input
+                  type="text"
+                  label="Serving"
+                  name="serving"
+                  value={serving}
+                  onChange={e => setServing(e.target.value)}
+               />
+               <Spacer size="16px" />
+               <Toggle
+                  checked={isDefault}
+                  label="Make Default"
+                  setChecked={setIsDefault}
+               />
+            </main>
+         </Tunnel>
+      </Tunnels>
    )
 }

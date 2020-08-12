@@ -19,12 +19,29 @@ export const UPSERT_SUBSCRIPTION_TITLE = gql`
       insert_subscription_subscriptionTitle_one(
          object: $object
          on_conflict: {
-            update_columns: [title]
             constraint: subscriptionTitle_pkey
+            update_columns: [title, defaultSubscriptionServingId]
          }
       ) {
          id
          title
+      }
+   }
+`
+
+export const UPSERT_SUBSCRIPTION_SERVING = gql`
+   mutation upsertSubscriptionServing(
+      $object: subscription_subscriptionServing_insert_input!
+   ) {
+      upsertSubscriptionServing: insert_subscription_subscriptionServing_one(
+         object: $object
+         on_conflict: {
+            update_columns: [servingSize]
+            constraint: subscriptionServing_pkey
+         }
+      ) {
+         id
+         size: servingSize
       }
    }
 `
