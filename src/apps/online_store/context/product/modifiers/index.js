@@ -87,6 +87,16 @@ export const reducers = (state, { type, payload }) => {
       case 'CATEGORY_FLAG': {
          const updatedCategories = state.modifier.categories
          updatedCategories[payload.index][payload.label] = payload.value
+         console.log('reducers -> payload.label', payload.label)
+         console.log('reducers -> payload.index', payload.value)
+         if (
+            payload.label === 'isRequired' &&
+            payload.value &&
+            updatedCategories[payload.index].type === 'multiple' &&
+            updatedCategories[payload.index].limits.min == 0
+         ) {
+            updatedCategories[payload.index].limits.min = 1
+         }
          return {
             ...state,
             modifier: {
