@@ -21,6 +21,7 @@ import { SimpleProductContext } from '../../../../../../context/product/simplePr
 import {
    DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
+   UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
 } from '../../../../../../graphql'
 // styles
 import {
@@ -33,6 +34,7 @@ import {
    StyledTabs,
    StyledTabView,
    StyledWrapper,
+   Modifier,
 } from './styled'
 import {
    RecipeTunnel,
@@ -75,6 +77,18 @@ export default function Recipe({ state }) {
          toast.error('Error!')
       },
    })
+   const [updateProductOption] = useMutation(
+      UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+      {
+         onCompleted: () => {
+            toast.success('Modifier removed!')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error!')
+         },
+      }
+   )
    const [deleteOptions] = useMutation(DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS, {
       variables: {
          ids: state.simpleRecipeProductOptions?.map(option => option.id),
@@ -133,6 +147,16 @@ export default function Recipe({ state }) {
          payload: option,
       })
       openPriceTunnel(1)
+   }
+   const removeModifier = id => {
+      updateProductOption({
+         variables: {
+            id,
+            set: {
+               modifierId: null,
+            },
+         },
+      })
    }
 
    return (
@@ -294,9 +318,36 @@ export default function Recipe({ state }) {
                                           </td>
                                           <td>
                                              {option.modifier?.name ? (
-                                                <span>
+                                                <Modifier>
+                                                   <span>
+                                                      <span>
+                                                         <EditIcon
+                                                            color="#00A7E1"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                      >
+                                                         <DeleteIcon
+                                                            color="#FF5A52"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                   </span>
                                                    {option.modifier.name}
-                                                </span>
+                                                </Modifier>
                                              ) : (
                                                 <IconButton
                                                    type="ghost"
@@ -386,7 +437,36 @@ export default function Recipe({ state }) {
                                           </td>
                                           <td>
                                              {option.modifier?.name ? (
-                                                `${option.modifier.name}`
+                                                <Modifier>
+                                                   <span>
+                                                      <span>
+                                                         <EditIcon
+                                                            color="#00A7E1"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                      >
+                                                         <DeleteIcon
+                                                            color="#FF5A52"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                   </span>
+                                                   {option.modifier.name}
+                                                </Modifier>
                                              ) : (
                                                 <IconButton
                                                    type="ghost"
