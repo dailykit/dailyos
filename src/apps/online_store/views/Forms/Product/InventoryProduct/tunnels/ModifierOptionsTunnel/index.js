@@ -11,11 +11,11 @@ import {
 } from '@dailykit/ui'
 import { TunnelBody } from '../styled'
 import {
-   INVENTORY_PRODUCTS,
-   SIMPLE_RECIPE_PRODUCTS,
+   SIMPLE_RECIPE_PRODUCT_OPTIONS,
    SACHET_ITEMS,
    BULK_ITEMS,
    SUPPLIER_ITEMS,
+   INVENTORY_PRODUCT_OPTIONS,
 } from '../../../../../../graphql'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
@@ -27,18 +27,24 @@ const ModifierOptionsTunnel = ({ close }) => {
    const [options, setOptions] = React.useState([])
    const [list, current, selectOption] = useSingleList(options)
 
+   const SRPType = type => {
+      return type === 'mealKit' ? 'Meal Kit' : 'Ready to Eat'
+   }
+
    // Queries
    const [
-      inventoryProducts,
+      inventoryProductsOptions,
       { loading: inventoryProductsLoading },
-   ] = useLazyQuery(INVENTORY_PRODUCTS, {
+   ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
       variables: {
-         where: {
-            isPublished: { _eq: true },
-         },
+         where: { inventoryProduct: { isPublished: { _eq: true } } },
       },
       onCompleted: data => {
-         setOptions([...data.inventoryProducts])
+         const updatedOptions = data.inventoryProductOptions.map(item => ({
+            ...item,
+            title: `${item.inventoryProduct.name} - ${item.label}`,
+         }))
+         setOptions([...updatedOptions])
       },
       onError: error => {
          console.log('Error in fetching Inventory Products: ', error)
@@ -47,16 +53,20 @@ const ModifierOptionsTunnel = ({ close }) => {
    })
 
    const [
-      simpleRecipeProducts,
+      simpleRecipeProductsOptions,
       { loading: simpleRecipeProductsLoading },
-   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCTS, {
+   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
       variables: {
-         where: {
-            isPublished: { _eq: true },
-         },
+         where: { simpleRecipeProduct: { isPublished: { _eq: true } } },
       },
       onCompleted: data => {
-         setOptions([...data.simpleRecipeProducts])
+         const updatedOptions = data.simpleRecipeProductOptions.map(item => ({
+            ...item,
+            title: `${item.simpleRecipeProduct.name} - ${SRPType(item.type)} (${
+               item.simpleRecipeYield.yield.serving
+            })`,
+         }))
+         setOptions([...updatedOptions])
       },
       onError: error => {
          console.log('Error in fetching Simple Recipe Products: ', error)
@@ -114,12 +124,14 @@ const ModifierOptionsTunnel = ({ close }) => {
    )
 
    React.useEffect(() => {
-      if (modifiersState.meta.modifierProductType === 'inventoryProduct') {
-         inventoryProducts()
-      } else if (
-         modifiersState.meta.modifierProductType === 'simpleRecipeProduct'
+      if (
+         modifiersState.meta.modifierProductType === 'inventoryProductOption'
       ) {
-         simpleRecipeProducts()
+         inventoryProductsOptions()
+      } else if (
+         modifiersState.meta.modifierProductType === 'simpleRecipeProductOption'
+      ) {
+         simpleRecipeProductsOptions()
       } else if (modifiersState.meta.modifierProductType === 'sachetItem') {
          sachetItems()
       } else if (modifiersState.meta.modifierProductType === 'bulkItem') {
@@ -138,11 +150,14 @@ const ModifierOptionsTunnel = ({ close }) => {
                productId: option.id,
                productType: modifiersState.meta.modifierProductType,
                name: option.title,
-               image: option.assets?.images[0] || '',
+               image:
+                  option.inventoryProduct?.assets?.images[0] ||
+                  option.simpleRecipeProduct?.assets?.images[0] ||
+                  '',
                isActive: true,
                isVisible: true,
                productQuantity: 1,
-               price: 0.5,
+               price: option.price[0]?.value || 1,
                discount: 0,
                isAlwaysCharged: false,
                unit: option.unit || null,

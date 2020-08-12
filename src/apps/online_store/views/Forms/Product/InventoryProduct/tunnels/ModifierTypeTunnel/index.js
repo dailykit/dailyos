@@ -21,11 +21,11 @@ const ModifierTypeTunnel = ({ open, close }) => {
       <>
          <TunnelHeader title="Choose Option Type" close={() => close(3)} />
          <TunnelBody>
-            <SolidTile onClick={() => select('inventoryProduct')}>
+            <SolidTile onClick={() => select('inventoryProductOption')}>
                <Text as="h1">Inventory Product</Text>
             </SolidTile>
             <br />
-            <SolidTile onClick={() => select('simpleRecipeProduct')}>
+            <SolidTile onClick={() => select('simpleRecipeProductOption')}>
                <Text as="h1">Simple Recipe Product</Text>
             </SolidTile>
             <br />

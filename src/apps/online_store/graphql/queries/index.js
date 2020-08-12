@@ -111,3 +111,40 @@ export const COMBO_PRODUCTS = gql`
       }
    }
 `
+
+export const INVENTORY_PRODUCT_OPTIONS = gql`
+   query InventoryProductOptions(
+      $where: onlineStore_inventoryProductOption_bool_exp
+   ) {
+      inventoryProductOptions(where: $where) {
+         id
+         label
+         price
+         inventoryProduct {
+            name
+            assets
+            id
+         }
+      }
+   }
+`
+
+export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
+   query SimpleRecipeProductOptions(
+      $where: onlineStore_simpleRecipeProductOption_bool_exp
+   ) {
+      simpleRecipeProductOptions(where: $where) {
+         id
+         price
+         simpleRecipeYield {
+            yield
+         }
+         type
+         simpleRecipeProduct {
+            id
+            name
+            assets
+         }
+      }
+   }
+`

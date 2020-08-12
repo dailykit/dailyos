@@ -5,7 +5,7 @@ export const ModifiersContext = React.createContext()
 export const state = {
    meta: {
       optionId: undefined,
-      modifierProductType: 'inventoryProduct',
+      modifierProductType: 'inventoryProductOption',
       selectedCategoryIndex: 0,
       selectedOptionIndex: 0,
    },
