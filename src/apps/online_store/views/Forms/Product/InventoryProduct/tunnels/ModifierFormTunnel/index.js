@@ -188,7 +188,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                   {category.type === 'multiple' && (
                      <>
                         <Text as="subtitle">Limits</Text>
-                        <Grid style={{ margin: '8px auto' }}>
+                        <Grid cols="3" style={{ margin: '8px auto' }}>
                            <Input
                               type="number"
                               label="Min"
@@ -221,6 +221,22 @@ const ModifierFormTunnel = ({ open, close }) => {
                                  })
                               }
                            />
+                           {/* <Input
+                              type="number"
+                              label="Free"
+                              name="free"
+                              value={category.limits.free}
+                              onChange={e =>
+                                 modifiersDispatch({
+                                    type: 'CATEGORY_LIMIT',
+                                    payload: {
+                                       value: e.target.value,
+                                       index,
+                                       label: 'free',
+                                    },
+                                 })
+                              }
+                           /> */}
                         </Grid>
                      </>
                   )}
@@ -345,7 +361,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                         </OptionTop>
                         <OptionBottom>
                            <div> </div>
-                           <Checkbox
+                           {/* <Checkbox
                               id="label"
                               checked={option.isAlwaysCharged}
                               onChange={value =>
@@ -361,7 +377,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                               }
                            >
                               Always Charge
-                           </Checkbox>
+                           </Checkbox> */}
                            <Checkbox
                               id="label"
                               checked={option.isActive}

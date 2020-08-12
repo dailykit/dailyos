@@ -86,7 +86,11 @@ export const reducers = (state, { type, payload }) => {
          const updatedCategories = state.modifier.categories
          updatedCategories[payload.index].type = payload.value
          if (payload.value === 'multiple') {
-            updatedCategories[payload.index].limits = { min: 1, max: 1 }
+            updatedCategories[payload.index].limits = {
+               min: 1,
+               max: 1,
+               free: 2,
+            }
          } else {
             delete updatedCategories[payload.index].limits
          }
