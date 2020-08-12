@@ -39,12 +39,12 @@ import {
 import {
    RecipeTunnel,
    PriceConfigurationTunnel,
+   ModifierTypeTunnel,
    ModifierModeTunnel,
    ModifierFormTunnel,
    ModifierOptionsTunnel,
    ModifierTemplatesTunnel,
 } from '../../tunnels'
-import ModifierTypeTunnel from '../../tunnels/ModifierTypeTunnel'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
 const address =

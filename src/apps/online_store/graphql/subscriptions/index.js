@@ -126,6 +126,11 @@ export const S_INVENTORY_PRODUCT = gql`
             label
             price
             quantity
+            modifier {
+               id
+               name
+               data
+            }
          }
       }
    }
