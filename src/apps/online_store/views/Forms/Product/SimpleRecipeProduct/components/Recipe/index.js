@@ -11,11 +11,17 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 // eslint-disable-next-line import/no-cycle
 import { Accompaniments } from '..'
-import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
+import {
+   DeleteIcon,
+   EditIcon,
+   EyeIcon,
+   AddIcon,
+} from '../../../../../../assets/icons'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import {
    DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
+   UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
 } from '../../../../../../graphql'
 // styles
 import {
@@ -28,8 +34,19 @@ import {
    StyledTabs,
    StyledTabView,
    StyledWrapper,
+   Modifier,
 } from './styled'
-import { RecipeTunnel, PriceConfigurationTunnel } from '../../tunnels'
+import {
+   RecipeTunnel,
+   PriceConfigurationTunnel,
+   ModifierTypeTunnel,
+   ModifierModeTunnel,
+   ModifierFormTunnel,
+   ModifierOptionsTunnel,
+   ModifierTemplatesTunnel,
+   ModifierPhotoTunnel,
+} from '../../tunnels'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -37,6 +54,7 @@ const address =
 export default function Recipe({ state }) {
    const { t } = useTranslation()
    const { productDispatch } = React.useContext(SimpleProductContext)
+   const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
@@ -44,6 +62,11 @@ export default function Recipe({ state }) {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [priceTunnels, openPriceTunnel, closePriceTunnel] = useTunnel(1)
+   const [
+      modifiersTunnel,
+      openModifiersTunnel,
+      closeModifiersTunnel,
+   ] = useTunnel(6)
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -55,6 +78,18 @@ export default function Recipe({ state }) {
          toast.error('Error!')
       },
    })
+   const [updateProductOption] = useMutation(
+      UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+      {
+         onCompleted: () => {
+            toast.success('Modifier removed!')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error('Error!')
+         },
+      }
+   )
    const [deleteOptions] = useMutation(DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS, {
       variables: {
          ids: state.simpleRecipeProductOptions?.map(option => option.id),
@@ -114,6 +149,24 @@ export default function Recipe({ state }) {
       })
       openPriceTunnel(1)
    }
+   const removeModifier = id => {
+      updateProductOption({
+         variables: {
+            id,
+            set: {
+               modifierId: null,
+            },
+         },
+      })
+   }
+   const editModifier = modifier => {
+      console.log(modifier)
+      modifiersDispatch({
+         type: 'POPULATE',
+         payload: { modifier },
+      })
+      openModifiersTunnel(2)
+   }
 
    return (
       <>
@@ -128,6 +181,35 @@ export default function Recipe({ state }) {
                   state={state}
                   close={closePriceTunnel}
                />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={modifiersTunnel}>
+            <Tunnel layer={1}>
+               <ModifierModeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ModifierTypeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ModifierOptionsTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ModifierPhotoTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -184,6 +266,7 @@ export default function Recipe({ state }) {
                                     <th>
                                        {t(address.concat('discounted price'))}
                                     </th>
+                                    <th> Modifiers </th>
                                     <th> </th>
                                  </tr>
                               </thead>
@@ -241,6 +324,69 @@ export default function Recipe({ state }) {
                                                    ) /
                                                       100)
                                              ).toFixed(2) || ''}
+                                          </td>
+                                          <td>
+                                             {option.modifier?.name ? (
+                                                <Modifier>
+                                                   <span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                      >
+                                                         <EditIcon
+                                                            color="#00A7E1"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                      >
+                                                         <DeleteIcon
+                                                            color="#FF5A52"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                   </span>
+                                                   {option.modifier.name}
+                                                </Modifier>
+                                             ) : (
+                                                <IconButton
+                                                   type="ghost"
+                                                   onClick={() => {
+                                                      modifiersDispatch({
+                                                         type: 'META',
+                                                         payload: {
+                                                            name: 'optionId',
+                                                            value: option.id,
+                                                         },
+                                                      })
+                                                      openModifiersTunnel(1)
+                                                   }}
+                                                >
+                                                   <AddIcon color="#36B6E2" />
+                                                </IconButton>
+                                             )}
                                           </td>
                                           <td>
                                              <IconButton
@@ -310,6 +456,69 @@ export default function Recipe({ state }) {
                                                    ) /
                                                       100)
                                              ).toFixed(2) || ''}
+                                          </td>
+                                          <td>
+                                             {option.modifier?.name ? (
+                                                <Modifier>
+                                                   <span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                      >
+                                                         <EditIcon
+                                                            color="#00A7E1"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            removeModifier(
+                                                               option.id
+                                                            )
+                                                         }
+                                                      >
+                                                         <DeleteIcon
+                                                            color="#FF5A52"
+                                                            size={14}
+                                                         />
+                                                      </span>
+                                                   </span>
+                                                   {option.modifier.name}
+                                                </Modifier>
+                                             ) : (
+                                                <IconButton
+                                                   type="ghost"
+                                                   onClick={() => {
+                                                      modifiersDispatch({
+                                                         type: 'META',
+                                                         payload: {
+                                                            name: 'optionId',
+                                                            value: option.id,
+                                                         },
+                                                      })
+                                                      openModifiersTunnel(1)
+                                                   }}
+                                                >
+                                                   <AddIcon color="#36B6E2" />
+                                                </IconButton>
+                                             )}
                                           </td>
                                           <td>
                                              <IconButton

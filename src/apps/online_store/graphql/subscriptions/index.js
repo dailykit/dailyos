@@ -60,6 +60,11 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
                id
                yield
             }
+            modifier {
+               id
+               name
+               data
+            }
          }
       }
    }
@@ -121,6 +126,11 @@ export const S_INVENTORY_PRODUCT = gql`
             label
             price
             quantity
+            modifier {
+               id
+               name
+               data
+            }
          }
       }
    }
@@ -335,6 +345,16 @@ export const RECURRENCES = gql`
                }
             }
          }
+      }
+   }
+`
+
+export const MODIFIERS = gql`
+   subscription Modifiers {
+      modifiers {
+         id
+         title: name
+         data
       }
    }
 `
