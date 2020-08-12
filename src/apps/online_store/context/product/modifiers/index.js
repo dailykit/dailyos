@@ -43,6 +43,8 @@ export const reducers = (state, { type, payload }) => {
                   {
                      name: '',
                      type: 'single',
+                     isActive: true,
+                     isRequired: true,
                      options: [],
                   },
                ],
@@ -74,6 +76,17 @@ export const reducers = (state, { type, payload }) => {
       case 'CATEGORY_LIMIT': {
          const updatedCategories = state.modifier.categories
          updatedCategories[payload.index].limits[payload.label] = payload.value
+         return {
+            ...state,
+            modifier: {
+               ...state.modifier,
+               categories: updatedCategories,
+            },
+         }
+      }
+      case 'CATEGORY_FLAG': {
+         const updatedCategories = state.modifier.categories
+         updatedCategories[payload.index][payload.label] = payload.value
          return {
             ...state,
             modifier: {

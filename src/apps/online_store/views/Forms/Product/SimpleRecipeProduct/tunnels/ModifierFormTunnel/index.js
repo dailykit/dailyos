@@ -166,25 +166,66 @@ const ModifierFormTunnel = ({ open, close }) => {
                         })
                      }
                   />
-                  <Text as="subtitle">Type</Text>
-                  <RadioGroup
-                     style={{ marginBottom: '16px' }}
-                     options={options}
-                     active={
-                        options.find(
-                           op => op.title.toLowerCase() === category.type
-                        ).id
-                     }
-                     onChange={option =>
-                        modifiersDispatch({
-                           type: 'CATEGORY_TYPE',
-                           payload: {
-                              value: option.title.toLowerCase(),
-                              index,
-                           },
-                        })
-                     }
-                  />
+                  <Grid>
+                     <div>
+                        <Text as="subtitle">Type</Text>
+                        <RadioGroup
+                           style={{ marginBottom: '16px' }}
+                           options={options}
+                           active={
+                              options.find(
+                                 op => op.title.toLowerCase() === category.type
+                              ).id
+                           }
+                           onChange={option =>
+                              modifiersDispatch({
+                                 type: 'CATEGORY_TYPE',
+                                 payload: {
+                                    value: option.title.toLowerCase(),
+                                    index,
+                                 },
+                              })
+                           }
+                        />
+                     </div>
+                     <div>
+                        <Text as="subtitle">Flags</Text>
+                        <Grid style={{ margin: '8px auto' }}>
+                           <Checkbox
+                              id="label"
+                              checked={category.isActive}
+                              onChange={value =>
+                                 modifiersDispatch({
+                                    type: 'CATEGORY_FLAG',
+                                    payload: {
+                                       value,
+                                       index,
+                                       label: 'isActive',
+                                    },
+                                 })
+                              }
+                           >
+                              Active
+                           </Checkbox>
+                           <Checkbox
+                              id="label"
+                              checked={category.isRequired}
+                              onChange={value =>
+                                 modifiersDispatch({
+                                    type: 'CATEGORY_FLAG',
+                                    payload: {
+                                       value,
+                                       index,
+                                       label: 'isRequired',
+                                    },
+                                 })
+                              }
+                           >
+                              Required
+                           </Checkbox>
+                        </Grid>
+                     </div>
+                  </Grid>
                   {category.type === 'multiple' && (
                      <>
                         <Text as="subtitle">Limits</Text>
