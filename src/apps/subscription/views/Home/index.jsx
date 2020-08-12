@@ -21,6 +21,14 @@ export const Home = () => {
                conf=""
                onClick={() => addTab('Menu', '/subscription/menu')}
             />
+            <DashboardTile
+               title="Subscriptions"
+               count="0"
+               conf=""
+               onClick={() =>
+                  addTab('Subscriptions', '/subscription/subscriptions')
+               }
+            />
          </StyledCardList>
       </StyledHome>
    )

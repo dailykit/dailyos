@@ -22,6 +22,13 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             >
                Menu
             </StyledListItem>
+            <StyledListItem
+               onClick={() =>
+                  addTab('Subscriptions', '/subscription/subscriptions')
+               }
+            >
+               Subscriptions
+            </StyledListItem>
          </StyledList>
       </StyledSidebar>
    )
