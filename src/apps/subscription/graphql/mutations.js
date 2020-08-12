@@ -11,3 +11,20 @@ export const INSERT_OCCURENCE_PRODUCTS = gql`
       }
    }
 `
+
+export const UPSERT_SUBSCRIPTION_TITLE = gql`
+   mutation upsertSubscriptionTitle(
+      $object: subscription_subscriptionTitle_insert_input!
+   ) {
+      insert_subscription_subscriptionTitle_one(
+         object: $object
+         on_conflict: {
+            update_columns: [title]
+            constraint: subscriptionTitle_pkey
+         }
+      ) {
+         id
+         title
+      }
+   }
+`

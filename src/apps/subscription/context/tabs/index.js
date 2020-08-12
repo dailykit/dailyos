@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 const Context = React.createContext()
 
@@ -9,7 +9,18 @@ const initialState = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
-      // Add Tab
+      case 'SET_TITLE': {
+         const { tabs } = state
+         const index = tabs.findIndex(tab => tab.path === payload.path)
+         tabs[index] = {
+            ...tabs[index],
+            title: payload.title,
+         }
+         return {
+            ...state,
+            tabs,
+         }
+      }
       case 'ADD_TAB': {
          const tabExists = state.tabs.find(tab => tab.path === payload.path)
          if (tabExists) {
@@ -44,11 +55,24 @@ export const TabProvider = ({ children }) => {
 
 export const useTabs = () => {
    const history = useHistory()
+   const location = useLocation()
 
    const {
       state: { tabs },
       dispatch,
    } = React.useContext(Context)
+
+   const tab = tabs.find(tab => tab.path === location.pathname)
+
+   const setTabTitle = title => {
+      dispatch({
+         type: 'SET_TITLE',
+         payload: {
+            title,
+            path: tab.path,
+         },
+      })
+   }
 
    const addTab = (title, path) => {
       dispatch({
@@ -81,5 +105,13 @@ export const useTabs = () => {
 
    const doesTabExists = path => tabs.find(tab => tab.path === path) || false
 
-   return { tabs, addTab, switchTab, removeTab, doesTabExists }
+   return {
+      tab,
+      tabs,
+      addTab,
+      switchTab,
+      removeTab,
+      setTabTitle,
+      doesTabExists,
+   }
 }

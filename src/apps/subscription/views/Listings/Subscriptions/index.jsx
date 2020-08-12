@@ -1,26 +1,25 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
+import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
+import { Text, IconButton, PlusIcon } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 
-import { Wrapper } from './styled'
 import { Spacer } from '../../../styled'
-import { useTabs } from '../../../context'
-import options from '../../../tableOption'
 import { TITLES } from '../../../graphql'
+import { useTabs } from '../../../context'
+import { Wrapper, Header } from './styled'
+import options from '../../../tableOption'
 import { InlineLoader } from '../../../../../shared/components'
 
 export const Subscriptions = () => {
    const history = useHistory()
    const tableRef = React.useRef()
-   const { tabs, addTab } = useTabs()
+   const { tab, tabs, addTab } = useTabs()
    const { loading, data: { titles = [] } = {} } = useSubscription(TITLES)
 
    React.useEffect(() => {
-      const tab =
-         tabs.find(item => item.path === `/subscription/subscriptions`) || {}
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          addTab('Subscriptions', '/subscription/subscriptions')
       }
    }, [history, tabs])
@@ -42,12 +41,22 @@ export const Subscriptions = () => {
       )
    }
 
+   const createTab = () => {
+      const hash = `form-${uuid().split('-')[0]}`
+      addTab('Create Subscription', `/subscription/subscriptions/${hash}`)
+   }
+
    if (loading) return <InlineLoader />
    return (
       <Wrapper>
          <div>
             <Spacer size="32px" />
-            <Text as="title">Subscriptions</Text>
+            <Header>
+               <Text as="title">Subscriptions</Text>
+               <IconButton type="outline" onClick={() => createTab()}>
+                  <PlusIcon />
+               </IconButton>
+            </Header>
             <Spacer size="16px" />
             <ReactTabulator
                data={titles}

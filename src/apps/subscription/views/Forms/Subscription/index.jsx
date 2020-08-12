@@ -1,7 +1,7 @@
 import React from 'react'
 import { RRule } from 'rrule'
 import moment from 'moment'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import {
@@ -28,9 +28,10 @@ import {
    TITLE,
    SERVING,
    ITEM_COUNT,
-   SUBSCRIPTION_OCCURENCES_LIST,
    SUBSCRIPTION_ZIPCODES,
    SUBSCRIPTION_CUSTOMERS,
+   UPSERT_SUBSCRIPTION_TITLE,
+   SUBSCRIPTION_OCCURENCES_LIST,
 } from '../../../graphql'
 import {
    Header,
@@ -44,12 +45,15 @@ import {
 } from './styled'
 
 export const Subscription = () => {
-   const { tabs } = useTabs()
    const params = useParams()
    const history = useHistory()
    const location = useLocation()
-   const [form, setForm] = React.useState({
-      title: '',
+   const { tab, tabs, setTabTitle } = useTabs()
+   const [form, setForm] = React.useState({ title: '' })
+   const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
+      onCompleted: () => {
+         setTabTitle(form.title)
+      },
    })
    const { loading, data: { title = {} } = {} } = useSubscription(TITLE, {
       variables: {
@@ -58,9 +62,7 @@ export const Subscription = () => {
    })
 
    React.useEffect(() => {
-      const tabIndex =
-         tabs.findIndex(item => item.path === location.pathname) || {}
-      if (tabIndex === -1) {
+      if (!tab) {
          history.push('/subscription/subscriptions')
       }
    }, [history, tabs])
@@ -70,16 +72,43 @@ export const Subscription = () => {
       setForm({ ...form, [name]: value })
    }
 
+   const saveTitle = e => {
+      upsertTitle({
+         variables: {
+            object: {
+               title: e.target.value,
+               ...(!params.id.includes('form') && { id: params.id }),
+            },
+         },
+      })
+   }
+
    if (loading) return <InlineLoader />
+   if (params.id.includes('form'))
+      return (
+         <Wrapper>
+            <Header>
+               <Input
+                  type="text"
+                  name="title"
+                  label="Subscription Title"
+                  onBlur={e => saveTitle(e)}
+                  onChange={e => handleChange(e)}
+                  value={form.title || title.title}
+               />
+            </Header>
+         </Wrapper>
+      )
    return (
       <Wrapper>
          <Header>
             <Input
                type="text"
-               label="Subscription Title"
                name="title"
-               value={form.title || title.title}
+               label="Subscription Title"
+               onBlur={e => saveTitle(e)}
                onChange={e => handleChange(e)}
+               value={form.title || title.title}
             />
          </Header>
          <Section>
