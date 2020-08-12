@@ -137,6 +137,7 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
          id
          price
          simpleRecipeYield {
+            id
             yield
          }
          type

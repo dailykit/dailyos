@@ -34,6 +34,10 @@ export const OptionTop = styled.div`
       object-fit: cover;
    }
 
+   small {
+      color: #888d9d;
+   }
+
    > div {
       display: grid;
       grid-template-row: repeat(2, 1fr);
@@ -44,4 +48,8 @@ export const OptionBottom = styled.div`
    display: grid;
    grid-gap: 16px;
    grid-template-columns: 80px repeat(3, 1fr);
+`
+
+export const ImageContainer = styled.div`
+   position: relative;
 `

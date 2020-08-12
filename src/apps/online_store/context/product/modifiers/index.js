@@ -141,9 +141,9 @@ export const reducers = (state, { type, payload }) => {
       }
       case 'EDIT_CATEGORY_OPTION': {
          const updatedCategories = state.modifier.categories
-         updatedCategories[state.meta.selectedCategoryIndex].options[
-            payload.optionIndex
-         ][payload.label] = payload.value
+         updatedCategories[
+            payload.index || state.meta.selectedCategoryIndex
+         ].options[payload.optionIndex][payload.label] = payload.value
          return {
             ...state,
             modifier: {

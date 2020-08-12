@@ -49,3 +49,7 @@ export const OptionBottom = styled.div`
    grid-gap: 16px;
    grid-template-columns: 80px repeat(3, 1fr);
 `
+
+export const ImageContainer = styled.div`
+   position: relative;
+`

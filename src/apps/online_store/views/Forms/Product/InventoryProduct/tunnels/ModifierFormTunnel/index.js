@@ -16,6 +16,7 @@ import {
    OptionTop,
    OptionBottom,
    Action,
+   ImageContainer,
 } from './styled'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
@@ -299,7 +300,24 @@ const ModifierFormTunnel = ({ open, close }) => {
                         </Action>
                         <OptionTop>
                            {option.image ? (
-                              <img src={option.image} alt="Option" />
+                              <ImageContainer>
+                                 <Action
+                                    onClick={() =>
+                                       modifiersDispatch({
+                                          type: 'EDIT_CATEGORY_OPTION',
+                                          payload: {
+                                             index,
+                                             optionIndex,
+                                             label: 'image',
+                                             value: '',
+                                          },
+                                       })
+                                    }
+                                 >
+                                    <DeleteIcon color="#FF5A52" />
+                                 </Action>
+                                 <img src={option.image} alt="Option" />
+                              </ImageContainer>
                            ) : (
                               <ButtonTile
                                  type="primary"
