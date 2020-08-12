@@ -169,6 +169,7 @@ export default function Item({ state }) {
       })
    }
    const editModifier = modifier => {
+      console.log(modifier)
       modifiersDispatch({
          type: 'POPULATE',
          payload: { modifier },

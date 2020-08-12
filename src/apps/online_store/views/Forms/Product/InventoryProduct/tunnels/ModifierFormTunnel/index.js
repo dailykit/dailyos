@@ -15,6 +15,7 @@ import {
    OptionWrapper,
    OptionTop,
    OptionBottom,
+   Action,
 } from './styled'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
@@ -22,6 +23,7 @@ import {
    UPDATE_MODIFIER,
    UPDATE_INVENTORY_PRODUCT_OPTION,
 } from '../../../../../../graphql'
+import { DeleteIcon } from '../../../../../../assets/icons'
 
 const ModifierFormTunnel = ({ open, close }) => {
    const {
@@ -139,6 +141,18 @@ const ModifierFormTunnel = ({ open, close }) => {
             />
             {modifier.categories.map((category, index) => (
                <CategoryWrapper>
+                  <Action
+                     onClick={() =>
+                        modifiersDispatch({
+                           type: 'DELETE_CATEGORY',
+                           payload: {
+                              index,
+                           },
+                        })
+                     }
+                  >
+                     <DeleteIcon color="#FF5A52" />
+                  </Action>
                   <Input
                      type="text"
                      label="Category Name"
@@ -213,6 +227,19 @@ const ModifierFormTunnel = ({ open, close }) => {
                   <Text as="subtitle">Options</Text>
                   {category.options.map((option, optionIndex) => (
                      <OptionWrapper>
+                        <Action
+                           onClick={() =>
+                              modifiersDispatch({
+                                 type: 'DELETE_CATEGORY_OPTION',
+                                 payload: {
+                                    index,
+                                    optionIndex,
+                                 },
+                              })
+                           }
+                        >
+                           <DeleteIcon color="#FF5A52" />
+                        </Action>
                         <OptionTop>
                            {option.image ? (
                               <img src={option.image} alt="Option" />

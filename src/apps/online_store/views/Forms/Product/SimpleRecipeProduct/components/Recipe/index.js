@@ -160,6 +160,7 @@ export default function Recipe({ state }) {
       })
    }
    const editModifier = modifier => {
+      console.log(modifier)
       modifiersDispatch({
          type: 'POPULATE',
          payload: { modifier },

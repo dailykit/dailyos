@@ -4,12 +4,22 @@ export const CategoryWrapper = styled.div`
    margin: 16px;
    box-shadow: 0px 0px 5px 1px #ececec;
    padding: 16px;
+   position: relative;
 `
 
 export const OptionWrapper = styled.div`
    margin: 8px;
    border: 1px solid #ececec;
    padding: 8px;
+   position: relative;
+`
+
+export const Action = styled.div`
+   position: absolute;
+   top: 4px;
+   right: 4px;
+   cursor: pointer;
+   z-index: 10;
 `
 
 export const OptionTop = styled.div`
