@@ -158,6 +158,13 @@ export default function Recipe({ state }) {
          },
       })
    }
+   const editModifier = modifier => {
+      modifiersDispatch({
+         type: 'POPULATE',
+         payload: { modifier },
+      })
+      openModifiersTunnel(2)
+   }
 
    return (
       <>
@@ -320,7 +327,20 @@ export default function Recipe({ state }) {
                                              {option.modifier?.name ? (
                                                 <Modifier>
                                                    <span>
-                                                      <span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                      >
                                                          <EditIcon
                                                             color="#00A7E1"
                                                             size={14}
@@ -439,7 +459,20 @@ export default function Recipe({ state }) {
                                              {option.modifier?.name ? (
                                                 <Modifier>
                                                    <span>
-                                                      <span>
+                                                      <span
+                                                         tabIndex="0"
+                                                         role="button"
+                                                         onKeyPress={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                         onClick={() =>
+                                                            editModifier(
+                                                               option.modifier
+                                                            )
+                                                         }
+                                                      >
                                                          <EditIcon
                                                             color="#00A7E1"
                                                             size={14}

@@ -20,6 +20,7 @@ import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
    CREATE_MODIFIER,
    UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+   UPDATE_MODIFIER,
 } from '../../../../../../graphql'
 
 const ModifierFormTunnel = ({ open, close }) => {
@@ -37,11 +38,24 @@ const ModifierFormTunnel = ({ open, close }) => {
 
    // Mutations
    const [createModifier] = useMutation(CREATE_MODIFIER)
+   const [updateModifier] = useMutation(UPDATE_MODIFIER, {
+      onCompleted: () => {
+         toast.success('Modifier updated!')
+         modifiersDispatch({ type: 'RESET' })
+         close(2)
+         close(1)
+      },
+      onError: error => {
+         toast.error('Error')
+         console.log(error)
+      },
+   })
    const [updateSimpleRecipeProductOption] = useMutation(
       UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
       {
          onCompleted: () => {
             toast.success('Modifier added to option!')
+            modifiersDispatch({ type: 'RESET' })
             close(2)
             close(1)
          },
@@ -57,7 +71,17 @@ const ModifierFormTunnel = ({ open, close }) => {
          if (saving) return
          setSaving(true)
          if (modifier.id) {
-            // update
+            updateModifier({
+               variables: {
+                  id: modifier.id,
+                  set: {
+                     name: modifier.name,
+                     data: {
+                        categories: modifier.categories,
+                     },
+                  },
+               },
+            })
          } else {
             const { data } = await createModifier({
                variables: {

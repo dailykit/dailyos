@@ -149,10 +149,10 @@ export const Modifier = styled.span`
       justify-content: center;
       position: absolute;
       top: 0;
-      left: -100px;
+      left: -200px;
       width: 100%;
       background: #fff;
-      transform: 0.2s ease-all;
+      transition: 0.2s ease left;
 
       svg {
          cursor: pointer;

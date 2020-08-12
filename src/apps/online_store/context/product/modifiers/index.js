@@ -135,6 +135,16 @@ export const reducers = (state, { type, payload }) => {
             },
          }
       }
+      case 'POPULATE': {
+         return {
+            ...state,
+            modifier: {
+               id: payload.modifier.id,
+               name: payload.modifier.name,
+               categories: payload.modifier.data.categories,
+            },
+         }
+      }
       case 'RESET': {
          return {
             ...state,

@@ -443,3 +443,11 @@ export const CREATE_MODIFIER = gql`
       }
    }
 `
+
+export const UPDATE_MODIFIER = gql`
+   mutation UpdateModifier($id: Int!, $set: onlineStore_modifier_set_input) {
+      updateModifier(pk_columns: { id: $id }, _set: $set) {
+         id
+      }
+   }
+`

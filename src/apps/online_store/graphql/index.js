@@ -50,6 +50,7 @@ import {
    DELETE_MILE_RANGE,
    DELETE_CHARGE,
    CREATE_MODIFIER,
+   UPDATE_MODIFIER,
 } from './mutations'
 
 import {
@@ -142,4 +143,5 @@ export {
    DELETE_CHARGE,
    CREATE_MODIFIER,
    MODIFIERS,
+   UPDATE_MODIFIER,
 }
