@@ -34,6 +34,10 @@ export const OptionTop = styled.div`
       object-fit: cover;
    }
 
+   small {
+      color: #888d9d;
+   }
+
    > div {
       display: grid;
       grid-template-row: repeat(2, 1fr);

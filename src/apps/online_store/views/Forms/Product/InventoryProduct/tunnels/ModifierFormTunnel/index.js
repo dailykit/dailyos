@@ -325,8 +325,27 @@ const ModifierFormTunnel = ({ open, close }) => {
                               />
                            )}
                            <div>
-                              <Flex>
-                                 <Text as="p">{option.name}</Text>
+                              <Flex style={{ marginBottom: '12px' }}>
+                                 <div>
+                                    <Input
+                                       type="text"
+                                       label="Name"
+                                       name={`name-${optionIndex}`}
+                                       value={option.name}
+                                       onChange={e =>
+                                          modifiersDispatch({
+                                             type: 'EDIT_CATEGORY_OPTION',
+                                             payload: {
+                                                value: e.target.value,
+                                                index,
+                                                optionIndex,
+                                                label: 'name',
+                                             },
+                                          })
+                                       }
+                                    />
+                                    <small>{option.originalName}</small>
+                                 </div>
                                  {['supplierItem', 'sachetItem'].includes(
                                     option.productType
                                  ) && (

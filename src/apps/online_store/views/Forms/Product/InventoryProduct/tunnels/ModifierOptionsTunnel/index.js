@@ -150,6 +150,7 @@ const ModifierOptionsTunnel = ({ close }) => {
                productId: option.id,
                productType: modifiersState.meta.modifierProductType,
                name: option.title,
+               originalName: option.title,
                image:
                   option.inventoryProduct?.assets?.images[0] ||
                   option.simpleRecipeProduct?.assets?.images[0] ||
