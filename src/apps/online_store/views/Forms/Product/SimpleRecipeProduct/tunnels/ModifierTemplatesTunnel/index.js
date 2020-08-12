@@ -72,7 +72,7 @@ const ModifierTemplatesTunnel = ({ close }) => {
    return (
       <>
          <TunnelHeader
-            title="Choose Option"
+            title="Choose Modifier Template"
             close={() => close(6)}
             right={{ action: save, title: saving ? 'Saving...' : 'Save' }}
          />

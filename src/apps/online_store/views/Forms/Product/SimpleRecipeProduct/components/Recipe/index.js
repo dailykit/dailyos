@@ -44,6 +44,7 @@ import {
    ModifierFormTunnel,
    ModifierOptionsTunnel,
    ModifierTemplatesTunnel,
+   ModifierPhotoTunnel,
 } from '../../tunnels'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
@@ -204,7 +205,7 @@ export default function Recipe({ state }) {
                <ModifierOptionsTunnel close={closeModifiersTunnel} />
             </Tunnel>
             <Tunnel layer={5}>
-               <ModifierOptionsTunnel close={closeModifiersTunnel} />
+               <ModifierPhotoTunnel close={closeModifiersTunnel} />
             </Tunnel>
             <Tunnel layer={6}>
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />

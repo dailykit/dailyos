@@ -11,6 +11,7 @@ import ModifierModeTunnel from './ModifierModeTunnel'
 import ModifierOptionsTunnel from './ModifierOptionsTunnel'
 import ModifierTypeTunnel from './ModifierTypeTunnel'
 import ModifierTemplatesTunnel from './ModifierTemplatesTunnel'
+import ModifierPhotoTunnel from './ModifierPhotoTunnel'
 
 export {
    ItemTunnel,
@@ -26,4 +27,5 @@ export {
    ModifierTemplatesTunnel,
    ModifierOptionsTunnel,
    ModifierModeTunnel,
+   ModifierPhotoTunnel,
 }

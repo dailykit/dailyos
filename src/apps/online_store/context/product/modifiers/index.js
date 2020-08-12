@@ -7,6 +7,7 @@ export const state = {
       optionId: undefined,
       modifierProductType: 'inventoryProduct',
       selectedCategoryIndex: 0,
+      selectedOptionIndex: 0,
    },
    modifier: {
       id: undefined,

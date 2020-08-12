@@ -174,7 +174,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                   {category.type === 'multiple' && (
                      <>
                         <Text as="subtitle">Limits</Text>
-                        <Grid>
+                        <Grid style={{ margin: '8px auto' }}>
                            <Input
                               type="number"
                               label="Min"
@@ -214,7 +214,32 @@ const ModifierFormTunnel = ({ open, close }) => {
                   {category.options.map((option, optionIndex) => (
                      <OptionWrapper>
                         <OptionTop>
-                           <img src={option.image} alt="Option" />
+                           {option.image ? (
+                              <img src={option.image} alt="Option" />
+                           ) : (
+                              <ButtonTile
+                                 type="primary"
+                                 size="sm"
+                                 text="Add Photo"
+                                 onClick={() => {
+                                    modifiersDispatch({
+                                       type: 'META',
+                                       payload: {
+                                          name: 'selectedOptionIndex',
+                                          value: optionIndex,
+                                       },
+                                    })
+                                    modifiersDispatch({
+                                       type: 'META',
+                                       payload: {
+                                          name: 'selectedCategoryIndex',
+                                          value: index,
+                                       },
+                                    })
+                                    open(5)
+                                 }}
+                              />
+                           )}
                            <div>
                               <Flex>
                                  <Text as="p">{option.name}</Text>
