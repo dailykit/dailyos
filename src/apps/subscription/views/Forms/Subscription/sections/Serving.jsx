@@ -28,6 +28,7 @@ import { InlineLoader } from '../../../../../../shared/components'
 
 const Serving = ({ id, isActive, openServingTunnel }) => {
    const { state, dispatch } = usePlan()
+   const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { loading, data: { serving = {} } = {} } = useSubscription(SERVING, {
       variables: { id },
@@ -76,7 +77,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
          </ServingHeader>
          <ItemCountsSection>
             {serving.counts.length > 0 ? (
-               <HorizontalTabs>
+               <HorizontalTabs onChange={index => setTabIndex(index)}>
                   <HorizontalTabList>
                      {serving.counts.map(({ id, count }) => (
                         <HorizontalTab key={id}>
@@ -85,9 +86,12 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                      ))}
                   </HorizontalTabList>
                   <HorizontalTabPanels>
-                     {serving.counts.map(({ id }) => (
+                     {serving.counts.map(({ id }, index) => (
                         <HorizontalTabPanel key={id}>
-                           <ItemCount id={id} />
+                           <ItemCount
+                              id={id}
+                              isActive={isActive && index === tabIndex}
+                           />
                         </HorizontalTabPanel>
                      ))}
                   </HorizontalTabPanels>

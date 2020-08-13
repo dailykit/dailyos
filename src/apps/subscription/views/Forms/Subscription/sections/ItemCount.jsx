@@ -11,17 +11,32 @@ import {
    SectionTabsListHeader,
 } from '@dailykit/ui'
 
+import { usePlan } from '../state'
 import DeliveryDay from './DeliveryDay'
 import { Spacer } from '../../../../styled'
 import { ITEM_COUNT } from '../../../../graphql'
 import { ItemCountHeader, ItemCountSection } from '../styled'
 import { InlineLoader } from '../../../../../../shared/components'
 
-const ItemCount = ({ id }) => {
+const ItemCount = ({ id, isActive }) => {
+   const { dispatch } = usePlan()
    const {
       loading,
       data: { itemCount = {} } = {},
    } = useSubscription(ITEM_COUNT, { variables: { id } })
+
+   React.useEffect(() => {
+      if (!loading && isActive) {
+         dispatch({
+            type: 'SET_ITEM',
+            payload: {
+               id: itemCount.id,
+               count: itemCount.count,
+               price: itemCount.price,
+            },
+         })
+      }
+   }, [loading, isActive])
 
    if (loading) return <InlineLoader />
    return (
