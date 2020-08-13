@@ -45,3 +45,21 @@ export const UPSERT_SUBSCRIPTION_SERVING = gql`
       }
    }
 `
+
+export const UPSERT_ITEM_COUNT = gql`
+   mutation upsertItemCount(
+      $object: subscription_subscriptionItemCount_insert_input!
+   ) {
+      upsertItemCount: insert_subscription_subscriptionItemCount_one(
+         object: $object
+         on_conflict: {
+            constraint: subscriptionItemCount_pkey
+            update_columns: [count, price]
+         }
+      ) {
+         id
+         count
+         price
+      }
+   }
+`

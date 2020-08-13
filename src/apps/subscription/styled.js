@@ -7,9 +7,10 @@ export const Spacer = styled.div(
 )
 
 export const Stack = styled.div(
-   ({ justify }) => css`
+   ({ px = 0, py = 0, justify = 'center' }) => css`
       display: flex;
       align-items: center;
+      padding: ${py} ${px};
       justify-content: ${justify};
    `
 )

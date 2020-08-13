@@ -15,6 +15,7 @@ import {
    useTunnel,
    IconButton,
    SectionTab,
+   ComboButton,
    SectionTabs,
    TunnelHeader,
    SectionTabList,
@@ -37,6 +38,7 @@ import {
    TITLE,
    SERVING,
    ITEM_COUNT,
+   UPSERT_ITEM_COUNT,
    SUBSCRIPTION_ZIPCODES,
    SUBSCRIPTION_CUSTOMERS,
    UPSERT_SUBSCRIPTION_TITLE,
@@ -66,6 +68,7 @@ export const Subscription = () => {
 const Title = () => {
    const params = useParams()
    const { dispatch } = usePlan()
+   const [tabIndex, setTabIndex] = React.useState(0)
    const { tab, tabs, addTab, setTabTitle } = useTabs()
    const [form, setForm] = React.useState({ title: '' })
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -152,7 +155,7 @@ const Title = () => {
             />
          </Header>
          <Section>
-            <SectionTabs>
+            <SectionTabs onChange={index => setTabIndex(index)}>
                <SectionTabList>
                   <SectionTabsListHeader>
                      <Text as="title">Servings</Text>
@@ -167,9 +170,13 @@ const Title = () => {
                   ))}
                </SectionTabList>
                <SectionTabPanels>
-                  {title?.servings.map(serving => (
+                  {title?.servings.map((serving, index) => (
                      <SectionTabPanel key={serving.id}>
-                        <Serving id={serving.id} openTunnel={openTunnel} />
+                        <Serving
+                           id={serving.id}
+                           openServingTunnel={openTunnel}
+                           isActive={tabIndex === index}
+                        />
                      </SectionTabPanel>
                   ))}
                </SectionTabPanels>
@@ -180,14 +187,28 @@ const Title = () => {
    )
 }
 
-const Serving = ({ id, openTunnel }) => {
+const Serving = ({ id, isActive, openServingTunnel }) => {
    const { state, dispatch } = usePlan()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { loading, data: { serving = {} } = {} } = useSubscription(SERVING, {
       variables: { id },
    })
 
+   React.useEffect(() => {
+      if (!loading && isActive) {
+         dispatch({
+            type: 'SET_SERVING',
+            payload: {
+               id: serving.id,
+               size: serving.size,
+               isDefault: state.title.defaultServing.id === serving.id,
+            },
+         })
+      }
+   }, [loading, isActive])
+
    const editServing = () => {
-      openTunnel(1)
+      openServingTunnel(1)
       dispatch({
          type: 'SET_SERVING',
          payload: {
@@ -215,23 +236,33 @@ const Serving = ({ id, openTunnel }) => {
             </IconButton>
          </ServingHeader>
          <ItemCountsSection>
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  {serving.counts.map(({ id, count }) => (
-                     <HorizontalTab key={id}>
-                        <Text as="title">{count}</Text>
-                     </HorizontalTab>
-                  ))}
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  {serving.counts.map(({ id }) => (
-                     <HorizontalTabPanel key={id}>
-                        <ItemCount id={id} />
-                     </HorizontalTabPanel>
-                  ))}
-               </HorizontalTabPanels>
-            </HorizontalTabs>
+            {serving.counts.length > 0 ? (
+               <HorizontalTabs>
+                  <HorizontalTabList>
+                     {serving.counts.map(({ id, count }) => (
+                        <HorizontalTab key={id}>
+                           <Text as="title">{count}</Text>
+                        </HorizontalTab>
+                     ))}
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     {serving.counts.map(({ id }) => (
+                        <HorizontalTabPanel key={id}>
+                           <ItemCount id={id} />
+                        </HorizontalTabPanel>
+                     ))}
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            ) : (
+               <Stack py="24px">
+                  <ComboButton type="outline" onClick={() => openTunnel(1)}>
+                     <PlusIcon />
+                     Add Item Count
+                  </ComboButton>
+               </Stack>
+            )}
          </ItemCountsSection>
+         <ItemCountTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
       </>
    )
 }
@@ -250,27 +281,31 @@ const ItemCount = ({ id }) => {
          </ItemCountHeader>
          <Spacer size="16px" />
          <ItemCountSection>
-            <SectionTabs>
-               <SectionTabList>
-                  <SectionTabsListHeader>
-                     <Text as="title">Delivery Days</Text>
-                  </SectionTabsListHeader>
-                  {itemCount?.subscriptions.map(subscription => (
-                     <SectionTab key={subscription.id}>
-                        <Text as="title">
-                           {RRule.fromString(subscription.rrule).toText()}
-                        </Text>
-                     </SectionTab>
-                  ))}
-               </SectionTabList>
-               <SectionTabPanels>
-                  {itemCount?.subscriptions.map(subscription => (
-                     <SectionTabPanel key={subscription.id}>
-                        <DeliveryDay id={subscription.id} />
-                     </SectionTabPanel>
-                  ))}
-               </SectionTabPanels>
-            </SectionTabs>
+            {itemCount?.subscriptions.length > 0 ? (
+               <SectionTabs>
+                  <SectionTabList>
+                     <SectionTabsListHeader>
+                        <Text as="title">Delivery Days</Text>
+                     </SectionTabsListHeader>
+                     {itemCount?.subscriptions.map(subscription => (
+                        <SectionTab key={subscription.id}>
+                           <Text as="title">
+                              {RRule.fromString(subscription.rrule).toText()}
+                           </Text>
+                        </SectionTab>
+                     ))}
+                  </SectionTabList>
+                  <SectionTabPanels>
+                     {itemCount?.subscriptions.map(subscription => (
+                        <SectionTabPanel key={subscription.id}>
+                           <DeliveryDay id={subscription.id} />
+                        </SectionTabPanel>
+                     ))}
+                  </SectionTabPanels>
+               </SectionTabs>
+            ) : (
+               'no occurences'
+            )}
          </ItemCountSection>
       </>
    )
@@ -471,7 +506,7 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                object: {
                   id: state.title.id,
                   title: state.title.title,
-                  defaultSubscriptionServingId: state.serving.selected.isDefault
+                  defaultSubscriptionServingId: state.serving.isDefault
                      ? id
                      : null,
                },
@@ -486,9 +521,9 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
          variables: {
             object: {
                subscriptionTitleId: state.title.id,
-               servingSize: Number(state.serving.selected.size),
-               ...(state.serving.selected.id && {
-                  id: state.serving.selected.id,
+               servingSize: Number(state.serving.size),
+               ...(state.serving.id && {
+                  id: state.serving.id,
                }),
             },
          },
@@ -497,10 +532,6 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
 
    const hideTunnel = () => {
       closeTunnel(1)
-      dispatch({
-         type: 'SET_SERVING',
-         payload: { size: null, isDefault: false },
-      })
    }
 
    return (
@@ -516,12 +547,11 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                   type="text"
                   name="serving"
                   label="Serving"
-                  value={state.serving.selected.size}
+                  value={state.serving.size}
                   onChange={e =>
                      dispatch({
                         type: 'SET_SERVING',
                         payload: {
-                           ...state.serving.selected,
                            size: e.target.value,
                         },
                      })
@@ -530,13 +560,77 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                <Spacer size="16px" />
                <Toggle
                   label="Make Default"
-                  checked={state.serving.selected.isDefault}
+                  checked={state.serving.isDefault}
                   setChecked={value =>
                      dispatch({
                         type: 'SET_SERVING',
                         payload: {
-                           ...state.serving.selected,
                            isDefault: value,
+                        },
+                     })
+                  }
+               />
+            </main>
+         </Tunnel>
+      </Tunnels>
+   )
+}
+
+const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
+   const { state, dispatch } = usePlan()
+   const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
+      onCompleted: () => {
+         closeTunnel(1)
+      },
+   })
+
+   const save = () => {
+      upsertItemCount({
+         variables: {
+            object: {
+               count: Number(state.item.count),
+               price: Number(state.item.price),
+               subscriptionServingId: state.serving.id,
+               ...(state.item.id && { id: state.item.id }),
+            },
+         },
+      })
+   }
+
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel layer="1">
+            <TunnelHeader
+               title="Add Item Count"
+               close={() => closeTunnel(1)}
+               right={{ action: () => save(), title: 'Save' }}
+            />
+            <main style={{ padding: 16 }}>
+               <Input
+                  type="text"
+                  name="count"
+                  label="Count"
+                  value={state.item.count}
+                  onChange={e =>
+                     dispatch({
+                        type: 'SET_ITEM',
+                        payload: {
+                           count: e.target.value,
+                        },
+                     })
+                  }
+               />
+               <Spacer size="16px" />
+               <Input
+                  type="text"
+                  name="price"
+                  label="Price"
+                  value={state.item.price}
+                  onChange={e =>
+                     dispatch({
+                        type: 'SET_ITEM',
+                        payload: {
+                           price: e.target.value,
                         },
                      })
                   }

@@ -4,7 +4,8 @@ const PlanContext = React.createContext()
 
 const initialState = {
    title: { id: null, title: '', defaultServing: { id: null } },
-   serving: { selected: { size: '', isDefault: false } },
+   serving: { size: '', isDefault: false },
+   item: { count: '', price: '' },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -17,7 +18,12 @@ const reducers = (state, { type, payload }) => {
       case 'SET_SERVING':
          return {
             ...state,
-            serving: { selected: payload },
+            serving: { ...state.serving, ...payload },
+         }
+      case 'SET_ITEM':
+         return {
+            ...state,
+            item: { ...state.item, ...payload },
          }
       default:
          return state

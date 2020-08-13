@@ -9,11 +9,11 @@ import 'react-tabulator/lib/styles.css'
 import './tableStyle.css'
 
 const Subscription = () => (
-   // <AuthProvider>
-   <TabProvider>
-      <App />
-   </TabProvider>
-   // </AuthProvider>
+   <AuthProvider>
+      <TabProvider>
+         <App />
+      </TabProvider>
+   </AuthProvider>
 )
 
 export default Subscription
