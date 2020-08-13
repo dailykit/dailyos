@@ -19,7 +19,7 @@ export const Section = styled.section`
    height: calc(100vh - 128px);
 
    [data-reach-tab] {
-      height: 48px;
+      height: 56px;
       flex-shrink: 0;
       padding: 0 16px;
       text-align: left;
@@ -50,6 +50,7 @@ export const ServingHeader = styled.header`
    height: 48px;
    display: flex;
    align-items: center;
+   justify-content: space-between;
 `
 
 export const ItemCountHeader = styled.header`

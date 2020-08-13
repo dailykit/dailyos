@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import {
+   Tag,
    Input,
    Text,
    Tunnel,
@@ -27,9 +28,10 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { Spacer } from '../../../styled'
 import { useTabs } from '../../../context'
+import { Spacer, Stack } from '../../../styled'
 import tableOptions from '../../../tableOption'
+import { PlanProvider, usePlan } from './state'
 import { InlineLoader } from '../../../../../shared/components'
 import {
    TITLE,
@@ -51,7 +53,7 @@ import {
    ItemCountsSection,
    DeliveryDaySection,
 } from './styled'
-import { PlanProvider, usePlan } from './state'
+import { EditIcon } from '../../../../../shared/assets/icons'
 
 export const Subscription = () => {
    return (
@@ -76,6 +78,18 @@ const Title = () => {
       variables: {
          id: params.id,
       },
+      onSubscriptionData: ({
+         subscriptionData: { data: { title = {} } = {} },
+      }) => {
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               id: title.id,
+               title: title.title,
+               defaultServing: { id: title.defaultSubscriptionServingId },
+            },
+         })
+      },
    })
 
    React.useEffect(() => {
@@ -83,7 +97,11 @@ const Title = () => {
          addTab(title.title, `/subscription/subscriptions/${params.id}`)
          dispatch({
             type: 'SET_TITLE',
-            payload: { id: title.id, title: title.title },
+            payload: {
+               id: title.id,
+               title: title.title,
+               defaultServing: { id: title.defaultSubscriptionServingId },
+            },
          })
       }
    }, [tabs, loading])
@@ -151,27 +169,50 @@ const Title = () => {
                <SectionTabPanels>
                   {title?.servings.map(serving => (
                      <SectionTabPanel key={serving.id}>
-                        <Serving id={serving.id} />
+                        <Serving id={serving.id} openTunnel={openTunnel} />
                      </SectionTabPanel>
                   ))}
                </SectionTabPanels>
             </SectionTabs>
          </Section>
-         <CreateServingTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+         <ServingTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
       </Wrapper>
    )
 }
 
-const Serving = ({ id }) => {
+const Serving = ({ id, openTunnel }) => {
+   const { state, dispatch } = usePlan()
    const { loading, data: { serving = {} } = {} } = useSubscription(SERVING, {
       variables: { id },
    })
+
+   const editServing = () => {
+      openTunnel(1)
+      dispatch({
+         type: 'SET_SERVING',
+         payload: {
+            id: serving.id,
+            size: serving.size,
+            isDefault: state.title.defaultServing.id === serving.id,
+         },
+      })
+   }
 
    if (loading) return <InlineLoader />
    return (
       <>
          <ServingHeader>
-            <Text as="title">Serving: {serving.size}</Text>
+            <Stack xAxis>
+               <Text as="title">Serving: {serving.size}</Text>
+               <Spacer size="14px" xAxis />
+               {serving.id === state.title.defaultServing.id && (
+                  <Tag>Default</Tag>
+               )}
+            </Stack>
+
+            <IconButton type="outline" onClick={() => editServing()}>
+               <EditIcon />
+            </IconButton>
          </ServingHeader>
          <ItemCountsSection>
             <HorizontalTabs>
@@ -183,7 +224,7 @@ const Serving = ({ id }) => {
                   ))}
                </HorizontalTabList>
                <HorizontalTabPanels>
-                  {serving.counts.map(({ id, ...rest }) => (
+                  {serving.counts.map(({ id }) => (
                      <HorizontalTabPanel key={id}>
                         <ItemCount id={id} />
                      </HorizontalTabPanel>
@@ -419,26 +460,24 @@ const CustomerName = ({ cell: { _cell } }) => {
    )
 }
 
-const CreateServingTunnel = ({ tunnels, closeTunnel }) => {
-   const { state } = usePlan()
-   const [serving, setServing] = React.useState('')
-   const [isDefault, setIsDefault] = React.useState(false)
+const ServingTunnel = ({ tunnels, closeTunnel }) => {
+   const { state, dispatch } = usePlan()
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING, {
       onCompleted: ({ upsertSubscriptionServing = {} }) => {
-         closeTunnel(1)
-         if (isDefault) {
-            const { id } = upsertSubscriptionServing
-            upsertTitle({
-               variables: {
-                  object: {
-                     id: state.title.id,
-                     title: state.title.title,
-                     defaultSubscriptionServingId: id,
-                  },
+         const { id } = upsertSubscriptionServing
+         upsertTitle({
+            variables: {
+               object: {
+                  id: state.title.id,
+                  title: state.title.title,
+                  defaultSubscriptionServingId: state.serving.selected.isDefault
+                     ? id
+                     : null,
                },
-            })
-         }
+            },
+         })
+         hideTunnel()
       },
    })
 
@@ -446,10 +485,21 @@ const CreateServingTunnel = ({ tunnels, closeTunnel }) => {
       upsertServing({
          variables: {
             object: {
-               servingSize: Number(serving),
                subscriptionTitleId: state.title.id,
+               servingSize: Number(state.serving.selected.size),
+               ...(state.serving.selected.id && {
+                  id: state.serving.selected.id,
+               }),
             },
          },
+      })
+   }
+
+   const hideTunnel = () => {
+      closeTunnel(1)
+      dispatch({
+         type: 'SET_SERVING',
+         payload: { size: null, isDefault: false },
       })
    }
 
@@ -458,22 +508,38 @@ const CreateServingTunnel = ({ tunnels, closeTunnel }) => {
          <Tunnel layer={1}>
             <TunnelHeader
                title="Add Serving"
-               close={() => closeTunnel(1)}
+               close={() => hideTunnel()}
                right={{ action: () => createServing(), title: 'Save' }}
             />
             <main style={{ padding: 16 }}>
                <Input
                   type="text"
-                  label="Serving"
                   name="serving"
-                  value={serving}
-                  onChange={e => setServing(e.target.value)}
+                  label="Serving"
+                  value={state.serving.selected.size}
+                  onChange={e =>
+                     dispatch({
+                        type: 'SET_SERVING',
+                        payload: {
+                           ...state.serving.selected,
+                           size: e.target.value,
+                        },
+                     })
+                  }
                />
                <Spacer size="16px" />
                <Toggle
-                  checked={isDefault}
                   label="Make Default"
-                  setChecked={setIsDefault}
+                  checked={state.serving.selected.isDefault}
+                  setChecked={value =>
+                     dispatch({
+                        type: 'SET_SERVING',
+                        payload: {
+                           ...state.serving.selected,
+                           isDefault: value,
+                        },
+                     })
+                  }
                />
             </main>
          </Tunnel>
