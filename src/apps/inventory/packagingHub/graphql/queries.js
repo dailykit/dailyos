@@ -203,9 +203,11 @@ export const CART_ITEMS_FOR_REGISTERING = gql`
                where: { quantity: { _is_null: false } }
                limit: 1
             ) {
+               id
                quantity
             }
             packagingSpecification {
+               id
                innerWaterResistant
                outerWaterResistant
                recyclable
@@ -215,6 +217,7 @@ export const CART_ITEMS_FOR_REGISTERING = gql`
                outerGreaseResistant
 
                packagingMaterial {
+                  id
                   materials
                }
             }

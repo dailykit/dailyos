@@ -81,7 +81,7 @@ export default function FormView({ state }) {
                                  updatePackaging({
                                     variables: {
                                        id: state.id,
-                                       object: { packagingName: itemName },
+                                       object: { name: itemName },
                                     },
                                  })
                            }}

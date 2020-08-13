@@ -34,7 +34,7 @@ export const PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION = gql`
    subscription Packagings {
       packagings {
          id
-         name: packagingName
+         name
 
          supplier {
             id
@@ -163,7 +163,7 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
          }
          status
          packaging {
-            packagingName
+            packagingName: name
          }
       }
    }
@@ -209,7 +209,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packaging($id: Int!) {
       packaging(id: $id) {
          id
-         packagingName
+         packagingName: name
          packagingSku
 
          images: assets(path: "images")
@@ -244,7 +244,7 @@ export const PACKAGINGS_SUBSCRIPTION = gql`
    subscription Packagings {
       packagings {
          id
-         name: packagingName
+         name
          unitPrice
          dimensions
          sku
@@ -502,7 +502,7 @@ export const PACKAGING_PURCHASE_ORDER_SUBSCRIPTION = gql`
          id
          packaging {
             id
-            packagingName
+            packagingName: name
             onHand
          }
          status
@@ -516,7 +516,7 @@ export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
    subscription PackagingsListings {
       packagings {
          id
-         packagingName
+         packagingName: name
          supplier {
             name
          }
