@@ -5,6 +5,7 @@ import {
    ORDERS_LISTING,
    ORDER,
    ALL_DATA,
+   STATUS,
 } from './queries'
 
 export {
@@ -15,4 +16,5 @@ export {
    ORDERS_LISTING,
    ORDER,
    ALL_DATA,
+   STATUS,
 }

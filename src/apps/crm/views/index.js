@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import Home from './Home'
 import { CustomerListing, ReferralPlansListing } from './Listings'
 import { customerRelation } from './Forms'

@@ -1,17 +1,16 @@
-/* eslint-disable react/jsx-fragments */
 import React from 'react'
-import { Text, Avatar } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { Text, Avatar, useTunnel } from '@dailykit/ui'
+import { ReactTabulator } from 'react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
 import { useTabs } from '../../../../context'
 import { Capitalize } from '../../../Forms/Utils'
+import { PaymentCard } from '../../../../components'
+import { ChevronRight } from '../../../../../../shared/assets/icons'
 import {
-   CustomerCard,
-   ContactInfoCard,
-   PaymentCard,
-   StyledCard,
-} from '../../../../components'
+   OrderStatusTunnel,
+   PaymentStatusTunnel,
+} from '../../../Forms/CustomerRelation/Tunnel'
 import {
    StyledWrapper,
    StyledContainer,
@@ -19,45 +18,35 @@ import {
    StyledMainBar,
    StyledTable,
    StyledDiv,
+   StyledSpan,
    SideCard,
    StyledInput,
+   SmallText,
    Card,
    CardInfo,
+   Heading,
 } from './styled'
 
-import { ChevronRight } from '../../../../../../shared/assets/icons'
-
-const OrderInfo = props => {
-   const { addTab, dispatch, tab } = useTabs()
+const OrderInfo = () => {
+   const { dispatch, tab } = useTabs()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const { data: orderData } = useQuery(ORDER, {
       variables: {
-         orderId: tab.data.orderId,
+         orderId: tab.data.oid,
       },
    })
 
-   const setOrderId = orderId => {
+   const setOrder = (orderId, order) => {
       dispatch({
          type: 'STORE_TAB_DATA',
          payload: {
             path: tab.path,
-            data: { orderId },
+            data: { oid: orderId, isOrderClicked: order },
          },
       })
    }
 
-   const setOrder = order => {
-      dispatch({
-         type: 'STORE_TAB_DATA',
-         payload: {
-            path: tab.path,
-            data: { isOrderClicked: order },
-         },
-      })
-   }
-   const setData = () => {
-      setOrder(false)
-      setOrderId('')
-   }
    const columns = [
       { title: 'Products', field: 'products' },
       { title: 'Servings', field: 'servings' },
@@ -76,17 +65,12 @@ const OrderInfo = props => {
          })
       })
    }
-   //    const rowClick = (e, row) => {
-   //       const { id, name } = row._row.data
 
-   //       const param = '/crm/customers/'.concat(name)
-   //       addTab(name, param)
-   //    }
    let deliveryPartner = null
    let deliveryAgent = null
    if (orderData?.order?.deliveryService !== null) {
       deliveryPartner = (
-         <React.Fragment>
+         <>
             <Text as="subtitle">Delivery Partner: </Text>
             <Card>
                <Avatar
@@ -98,12 +82,12 @@ const OrderInfo = props => {
                   url={orderData?.order?.deliveryService?.logo || ''}
                />
             </Card>
-         </React.Fragment>
+         </>
       )
    }
    if (orderData?.order?.driverInfo !== null) {
       deliveryAgent = (
-         <React.Fragment>
+         <>
             <Text as="subtitle">Delivery Assign To:</Text>
             <Card>
                <Avatar
@@ -121,7 +105,7 @@ const OrderInfo = props => {
                   </Text>
                </CardInfo>
             </Card>
-         </React.Fragment>
+         </>
       )
    }
 
@@ -136,47 +120,40 @@ const OrderInfo = props => {
 
    return (
       <StyledWrapper>
-         <span style={{ margin: '16px', boxSizing: 'border-box' }}>
-            <StyledInput type="button" onClick={setData} value="Orders" />
-            <ChevronRight size="20" />
-            Order Id: #{tab.data.orderId}
-         </span>
-         <Text as="h1">Order Id: #{tab.data.orderId}</Text>
+         <Heading>
+            <StyledContainer
+               style={{ margin: '16px', boxSizing: 'border-box' }}
+            >
+               <StyledInput
+                  type="button"
+                  onClick={() => setOrder('', false)}
+                  value="Orders"
+               />
+               <ChevronRight size="20" />
+               <Text as="p">Order Id: #{tab.data.oid}</Text>
+            </StyledContainer>
+            <SmallText onClick={() => openTunnel(1)}>
+               Check Order Status
+            </SmallText>
+         </Heading>
+         <Text as="h1">Order Id: #{tab.data.oid}</Text>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
-                  <div
-                     style={{
-                        padding: '0 30px 16px 30px',
-                        borderRight: '1px solid #ececec',
-                     }}
-                  >
+                  <StyledSpan>
                      Ordered on:{' '}
                      {orderData?.order?.created_at.substr(0, 16) || 'N/A'}
-                  </div>
-                  <div
-                     style={{
-                        padding: '0 30px 16px 30px',
-                        borderRight: '1px solid #ececec',
-                     }}
-                  >
-                     Deliverd on: N/A
-                  </div>
-                  <div
-                     style={{
-                        padding: '0 30px 16px 30px',
-                     }}
-                  >
-                     Channel:RMK
-                  </div>
+                  </StyledSpan>
+                  <StyledSpan>Deliverd on: N/A</StyledSpan>
+                  <StyledSpan>
+                     Channel:
+                     {Capitalize(
+                        orderData?.order?.channel?.cartSource || 'N/A'
+                     )}
+                  </StyledSpan>
                </StyledDiv>
                <StyledTable>
-                  <ReactTabulator
-                     columns={columns}
-                     data={data}
-                     // rowClick={rowClick}
-                     // options={tableOptions}
-                  />
+                  <ReactTabulator columns={columns} data={data} />
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">
@@ -208,10 +185,22 @@ const OrderInfo = props => {
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"
                   defaultTag="(Used for this order)"
+                  onClick={() => openTunnel1(1)}
+                  smallText="Check Payment Status"
                />
                {deliveryInfoCard}
             </StyledSideBar>
          </StyledContainer>
+         <OrderStatusTunnel
+            tunnels={tunnels}
+            openTunnel={openTunnel}
+            closeTunnel={closeTunnel}
+         />
+         <PaymentStatusTunnel
+            tunnels={tunnels1}
+            openTunnel={openTunnel1}
+            closeTunnel={closeTunnel1}
+         />
       </StyledWrapper>
    )
 }

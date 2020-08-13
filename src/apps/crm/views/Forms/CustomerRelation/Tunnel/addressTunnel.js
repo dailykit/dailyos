@@ -28,7 +28,7 @@ const AddressTunnel = props => {
                {allAddress?.customer?.platform_customers[0]?.customerAddresses?.map(
                   address => {
                      return (
-                        <CustomerAddress>
+                        <CustomerAddress key={address.id}>
                            <Text as="subtitle">Delivery Address</Text>
                            <Text as="title">{ConcatAddress(address)}</Text>
                         </CustomerAddress>

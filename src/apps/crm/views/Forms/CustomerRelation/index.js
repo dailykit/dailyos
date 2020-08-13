@@ -1,13 +1,10 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable import/no-cycle */
-/* eslint-disable import/imports-first */
-/* eslint-disable import/order */
-import React, { useState, useEffect } from 'react'
-import { Text, Loader, useTunnel } from '@dailykit/ui'
-import { useTabs } from '../../../context'
-import { useQuery } from '@apollo/react-hooks'
-import { CUSTOMER_DATA } from '../../../graphql'
+import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useQuery } from '@apollo/react-hooks'
+import { Loader, useTunnel } from '@dailykit/ui'
+import { useTabs } from '../../../context'
+import { CUSTOMER_DATA } from '../../../graphql'
+import { OrdersTable, ReferralTable, WalletTable } from '../../index'
 import {
    StyledWrapper,
    StyledContainer,
@@ -21,12 +18,9 @@ import {
    PaymentCard,
    StyledCard,
 } from '../../../components'
-// import { reactFormatter, ReactTabulator } from 'react-tabulator'
-import { OrdersTable, ReferralTable, WalletTable } from '../../index'
-import { Capitalize } from '../Utils'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
 
-const CustomerRelation = props => {
+const CustomerRelation = ({ match }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const { addTab, dispatch, tab } = useTabs()
@@ -36,7 +30,7 @@ const CustomerRelation = props => {
       CUSTOMER_DATA,
       {
          variables: {
-            keycloakId: props.match.params.id,
+            keycloakId: match.params.id,
          },
       }
    )
@@ -45,8 +39,6 @@ const CustomerRelation = props => {
          history.push('/crm/customers')
       }
    }, [history, tab])
-
-   console.log(tab)
 
    const setActiveCard = card => {
       dispatch({
@@ -64,7 +56,7 @@ const CustomerRelation = props => {
 
    let table = null
    if (tab?.data?.activeCard === 'Orders') {
-      table = <OrdersTable id={props.match.params.id} />
+      table = <OrdersTable id={match.params.id} />
    } else if (tab?.data?.activeCard === 'Referrals') {
       table = <ReferralTable />
    } else if (tab?.data?.activeCard === 'Wallet') {
@@ -77,16 +69,8 @@ const CustomerRelation = props => {
             <StyledSideBar>
                {/* <StyledDiv> */}
                <CustomerCard
-                  CustomerName={`${
-                     customerData?.customer?.platform_customer?.firstName || ''
-                  } ${
-                     customerData?.customer?.platform_customer?.lastName ||
-                     'N/A'
-                  }`}
-                  CustomerInfo={`Source: ${
-                     Capitalize(customerData?.customer?.source) || ''
-                  }`}
-                  WalletAmount="N/A"
+                  customer={customerData?.customer}
+                  walletAmount="N/A"
                />
                <ContactInfoCard
                   defaultTag2="(Default)"
@@ -139,13 +123,13 @@ const CustomerRelation = props => {
             tunnels={tunnels}
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
-            id={props.match.params.id}
+            id={match.params.id}
          />
          <AddressTunnel
             tunnels={tunnels1}
             openTunnel={openTunnel1}
             closeTunnel={closeTunnel1}
-            id={props.match.params.id}
+            id={match.params.id}
          />
       </StyledWrapper>
    )

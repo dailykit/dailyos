@@ -1,10 +1,7 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-console */
 import React from 'react'
 import { Text, ButtonGroup, IconButton, PlusIcon, Loader } from '@dailykit/ui'
-import { useHistory } from 'react-router-dom'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from 'react-tabulator'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'

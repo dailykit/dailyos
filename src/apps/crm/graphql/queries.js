@@ -89,7 +89,9 @@ export const ORDER = gql`
          id
          itemTotal
          discount
-
+         channel: orderCart {
+            cartSource
+         }
          amountPaid
          created_at
          orderCart {
@@ -117,6 +119,7 @@ export const ALL_DATA = gql`
       customer(keycloakId: $keycloakId) {
          platform_customers {
             customerAddresses {
+               id
                line1
                line2
                city
@@ -125,11 +128,25 @@ export const ALL_DATA = gql`
                country
             }
             stripePaymentMethods {
+               stripePaymentMethodId
                brand
                last4
                expMonth
                expYear
             }
+         }
+      }
+   }
+`
+export const STATUS = gql`
+   query STATUS($oid: oid!) {
+      order(id: $oid) {
+         id
+         orderStatus
+         transactionId
+         paymentStatus
+         orderCart {
+            transactionRemark
          }
       }
    }

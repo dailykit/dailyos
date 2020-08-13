@@ -5,15 +5,15 @@ import { ALL_DATA } from '../../../../graphql'
 import { PaymentCard } from '../../../../components'
 import { TunnelHeaderContainer } from './styled'
 
-const TunnelVision = props => {
+const TunnelVision = ({ id, tunnels, closeTunnel }) => {
    const { loading: listLoading, data: allCards } = useQuery(ALL_DATA, {
       variables: {
-         keycloakId: props.id,
+         keycloakId: id,
       },
    })
    if (listLoading) return <Loader />
    return (
-      <Tunnels tunnels={props.tunnels}>
+      <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
             <TunnelHeader
                title={`Payment Cards(${
@@ -21,13 +21,14 @@ const TunnelVision = props => {
                      ?.stripePaymentMethods?.length || 'N/A'
                })`}
                //   right={{ action: () => openTunnel(2), title: 'Next' }}
-               close={() => props.closeTunnel(1)}
+               close={() => closeTunnel(1)}
             />
             <TunnelHeaderContainer>
                {allCards?.customer?.platform_customers[0]?.stripePaymentMethods?.map(
                   card => {
                      return (
                         <PaymentCard
+                           key={card.stripePaymentMethodId}
                            cardData={card}
                            billingAddDisplay="none"
                            margin="16px 80px"

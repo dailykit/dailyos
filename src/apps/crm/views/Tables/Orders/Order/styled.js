@@ -13,9 +13,8 @@ export const StyledDiv = styled.div`
    grid-template-columns: 1fr 1fr 1fr;
 `
 export const StyledTable = styled.div`
-   //    padding: 0 32px 20em 32px;paddingpaddingpadding
-   background: #ffffff;backgroundbackground
-   width: 97%;width
+   background: #ffffff;
+   width: 97%;
    border-top: 1px solid #ececec;
 `
 export const StyledSideBar = styled.div`
@@ -33,7 +32,6 @@ export const SideCard = styled.div`
    border: 1px solid #ececec;
    box-sizing: border-box;
    padding: 16px;
-   //    margin: 0 32px 16px 0;marginmarginmargin
 `
 export const Card = styled.div`
    padding: 16px;
@@ -52,4 +50,20 @@ export const StyledInput = styled.input`
    border: none;
    background: none;
    font-size: inherit;
+`
+export const StyledSpan = styled.span`
+   padding: 0 30px 16px 30px;
+   border-right: 1px solid #ececec;
+`
+export const SmallText = styled.small`
+   color: #00a7e1;
+   font-size: 14px;
+   cursor: pointer;
+   &:hover {
+      text-decoration: underline;
+   }
+`
+
+export const Heading = styled(StyledContainer)`
+   justify-content: space-between;
 `
