@@ -1,6 +1,6 @@
 import React from 'react'
-import { ReactTabulator } from 'react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../tableOption'
 import { SUBSCRIPTION_ZIPCODES } from '../../../../graphql'

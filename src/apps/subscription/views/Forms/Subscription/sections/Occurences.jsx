@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import { useSubscription } from '@apollo/react-hooks'
-import { ReactTabulator, reactFormatter } from 'react-tabulator'
+import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../tableOption'
 import { SUBSCRIPTION_OCCURENCES_LIST } from '../../../../graphql'
