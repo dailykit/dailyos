@@ -19,6 +19,7 @@ jobs:
         REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.ReactAppDailyosServeruri }}
     runs-on: ubuntu-latest
     steps:
+    - run: echo $REACT_APP_DATA_HUB_URI $REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI $REACT_APP_KEYCLOAK_URL
     - uses: actions/checkout@v2
       
     - name: Cypress run
@@ -29,7 +30,4 @@ jobs:
         config-file: cypress.json
         start: npm start 
         wait-on: 'http://localhost:3000'
-        
-    - name: log env vars
-      run: echo $REACT_APP_DATA_HUB_URI $REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI $REACT_APP_KEYCLOAK_URL
 
