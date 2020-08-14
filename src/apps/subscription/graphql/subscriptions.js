@@ -188,8 +188,11 @@ export const SUBSCRIPTION_ZIPCODES = gql`
    subscription subscription_zipcodes($id: Int!) {
       subscription_zipcodes: subscription_subscription_zipcode(
          where: { subscriptionId: { _eq: $id } }
+         order_by: { zipcode: asc }
       ) {
          zipcode
+         isActive
+         deliveryPrice
       }
    }
 `

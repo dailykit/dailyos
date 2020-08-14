@@ -73,3 +73,15 @@ export const INSERT_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const INSERT_SUBSCRIPTION_ZIPCODES = gql`
+   mutation insertSubscriptionZipcodes(
+      $objects: [subscription_subscription_zipcode_insert_input!]!
+   ) {
+      insertSubscriptionZipcodes: insert_subscription_subscription_zipcode(
+         objects: $objects
+      ) {
+         affected_rows
+      }
+   }
+`
