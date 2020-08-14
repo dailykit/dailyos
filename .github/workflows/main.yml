@@ -11,17 +11,17 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-      
-    - name: Cypress run
-      env:
+    env:
         REACT_APP_DATA_HUB_URI: ${{ secrets.ReactAppDataHubUri }}
         REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.ReactAppDataHubSubscriptionsUri }}
         REACT_APP_KEYCLOAK_URL: ${{ secrets.ReactAppKeycloakUrl }}
         REACT_APP_KEYCLOAK_REALM: ${{ secrets.ReactAppKeycloakRealm }}
         REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.ReactAppDailyosServeruri }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Cypress run
       uses: cypress-io/github-action@v2
       with: 
         browser: chrome
