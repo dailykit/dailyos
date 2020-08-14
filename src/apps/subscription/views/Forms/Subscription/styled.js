@@ -8,7 +8,10 @@ export const Wrapper = styled.div`
 
 export const Header = styled.header`
    padding: 24px;
+   display: flex;
    background: #fff;
+   align-items: center;
+   justify-content: space-between;
    input[type='text'] {
       width: 340px;
    }

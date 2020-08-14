@@ -34,14 +34,13 @@ import {
 
 const Title = () => {
    const params = useParams()
-   const { dispatch } = usePlan()
+   const { state, dispatch } = usePlan()
    const { tab, addTab, setTabTitle } = useTabs()
    const [tabIndex, setTabIndex] = React.useState(0)
-   const [form, setForm] = React.useState({ title: '' })
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
       onCompleted: () => {
-         setTabTitle(form.title)
+         setTabTitle(state.title.title)
       },
    })
    const { loading, data: { title = {} } = {} } = useSubscription(TITLE, {
@@ -56,6 +55,7 @@ const Title = () => {
             payload: {
                id: title.id,
                title: title.title,
+               isActive: title.isActive,
                defaultServing: { id: title.defaultSubscriptionServingId },
             },
          })
@@ -69,16 +69,32 @@ const Title = () => {
    }, [loading, tab, title])
 
    const handleChange = e => {
-      const { name, value } = e.target
-      setForm({ ...form, [name]: value })
+      dispatch({
+         type: 'SET_TITLE',
+         payload: {
+            title: e.target.value,
+         },
+      })
    }
 
    const saveTitle = e => {
       upsertTitle({
          variables: {
             object: {
+               id: params.id,
                title: e.target.value,
-               ...(!params.id.includes('form') && { id: params.id }),
+            },
+         },
+      })
+   }
+
+   const toggleIsActive = value => {
+      upsertTitle({
+         variables: {
+            object: {
+               isActive: value,
+               id: state.title.id,
+               title: state.title.title,
             },
          },
       })
@@ -102,7 +118,12 @@ const Title = () => {
                label="Subscription Title"
                onBlur={e => saveTitle(e)}
                onChange={e => handleChange(e)}
-               value={form.title || title.title}
+               value={state.title.title || title.title}
+            />
+            <Toggle
+               label="Publish"
+               checked={state.title.isActive}
+               setChecked={value => toggleIsActive(value)}
             />
          </Header>
          <Section>

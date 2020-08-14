@@ -20,7 +20,7 @@ export const UPSERT_SUBSCRIPTION_TITLE = gql`
          object: $object
          on_conflict: {
             constraint: subscriptionTitle_pkey
-            update_columns: [title, defaultSubscriptionServingId]
+            update_columns: [title, isActive, defaultSubscriptionServingId]
          }
       ) {
          id

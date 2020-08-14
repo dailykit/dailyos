@@ -3,7 +3,12 @@ import React from 'react'
 const PlanContext = React.createContext()
 
 const initialState = {
-   title: { id: null, title: '', defaultServing: { id: null } },
+   title: {
+      id: null,
+      title: '',
+      isActive: false,
+      defaultServing: { id: null },
+   },
    serving: { size: '', isDefault: false },
    item: { count: '', price: '' },
    subscription: { id: null },
@@ -14,7 +19,7 @@ const reducers = (state, { type, payload }) => {
       case 'SET_TITLE':
          return {
             ...state,
-            title: payload,
+            title: { ...state.title, ...payload },
          }
       case 'SET_SERVING':
          return {

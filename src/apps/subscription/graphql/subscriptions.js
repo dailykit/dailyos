@@ -117,6 +117,7 @@ export const TITLE = gql`
       title: subscription_subscriptionTitle_by_pk(id: $id) {
          id
          title
+         isActive
          defaultSubscriptionServingId
          servings: subscriptionServings(order_by: { servingSize: asc }) {
             id
