@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Input,
@@ -34,10 +34,9 @@ import {
 
 const Title = () => {
    const params = useParams()
-   const history = useHistory()
-   const { state, dispatch } = usePlan()
+   const { dispatch } = usePlan()
+   const { tab, addTab, setTabTitle } = useTabs()
    const [tabIndex, setTabIndex] = React.useState(0)
-   const { tab, tabs, addTab, setTabTitle } = useTabs()
    const [form, setForm] = React.useState({ title: '' })
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
@@ -47,7 +46,7 @@ const Title = () => {
    })
    const { loading, data: { title = {} } = {} } = useSubscription(TITLE, {
       variables: {
-         id: state.title.id || params.id,
+         id: params.id,
       },
       onSubscriptionData: ({
          subscriptionData: { data: { title = {} } = {} },
@@ -65,16 +64,9 @@ const Title = () => {
 
    React.useEffect(() => {
       if (!loading && !tab && title?.id) {
-         dispatch({
-            type: 'SET_TITLE',
-            payload: {
-               id: title.id,
-               title: title.title,
-               defaultServing: { id: title.defaultSubscriptionServingId },
-            },
-         })
+         addTab(title.title, `/subscription/subscriptions/${title.id}`)
       }
-   }, [tabs, loading])
+   }, [loading, tab, title])
 
    const handleChange = e => {
       const { name, value } = e.target
@@ -101,21 +93,6 @@ const Title = () => {
    }
 
    if (loading) return <InlineLoader />
-   if (params.id.includes('form'))
-      return (
-         <Wrapper>
-            <Header>
-               <Input
-                  type="text"
-                  name="title"
-                  label="Subscription Title"
-                  onBlur={e => saveTitle(e)}
-                  onChange={e => handleChange(e)}
-                  value={form.title || title.title}
-               />
-            </Header>
-         </Wrapper>
-      )
    return (
       <Wrapper>
          <Header>

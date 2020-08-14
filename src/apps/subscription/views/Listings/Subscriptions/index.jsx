@@ -1,22 +1,28 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
-import { useSubscription } from '@apollo/react-hooks'
 import { Text, IconButton, PlusIcon } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import { Spacer } from '../../../styled'
-import { TITLES } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Header } from './styled'
 import options from '../../../tableOption'
 import { InlineLoader } from '../../../../../shared/components'
+import { TITLES, UPSERT_SUBSCRIPTION_TITLE } from '../../../graphql'
 
 export const Subscriptions = () => {
    const history = useHistory()
    const tableRef = React.useRef()
    const { tab, tabs, addTab } = useTabs()
    const { loading, data: { titles = [] } = {} } = useSubscription(TITLES)
+   const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
+      onCompleted: ({ upsertSubscriptionTitle = {} }) => {
+         const { id, title } = upsertSubscriptionTitle
+         addTab(title, `/subscription/subscriptions/${id}`)
+      },
+   })
 
    React.useEffect(() => {
       if (!tab) {
@@ -43,7 +49,13 @@ export const Subscriptions = () => {
 
    const createTab = () => {
       const hash = `form-${uuid().split('-')[0]}`
-      addTab('Create Subscription', `/subscription/subscriptions/${hash}`)
+      upsertTitle({
+         variables: {
+            object: {
+               title: hash,
+            },
+         },
+      })
    }
 
    if (loading) return <InlineLoader />
