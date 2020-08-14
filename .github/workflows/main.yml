@@ -16,6 +16,12 @@ jobs:
     - uses: actions/checkout@v2
       
     - name: Cypress run
+      env:
+        REACT_APP_DATA_HUB_URI: ${{ secrets.ReactAppDataHubUri }}
+        REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.ReactAppDataHubSubscriptionsUri }}
+        REACT_APP_KEYCLOAK_URL: ${{ secrets.ReactAppKeycloakUrl }}
+        REACT_APP_KEYCLOAK_REALM: ${{ secrets.ReactAppKeycloakRealm }}
+        REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.ReactAppDailyosServeruri }}
       uses: cypress-io/github-action@v2
       with: 
         browser: chrome
@@ -23,4 +29,7 @@ jobs:
         config-file: cypress.json
         start: npm start 
         wait-on: 'http://localhost:3000'
+        
+    - name: log env vars
+      run: echo $REACT_APP_DATA_HUB_URI $REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI $REACT_APP_KEYCLOAK_URL
 
