@@ -5,6 +5,7 @@ import {
    Text,
    Input,
    Tunnel,
+   Toggle,
    Tunnels,
    PlusIcon,
    useTunnel,
@@ -23,28 +24,36 @@ import ItemCount from './ItemCount'
 import { Spacer, Stack } from '../../../../styled'
 import { ItemCountsSection, ServingHeader } from '../styled'
 import { EditIcon } from '../../../../../../shared/assets/icons'
-import { SERVING, UPSERT_ITEM_COUNT } from '../../../../graphql'
 import { InlineLoader } from '../../../../../../shared/components'
+import {
+   SERVING,
+   UPSERT_ITEM_COUNT,
+   UPSERT_SUBSCRIPTION_SERVING,
+} from '../../../../graphql'
 
 const Serving = ({ id, isActive, openServingTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
    const { loading, data: { serving = {} } = {} } = useSubscription(SERVING, {
       variables: { id },
-   })
-
-   React.useEffect(() => {
-      if (!loading) {
+      onSubscriptionData: ({
+         subscriptionData: { data: { serving = {} } = {} } = {},
+      }) => {
          dispatch({
             type: 'SET_SERVING',
             payload: {
                id: serving.id,
                size: serving.size,
+               isActive: serving.isActive,
                isDefault: state.title.defaultServing.id === serving.id,
             },
          })
-      }
+      },
+   })
+
+   React.useEffect(() => {
       return () => {
          dispatch({
             type: 'SET_SERVING',
@@ -55,7 +64,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             },
          })
       }
-   }, [loading])
+   }, [])
 
    const editServing = () => {
       openServingTunnel(1)
@@ -77,6 +86,19 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       openTunnel(1)
    }
 
+   const toggleIsActive = value => {
+      upsertServing({
+         variables: {
+            object: {
+               isActive: value,
+               id: state.serving.id,
+               subscriptionTitleId: state.title.id,
+               servingSize: Number(state.serving.size),
+            },
+         },
+      })
+   }
+
    if (loading) return <InlineLoader />
    return (
       <>
@@ -89,9 +111,17 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                )}
             </Stack>
 
-            <IconButton type="outline" onClick={() => editServing()}>
-               <EditIcon />
-            </IconButton>
+            <Stack>
+               <Toggle
+                  label="Publish"
+                  checked={state.serving.isActive}
+                  setChecked={value => toggleIsActive(value)}
+               />
+               <Spacer size="16px" xAxis />
+               <IconButton type="outline" onClick={() => editServing()}>
+                  <EditIcon />
+               </IconButton>
+            </Stack>
          </ServingHeader>
          <ItemCountsSection>
             {serving.counts.length > 0 ? (

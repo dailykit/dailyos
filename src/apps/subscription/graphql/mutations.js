@@ -36,11 +36,12 @@ export const UPSERT_SUBSCRIPTION_SERVING = gql`
       upsertSubscriptionServing: insert_subscription_subscriptionServing_one(
          object: $object
          on_conflict: {
-            update_columns: [servingSize]
             constraint: subscriptionServing_pkey
+            update_columns: [servingSize, isActive]
          }
       ) {
          id
+         isActive
          size: servingSize
       }
    }

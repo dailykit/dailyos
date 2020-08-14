@@ -9,7 +9,7 @@ const initialState = {
       isActive: false,
       defaultServing: { id: null },
    },
-   serving: { size: '', isDefault: false },
+   serving: { isActive: true, size: '', isDefault: false },
    item: { count: '', price: '' },
    subscription: { id: null },
 }

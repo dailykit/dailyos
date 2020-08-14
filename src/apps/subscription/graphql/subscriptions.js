@@ -131,6 +131,7 @@ export const SERVING = gql`
    subscription serving($id: Int!) {
       serving: subscription_subscriptionServing_by_pk(id: $id) {
          id
+         isActive
          size: servingSize
          counts: subscriptionItemCounts {
             id
