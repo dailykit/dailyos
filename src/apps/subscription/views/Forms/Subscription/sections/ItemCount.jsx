@@ -7,6 +7,7 @@ import {
    Text,
    Input,
    Tunnel,
+   Toggle,
    Tunnels,
    PlusIcon,
    useTunnel,
@@ -25,30 +26,40 @@ import { usePlan } from '../state'
 import DeliveryDay from './DeliveryDay'
 import { Flex } from '../../../../components'
 import { Spacer, Stack } from '../../../../styled'
-import { ItemCountHeader, ItemCountSection } from '../styled'
+import { ItemCountSection } from '../styled'
 import { InlineLoader } from '../../../../../../shared/components'
-import { ITEM_COUNT, INSERT_SUBSCRIPTION } from '../../../../graphql'
+import {
+   ITEM_COUNT,
+   INSERT_SUBSCRIPTION,
+   UPSERT_ITEM_COUNT,
+} from '../../../../graphql'
 
 const ItemCount = ({ id, isActive }) => {
-   const { dispatch } = usePlan()
+   const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-   const {
-      loading,
-      data: { itemCount = {} } = {},
-   } = useSubscription(ITEM_COUNT, { variables: { id } })
+   const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT)
+   const { loading, data: { itemCount = {} } = {} } = useSubscription(
+      ITEM_COUNT,
+      {
+         variables: { id },
+         onSubscriptionData: ({
+            subscriptionData: { data: { itemCount = {} } = {} } = {},
+         }) => {
+            dispatch({
+               type: 'SET_ITEM',
+               payload: {
+                  id: itemCount.id,
+                  count: itemCount.count,
+                  price: itemCount.price,
+                  isActive: itemCount.isActive,
+               },
+            })
+         },
+      }
+   )
 
    React.useEffect(() => {
-      if (!loading) {
-         dispatch({
-            type: 'SET_ITEM',
-            payload: {
-               id: itemCount.id,
-               count: itemCount.count,
-               price: itemCount.price,
-            },
-         })
-      }
       return () => {
          dispatch({
             type: 'SET_ITEM',
@@ -56,17 +67,43 @@ const ItemCount = ({ id, isActive }) => {
                id: null,
                count: '',
                price: '',
+               isActive: true,
             },
          })
       }
-   }, [loading])
+   }, [])
+
+   const toggleIsActive = value => {
+      upsertItemCount({
+         variables: {
+            object: {
+               isActive: value,
+               id: state.item.id,
+               count: state.item.count,
+               price: state.item.price,
+               subscriptionServingId: state.serving.id,
+            },
+         },
+      })
+   }
 
    if (loading) return <InlineLoader />
    return (
       <>
-         <ItemCountHeader>
+         <Flex
+            container
+            height="48px"
+            alignItems="center"
+            padding="0 8px 0 0"
+            justifyContent="space-between"
+         >
             <Text as="title">Price per week: {itemCount.price}</Text>
-         </ItemCountHeader>
+            <Toggle
+               label="Publish"
+               checked={state.item.isActive}
+               setChecked={value => toggleIsActive(value)}
+            />
+         </Flex>
          <ItemCountSection>
             {itemCount?.subscriptions.length > 0 ? (
                <SectionTabs onChange={index => setTabIndex(index)}>

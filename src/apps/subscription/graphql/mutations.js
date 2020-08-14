@@ -55,7 +55,7 @@ export const UPSERT_ITEM_COUNT = gql`
          object: $object
          on_conflict: {
             constraint: subscriptionItemCount_pkey
-            update_columns: [count, price]
+            update_columns: [count, price, isActive]
          }
       ) {
          id

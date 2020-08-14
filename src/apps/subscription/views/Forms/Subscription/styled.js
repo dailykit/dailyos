@@ -56,12 +56,6 @@ export const ServingHeader = styled.header`
    justify-content: space-between;
 `
 
-export const ItemCountHeader = styled.header`
-   height: 48px;
-   display: flex;
-   align-items: center;
-`
-
 export const ItemCountSection = styled.section`
    padding: 16px;
    background: #e3e3e3;

@@ -147,6 +147,7 @@ export const ITEM_COUNT = gql`
          id
          count
          price
+         isActive
          subscriptions {
             id
             rrule
