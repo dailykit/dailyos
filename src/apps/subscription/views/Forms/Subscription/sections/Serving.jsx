@@ -59,6 +59,14 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       })
    }
 
+   const addItemCount = () => {
+      dispatch({
+         type: 'SET_ITEM',
+         payload: { id: null, count: '', price: '' },
+      })
+      openTunnel(1)
+   }
+
    if (loading) return <InlineLoader />
    return (
       <>
@@ -98,7 +106,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                </HorizontalTabs>
             ) : (
                <Stack py="24px">
-                  <ComboButton type="outline" onClick={() => openTunnel(1)}>
+                  <ComboButton type="outline" onClick={() => addItemCount()}>
                      <PlusIcon />
                      Add Item Count
                   </ComboButton>
