@@ -10,6 +10,7 @@ import {
    Tunnels,
    PlusIcon,
    useTunnel,
+   IconButton,
    SectionTab,
    ComboButton,
    SectionTabs,
@@ -61,6 +62,12 @@ const ItemCount = ({ id, isActive }) => {
                   <SectionTabList>
                      <SectionTabsListHeader>
                         <Text as="title">Delivery Days</Text>
+                        <IconButton
+                           type="outline"
+                           onClick={() => openTunnel(1)}
+                        >
+                           <PlusIcon />
+                        </IconButton>
                      </SectionTabsListHeader>
                      {itemCount?.subscriptions.map(subscription => (
                         <SectionTab key={subscription.id}>
@@ -170,7 +177,6 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
    }
 
    const selectDay = (e, day) => {
-      console.log('selectDay -> day', day)
       setDays({ ...days, [day]: e.target.checked })
    }
 
