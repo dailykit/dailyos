@@ -12,11 +12,11 @@ on:
 jobs:
   test:
     env:
-        REACT_APP_DATA_HUB_URI: ${{ secrets.ReactAppDataHubUri }}
-        REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.ReactAppDataHubSubscriptionsUri }}
-        REACT_APP_KEYCLOAK_URL: ${{ secrets.ReactAppKeycloakUrl }}
-        REACT_APP_KEYCLOAK_REALM: ${{ secrets.ReactAppKeycloakRealm }}
-        REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.ReactAppDailyosServeruri }}
+        REACT_APP_DATA_HUB_URI: ${{ secrets.REACT_APP_DATA_HUB_URI }}
+        REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI }}
+        REACT_APP_KEYCLOAK_URL: ${{ secrets.REACT_APP_KEYCLOAK_URL }}
+        REACT_APP_KEYCLOAK_REALM: ${{ secrets.REACT_APP_KEYCLOAK_REALM }}
+        REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.REACT_APP_DAILYOS_SERVER_URI }}
     runs-on: ubuntu-latest
     steps:
     - run: | 
