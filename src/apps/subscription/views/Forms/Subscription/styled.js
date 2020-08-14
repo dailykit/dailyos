@@ -18,7 +18,7 @@ export const Header = styled.header`
 `
 
 export const Section = styled.section`
-   padding: 24px;
+   padding: 16px;
    height: calc(100vh - 128px);
 
    [data-reach-tab] {
@@ -32,10 +32,13 @@ export const Section = styled.section`
          color: #fff;
       }
    }
+   [data-reach-tab-panel] {
+      padding: 0 16px 16px 16px;
+   }
 `
 
 export const ItemCountsSection = styled.section`
-   height: calc(100vh - 254px);
+   height: calc(100vh - 282px);
    [data-reach-tab-panel] {
       padding: 0;
    }
@@ -49,17 +52,10 @@ export const ItemCountsSection = styled.section`
    }
 `
 
-export const ServingHeader = styled.header`
-   height: 48px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-`
-
 export const ItemCountSection = styled.section`
    padding: 16px;
    background: #e3e3e3;
-   height: calc(100vh - 366px);
+   height: calc(100vh - 394px);
    [data-reach-tab-panels] {
       height: unset;
    }

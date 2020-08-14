@@ -21,6 +21,7 @@ import {
 
 import { usePlan } from '../state'
 import ItemCount from './ItemCount'
+import { Flex } from '../../../../components'
 import { Spacer, Stack } from '../../../../styled'
 import { ItemCountsSection, ServingHeader } from '../styled'
 import { EditIcon } from '../../../../../../shared/assets/icons'
@@ -102,7 +103,12 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
    if (loading) return <InlineLoader />
    return (
       <>
-         <ServingHeader>
+         <Flex
+            container
+            height="56px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Stack xAxis>
                <Text as="title">Serving: {serving.size}</Text>
                <Spacer size="14px" xAxis />
@@ -110,7 +116,6 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                   <Tag>Default</Tag>
                )}
             </Stack>
-
             <Stack>
                <Toggle
                   label="Publish"
@@ -122,7 +127,15 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                   <EditIcon />
                </IconButton>
             </Stack>
-         </ServingHeader>
+         </Flex>
+         <hr style={{ border: '1px solid #ededed' }} />
+         <Spacer size="16px" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Text as="title">Items Counts</Text>
+            <IconButton type="outline" onClick={addItemCount}>
+               <PlusIcon />
+            </IconButton>
+         </Flex>
          <ItemCountsSection>
             {serving.counts.length > 0 ? (
                <HorizontalTabs onChange={index => setTabIndex(index)}>
@@ -148,7 +161,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                </HorizontalTabs>
             ) : (
                <Stack py="24px">
-                  <ComboButton type="outline" onClick={() => addItemCount()}>
+                  <ComboButton type="outline" onClick={addItemCount}>
                      <PlusIcon />
                      Add Item Count
                   </ComboButton>
