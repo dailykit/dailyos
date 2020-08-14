@@ -147,3 +147,35 @@ export const Grid = styled.div`
    grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
    grid-gap: ${props => props.gap || 8}px;
 `
+
+export const Modifier = styled.span`
+   position: relative;
+   overflow: hidden;
+   display: inline-block;
+
+   > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: -200px;
+      width: 100%;
+      background: #fff;
+      transition: 0.2s ease left;
+
+      svg {
+         cursor: pointer;
+
+         &:first-child {
+            margin-right: 8px;
+         }
+      }
+   }
+
+   &:hover {
+      > span {
+         left: 0;
+      }
+   }
+`

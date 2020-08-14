@@ -1,5 +1,18 @@
 import gql from 'graphql-tag'
 
+export const BULK_ITEMS = gql`
+   query BulkItems {
+      bulkItems {
+         id
+         unit
+         processingName
+         supplierItem {
+            name
+         }
+      }
+   }
+`
+
 export const SACHET_ITEMS = gql`
    query SachetItems {
       sachetItems {
@@ -21,6 +34,7 @@ export const SUPPLIER_ITEMS = gql`
       supplierItems {
          id
          name
+         title: name
          unitSize
          unit
       }
@@ -33,6 +47,7 @@ export const INVENTORY_PRODUCTS = gql`
          id
          name
          title: name
+         assets
          isValid
          isPublished
       }
@@ -47,6 +62,7 @@ export const SIMPLE_RECIPE_PRODUCTS = gql`
          id
          name
          title: name
+         assets
          isValid
          isPublished
          simpleRecipe {
@@ -92,6 +108,44 @@ export const COMBO_PRODUCTS = gql`
          name
          title: name
          isValid
+      }
+   }
+`
+
+export const INVENTORY_PRODUCT_OPTIONS = gql`
+   query InventoryProductOptions(
+      $where: onlineStore_inventoryProductOption_bool_exp
+   ) {
+      inventoryProductOptions(where: $where) {
+         id
+         label
+         price
+         inventoryProduct {
+            name
+            assets
+            id
+         }
+      }
+   }
+`
+
+export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
+   query SimpleRecipeProductOptions(
+      $where: onlineStore_simpleRecipeProductOption_bool_exp
+   ) {
+      simpleRecipeProductOptions(where: $where) {
+         id
+         price
+         simpleRecipeYield {
+            id
+            yield
+         }
+         type
+         simpleRecipeProduct {
+            id
+            name
+            assets
+         }
       }
    }
 `

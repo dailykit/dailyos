@@ -24,7 +24,7 @@ const Main = () => {
                <AssetsTunnel closeTunnel={closeTunnel} updating={updating} />
             </Tunnel>
          </Tunnels>
-         <Container paddingX="32" left="300">
+         <Container paddingX="32" paddingY="32" left="300">
             <Text as="h1">Store Settings</Text>
             <Container paddingY="60" bottom="32">
                <BrandSettings

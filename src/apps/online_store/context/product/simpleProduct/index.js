@@ -7,6 +7,7 @@ export const state = {
       accompanimentTabIndex: 0,
       accompanimentType: '',
       productTypes: 'inventory',
+      modifierProductType: 'inventoryProduct',
    },
    edit: undefined,
 }
