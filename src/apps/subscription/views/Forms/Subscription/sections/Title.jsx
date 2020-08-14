@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Input,
@@ -9,6 +9,7 @@ import {
    Tunnels,
    PlusIcon,
    useTunnel,
+   HelperText,
    IconButton,
    SectionTab,
    SectionTabs,
@@ -33,7 +34,8 @@ import {
 
 const Title = () => {
    const params = useParams()
-   const { dispatch } = usePlan()
+   const history = useHistory()
+   const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const { tab, tabs, addTab, setTabTitle } = useTabs()
    const [form, setForm] = React.useState({ title: '' })
@@ -45,7 +47,7 @@ const Title = () => {
    })
    const { loading, data: { title = {} } = {} } = useSubscription(TITLE, {
       variables: {
-         id: params.id,
+         id: state.title.id || params.id,
       },
       onSubscriptionData: ({
          subscriptionData: { data: { title = {} } = {} },
@@ -62,8 +64,7 @@ const Title = () => {
    })
 
    React.useEffect(() => {
-      if (!loading && !tab) {
-         addTab(title.title, `/subscription/subscriptions/${params.id}`)
+      if (!loading && !tab && title?.id) {
          dispatch({
             type: 'SET_TITLE',
             payload: {
@@ -100,7 +101,6 @@ const Title = () => {
    }
 
    if (loading) return <InlineLoader />
-
    if (params.id.includes('form'))
       return (
          <Wrapper>
@@ -206,8 +206,8 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
             <TunnelHeader
-               title="Add Serving"
                close={() => hideTunnel()}
+               title={`${state.serving.id ? 'Edit' : 'Add'} Serving`}
                right={{ action: () => createServing(), title: 'Save' }}
             />
             <main style={{ padding: 16 }}>
@@ -216,6 +216,7 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                   name="serving"
                   label="Serving"
                   value={state.serving.size}
+                  disabled={state.serving.id}
                   onChange={e =>
                      dispatch({
                         type: 'SET_SERVING',
@@ -225,6 +226,12 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                      })
                   }
                />
+               {state.serving.id && (
+                  <HelperText
+                     type="hint"
+                     message="Serving is not editable right now."
+                  />
+               )}
                <Spacer size="16px" />
                <Toggle
                   label="Make Default"

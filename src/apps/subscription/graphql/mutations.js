@@ -16,7 +16,7 @@ export const UPSERT_SUBSCRIPTION_TITLE = gql`
    mutation upsertSubscriptionTitle(
       $object: subscription_subscriptionTitle_insert_input!
    ) {
-      insert_subscription_subscriptionTitle_one(
+      upsertSubscriptionTitle: insert_subscription_subscriptionTitle_one(
          object: $object
          on_conflict: {
             constraint: subscriptionTitle_pkey
