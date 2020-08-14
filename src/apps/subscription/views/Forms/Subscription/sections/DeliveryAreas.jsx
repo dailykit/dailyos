@@ -1,7 +1,9 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
+import { Text, IconButton, PlusIcon } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 
+import { Flex } from '../../../../components'
 import tableOptions from '../../../../tableOption'
 import { SUBSCRIPTION_ZIPCODES } from '../../../../graphql'
 import { InlineLoader } from '../../../../../../shared/components'
@@ -28,12 +30,20 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
 
    if (loading) return <InlineLoader />
    return (
-      <ReactTabulator
-         ref={tableRef}
-         columns={columns}
-         data={subscription_zipcodes}
-         options={{ ...tableOptions, layout: 'fitColumns' }}
-      />
+      <>
+         <Flex container justify="space-between">
+            <Text as="title">Delivery Areas</Text>
+            <IconButton type="outline">
+               <PlusIcon />
+            </IconButton>
+         </Flex>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={subscription_zipcodes}
+            options={{ ...tableOptions, layout: 'fitColumns' }}
+         />
+      </>
    )
 }
 

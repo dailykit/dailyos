@@ -35,7 +35,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
    })
 
    React.useEffect(() => {
-      if (!loading && isActive) {
+      if (!loading) {
          dispatch({
             type: 'SET_SERVING',
             payload: {
@@ -45,7 +45,17 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             },
          })
       }
-   }, [loading, isActive])
+      return () => {
+         dispatch({
+            type: 'SET_SERVING',
+            payload: {
+               id: null,
+               size: '',
+               isDefault: false,
+            },
+         })
+      }
+   }, [loading])
 
    const editServing = () => {
       openServingTunnel(1)
@@ -96,10 +106,12 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                   <HorizontalTabPanels>
                      {serving.counts.map(({ id }, index) => (
                         <HorizontalTabPanel key={id}>
-                           <ItemCount
-                              id={id}
-                              isActive={isActive && index === tabIndex}
-                           />
+                           {index === tabIndex && (
+                              <ItemCount
+                                 id={id}
+                                 isActive={isActive && index === tabIndex}
+                              />
+                           )}
                         </HorizontalTabPanel>
                      ))}
                   </HorizontalTabPanels>

@@ -31,6 +31,7 @@ import { ITEM_COUNT, INSERT_SUBSCRIPTION } from '../../../../graphql'
 
 const ItemCount = ({ id, isActive }) => {
    const { dispatch } = usePlan()
+   const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const {
       loading,
@@ -38,7 +39,7 @@ const ItemCount = ({ id, isActive }) => {
    } = useSubscription(ITEM_COUNT, { variables: { id } })
 
    React.useEffect(() => {
-      if (!loading && isActive) {
+      if (!loading) {
          dispatch({
             type: 'SET_ITEM',
             payload: {
@@ -48,7 +49,17 @@ const ItemCount = ({ id, isActive }) => {
             },
          })
       }
-   }, [loading, isActive])
+      return () => {
+         dispatch({
+            type: 'SET_ITEM',
+            payload: {
+               id: null,
+               count: '',
+               price: '',
+            },
+         })
+      }
+   }, [loading])
 
    if (loading) return <InlineLoader />
    return (
@@ -58,7 +69,7 @@ const ItemCount = ({ id, isActive }) => {
          </ItemCountHeader>
          <ItemCountSection>
             {itemCount?.subscriptions.length > 0 ? (
-               <SectionTabs>
+               <SectionTabs onChange={index => setTabIndex(index)}>
                   <SectionTabList>
                      <SectionTabsListHeader>
                         <Text as="title">Delivery Days</Text>
@@ -78,9 +89,11 @@ const ItemCount = ({ id, isActive }) => {
                      ))}
                   </SectionTabList>
                   <SectionTabPanels>
-                     {itemCount?.subscriptions.map(subscription => (
+                     {itemCount?.subscriptions.map((subscription, index) => (
                         <SectionTabPanel key={subscription.id}>
-                           <DeliveryDay id={subscription.id} />
+                           {index === tabIndex && (
+                              <DeliveryDay id={subscription.id} />
+                           )}
                         </SectionTabPanel>
                      ))}
                   </SectionTabPanels>

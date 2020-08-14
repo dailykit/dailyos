@@ -146,11 +146,13 @@ const Title = () => {
                <SectionTabPanels>
                   {title?.servings.map((serving, index) => (
                      <SectionTabPanel key={serving.id}>
-                        <Serving
-                           id={serving.id}
-                           openServingTunnel={openTunnel}
-                           isActive={tabIndex === index}
-                        />
+                        {tabIndex === index && (
+                           <Serving
+                              id={serving.id}
+                              isActive={tabIndex === index}
+                              openServingTunnel={openTunnel}
+                           />
+                        )}
                      </SectionTabPanel>
                   ))}
                </SectionTabPanels>
