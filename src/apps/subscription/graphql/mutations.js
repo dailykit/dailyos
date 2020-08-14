@@ -63,3 +63,13 @@ export const UPSERT_ITEM_COUNT = gql`
       }
    }
 `
+
+export const INSERT_SUBSCRIPTION = gql`
+   mutation insertSubscription(
+      $objects: [subscription_subscription_insert_input!]!
+   ) {
+      insertSubscription: insert_subscription_subscription(objects: $objects) {
+         affected_rows
+      }
+   }
+`
