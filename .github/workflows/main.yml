@@ -12,15 +12,15 @@ on:
 jobs:
   test:
     env:
-        REACT_APP_DATA_HUB_URI: ${{ secrets.REACT_APP_DATA_HUB_URI }}
-        REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI }}
-        REACT_APP_KEYCLOAK_URL: ${{ secrets.REACT_APP_KEYCLOAK_URL }}
-        REACT_APP_KEYCLOAK_REALM: ${{ secrets.REACT_APP_KEYCLOAK_REALM }}
-        REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.REACT_APP_DAILYOS_SERVER_URI }}
+      REACT_APP_DATA_HUB_URI: ${{ secrets.REACT_APP_DATA_HUB_URI }}
+      REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI }}
+      REACT_APP_KEYCLOAK_URL: ${{ secrets.REACT_APP_KEYCLOAK_URL }}
+      REACT_APP_KEYCLOAK_REALM: ${{ secrets.REACT_APP_KEYCLOAK_REALM }}
+      REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.REACT_APP_DAILYOS_SERVER_URI }}
     runs-on: ubuntu-latest
     steps:
     - run: | 
-        echo envs are $REACT_APP_DATA_HUB_URI 
+            echo envs are $REACT_APP_DATA_HUB_URI 
              $REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI
              $REACT_APP_KEYCLOAK_URL
     - uses: actions/checkout@v2
