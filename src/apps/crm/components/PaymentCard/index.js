@@ -8,7 +8,7 @@ import {
    SmallText,
 } from './styled'
 import { MaestroIcon } from '../../../../shared/assets/icons'
-import { Capitalize } from '../../views/Forms/Utils'
+import { Capitalize } from '../../Utils'
 
 const contactInfoCard = ({
    bgColor,

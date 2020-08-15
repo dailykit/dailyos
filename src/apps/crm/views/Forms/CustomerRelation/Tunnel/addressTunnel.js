@@ -2,7 +2,7 @@ import React from 'react'
 import { Tunnels, Tunnel, TunnelHeader, Loader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
-import { ConcatAddress } from '../../Utils'
+import { ConcatAddress } from '../../../../Utils'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
 
 const AddressTunnel = props => {

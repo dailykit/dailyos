@@ -8,7 +8,7 @@ import {
    SmallText,
 } from './styled'
 import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
-import { ConcatAddress } from '../../views/Forms/Utils'
+import { ConcatAddress } from '../../Utils'
 
 const contactInfoCard = ({
    defaultTag1,

@@ -4,7 +4,7 @@ import { ReactTabulator } from 'react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
 import { useTabs } from '../../../../context'
-import { Capitalize } from '../../../Forms/Utils'
+import { Capitalize } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import {
