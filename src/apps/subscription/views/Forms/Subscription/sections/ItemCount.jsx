@@ -33,8 +33,9 @@ import {
    INSERT_SUBSCRIPTION,
    UPSERT_ITEM_COUNT,
 } from '../../../../graphql'
+import { EditIcon } from '../../../../../../shared/assets/icons'
 
-const ItemCount = ({ id, isActive }) => {
+const ItemCount = ({ id, openItemTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -98,11 +99,17 @@ const ItemCount = ({ id, isActive }) => {
             justifyContent="space-between"
          >
             <Text as="title">Price per week: {itemCount.price}</Text>
-            <Toggle
-               label="Publish"
-               checked={state.item.isActive}
-               setChecked={value => toggleIsActive(value)}
-            />
+            <Flex container>
+               <Toggle
+                  label="Publish"
+                  checked={state.item.isActive}
+                  setChecked={value => toggleIsActive(value)}
+               />
+               <Spacer size="16px" xAxis />
+               <IconButton type="outline" onClick={() => openItemTunnel(1)}>
+                  <EditIcon />
+               </IconButton>
+            </Flex>
          </Flex>
          <ItemCountSection>
             {itemCount?.subscriptions.length > 0 ? (

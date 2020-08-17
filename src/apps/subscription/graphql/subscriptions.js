@@ -133,7 +133,7 @@ export const SERVING = gql`
          id
          isActive
          size: servingSize
-         counts: subscriptionItemCounts {
+         counts: subscriptionItemCounts(order_by: { count: asc }) {
             id
             count
          }

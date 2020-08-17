@@ -152,6 +152,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                            {index === tabIndex && (
                               <ItemCount
                                  id={id}
+                                 openItemTunnel={openTunnel}
                                  isActive={isActive && index === tabIndex}
                               />
                            )}
