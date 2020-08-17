@@ -30,6 +30,19 @@ export const SUPPLIER_ITEMS_SUBSCRIPTION = gql`
    }
 `
 
+export const PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION = gql`
+   subscription Packagings {
+      packagings {
+         id
+         name
+
+         supplier {
+            id
+         }
+      }
+   }
+`
+
 export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
    subscription SupplierItem($id: Int!) {
       supplierItem(id: $id) {
@@ -149,6 +162,9 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
             name
          }
          status
+         packaging {
+            packagingName: name
+         }
       }
    }
 `
@@ -193,41 +209,33 @@ export const PACKAGING_SUBSCRIPTION = gql`
    subscription Packaging($id: Int!) {
       packaging(id: $id) {
          id
-         name
-         unitPrice
-         dimensions
-         sku
-         parLevel
-         maxLevel
-         awaiting
-         onHand
-         consumed
-         innWaterRes
-         heatSafe
-         outWaterRes
-         recyclable
-         compostable
-         fdaComp
-         type
-         innGreaseRes
-         outGreaseRes
-         leakResistance
-         compressableFrom
-         packOpacity
-         committed
-         unitQuantity
-         caseQuantity
-         unitPrice
-         minOrderValue
-         packagingType
-         sealingType
-         leadTime
-         image
+         packagingName: name
+         packagingSku
+
+         images: assets(path: "images")
+
          supplier {
-            id
             name
             contactPerson
          }
+
+         leadTime
+         minOrderValue
+         unitPrice
+         caseQuantity
+         unitQuantity
+
+         length
+         width
+         height
+         LWHUnit
+
+         parLevel
+         maxLevel
+         onHand
+         awaiting
+         committed
+         consumed
       }
    }
 `
@@ -484,6 +492,65 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          status
          orderQuantity
          unit
+      }
+   }
+`
+
+export const PACKAGING_PURCHASE_ORDER_SUBSCRIPTION = gql`
+   subscription PurchaseOrderItem($id: Int!) {
+      purchaseOrderItem(id: $id) {
+         id
+         packaging {
+            id
+            packagingName: name
+            onHand
+         }
+         status
+         orderQuantity
+         unit
+      }
+   }
+`
+
+export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
+   subscription PackagingsListings {
+      packagings {
+         id
+         packagingName: name
+         supplier {
+            name
+         }
+
+         type
+
+         parLevel
+         onHand
+         maxLevel
+         awaiting
+         committed
+      }
+   }
+`
+
+export const PACKAGING_SPECS_SUBSCRIPTION = gql`
+   subscription Packaging($id: Int!) {
+      packaging(id: $id) {
+         id
+         packagingSpecification {
+            id
+            fdaCompliant
+            innerWaterResistant
+            outerWaterResistant
+            innerGreaseResistant
+            outerGreaseResistant
+            compostable
+            recyclable
+            microwaveable
+            recycled
+            opacity
+            compressibility
+            packagingMaterial
+         }
       }
    }
 `

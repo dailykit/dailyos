@@ -14,19 +14,19 @@ const Main = () => {
    return (
       <main>
          <Switch>
-            <Route path="/recipe-app" exact>
+            <Route path="/recipe" exact>
                <Home />
             </Route>
-            <Route path="/recipe-app/recipes" exact>
+            <Route path="/recipe/recipes" exact>
                <RecipesListing />
             </Route>
-            <Route path="/recipe-app/recipes/:id" exact>
+            <Route path="/recipe/recipes/:id" exact>
                <RecipeForm />
             </Route>
-            <Route path="/recipe-app/ingredients" exact>
+            <Route path="/recipe/ingredients" exact>
                <IngredientsListing />
             </Route>
-            <Route path="/recipe-app/ingredients/:id" exact>
+            <Route path="/recipe/ingredients/:id" exact>
                <IngredientForm />
             </Route>
          </Switch>

@@ -21,6 +21,7 @@ import { InventoryProductContext } from '../../../../../../context/product/inven
 import {
    DELETE_INVENTORY_PRODUCT_OPTION,
    UPDATE_INVENTORY_PRODUCT,
+   UPDATE_INVENTORY_PRODUCT_OPTION,
 } from '../../../../../../graphql'
 // styles
 import {
@@ -34,8 +35,20 @@ import {
    StyledTabs,
    StyledTabView,
    StyledWrapper,
+   Modifier,
 } from './styled'
-import { ItemTypeTunnel, ItemTunnel, PricingTunnel } from '../../tunnels'
+import {
+   ItemTypeTunnel,
+   ItemTunnel,
+   PricingTunnel,
+   ModifierTypeTunnel,
+   ModifierModeTunnel,
+   ModifierFormTunnel,
+   ModifierOptionsTunnel,
+   ModifierTemplatesTunnel,
+   ModifierPhotoTunnel,
+} from '../../tunnels'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.item.'
@@ -44,6 +57,7 @@ export default function Item({ state }) {
    const { t } = useTranslation()
 
    const { productDispatch } = React.useContext(InventoryProductContext)
+   const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const [_state, _setState] = React.useState({
       view: 'pricing',
@@ -51,6 +65,11 @@ export default function Item({ state }) {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [pricingTunnels, openPricingTunnel, closePricingTunnel] = useTunnel(1)
+   const [
+      modifiersTunnel,
+      openModifiersTunnel,
+      closeModifiersTunnel,
+   ] = useTunnel(6)
 
    // Mutations
    const [deleteOption] = useMutation(DELETE_INVENTORY_PRODUCT_OPTION, {
@@ -60,6 +79,15 @@ export default function Item({ state }) {
       onError: error => {
          console.log(error)
          toast.error(t(address.concat('could not delete!')))
+      },
+   })
+   const [updateProductOption] = useMutation(UPDATE_INVENTORY_PRODUCT_OPTION, {
+      onCompleted: () => {
+         toast.success('Modifier removed!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error')
       },
    })
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
@@ -130,6 +158,24 @@ export default function Item({ state }) {
          }
       }
    }
+   const removeModifier = id => {
+      updateProductOption({
+         variables: {
+            id,
+            set: {
+               modifierId: null,
+            },
+         },
+      })
+   }
+   const editModifier = modifier => {
+      console.log(modifier)
+      modifiersDispatch({
+         type: 'POPULATE',
+         payload: { modifier },
+      })
+      openModifiersTunnel(2)
+   }
 
    return (
       <>
@@ -144,6 +190,35 @@ export default function Item({ state }) {
          <Tunnels tunnels={pricingTunnels}>
             <Tunnel layer={1}>
                <PricingTunnel state={state} close={closePricingTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={modifiersTunnel}>
+            <Tunnel layer={1}>
+               <ModifierModeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ModifierTypeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ModifierOptionsTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ModifierPhotoTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
@@ -210,6 +285,7 @@ export default function Item({ state }) {
                                              address.concat('discounted price')
                                           )}
                                        </th>
+                                       <th>{t(address.concat('modifiers'))}</th>
                                        <th> </th>
                                     </tr>
                                  </thead>
@@ -250,6 +326,69 @@ export default function Item({ state }) {
                                                       ) /
                                                          100)
                                                 ).toFixed(2) || ''}
+                                             </td>
+                                             <td>
+                                                {option.modifier?.name ? (
+                                                   <Modifier>
+                                                      <span>
+                                                         <span
+                                                            tabIndex="0"
+                                                            role="button"
+                                                            onKeyPress={() =>
+                                                               editModifier(
+                                                                  option.modifier
+                                                               )
+                                                            }
+                                                            onClick={() =>
+                                                               editModifier(
+                                                                  option.modifier
+                                                               )
+                                                            }
+                                                         >
+                                                            <EditIcon
+                                                               color="#00A7E1"
+                                                               size={14}
+                                                            />
+                                                         </span>
+                                                         <span
+                                                            tabIndex="0"
+                                                            role="button"
+                                                            onKeyPress={() =>
+                                                               removeModifier(
+                                                                  option.id
+                                                               )
+                                                            }
+                                                            onClick={() =>
+                                                               removeModifier(
+                                                                  option.id
+                                                               )
+                                                            }
+                                                         >
+                                                            <DeleteIcon
+                                                               color="#FF5A52"
+                                                               size={14}
+                                                            />
+                                                         </span>
+                                                      </span>
+                                                      {option.modifier.name}
+                                                   </Modifier>
+                                                ) : (
+                                                   <IconButton
+                                                      type="ghost"
+                                                      onClick={() => {
+                                                         modifiersDispatch({
+                                                            type: 'META',
+                                                            payload: {
+                                                               name: 'optionId',
+                                                               value: option.id,
+                                                            },
+                                                         })
+                                                         openModifiersTunnel(1)
+                                                      }}
+                                                   >
+                                                      <AddIcon color="#36B6E2" />
+                                                   </IconButton>
+                                                )}
                                              </td>
                                              <td>
                                                 <Grid>

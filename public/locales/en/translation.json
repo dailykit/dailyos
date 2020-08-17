@@ -4,6 +4,7 @@
    "online store": "Online Store",
    "settings": "Settings",
    "crm": "CRM",
+   "subscription": "Subscription",
    "units": {
       "gm": "gm",
       "gms": "gms",
@@ -801,6 +802,7 @@
                            "price": "Price",
                            "discount": "Discount",
                            "discounted price": "Discounted Price",
+                           "modifiers": "Modifiers",
                            "add option": "Add Option",
                            "add item": "Add Item",
                            "option(s) deleted!": "Option(s) deleted!",

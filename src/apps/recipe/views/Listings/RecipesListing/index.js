@@ -37,7 +37,7 @@ const RecipesListing = () => {
       onCompleted: input => {
          addTab(
             input.createSimpleRecipe.returning[0].name,
-            `/recipe-app/recipes/${input.createSimpleRecipe.returning[0].id}`
+            `/recipe/recipes/${input.createSimpleRecipe.returning[0].id}`
          )
          toast.success('Recipe added!')
       },
@@ -143,7 +143,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, `/recipe-app/recipes/${id}`)
+      addTab(name, `/recipe/recipes/${id}`)
    }
 
    return (

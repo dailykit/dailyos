@@ -25,18 +25,23 @@ export default function WorkOrderTypeTunnel({ close }) {
          toast.error('Error! Please try again')
       },
       onCompleted: input => {
-         const { name, id } = input.createPackaging.returning[0]
-         addTab(name, 'sachetPackaging', id)
+         const { packagingName, id } = input.createPackaging.returning[0]
+         addTab(packagingName, 'sachetPackaging', id)
       },
    })
 
    const createPackagingHandler = type => {
-      const name = `pack-${randomSuffix()}`
+      const packagingName = `pack-${randomSuffix()}`
       createPackaging({
          variables: {
             object: {
-               name,
+               packagingName,
                type,
+               packagingSpecification: {
+                  data: {
+                     compostable: false,
+                  },
+               },
             },
          },
       })

@@ -5,6 +5,12 @@ import ProductsTunnel from './ProductsTunnel'
 import AccompanimentTypeTunnel from './AccompanimentTypeTunnel'
 import PriceConfigurationTunnel from './PriceConfigurationTunnel'
 import AssetsTunnel from './AssetsTunnel'
+import ModifierModeTunnel from './ModifierModeTunnel'
+import ModifierFormTunnel from './ModifierFormTunnel'
+import ModifierTypeTunnel from './ModifierTypeTunnel'
+import ModifierOptionsTunnel from './ModifierOptionsTunnel'
+import ModifierTemplatesTunnel from './ModifierTemplatesTunnel'
+import ModifierPhotoTunnel from './ModifierPhotoTunnel'
 
 export {
    RecipeTunnel,
@@ -14,4 +20,10 @@ export {
    AccompanimentTypeTunnel,
    PriceConfigurationTunnel,
    AssetsTunnel,
+   ModifierModeTunnel,
+   ModifierFormTunnel,
+   ModifierTypeTunnel,
+   ModifierOptionsTunnel,
+   ModifierTemplatesTunnel,
+   ModifierPhotoTunnel,
 }
