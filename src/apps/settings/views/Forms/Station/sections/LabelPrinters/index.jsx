@@ -7,7 +7,6 @@ import {
    Tunnels,
    Tunnel,
    useTunnel,
-   IconButton,
    ListItem,
    List,
    ListOptions,
@@ -30,7 +29,6 @@ import {
 import { Header } from './styled'
 import { TunnelMain, StyledInfo } from '../../styled'
 
-import { CloseIcon } from '../../../../../../../shared/assets/icons'
 import { LABEL_PRINTERS } from '../../../../../graphql/subscriptions'
 import {
    CREATE_STATION_LABEL_PRINTER,
