@@ -31,6 +31,11 @@ const Order = Loadable({
    loading: Loader,
 })
 
+const Subscription = Loadable({
+   loader: () => import('./apps/subscription'),
+   loading: Loader,
+})
+
 const App = () => {
    return (
       <>
@@ -55,6 +60,9 @@ const App = () => {
                   <Link to="/order">
                      <Trans i18nKey="order">Order</Trans>
                   </Link>
+                  <Link to="/subscription">
+                     <Trans i18nKey="subscription">Subscription</Trans>
+                  </Link>
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
@@ -62,6 +70,7 @@ const App = () => {
                <Route path="/online-store" component={OnlineStore} />
                <Route path="/settings" component={Settings} />
                <Route path="/order" component={Order} />
+               <Route path="/subscription" component={Subscription} />
             </Switch>
          </Router>
          <Lang />
