@@ -25,9 +25,12 @@ const Settings = Loadable({
    loader: () => import('./apps/settings'),
    loading: Loader,
 })
-
 const Order = Loadable({
    loader: () => import('./apps/order'),
+   loading: Loader,
+})
+const CRM = Loadable({
+   loader: () => import('./apps/crm'),
    loading: Loader,
 })
 
@@ -60,6 +63,9 @@ const App = () => {
                   <Link to="/order">
                      <Trans i18nKey="order">Order</Trans>
                   </Link>
+                  <Link to="/crm">
+                     <Trans i18nKey="crm">CRM</Trans>
+                  </Link>
                   <Link to="/subscription">
                      <Trans i18nKey="subscription">Subscription</Trans>
                   </Link>
@@ -70,6 +76,7 @@ const App = () => {
                <Route path="/online-store" component={OnlineStore} />
                <Route path="/settings" component={Settings} />
                <Route path="/order" component={Order} />
+               <Route path="/crm" component={CRM} />
                <Route path="/subscription" component={Subscription} />
             </Switch>
          </Router>
