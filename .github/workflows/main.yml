@@ -17,8 +17,8 @@ jobs:
          REACT_APP_KEYCLOAK_REALM: ${{ secrets.REACT_APP_KEYCLOAK_REALM }}
          REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.REACT_APP_DAILYOS_SERVER_URI }}
       runs-on: ubuntu-latest
+      container: cypress/browsers:node12.13.0-chrome78-ff70
       steps:
-         - run: echo $REACT_APP_DATA_HUB_URI
          - uses: actions/checkout@v2
 
          - name: Cypress run
