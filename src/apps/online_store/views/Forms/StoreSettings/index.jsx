@@ -5,10 +5,10 @@ import Main from './Main'
 
 const StoreSettingsForm = () => {
    return (
-      <React.Fragment>
+      <>
          <SideNav />
          <Main />
-      </React.Fragment>
+      </>
    )
 }
 

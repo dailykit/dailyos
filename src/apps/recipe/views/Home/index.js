@@ -29,7 +29,7 @@ const Home = () => {
                   recipeData?.simpleRecipesAggregate.aggregate.count || '...'
                }
                conf="All available"
-               onClick={() => addTab('Recipes', '/recipe-app/recipes')}
+               onClick={() => addTab('Recipes', '/recipe/recipes')}
             />
             <DashboardTile
                title={t(address.concat('ingredients'))}
@@ -37,7 +37,7 @@ const Home = () => {
                   ingredientsData?.ingredientsAggregate.aggregate.count || '...'
                }
                conf="All available"
-               onClick={() => addTab('Ingredients', '/recipe-app/ingredients')}
+               onClick={() => addTab('Ingredients', '/recipe/ingredients')}
             />
          </StyledCardList>
       </StyledHome>

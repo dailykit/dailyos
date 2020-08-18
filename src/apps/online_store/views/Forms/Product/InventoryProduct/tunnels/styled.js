@@ -44,3 +44,9 @@ export const Grid = styled.div`
    grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
    grid-gap: ${props => props.gap || 8}px;
 `
+
+export const Flex = styled.div`
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+`

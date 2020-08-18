@@ -12,7 +12,7 @@ export default function StatusSwitch({ currentStatus, onSave }) {
    }
 
    return (
-      <div style={{ position: 'absolute', top: '12%', right: '5%' }}>
+      <div>
          <StyledStatusSwitch
             onClick={() => setShowSwitch(!showSwitch)}
             currentStatus={status}

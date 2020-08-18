@@ -23,14 +23,14 @@ export const MasterSettings = styled.div`
    display: flex;
    align-items: center;
 
-   > div {
+   div {
       display: flex;
       align-items: center;
       margin-left: 32px;
-   }
 
-   svg {
-      margin-right: 8px;
+      label {
+         color: #555b6e;
+      }
    }
 `
 

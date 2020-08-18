@@ -20,11 +20,14 @@ export default function PhotoTunnel({ close, state }) {
    })
 
    const addImage = ({ url }) => {
+      const oldImages = state.images && state.images.length ? state.images : []
       updatePackaging({
          variables: {
             id: state.id,
             object: {
-               image: url,
+               assets: {
+                  images: [url, ...oldImages],
+               },
             },
          },
       })

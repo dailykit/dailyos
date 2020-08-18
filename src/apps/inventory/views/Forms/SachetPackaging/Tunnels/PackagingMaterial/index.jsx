@@ -3,33 +3,32 @@ import { Text, Input, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
-import { UPDATE_PACKAGING } from '../../../../../graphql'
+import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
 
 import { TunnelContainer } from '../../../../../components'
 
+function errorHandler(error) {
+   console.log(error)
+   toast.error(error.message)
+}
+
 export default function PackagingTypeTunnel({ close, state }) {
-   const [loading, setLoading] = useState(false)
    const [packagingType, setPackagingType] = useState(state.packagingType || '')
 
-   const [updatePakcaging] = useMutation(UPDATE_PACKAGING, {
-      onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
-         close(1)
-      },
+   const [updateSpecs, { loading }] = useMutation(UPDATE_PACKAGING_SPECS, {
+      onError: errorHandler,
       onCompleted: () => {
-         setLoading(false)
-         toast.info('Information Added :)')
+         toast.success('Package Specification updated!')
          close(1)
       },
    })
 
    const handleNext = () => {
-      updatePakcaging({
+      updateSpecs({
          variables: {
             id: state.id,
             object: {
-               packagingType,
+               packagingMaterial: packagingType,
             },
          },
       })
@@ -40,7 +39,7 @@ export default function PackagingTypeTunnel({ close, state }) {
    return (
       <>
          <TunnelHeader
-            title="Select leak resistance"
+            title="Configure Packaging Material"
             close={() => close(1)}
             right={{ title: 'Save', action: handleNext }}
          />
@@ -51,8 +50,8 @@ export default function PackagingTypeTunnel({ close, state }) {
             <div style={{ width: '40%' }}>
                <Input
                   type="text"
-                  name="packaging type"
-                  label="Enter Packaging Type"
+                  name="packaging material"
+                  label="Enter Packaging Material"
                   value={packagingType}
                   onChange={e => setPackagingType(e.target.value)}
                />

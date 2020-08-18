@@ -1,123 +1,108 @@
-import React, { useState } from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { Loader, Toggle, Text, TextButton } from '@dailykit/ui'
+import React from 'react'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Loader, Toggle, Text } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
-import { UPDATE_PACKAGING } from '../../../graphql'
+import {
+   UPDATE_PACKAGING_SPECS,
+   PACKAGING_SPECS_SUBSCRIPTION,
+} from '../../../graphql'
 import { Spacer } from '../../../components'
 import { FlexContainer, ShadowCard } from '../styled'
 
-export default function AdditionalInfo({ state }) {
-   const [innWaterRes, setInnWaterRes] = useState(state.innWaterRes)
-   const [heatSafe, setHeatSafe] = useState(state.heatSafe)
-   const [outWaterRes, setOutWaterRes] = useState(state.outWaterRes)
-   const [recyclable, setRecyclable] = useState(state.recyclable)
-   const [compostable, setCompostable] = useState(state.compostable)
-   const [fdaComp, setFdaComp] = useState(state.fdaComp)
-   const [innGreaseRes, setInnGreaseRes] = useState(state.innGreaseRes)
-   const [outGreaseRes, setOutGreaseRes] = useState(state.outGreaseRes)
+function errorHandler(error) {
+   console.log(error)
+   toast.error(error.message)
+}
 
-   const [loading, setLoading] = useState(false)
+export default function AdditionalInfo({ id }) {
+   const {
+      data: { packaging: { packagingSpecification: spec = {} } = {} } = {},
+      loading,
+   } = useSubscription(PACKAGING_SPECS_SUBSCRIPTION, {
+      variables: { id },
+      onError: errorHandler,
+   })
 
-   const [updatePackaging] = useMutation(UPDATE_PACKAGING)
+   const [updateSpecs] = useMutation(UPDATE_PACKAGING_SPECS, {
+      onError: errorHandler,
+      onCompleted: () => toast.success('Package Specification updated!'),
+   })
 
-   const handleSave = async () => {
-      try {
-         setLoading(true)
-         const resp = await updatePackaging({
-            variables: {
-               id: state.id,
-               object: {
-                  innWaterRes,
-                  heatSafe,
-                  outWaterRes,
-                  recyclable,
-                  compostable,
-                  fdaComp,
-                  innGreaseRes,
-                  outGreaseRes,
-               },
+   const handleSave = specName => {
+      updateSpecs({
+         variables: {
+            id: spec.id,
+            object: {
+               [specName]: !spec[specName],
             },
-         })
-
-         if (resp?.data?.updatePackaging) {
-            setLoading(false)
-            toast.info('Information added :)')
-         }
-      } catch (error) {
-         setLoading(false)
-         console.log(error)
-         toast.error('Error, Please try again')
-      }
+         },
+      })
    }
 
-   if (loading) return <Loader />
-
-   return (
+   return loading ? (
+      <Loader />
+   ) : (
       <ShadowCard style={{ flexDirection: 'column' }}>
          <FlexContainer
             style={{ justifyContent: 'space-between', alignItems: 'center' }}
          >
             <Text as="title">Additional Information</Text>
-
-            <TextButton type="solid" onClick={handleSave}>
-               Save
-            </TextButton>
          </FlexContainer>
          <Spacer />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
-               checked={innWaterRes}
+               checked={spec.innerWaterResistant}
                label="Inner Water Resistant"
-               setChecked={() => setInnWaterRes(!innWaterRes)}
+               setChecked={() => handleSave('innerWaterResistant')}
             />
 
             <Toggle
-               checked={heatSafe}
-               label="Heat Safe"
-               setChecked={() => setHeatSafe(!heatSafe)}
+               checked={spec.microwaveable}
+               label="Microwaveable"
+               setChecked={() => handleSave('microwaveable')}
             />
          </FlexContainer>
          <br />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
-               checked={outWaterRes}
+               checked={spec.outerWaterResistant}
                label="Outer Water Resistant"
-               setChecked={() => setOutWaterRes(!outWaterRes)}
+               setChecked={() => handleSave('outerWaterResistant')}
             />
 
             <Toggle
-               checked={recyclable}
+               checked={spec.recyclable}
                label="Recyclable"
-               setChecked={() => setRecyclable(!recyclable)}
+               setChecked={() => handleSave('recyclable')}
             />
          </FlexContainer>
          <br />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
-               checked={innGreaseRes}
+               checked={spec.innerGreaseResistant}
                label="Inner Grease Resistant"
-               setChecked={() => setInnGreaseRes(!innGreaseRes)}
+               setChecked={() => handleSave('innerGreaseResistant')}
             />
 
             <Toggle
-               checked={compostable}
+               checked={spec.compostable}
                label="Compostable"
-               setChecked={() => setCompostable(!compostable)}
+               setChecked={() => handleSave('compostable')}
             />
          </FlexContainer>
          <br />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
-               checked={outGreaseRes}
+               checked={spec.outerGreaseResistant}
                label="Outer Grease Resistant"
-               setChecked={() => setOutGreaseRes(!outGreaseRes)}
+               setChecked={() => handleSave('innerGreaseResistant')}
             />
 
             <Toggle
-               checked={fdaComp}
+               checked={spec.fdaCompliant}
                label="FDA compliant"
-               setChecked={() => setFdaComp(!fdaComp)}
+               setChecked={() => handleSave('fdaCompliant')}
             />
          </FlexContainer>
       </ShadowCard>
