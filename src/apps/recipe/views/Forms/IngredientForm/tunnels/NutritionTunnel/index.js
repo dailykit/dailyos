@@ -17,6 +17,7 @@ const NutritionTunnel = ({ state, close }) => {
 
    const [busy, setBusy] = React.useState(false)
 
+   const [per, setPer] = React.useState(100)
    const [calories, setCalories] = React.useState(
       nutritionalInfo?.calories || ''
    )
@@ -81,6 +82,7 @@ const NutritionTunnel = ({ state, close }) => {
             id: state.ingredientProcessings[ingredientState.processingIndex].id,
             set: {
                nutritionalInfo: {
+                  per,
                   calories,
                   totalFat,
                   saturatedFat,
@@ -114,8 +116,8 @@ const NutritionTunnel = ({ state, close }) => {
          <TunnelBody>
             <Container bottom="16">
                <Text as="title">
-                  Add the values as per 100gm and make your recipes smarter with
-                  auto-generated Nutritional Facts
+                  Add the values as per {per}gm and make your recipes smarter
+                  with auto-generated Nutritional Facts
                </Text>
                <Text as="subtitle">
                   You can skip the values you don’t want to put.
