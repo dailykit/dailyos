@@ -3,62 +3,52 @@ import { useMutation } from '@apollo/react-hooks'
 import { Input, Text, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { UPDATE_SACHET } from '../../../../../graphql'
+import { UPDATE_PROCESSING } from '../../../../../graphql'
 import { Container, TunnelBody } from '../styled'
 import { FlexContainer, Flexible } from './styled'
 
-const NutritionTunnel = ({ state, closeTunnel }) => {
+const NutritionTunnel = ({ state, close }) => {
    const { ingredientState } = React.useContext(IngredientContext)
 
-   const [sachet] = React.useState(
+   const [nutritionalInfo] = React.useState(
       state.ingredientProcessings[ingredientState.processingIndex]
-         .ingredientSachets[ingredientState.sachetIndex]
+         .nutritionalInfo
    )
 
    const [busy, setBusy] = React.useState(false)
 
    const [calories, setCalories] = React.useState(
-      sachet.defaultNutritionalValues?.calories || ''
+      nutritionalInfo?.calories || ''
    )
    const [totalFat, setTotalFat] = React.useState(
-      sachet.defaultNutritionalValues?.totalFat || ''
+      nutritionalInfo?.totalFat || ''
    )
    const [saturatedFat, setSaturatedFat] = React.useState(
-      sachet.defaultNutritionalValues?.saturatedFat || ''
+      nutritionalInfo?.saturatedFat || ''
    )
    const [transFat, setTransFat] = React.useState(
-      sachet.defaultNutritionalValues?.transFat || ''
+      nutritionalInfo?.transFat || ''
    )
    const [cholesterol, setCholesterol] = React.useState(
-      sachet.defaultNutritionalValues?.cholesterol || ''
+      nutritionalInfo?.cholesterol || ''
    )
-   const [sodium, setSodium] = React.useState(
-      sachet.defaultNutritionalValues?.sodium || ''
-   )
+   const [sodium, setSodium] = React.useState(nutritionalInfo?.sodium || '')
    const [totalCarbohydrates, setTotalCarbohydrates] = React.useState(
-      sachet.defaultNutritionalValues?.totalCarbohydrates || ''
+      nutritionalInfo?.totalCarbohydrates || ''
    )
    const [dietaryFibre, setDietaryFibre] = React.useState(
-      sachet.defaultNutritionalValues?.dietaryFibre || ''
+      nutritionalInfo?.dietaryFibre || ''
    )
-   const [sugars, setSugars] = React.useState(
-      sachet.defaultNutritionalValues?.sugars || ''
-   )
-   const [protein, setProtein] = React.useState(
-      sachet.defaultNutritionalValues?.protein || ''
-   )
+   const [sugars, setSugars] = React.useState(nutritionalInfo?.sugars || '')
+   const [protein, setProtein] = React.useState(nutritionalInfo?.protein || '')
    const [vitaminA, setVitaminA] = React.useState(
-      sachet.defaultNutritionalValues?.vitaminA || ''
+      nutritionalInfo?.vitaminA || ''
    )
    const [vitaminC, setVitaminC] = React.useState(
-      sachet.defaultNutritionalValues?.vitaminC || ''
+      nutritionalInfo?.vitaminC || ''
    )
-   const [calcium, setCalcium] = React.useState(
-      sachet.defaultNutritionalValues?.calcium || ''
-   )
-   const [iron, setIron] = React.useState(
-      sachet.defaultNutritionalValues?.iron || ''
-   )
+   const [calcium, setCalcium] = React.useState(nutritionalInfo?.calcium || '')
+   const [iron, setIron] = React.useState(nutritionalInfo?.iron || '')
 
    const sanitizeInput = value => {
       if (value.length === 0) return true
@@ -71,10 +61,10 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
    const calcDailyValue = value => (value / 100) * 100
 
    // Mutation
-   const [updateSachet] = useMutation(UPDATE_SACHET, {
+   const [updateProcessing] = useMutation(UPDATE_PROCESSING, {
       onCompleted: () => {
          toast.success('Nutritional values updated!')
-         closeTunnel(7)
+         close(1)
       },
       onError: () => {
          toast.error('Error')
@@ -86,11 +76,11 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
    const save = () => {
       if (busy) return
       setBusy(true)
-      updateSachet({
+      updateProcessing({
          variables: {
-            id: sachet.id,
+            id: state.ingredientProcessings[ingredientState.processingIndex].id,
             set: {
-               defaultNutritionalValues: {
+               nutritionalInfo: {
                   calories,
                   totalFat,
                   saturatedFat,
@@ -114,9 +104,12 @@ const NutritionTunnel = ({ state, closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title="Add Default Nutritional Values"
+            title={`Add Nutritional Values for ${
+               state.ingredientProcessings[ingredientState.processingIndex]
+                  .processingName
+            } ${state.name}`}
             right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
-            close={() => closeTunnel(7)}
+            close={() => close(1)}
          />
          <TunnelBody>
             <Container bottom="16">

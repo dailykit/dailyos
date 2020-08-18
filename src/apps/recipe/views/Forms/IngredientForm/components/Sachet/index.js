@@ -5,11 +5,11 @@ import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { Container, ContainerAction, Flex, Grid } from '../styled'
+import { Container, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
 import { Nutrition } from '../../../../../../../shared/components'
 
-const Sachet = ({ state, openEditSachetTunnel }) => {
+const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -169,20 +169,13 @@ const Sachet = ({ state, openEditSachetTunnel }) => {
             </tbody>
          </StyledTable>
          <Container top="32">
-            {sachet.defaultNutritionalValues ? (
-               <Container>
-                  <ContainerAction>
-                     <IconButton onClick={() => openEditSachetTunnel(7)}>
-                        <EditIcon color="#00A7E1" />
-                     </IconButton>
-                  </ContainerAction>
-                  <Nutrition data={sachet.defaultNutritionalValues} vertical />
-               </Container>
+            {sachet.nutritionalInfo ? (
+               <Nutrition data={sachet.nutritionalInfo} vertical />
             ) : (
                <ButtonTile
                   type="secondary"
-                  text="Add Default Nutritional Values"
-                  onClick={() => openEditSachetTunnel(7)}
+                  text="Add Nutritional Values"
+                  onClick={() => openNutritionTunnel(1)}
                />
             )}
          </Container>
