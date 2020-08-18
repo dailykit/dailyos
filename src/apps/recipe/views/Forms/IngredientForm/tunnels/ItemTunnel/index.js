@@ -38,6 +38,7 @@ const ItemTunnel = ({ closeTunnel }) => {
          onError: error => {
             console.log(error)
          },
+         fetchPolicy: 'cache-and-network',
       }
    )
    const [fetchSupplierItems, { loading: supplierItemsLoading }] = useLazyQuery(
@@ -55,13 +56,16 @@ const ItemTunnel = ({ closeTunnel }) => {
          onError: error => {
             console.log(error)
          },
+         fetchPolicy: 'cache-and-network',
       }
    )
 
    React.useEffect(() => {
       if (ingredientState.currentMode === 'realTime') {
+         console.log('REAL')
          fetchBulkItems()
       } else {
+         console.log('PLANNED')
          fetchSupplierItems()
       }
    }, [])
