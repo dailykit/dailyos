@@ -1,9 +1,9 @@
 import React from 'react'
 import { Text, Avatar, IconButton, PlusIcon } from '@dailykit/ui'
-import { CustomerCard, CustomerInfo, CustomerWallet } from './styled'
+import { StyledCustomerCard, CustomerInfo, CustomerWallet } from './styled'
 
-const customerCard = ({ customer, walletAmount }) => (
-   <CustomerCard>
+const CustomerCard = ({ customer, walletAmount }) => (
+   <StyledCustomerCard>
       <CustomerInfo>
          <Avatar url="https://randomuser.me/api/portraits/men/61.jpg" />
          <Text as="title">{`${
@@ -20,6 +20,6 @@ const customerCard = ({ customer, walletAmount }) => (
             <PlusIcon />
          </IconButton>
       </CustomerWallet>
-   </CustomerCard>
+   </StyledCustomerCard>
 )
-export default customerCard
+export default CustomerCard

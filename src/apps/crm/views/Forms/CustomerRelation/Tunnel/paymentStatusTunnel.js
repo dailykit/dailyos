@@ -16,11 +16,7 @@ const PaymentStatus = ({ tunnels, closeTunnel }) => {
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
-            <TunnelHeader
-               title="Payment Status"
-               //   right={{ action: () => openTunnel(2), title: 'Next' }}
-               close={() => closeTunnel(1)}
-            />
+            <TunnelHeader title="Payment Status" close={() => closeTunnel(1)} />
             <TunnelHeaderContainer>
                <StyledDiv>
                   <Text as="h2">

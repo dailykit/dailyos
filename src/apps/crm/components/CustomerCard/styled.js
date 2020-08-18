@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const CustomerCard = styled.div`
+export const StyledCustomerCard = styled.div`
    background: #ffffff;
    border: 1px solid #ececec;
    box-sizing: border-box;

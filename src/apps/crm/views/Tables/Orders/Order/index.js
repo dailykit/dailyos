@@ -4,7 +4,7 @@ import { ReactTabulator } from 'react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
 import { useTabs } from '../../../../context'
-import { Capitalize } from '../../../../Utils'
+import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import {
@@ -147,7 +147,7 @@ const OrderInfo = () => {
                   <StyledSpan>Deliverd on: N/A</StyledSpan>
                   <StyledSpan>
                      Channel:
-                     {Capitalize(
+                     {capitalizeString(
                         orderData?.order?.channel?.cartSource || 'N/A'
                      )}
                   </StyledSpan>

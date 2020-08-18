@@ -8,9 +8,9 @@ import {
    SmallText,
 } from './styled'
 import { MaestroIcon } from '../../../../shared/assets/icons'
-import { Capitalize } from '../../Utils'
+import { capitalizeString } from '../../Utils'
 
-const contactInfoCard = ({
+const ContactInfoCard = ({
    bgColor,
    margin,
    defaultTag,
@@ -28,7 +28,7 @@ const contactInfoCard = ({
       <CardInfo>
          <MaestroIcon size="25" />
          <Text as="subtitle">
-            &nbsp;&nbsp;{Capitalize(cardData?.brand || 'N/A')}
+            &nbsp;&nbsp;{capitalizeString(cardData?.brand || 'N/A')}
          </Text>
       </CardInfo>
       <CardInfo>
@@ -47,4 +47,4 @@ const contactInfoCard = ({
       </BillingAddress>
    </PaymentCard>
 )
-export default contactInfoCard
+export default ContactInfoCard
