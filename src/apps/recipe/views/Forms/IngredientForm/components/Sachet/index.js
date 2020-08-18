@@ -20,11 +20,21 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    )
 
    React.useEffect(() => {
-      setSachet(
+      if (
          state.ingredientProcessings[ingredientState.processingIndex]
             .ingredientSachets[ingredientState.sachetIndex]
-      )
-   }, [state, ingredientState.sachetIndex])
+      ) {
+         setSachet(
+            state.ingredientProcessings[ingredientState.processingIndex]
+               .ingredientSachets[ingredientState.sachetIndex]
+         )
+      } else {
+         setSachet(
+            state.ingredientProcessings[ingredientState.processingIndex]
+               .ingredientSachets[0]
+         )
+      }
+   }, [state, ingredientState.processingIndex, ingredientState.sachetIndex])
 
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
