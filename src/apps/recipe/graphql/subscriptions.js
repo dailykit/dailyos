@@ -159,6 +159,7 @@ export const S_RECIPE = gql`
                   id
                   quantity
                   unit
+                  nutritionalInfo
                   ingredient {
                      id
                   }

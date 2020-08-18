@@ -26,6 +26,7 @@ import {
    Ingredients,
    Photo,
    RecipeCard,
+   NutritionalInfo,
 } from './components'
 import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
 
@@ -162,6 +163,9 @@ const RecipeForm = () => {
                      <Photo state={state} />
                      <Servings state={state} />
                      <Ingredients state={state} />
+                     {Boolean(state.simpleRecipeYields?.length) && (
+                        <NutritionalInfo state={state} />
+                     )}
                      <Procedures state={state} />
                   </>
                ) : (
