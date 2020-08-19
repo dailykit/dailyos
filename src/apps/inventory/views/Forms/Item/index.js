@@ -530,12 +530,18 @@ function ContactPerson({ formState, open }) {
    return (
       <>
          <span>{formState.supplier.name}</span>
-         <Avatar
-            withName
-            title={`${formState.supplier?.contactPerson?.firstName} ${
-               formState.supplier?.contactPerson?.lastName || ''
-            }`}
-         />
+         {formState.supplier.contactPerson &&
+         formState.supplier.contactPerson.firstName ? (
+            <Avatar
+               withName
+               title={`${formState.supplier?.contactPerson?.firstName} ${
+                  formState.supplier?.contactPerson?.lastName || ''
+               }`}
+            />
+         ) : <Avatar
+         withName
+         title="N/A"
+      />}
          <TransparentIconButton type="outline" onClick={() => open(1)}>
             <EditIcon size="18" color="#555B6E" />
          </TransparentIconButton>
