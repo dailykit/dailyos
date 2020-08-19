@@ -58,6 +58,7 @@ export const S_INGREDIENT = gql`
                unit
                quantity
                nutritionalInfo
+               cost
                liveModeOfFulfillment {
                   id
                   type

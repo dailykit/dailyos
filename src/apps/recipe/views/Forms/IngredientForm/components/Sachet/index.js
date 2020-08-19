@@ -179,6 +179,11 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
             </tbody>
          </StyledTable>
          <Container top="32">
+            <Text as="subtitle"> Cost </Text>
+            <Text as="p">${sachet.cost}</Text>
+         </Container>
+         <Container top="32">
+            <Text as="subtitle"> Nutrition </Text>
             {sachet.nutritionalInfo ? (
                <Nutrition data={sachet.nutritionalInfo} vertical />
             ) : (
