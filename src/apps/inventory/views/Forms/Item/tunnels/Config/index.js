@@ -88,13 +88,13 @@ export default function ConfigTunnel({ close, formState }) {
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
-         close(4)
+         close(2)
          toast.success('Bulk Item as Shipped Added!')
       },
       onError: error => {
          console.log(error)
          toast.error('Error adding bulk item as shipped. Please try again')
-         close(4)
+         close(2)
       },
    })
    const [createBulkItem, { loading: createBulkItemLoading }] = useMutation(
@@ -363,6 +363,7 @@ export default function ConfigTunnel({ close, formState }) {
                      >
                         <option value="hours">{t('units.hours')}</option>
                         <option value="minutes">{t('units.minutes')}</option>
+                        <option value="days">days</option>
                      </StyledSelect>
                   </InputWrapper>
                   <InputWrapper>
@@ -423,9 +424,10 @@ export default function ConfigTunnel({ close, formState }) {
                   />
                ) : (
                   <ButtonTile
+                     data-testid="nutri_tunnel"
                      type="secondary"
                      text={t(address.concat('add nutritions'))}
-                     onClick={e => {
+                     onClick={() => {
                         dispatch({
                            type: 'SET_NUTRI_TARGET',
                            payload: 'processing',
@@ -447,6 +449,7 @@ export default function ConfigTunnel({ close, formState }) {
                   </Highlight>
                ) : (
                   <ButtonTile
+                     data-testid="allergen_tunnel"
                      type="secondary"
                      text={t(address.concat('add allergens'))}
                      onClick={() => openAllergensTunnel(1)}
