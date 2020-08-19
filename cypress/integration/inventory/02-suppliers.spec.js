@@ -14,7 +14,7 @@ context('suppliers module | inventory app', () => {
    })
 
    it('should load suppliers listings view', () => {
-      cy.get('.tabulator-header', { timeout: 4000 }).should('be.visible')
+      cy.get('.tabulator-header').should('be.visible')
    })
 
    it('should create a supplier and change his name', () => {
@@ -85,5 +85,16 @@ context('suppliers module | inventory app', () => {
          .wait(200)
          .get('span')
          .should('contain', 'Cypress user')
+   })
+
+   it('should get the created supplier and try to delete it', () => {
+      cy.get('input[type="search"]')
+         .type(newSupplierName)
+         .wait(500)
+         .get('div.formatterCell > svg')
+         .then(e => e[0])
+         .click()
+         .get('.Toastify__toast')
+         .contains('Supplier deleted!')
    })
 })
