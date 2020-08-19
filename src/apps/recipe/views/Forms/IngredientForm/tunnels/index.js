@@ -11,6 +11,7 @@ import EditPackagingTunnel from './EditPackagingTunnel'
 import EditLabelTemplateTunnel from './EditLabelTemplateTunnel'
 import NutritionTunnel from './NutritionTunnel'
 import PhotoTunnel from './PhotoTunnel'
+import PriceTunnel from './PriceTunnel'
 
 export {
    ProcessingsTunnel,
@@ -26,4 +27,5 @@ export {
    EditLabelTemplateTunnel,
    NutritionTunnel,
    PhotoTunnel,
+   PriceTunnel,
 }

@@ -11,6 +11,7 @@ import CircleIcon from './Circle'
 import EyeIcon from './Eye'
 import TickIcon from './Tick'
 import FileIcon from './File'
+import DollarIcon from './Dollar'
 
 export {
    MenuIcon,
@@ -26,4 +27,5 @@ export {
    EyeIcon,
    TickIcon,
    FileIcon,
+   DollarIcon,
 }

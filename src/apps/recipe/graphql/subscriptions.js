@@ -51,6 +51,7 @@ export const S_INGREDIENT = gql`
             id
             processingName
             nutritionalInfo
+            cost
             ingredientSachets {
                id
                tracking

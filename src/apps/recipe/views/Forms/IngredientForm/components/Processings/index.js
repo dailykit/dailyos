@@ -4,7 +4,12 @@ import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 // eslint-disable-next-line import/no-cycle
 import { Sachets } from '..'
-import { AddIcon, DeleteIcon, FileIcon } from '../../../../../assets/icons'
+import {
+   AddIcon,
+   DeleteIcon,
+   FileIcon,
+   DollarIcon,
+} from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { DELETE_PROCESSING } from '../../../../../graphql'
 import { Container } from '../styled'
@@ -16,7 +21,7 @@ import {
    StyledListingTile,
    StyledSection,
 } from './styled'
-import { NutritionTunnel } from '../../tunnels'
+import { NutritionTunnel, PriceTunnel } from '../../tunnels'
 
 const Processings = ({
    state,
@@ -32,7 +37,8 @@ const Processings = ({
       nutritionTunnels,
       openNutritionTunnel,
       closeNutritionTunnel,
-   ] = useTunnel()
+   ] = useTunnel(1)
+   const [priceTunnels, openPriceTunnel, closePriceTunnel] = useTunnel(1)
 
    // Mutation
    const [deleteProcessing] = useMutation(DELETE_PROCESSING, {
@@ -71,6 +77,11 @@ const Processings = ({
                <NutritionTunnel state={state} close={closeNutritionTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={priceTunnels}>
+            <Tunnel layer={1}>
+               <PriceTunnel state={state} close={closePriceTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Container top="16" paddingX="32">
             {state.ingredientProcessings?.length ? (
                <StyledSection>
@@ -104,6 +115,16 @@ const Processings = ({
                            <Actions
                               active={ingredientState.processingIndex === i}
                            >
+                              <span
+                                 role="button"
+                                 tabIndex="0"
+                                 onClick={() => openPriceTunnel(1)}
+                                 onKeyDown={e =>
+                                    e.charCode === 13 && openPriceTunnel(1)
+                                 }
+                              >
+                                 <DollarIcon color="#fff" />
+                              </span>
                               <span
                                  role="button"
                                  tabIndex="0"
