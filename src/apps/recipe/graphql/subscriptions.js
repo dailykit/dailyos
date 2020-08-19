@@ -153,6 +153,8 @@ export const S_RECIPE = gql`
          simpleRecipeYields {
             id
             yield
+            cost
+            nutritionalInfo
             ingredientSachets {
                isVisible
                slipName
@@ -160,7 +162,6 @@ export const S_RECIPE = gql`
                   id
                   quantity
                   unit
-                  nutritionalInfo
                   ingredient {
                      id
                   }

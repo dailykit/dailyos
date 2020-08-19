@@ -8,6 +8,7 @@ import SachetTunnel from './SachetTunnel'
 import PhotoTunnel from './PhotoTunnel'
 import CardPreviewTunnel from './CardPreviewTunnel'
 import StepPhotoTunnel from './StepPhotoTunnel'
+import YieldInfoTunnel from './YieldInfoTunnel'
 
 export {
    InformationTunnel,
@@ -20,4 +21,5 @@ export {
    PhotoTunnel,
    CardPreviewTunnel,
    StepPhotoTunnel,
+   YieldInfoTunnel,
 }
