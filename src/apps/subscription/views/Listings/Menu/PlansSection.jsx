@@ -2,8 +2,8 @@ import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
 import { Text, Toggle } from '@dailykit/ui'
-import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
@@ -55,8 +55,9 @@ const PlansSection = () => {
             moment(value).format('MMM DD HH:MM A'),
       },
       {
-         title: 'Products',
-         field: 'products.aggregate.count',
+         hozAlign: 'right',
+         title: 'Menu Products',
+         formatter: reactFormatter(<ProductsCount />),
       },
       {
          title: 'Customers',
@@ -125,6 +126,21 @@ const PlansSection = () => {
 }
 
 export default PlansSection
+
+const ProductsCount = ({ cell: { _cell } }) => {
+   const data = _cell.row.getData()
+   return (
+      <div>
+         <span title="Added to this occurence">
+            {data.products.aggregate.count}
+         </span>
+         /
+         <span title="Added to the subscription">
+            {data.subscription.products.aggregate.count}
+         </span>
+      </div>
+   )
+}
 
 const Wrapper = styled.main`
    padding: 0 16px;
