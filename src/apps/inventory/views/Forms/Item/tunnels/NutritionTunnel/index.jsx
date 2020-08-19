@@ -18,20 +18,21 @@ export default function NutritionTunnel({ close }) {
    } = useContext(ItemContext)
 
    const [per, setPer] = useState(100)
-   const [cal, setCal] = useState('')
-   const [fat, setFat] = useState('')
+   const [calories, setCalories] = useState('')
+   const [totalFat, setTotalFat] = useState('')
    const [saturatedFat, setSaturatedFat] = useState('')
    const [transFat, setTransFat] = useState('')
-   const [cholestrol, setCholestrol] = useState('')
+   const [cholesterol, setCholesterol] = useState('')
    const [sodium, setSodium] = useState('')
-   const [carbs, setCarbs] = useState('')
-   const [dietryFiber, setDietryFiber] = useState('')
-   const [sugar, setSugar] = useState('')
+   const [totalCarbohydrates, setTotalCarbohydrates] = useState('')
+   const [dietaryFibre, setDietaryFibre] = useState('')
+   const [sugars, setSugars] = useState('')
    const [protein, setProtein] = useState('')
-   const [vitA, setVitA] = useState('')
-   const [vitC, setVitC] = useState('')
+   const [vitaminA, setVitaminA] = useState('')
+   const [vitaminC, setVitaminC] = useState('')
    const [calcium, setCalcium] = useState('')
    const [iron, setIron] = useState('')
+
    const [valid, setValid] = useState(true)
 
    // change below function to calculate daily % value acc. to provided total nutrients
@@ -54,21 +55,21 @@ export default function NutritionTunnel({ close }) {
             dispatch({
                type: 'ADD_PROCESSING_NUTRIENT',
                payload: {
-                  per: +per,
-                  cal: +cal,
-                  fat: +fat,
-                  saturatedFat: +saturatedFat,
-                  transFat: +transFat,
-                  cholestrol: +cholestrol,
-                  sodium: +sodium,
-                  carbs: +carbs,
-                  dietryFiber: +dietryFiber,
-                  sugar: +sugar,
-                  protein: +protein,
-                  vitA: +vitA,
-                  vitC: +vitC,
-                  calcium: +calcium,
-                  iron: +iron,
+                  per,
+                  calories,
+                  totalFat,
+                  saturatedFat,
+                  transFat,
+                  cholesterol,
+                  sodium,
+                  totalCarbohydrates,
+                  dietaryFibre,
+                  sugars,
+                  protein,
+                  vitaminA,
+                  vitaminC,
+                  calcium,
+                  iron,
                },
             })
          } else {
@@ -76,18 +77,18 @@ export default function NutritionTunnel({ close }) {
                type: 'ADD_DERIVED_PROCESSING_NUTRIENT',
                payload: {
                   per,
-                  cal,
-                  fat,
+                  calories,
+                  totalFat,
                   saturatedFat,
                   transFat,
-                  cholestrol,
+                  cholesterol,
                   sodium,
-                  carbs,
-                  dietryFiber,
-                  sugar,
+                  totalCarbohydrates,
+                  dietaryFibre,
+                  sugars,
                   protein,
-                  vitA,
-                  vitC,
+                  vitaminA,
+                  vitaminC,
                   calcium,
                   iron,
                },
@@ -142,16 +143,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('calories'))}
                         name="cal"
-                        value={cal || ''}
-                        onChange={e => setCal(e.target.value)}
-                        onBlur={() => checkInput(cal)}
+                        value={calories || ''}
+                        onChange={e => setCalories(e.target.value)}
+                        onBlur={() => checkInput(calories)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(cal)}
+                     {calcDailyValue(calories)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -168,16 +169,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('total fat'))}
                         name="fat"
-                        value={fat || ''}
-                        onChange={e => setFat(e.target.value)}
-                        onBlur={() => checkInput(fat)}
+                        value={totalFat || ''}
+                        onChange={e => setTotalFat(e.target.value)}
+                        onBlur={() => checkInput(totalFat)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(fat)}
+                     {calcDailyValue(totalFat)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -258,16 +259,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('cholestrol'))}
                         name="cholestrol"
-                        value={cholestrol || ''}
-                        onChange={e => setCholestrol(e.target.value)}
-                        onBlur={() => checkInput(cholestrol)}
+                        value={cholesterol || ''}
+                        onChange={e => setCholesterol(e.target.value)}
+                        onBlur={() => checkInput(cholesterol)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(cholestrol)}
+                     {calcDailyValue(cholesterol)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -310,16 +311,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('total carbohydrates'))}
                         name="totalCarbs"
-                        value={carbs || ''}
-                        onChange={e => setCarbs(e.target.value)}
-                        onBlur={() => checkInput(carbs)}
+                        value={totalCarbohydrates || ''}
+                        onChange={e => setTotalCarbohydrates(e.target.value)}
+                        onBlur={() => checkInput(totalCarbohydrates)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(carbs)}
+                     {calcDailyValue(totalCarbohydrates)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -342,16 +343,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('dietry fiber'))}
                         name="dietryFibre"
-                        value={dietryFiber || ''}
-                        onChange={e => setDietryFiber(e.target.value)}
-                        onBlur={() => checkInput(dietryFiber)}
+                        value={dietaryFibre || ''}
+                        onChange={e => setDietaryFibre(e.target.value)}
+                        onBlur={() => checkInput(dietaryFibre)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(dietryFiber)}
+                     {calcDailyValue(dietaryFibre)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -374,16 +375,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('sugar'))}
                         name="sugar"
-                        value={sugar || ''}
-                        onChange={e => setSugar(e.target.value)}
-                        onBlur={() => checkInput(sugar)}
+                        value={sugars || ''}
+                        onChange={e => setSugars(e.target.value)}
+                        onBlur={() => checkInput(sugars)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(sugar)}
+                     {calcDailyValue(sugars)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -426,16 +427,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('vitamin A'))}
                         name="vitaminA"
-                        value={vitA || ''}
-                        onChange={e => setVitA(e.target.value)}
-                        onBlur={() => checkInput(vitA)}
+                        value={vitaminA || ''}
+                        onChange={e => setVitaminA(e.target.value)}
+                        onBlur={() => checkInput(vitaminA)}
                      />
                      <div>{t('units.gm')}</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(vitA)}
+                     {calcDailyValue(vitaminA)}
                   </span>
                </Flexible>
             </FlexContainer>
@@ -452,16 +453,16 @@ export default function NutritionTunnel({ close }) {
                         type="number"
                         label={t(address.concat('vitamin C'))}
                         name="vitC"
-                        value={vitC || ''}
-                        onChange={e => setVitC(e.target.value)}
-                        onBlur={() => checkInput(vitC)}
+                        value={vitaminC || ''}
+                        onChange={e => setVitaminC(e.target.value)}
+                        onBlur={() => checkInput(vitaminC)}
                      />
                      <div>gm</div>
                   </FlexContainer>
                </Flexible>
                <Flexible width="1">
                   <span style={{ marginLeft: '20px' }}>
-                     {calcDailyValue(vitC)}
+                     {calcDailyValue(vitaminC)}
                   </span>
                </Flexible>
             </FlexContainer>

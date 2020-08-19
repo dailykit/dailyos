@@ -401,22 +401,23 @@ export default function ConfigTunnel({ close, formState }) {
                      <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
-               {state.processing.nutrients?.fat ||
-               state.processing.nutrients?.cal ? (
+               {state.processing.nutrients?.totalFat ||
+               state.processing.nutrients?.calories ? (
                   <Nutrition
                      data={{
-                        calories: state.processing.nutrients.cal,
-                        totalFat: state.processing.nutrients.fat,
+                        calories: state.processing.nutrients.calories,
+                        totalFat: state.processing.nutrients.totalFat,
                         transFat: state.processing.nutrients.transFat,
                         saturatedFat: state.processing.nutrients.saturatedFat,
-                        cholesterol: state.processing.nutrients.cholestrol,
+                        cholesterol: state.processing.nutrients.cholesterol,
                         sodium: state.processing.nutrients.sodium,
-                        totalCarbohydrates: state.processing.nutrients.carbs,
-                        dietaryFibre: state.processing.nutrients.dietryFiber,
-                        sugars: state.processing.nutrients.sugar,
+                        totalCarbohydrates:
+                           state.processing.nutrients.totalCarbohydrates,
+                        dietaryFibre: state.processing.nutrients.dietaryFibre,
+                        sugars: state.processing.nutrients.sugars,
                         protein: state.processing.nutrients.protein,
-                        vitaminA: state.processing.nutrients.vitA,
-                        vitaminC: state.processing.nutrients.vitC,
+                        vitaminA: state.processing.nutrients.vitaminA,
+                        vitaminC: state.processing.nutrients.vitaminC,
                         iron: state.processing.nutrients.iron,
                         calcium: state.processing.nutrients.calcium,
                      }}
