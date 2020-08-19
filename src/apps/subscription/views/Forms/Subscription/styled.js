@@ -67,12 +67,17 @@ export const ItemCountSection = styled.section`
 `
 
 export const DeliveryDaySection = styled.section`
+   padding: 0 16px;
+   [data-reach-tab] {
+      padding: 0;
+      height: 48px;
+   }
    [data-selected] {
       span {
          color: #05abe4;
       }
    }
    [data-reach-tab-panel] {
-      padding: 16px;
+      padding-top: 16px;
    }
 `

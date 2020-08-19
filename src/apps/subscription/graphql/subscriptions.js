@@ -221,3 +221,13 @@ export const SUBSCRIPTION_CUSTOMERS = gql`
       }
    }
 `
+
+export const SUBSCRIPTION = gql`
+   subscription subscription($id: Int!) {
+      subscription: subscription_subscription_by_pk(id: $id) {
+         id
+         endDate
+         startDate
+      }
+   }
+`
