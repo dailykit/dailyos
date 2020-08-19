@@ -19,6 +19,7 @@ import { TunnelContainer } from '../../../../components'
 import { FlexContainer } from '../../styled'
 import { CircleButton } from '../styled'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
+import { validateEmail } from '../../../../../../shared/utils/index'
 
 import PhotoTunnel from './PhotoTunnel'
 
@@ -53,7 +54,9 @@ export default function PersonContactTunnel({ close, formState }) {
    })
 
    const handleNext = () => {
-      if (!firstName || !lastName) return toast.error('Fill the form properly')
+      if (!firstName) return toast.error('Provide first name')
+      if (!lastName) return toast.error('Provide last name')
+      if (!validateEmail(email)) return toast.error('Invalid Email')
 
       updateSupplier({
          variables: {
@@ -137,7 +140,7 @@ export default function PersonContactTunnel({ close, formState }) {
                   }}
                >
                   <CircleButton onClick={() => openPhotoTunnel(1)}>
-                     {formState.contactPerson.imageUrl ? (
+                     {formState.contactPerson?.imageUrl ? (
                         <img
                            src={formState.contactPerson.imageUrl}
                            alt="profile"

@@ -1,0 +1,30 @@
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+   push:
+      branches: ['feat/**']
+   pull_request:
+      branches: [master, staging]
+
+jobs:
+   test:
+      env:
+         REACT_APP_DATA_HUB_URI: ${{ secrets.REACT_APP_DATA_HUB_URI }}
+         REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI: ${{ secrets.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI }}
+         REACT_APP_KEYCLOAK_URL: ${{ secrets.REACT_APP_KEYCLOAK_URL }}
+         REACT_APP_KEYCLOAK_REALM: ${{ secrets.REACT_APP_KEYCLOAK_REALM }}
+         REACT_APP_DAILYOS_SERVER_URI: ${{ secrets.REACT_APP_DAILYOS_SERVER_URI }}
+      runs-on: ubuntu-latest
+      steps:
+         - uses: actions/checkout@v2
+
+         - name: Cypress run
+           uses: cypress-io/github-action@v2
+           with:
+              browser: chrome
+              headless: true
+              config-file: cypress.json
+              start: npm start
+              wait-on: 'http://localhost:3000'

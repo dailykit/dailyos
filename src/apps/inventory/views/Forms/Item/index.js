@@ -230,7 +230,10 @@ export default function ItemForm() {
          </StyledWrapper>
          <StyledMain>
             <>
-               <StyledGrid onClick={() => openInfoTunnel(1)}>
+               <StyledGrid
+                  data-testid="basic_info"
+                  onClick={() => openInfoTunnel(1)}
+               >
                   <div>
                      <div>
                         <ItemIcon />
@@ -323,6 +326,7 @@ export default function ItemForm() {
                            {t(address.concat('processings'))}
                         </Text>
                         <TransparentIconButton
+                           data-testid="add_processing"
                            onClick={() => {
                               if (!formState.supplier)
                                  return toast.error('Select a supplier first!')
@@ -393,7 +397,7 @@ export default function ItemForm() {
                         </>
                      )}
 
-                     {formState.bulkItems?.length && (
+                     {formState.bulkItems?.length ? (
                         <>
                            <br />
                            <Text as="subtitle">
@@ -477,7 +481,7 @@ export default function ItemForm() {
                               )
                            })}
                         </>
-                     )}
+                     ) : null}
                   </Flexible>
                   <Flexible style={{ marginTop: '14vh' }} width="4">
                      <div
@@ -514,7 +518,11 @@ export default function ItemForm() {
 function ContactPerson({ formState, open }) {
    if (!formState.supplier)
       return (
-         <TextButton type="outline" onClick={() => open(1)}>
+         <TextButton
+            data-testid="add_supplier"
+            type="outline"
+            onClick={() => open(1)}
+         >
             Add Supplier
          </TextButton>
       )
@@ -522,12 +530,18 @@ function ContactPerson({ formState, open }) {
    return (
       <>
          <span>{formState.supplier.name}</span>
-         <Avatar
-            withName
-            title={`${formState.supplier?.contactPerson?.firstName} ${
-               formState.supplier?.contactPerson?.lastName || ''
-            }`}
-         />
+         {formState.supplier.contactPerson &&
+         formState.supplier.contactPerson.firstName ? (
+            <Avatar
+               withName
+               title={`${formState.supplier?.contactPerson?.firstName} ${
+                  formState.supplier?.contactPerson?.lastName || ''
+               }`}
+            />
+         ) : <Avatar
+         withName
+         title="N/A"
+      />}
          <TransparentIconButton type="outline" onClick={() => open(1)}>
             <EditIcon size="18" color="#555B6E" />
          </TransparentIconButton>

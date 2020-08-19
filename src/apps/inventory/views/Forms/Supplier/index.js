@@ -196,6 +196,7 @@ export default function SupplierForm() {
                   />
                ) : (
                   <ButtonTile
+                     data-testid="supplier_contact"
                      type="secondary"
                      text={t(address.concat('add person of contact'))}
                      onClick={() => openContactTunnel(1)}
@@ -313,6 +314,7 @@ function AddressView({ formState, openTunnel }) {
             />
          ) : (
             <ButtonTile
+               data-testid="supplier_address"
                type="secondary"
                text={t(address.concat('add address'))}
                onClick={() => openTunnel(1)}

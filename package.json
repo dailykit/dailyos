@@ -9,9 +9,6 @@
       "@dailykit/ui": "^0.7.1",
       "@reach/tabs": "^0.10.0",
       "@react-google-maps/api": "^1.9.7",
-      "@testing-library/jest-dom": "^4.2.4",
-      "@testing-library/react": "^9.3.2",
-      "@testing-library/user-event": "^7.1.2",
       "apollo-cache-inmemory": "^1.6.5",
       "apollo-client": "^2.6.8",
       "apollo-link": "^1.2.14",
@@ -56,8 +53,11 @@
    "scripts": {
       "start": "react-scripts start",
       "build": "react-scripts build",
-      "test": "react-scripts test",
-      "eject": "react-scripts eject"
+      "eject": "react-scripts eject",
+      "test:dashboard": "cypress open",
+      "test": "cypress run --browser chrome --headless",
+      "test:e2e:ci": "start-server-and-test 'yarn start' 3000 'yarn test'",
+      "test:e2e": "start-server-and-test 'yarn start' 3000 'yarn test:dashboard'"
    },
    "eslintConfig": {
       "extends": "react-app"
@@ -73,5 +73,10 @@
          "last 1 firefox version",
          "last 1 safari version"
       ]
+   },
+   "devDependencies": {
+      "@testing-library/cypress": "^6.0.0",
+      "cypress": "^4.12.1",
+      "start-server-and-test": "^1.11.2"
    }
 }

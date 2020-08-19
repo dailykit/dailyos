@@ -132,7 +132,11 @@ export default function SupplierListing() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton type="solid" onClick={createSupplierHandler}>
+                  <IconButton
+                     data-testid="addSupplier"
+                     type="solid"
+                     onClick={createSupplierHandler}
+                  >
                      <AddIcon color="#fff" size={24} />
                   </IconButton>
                </FlexContainer>

@@ -1,4 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    List,
    ListItem,
@@ -37,6 +38,15 @@ export default function ProcessingTunnel({ close, open, formState }) {
       }
    )
 
+   const handleNext = () => {
+      if (!current || !current.id)
+         return toast.error('Select a processing first')
+
+      dispatch({ type: 'PROCESSING', payload: current })
+      close(1)
+      open(2)
+   }
+
    if (processingsLoading) return <Loader />
 
    return (
@@ -46,11 +56,7 @@ export default function ProcessingTunnel({ close, open, formState }) {
             close={() => close(1)}
             right={{
                title: 'Next',
-               action: () => {
-                  dispatch({ type: 'PROCESSING', payload: current })
-                  close(1)
-                  open(2)
-               },
+               action: handleNext,
             }}
          />
          <TunnelContainer>
