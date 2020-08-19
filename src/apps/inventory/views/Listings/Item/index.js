@@ -142,7 +142,11 @@ export default function ItemListing() {
                   >
                      Clear Filters
                   </TextButton>
-                  <IconButton type="solid" onClick={createItemHandler}>
+                  <IconButton
+                     data-testid="addItem"
+                     type="solid"
+                     onClick={createItemHandler}
+                  >
                      <AddIcon color="#fff" size={24} />
                   </IconButton>
                </StyledTableActions>

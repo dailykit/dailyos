@@ -421,6 +421,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                   />
                ) : (
                   <ButtonTile
+                     data-testid="nutri_tunnel"
                      type="secondary"
                      text={t(address.concat('add nutritions'))}
                      onClick={() => {
@@ -448,6 +449,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                   </Highlight>
                ) : (
                   <ButtonTile
+                     data-testid="allergen_tunnel"
                      type="secondary"
                      text={t(address.concat('add allergens'))}
                      onClick={() => openDerivedAllergensTunnel(1)}
