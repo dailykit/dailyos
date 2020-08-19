@@ -4,7 +4,7 @@
 
 context('supplier items module | inventory app', () => {
    let newItemName = 'updated cypress item'
-   const supplierName = 'delete this supplier'
+   let supplierName = 'delete this supplier'
    const itemSku = 'uniq-10921'
 
    function createBulkItem(name = 'Raw') {
@@ -88,6 +88,22 @@ context('supplier items module | inventory app', () => {
          .should('be.visible')
    }
 
+   before(() => {
+      cy.visit('/apps/inventory')
+         .get('h2')
+         .contains('Suppliers')
+         .click()
+         .wait(2000)
+         .get('[data-testid="addSupplier"]')
+         .click()
+         .get('input[name="supplierName"]')
+         .should('contain.value', 'supplier')
+         .then($e => {
+            cy.log($e[0].value)
+            supplierName = $e[0].value
+         })
+   })
+
    beforeEach(() => {
       cy.visit('/apps/inventory').get('h2').contains('Items').click().wait(4000)
    })
@@ -106,8 +122,6 @@ context('supplier items module | inventory app', () => {
             cy.log($e[0].value)
             newItemName = $e[0].value
          })
-         .get('.Toastify__toast', { timeout: 4000 })
-         .should('be.visible')
    })
 
    it('should select a supplier for the created item', () => {
@@ -131,8 +145,6 @@ context('supplier items module | inventory app', () => {
          .get('button')
          .contains('Save')
          .click()
-         .get('.Toastify__toast', { timeout: 4000 })
-         .should('be.visible')
    })
 
    it('should update basic item information', () => {
@@ -161,8 +173,6 @@ context('supplier items module | inventory app', () => {
          .get('button')
          .contains('Save')
          .click()
-         .get('.Toastify__toast', { timeout: 4000 })
-         .should('be.visible')
    })
 
    it('should add bulk item as shipped', () => {
@@ -198,8 +208,7 @@ context('supplier items module | inventory app', () => {
          .get('button')
          .contains('Save')
          .click()
-         .get('.Toastify__toast', { timeout: 4000 })
-         .should('be.visible')
+         .wait(2000)
          .get('h3')
          .contains('80')
          .should('be.visible')
