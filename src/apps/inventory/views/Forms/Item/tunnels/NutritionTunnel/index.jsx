@@ -17,6 +17,7 @@ export default function NutritionTunnel({ close }) {
       dispatch,
    } = useContext(ItemContext)
 
+   const [per, setPer] = useState(100)
    const [cal, setCal] = useState('')
    const [fat, setFat] = useState('')
    const [saturatedFat, setSaturatedFat] = useState('')
@@ -53,6 +54,7 @@ export default function NutritionTunnel({ close }) {
             dispatch({
                type: 'ADD_PROCESSING_NUTRIENT',
                payload: {
+                  per: +per,
                   cal: +cal,
                   fat: +fat,
                   saturatedFat: +saturatedFat,
@@ -73,6 +75,7 @@ export default function NutritionTunnel({ close }) {
             dispatch({
                type: 'ADD_DERIVED_PROCESSING_NUTRIENT',
                payload: {
+                  per,
                   cal,
                   fat,
                   saturatedFat,
@@ -106,8 +109,8 @@ export default function NutritionTunnel({ close }) {
          <TunnelContainer>
             <Text as="title">
                <Trans i18nKey={address.concat('title')}>
-                  Add the values as per 100gm and make your recipes smarter with
-                  auto-generated Nutritional Facts
+                  Add the values as per {per}gm and make your recipes smarter
+                  with auto-generated Nutritional Facts
                </Trans>
             </Text>
             <Text as="subtitle">
