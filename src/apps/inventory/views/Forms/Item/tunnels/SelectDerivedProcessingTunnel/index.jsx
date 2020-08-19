@@ -1,4 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    List,
    ListItem,
@@ -42,7 +43,18 @@ export default function SelectDerivedProcessingTunnel({
       }
    )
 
-   console.log(data)
+   const handleNext = () => {
+      if (!current || !current.id)
+         return toast.error('Select a processing first')
+
+      dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
+      dispatch({
+         type: 'ADD_CONFIGURABLE_PROCESSING',
+         payload: current,
+      })
+      close()
+      next()
+   }
 
    if (processingsLoading) return <Loader />
 
@@ -52,16 +64,8 @@ export default function SelectDerivedProcessingTunnel({
             title={t(address.concat('select processing'))}
             close={() => close()}
             right={{
-               action: () => {
-                  dispatch({ type: 'ADD_DERIVED_PROCESSING', payload: current })
-                  dispatch({
-                     type: 'ADD_CONFIGURABLE_PROCESSING',
-                     payload: current,
-                  })
-                  close()
-                  next()
-               },
-               title: 'Save',
+               action: handleNext,
+               title: 'Next',
             }}
          />
          <TunnelContainer>
