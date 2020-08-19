@@ -99,6 +99,7 @@ export const S_INGREDIENT = gql`
                         }
                      }
                   }
+                  cost
                }
             }
          }
