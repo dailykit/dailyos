@@ -41,7 +41,10 @@ const PriceTunnel = ({ state, close }) => {
                   state.ingredientProcessings[ingredientState.processingIndex]
                      .id,
                set: {
-                  cost,
+                  cost: {
+                     value: +cost.value,
+                     per: +cost.per,
+                  },
                },
             },
          })
