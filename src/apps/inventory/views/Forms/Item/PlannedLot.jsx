@@ -60,6 +60,7 @@ export default function PlannedLotView({ open, formState }) {
 
                <div style={{ width: '90%', marginTop: '10px' }}>
                   <ButtonTile
+                     data-testid="add_sachets_button"
                      type="primary"
                      size="lg"
                      text={t(address.concat('add sachets'))}

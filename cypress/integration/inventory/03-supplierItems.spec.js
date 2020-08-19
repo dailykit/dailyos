@@ -3,14 +3,13 @@
 /// <reference types="cypress" />
 
 context('supplier items module | inventory app', () => {
-   const newItemName = 'cypress test item'
+   let newItemName = 'updated cypress item'
    const supplierName = 'delete this supplier'
-   const updatedItemName = 'updated cypress item'
    const itemSku = 'uniq-10921'
 
    function createBulkItem(name = 'Raw') {
       cy.get('input[type="search"]', { timeout: 4000 })
-         .type(updatedItemName)
+         .type(newItemName)
          .wait(500)
          .get('div.tabulator-cell')
          .then(e => e[0])
@@ -97,15 +96,16 @@ context('supplier items module | inventory app', () => {
       cy.get('.tabulator-header', { timeout: 4000 }).should('be.visible')
    })
 
-   it('should create an item and change its name', () => {
+   it('should create an item and get its name', () => {
       cy.get('[data-testid="addItem"]')
          .click()
          .wait(2000)
          .get('input[name="itemName"]')
          .should('contain.value', 'item')
-         .clear()
-         .type(newItemName)
-         .blur()
+         .then($e => {
+            cy.log($e[0].value)
+            newItemName = $e[0].value
+         })
          .get('.Toastify__toast', { timeout: 4000 })
          .should('be.visible')
    })
@@ -146,9 +146,6 @@ context('supplier items module | inventory app', () => {
          .get('[data-testid="basic_info"]')
          .click()
          .wait(1000)
-         .get('input[name="title"]')
-         .clear()
-         .type(updatedItemName)
          .get('input[name="sku"]')
          .type(itemSku)
          .get('input[name="unit quantity"]')
@@ -174,5 +171,37 @@ context('supplier items module | inventory app', () => {
 
    it('should add bulk item', () => {
       createBulkItem('Boiled')
+   })
+
+   it('should add sachets to the created bulk item as shipped', () => {
+      cy.get('input[type="search"]')
+         .type(newItemName)
+         .wait(500)
+         .get('div.tabulator-cell')
+         .then(e => e[0])
+         .click()
+         .wait(1000)
+         .get('h3')
+         .contains('Raw')
+         .click()
+         .get('[data-testid="planned_lot_tab"]')
+         .click()
+         .get('[data-testid="add_sachets_button"]')
+         .click()
+         .wait(500)
+         .get('input[name="quantity"]')
+         .type('80', { force: true })
+         .get('input[name="par"]')
+         .type('20', { force: true })
+         .get('input[name="inventory level"]')
+         .type('100', { force: true })
+         .get('button')
+         .contains('Save')
+         .click()
+         .get('.Toastify__toast', { timeout: 4000 })
+         .should('be.visible')
+         .get('h3')
+         .contains('80')
+         .should('be.visible')
    })
 })

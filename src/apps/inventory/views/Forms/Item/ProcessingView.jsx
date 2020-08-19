@@ -23,12 +23,14 @@ export default function ProcessingView({ open, formState }) {
       <>
          <TabContainer>
             <ItemTab
+               data-testid="realtime_tab"
                active={activeView === 'realtime'}
                onClick={() => setActiveView('realtime')}
             >
                <Text as="title">{t(address.concat('real-time'))}</Text>
             </ItemTab>
             <ItemTab
+               data-testid="planned_lot_tab"
                active={activeView === 'plannedLot'}
                onClick={() => setActiveView('plannedLot')}
             >
