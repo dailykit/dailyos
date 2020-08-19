@@ -22,7 +22,6 @@ const NutritionalInfo = ({ state }) => {
    })
 
    React.useEffect(() => {
-      console.log(state)
       if (state.simpleRecipeYields.length) {
          const nutritionObj = {
             iron: parseFloat(
