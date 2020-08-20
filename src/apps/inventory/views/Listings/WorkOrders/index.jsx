@@ -42,30 +42,17 @@ export default function WorkOrders() {
       loading: sachetWorkOrderLoading,
    } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION)
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const addTab = (title, view, id) => {
+      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
    }
 
    const rowClick = (e, row) => {
-      const { id, type, status } = row._row.data
+      const { id, type, name } = row._row.data
+
       if (type === 'bulk') {
-         dispatch({
-            type: 'SET_BULK_WORK_ORDER',
-            payload: {
-               id,
-               status,
-            },
-         })
-         addTab('Bulk Work Order', 'bulkOrder')
+         addTab(name, 'bulkOrder', id)
       } else {
-         dispatch({
-            type: 'SET_SACHET_WORK_ORDER',
-            payload: {
-               id,
-               status,
-            },
-         })
-         addTab('Sachet Work Order', 'sachetOrder')
+         addTab(name, 'sachetOrder', id)
       }
    }
 
