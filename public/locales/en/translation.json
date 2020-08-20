@@ -902,6 +902,7 @@
                            "visibility": "Visibility",
                            "default": "Default",
                            "price": "Price",
+                           "recommended price": "Recommended Price",
                            "discount": "Discount",
                            "discounted price": "Discounted Price",
                            "meal kit": "Meal Kit",
