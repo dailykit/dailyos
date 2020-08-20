@@ -13,12 +13,12 @@ export const CREATE_BULK_WORK_ORDER = gql`
    }
 `
 
-export const UPDATE_BULK_WORK_ORDER_STATUS = gql`
-   mutation UpdateBulkWorkOrderStatus($id: Int!, $status: String!) {
-      updateBulkWorkOrder(
-         where: { id: { _eq: $id } }
-         _set: { status: $status }
-      ) {
+export const UPDATE_BULK_WORK_ORDER = gql`
+   mutation UpdateBulkWorkOrderStatus(
+      $id: Int!
+      $object: inventory_bulkWorkOrder_set_input
+   ) {
+      updateBulkWorkOrder(where: { id: { _eq: $id } }, _set: $object) {
          affected_rows
          returning {
             id
