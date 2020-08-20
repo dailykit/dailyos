@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Tag,
@@ -87,17 +88,41 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       openTunnel(1)
    }
 
-   const toggleIsActive = value => {
-      upsertServing({
-         variables: {
-            object: {
-               isActive: value,
-               id: state.serving.id,
-               subscriptionTitleId: state.title.id,
-               servingSize: Number(state.serving.size),
+   React.useEffect(() => {
+      if (!loading && serving.counts.every(node => node.isActive === false)) {
+         upsertServing({
+            variables: {
+               object: {
+                  isActive: false,
+                  id: serving.id,
+                  subscriptionTitleId: state.title.id,
+                  servingSize: Number(serving.size),
+               },
             },
-         },
+         })
+      }
+   }, [loading, serving])
+
+   const toggleIsActive = value => {
+      if (
+         serving.counts.length > 0 &&
+         serving.counts.some(node => node.isActive)
+      ) {
+         return upsertServing({
+            variables: {
+               object: {
+                  isActive: value,
+                  id: state.serving.id,
+                  subscriptionTitleId: state.title.id,
+                  servingSize: Number(state.serving.size),
+               },
+            },
+         })
+      }
+      toast.error('Can not be published without any active item counts!', {
+         position: 'top-center',
       })
+      return
    }
 
    if (loading) return <InlineLoader />
