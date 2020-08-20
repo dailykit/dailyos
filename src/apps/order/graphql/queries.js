@@ -126,7 +126,6 @@ export const ORDERS = gql`
             comboProductComponent {
                label
             }
-            recipeCardUri
             orderSachets {
                status
                isAssembled
@@ -212,7 +211,6 @@ export const ORDER = gql`
          orderMealKitProducts {
             id
             assemblyStatus
-            recipeCardUri
             assemblyStation {
                name
             }
@@ -328,7 +326,6 @@ export const FETCH_ORDER_MEALKIT = gql`
       orderMealKitProduct(id: $id) {
          id
          assemblyStatus
-         recipeCardUri
          assemblyStation {
             name
          }
