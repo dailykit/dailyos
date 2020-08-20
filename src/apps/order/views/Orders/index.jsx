@@ -13,14 +13,14 @@ const address = 'apps.order.views.orders.'
 const Orders = () => {
    const { t } = useTranslation()
    const history = useHistory()
-   const { tabs } = useTabs()
+   const { tabs, addTab } = useTabs()
    const { loading, error, data: { orders = [] } = {} } = useSubscription(
       ORDERS
    )
    React.useEffect(() => {
       const tab = tabs.find(item => item.path === `/apps/order/orders`) || {}
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/apps/order')
+         addTab('Orders', '/apps/order/orders')
       }
    }, [history, tabs])
 

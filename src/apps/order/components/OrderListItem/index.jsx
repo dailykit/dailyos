@@ -257,7 +257,7 @@ const OrderListItem = ({ order }) => {
                               <div>
                                  <ProductTitle
                                     data={inventory}
-                                    product={inventory?.inventoryProduct}
+                                    type="INVENTORY"
                                  />
                               </div>
                               <StyledServings>
@@ -284,10 +284,7 @@ const OrderListItem = ({ order }) => {
                         {mealkits.map(mealkit => (
                            <StyledProductItem key={mealkit.id}>
                               <div>
-                                 <ProductTitle
-                                    data={mealkit}
-                                    product={mealkit?.simpleRecipeProduct}
-                                 />
+                                 <ProductTitle data={mealkit} type="MEAL_KIT" />
                               </div>
                               <StyledServings>
                                  <span>
@@ -322,7 +319,7 @@ const OrderListItem = ({ order }) => {
                               <div>
                                  <ProductTitle
                                     data={readytoeat}
-                                    product={readytoeat?.comboProduct}
+                                    type="READY_TO_EAT"
                                  />
                               </div>
                               <StyledServings>
@@ -353,7 +350,7 @@ const OrderListItem = ({ order }) => {
                                    <div>
                                       <ProductTitle
                                          data={inventory}
-                                         product={inventory?.inventoryProduct}
+                                         type="INVENTORY"
                                       />
                                    </div>
                                    <StyledServings>
@@ -389,7 +386,7 @@ const OrderListItem = ({ order }) => {
                                    <div>
                                       <ProductTitle
                                          data={mealkit}
-                                         product={mealkit?.simpleRecipeProduct}
+                                         type="MEAL_KIT"
                                       />
                                    </div>
                                    <StyledServings>
@@ -430,7 +427,7 @@ const OrderListItem = ({ order }) => {
                                    <div>
                                       <ProductTitle
                                          data={readytoeat}
-                                         product={readytoeat?.comboProduct}
+                                         type="READY_TO_EAT"
                                       />
                                    </div>
                                    <StyledServings>
@@ -588,11 +585,16 @@ const TimeSlot = ({ type, data = {} }) => {
    )
 }
 
-const ProductTitle = ({ data, product }) => {
+const ProductTitle = ({ data, type }) => {
    return (
       <StyledProductTitle>
-         {product?.name}&nbsp;-&nbsp;
-         {data?.comboProduct?.name}({data?.comboProductComponent?.label})
+         {['READY_TO_EAT', 'MEAL_KIT'].includes(type) &&
+            data?.simpleRecipeProduct?.name}
+         {type === 'INVENTORY' && data?.inventoryProduct?.name}
+         {data?.comboProduct?.name && `&nbsp;-&nbsp`}
+         {data?.comboProduct?.name}
+         {data?.comboProductComponent?.label &&
+            `(${data?.comboProductComponent?.label})`}
       </StyledProductTitle>
    )
 }
