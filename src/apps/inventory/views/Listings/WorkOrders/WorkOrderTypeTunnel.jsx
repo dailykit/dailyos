@@ -3,6 +3,7 @@ import React from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
+import { v4 as uuid } from 'uuid'
 
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
 import { Context } from '../../../context/tabs'
@@ -32,7 +33,11 @@ export default function WorkOrderTypeTunnel({ close }) {
    }
 
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER, {
-      variables: { object: {} },
+      variables: {
+         object: {
+            name: `Work Order-${uuid().substring(30)}`,
+         },
+      },
       onError,
       onCompleted: data => {
          const { id } = data.createBulkWorkOrder.returning[0]
@@ -41,7 +46,11 @@ export default function WorkOrderTypeTunnel({ close }) {
    })
 
    const [createSachetWorkOrder] = useMutation(CREATE_SACHET_WORK_ORDER, {
-      variables: { object: {} },
+      variables: {
+         object: {
+            name: `Work Order-${uuid().substring(30)}`,
+         },
+      },
       onError,
       onCompleted: data => {
          const { id } = data.createSachetWorkOrder.returning[0]
