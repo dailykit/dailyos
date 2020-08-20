@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    IconButton,
@@ -22,6 +22,7 @@ import {
    DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+   STORE_SETTINGS,
 } from '../../../../../../graphql'
 // styles
 import {
@@ -59,6 +60,10 @@ export default function Recipe({ state }) {
    const [_state, _setState] = React.useState({
       view: 'pricing',
    })
+   const [foodCostPercent, setFoodCostPercent] = React.useState({
+      lowerLimit: 0,
+      upperLimit: 10,
+   })
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [priceTunnels, openPriceTunnel, closePriceTunnel] = useTunnel(1)
@@ -67,6 +72,21 @@ export default function Recipe({ state }) {
       openModifiersTunnel,
       closeModifiersTunnel,
    ] = useTunnel(6)
+
+   // Subscription
+   useSubscription(STORE_SETTINGS, {
+      variables: {
+         type: 'sales',
+      },
+      onSubscriptionData: data => {
+         if (data.subscriptionData.data.storeSettings.length) {
+            const { value } = data.subscriptionData.data.storeSettings.find(
+               setting => setting.identifier === 'Food Cost Percent'
+            )
+            setFoodCostPercent(value)
+         }
+      },
+   })
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -261,6 +281,9 @@ export default function Recipe({ state }) {
                                        {t(address.concat('default'))}
                                     </th>
                                     <th>{t(address.concat('servings'))}</th>
+                                    <th>
+                                       {t(address.concat('recommended price'))}
+                                    </th>
                                     <th>{t(address.concat('price'))}</th>
                                     <th>{t(address.concat('discount'))}</th>
                                     <th>
@@ -307,6 +330,21 @@ export default function Recipe({ state }) {
                                                 option.simpleRecipeYield.yield
                                                    .serving
                                              }
+                                          </td>
+                                          <td>
+                                             {option.cost
+                                                ? `$${
+                                                     option.cost +
+                                                     (option.cost *
+                                                        foodCostPercent.lowerLimit) /
+                                                        100
+                                                  } - $${
+                                                     option.cost +
+                                                     (option.cost *
+                                                        foodCostPercent.upperLimit) /
+                                                        100
+                                                  }`
+                                                : '-'}
                                           </td>
                                           <td>${option.price[0].value} </td>
                                           <td>{option.price[0].discount} %</td>
@@ -439,6 +477,21 @@ export default function Recipe({ state }) {
                                                 option.simpleRecipeYield.yield
                                                    .serving
                                              }
+                                          </td>
+                                          <td>
+                                             {option.cost
+                                                ? `$${
+                                                     option.cost +
+                                                     (option.cost *
+                                                        foodCostPercent.lowerLimit) /
+                                                        100
+                                                  } - $${
+                                                     option.cost +
+                                                     (option.cost *
+                                                        foodCostPercent.upperLimit) /
+                                                        100
+                                                  }`
+                                                : '-'}
                                           </td>
                                           <td>${option.price[0].value} </td>
                                           <td>{option.price[0].discount} %</td>

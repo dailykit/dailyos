@@ -16,7 +16,12 @@ import {
    StyledSection,
 } from './styled'
 
-const Sachets = ({ state, openSachetTunnel, openEditSachetTunnel }) => {
+const Sachets = ({
+   state,
+   openSachetTunnel,
+   openEditSachetTunnel,
+   openNutritionTunnel,
+}) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -124,6 +129,7 @@ const Sachets = ({ state, openSachetTunnel, openEditSachetTunnel }) => {
                   <Sachet
                      state={state}
                      openEditSachetTunnel={openEditSachetTunnel}
+                     openNutritionTunnel={openNutritionTunnel}
                   />
                </StyledDisplay>
             </StyledSection>

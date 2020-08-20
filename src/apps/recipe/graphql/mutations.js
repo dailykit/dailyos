@@ -44,6 +44,19 @@ export const CREATE_PROCESSINGS = gql`
    }
 `
 
+export const UPDATE_PROCESSING = gql`
+   mutation UpdateIngredientProcessing(
+      $id: Int!
+      $set: ingredient_ingredientProcessing_set_input
+   ) {
+      updateIngredientProcessing(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const DELETE_PROCESSING = gql`
    mutation DeleteProcessing($id: Int!) {
       deleteIngredientProcessing(where: { id: { _eq: $id } }) {

@@ -59,6 +59,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             simpleRecipeYield {
                id
                yield
+               cost
             }
             modifier {
                id

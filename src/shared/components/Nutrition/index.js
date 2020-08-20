@@ -14,13 +14,17 @@ const Nutrition = ({ data, vertical = false }) => {
          <Grid vertical={vertical}>
             <Wrapper>
                <Header>
-                  <h6>{t(address.concat('amount'))}/{t(address.concat('serving'))}</h6>
+                  <h6>
+                     {t(address.concat('amount'))}/
+                     {t(address.concat('serving'))}
+                  </h6>
                   <h6>% {t(address.concat('daily value'))}</h6>
                </Header>
                <Rule />
                <Row hidden={!data.totalFat}>
                   <h5>
-                     {t(address.concat('total fat'))} <span>{data.totalFat}g</span>
+                     {t(address.concat('total fat'))}{' '}
+                     <span>{data.totalFat}g</span>
                   </h5>
                   <h5>
                      {Math.round((parseInt(data.totalFat, 10) / 78) * 100)}%
@@ -28,7 +32,8 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row inset hidden={!(data.totalFat && data.saturatedFat)}>
                   <span>
-                     {t(address.concat('saturated fat'))} <span>{data.saturatedFat}g</span>
+                     {t(address.concat('saturated fat'))}{' '}
+                     <span>{data.saturatedFat}g</span>
                   </span>
                   <h5>
                      {Math.round((parseInt(data.saturatedFat, 10) / 20) * 100)}%
@@ -36,12 +41,14 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row inset hidden={!(data.totalFat && data.transFat)}>
                   <span>
-                     {t(address.concat('trans fat'))} <span>{data.transFat}g</span>
+                     {t(address.concat('trans fat'))}{' '}
+                     <span>{data.transFat}g</span>
                   </span>
                </Row>
                <Row hidden={!data.cholesterol}>
                   <h5>
-                     {t(address.concat('cholesterol'))} <span>{data.cholesterol}mg</span>
+                     {t(address.concat('cholesterol'))}{' '}
+                     <span>{data.cholesterol}mg</span>
                   </h5>
                   <h5>
                      {Math.round((parseInt(data.cholesterol, 10) / 300) * 100)}%
@@ -59,13 +66,17 @@ const Nutrition = ({ data, vertical = false }) => {
             </Wrapper>
             <Wrapper>
                <Header vertical={vertical}>
-                  <h6>{t(address.concat('amount'))}/{t(address.concat('serving'))}</h6>
+                  <h6>
+                     {t(address.concat('amount'))}/
+                     {t(address.concat('serving'))}
+                  </h6>
                   <h6>% {t(address.concat('daily value'))}</h6>
                </Header>
                <Rule vertical={vertical} />
                <Row hidden={!data.totalCarbohydrates}>
                   <h5>
-                     {t(address.concat('total carbohydrate'))} <span>{data.totalCarbohydrates}g</span>
+                     {t(address.concat('total carbohydrates'))}{' '}
+                     <span>{data.totalCarbohydrates}g</span>
                   </h5>
                   <h5>5%</h5>
                </Row>
@@ -74,7 +85,8 @@ const Nutrition = ({ data, vertical = false }) => {
                   hidden={!(data.totalCarbohydrates && data.dietaryFibre)}
                >
                   <span>
-                     {t(address.concat('dietary fiber'))} <span>{data.dietaryFibre}g</span>
+                     {t(address.concat('dietary fibre'))}{' '}
+                     <span>{data.dietaryFibre}g</span>
                   </span>
                   <h5>
                      {Math.round((parseInt(data.dietaryFibre, 10) / 28) * 100)}%
@@ -94,13 +106,21 @@ const Nutrition = ({ data, vertical = false }) => {
             </Wrapper>
          </Grid>
          <Row>
-            <span>{t(address.concat('vitamin A'))} {data.vitaminA}%</span>
+            <span>
+               {t(address.concat('vitamin A'))} {data.vitaminA}%
+            </span>
             <span>&bull;</span>
-            <span>{t(address.concat('vitamin C'))} {data.vitaminC}%</span>
+            <span>
+               {t(address.concat('vitamin C'))} {data.vitaminC}%
+            </span>
             <span>&bull;</span>
-            <span>{t(address.concat('calcium'))} {data.calcium}%</span>
+            <span>
+               {t(address.concat('calcium'))} {data.calcium}%
+            </span>
             <span>&bull;</span>
-            <span>{t(address.concat('iron'))} {data.iron}%</span>
+            <span>
+               {t(address.concat('iron'))} {data.iron}%
+            </span>
          </Row>
       </Container>
    )
