@@ -68,11 +68,21 @@ export const NOTIFICATIONS = gql`
    }
 `
 
-export const SUMMARY = gql`
-   subscription ordersSummary {
-      orders(limit: 1) {
-         summary
-         currency
+export const ORDER_BY_STATUS = gql`
+   subscription orderByStatus {
+      orderByStatus: order_orderStatusEnum {
+         value
+         orders: orders_aggregate {
+            aggregate {
+               count
+               sum {
+                  amount: amountPaid
+               }
+               avg {
+                  amountPaid
+               }
+            }
+         }
       }
    }
 `
