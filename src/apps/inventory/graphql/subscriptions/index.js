@@ -125,6 +125,7 @@ export const BULK_WORK_ORDERS_SUBSCRIPTION = gql`
       bulkWorkOrders {
          id
          status
+         name
          scheduledOn
          station {
             name
@@ -417,27 +418,33 @@ export const SACHET_ITEMS_SUBSCRIPTION = gql`
 export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
    subscription BulkWorkOrder($id: Int!) {
       bulkWorkOrder(id: $id) {
+         id
          status
          station {
             name
             id
          }
          user {
+            id
             lastName
             firstName
          }
          scheduledOn
+         outputYield
          outputBulkItem {
+            id
             yield
             processingName
             onHand
             shelfLife
-            supplierItem {
-               name
-            }
+         }
+         supplierItem {
+            id
+            name
          }
          outputQuantity
          inputBulkItem {
+            id
             processingName
             onHand
             shelfLife
@@ -551,6 +558,18 @@ export const PACKAGING_SPECS_SUBSCRIPTION = gql`
             compressibility
             packagingMaterial
          }
+      }
+   }
+`
+
+export const GET_BULK_ITEMS_SUBSCRIPTION = gql`
+   subscription GetBulkItems($supplierItemId: Int!) {
+      bulkItems(where: { supplierItemId: { _eq: $supplierItemId } }) {
+         id
+         processingName
+         shelfLife
+         onHand
+         unit
       }
    }
 `
