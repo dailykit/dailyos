@@ -106,11 +106,8 @@ export const ORDER_STATUSES = gql`
 `
 
 export const ORDERS = gql`
-   subscription orders {
-      orders(
-         order_by: { updated_at: desc }
-         where: { orderStatus: { _neq: "DELIVERED" } }
-      ) {
+   subscription orders($where: order_order_bool_exp!) {
+      orders(order_by: { updated_at: desc }, where: $where) {
          id
          created_at
          deliveryInfo

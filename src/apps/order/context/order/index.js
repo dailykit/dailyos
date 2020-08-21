@@ -20,6 +20,11 @@ const initialState = {
    readytoeat: {
       id: null,
    },
+   orders: {
+      where: {
+         orderStatus: { _eq: 'PENDING' },
+      },
+   },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -74,6 +79,9 @@ const reducers = (state, { type, payload }) => {
                ...payload,
             },
          }
+      }
+      case 'SET_FILTER': {
+         return { ...state, orders: { ...state.orders, where: payload } }
       }
       default:
          return state

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 
 import Loader from '../Loader'
-import { MetricItem } from '../MetricItem'
 import { Wrapper } from './styled'
+import { MetricItem } from '../MetricItem'
 import { ORDER_BY_STATUS, ORDER_STATUSES } from '../../graphql'
 
 const address = 'apps.order.components.ordersummary.'

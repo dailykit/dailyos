@@ -3,19 +3,25 @@ import { useHistory } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
-import { OrderListItem, Loader } from '../../components'
-
-import { useTabs } from '../../context/tabs'
-
 import { ORDERS } from '../../graphql'
+import { useOrder } from '../../context'
+import { useTabs } from '../../context/tabs'
+import { OrderListItem } from '../../components'
+import { InlineLoader } from '../../../../shared/components'
 
 const address = 'apps.order.views.orders.'
 const Orders = () => {
    const { t } = useTranslation()
    const history = useHistory()
+   const { state } = useOrder()
    const { tabs, addTab } = useTabs()
    const { loading, error, data: { orders = [] } = {} } = useSubscription(
-      ORDERS
+      ORDERS,
+      {
+         variables: {
+            where: state.orders.where,
+         },
+      }
    )
    React.useEffect(() => {
       const tab = tabs.find(item => item.path === `/apps/order/orders`) || {}
@@ -27,7 +33,7 @@ const Orders = () => {
    if (loading)
       return (
          <div>
-            <Loader />
+            <InlineLoader />
          </div>
       )
    if (error) return <div>{error.message}</div>
