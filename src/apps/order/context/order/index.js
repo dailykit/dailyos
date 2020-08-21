@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import { useMutation } from '@apollo/react-hooks'
 
 import { UPDATE_ORDER } from '../../graphql'
@@ -81,8 +82,36 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'SET_FILTER': {
-         return { ...state, orders: { ...state.orders, where: payload } }
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               where: { ...state.orders.where, ...payload },
+            },
+         }
       }
+      case 'CLEAR_READY_BY_FILTER':
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               where: {
+                  ...state.orders.where,
+                  readyByTimestamp: {},
+               },
+            },
+         }
+      case 'CLEAR_FULFILLMENT_FILTER':
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               where: {
+                  ...state.orders.where,
+                  fulfillmentTimestamp: {},
+               },
+            },
+         }
       default:
          return state
    }
