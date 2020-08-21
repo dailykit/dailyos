@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
@@ -88,16 +89,39 @@ const Title = () => {
       })
    }
 
-   const toggleIsActive = value => {
-      upsertTitle({
-         variables: {
-            object: {
-               isActive: value,
-               id: state.title.id,
-               title: state.title.title,
+   React.useEffect(() => {
+      if (!loading && title.servings.every(node => node.isActive === false)) {
+         upsertTitle({
+            variables: {
+               object: {
+                  id: title.id,
+                  isActive: false,
+                  title: title.title,
+               },
             },
-         },
+         })
+      }
+   }, [loading, title])
+
+   const toggleIsActive = value => {
+      if (
+         title.servings.length > 0 &&
+         title.servings.some(node => node.isActive)
+      ) {
+         return upsertTitle({
+            variables: {
+               object: {
+                  isActive: value,
+                  id: state.title.id,
+                  title: state.title.title,
+               },
+            },
+         })
+      }
+      toast.error('Can not be published without any active servings!', {
+         position: 'top-center',
       })
+      return
    }
 
    const addServing = () => {

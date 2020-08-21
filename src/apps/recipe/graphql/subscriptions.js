@@ -21,12 +21,14 @@ export const S_INGREDIENTS = gql`
          createdAt
          ingredientProcessings {
             id
+            nutritionalInfo
             processingName
             ingredientSachets {
                id
                isValid
                quantity
                unit
+               nutritionalInfo
                ingredient {
                   name
                }
@@ -48,12 +50,15 @@ export const S_INGREDIENT = gql`
          ingredientProcessings {
             id
             processingName
+            nutritionalInfo
+            cost
             ingredientSachets {
                id
                tracking
                unit
                quantity
-               defaultNutritionalValues
+               nutritionalInfo
+               cost
                liveModeOfFulfillment {
                   id
                   type
@@ -94,6 +99,7 @@ export const S_INGREDIENT = gql`
                         }
                      }
                   }
+                  cost
                }
             }
          }
@@ -149,6 +155,8 @@ export const S_RECIPE = gql`
          simpleRecipeYields {
             id
             yield
+            cost
+            nutritionalInfo
             ingredientSachets {
                isVisible
                slipName
