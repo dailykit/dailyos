@@ -1,7 +1,12 @@
 import Home from './Home'
 import { CustomerListing, ReferralPlansListing } from './Listings'
 import { CustomerRelation } from './Forms'
-import { OrdersTable, ReferralTable, WalletTable } from './Tables'
+import {
+   OrdersTable,
+   ReferralTable,
+   WalletTable,
+   SubscriptionTable,
+} from './Tables'
 
 export {
    Home,
@@ -11,4 +16,5 @@ export {
    OrdersTable,
    ReferralTable,
    WalletTable,
+   SubscriptionTable,
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, Avatar, IconButton, PlusIcon } from '@dailykit/ui'
 import { StyledCustomerCard, CustomerInfo, CustomerWallet } from './styled'
+import { capitalizeString } from '../../Utils'
 
 const CustomerCard = ({ customer, walletAmount }) => (
    <StyledCustomerCard>
@@ -9,7 +10,9 @@ const CustomerCard = ({ customer, walletAmount }) => (
          <Text as="title">{`${
             customer?.platform_customer?.firstName || 'N/A'
          } ${customer?.platform_customer?.lastName || 'N/A'}`}</Text>
-         <Text as="subtitle">{customer?.source}</Text>
+         <Text as="subtitle">
+            {capitalizeString(customer?.source || 'N/A')}
+         </Text>
       </CustomerInfo>
       <CustomerWallet>
          <span>

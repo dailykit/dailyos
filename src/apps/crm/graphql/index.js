@@ -6,6 +6,9 @@ import {
    ORDER,
    ALL_DATA,
    STATUS,
+   SUBSCRIPTION,
+   SUBSCRIPTION_PLAN,
+   OCCURENCES,
 } from './queries'
 
 export {
@@ -17,4 +20,7 @@ export {
    ORDER,
    ALL_DATA,
    STATUS,
+   SUBSCRIPTION,
+   SUBSCRIPTION_PLAN,
+   OCCURENCES,
 }

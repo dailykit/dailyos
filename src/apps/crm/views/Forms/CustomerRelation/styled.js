@@ -15,10 +15,10 @@ export const StyledTable = styled.div`
    width: 97%;
 `
 export const StyledSideBar = styled.div`
-   width: 25%;
+   width: 20%;
 `
 export const StyledMainBar = styled.div`
-   width: 75%;
+   width: 80%;
    display: flex;
    flex-direction: column;
 `

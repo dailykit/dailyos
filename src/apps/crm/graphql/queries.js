@@ -151,3 +151,67 @@ export const STATUS = gql`
       }
    }
 `
+
+export const SUBSCRIPTION = gql`
+   query SUBSCRIPTION($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         subscriptionId
+         ordered: subscriptionOccurences_aggregate(
+            where: { orderCart: { orderId: { _is_null: false } } }
+         ) {
+            aggregate {
+               count
+            }
+         }
+         skipped: subscriptionOccurences_aggregate(
+            where: { isSkipped: { _eq: true } }
+         ) {
+            aggregate {
+               count
+            }
+         }
+      }
+   }
+`
+export const SUBSCRIPTION_PLAN = gql`
+   query SUBSCRIPTION_PLAN($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         isSubscriber
+         subscription {
+            rrule
+            subscriptionItemCount {
+               count
+               plan: subscriptionServing {
+                  subscriptionTitle {
+                     title
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+export const OCCURENCES = gql`
+   query OCCURENCES($sid: Int!, $keycloakId: String!) {
+      subscriptionOccurencesAggregate(
+         where: { subscriptionId: { _eq: $sid } }
+      ) {
+         occurenceCount: aggregate {
+            count
+         }
+         nodes {
+            fulfillmentDate
+            startTimeStamp
+            cutoffTimeStamp
+            customers(where: { keycloakId: { _eq: $keycloakId } }) {
+               isSkipped
+               orderCart {
+                  orderId
+                  id
+                  amount
+               }
+            }
+         }
+      }
+   }
+`
