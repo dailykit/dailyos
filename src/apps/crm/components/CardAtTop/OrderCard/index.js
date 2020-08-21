@@ -15,7 +15,7 @@ const StyleCard = ({ active, heading, click, data }) => {
                <Text as="title">{data?.sum?.amountPaid || 'N/A'}</Text>
             </span>
             <span>
-               <Text as="subtitle">Total Amount</Text>
+               <Text as="subtitle">Total Orders</Text>
                <Text as="title">{data?.count || 'N/A'}</Text>
             </span>
          </CardContent>

@@ -6,7 +6,7 @@ const StyleCard = ({ active, heading, click }) => {
    return (
       <StyledCard active={active === heading}>
          <CardHeading>
-            <Text as="subtitle">Wallted</Text>
+            <Text as="subtitle">Wallet</Text>
             <ViewTab onClick={click}>view</ViewTab>
          </CardHeading>
          <CardContent>
