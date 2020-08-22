@@ -40,8 +40,8 @@ export default function WorkOrderTypeTunnel({ close }) {
       },
       onError,
       onCompleted: data => {
-         const { id } = data.createBulkWorkOrder.returning[0]
-         addTab(`Work Order-${new Date().getMilliseconds()}`, 'bulkOrder', id)
+         const { id, name } = data.createBulkWorkOrder.returning[0]
+         addTab(name, 'bulkOrder', id)
       },
    })
 

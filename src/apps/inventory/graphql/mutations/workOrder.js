@@ -7,7 +7,7 @@ export const CREATE_BULK_WORK_ORDER = gql`
       createBulkWorkOrder(objects: [$object]) {
          returning {
             id
-            status
+            name
          }
       }
    }
