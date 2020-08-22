@@ -7,19 +7,21 @@ import {
    Loader,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 import { TunnelContainer } from '../../../../components'
-import { BulkOrderContext } from '../../../../context/bulkOrder'
-import { STATIONS_SUBSCRIPTION } from '../../../../graphql'
+import {
+   STATIONS_SUBSCRIPTION,
+   UPDATE_BULK_WORK_ORDER,
+} from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
-export default function SelectStationTunnel({ close }) {
+export default function SelectStationTunnel({ close, state }) {
    const { t } = useTranslation()
-   const { bulkOrderDispatch } = useContext(BulkOrderContext)
 
    const [search, setSearch] = React.useState('')
    const [data, setData] = React.useState([])
@@ -33,9 +35,29 @@ export default function SelectStationTunnel({ close }) {
       },
    })
 
+   const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+         close(1)
+      },
+      onCompleted: () => {
+         toast.success('User assigned!')
+         close(1)
+      },
+   })
+
    const handleNext = () => {
-      bulkOrderDispatch({ type: 'ADD_STATION', payload: current })
-      close(1)
+      if (!current || !current.id) return toast.error('Please select a user.')
+
+      updateBulkWorkOrder({
+         variables: {
+            id: state.id,
+            object: {
+               stationId: current.id,
+            },
+         },
+      })
    }
 
    if (loading) return <Loader />
