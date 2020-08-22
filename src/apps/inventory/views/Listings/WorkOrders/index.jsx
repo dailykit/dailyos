@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
+import { toast } from 'react-toastify'
 
 import { AddIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
@@ -26,6 +27,11 @@ import { FlexContainer } from '../../Forms/styled'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
+function onError(error) {
+   console.log(error)
+   toast.error(error.message)
+}
+
 export default function WorkOrders() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -35,12 +41,12 @@ export default function WorkOrders() {
    const {
       data: bulkWorkOrdersData,
       loading: bulkWorkOrderLoading,
-   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION)
+   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION, { onError })
 
    const {
       data: sachetWorkOrdersData,
       loading: sachetWorkOrderLoading,
-   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION)
+   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION, { onError })
 
    const addTab = (title, view, id) => {
       dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })

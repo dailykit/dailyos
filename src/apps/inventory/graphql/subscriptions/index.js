@@ -128,9 +128,11 @@ export const BULK_WORK_ORDERS_SUBSCRIPTION = gql`
          name
          scheduledOn
          station {
+            id
             name
          }
          user {
+            id
             firstName
             lastName
          }
@@ -145,9 +147,11 @@ export const SACHET_WORK_ORDERS_SUBSCRIPTION = gql`
          status
          scheduledOn
          station {
+            id
             name
          }
          user {
+            id
             firstName
             lastName
          }
@@ -420,6 +424,7 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
       bulkWorkOrder(id: $id) {
          id
          status
+         isPublished
          station {
             name
             id
