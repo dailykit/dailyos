@@ -13,6 +13,7 @@ import { reactFormatter, ReactTabulator } from 'react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import { toast } from 'react-toastify'
+import { v4 as uuid } from 'uuid'
 
 import { AddIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
@@ -54,11 +55,12 @@ export default function WorkOrders() {
 
    const rowClick = (e, row) => {
       const { id, type, name } = row._row.data
+      const altName = `Work Order-${uuid().substring(30)}`
 
       if (type === 'bulk') {
-         addTab(name, 'bulkOrder', id)
+         addTab(name || altName, 'bulkOrder', id)
       } else {
-         addTab(name, 'sachetOrder', id)
+         addTab(name || altName, 'sachetOrder', id)
       }
    }
 
