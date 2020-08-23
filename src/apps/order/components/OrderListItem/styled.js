@@ -149,12 +149,13 @@ export const StyledCount = styled.span`
 
 export const StyledProductItem = styled.div`
    height: 40px;
-   display: flex;
+   display: grid;
+   grid-gap: 24px;
    padding: 0 12px;
    margin-bottom: 4px;
    align-items: center;
    background: #f3f3f3;
-   justify-content: space-between;
+   grid-template-columns: 240px 1fr auto;
    > div {
       display: flex;
       align-items: center;
@@ -164,6 +165,9 @@ export const StyledProductItem = styled.div`
 export const StyledProductTitle = styled.span`
    font-size: 14px;
    font-weight: 500;
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
 `
 
 export const StyledDot = styled.span`

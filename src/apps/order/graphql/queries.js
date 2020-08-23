@@ -68,11 +68,21 @@ export const NOTIFICATIONS = gql`
    }
 `
 
-export const SUMMARY = gql`
-   subscription ordersSummary {
-      orders(limit: 1) {
-         summary
-         currency
+export const ORDER_BY_STATUS = gql`
+   subscription orderByStatus {
+      orderByStatus: order_orderStatusEnum {
+         value
+         orders: orders_aggregate {
+            aggregate {
+               count
+               sum {
+                  amount: amountPaid
+               }
+               avg {
+                  amountPaid
+               }
+            }
+         }
       }
    }
 `
@@ -96,11 +106,8 @@ export const ORDER_STATUSES = gql`
 `
 
 export const ORDERS = gql`
-   subscription orders {
-      orders(
-         order_by: { updated_at: desc }
-         where: { orderStatus: { _neq: "DELIVERED" } }
-      ) {
+   subscription orders($where: order_order_bool_exp!) {
+      orders(order_by: { updated_at: desc }, where: $where) {
          id
          created_at
          deliveryInfo
@@ -126,7 +133,6 @@ export const ORDERS = gql`
             comboProductComponent {
                label
             }
-            recipeCardUri
             orderSachets {
                status
                isAssembled
@@ -212,7 +218,6 @@ export const ORDER = gql`
          orderMealKitProducts {
             id
             assemblyStatus
-            recipeCardUri
             assemblyStation {
                name
             }
@@ -328,7 +333,6 @@ export const FETCH_ORDER_MEALKIT = gql`
       orderMealKitProduct(id: $id) {
          id
          assemblyStatus
-         recipeCardUri
          assemblyStation {
             name
          }
