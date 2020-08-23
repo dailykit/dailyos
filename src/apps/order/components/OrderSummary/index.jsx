@@ -1,8 +1,8 @@
 import React from 'react'
 import moment from 'moment'
 import DateTime from 'react-datetime'
-import { ClearIcon } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import { ClearIcon, RadioGroup } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
 import 'react-datetime/css/react-datetime.css'
@@ -151,6 +151,28 @@ export const OrderSummary = () => {
                   dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
                }
             >
+               <ClearIcon />
+            </button>
+         </Fieldset>
+         <Fieldset>
+            <legend>Source</legend>
+            <RadioGroup
+               options={[
+                  { id: 1, title: 'à la carte' },
+                  { id: 2, title: 'Subscription' },
+               ]}
+               onChange={option =>
+                  dispatch({
+                     type: 'SET_FILTER',
+                     payload: {
+                        source: {
+                           _eq: option.id === 1 ? 'a-la-carte' : 'subscription',
+                        },
+                     },
+                  })
+               }
+            />
+            <button onClick={() => dispatch({ type: 'CLEAR_SOURCE_FILTER' })}>
                <ClearIcon />
             </button>
          </Fieldset>

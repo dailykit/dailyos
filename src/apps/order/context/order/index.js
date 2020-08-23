@@ -123,6 +123,17 @@ const reducers = (state, { type, payload }) => {
                },
             },
          }
+      case 'CLEAR_SOURCE_FILTER':
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               where: {
+                  ...state.orders.where,
+                  source: {},
+               },
+            },
+         }
       default:
          return state
    }
