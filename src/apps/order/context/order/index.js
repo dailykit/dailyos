@@ -112,6 +112,17 @@ const reducers = (state, { type, payload }) => {
                },
             },
          }
+      case 'CLEAR_FULFILLMENT_TYPE_FILTER':
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               where: {
+                  ...state.orders.where,
+                  fulfillmentType: {},
+               },
+            },
+         }
       default:
          return state
    }

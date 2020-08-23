@@ -117,6 +117,43 @@ export const OrderSummary = () => {
                <ClearIcon />
             </button>
          </Fieldset>
+         <Fieldset>
+            <legend>Fulfillment Type</legend>
+            <select
+               id="fulfillment"
+               name="fulfillment"
+               value={
+                  state.orders.where?.fulfillmentType?._eq ||
+                  'PREORDER_DELIVERY'
+               }
+               onChange={e =>
+                  dispatch({
+                     type: 'SET_FILTER',
+                     payload: { fulfillmentType: { _eq: e.target.value } },
+                  })
+               }
+            >
+               <option name="PREORDER_DELIVERY" value="PREORDER_DELIVERY">
+                  Preorder Delivery
+               </option>
+               <option name="ONDEMAND_DELIVERY" value="ONDEMAND_DELIVERY">
+                  Ondemand Delivery
+               </option>
+               <option name="PREORDER_PICKUP" value="PREORDER_PICKUP">
+                  Preorder Pickup
+               </option>
+               <option name="ONDEMAND_PICKUP" value="ONDEMAND_PICKUP">
+                  Ondemand Pickup
+               </option>
+            </select>
+            <button
+               onClick={() =>
+                  dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
+               }
+            >
+               <ClearIcon />
+            </button>
+         </Fieldset>
       </Wrapper>
    )
 }

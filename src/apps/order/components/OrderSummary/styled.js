@@ -39,11 +39,21 @@ export const Fieldset = styled.fieldset`
          margin-right: 8px;
       }
    }
+   select {
+      width: 100%;
+      height: 32px;
+      border: none;
+      border-bottom: 1px solid #d8d8d8;
+      :focus {
+         outline: none;
+      }
+   }
    button {
       top: -22px;
       right: 11px;
       width: 24px;
       height: 24px;
+      cursor: pointer;
       background: #fff;
       border-radius: 50%;
       position: absolute;
