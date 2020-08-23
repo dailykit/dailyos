@@ -85,7 +85,7 @@ export default function PackagingPurchaseOrderForm() {
                   <Text as="h1">{t(address.concat('purchase order'))}</Text>
                </div>
 
-               <FormActions>
+               <FormActions style={{ position: 'relative' }}>
                   {item.status ? (
                      <StatusSwitch
                         currentStatus={item.status}

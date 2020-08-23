@@ -35,6 +35,8 @@ export default function PurchaseOrderForm() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
+   const [orderQuantity, setOrderQuantity] = useState(0)
+
    const {
       state: {
          current: { id },
@@ -47,6 +49,11 @@ export default function PurchaseOrderForm() {
    } = useSubscription(PURCHASE_ORDER_SUBSCRIPTION, {
       variables: { id },
       onError,
+      onSubscriptionData: data => {
+         setOrderQuantity(
+            data.subscriptionData.data?.purchaseOrderItem.orderQuantity
+         )
+      },
    })
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
       onError,
@@ -55,11 +62,7 @@ export default function PurchaseOrderForm() {
       },
    })
 
-   console.log(state)
-
    const editable = state.status === 'COMPLETED' || state.status === 'CANCELLED'
-
-   const [orderQuantity, setOrderQuantity] = useState(state.orderQuantity || '')
 
    const checkForm = () => {
       if (!state.supplierItem?.id) {
@@ -106,7 +109,7 @@ export default function PurchaseOrderForm() {
                   <Text as="h1">{t(address.concat('purchase order'))}</Text>
                </div>
 
-               <FormActions>
+               <FormActions style={{ position: 'relative' }}>
                   <StatusSwitch
                      currentStatus={state.status}
                      onSave={saveStatus}
