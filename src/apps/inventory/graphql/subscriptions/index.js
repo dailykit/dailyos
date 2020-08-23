@@ -461,16 +461,20 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
 export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
    subscription SachetWorkOrder($id: Int!) {
       sachetWorkOrder(id: $id) {
+         id
          status
+         isPublished
          station {
             name
             id
          }
          user {
+            id
             lastName
             firstName
          }
          scheduledOn
+         outputQuantity
          outputSachetItem {
             id
             onHand
@@ -478,6 +482,17 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             unitSize
             unit
          }
+
+         supplierItem {
+            id
+            name
+         }
+
+         packaging {
+            id
+            name
+         }
+         label
 
          bulkItem {
             id
