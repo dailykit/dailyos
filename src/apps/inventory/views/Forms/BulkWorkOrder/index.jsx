@@ -348,6 +348,8 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
       },
    })
 
+   const inputQuantity = Math.round((outputQuantity * 100) / yieldPercentage)
+
    return (
       <>
          <Spacer />
@@ -416,6 +418,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                               id: bulkWorkOrder.id,
                               object: {
                                  outputQuantity: +e.target.value,
+                                 inputQuantity
                               },
                            },
                         })
@@ -431,7 +434,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                         {t(address.concat('suggested committed quantity'))}
                      </Text>
                      <Text as="title">
-                        {Math.round((outputQuantity * 100) / yieldPercentage)}
+                        {inputQuantity}
                      </Text>
                   </>
                ) : null}
