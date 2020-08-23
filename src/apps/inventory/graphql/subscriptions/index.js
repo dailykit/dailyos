@@ -127,9 +127,11 @@ export const BULK_WORK_ORDERS_SUBSCRIPTION = gql`
          status
          scheduledOn
          station {
+            id
             name
          }
          user {
+            id
             firstName
             lastName
          }
@@ -144,9 +146,11 @@ export const SACHET_WORK_ORDERS_SUBSCRIPTION = gql`
          status
          scheduledOn
          station {
+            id
             name
          }
          user {
+            id
             firstName
             lastName
          }
@@ -158,11 +162,14 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
    subscription PurchaseOrderItems {
       purchaseOrderItems {
          id
+         type
          supplierItem {
+            id
             name
          }
          status
          packaging {
+            id
             packagingName: name
          }
       }
@@ -215,6 +222,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          images: assets(path: "images")
 
          supplier {
+            id
             name
             contactPerson
          }
@@ -417,27 +425,32 @@ export const SACHET_ITEMS_SUBSCRIPTION = gql`
 export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
    subscription BulkWorkOrder($id: Int!) {
       bulkWorkOrder(id: $id) {
+         id
          status
          station {
             name
             id
          }
          user {
+            id
             lastName
             firstName
          }
          scheduledOn
          outputBulkItem {
+            id
             yield
             processingName
             onHand
             shelfLife
             supplierItem {
+               id
                name
             }
          }
          outputQuantity
          inputBulkItem {
+            id
             processingName
             onHand
             shelfLife
@@ -455,6 +468,7 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             id
          }
          user {
+            id
             lastName
             firstName
          }
@@ -473,6 +487,7 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             onHand
             shelfLife
             supplierItem {
+               id
                name
             }
          }
@@ -518,6 +533,7 @@ export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
          id
          packagingName: name
          supplier {
+            id
             name
          }
 
