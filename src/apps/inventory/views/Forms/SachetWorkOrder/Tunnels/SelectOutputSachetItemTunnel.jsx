@@ -7,40 +7,60 @@ import {
    Loader,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext, useState } from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import React, { useState } from 'react'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
 import { TunnelContainer } from '../../../../components'
-import { SachetOrderContext } from '../../../../context/sachetOrder'
-import { SACHET_ITEMS_SUBSCRIPTION } from '../../../../graphql'
+
+import {
+   SACHET_ITEMS_SUBSCRIPTION,
+   UPDATE_SACHET_WORK_ORDER,
+} from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
-export default function SelectOutputSachetItemTunnel({ close }) {
+const onError = error => {
+   console.log(error)
+   toast.error(error.message)
+}
+
+export default function SelectOutputSachetItemTunnel({ close, state }) {
    const { t } = useTranslation()
-   const { sachetOrderState, sachetOrderDispatch } = useContext(
-      SachetOrderContext
-   )
+
    const [search, setSearch] = useState('')
    const [data, setData] = useState([])
 
    const [list, current, selectOption] = useSingleList(data)
 
    const { loading } = useSubscription(SACHET_ITEMS_SUBSCRIPTION, {
-      variables: { bulkItemId: sachetOrderState.inputItemProcessing?.id },
+      variables: { bulkItemId: state.bulkItem.id },
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.sachetItems
          setData(data)
       },
    })
 
+   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
+      onCompleted: () => {
+         toast.info('Work Order updated successfully!')
+         close(1)
+      },
+      onError,
+   })
+
    const handleNext = () => {
-      sachetOrderDispatch({
-         type: 'ADD_OUTPUT_SACHET',
-         payload: current,
+      if (!current || !current.id) return toast.error('Select an item first!')
+
+      updateSachetWorkOrder({
+         variables: {
+            id: state.id,
+            set: {
+               outputSachetItemId: current.id,
+            },
+         },
       })
-      close(1)
    }
 
    if (loading) return <Loader />
