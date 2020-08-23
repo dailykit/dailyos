@@ -5,7 +5,10 @@ import { toast } from 'react-toastify'
 
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
 import { Context } from '../../../context/tabs'
-import { CREATE_PACKAGING_PURCHASE_ORDER } from '../../../graphql'
+import {
+   CREATE_PURCHASE_ORDER,
+   CREATE_ITEM_PURCHASE_ORDER,
+} from '../../../graphql'
 import { SolidTile } from '../styled'
 
 function onError(error) {
@@ -24,11 +27,22 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
    }
 
    const [createPackagingOrder, { loading }] = useMutation(
-      CREATE_PACKAGING_PURCHASE_ORDER,
+      CREATE_PURCHASE_ORDER,
       {
          onCompleted: data => {
             const { id } = data.item
             addTab('Purchase Order', 'packagingPurchaseOrder', id)
+         },
+         onError,
+      }
+   )
+
+   const [createItemPurchaseOrder, { loading: itemOrderLoading }] = useMutation(
+      CREATE_ITEM_PURCHASE_ORDER,
+      {
+         onCompleted: data => {
+            const { id } = data.item
+            addTab('New Purchase Order', 'purchaseOrder', id)
          },
          onError,
       }
@@ -39,10 +53,10 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
    }
 
    const createSupplierItemPurchaseOrder = () => {
-      addTab('New Purchase Order', 'purchaseOrder')
+      createItemPurchaseOrder()
    }
 
-   if (loading) return <Loader />
+   if (loading || itemOrderLoading) return <Loader />
 
    return (
       <TunnelContainer>
