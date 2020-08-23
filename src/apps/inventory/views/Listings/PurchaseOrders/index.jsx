@@ -50,20 +50,13 @@ export default function PurchaseOrders() {
    const tableRef = React.useRef()
 
    const rowClick = (_, row) => {
-      const { id, status, packaging, supplierItem } = row._row.data
-      if (supplierItem) {
-         dispatch({
-            type: 'SET_PURCHASE_WORK_ORDER',
-            payload: {
-               id,
-               status,
-            },
-         })
-         addTab('Purchase Order', 'purchaseOrder')
+      const { id, type } = row._row.data
+      if (type === 'PACKAGING') {
+         addTab('Purchase Order', 'packagingPurchaseOrder', id)
       }
 
-      if (packaging) {
-         addTab('Purchase Order', 'packagingPurchaseOrder', id)
+      if (type === 'SUPPLIER_ITEM') {
+         addTab('Purchase Order', 'purchaseOrder', id)
       }
    }
 
@@ -144,9 +137,10 @@ function LabelItem({
       },
    },
 }) {
-   if (data.supplierItem && data.supplierItem.name)
-      return <Tag color="primary">Supplier Item</Tag>
-   if (data.packaging && data.packaging.packagingName)
+   if (data && data.type === 'PACKAGING')
       return <Tag color="success">Packaging</Tag>
+   if (data && data.type === 'SUPPLIER_ITEM')
+      return <Tag color="primary">Supplier Item</Tag>
+
    return <Tag color="danger">NA</Tag>
 }
