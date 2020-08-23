@@ -42,14 +42,29 @@ export const CREATE_SACHET_WORK_ORDER = gql`
 `
 
 export const UPDATE_SACHET_WORK_ORDER = gql`
-   mutation UpdateSachetWorkOrder($id: Int!, $status: String!) {
-      updateSachetWorkOrder(
-         where: { id: { _eq: $id } }
-         _set: { status: $status }
-      ) {
+   mutation UpdateSachetWorkOrder(
+      $id: Int!
+      $set: inventory_sachetWorkOrder_set_input
+   ) {
+      updateSachetWorkOrder(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             id
             status
+         }
+      }
+   }
+`
+
+export const INCREMENT_SACHET_WORK_ORDER = gql`
+   mutation UpdateSachetWorkOrder(
+      $id: Int!
+      $inc: inventory_sachetWorkOrder_inc_input
+   ) {
+      updateSachetWorkOrder(where: { id: { _eq: $id } }, _inc: $inc) {
+         returning {
+            id
+            status
+            outputQuantity
          }
       }
    }
