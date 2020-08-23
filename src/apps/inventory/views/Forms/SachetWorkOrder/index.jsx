@@ -79,8 +79,6 @@ export default function SachetWorkOrder() {
       onError,
    })
 
-   console.log(state)
-
    const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
       onCompleted: () => {
          toast.info('Work Order updated successfully!')
@@ -188,7 +186,7 @@ export default function SachetWorkOrder() {
          </Tunnels>
 
          <StyledWrapper>
-            <FormHeading style={{ position: 'relative' }}>
+            <FormHeading>
                <div
                   style={{
                      width: '30%',
@@ -202,7 +200,7 @@ export default function SachetWorkOrder() {
                   </Text>
                </div>
 
-               <FormActions>
+               <FormActions style={{ position: 'relative' }}>
                   {state.isPublished ? (
                      <StatusSwitch
                         currentStatus={state.status}
