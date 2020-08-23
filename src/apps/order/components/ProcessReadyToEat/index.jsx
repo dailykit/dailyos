@@ -95,9 +95,13 @@ export const ProcessReadyToEat = () => {
          </StyledMode>
          <StyledHeader>
             <h3>
+               {current_view === 'INVENTORY' && product?.inventoryProduct?.name}
+               {['MEALKIT', 'READYTOEAT'].includes(current_view) &&
+                  product?.simpleRecipeProduct?.name}
                {product?.comboProduct?.name}
-               &nbsp;(
-               {product?.comboProductComponent?.label})
+               &nbsp;
+               {product?.comboProductComponent?.label &&
+                  `(${product?.comboProductComponent?.label})`}
             </h3>
          </StyledHeader>
          <main>

@@ -1,22 +1,27 @@
 import React from 'react'
+import moment from 'moment'
+import DateTime from 'react-datetime'
 import { useTranslation } from 'react-i18next'
+import { ClearIcon, RadioGroup } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
+import 'react-datetime/css/react-datetime.css'
+
 import Loader from '../Loader'
+import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
-import { Wrapper } from './styled'
-import { SUMMARY, ORDER_STATUSES } from '../../graphql'
+import { Wrapper, Fieldset } from './styled'
+import { ORDER_BY_STATUS } from '../../graphql'
 
 const address = 'apps.order.components.ordersummary.'
 export const OrderSummary = () => {
+   const { state, dispatch } = useOrder()
    const { t } = useTranslation()
-   const { loading, error, data: { orders = [] } = {} } = useSubscription(
-      SUMMARY
-   )
-
    const {
-      data: { order_orderStatusEnum: statuses = [] } = {},
-   } = useSubscription(ORDER_STATUSES)
+      loading,
+      error,
+      data: { orderByStatus = [] } = {},
+   } = useSubscription(ORDER_BY_STATUS)
 
    if (loading)
       return (
@@ -27,39 +32,150 @@ export const OrderSummary = () => {
    if (error) return <Wrapper>{error.message}</Wrapper>
    return (
       <Wrapper>
-         <h4>{t(address.concat('quick info'))}</h4>
-         {orders.length > 0 && Object.keys(orders[0]).length > 0 ? (
-            <ul>
+         <h2>{t(address.concat('quick info'))}</h2>
+         <ul>
+            {orderByStatus.map(({ value, orders }) => (
                <MetricItem
-                  title={t(address.concat('all orders'))}
-                  currency={orders[0].currency}
-                  count={Object.keys(orders[0].summary.count).reduce(
-                     (sum, key) =>
-                        sum + Number(orders[0].summary.count[key] || 0),
-                     0
-                  )}
-                  amount={Object.keys(orders[0].summary.amount).reduce(
-                     (sum, key) =>
-                        sum + parseFloat(orders[0].summary.amount[key] || 0),
-                     0
-                  )}
-                  variant="ALL"
+                  key={value}
+                  currency="usd"
+                  variant={value}
+                  count={orders.aggregate.count}
+                  title={value.split('_').join(' ')}
+                  amount={orders.aggregate.sum.amount || 0}
+                  average={orders.aggregate.avg.amountPaid || 0}
                />
-
-               {statuses.map(({ value }) => (
-                  <MetricItem
-                     key={value}
-                     currency={orders[0].currency}
-                     title={value.split('_').join(' ')}
-                     count={orders[0].summary.count[value] || 0}
-                     amount={orders[0].summary.amount[value] || 0}
-                     variant={value}
-                  />
-               ))}
-            </ul>
-         ) : (
-            <div>{t(address.concat('no orders yet!'))}</div>
-         )}
+            ))}
+         </ul>
+         <h2>Filters</h2>
+         <Fieldset>
+            <legend>Ready By</legend>
+            <section>
+               <DateTime
+                  onBlur={data =>
+                     dispatch({
+                        type: 'SET_FILTER',
+                        payload: {
+                           readyByTimestamp: {
+                              ...state.orders.where.readyByTimestamp,
+                              _gte: moment(data).format('YYYY-MM-DD HH:MM'),
+                           },
+                        },
+                     })
+                  }
+               />
+               <DateTime
+                  onBlur={data =>
+                     dispatch({
+                        type: 'SET_FILTER',
+                        payload: {
+                           readyByTimestamp: {
+                              ...state.orders.where.readyByTimestamp,
+                              _lte: moment(data).format('YYYY-MM-DD HH:MM'),
+                           },
+                        },
+                     })
+                  }
+               />
+            </section>
+            <button onClick={() => dispatch({ type: 'CLEAR_READY_BY_FILTER' })}>
+               <ClearIcon />
+            </button>
+         </Fieldset>
+         <Fieldset>
+            <legend>Fulfillment Time</legend>
+            <section>
+               <DateTime
+                  onBlur={data =>
+                     dispatch({
+                        type: 'SET_FILTER',
+                        payload: {
+                           fulfillmentTimestamp: {
+                              ...state.orders.where.fulfillmentTimestamp,
+                              _gte: moment(data).format('YYYY-MM-DD HH:MM'),
+                           },
+                        },
+                     })
+                  }
+               />
+               <DateTime
+                  onBlur={data =>
+                     dispatch({
+                        type: 'SET_FILTER',
+                        payload: {
+                           fulfillmentTimestamp: {
+                              ...state.orders.where.fulfillmentTimestamp,
+                              _lte: moment(data).format('YYYY-MM-DD HH:MM'),
+                           },
+                        },
+                     })
+                  }
+               />
+            </section>
+            <button
+               onClick={() => dispatch({ type: 'CLEAR_FULFILLMENT_FILTER' })}
+            >
+               <ClearIcon />
+            </button>
+         </Fieldset>
+         <Fieldset>
+            <legend>Fulfillment Type</legend>
+            <select
+               id="fulfillment"
+               name="fulfillment"
+               value={
+                  state.orders.where?.fulfillmentType?._eq ||
+                  'PREORDER_DELIVERY'
+               }
+               onChange={e =>
+                  dispatch({
+                     type: 'SET_FILTER',
+                     payload: { fulfillmentType: { _eq: e.target.value } },
+                  })
+               }
+            >
+               <option name="PREORDER_DELIVERY" value="PREORDER_DELIVERY">
+                  Preorder Delivery
+               </option>
+               <option name="ONDEMAND_DELIVERY" value="ONDEMAND_DELIVERY">
+                  Ondemand Delivery
+               </option>
+               <option name="PREORDER_PICKUP" value="PREORDER_PICKUP">
+                  Preorder Pickup
+               </option>
+               <option name="ONDEMAND_PICKUP" value="ONDEMAND_PICKUP">
+                  Ondemand Pickup
+               </option>
+            </select>
+            <button
+               onClick={() =>
+                  dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
+               }
+            >
+               <ClearIcon />
+            </button>
+         </Fieldset>
+         <Fieldset>
+            <legend>Source</legend>
+            <RadioGroup
+               options={[
+                  { id: 1, title: 'à la carte' },
+                  { id: 2, title: 'Subscription' },
+               ]}
+               onChange={option =>
+                  dispatch({
+                     type: 'SET_FILTER',
+                     payload: {
+                        source: {
+                           _eq: option.id === 1 ? 'a-la-carte' : 'subscription',
+                        },
+                     },
+                  })
+               }
+            />
+            <button onClick={() => dispatch({ type: 'CLEAR_SOURCE_FILTER' })}>
+               <ClearIcon />
+            </button>
+         </Fieldset>
       </Wrapper>
    )
 }

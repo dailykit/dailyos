@@ -2,10 +2,14 @@ import { useMutation } from '@apollo/react-hooks'
 import { Loader, Text } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { v4 as uuid } from 'uuid'
 
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
 import { Context } from '../../../context/tabs'
-import { CREATE_PACKAGING_PURCHASE_ORDER } from '../../../graphql'
+import {
+   CREATE_PURCHASE_ORDER,
+   CREATE_ITEM_PURCHASE_ORDER,
+} from '../../../graphql'
 import { SolidTile } from '../styled'
 
 function onError(error) {
@@ -24,11 +28,24 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
    }
 
    const [createPackagingOrder, { loading }] = useMutation(
-      CREATE_PACKAGING_PURCHASE_ORDER,
+      CREATE_PURCHASE_ORDER,
       {
          onCompleted: data => {
             const { id } = data.item
-            addTab('Purchase Order', 'packagingPurchaseOrder', id)
+            const tabTitle = `Purchase Order-${uuid().substring(30)}`
+            addTab(tabTitle, 'packagingPurchaseOrder', id)
+         },
+         onError,
+      }
+   )
+
+   const [createItemPurchaseOrder, { loading: itemOrderLoading }] = useMutation(
+      CREATE_ITEM_PURCHASE_ORDER,
+      {
+         onCompleted: data => {
+            const { id } = data.item
+            const tabTitle = `Purchase Order-${uuid().substring(30)}`
+            addTab(tabTitle, 'purchaseOrder', id)
          },
          onError,
       }
@@ -39,10 +56,10 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
    }
 
    const createSupplierItemPurchaseOrder = () => {
-      addTab('New Purchase Order', 'purchaseOrder')
+      createItemPurchaseOrder()
    }
 
-   if (loading) return <Loader />
+   if (loading || itemOrderLoading) return <Loader />
 
    return (
       <TunnelContainer>

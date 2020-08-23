@@ -207,9 +207,10 @@ const MealKits = ({ mealkits }) => {
                   <div>
                      <StyledProductTitle>
                         {mealkit?.simpleRecipeProduct?.name}
-                        &nbsp;-&nbsp;
-                        {mealkit?.comboProduct?.name}(
-                        {mealkit?.comboProductComponent?.label})
+                        {mealkit?.comboProduct?.name}
+                        &nbsp;
+                        {mealkit?.comboProductComponent?.label &&
+                           `(${mealkit?.comboProductComponent?.label})`}
                      </StyledProductTitle>
                   </div>
                   <section>
@@ -299,9 +300,10 @@ const Inventories = ({ inventories }) => {
             >
                <StyledProductTitle>
                   {inventory?.inventoryProduct?.name}
-                  &nbsp;-&nbsp;
-                  {inventory?.comboProduct?.name}(
-                  {inventory?.comboProductComponent?.label})
+                  {inventory?.comboProduct?.name}
+                  &nbsp;
+                  {inventory?.comboProductComponent?.label &&
+                     `(${inventory?.comboProductComponent?.label})`}
                </StyledProductTitle>
                <section>
                   <span>
@@ -357,9 +359,11 @@ const ReadyToEats = ({ readytoeats }) => {
             >
                <div>
                   <StyledProductTitle>
+                     {readytoeat?.simpleRecipeProduct?.name}
                      {readytoeat?.comboProduct?.name}
-                     &nbsp;(
-                     {readytoeat?.comboProductComponent?.label})
+                     &nbsp;
+                     {readytoeat?.comboProductComponent?.label &&
+                        `(${readytoeat?.comboProductComponent?.label})`}
                   </StyledProductTitle>
                </div>
                <section>

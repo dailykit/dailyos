@@ -1,18 +1,5 @@
 import gql from 'graphql-tag'
 
-export const CREATE_PURCHASE_ORDER = gql`
-   mutation CreatePurchaseOrderItem(
-      $object: inventory_purchaseOrderItem_insert_input!
-   ) {
-      createPurchaseOrderItem(objects: [$object]) {
-         returning {
-            id
-            status
-         }
-      }
-   }
-`
-
 export const UPDATE_PURCHASE_ORDER = gql`
    mutation UpdatePurchaseOrderItem($id: Int!, $status: String!) {
       updatePurchaseOrderItem(
@@ -27,10 +14,23 @@ export const UPDATE_PURCHASE_ORDER = gql`
    }
 `
 
-export const CREATE_PACKAGING_PURCHASE_ORDER = gql`
+export const CREATE_PURCHASE_ORDER = gql`
    mutation CreatePurchaseOrder {
-      item: insert_inventory_purchaseOrderItem_one(object: {}) {
+      item: insert_inventory_purchaseOrderItem_one(
+         object: { type: "PACKAGING" }
+      ) {
          id
+         type
+      }
+   }
+`
+export const CREATE_ITEM_PURCHASE_ORDER = gql`
+   mutation CreatePurchaseOrder {
+      item: insert_inventory_purchaseOrderItem_one(
+         object: { type: "SUPPLIER_ITEM" }
+      ) {
+         id
+         type
       }
    }
 `

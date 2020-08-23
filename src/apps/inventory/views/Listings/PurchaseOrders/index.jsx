@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { v4 as uuid } from 'uuid'
 
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
@@ -50,20 +51,14 @@ export default function PurchaseOrders() {
    const tableRef = React.useRef()
 
    const rowClick = (_, row) => {
-      const { id, status, packaging, supplierItem } = row._row.data
-      if (supplierItem) {
-         dispatch({
-            type: 'SET_PURCHASE_WORK_ORDER',
-            payload: {
-               id,
-               status,
-            },
-         })
-         addTab('Purchase Order', 'purchaseOrder')
+      const { id, type } = row._row.data
+      const tabTitle = `Purchase Order-${uuid().substring(30)}`
+      if (type === 'PACKAGING') {
+         addTab(tabTitle, 'packagingPurchaseOrder', id)
       }
 
-      if (packaging) {
-         addTab('Purchase Order', 'packagingPurchaseOrder', id)
+      if (type === 'SUPPLIER_ITEM') {
+         addTab(tabTitle, 'purchaseOrder', id)
       }
    }
 
@@ -144,9 +139,10 @@ function LabelItem({
       },
    },
 }) {
-   if (data.supplierItem && data.supplierItem.name)
-      return <Tag color="primary">Supplier Item</Tag>
-   if (data.packaging && data.packaging.packagingName)
+   if (data && data.type === 'PACKAGING')
       return <Tag color="success">Packaging</Tag>
+   if (data && data.type === 'SUPPLIER_ITEM')
+      return <Tag color="primary">Supplier Item</Tag>
+
    return <Tag color="danger">NA</Tag>
 }

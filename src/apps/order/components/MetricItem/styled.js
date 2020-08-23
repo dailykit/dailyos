@@ -24,13 +24,19 @@ const selectColor = variant => {
 export const ListItem = styled.li(
    ({ variant }) => css`
       padding: 12px;
+      cursor: pointer;
       list-style: none;
       margin-bottom: 16px;
       box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
       border-left: 4px solid ${selectColor(variant)};
       header {
-         font-weight: 500;
-         font-size: 14px;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         h2 {
+            font-weight: 500;
+            font-size: 14px;
+         }
       }
       main {
          display: flex;

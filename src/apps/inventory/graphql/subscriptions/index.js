@@ -163,11 +163,14 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
    subscription PurchaseOrderItems {
       purchaseOrderItems {
          id
+         type
          supplierItem {
+            id
             name
          }
          status
          packaging {
+            id
             packagingName: name
          }
       }
@@ -220,6 +223,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          images: assets(path: "images")
 
          supplier {
+            id
             name
             contactPerson
          }
@@ -500,6 +504,7 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             onHand
             shelfLife
             supplierItem {
+               id
                name
             }
          }
@@ -514,7 +519,10 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          supplierItem {
             id
             name
-            unit
+            bulkItemAsShipped {
+               id
+               unit
+            }
          }
          status
          orderQuantity
@@ -545,6 +553,7 @@ export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
          id
          packagingName: name
          supplier {
+            id
             name
          }
 
