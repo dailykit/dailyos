@@ -502,7 +502,10 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          supplierItem {
             id
             name
-            unit
+            bulkItemAsShipped {
+               id
+               unit
+            }
          }
          status
          orderQuantity
