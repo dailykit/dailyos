@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { v4 as uuid } from 'uuid'
 
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
@@ -51,12 +52,13 @@ export default function PurchaseOrders() {
 
    const rowClick = (_, row) => {
       const { id, type } = row._row.data
+      const tabTitle = `Purchase Order-${uuid().substring(30)}`
       if (type === 'PACKAGING') {
-         addTab('Purchase Order', 'packagingPurchaseOrder', id)
+         addTab(tabTitle, 'packagingPurchaseOrder', id)
       }
 
       if (type === 'SUPPLIER_ITEM') {
-         addTab('Purchase Order', 'purchaseOrder', id)
+         addTab(tabTitle, 'purchaseOrder', id)
       }
    }
 

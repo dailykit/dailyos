@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { Loader, Text } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { v4 as uuid } from 'uuid'
 
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
 import { Context } from '../../../context/tabs'
@@ -31,7 +32,8 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
       {
          onCompleted: data => {
             const { id } = data.item
-            addTab('Purchase Order', 'packagingPurchaseOrder', id)
+            const tabTitle = `Purchase Order-${uuid().substring(30)}`
+            addTab(tabTitle, 'packagingPurchaseOrder', id)
          },
          onError,
       }
@@ -42,7 +44,8 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
       {
          onCompleted: data => {
             const { id } = data.item
-            addTab('New Purchase Order', 'purchaseOrder', id)
+            const tabTitle = `Purchase Order-${uuid().substring(30)}`
+            addTab(tabTitle, 'purchaseOrder', id)
          },
          onError,
       }
