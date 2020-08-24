@@ -7,18 +7,18 @@ export const CREATE_BULK_WORK_ORDER = gql`
       createBulkWorkOrder(objects: [$object]) {
          returning {
             id
-            status
+            name
          }
       }
    }
 `
 
-export const UPDATE_BULK_WORK_ORDER_STATUS = gql`
-   mutation UpdateBulkWorkOrderStatus($id: Int!, $status: String!) {
-      updateBulkWorkOrder(
-         where: { id: { _eq: $id } }
-         _set: { status: $status }
-      ) {
+export const UPDATE_BULK_WORK_ORDER = gql`
+   mutation UpdateBulkWorkOrderStatus(
+      $id: Int!
+      $object: inventory_bulkWorkOrder_set_input
+   ) {
+      updateBulkWorkOrder(where: { id: { _eq: $id } }, _set: $object) {
          affected_rows
          returning {
             id
@@ -42,14 +42,29 @@ export const CREATE_SACHET_WORK_ORDER = gql`
 `
 
 export const UPDATE_SACHET_WORK_ORDER = gql`
-   mutation UpdateSachetWorkOrder($id: Int!, $status: String!) {
-      updateSachetWorkOrder(
-         where: { id: { _eq: $id } }
-         _set: { status: $status }
-      ) {
+   mutation UpdateSachetWorkOrder(
+      $id: Int!
+      $set: inventory_sachetWorkOrder_set_input
+   ) {
+      updateSachetWorkOrder(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             id
             status
+         }
+      }
+   }
+`
+
+export const INCREMENT_SACHET_WORK_ORDER = gql`
+   mutation UpdateSachetWorkOrder(
+      $id: Int!
+      $inc: inventory_sachetWorkOrder_inc_input
+   ) {
+      updateSachetWorkOrder(where: { id: { _eq: $id } }, _inc: $inc) {
+         returning {
+            id
+            status
+            outputQuantity
          }
       }
    }

@@ -125,6 +125,7 @@ export const BULK_WORK_ORDERS_SUBSCRIPTION = gql`
       bulkWorkOrders {
          id
          status
+         name
          scheduledOn
          station {
             id
@@ -427,6 +428,7 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
       bulkWorkOrder(id: $id) {
          id
          status
+         isPublished
          station {
             name
             id
@@ -437,16 +439,17 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             firstName
          }
          scheduledOn
+         outputYield
          outputBulkItem {
             id
             yield
             processingName
             onHand
             shelfLife
-            supplierItem {
-               id
-               name
-            }
+         }
+         supplierItem {
+            id
+            name
          }
          outputQuantity
          inputBulkItem {
@@ -462,7 +465,9 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
 export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
    subscription SachetWorkOrder($id: Int!) {
       sachetWorkOrder(id: $id) {
+         id
          status
+         isPublished
          station {
             name
             id
@@ -473,6 +478,7 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             firstName
          }
          scheduledOn
+         outputQuantity
          outputSachetItem {
             id
             onHand
@@ -480,6 +486,17 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             unitSize
             unit
          }
+
+         supplierItem {
+            id
+            name
+         }
+
+         packaging {
+            id
+            name
+         }
+         label
 
          bulkItem {
             id
@@ -570,6 +587,18 @@ export const PACKAGING_SPECS_SUBSCRIPTION = gql`
             compressibility
             packagingMaterial
          }
+      }
+   }
+`
+
+export const GET_BULK_ITEMS_SUBSCRIPTION = gql`
+   subscription GetBulkItems($supplierItemId: Int!) {
+      bulkItems(where: { supplierItemId: { _eq: $supplierItemId } }) {
+         id
+         processingName
+         shelfLife
+         onHand
+         unit
       }
    }
 `
