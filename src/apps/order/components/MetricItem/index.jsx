@@ -11,10 +11,15 @@ export const MetricItem = ({
    currency,
    average,
 }) => {
-   const { dispatch } = useOrder()
+   const { state, dispatch } = useOrder()
    return (
       <ListItem
          variant={variant}
+         className={
+            title.split(' ').join('_') === state.orders.where?.orderStatus?._eq
+               ? 'active'
+               : ''
+         }
          onClick={() =>
             dispatch({
                type: 'SET_FILTER',

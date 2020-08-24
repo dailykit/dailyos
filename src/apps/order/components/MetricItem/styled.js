@@ -27,8 +27,12 @@ export const ListItem = styled.li(
       cursor: pointer;
       list-style: none;
       margin-bottom: 16px;
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
-      border-left: 4px solid ${selectColor(variant)};
+      border: 1px solid rgba(0, 0, 0, 0.09);
+      border-left: 6px solid ${selectColor(variant)};
+      &.active,
+      &:hover {
+         box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
+      }
       header {
          display: flex;
          align-items: center;
