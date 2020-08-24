@@ -134,6 +134,17 @@ const reducers = (state, { type, payload }) => {
                },
             },
          }
+      case 'CLEAR_AMOUNT_FILTER':
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               where: {
+                  ...state.orders.where,
+                  amountPaid: {},
+               },
+            },
+         }
       default:
          return state
    }

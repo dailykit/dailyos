@@ -14,29 +14,35 @@ export const Wrapper = styled.div`
    }
 `
 
-export const Fieldset = styled.fieldset`
+export const Fieldset = styled.section`
    position: relative;
    border-radius: 2px;
    margin-bottom: 16px;
-   padding: 0 8px 8px 8px;
-   border: 1px solid #d8d8d8;
    legend {
-      padding: 0 8px;
+      color: rgb(136, 141, 157);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      ~ div {
+         height: 32px;
+         margin-top: 8px;
+      }
    }
+
    section {
       display: flex;
       align-items: center;
+      > div {
+         margin-right: 8px;
+      }
    }
    input[type='text'] {
-      width: 144px;
+      width: 100%;
       height: 32px;
       border: none;
       border-bottom: 1px solid #d8d8d8;
       :focus {
          outline: none;
-      }
-      :first-child {
-         margin-right: 8px;
       }
    }
    select {
@@ -49,15 +55,16 @@ export const Fieldset = styled.fieldset`
       }
    }
    button {
-      top: -22px;
-      right: 11px;
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       cursor: pointer;
+      margin-left: 8px;
       background: #fff;
       border-radius: 50%;
-      position: absolute;
       border: 1px solid #a2a0a0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       svg {
          stroke: #000;
       }
