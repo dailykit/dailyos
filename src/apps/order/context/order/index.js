@@ -22,8 +22,11 @@ const initialState = {
       id: null,
    },
    orders: {
+      limit: 10,
+      offset: 0,
       where: {
          orderStatus: { _eq: 'PENDING' },
+         fulfillmentTimestamp: { _gte: moment().format('YYYY-MM-DD HH:MM') },
       },
    },
 }
@@ -87,6 +90,16 @@ const reducers = (state, { type, payload }) => {
             orders: {
                ...state.orders,
                where: { ...state.orders.where, ...payload },
+            },
+         }
+      }
+      case 'SET_PAGINATION': {
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               limit: payload.limit,
+               offset: payload.offset,
             },
          }
       }

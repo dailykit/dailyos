@@ -68,7 +68,6 @@ export const StyledOrderItem = styled.div(
       border-left-width: 8px;
       border-right-width: 8px;
       position: relative;
-      margin-bottom: 16px;
       > section {
          :last-child {
             padding-left: 16px;

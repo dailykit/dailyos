@@ -44,8 +44,10 @@ import pickUpIcon from '../../assets/svgs/pickup.png'
 
 import { formatDate } from '../../utils'
 
-import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
+import { InlineLoader } from '../../../../shared/components'
+
 import { useTabs, useOrder } from '../../context'
+import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -56,7 +58,7 @@ const normalize = address =>
       address.city
    }, ${address.state}, ${address.zipcode}`
 
-const OrderListItem = ({ order }) => {
+const OrderListItem = ({ containerId, order = {} }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
    const { dispatch } = useOrder()
@@ -66,11 +68,11 @@ const OrderListItem = ({ order }) => {
       data: { order_orderStatusEnum: statuses = [] } = {},
    } = useSubscription(ORDER_STATUSES)
    const {
-      id,
-      orderStatus,
-      orderMealKitProducts: mealkits,
-      orderInventoryProducts: inventories,
-      orderReadyToEatProducts: readytoeats,
+      id = '',
+      orderStatus = '',
+      orderMealKitProducts: mealkits = [],
+      orderInventoryProducts: inventories = [],
+      orderReadyToEatProducts: readytoeats = [],
       deliveryInfo = {},
       ...rest
    } = order
@@ -104,7 +106,7 @@ const OrderListItem = ({ order }) => {
    }
 
    return (
-      <StyledOrderItem status={orderStatus}>
+      <StyledOrderItem status={orderStatus} id={containerId}>
          <section>
             <ListBodyItem isOpen={currentPanel === 'customer'}>
                <header>
@@ -269,7 +271,7 @@ const OrderListItem = ({ order }) => {
                                        inventory?.inventoryProductOption
                                           ?.quantity
                                     }
-                                    &nbsp;-&nbsp;
+                                    &nbsp; - &nbsp;
                                     {inventory?.inventoryProductOption?.label}
                                  </span>
                               </StyledServings>
@@ -362,7 +364,7 @@ const OrderListItem = ({ order }) => {
                                             inventory?.inventoryProductOption
                                                ?.quantity
                                          }
-                                         &nbsp;-&nbsp;
+                                         &nbsp; - &nbsp;
                                          {
                                             inventory?.inventoryProductOption
                                                ?.label

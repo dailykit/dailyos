@@ -106,8 +106,17 @@ export const ORDER_STATUSES = gql`
 `
 
 export const ORDERS = gql`
-   subscription orders($where: order_order_bool_exp!) {
-      orders(order_by: { updated_at: desc }, where: $where) {
+   subscription orders(
+      $limit: Int = 10
+      $offset: Int = 0
+      $where: order_order_bool_exp = {}
+   ) {
+      orders(
+         limit: $limit
+         offset: $offset
+         order_by: { updated_at: desc }
+         where: $where
+      ) {
          id
          created_at
          deliveryInfo
@@ -506,6 +515,16 @@ export const FETCH_READYTOEAT = gql`
             simpleRecipeYield {
                yield
             }
+         }
+      }
+   }
+`
+
+export const ORDERS_AGGREGATE = gql`
+   query ordersAggregate($where: order_order_bool_exp = {}) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            count
          }
       }
    }

@@ -96,6 +96,7 @@ export const OrderSummary = () => {
             </legend>
             <section>
                <DateTime
+                  value={moment().format('YYYY-MM-DD HH:MM')}
                   onBlur={data =>
                      dispatch({
                         type: 'SET_FILTER',

@@ -12,21 +12,36 @@ export const MetricItem = ({
    average,
 }) => {
    const { state, dispatch } = useOrder()
+
+   const changeStatus = () => {
+      window.scrollTo({
+         top: 0,
+         behavior: 'smooth',
+      })
+      window.history.pushState(
+         '',
+         document.title,
+         window.location.pathname + window.location.search
+      )
+      dispatch({
+         type: 'SET_FILTER',
+         payload: {
+            orderStatus: { _eq: title.split(' ').join('_') },
+         },
+      })
+      dispatch({
+         type: 'SET_PAGINATION',
+         payload: { limit: 10, offset: 0 },
+      })
+   }
    return (
       <ListItem
          variant={variant}
+         onClick={() => changeStatus()}
          className={
             title.split(' ').join('_') === state.orders.where?.orderStatus?._eq
                ? 'active'
                : ''
-         }
-         onClick={() =>
-            dispatch({
-               type: 'SET_FILTER',
-               payload: {
-                  orderStatus: { _eq: title.split(' ').join('_') },
-               },
-            })
          }
       >
          <header>
