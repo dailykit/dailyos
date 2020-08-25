@@ -1,27 +1,34 @@
 import React from 'react'
 import moment from 'moment'
-import DateTime from 'react-datetime'
 import { useTranslation } from 'react-i18next'
+import { TextButton, ClearIcon, IconButton } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-import { ClearIcon, RadioGroup, Input } from '@dailykit/ui'
-
-import 'react-datetime/css/react-datetime.css'
 
 import Loader from '../Loader'
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
-import { Wrapper, Fieldset } from './styled'
 import { ORDER_BY_STATUS } from '../../graphql'
+import { Flex } from '../../../../shared/components'
+import { Wrapper, FilterSection, Spacer } from './styled'
 
 const address = 'apps.order.components.ordersummary.'
+
 export const OrderSummary = () => {
-   const { state, dispatch } = useOrder()
    const { t } = useTranslation()
+   const { state, dispatch } = useOrder()
    const {
       loading,
       error,
       data: { orderByStatus = [] } = {},
    } = useSubscription(ORDER_BY_STATUS)
+
+   const clearFilters = () => {
+      dispatch({ type: 'CLEAR_READY_BY_FILTER' })
+      dispatch({ type: 'CLEAR_FULFILLMENT_FILTER' })
+      dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
+      dispatch({ type: 'CLEAR_SOURCE_FILTER' })
+      dispatch({ type: 'CLEAR_AMOUNT_FILTER' })
+   }
 
    if (loading)
       return (
@@ -46,197 +53,106 @@ export const OrderSummary = () => {
                />
             ))}
          </ul>
-         <h2>Filters</h2>
-         <Fieldset>
-            <legend>
-               Ready By
-               <button
-                  onClick={() => dispatch({ type: 'CLEAR_READY_BY_FILTER' })}
-               >
-                  <ClearIcon />
-               </button>
-            </legend>
-            <section>
-               <DateTime
-                  onBlur={data =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           readyByTimestamp: {
-                              ...state.orders.where.readyByTimestamp,
-                              _gte: moment(data).format('YYYY-MM-DD HH:MM'),
-                           },
-                        },
-                     })
-                  }
-               />
-               <DateTime
-                  onBlur={data =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           readyByTimestamp: {
-                              ...state.orders.where.readyByTimestamp,
-                              _lte: moment(data).format('YYYY-MM-DD HH:MM'),
-                           },
-                        },
-                     })
-                  }
-               />
-            </section>
-         </Fieldset>
-         <Fieldset>
-            <legend>
-               Fulfillment Time
-               <button
-                  onClick={() => dispatch({ type: 'CLEAR_FULFILLMENT_FILTER' })}
-               >
-                  <ClearIcon />
-               </button>
-            </legend>
-            <section>
-               <DateTime
-                  value={moment().format('YYYY-MM-DD HH:MM')}
-                  onBlur={data =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           fulfillmentTimestamp: {
-                              ...state.orders.where.fulfillmentTimestamp,
-                              _gte: moment(data).format('YYYY-MM-DD HH:MM'),
-                           },
-                        },
-                     })
-                  }
-               />
-               <DateTime
-                  onBlur={data =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           fulfillmentTimestamp: {
-                              ...state.orders.where.fulfillmentTimestamp,
-                              _lte: moment(data).format('YYYY-MM-DD HH:MM'),
-                           },
-                        },
-                     })
-                  }
-               />
-            </section>
-         </Fieldset>
-         <Fieldset>
-            <legend>
-               Fulfillment Type
-               <button
+         <Flex container alignItems="center" justifyContent="space-between">
+            <h2>Advanced Filters</h2>
+            <Flex container alignItems="center">
+               <IconButton type="ghost" onClick={() => clearFilters()}>
+                  <ClearIcon color="#000" />
+               </IconButton>
+               <Spacer size="8px" xAxis />
+               <TextButton
+                  type="outline"
                   onClick={() =>
-                     dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
-                  }
-               >
-                  <ClearIcon />
-               </button>
-            </legend>
-            <select
-               id="fulfillment"
-               name="fulfillment"
-               value={
-                  state.orders.where?.fulfillmentType?._eq ||
-                  'PREORDER_DELIVERY'
-               }
-               onChange={e =>
-                  dispatch({
-                     type: 'SET_FILTER',
-                     payload: { fulfillmentType: { _eq: e.target.value } },
-                  })
-               }
-            >
-               <option name="PREORDER_DELIVERY" value="PREORDER_DELIVERY">
-                  Preorder Delivery
-               </option>
-               <option name="ONDEMAND_DELIVERY" value="ONDEMAND_DELIVERY">
-                  Ondemand Delivery
-               </option>
-               <option name="PREORDER_PICKUP" value="PREORDER_PICKUP">
-                  Preorder Pickup
-               </option>
-               <option name="ONDEMAND_PICKUP" value="ONDEMAND_PICKUP">
-                  Ondemand Pickup
-               </option>
-            </select>
-         </Fieldset>
-         <Fieldset>
-            <legend>
-               Source
-               <button
-                  onClick={() => dispatch({ type: 'CLEAR_SOURCE_FILTER' })}
-               >
-                  <ClearIcon />
-               </button>
-            </legend>
-            <RadioGroup
-               options={[
-                  { id: 1, title: 'à la carte' },
-                  { id: 2, title: 'Subscription' },
-               ]}
-               onChange={option =>
-                  dispatch({
-                     type: 'SET_FILTER',
-                     payload: {
-                        source: {
-                           _eq: option.id === 1 ? 'a-la-carte' : 'subscription',
-                        },
-                     },
-                  })
-               }
-            />
-         </Fieldset>
-         <Fieldset>
-            <legend>
-               Amount
-               <button
-                  onClick={() => dispatch({ type: 'CLEAR_AMOUNT_FILTER' })}
-               >
-                  <ClearIcon />
-               </button>
-            </legend>
-            <section>
-               <Input
-                  type="text"
-                  label=""
-                  name="greater_than"
-                  placeholder="greater than"
-                  value={state.orders.where?.amountPaid?._gte || ''}
-                  onChange={e =>
                      dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           amountPaid: {
-                              ...state.orders.where?.amountPaid,
-                              _gte: Number(e.target.value),
-                           },
-                        },
+                        type: 'TOGGLE_FILTER_TUNNEL',
+                        payload: { tunnel: true },
                      })
                   }
-               />
-               <Input
-                  type="text"
-                  label=""
-                  name="less_than"
-                  placeholder="less than"
-                  value={state.orders.where?.amountPaid?._lte || ''}
-                  onChange={e =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           amountPaid: {
-                              ...state.orders.where?.amountPaid,
-                              _lte: Number(e.target.value),
-                           },
-                        },
-                     })
-                  }
-               />
-            </section>
-         </Fieldset>
+               >
+                  View
+               </TextButton>
+            </Flex>
+         </Flex>
+         {state.orders.where?.readyByTimestamp &&
+            Object.keys(state.orders.where?.readyByTimestamp).length > 0 && (
+               <FilterSection>
+                  <h3>Ready By</h3>
+                  <Flex container alignItems="center" margin="8px 0 0 0">
+                     <span title="From">
+                        {state.orders.where?.readyByTimestamp?._gte
+                           ? moment(
+                                state.orders.where?.readyByTimestamp?._gte
+                             ).format('HH:MM - MMM DD, YYYY')
+                           : ''}
+                     </span>
+                     <Spacer size="16px" xAxis />
+                     <span title="To">
+                        {state.orders.where?.readyByTimestamp?._lte
+                           ? moment(
+                                state.orders.where?.readyByTimestamp?._lte
+                             ).format('HH:MM - MMM DD, YYYY')
+                           : ''}
+                     </span>
+                  </Flex>
+               </FilterSection>
+            )}
+         <Spacer size="16px" />
+         {state.orders.where?.fulfillmentTimestamp &&
+            Object.keys(state.orders.where?.fulfillmentTimestamp).length >
+               0 && (
+               <FilterSection>
+                  <h3>Fulfillment Time</h3>
+                  <Flex container alignItems="center" margin="8px 0 0 0">
+                     <span title="From">
+                        {state.orders.where?.fulfillmentTimestamp?._gte
+                           ? moment(
+                                state.orders.where?.fulfillmentTimestamp?._gte
+                             ).format('HH:MM - MMM DD, YYYY')
+                           : ''}
+                     </span>
+                     <Spacer size="16px" xAxis />
+                     <span title="To">
+                        {state.orders.where?.fulfillmentTimestamp?._lte
+                           ? moment(
+                                state.orders.where?.fulfillmentTimestamp?._lte
+                             ).format('HH:MM - MMM DD, YYYY')
+                           : ''}
+                     </span>
+                  </Flex>
+               </FilterSection>
+            )}
+         <Spacer size="16px" />
+         {state.orders.where?.fulfillmentType &&
+            Object.keys(state.orders.where?.fulfillmentType).length > 0 && (
+               <FilterSection>
+                  <h3>Fulfillment Type</h3>
+                  <Flex container alignItems="center" margin="8px 0 0 0">
+                     <span>{state.orders.where?.fulfillmentType?._eq}</span>
+                  </Flex>
+               </FilterSection>
+            )}
+         <Spacer size="16px" />
+         {state.orders.where?.source &&
+            Object.keys(state.orders.where?.source).length > 0 && (
+               <FilterSection>
+                  <h3>Source</h3>
+                  <Flex container alignItems="center" margin="8px 0 0 0">
+                     <span>{state.orders.where?.source?._eq}</span>
+                  </Flex>
+               </FilterSection>
+            )}
+         <Spacer size="16px" />
+         {state.orders.where?.amountPaid &&
+            Object.keys(state.orders.where?.amountPaid).length > 0 && (
+               <FilterSection>
+                  <h3>Amount</h3>
+                  <Flex container alignItems="center" margin="8px 0 0 0">
+                     <span>{state.orders.where?.amountPaid?._gte}</span>
+                     <Spacer size="16px" xAxis />
+                     <span>{state.orders.where?.amountPaid?._lte}</span>
+                  </Flex>
+               </FilterSection>
+            )}
       </Wrapper>
    )
 }

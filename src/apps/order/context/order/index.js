@@ -7,6 +7,9 @@ import { UPDATE_ORDER } from '../../graphql'
 const Context = React.createContext()
 
 const initialState = {
+   filter: {
+      tunnel: false,
+   },
    delivery_config: {
       orderId: null,
    },
@@ -158,6 +161,12 @@ const reducers = (state, { type, payload }) => {
                },
             },
          }
+      case 'TOGGLE_FILTER_TUNNEL': {
+         return {
+            ...state,
+            filter: payload,
+         }
+      }
       default:
          return state
    }
