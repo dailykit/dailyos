@@ -92,7 +92,9 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             orders: {
-               ...state.orders,
+               loading: true,
+               limit: 10,
+               offset: 0,
                where: { ...state.orders.where, ...payload },
             },
          }
@@ -107,61 +109,79 @@ const reducers = (state, { type, payload }) => {
             },
          }
       }
-      case 'CLEAR_READY_BY_FILTER':
+      case 'CLEAR_READY_BY_FILTER': {
+         const { readyByTimestamp, ...rest } = state.orders.where
          return {
             ...state,
             orders: {
-               ...state.orders,
-               where: {
-                  ...state.orders.where,
-                  readyByTimestamp: {},
-               },
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
             },
          }
-      case 'CLEAR_FULFILLMENT_FILTER':
+      }
+      case 'CLEAR_FULFILLMENT_FILTER': {
+         const { fulfillmentTimestamp, ...rest } = state.orders.where
          return {
             ...state,
             orders: {
-               ...state.orders,
-               where: {
-                  ...state.orders.where,
-                  fulfillmentTimestamp: {},
-               },
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
             },
          }
-      case 'CLEAR_FULFILLMENT_TYPE_FILTER':
+      }
+      case 'CLEAR_FULFILLMENT_TYPE_FILTER': {
+         const { fulfillmentType, ...rest } = state.orders.where
          return {
             ...state,
             orders: {
-               ...state.orders,
-               where: {
-                  ...state.orders.where,
-                  fulfillmentType: {},
-               },
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
             },
          }
-      case 'CLEAR_SOURCE_FILTER':
+      }
+      case 'CLEAR_SOURCE_FILTER': {
+         const { source, ...rest } = state.orders.where
          return {
             ...state,
             orders: {
-               ...state.orders,
-               where: {
-                  ...state.orders.where,
-                  source: {},
-               },
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
             },
          }
-      case 'CLEAR_AMOUNT_FILTER':
+      }
+      case 'CLEAR_AMOUNT_FILTER': {
+         const { amountPaid, ...rest } = state.orders.where
          return {
             ...state,
             orders: {
-               ...state.orders,
-               where: {
-                  ...state.orders.where,
-                  amountPaid: {},
-               },
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
             },
          }
+      }
+      case 'CLEAR_STATION_FILTER': {
+         const { _or, ...rest } = state.orders.where
+         return {
+            ...state,
+            loading: true,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
       case 'TOGGLE_FILTER_TUNNEL': {
          return {
             ...state,

@@ -107,8 +107,8 @@ export const ORDER_STATUSES = gql`
 
 export const ORDERS = gql`
    subscription orders(
-      $limit: Int = 10
-      $offset: Int = 0
+      $limit: Int
+      $offset: Int
       $where: order_order_bool_exp = {}
    ) {
       orders(
@@ -541,6 +541,15 @@ export const STATIONS = gql`
       stations {
          id
          title: name
+      }
+   }
+`
+
+export const STATION = gql`
+   query station($id: Int!) {
+      station(id: $id) {
+         id
+         name
       }
    }
 `

@@ -31,15 +31,30 @@ const Orders = () => {
    })
    useSubscription(ORDERS, {
       variables: {
-         limit: state.orders.limit,
          where: state.orders.where,
-         offset: state.orders.offset,
+         ...(state.orders.limit && { limit: state.orders.limit }),
+         ...(state.orders.offset !== null && { offset: state.orders.offset }),
       },
       onSubscriptionData: ({
          subscriptionData: { data: { orders = [] } = {} } = {},
       }) => {
+         console.log(
+            'Orders -> orders',
+            {
+               where: state.orders.where,
+               ...(state.orders.limit && { limit: state.orders.limit }),
+               ...(state.orders.offset && { offset: state.orders.offset }),
+            },
+            orders
+         )
          setOrders(orders)
          if (state.orders.limit) {
+            if (!loadingAggregate && ordersAggregate?.aggregate?.count > 10) {
+               dispatch({
+                  type: 'SET_PAGINATION',
+                  payload: { limit: null, offset: null },
+               })
+            }
             dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
          }
       },
@@ -51,15 +66,6 @@ const Orders = () => {
          addTab('Orders', '/apps/order/orders')
       }
    }, [history, tabs])
-
-   React.useEffect(() => {
-      if (!state.orders.loading) {
-         dispatch({
-            type: 'SET_PAGINATION',
-            payload: { limit: null, offset: null },
-         })
-      }
-   }, [state.orders.loading, dispatch])
 
    React.useEffect(() => {
       window.addEventListener('hashchange', () => {

@@ -2,14 +2,17 @@ import React from 'react'
 import moment from 'moment'
 import DateTime from 'react-datetime'
 import styled from 'styled-components'
+import { useSubscription } from '@apollo/react-hooks'
 import { TunnelHeader, Input, ClearIcon, RadioGroup } from '@dailykit/ui'
 
 import { useOrder } from '../../context'
+import { STATIONS } from '../../graphql'
 import 'react-datetime/css/react-datetime.css'
 import { Flex } from '../../../../shared/components'
 
 export const FilterTunnel = () => {
    const { state, dispatch } = useOrder()
+   const { data: { stations = [] } = {} } = useSubscription(STATIONS)
    return (
       <>
          <TunnelHeader
@@ -251,6 +254,60 @@ export const FilterTunnel = () => {
                      }
                   />
                </section>
+            </Fieldset>
+            <Fieldset>
+               <legend>
+                  Station
+                  <button
+                     onClick={() => dispatch({ type: 'CLEAR_STATION_FILTER' })}
+                  >
+                     <ClearIcon />
+                  </button>
+               </legend>
+               <select
+                  id="station"
+                  name="station"
+                  value={
+                     state.orders.where?._or?.length > 0
+                        ? state.orders.where?._or[0]?.orderInventoryProducts
+                             ?.assemblyStationId?._eq
+                        : ''
+                  }
+                  onChange={e =>
+                     dispatch({
+                        type: 'SET_FILTER',
+                        payload: {
+                           _or: [
+                              {
+                                 orderInventoryProducts: {
+                                    assemblyStationId: {
+                                       _eq: Number(e.target.value),
+                                    },
+                                 },
+                              },
+                              {
+                                 orderReadyToEatProducts: {
+                                    assemblyStationId: {
+                                       _eq: Number(e.target.value),
+                                    },
+                                 },
+                              },
+                           ],
+                        },
+                     })
+                  }
+               >
+                  {stations.length > 0 &&
+                     stations.map(station => (
+                        <option
+                           key={station.id}
+                           value={station.id}
+                           name={station.title}
+                        >
+                           {station.title}
+                        </option>
+                     ))}
+               </select>
             </Fieldset>
          </Flex>
       </>
