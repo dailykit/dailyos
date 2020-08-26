@@ -3,16 +3,69 @@ import moment from 'moment'
 import DateTime from 'react-datetime'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
-import { TunnelHeader, Input, ClearIcon, RadioGroup } from '@dailykit/ui'
+import {
+   Dropdown,
+   TunnelHeader,
+   Input,
+   ClearIcon,
+   RadioGroup,
+} from '@dailykit/ui'
 
 import { useOrder } from '../../context'
 import { STATIONS } from '../../graphql'
+import { Spacer } from '../../styled'
 import 'react-datetime/css/react-datetime.css'
-import { Flex } from '../../../../shared/components'
+import { Flex, InlineLoader } from '../../../../shared/components'
 
 export const FilterTunnel = () => {
    const { state, dispatch } = useOrder()
-   const { data: { stations = [] } = {} } = useSubscription(STATIONS)
+   const [activeStation, setActiveStation] = React.useState(null)
+   const [fulfillmentTypes] = React.useState([
+      { id: 1, title: 'PREORDER_DELIVERY' },
+      { id: 2, title: 'ONDEMAND_DELIVERY' },
+      { id: 3, title: 'PREORDER_PICKUP' },
+      { id: 4, title: 'ONDEMAND_PICKUP' },
+   ])
+   const { loading, data: { stations = [] } = {} } = useSubscription(STATIONS, {
+      onSubscriptionData: ({
+         subscriptionData: { data: { stations = [] } = {} } = {},
+      }) => {
+         if (state.orders.where?._or?.length > 0 && stations.length > 0) {
+            const index = stations.findIndex(
+               station =>
+                  station.id ===
+                  state.orders.where?._or[0]?.orderInventoryProducts
+                     ?.assemblyStationId?._eq
+            )
+            setActiveStation(index + 1)
+         }
+      },
+   })
+
+   const handleStationChange = option => {
+      dispatch({
+         type: 'SET_FILTER',
+         payload: {
+            _or: [
+               {
+                  orderInventoryProducts: {
+                     assemblyStationId: {
+                        _eq: option.id,
+                     },
+                  },
+               },
+               {
+                  orderReadyToEatProducts: {
+                     assemblyStationId: {
+                        _eq: option.id,
+                     },
+                  },
+               },
+            ],
+         },
+      })
+   }
+
    return (
       <>
          <TunnelHeader
@@ -85,6 +138,7 @@ export const FilterTunnel = () => {
                   />
                </section>
             </Fieldset>
+            <Spacer size="16px" />
             <Fieldset>
                <legend>
                   Fulfillment Time
@@ -139,45 +193,7 @@ export const FilterTunnel = () => {
                   />
                </section>
             </Fieldset>
-            <Fieldset>
-               <legend>
-                  Fulfillment Type
-                  <button
-                     onClick={() =>
-                        dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
-                     }
-                  >
-                     <ClearIcon />
-                  </button>
-               </legend>
-               <select
-                  id="fulfillment"
-                  name="fulfillment"
-                  value={
-                     state.orders.where?.fulfillmentType?._eq ||
-                     'PREORDER_DELIVERY'
-                  }
-                  onChange={e =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: { fulfillmentType: { _eq: e.target.value } },
-                     })
-                  }
-               >
-                  <option name="PREORDER_DELIVERY" value="PREORDER_DELIVERY">
-                     Preorder Delivery
-                  </option>
-                  <option name="ONDEMAND_DELIVERY" value="ONDEMAND_DELIVERY">
-                     Ondemand Delivery
-                  </option>
-                  <option name="PREORDER_PICKUP" value="PREORDER_PICKUP">
-                     Preorder Pickup
-                  </option>
-                  <option name="ONDEMAND_PICKUP" value="ONDEMAND_PICKUP">
-                     Ondemand Pickup
-                  </option>
-               </select>
-            </Fieldset>
+            <Spacer size="16px" />
             <Fieldset>
                <legend>
                   Source
@@ -207,6 +223,7 @@ export const FilterTunnel = () => {
                   }
                />
             </Fieldset>
+            <Spacer size="16px" />
             <Fieldset>
                <legend>
                   Amount
@@ -255,6 +272,7 @@ export const FilterTunnel = () => {
                   />
                </section>
             </Fieldset>
+            <Spacer size="16px" />
             <Fieldset>
                <legend>
                   Station
@@ -264,50 +282,56 @@ export const FilterTunnel = () => {
                      <ClearIcon />
                   </button>
                </legend>
-               <select
-                  id="station"
-                  name="station"
-                  value={
-                     state.orders.where?._or?.length > 0
-                        ? state.orders.where?._or[0]?.orderInventoryProducts
-                             ?.assemblyStationId?._eq
-                        : ''
-                  }
-                  onChange={e =>
-                     dispatch({
-                        type: 'SET_FILTER',
-                        payload: {
-                           _or: [
-                              {
-                                 orderInventoryProducts: {
-                                    assemblyStationId: {
-                                       _eq: Number(e.target.value),
-                                    },
-                                 },
-                              },
-                              {
-                                 orderReadyToEatProducts: {
-                                    assemblyStationId: {
-                                       _eq: Number(e.target.value),
-                                    },
-                                 },
-                              },
-                           ],
-                        },
-                     })
-                  }
-               >
-                  {stations.length > 0 &&
-                     stations.map(station => (
-                        <option
-                           key={station.id}
-                           value={station.id}
-                           name={station.title}
-                        >
-                           {station.title}
-                        </option>
-                     ))}
-               </select>
+               {loading ? (
+                  <InlineLoader />
+               ) : (
+                  <div className="station">
+                     <Dropdown
+                        type="single"
+                        options={stations}
+                        searchedOption={() => {}}
+                        defaultValue={activeStation}
+                        placeholder="search for stations..."
+                        selectedOption={option => handleStationChange(option)}
+                     />
+                  </div>
+               )}
+            </Fieldset>
+            <Spacer size="16px" />
+            <Fieldset>
+               <legend>
+                  Fulfillment Type
+                  <button
+                     onClick={() =>
+                        dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
+                     }
+                  >
+                     <ClearIcon />
+                  </button>
+               </legend>
+               <div className="fulfillmentType">
+                  <Dropdown
+                     type="single"
+                     options={fulfillmentTypes}
+                     searchedOption={() => {}}
+                     defaultValue={
+                        state.orders.where?.fulfillmentType?._eq
+                           ? fulfillmentTypes.findIndex(
+                                type =>
+                                   type.title ===
+                                   state.orders.where?.fulfillmentType?._eq
+                             ) + 1
+                           : null
+                     }
+                     placeholder="search for fulfillment types..."
+                     selectedOption={option =>
+                        dispatch({
+                           type: 'SET_FILTER',
+                           payload: { fulfillmentType: { _eq: option.title } },
+                        })
+                     }
+                  />
+               </div>
             </Fieldset>
          </Flex>
       </>
@@ -328,7 +352,6 @@ const Fieldset = styled.section`
          margin-top: 8px;
       }
    }
-
    section {
       display: flex;
       align-items: center;
@@ -336,13 +359,15 @@ const Fieldset = styled.section`
          margin-right: 8px;
       }
    }
-   input[type='text'] {
-      width: 100%;
-      height: 32px;
-      border: none;
-      border-bottom: 1px solid #d8d8d8;
-      :focus {
-         outline: none;
+   > section {
+      input[type='text'] {
+         width: 100%;
+         height: 32px;
+         border: none;
+         border-bottom: 1px solid #d8d8d8;
+         :focus {
+            outline: none;
+         }
       }
    }
    select {
@@ -367,6 +392,16 @@ const Fieldset = styled.section`
       justify-content: center;
       svg {
          stroke: #000;
+      }
+   }
+   .station {
+      > div > div:last-child {
+         z-index: 100;
+      }
+   }
+   .fulfillmentType {
+      > div > div:last-child {
+         z-index: 99;
       }
    }
 `
