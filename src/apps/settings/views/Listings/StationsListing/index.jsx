@@ -11,7 +11,7 @@ import { IconButton, Text, Loader } from '@dailykit/ui'
 // State
 import { useTabs } from '../../../context'
 
-import { STATIONS, DELETE_STATION } from '../../../graphql'
+import { STATIONS, DELETE_STATION, UPSERT_STATION } from '../../../graphql'
 
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
@@ -25,12 +25,12 @@ const StationsListing = () => {
    const { tabs, addTab } = useTabs()
    const tableRef = React.useRef()
    const { error, loading, data: { stations } = {} } = useSubscription(STATIONS)
+   const [create] = useMutation(UPSERT_STATION, {
+      onCompleted: ({ insertStation = {} }) => {
+         addTab(insertStation.name, `/settings/stations/${insertStation.id}`)
+      },
+   })
    const [remove] = useMutation(DELETE_STATION)
-
-   const createTab = () => {
-      const hash = `stations${uuid().split('-')[0]}`
-      addTab(hash, `/settings/stations/${hash}`)
-   }
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
@@ -57,7 +57,7 @@ const StationsListing = () => {
    React.useEffect(() => {
       const tab = tabs.find(item => item.path === `/settings/stations`) || {}
       if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/settings')
+         addTab('Stations', `/settings/stations`)
       }
    }, [history, tabs])
 
@@ -65,7 +65,18 @@ const StationsListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <Text as="h2">Stations</Text>
-            <IconButton type="solid" onClick={() => createTab()}>
+            <IconButton
+               type="solid"
+               onClick={() =>
+                  create({
+                     variables: {
+                        object: {
+                           name: `stations${uuid().split('-')[0]}`,
+                        },
+                     },
+                  })
+               }
+            >
                <AddIcon color="#fff" size={24} />
             </IconButton>
          </StyledHeader>
