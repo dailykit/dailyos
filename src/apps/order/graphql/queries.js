@@ -247,7 +247,6 @@ export const ORDER = gql`
             orderSachets {
                id
                status
-               labelUri
                quantity
                isAssembled
                isLabelled
@@ -362,7 +361,6 @@ export const FETCH_ORDER_MEALKIT = gql`
          orderSachets {
             id
             status
-            labelUri
             quantity
             isAssembled
             ingredientName
@@ -407,7 +405,6 @@ export const FETCH_ORDER_SACHET = gql`
       orderSachet(id: $id) {
          id
          status
-         labelUri
          quantity
          isAssembled
          ingredientName

@@ -76,18 +76,6 @@ const ProductDetails = ({ product }) => {
                         <span>{item?.packaging?.name || 'N/A'}</span>
                      </section>
                      <section>
-                        <span>{t(address.concat('label template'))}</span>
-                        <span>
-                           {item?.labelUri ? (
-                              <a href={item.labelUri} title="Label URI">
-                                 {t(address.concat('link'))}
-                              </a>
-                           ) : (
-                              'N/A'
-                           )}
-                        </span>
-                     </section>
-                     <section>
                         <span>SOP</span>
                         <span>
                            {(item.bulkItemId && item?.bulkItem?.sop) || ''}
