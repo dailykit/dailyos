@@ -211,7 +211,11 @@ export const ORDERS = gql`
 `
 
 export const ORDER = gql`
-   subscription order($id: oid!) {
+   subscription order(
+      $id: oid!
+      $packingStationId: Int_comparison_exp = {}
+      $assemblyStationId: Int_comparison_exp = {}
+   ) {
       order(id: $id) {
          id
          created_at
@@ -244,7 +248,7 @@ export const ORDER = gql`
                   yield
                }
             }
-            orderSachets {
+            orderSachets(where: { packingStationId: $packingStationId }) {
                id
                status
                quantity
@@ -283,7 +287,9 @@ export const ORDER = gql`
                }
             }
          }
-         orderReadyToEatProducts {
+         orderReadyToEatProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
             id
             assemblyStatus
             simpleRecipeProduct {
@@ -309,7 +315,9 @@ export const ORDER = gql`
                }
             }
          }
-         orderInventoryProducts {
+         orderInventoryProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
             id
             inventoryProduct {
                name
@@ -442,6 +450,7 @@ export const FETCH_ORDER_SACHET = gql`
       }
    }
 `
+
 export const FETCH_INVENTORY = gql`
    subscription orderInventoryProduct($id: Int!) {
       orderInventoryProduct(id: $id) {
@@ -523,6 +532,15 @@ export const ORDERS_AGGREGATE = gql`
          aggregate {
             count
          }
+      }
+   }
+`
+
+export const STATIONS = gql`
+   subscription stations {
+      stations {
+         id
+         title: name
       }
    }
 `
