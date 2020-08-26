@@ -593,7 +593,7 @@ const ProductTitle = ({ data, type }) => {
          {['READY_TO_EAT', 'MEAL_KIT'].includes(type) &&
             data?.simpleRecipeProduct?.name}
          {type === 'INVENTORY' && data?.inventoryProduct?.name}
-         {data?.comboProduct?.name && `&nbsp;-&nbsp`}
+         {data?.comboProduct?.name && <span>&nbsp;-&nbsp;</span>}
          {data?.comboProduct?.name}
          {data?.comboProductComponent?.label &&
             `(${data?.comboProductComponent?.label})`}
