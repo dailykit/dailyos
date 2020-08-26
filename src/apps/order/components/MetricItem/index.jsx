@@ -14,15 +14,7 @@ export const MetricItem = ({
    const { state, dispatch } = useOrder()
 
    const changeStatus = () => {
-      window.scrollTo({
-         top: 0,
-         behavior: 'smooth',
-      })
-      window.history.pushState(
-         '',
-         document.title,
-         window.location.pathname + window.location.search
-      )
+      dispatch({ type: 'SET_ORDERS_STATUS', payload: true })
       dispatch({
          type: 'SET_FILTER',
          payload: {
@@ -33,6 +25,15 @@ export const MetricItem = ({
          type: 'SET_PAGINATION',
          payload: { limit: 10, offset: 0 },
       })
+      window.scrollTo({
+         top: 0,
+         behavior: 'smooth',
+      })
+      window.history.pushState(
+         '',
+         document.title,
+         window.location.pathname + window.location.search
+      )
    }
    return (
       <ListItem

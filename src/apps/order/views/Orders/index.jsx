@@ -1,15 +1,15 @@
 import React from 'react'
+import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
-import { ORDERS, ORDERS_AGGREGATE } from '../../graphql'
+import { paginate } from '../../utils'
 import { useOrder } from '../../context'
 import { useTabs } from '../../context/tabs'
 import { OrderListItem } from '../../components'
-import { Flex } from '../../../../shared/components'
-import { paginate } from '../../utils'
-import styled from 'styled-components'
+import { ORDERS, ORDERS_AGGREGATE } from '../../graphql'
+import { Flex, InlineLoader } from '../../../../shared/components'
 
 const address = 'apps.order.views.orders.'
 const Orders = () => {
@@ -29,7 +29,7 @@ const Orders = () => {
          },
       },
    })
-   const { loading } = useSubscription(ORDERS, {
+   useSubscription(ORDERS, {
       variables: {
          limit: state.orders.limit,
          where: state.orders.where,
@@ -39,6 +39,9 @@ const Orders = () => {
          subscriptionData: { data: { orders = [] } = {} } = {},
       }) => {
          setOrders(orders)
+         if (state.orders.limit) {
+            dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
+         }
       },
    })
 
@@ -50,13 +53,13 @@ const Orders = () => {
    }, [history, tabs])
 
    React.useEffect(() => {
-      if (!loading && state.orders.limit) {
+      if (!state.orders.loading) {
          dispatch({
             type: 'SET_PAGINATION',
             payload: { limit: null, offset: null },
          })
       }
-   }, [loading, state.orders.limit, dispatch])
+   }, [state.orders.loading, dispatch])
 
    React.useEffect(() => {
       window.addEventListener('hashchange', () => {
@@ -102,21 +105,27 @@ const Orders = () => {
                   ))}
             </Pagination>
          </Flex>
-         <section style={{ overflowY: 'auto', height: 'calc(100vh - 88px' }}>
-            {orders.length > 0 ? (
-               orders.map((order, index) => (
-                  <OrderListItem
-                     order={order}
-                     key={order.id}
-                     containerId={`${
-                        index % 10 === 0 ? `${index / 10 + 1}` : ''
-                     }`}
-                  />
-               ))
-            ) : (
-               <div>{t(address.concat('no orders yet!'))}</div>
-            )}
-         </section>
+         {state.orders.loading ? (
+            <InlineLoader />
+         ) : (
+            <section style={{ overflowY: 'auto', height: 'calc(100vh - 88px' }}>
+               {orders.length > 0 ? (
+                  orders.map((order, index) => (
+                     <OrderListItem
+                        order={order}
+                        key={order.id}
+                        containerId={`${
+                           index % 10 === 0 ? `${index / 10 + 1}` : ''
+                        }`}
+                     />
+                  ))
+               ) : (
+                  <Flex padding="16px">
+                     {t(address.concat('no orders yet!'))}
+                  </Flex>
+               )}
+            </section>
+         )}
       </div>
    )
 }

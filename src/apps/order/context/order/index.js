@@ -25,11 +25,12 @@ const initialState = {
       id: null,
    },
    orders: {
+      loading: true,
       limit: 10,
       offset: 0,
       where: {
          orderStatus: { _eq: 'PENDING' },
-         fulfillmentTimestamp: { _gte: moment().format('YYYY-MM-DD HH:MM') },
+         // fulfillmentTimestamp: { _gte: moment().format('YYYY-MM-DD HH:MM') },
       },
    },
 }
@@ -165,6 +166,12 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             filter: payload,
+         }
+      }
+      case 'SET_ORDERS_STATUS': {
+         return {
+            ...state,
+            orders: { ...state.orders, loading: payload },
          }
       }
       default:
