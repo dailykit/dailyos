@@ -591,4 +591,42 @@ export const PLANNED = {
          }
       }
    `,
+   INVENTORY_PRODUCT: gql`
+      subscription inventoryProduct(
+         $id: Int!
+         $order: order_order_bool_exp = {}
+      ) {
+         inventoryProduct(id: $id) {
+            id
+            name
+            products: orderInventoryProducts_aggregate(
+               where: { order: $order }
+            ) {
+               aggregate {
+                  count(columns: id)
+                  sum {
+                     quantity
+                  }
+               }
+            }
+            options: inventoryProductOptions(
+               where: { orderInventoryProducts: { order: $order } }
+            ) {
+               id
+               label
+               orderInventoryProducts: orderInventoryProducts_aggregate {
+                  aggregate {
+                     total: count(columns: id)
+                  }
+                  nodes {
+                     id
+                     orderId
+                     quantity
+                     isAssembled
+                  }
+               }
+            }
+         }
+      }
+   `,
 }

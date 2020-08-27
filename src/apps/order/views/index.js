@@ -4,3 +4,4 @@ import Order from './Order'
 import Planned from './Planned'
 
 export { Home, Orders, Order, Planned }
+export * from './Product'

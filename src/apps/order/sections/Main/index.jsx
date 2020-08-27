@@ -2,7 +2,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Orders, Order, Planned } from '../../views'
+import { Home, Orders, Order, Planned, InventoryProduct } from '../../views'
 
 const Main = () => {
    return (
@@ -19,6 +19,9 @@ const Main = () => {
             </Route>
             <Route path="/apps/order/planned" exact>
                <Planned />
+            </Route>
+            <Route path="/apps/order/planned/inventory/:id" exact>
+               <InventoryProduct />
             </Route>
          </Switch>
       </main>
