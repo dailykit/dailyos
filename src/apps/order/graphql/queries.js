@@ -553,3 +553,42 @@ export const STATION = gql`
       }
    }
 `
+
+export const PLANNED = {
+   INVENTORY_PRODUCTS: gql`
+      subscription inventoryProducts($order: order_order_bool_exp) {
+         inventoryProducts: inventoryProductsAggregate(
+            where: { orderInventoryProducts: { order: $order } }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               products: orderInventoryProducts_aggregate {
+                  aggregate {
+                     count(columns: id)
+                     sum {
+                        quantity
+                     }
+                  }
+               }
+               options: inventoryProductOptions(
+                  where: { orderInventoryProducts: { order: $order } }
+               ) {
+                  id
+                  label
+                  products: orderInventoryProducts_aggregate {
+                     aggregate {
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
+}
