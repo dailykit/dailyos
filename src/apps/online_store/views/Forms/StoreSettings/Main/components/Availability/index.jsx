@@ -18,12 +18,14 @@ import { Container, Flex } from '../../../styled'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
 import { useTabs } from '../../../../../../context'
 import { AddressTunnel } from '../../tunnels'
+import { TickIcon, CloseIcon } from '../../../../../../assets/icons'
 
 const AvailabilitySettings = () => {
    const { addTab } = useTabs()
    const [store, setStore] = React.useState(undefined)
    const [pickup, setPickup] = React.useState(undefined)
    const [delivery, setDelivery] = React.useState(undefined)
+   const [payment, setPayment] = React.useState(undefined)
    const [address, setAddress] = React.useState({})
 
    const [addressTunnel, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
@@ -42,6 +44,9 @@ const AvailabilitySettings = () => {
             }
             case 'Location': {
                return setAddress(setting.value.address)
+            }
+            case 'Store Live': {
+               return setPayment(setting.value)
             }
             default: {
                // eslint-disable-next-line
@@ -97,6 +102,42 @@ const AvailabilitySettings = () => {
          <Container bottom="80" id="availability">
             <Text as="h2">Availability</Text>
             <Container bottom="32" maxWidth="600">
+               <Text as="subtitle">Payments</Text>
+               <Flex direction="row" align="center" justify="space-between">
+                  <div>
+                     <Flex direction="row" align="center" justify="flex-start">
+                        {payment?.isStripeConfigured ? (
+                           <TickIcon color="#00ff00" size={20} />
+                        ) : (
+                           <CloseIcon color="#ff0000" />
+                        )}
+                        <Text as="p">Stripe Configured</Text>
+                     </Flex>
+                     <div>
+                        <Checkbox
+                           checked={payment?.isStoreLive}
+                           onChange={val =>
+                              setPayment({ ...payment, isStoreLive: val })
+                           }
+                        >
+                           Accept Live Payments
+                        </Checkbox>
+                     </div>
+                  </div>
+                  <TextButton
+                     type="solid"
+                     onClick={() =>
+                        save({
+                           identifier: 'Store Live',
+                           value: { ...payment },
+                        })
+                     }
+                  >
+                     Update
+                  </TextButton>
+               </Flex>
+            </Container>
+            <Container bottom="32" maxWidth="600">
                {Object.keys(address).length ? (
                   <>
                      <Flex
@@ -129,7 +170,7 @@ const AvailabilitySettings = () => {
                )}
             </Container>
             <Container top="32" bottom="32" maxWidth="600">
-               <Text as="p">Store</Text>
+               <Text as="subtitle">Store</Text>
                <Flex direction="row" align="center">
                   <Container>
                      <Container top="16" bottom="8">
@@ -195,7 +236,7 @@ const AvailabilitySettings = () => {
                </Flex>
             </Container>
             <Container top="32" bottom="32" maxWidth="600">
-               <Text as="p">Pickup</Text>
+               <Text as="subtitle">Pickup</Text>
                <Flex direction="row" align="center">
                   <Container>
                      <Container top="16" bottom="8">
@@ -248,7 +289,7 @@ const AvailabilitySettings = () => {
                </Flex>
             </Container>
             <Container top="32" bottom="32" maxWidth="600">
-               <Text as="p">Delivery</Text>
+               <Text as="subtitle">Delivery</Text>
                <Flex direction="row" align="center">
                   <Container>
                      <Container top="16" bottom="8">
@@ -307,7 +348,7 @@ const AvailabilitySettings = () => {
                </Flex>
             </Container>
             <Container bottom="32">
-               <Text as="p">Recurrences</Text>
+               <Text as="subtitle">Recurrences</Text>
                <Container bottom="16">
                   <span
                      onClick={() =>
