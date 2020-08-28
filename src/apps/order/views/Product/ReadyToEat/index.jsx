@@ -4,34 +4,34 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { Spacer } from '../../../styled'
 import { PLANNED } from '../../../graphql'
-import { useOrder, useTabs } from '../../../context'
-import { ArrowDownIcon, ArrowUpIcon } from '../../../assets/icons'
-import { InlineLoader, Flex } from '../../../../../shared/components'
 import {
-   List,
-   Label,
-   Labels,
    Wrapper,
+   Labels,
+   Label,
+   List,
    ListHead,
    ListBody,
    ListBodyItem,
 } from './styled'
+import { useOrder, useTabs } from '../../../context'
+import { Flex, InlineLoader } from '../../../../../shared/components'
+import { ArrowDownIcon, ArrowUpIcon } from '../../../assets/icons'
 
-export const InventoryProduct = () => {
+export const ReadyToEatProduct = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
-   const { state, selectInventory } = useOrder()
+   const { state, selectReadyToEat } = useOrder()
    const [current, setCurrent] = React.useState({})
    const [currentPanel, setCurrentPanel] = React.useState(null)
-   const { loading, data: { inventoryProduct = {} } = {} } = useSubscription(
-      PLANNED.INVENTORY_PRODUCT,
+   const { loading, data: { simpleRecipeProduct = {} } = {} } = useSubscription(
+      PLANNED.READY_TO_EAT_PRODUCT,
       {
          variables: {
             id: params.id,
             order: state.orders.where,
          },
          onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-            const { options } = data.inventoryProduct
+            const { options } = data?.simpleRecipeProduct
             if (options.length > 0) {
                const [option] = options
                setCurrent(option)
@@ -43,14 +43,14 @@ export const InventoryProduct = () => {
    React.useEffect(() => {
       if (!loading && !tab) {
          addTab(
-            inventoryProduct?.name,
-            `/apps/order/planned/inventory/${params.id}`
+            simpleRecipeProduct?.name,
+            `/apps/order/planned/ready-to-eat/${params.id}`
          )
       }
    }, [tab, loading])
 
    const selectOption = id => {
-      selectInventory(id)
+      selectReadyToEat(id)
       setCurrentPanel(currentPanel === id ? '' : id)
    }
 
@@ -58,32 +58,33 @@ export const InventoryProduct = () => {
    return (
       <Wrapper>
          <Flex container alignItems="center">
-            <h2 title={inventoryProduct.name}>{inventoryProduct.name}</h2>
-            <h3 title={inventoryProduct.products.aggregate.count}>
-               <label>Total:</label> {inventoryProduct.products.aggregate.count}
+            <h2 title={simpleRecipeProduct.name}>{simpleRecipeProduct.name}</h2>
+            <h3 title={simpleRecipeProduct.products.aggregate.count}>
+               <label>Total:</label>{' '}
+               {simpleRecipeProduct.products.aggregate.count}
             </h3>
-            <h3 title={inventoryProduct.products.aggregate.sum.quantity}>
+            <h3 title={simpleRecipeProduct.products.aggregate.sum.quantity}>
                <label>Quantity:</label>{' '}
-               {inventoryProduct.products.aggregate.sum.quantity}
+               {simpleRecipeProduct.products.aggregate.sum.quantity}
             </h3>
          </Flex>
          <Spacer size="16px" />
          <Labels>
-            {inventoryProduct.options.map(option => (
+            {simpleRecipeProduct.options.map(option => (
                <Label
                   key={option.id}
                   onClick={() => setCurrent(option)}
                   isActive={current?.id === option.id}
                >
-                  <h3>{option.label}</h3>
+                  <h3>{option.yield.size}</h3>
                   <section>
                      {
-                        option.orderInventoryProducts.nodes.filter(
+                        option.orderReadyToEatProducts.nodes.filter(
                            node => node.isAssembled
                         ).length
                      }
                      &nbsp;/&nbsp;
-                     {option.orderInventoryProducts.aggregate.total}
+                     {option.orderReadyToEatProducts.aggregate.total}
                   </section>
                </Label>
             ))}
@@ -96,7 +97,7 @@ export const InventoryProduct = () => {
                   <span>Quantity</span>
                </ListHead>
                <ListBody>
-                  {current.orderInventoryProducts.nodes.map(node => (
+                  {current.orderReadyToEatProducts.nodes.map(node => (
                      <ListBodyItem
                         key={node.id}
                         isAssembled={node.isAssembled}

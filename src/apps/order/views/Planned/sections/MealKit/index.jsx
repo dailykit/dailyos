@@ -3,7 +3,6 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { PLANNED } from '../../../../graphql'
 import { useOrder, useTabs } from '../../../../context'
-import { NewTabIcon } from '../../../../assets/icons'
 import { InlineLoader, Flex } from '../../../../../../shared/components'
 import {
    SimpleRecipeProducts,
@@ -12,48 +11,28 @@ import {
    ProductOption,
 } from './styled'
 
-export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
-   const { addTab } = useTabs()
+export const MealKitSection = ({ setMealKitTotal }) => {
    const { state } = useOrder()
    const {
       loading,
       data: { simpleRecipeProducts = {} } = {},
-   } = useSubscription(PLANNED.READY_TO_EAT_PRODUCTS, {
+   } = useSubscription(PLANNED.MEAL_KIT_PRODUCTS, {
       variables: {
          order: state.orders.where,
       },
       onSubscriptionData: ({
          subscriptionData: { data: { simpleRecipeProducts = {} } = {} } = {},
       }) => {
-         setReadyToEatTotal(simpleRecipeProducts.aggregate.count)
+         setMealKitTotal(simpleRecipeProducts.aggregate.count)
       },
    })
 
-   const openProduct = (id, name) => {
-      addTab(name, `/apps/order/planned/ready-to-eat/${id}`)
-   }
-
    if (loading) return <InlineLoader />
-
    return (
       <SimpleRecipeProducts>
          {simpleRecipeProducts.nodes.map(product => (
             <SimpleRecipeProduct key={product.id}>
-               <Flex container alignItems="center">
-                  <h2
-                     tabIndex="-1"
-                     role="button"
-                     title={product.name}
-                     onClick={() => openProduct(product.id, product.name)}
-                     onKeyPress={e =>
-                        e.charCode === 13 && openProduct(product.id)
-                     }
-                  >
-                     <NewTabIcon size={16} color="#b9b9b9" />
-                     &nbsp;
-                     {product.name}
-                  </h2>
-               </Flex>
+               <h2>{product.name}</h2>
                <section className="optionsHeader">
                   <span>Yield</span>
                   <span>Total</span>

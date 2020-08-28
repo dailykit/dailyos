@@ -629,7 +629,7 @@ export const PLANNED = {
          }
       }
    `,
-   READT_TO_EAT_PRODUCTS: gql`
+   READY_TO_EAT_PRODUCTS: gql`
       subscription simpleRecipeProducts($order: order_order_bool_exp) {
          simpleRecipeProducts: simpleRecipeProductsAggregate(
             where: { orderReadyToEatProducts: { order: $order } }
@@ -655,6 +655,128 @@ export const PLANNED = {
                            quantity
                         }
                      }
+                  }
+               }
+            }
+         }
+      }
+   `,
+   READY_TO_EAT_PRODUCT: gql`
+      subscription simpleRecipeProduct(
+         $id: Int!
+         $order: order_order_bool_exp = {}
+      ) {
+         simpleRecipeProduct(id: $id) {
+            id
+            name
+            products: orderReadyToEatProducts_aggregate(
+               where: { order: $order }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     quantity
+                  }
+               }
+            }
+            options: simpleRecipeProductOptions(
+               where: { orderReadyToEatProducts: { order: $order } }
+            ) {
+               id
+               yield: simpleRecipeYield {
+                  id
+                  size: yield(path: "serving")
+               }
+               orderReadyToEatProducts: orderReadyToEatProducts_aggregate(
+                  where: { order: $order }
+               ) {
+                  aggregate {
+                     total: count(columns: id)
+                     sum {
+                        quantity
+                     }
+                  }
+                  nodes {
+                     id
+                     orderId
+                     quantity
+                     isAssembled
+                  }
+               }
+            }
+         }
+      }
+   `,
+   MEAL_KIT_PRODUCTS: gql`
+      subscription simpleRecipeProducts($order: order_order_bool_exp) {
+         simpleRecipeProducts: simpleRecipeProductsAggregate(
+            where: { orderMealKitProducts: { order: $order } }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               options: simpleRecipeProductOptions(
+                  where: { orderMealKitProducts: { order: $order } }
+               ) {
+                  id
+                  yield: simpleRecipeYield {
+                     id
+                     size: yield(path: "serving")
+                  }
+                  products: orderMealKitProducts_aggregate {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
+   MEAL_KIT_PRODUCT: gql`
+      subscription simpleRecipeProduct(
+         $id: Int!
+         $order: order_order_bool_exp = {}
+      ) {
+         simpleRecipeProduct(id: $id) {
+            id
+            name
+            products: orderMealKitProducts_aggregate(where: { order: $order }) {
+               aggregate {
+                  count
+                  sum {
+                     quantity
+                  }
+               }
+            }
+            options: simpleRecipeProductOptions(
+               where: { orderMealKitProducts: { order: $order } }
+            ) {
+               id
+               yield: simpleRecipeYield {
+                  id
+                  size: yield(path: "serving")
+               }
+               orderMealKitProducts: orderMealKitProducts_aggregate(
+                  where: { order: $order }
+               ) {
+                  aggregate {
+                     total: count(columns: id)
+                     sum {
+                        quantity
+                     }
+                  }
+                  nodes {
+                     id
+                     orderId
+                     quantity
+                     isAssembled
                   }
                }
             }
