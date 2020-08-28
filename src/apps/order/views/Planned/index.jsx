@@ -9,12 +9,13 @@ import {
 
 import { Wrapper } from './styled'
 import { useTabs } from '../../context'
-import { InventorySection } from './sections'
 import { Flex } from '../../../../shared/components'
+import { InventorySection, ReadyToEatSection } from './sections'
 
 const Planned = () => {
    const { tab, addTab } = useTabs()
    const [inventoryTotal, setInventoryTotal] = React.useState(0)
+   const [readyToEatTotal, setReadyToEatTotal] = React.useState(0)
 
    React.useEffect(() => {
       if (!tab) {
@@ -28,11 +29,17 @@ const Planned = () => {
             <Flex container padding="0 16px">
                <HorizontalTabList>
                   <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
+                  <HorizontalTab>
+                     Ready To Eat ({readyToEatTotal})
+                  </HorizontalTab>
                </HorizontalTabList>
             </Flex>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <InventorySection setInventoryTotal={setInventoryTotal} />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ReadyToEatSection setReadyToEatTotal={setReadyToEatTotal} />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>

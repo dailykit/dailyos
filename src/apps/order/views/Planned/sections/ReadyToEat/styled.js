@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const InventoryProducts = styled.ul`
+export const SimpleRecipeProducts = styled.ul`
    margin-bottom: 16px;
    li {
       list-style: none;
@@ -10,7 +10,7 @@ export const InventoryProducts = styled.ul`
    }
 `
 
-export const InventoryProduct = styled.li`
+export const SimpleRecipeProduct = styled.li`
    padding: 16px;
    border: 1px solid #e1e1e1;
    border-radius: 2px;

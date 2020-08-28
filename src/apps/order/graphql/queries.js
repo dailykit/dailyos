@@ -629,4 +629,36 @@ export const PLANNED = {
          }
       }
    `,
+   READT_TO_EAT_PRODUCTS: gql`
+      subscription simpleRecipeProducts($order: order_order_bool_exp) {
+         simpleRecipeProducts: simpleRecipeProductsAggregate(
+            where: { orderReadyToEatProducts: { order: $order } }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               options: simpleRecipeProductOptions(
+                  where: { orderReadyToEatProducts: { order: $order } }
+               ) {
+                  id
+                  yield: simpleRecipeYield {
+                     id
+                     size: yield(path: "serving")
+                  }
+                  products: orderReadyToEatProducts_aggregate {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
 }
