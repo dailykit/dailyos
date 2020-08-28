@@ -566,7 +566,9 @@ export const PLANNED = {
             nodes {
                id
                name
-               products: orderInventoryProducts_aggregate {
+               products: orderInventoryProducts_aggregate(
+                  where: { order: $order }
+               ) {
                   aggregate {
                      count(columns: id)
                      sum {
@@ -579,7 +581,9 @@ export const PLANNED = {
                ) {
                   id
                   label
-                  products: orderInventoryProducts_aggregate {
+                  products: orderInventoryProducts_aggregate(
+                     where: { order: $order }
+                  ) {
                      aggregate {
                         sum {
                            quantity
@@ -614,7 +618,9 @@ export const PLANNED = {
             ) {
                id
                label
-               orderInventoryProducts: orderInventoryProducts_aggregate {
+               orderInventoryProducts: orderInventoryProducts_aggregate(
+                  where: { order: $order }
+               ) {
                   aggregate {
                      total: count(columns: id)
                   }
@@ -648,7 +654,9 @@ export const PLANNED = {
                      id
                      size: yield(path: "serving")
                   }
-                  products: orderReadyToEatProducts_aggregate {
+                  products: orderReadyToEatProducts_aggregate(
+                     where: { order: $order }
+                  ) {
                      aggregate {
                         count(columns: id)
                         sum {
@@ -726,7 +734,9 @@ export const PLANNED = {
                      id
                      size: yield(path: "serving")
                   }
-                  products: orderMealKitProducts_aggregate {
+                  products: orderMealKitProducts_aggregate(
+                     where: { order: $order }
+                  ) {
                      aggregate {
                         count(columns: id)
                         sum {
