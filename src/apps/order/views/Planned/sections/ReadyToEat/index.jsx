@@ -46,7 +46,8 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
                      title={product.name}
                      onClick={() => openProduct(product.id, product.name)}
                      onKeyPress={e =>
-                        e.charCode === 13 && openProduct(product.id)
+                        e.charCode === 13 &&
+                        openProduct(product.id, product.name)
                      }
                   >
                      <NewTabIcon size={16} color="#b9b9b9" />
