@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { Loader, useTunnel } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
 import {
    CUSTOMER_DATA,
    SUBSCRIPTION,
    SUBSCRIPTION_PLAN,
+   ISTEST,
+   CUSTOMER_ISTEST,
 } from '../../../graphql'
 import {
    OrdersTable,
@@ -38,6 +41,9 @@ const CustomerRelation = ({ match }) => {
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const { dispatch, tab } = useTabs()
    const history = useHistory()
+   const { data: customerIsTest } = useSubscription(CUSTOMER_ISTEST, {
+      variables: { keycloakId: match.params.id },
+   })
    const { loading: listLoading, data: customerData } = useQuery(
       CUSTOMER_DATA,
       {
@@ -62,6 +68,24 @@ const CustomerRelation = ({ match }) => {
          },
       }
    )
+   const [updateIsTest] = useMutation(ISTEST, {
+      onCompleted: () => {
+         toast.info('Information updated!')
+      },
+      onError: error => {
+         toast.error(`Error : ${error.message}`)
+      },
+   })
+
+   const toggleHandler = toggle => {
+      updateIsTest({
+         variables: {
+            keycloakId: match.params.id,
+            isTest: toggle,
+         },
+      })
+   }
+
    useEffect(() => {
       if (!tab) {
          history.push('/crm/customers')
@@ -104,10 +128,13 @@ const CustomerRelation = ({ match }) => {
       <StyledWrapper>
          <StyledContainer>
             <StyledSideBar>
-               {/* <StyledDiv> */}
                <CustomerCard
                   customer={customerData?.customer}
                   walletAmount="N/A"
+                  toggle={customerIsTest?.customer?.isTest}
+                  toggleHandler={() =>
+                     toggleHandler(!customerIsTest?.customer?.isTest)
+                  }
                />
                <SubscriptionInfoCard planData={subscriptionPlan?.customer} />
                <ContactInfoCard
@@ -125,7 +152,6 @@ const CustomerRelation = ({ match }) => {
                   }
                   billingAddDisplay="none"
                />
-               {/* </StyledDiv> */}
             </StyledSideBar>
             <StyledMainBar>
                <StyledContainer>

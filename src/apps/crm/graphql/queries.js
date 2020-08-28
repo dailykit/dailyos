@@ -27,6 +27,7 @@ export const CUSTOMER_DATA = gql`
    query CUSTOMER_DATA($keycloakId: String!) {
       customer(keycloakId: $keycloakId) {
          source
+         isTest
          platform_customer {
             firstName
             lastName

@@ -1,9 +1,14 @@
 import React from 'react'
-import { Text, Avatar, IconButton, PlusIcon } from '@dailykit/ui'
-import { StyledCustomerCard, CustomerInfo, CustomerWallet } from './styled'
+import { Text, Avatar, IconButton, PlusIcon, Toggle } from '@dailykit/ui'
+import {
+   StyledCustomerCard,
+   CustomerInfo,
+   CustomerWallet,
+   StyledDiv,
+} from './styled'
 import { capitalizeString } from '../../Utils'
 
-const CustomerCard = ({ customer, walletAmount }) => (
+const CustomerCard = ({ customer, walletAmount, toggle, toggleHandler }) => (
    <StyledCustomerCard>
       <CustomerInfo>
          <Avatar url="https://randomuser.me/api/portraits/men/61.jpg" />
@@ -23,6 +28,10 @@ const CustomerCard = ({ customer, walletAmount }) => (
             <PlusIcon />
          </IconButton>
       </CustomerWallet>
+      <StyledDiv>
+         <Text as="subtitle">Test Customer</Text>
+         <Toggle checked={toggle} setChecked={toggleHandler} />
+      </StyledDiv>
    </StyledCustomerCard>
 )
 export default CustomerCard

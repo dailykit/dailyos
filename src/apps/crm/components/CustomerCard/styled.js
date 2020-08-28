@@ -20,3 +20,4 @@ export const CustomerWallet = styled.div`
    justify-content: space-between;
    padding: 16px;
 `
+export const StyledDiv = styled(CustomerWallet)``
