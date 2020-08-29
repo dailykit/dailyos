@@ -31,10 +31,10 @@
 -  [x] Show serving cost
 -  [x] Show serving nutritional info
 -  [ ] Add cooking steps
--  [x] Add procedures
--  [x] Add steps
--  [ ] Add step photos
--  [x] Add description
+   -  [x] Add procedures
+   -  [x] Add steps
+   -  [ ] Add step photos
+   -  [x] Add description
 -  [x] Show Recipe validity status
 -  [x] Publish Recipe
 
