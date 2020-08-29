@@ -23,6 +23,7 @@
    -  [x] Add description
 -  [x] Recipe photo (upload, select, edit and remove)
 -  [x] Add multiple servings
+-  [x] Delete servings
 -  [x] Add Ingredients + Processings
 -  [x] Delete Ingredients
 -  [x] Select Sachets
