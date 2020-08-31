@@ -105,9 +105,7 @@ const Orders = () => {
          {state.orders.loading ? (
             <InlineLoader />
          ) : (
-            <section
-               style={{ overflowY: 'auto', height: 'calc(100vh - 128px' }}
-            >
+            <section style={{ overflowY: 'auto', height: 'calc(100vh - 88px' }}>
                {orders.length > 0 ? (
                   orders.map((order, index) => (
                      <OrderListItem

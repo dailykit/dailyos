@@ -18,7 +18,9 @@ export const MetricItem = ({
       dispatch({
          type: 'SET_FILTER',
          payload: {
-            orderStatus: { _eq: title.split(' ').join('_') },
+            orderStatus: {
+               ...(title !== 'ALL' && { _eq: title.split(' ').join('_') }),
+            },
          },
       })
       dispatch({
@@ -40,6 +42,8 @@ export const MetricItem = ({
          variant={variant}
          onClick={() => changeStatus()}
          className={
+            (Object.keys(state.orders.where?.orderStatus).length === 0 &&
+               title === 'ALL') ||
             title.split(' ').join('_') === state.orders.where?.orderStatus?._eq
                ? 'active'
                : ''
