@@ -11,7 +11,7 @@ import { randomSuffix } from '../../../../../shared/utils'
 // Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import {
    S_COLLECTIONS,
    CREATE_COLLECTION,
@@ -25,11 +25,7 @@ const address = 'apps.online_store.views.listings.collectionslisting.'
 
 const CollectionsListing = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
+   const { addTab } = useTabs()
 
    const tableRef = React.useRef()
 
@@ -59,8 +55,7 @@ const CollectionsListing = () => {
       onCompleted: data => {
          addTab(
             data.createMenuCollection.returning[0].name,
-            'collection',
-            data.createMenuCollection.returning[0].id
+            `/online-store/collections/${data.createMenuCollection.returning[0].id}`
          )
          toast.success('Collection created!')
       },
@@ -129,7 +124,7 @@ const CollectionsListing = () => {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, 'collection', id)
+      addTab(name, `/online-store/collections/${id}`)
    }
 
    if (loading) return <Loader />

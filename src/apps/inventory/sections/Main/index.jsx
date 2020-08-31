@@ -18,7 +18,12 @@ import {
    SachetOrderForm,
    Packagings,
    SachetPackaging,
+   PackagingPurchaseOrderForm,
 } from '../../views'
+
+import PackagingHub from '../../packagingHub'
+import PackagingHubProducts from '../../packagingHub/views/Products'
+import PackagingHubProductDetails from '../../packagingHub/views/ProductDetails'
 
 const renderComponent = (type, view) => {
    // Listings
@@ -40,10 +45,18 @@ const renderComponent = (type, view) => {
       return <SachetPackaging />
    if (type === 'forms' && view === 'assemblyPackaging')
       return <SachetPackaging />
+   if (type === 'forms' && view === 'packagingHub') return <PackagingHub />
+   if (type === 'forms' && view === 'packagingHubProducts')
+      return <PackagingHubProducts />
+   if (type === 'forms' && view === 'packagingHubProductDetailsView')
+      return <PackagingHubProductDetails />
+   if (type === 'forms' && view === 'packagingPurchaseOrder')
+      return <PackagingPurchaseOrderForm />
 }
 
 const MainWrapper = styled.main`
    overflow-x: auto;
+   position: relative;
 `
 
 const Main = () => {

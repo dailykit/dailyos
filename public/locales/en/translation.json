@@ -3,6 +3,8 @@
    "recipe": "Recipe",
    "online store": "Online Store",
    "settings": "Settings",
+   "crm": "CRM",
+   "subscription": "Subscription",
    "units": {
       "gm": "gm",
       "gms": "gms",
@@ -624,6 +626,11 @@
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "saving": "Saving...",
@@ -714,6 +721,11 @@
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "descriptiontunnel": {
                            "add description and tags": "Add Description and Tags",
                            "save": "Save",
@@ -784,11 +796,13 @@
                            "unit size": "Unit Size",
                            "pricing": "Pricing",
                            "accompaniments": "Accompaniments",
+                           "default": "Default",
                            "options": "Options",
                            "quantity": "Quantity",
                            "price": "Price",
                            "discount": "Discount",
                            "discounted price": "Discounted Price",
+                           "modifiers": "Modifiers",
                            "add option": "Add Option",
                            "add item": "Add Item",
                            "option(s) deleted!": "Option(s) deleted!",
@@ -888,6 +902,7 @@
                            "visibility": "Visibility",
                            "default": "Default",
                            "price": "Price",
+                           "recommended price": "Recommended Price",
                            "discount": "Discount",
                            "discounted price": "Discounted Price",
                            "meal kit": "Meal Kit",
@@ -1342,10 +1357,10 @@
             "total fat": "Total Fat",
             "saturated fat": "Saturated Fat",
             "trans fat": "Trans Fat",
-            "cholestrol": "Cholestrol",
+            "cholesterol": "Cholesterol",
             "sodium": "Sodium",
             "total carbohydrates": "Total Carbohydrates",
-            "dietry fibre": "Dietry Fibre",
+            "dietary fibre": "Dietary Fibre",
             "sugars": "Sugars",
             "protein": "Protein",
             "vitamin A": "Vitamin A",

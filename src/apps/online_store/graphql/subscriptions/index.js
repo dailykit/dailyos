@@ -46,6 +46,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
          tags
          description
          default
+         isPopupAllowed
          simpleRecipe {
             id
             name
@@ -58,6 +59,12 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             simpleRecipeYield {
                id
                yield
+               cost
+            }
+            modifier {
+               id
+               name
+               data
             }
          }
       }
@@ -96,6 +103,8 @@ export const S_INVENTORY_PRODUCT = gql`
          isPublished
          tags
          description
+         default
+         isPopupAllowed
          supplierItem {
             id
             name
@@ -118,6 +127,11 @@ export const S_INVENTORY_PRODUCT = gql`
             label
             price
             quantity
+            modifier {
+               id
+               name
+               data
+            }
          }
       }
    }
@@ -154,6 +168,8 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          isPublished
          description
          tags
+         assets
+         isPopupAllowed
          customizableProductOptions {
             id
             inventoryProduct {
@@ -218,6 +234,8 @@ export const S_COMBO_PRODUCT = gql`
          tags
          isValid
          isPublished
+         assets
+         isPopupAllowed
          comboProductComponents {
             id
             label
@@ -328,6 +346,16 @@ export const RECURRENCES = gql`
                }
             }
          }
+      }
+   }
+`
+
+export const MODIFIERS = gql`
+   subscription Modifiers {
+      modifiers {
+         id
+         title: name
+         data
       }
    }
 `

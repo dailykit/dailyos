@@ -1,19 +1,17 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
+import { useParams } from 'react-router-dom'
 import { Text, Input, TunnelHeader } from '@dailykit/ui'
 
 import { TunnelBody, StyledRow } from '../styled'
 import { Container, Flex } from '../../../styled'
 import { CREATE_TIME_SLOTS } from '../../../../../../graphql'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
-import { Context } from '../../../../../../context'
 
 const TimeSlotTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
-   const {
-      state: { current },
-   } = React.useContext(Context)
+   const { type } = useParams()
    const [busy, setBusy] = React.useState(false)
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
@@ -34,7 +32,7 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
    // Handlers
    const save = () => {
       setBusy(true)
-      if (isNaN(advance) && current.fulfillment.includes('PICKUP')) {
+      if (Number.isNaN(advance) && type.includes('PICKUP')) {
          setBusy(false)
          return toast.error('Invalid time!')
       }
@@ -45,10 +43,8 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                   recurrenceId: recurrenceState.recurrenceId,
                   from,
                   to,
-                  pickUpLeadTime:
-                     current.fulfillment === 'PREORDER_PICKUP' ? advance : null,
-                  pickUpPrepTime:
-                     current.fulfillment === 'ONDEMAND_PICKUP' ? advance : null,
+                  pickUpLeadTime: type === 'PREORDER_PICKUP' ? advance : null,
+                  pickUpPrepTime: type === 'ONDEMAND_PICKUP' ? advance : null,
                },
             ],
          },
@@ -88,14 +84,12 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                      />
                   </label>
                </Flex>
-               {current.fulfillment.includes('PICKUP') && (
+               {type.includes('PICKUP') && (
                   <Container top="32">
                      <Input
                         type="number"
                         label={`${
-                           current.fulfillment.includes('ONDEMAND')
-                              ? 'Prep'
-                              : 'Lead'
+                           type.includes('ONDEMAND') ? 'Prep' : 'Lead'
                         } Time(minutes)`}
                         value={advance}
                         onChange={e => setAdvance(e.target.value)}

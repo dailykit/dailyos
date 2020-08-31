@@ -7,19 +7,28 @@ import {
    Loader,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import React from 'react'
+import { toast } from 'react-toastify'
+
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
 import { TunnelContainer } from '../../../../components'
-import { SachetOrderContext } from '../../../../context/sachetOrder'
-import { PACKAGINGS_LIST_SUBSCRIPTION } from '../../../../graphql'
+
+import {
+   PACKAGINGS_LIST_SUBSCRIPTION,
+   UPDATE_SACHET_WORK_ORDER,
+} from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
-export default function SelectPackagingTunnel({ close }) {
+const onError = error => {
+   console.log(error)
+   toast.error(error.message)
+}
+
+export default function SelectPackagingTunnel({ close, state }) {
    const { t } = useTranslation()
-   const { sachetOrderDispatch } = useContext(SachetOrderContext)
 
    const [search, setSearch] = React.useState('')
    const [data, setData] = React.useState([])
@@ -33,12 +42,25 @@ export default function SelectPackagingTunnel({ close }) {
       },
    })
 
+   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
+      onCompleted: () => {
+         toast.info('Work Order updated successfully!')
+         close(1)
+      },
+      onError,
+   })
+
    const handleNext = () => {
-      sachetOrderDispatch({
-         type: 'SELECT_PACKAGING',
-         payload: current,
+      if (!current || !current.id) return toast.error('Select an item first!')
+
+      updateSachetWorkOrder({
+         variables: {
+            id: state.id,
+            set: {
+               packagingId: current.id,
+            },
+         },
       })
-      close(1)
    }
 
    if (loading) return <Loader />

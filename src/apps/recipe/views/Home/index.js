@@ -1,24 +1,20 @@
 import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
+import { useTranslation } from 'react-i18next'
 
 // State
-import { Context } from '../../context/tabs'
+import { useTabs } from '../../context'
 
 import { StyledHome, StyledCardList } from './styled'
-
-import { useTranslation, Trans } from 'react-i18next'
 
 import { INGREDIENTS_COUNT, RECIPES_COUNT } from '../../graphql'
 
 const address = 'apps.recipe.views.home.'
 
 const Home = () => {
+   const { addTab } = useTabs()
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
-   }
 
    const { data: ingredientsData } = useSubscription(INGREDIENTS_COUNT)
    const { data: recipeData } = useSubscription(RECIPES_COUNT)
@@ -33,7 +29,7 @@ const Home = () => {
                   recipeData?.simpleRecipesAggregate.aggregate.count || '...'
                }
                conf="All available"
-               onClick={() => addTab('Recipes', 'recipes')}
+               onClick={() => addTab('Recipes', '/recipe/recipes')}
             />
             <DashboardTile
                title={t(address.concat('ingredients'))}
@@ -41,7 +37,7 @@ const Home = () => {
                   ingredientsData?.ingredientsAggregate.aggregate.count || '...'
                }
                conf="All available"
-               onClick={() => addTab('Ingredients', 'ingredients')}
+               onClick={() => addTab('Ingredients', '/recipe/ingredients')}
             />
          </StyledCardList>
       </StyledHome>

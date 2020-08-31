@@ -80,7 +80,7 @@ i18n
       render(
          <ApolloProvider client={client}>
             <ToastContainer
-               position="top-right"
+               position="bottom-left"
                autoClose={3000}
                hideProgressBar={false}
                newestOnTop={false}

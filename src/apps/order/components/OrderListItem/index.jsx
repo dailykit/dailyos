@@ -44,8 +44,10 @@ import pickUpIcon from '../../assets/svgs/pickup.png'
 
 import { formatDate } from '../../utils'
 
-import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
+import { InlineLoader } from '../../../../shared/components'
+
 import { useTabs, useOrder } from '../../context'
+import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -56,7 +58,7 @@ const normalize = address =>
       address.city
    }, ${address.state}, ${address.zipcode}`
 
-const OrderListItem = ({ order }) => {
+const OrderListItem = ({ containerId, order = {} }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
    const { dispatch } = useOrder()
@@ -66,11 +68,11 @@ const OrderListItem = ({ order }) => {
       data: { order_orderStatusEnum: statuses = [] } = {},
    } = useSubscription(ORDER_STATUSES)
    const {
-      id,
-      orderStatus,
-      orderMealKitProducts: mealkits,
-      orderInventoryProducts: inventories,
-      orderReadyToEatProducts: readytoeats,
+      id = '',
+      orderStatus = '',
+      orderMealKitProducts: mealkits = [],
+      orderInventoryProducts: inventories = [],
+      orderReadyToEatProducts: readytoeats = [],
       deliveryInfo = {},
       ...rest
    } = order
@@ -104,7 +106,7 @@ const OrderListItem = ({ order }) => {
    }
 
    return (
-      <StyledOrderItem status={orderStatus}>
+      <StyledOrderItem status={orderStatus} id={containerId}>
          <section>
             <ListBodyItem isOpen={currentPanel === 'customer'}>
                <header>
@@ -127,9 +129,12 @@ const OrderListItem = ({ order }) => {
                            <CustomerEmail
                               data={deliveryInfo?.dropoff?.dropoffInfo}
                            />
-                           <CustomerAddress
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
+                           {deliveryInfo?.dropoff?.dropoffInfo
+                              ?.customerAddress && (
+                              <CustomerAddress
+                                 data={deliveryInfo?.dropoff?.dropoffInfo}
+                              />
+                           )}
                         </StyledConsumer>
                      )}
                </main>
@@ -254,7 +259,7 @@ const OrderListItem = ({ order }) => {
                               <div>
                                  <ProductTitle
                                     data={inventory}
-                                    product={inventory?.inventoryProduct}
+                                    type="INVENTORY"
                                  />
                               </div>
                               <StyledServings>
@@ -266,7 +271,7 @@ const OrderListItem = ({ order }) => {
                                        inventory?.inventoryProductOption
                                           ?.quantity
                                     }
-                                    &nbsp;-&nbsp;
+                                    &nbsp; - &nbsp;
                                     {inventory?.inventoryProductOption?.label}
                                  </span>
                               </StyledServings>
@@ -281,10 +286,7 @@ const OrderListItem = ({ order }) => {
                         {mealkits.map(mealkit => (
                            <StyledProductItem key={mealkit.id}>
                               <div>
-                                 <ProductTitle
-                                    data={mealkit}
-                                    product={mealkit?.simpleRecipeProduct}
-                                 />
+                                 <ProductTitle data={mealkit} type="MEAL_KIT" />
                               </div>
                               <StyledServings>
                                  <span>
@@ -319,7 +321,7 @@ const OrderListItem = ({ order }) => {
                               <div>
                                  <ProductTitle
                                     data={readytoeat}
-                                    product={readytoeat?.comboProduct}
+                                    type="READY_TO_EAT"
                                  />
                               </div>
                               <StyledServings>
@@ -350,7 +352,7 @@ const OrderListItem = ({ order }) => {
                                    <div>
                                       <ProductTitle
                                          data={inventory}
-                                         product={inventory?.inventoryProduct}
+                                         type="INVENTORY"
                                       />
                                    </div>
                                    <StyledServings>
@@ -362,7 +364,7 @@ const OrderListItem = ({ order }) => {
                                             inventory?.inventoryProductOption
                                                ?.quantity
                                          }
-                                         &nbsp;-&nbsp;
+                                         &nbsp; - &nbsp;
                                          {
                                             inventory?.inventoryProductOption
                                                ?.label
@@ -386,7 +388,7 @@ const OrderListItem = ({ order }) => {
                                    <div>
                                       <ProductTitle
                                          data={mealkit}
-                                         product={mealkit?.simpleRecipeProduct}
+                                         type="MEAL_KIT"
                                       />
                                    </div>
                                    <StyledServings>
@@ -427,7 +429,7 @@ const OrderListItem = ({ order }) => {
                                    <div>
                                       <ProductTitle
                                          data={readytoeat}
-                                         product={readytoeat?.comboProduct}
+                                         type="READY_TO_EAT"
                                       />
                                    </div>
                                    <StyledServings>
@@ -585,11 +587,16 @@ const TimeSlot = ({ type, data = {} }) => {
    )
 }
 
-const ProductTitle = ({ data, product }) => {
+const ProductTitle = ({ data, type }) => {
    return (
       <StyledProductTitle>
-         {product?.name}&nbsp;-&nbsp;
-         {data?.comboProduct?.name}({data?.comboProductComponent?.label})
+         {['READY_TO_EAT', 'MEAL_KIT'].includes(type) &&
+            data?.simpleRecipeProduct?.name}
+         {type === 'INVENTORY' && data?.inventoryProduct?.name}
+         {data?.comboProduct?.name && <span>&nbsp;-&nbsp;</span>}
+         {data?.comboProduct?.name}
+         {data?.comboProductComponent?.label &&
+            `(${data?.comboProductComponent?.label})`}
       </StyledProductTitle>
    )
 }

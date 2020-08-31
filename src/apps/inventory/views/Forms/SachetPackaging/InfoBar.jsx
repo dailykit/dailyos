@@ -16,7 +16,6 @@ export default function InfoBar({ open, state }) {
       !state.unitQuantity &&
       !state.unitPrice &&
       !state.caseQuantity &&
-      !state.unitPrice &&
       !state.minOrderValue &&
       !state.leadTime?.value &&
       !state.leadTime?.unit
@@ -38,8 +37,8 @@ export default function InfoBar({ open, state }) {
             <div>
                <span>{t(address.concat('unit qty'))}</span>
                <div>
-                  <span>{state.unitQuantity}</span>
-                  <span>${state.unitPrice}</span>
+                  <span>{state.unitQuantity || 'N/A'}</span>
+                  {state.unitPrice ? <span>${state.unitPrice}</span> : null}
                </div>
             </div>
          </div>
@@ -50,8 +49,10 @@ export default function InfoBar({ open, state }) {
             <div>
                <span>{t(address.concat('case qty'))}</span>
                <div>
-                  <span>{state.caseQuantity}</span>
-                  <span>${+state.unitPrice * +state.caseQuantity}</span>
+                  <span>{state.caseQuantity || 'N/A'}</span>
+                  {state.unitPrice && state.caseQuantity ? (
+                     <span>${+state.unitPrice * +state.caseQuantity}</span>
+                  ) : null}
                </div>
             </div>
          </div>
@@ -63,7 +64,9 @@ export default function InfoBar({ open, state }) {
                <span>{t(address.concat('min order value'))}</span>
                <div>
                   <span>{state.minOrderValue}</span>
-                  <span>${+state.unitPrice * +state.minOrderValue}</span>
+                  {state.unitPrice && state.minOrderValue ? (
+                     <span>${+state.unitPrice * +state.minOrderValue}</span>
+                  ) : null}
                </div>
             </div>
          </div>
@@ -74,7 +77,9 @@ export default function InfoBar({ open, state }) {
             <div>
                <span>{t(address.concat('lead time'))}</span>
                <div>
-                  <span>{`${state.leadTime?.value}  ${state.leadTime?.unit}`}</span>
+                  <span>{`${state.leadTime?.value || 'N/A'}  ${
+                     state.leadTime?.value ? state.leadTime?.unit : ''
+                  }`}</span>
                </div>
             </div>
          </div>

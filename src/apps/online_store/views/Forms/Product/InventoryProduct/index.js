@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { useParams } from 'react-router-dom'
+import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
@@ -9,7 +10,12 @@ import {
    reducers,
    initialState,
 } from '../../../../context/product/inventoryProduct'
-import { Context } from '../../../../context/tabs'
+import {
+   reducers as modifiersReducers,
+   ModifiersContext,
+   state as initialModifiersState,
+} from '../../../../context/product/modifiers'
+import { useTabs } from '../../../../context'
 import {
    S_INVENTORY_PRODUCT,
    UPDATE_INVENTORY_PRODUCT,
@@ -22,13 +28,18 @@ const address = 'apps.online_store.views.forms.product.inventoryproduct.'
 
 export default function InventoryProduct() {
    const { t } = useTranslation()
+   const { id: productId } = useParams()
 
    // Context
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
    )
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const [modifiersState, modifiersDispatch] = React.useReducer(
+      modifiersReducers,
+      initialModifiersState
+   )
+   const { setTitle: setTabTitle } = useTabs()
 
    // State
    const [title, setTitle] = React.useState('')
@@ -37,7 +48,7 @@ export default function InventoryProduct() {
    // Subscription
    const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
       variables: {
-         id: tabs.current.id,
+         id: productId,
       },
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.inventoryProduct)
@@ -71,10 +82,7 @@ export default function InventoryProduct() {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }
@@ -91,6 +99,16 @@ export default function InventoryProduct() {
          },
       })
    }
+   const togglePopup = val => {
+      return updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               isPopupAllowed: val,
+            },
+         },
+      })
+   }
 
    if (loading) return <Loader />
 
@@ -98,54 +116,65 @@ export default function InventoryProduct() {
       <InventoryProductContext.Provider
          value={{ productState, productDispatch }}
       >
-         <StyledWrapper>
-            <StyledHeader>
-               <div>
-                  <Input
-                     label={t(address.concat('product name'))}
-                     type="text"
-                     name="name"
-                     value={title}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
-                  />
-               </div>
-               <MasterSettings>
+         <ModifiersContext.Provider
+            value={{ modifiersState, modifiersDispatch }}
+         >
+            <StyledWrapper>
+               <StyledHeader>
                   <div>
-                     {state.isValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isValid?.error}</Text>
-                        </>
-                     )}
-                  </div>
-                  <div>
-                     <Toggle
-                        checked={state.isPublished}
-                        setChecked={togglePublish}
-                        label="Published"
+                     <Input
+                        label={t(address.concat('product name'))}
+                        type="text"
+                        name="name"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        onBlur={updateName}
                      />
                   </div>
-               </MasterSettings>
-            </StyledHeader>
-            <StyledBody>
-               <StyledMeta>
-                  <div>
-                     <Description state={state} />
-                  </div>
-                  <div>
-                     <Assets state={state} />
-                  </div>
-               </StyledMeta>
-               <StyledRule />
-               <Item state={state} />
-            </StyledBody>
-         </StyledWrapper>
+                  <MasterSettings>
+                     <div>
+                        {state.isValid?.status ? (
+                           <>
+                              <TickIcon color="#00ff00" stroke={2} />
+                              <Text as="p">All good!</Text>
+                           </>
+                        ) : (
+                           <>
+                              <CloseIcon color="#ff0000" />
+                              <Text as="p">{state.isValid?.error}</Text>
+                           </>
+                        )}
+                     </div>
+                     <div className="settings">
+                        <Checkbox
+                           id="label"
+                           checked={state.isPopupAllowed}
+                           onChange={togglePopup}
+                        >
+                           Popup Allowed
+                        </Checkbox>
+                        <Toggle
+                           checked={state.isPublished}
+                           setChecked={togglePublish}
+                           label="Published"
+                        />
+                     </div>
+                  </MasterSettings>
+               </StyledHeader>
+               <StyledBody>
+                  <StyledMeta>
+                     <div>
+                        <Description state={state} />
+                     </div>
+                     <div>
+                        <Assets state={state} />
+                     </div>
+                  </StyledMeta>
+                  <StyledRule />
+                  <Item state={state} />
+               </StyledBody>
+            </StyledWrapper>
+         </ModifiersContext.Provider>
       </InventoryProductContext.Provider>
    )
 }

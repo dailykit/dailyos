@@ -1,9 +1,19 @@
-import { IconButton, Loader, TextButton, Text } from '@dailykit/ui'
+import {
+   IconButton,
+   Loader,
+   TextButton,
+   Text,
+   Tag,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+} from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { v4 as uuid } from 'uuid'
 
 import { AddIcon } from '../../../assets/icons'
 import { Context } from '../../../context/tabs'
@@ -11,6 +21,7 @@ import { StyledHeader, StyledWrapper } from '../styled'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
+import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
 
@@ -18,8 +29,13 @@ export default function PurchaseOrders() {
    const { t } = useTranslation()
    const { dispatch } = React.useContext(Context)
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view } })
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
+   const addTab = (title, view, id) => {
+      dispatch({
+         type: 'ADD_TAB',
+         payload: { type: 'forms', title, view, id },
+      })
    }
 
    const { loading, data: { purchaseOrderItems = [] } = {} } = useSubscription(
@@ -34,25 +50,31 @@ export default function PurchaseOrders() {
 
    const tableRef = React.useRef()
 
-   const rowClick = (e, row) => {
-      const { id, status } = row._row.data
-      dispatch({
-         type: 'SET_PURCHASE_WORK_ORDER',
-         payload: {
-            id,
-            status,
-         },
-      })
-      addTab('Purchase Order', 'purchaseOrder')
+   const rowClick = (_, row) => {
+      const { id, type } = row._row.data
+      const tabTitle = `Purchase Order-${uuid().substring(30)}`
+      if (type === 'PACKAGING') {
+         addTab(tabTitle, 'packagingPurchaseOrder', id)
+      }
+
+      if (type === 'SUPPLIER_ITEM') {
+         addTab(tabTitle, 'purchaseOrder', id)
+      }
    }
 
    const columns = [
       { title: 'Status', field: 'status', headerFilter: true },
       {
-         title: 'Supplier Item',
+         title: 'Item',
          field: 'supplierItem',
          headerFilter: false,
          formatter: reactFormatter(<SupplierItemName />),
+      },
+      {
+         title: 'Type',
+         field: 'packaging',
+         headerFilter: false,
+         formatter: reactFormatter(<LabelItem />),
       },
    ]
 
@@ -60,6 +82,11 @@ export default function PurchaseOrders() {
 
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <SelectPurchaseOrderTypeTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
          <StyledWrapper>
             <StyledHeader>
                <Text as="title">{t(address.concat('purchase orders'))}</Text>
@@ -71,12 +98,7 @@ export default function PurchaseOrders() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton
-                     type="solid"
-                     onClick={() =>
-                        addTab('New Purchase Order', 'purchaseOrder')
-                     }
-                  >
+                  <IconButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
                   </IconButton>
                </FlexContainer>
@@ -98,9 +120,29 @@ export default function PurchaseOrders() {
 
 function SupplierItemName({
    cell: {
-      _cell: { value },
+      _cell: {
+         row: { data },
+      },
    },
 }) {
-   if (value && value.name) return <>{value.name}</>
+   if (data.supplierItem && data.supplierItem.name)
+      return data.supplierItem.name
+   if (data.packaging && data.packaging.packagingName)
+      return data.packaging.packagingName
    return 'NA'
+}
+
+function LabelItem({
+   cell: {
+      _cell: {
+         row: { data },
+      },
+   },
+}) {
+   if (data && data.type === 'PACKAGING')
+      return <Tag color="success">Packaging</Tag>
+   if (data && data.type === 'SUPPLIER_ITEM')
+      return <Tag color="primary">Supplier Item</Tag>
+
+   return <Tag color="danger">NA</Tag>
 }

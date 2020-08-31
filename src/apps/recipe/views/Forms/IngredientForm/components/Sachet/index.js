@@ -5,11 +5,11 @@ import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { Container, ContainerAction, Flex, Grid } from '../styled'
+import { Container, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
 import { Nutrition } from '../../../../../../../shared/components'
 
-const Sachet = ({ state, openEditSachetTunnel }) => {
+const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -20,11 +20,21 @@ const Sachet = ({ state, openEditSachetTunnel }) => {
    )
 
    React.useEffect(() => {
-      setSachet(
+      if (
          state.ingredientProcessings[ingredientState.processingIndex]
             .ingredientSachets[ingredientState.sachetIndex]
-      )
-   }, [state, ingredientState.sachetIndex])
+      ) {
+         setSachet(
+            state.ingredientProcessings[ingredientState.processingIndex]
+               .ingredientSachets[ingredientState.sachetIndex]
+         )
+      } else {
+         setSachet(
+            state.ingredientProcessings[ingredientState.processingIndex]
+               .ingredientSachets[0]
+         )
+      }
+   }, [state, ingredientState.processingIndex, ingredientState.sachetIndex])
 
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
@@ -128,6 +138,7 @@ const Sachet = ({ state, openEditSachetTunnel }) => {
                   <th>Priority</th>
                   <th>Station</th>
                   <th>Item</th>
+                  <th>Cost</th>
                   <th>Accuracy</th>
                   <th>Packaging</th>
                   <th>Label</th>
@@ -152,6 +163,7 @@ const Sachet = ({ state, openEditSachetTunnel }) => {
                         {mode.sachetItem &&
                            `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`}
                      </td>
+                     <td>${mode.cost}</td>
                      <td>
                         {mode.accuracy
                            ? `Atleast ${mode.accuracy} %`
@@ -169,20 +181,18 @@ const Sachet = ({ state, openEditSachetTunnel }) => {
             </tbody>
          </StyledTable>
          <Container top="32">
-            {sachet.defaultNutritionalValues ? (
-               <Container>
-                  <ContainerAction>
-                     <IconButton onClick={() => openEditSachetTunnel(7)}>
-                        <EditIcon color="#00A7E1" />
-                     </IconButton>
-                  </ContainerAction>
-                  <Nutrition data={sachet.defaultNutritionalValues} vertical />
-               </Container>
+            <Text as="subtitle"> Cost </Text>
+            <Text as="p">${sachet.cost}</Text>
+         </Container>
+         <Container top="32">
+            <Text as="subtitle"> Nutrition </Text>
+            {sachet.nutritionalInfo ? (
+               <Nutrition data={sachet.nutritionalInfo} vertical />
             ) : (
                <ButtonTile
                   type="secondary"
-                  text="Add Default Nutritional Values"
-                  onClick={() => openEditSachetTunnel(7)}
+                  text="Add Nutritional Values"
+                  onClick={() => openNutritionTunnel(1)}
                />
             )}
          </Container>

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 
 import { useTranslation } from 'react-i18next'
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
-import { Context } from '../../../../../context/tabs'
+import { useTabs } from '../../../../../context'
 import {
    S_INVENTORY_PRODUCTS,
    DELETE_INVENTORY_PRODUCTS,
@@ -17,7 +17,7 @@ const address = 'apps.online_store.views.listings.productslisting.'
 
 const InventoryProducts = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
 
    const tableRef = React.useRef()
 
@@ -26,10 +26,6 @@ const InventoryProducts = () => {
       loading,
       error,
    } = useSubscription(S_INVENTORY_PRODUCTS)
-
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
 
    const [deleteProducts] = useMutation(DELETE_INVENTORY_PRODUCTS, {
       onCompleted: () => {
@@ -80,13 +76,13 @@ const InventoryProducts = () => {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, 'inventoryProduct', id)
+      addTab(name, `/online-store/inventory-products/${id}`)
    }
 
    if (loading) return <Loader />
    if (error) {
       console.log(error)
-      return <Text as="p">Error: Could'nt fetch products!</Text>
+      return <Text as="p">Error: Could not fetch products!</Text>
    }
 
    return (

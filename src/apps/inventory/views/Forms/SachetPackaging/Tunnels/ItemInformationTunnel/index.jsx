@@ -13,11 +13,11 @@ const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 export default function ItemInformationTunnel({ close, state, next }) {
    const { t } = useTranslation()
 
-   const [itemName, setItemName] = useState(state.name || '')
-   const [itemSku, setItemSku] = useState(state.sku || '')
-   const [itemWidth, setItemWidth] = useState(state.dimensions?.width || '')
-   const [itemHeight, setItemHeight] = useState(state.dimensions?.height || '')
-   const [itemDepth, setItemDepth] = useState(state.dimensions?.depth || '')
+   const [itemName, setItemName] = useState(state.packagingName || '')
+   const [itemSku, setItemSku] = useState(state.packagingSku || '')
+   const [itemWidth, setItemWidth] = useState(state.width || '')
+   const [itemHeight, setItemHeight] = useState(state.height || '')
+   const [itemLength, setItemLength] = useState(state.length || '')
    const [itemPar, setItemPar] = useState(state.parLevel || '')
    const [itemMaxValue, setItemMaxValue] = useState(state.maxLevel || '')
 
@@ -40,14 +40,13 @@ export default function ItemInformationTunnel({ close, state, next }) {
             id: state.id,
             object: {
                name: itemName,
-               sku: itemSku,
-               dimensions: {
-                  width: +itemWidth,
-                  height: +itemHeight,
-                  depth: +itemDepth,
-               },
+               packagingSku: itemSku,
+               width: +itemWidth,
+               height: +itemHeight,
+               length: +itemLength,
                parLevel: +itemPar,
                maxLevel: +itemMaxValue,
+               LWHUnit: 'mm',
             },
          },
       })
@@ -83,7 +82,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
             </FlexContainer>
             <br />
 
-            <Text as="title">Dimensions (in cms)</Text>
+            <Text as="title">Dimensions (in mm)</Text>
             <br />
             <FlexContainer style={{ width: '90%' }}>
                <Input
@@ -96,18 +95,18 @@ export default function ItemInformationTunnel({ close, state, next }) {
                <span style={{ width: '30px' }} />
                <Input
                   type="number"
-                  label="height"
-                  name="height"
-                  value={itemHeight}
-                  onChange={e => setItemHeight(e.target.value)}
+                  label="length"
+                  name="length"
+                  value={itemLength}
+                  onChange={e => setItemLength(e.target.value)}
                />
                <span style={{ width: '30px' }} />
                <Input
                   type="number"
-                  label="depth"
-                  name="depth"
-                  value={itemDepth}
-                  onChange={e => setItemDepth(e.target.value)}
+                  label="height"
+                  name="height"
+                  value={itemHeight}
+                  onChange={e => setItemHeight(e.target.value)}
                />
             </FlexContainer>
 

@@ -12,3 +12,10 @@ export const StyledWrapper = styled.div(
       }
    `
 )
+
+export const Spacer = styled.div(
+   ({ size, xAxis }) => css`
+      flex-shrink: 0;
+      ${xAxis ? `width: ${size};` : `height: ${size};`}
+   `
+)

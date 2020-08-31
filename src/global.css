@@ -7,6 +7,10 @@
    font-family: 'Inter', sans-serif;
 }
 
+html {
+   scroll-behavior: smooth;
+}
+
 body {
    font-family: 'Inter', sans-serif;
 }
@@ -15,4 +19,8 @@ h1 {
    color: #555b6e;
    font-size: 20px;
    font-weight: 500;
+}
+
+.Toastify__toast--success {
+   background-color: #00a7e1;
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, TextButton } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +10,7 @@ import {
    reducer,
    state as initialState,
 } from '../../../context/collection'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context/tabs'
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
 import { Categories, Configuration } from './components'
 import {
@@ -25,7 +26,9 @@ const address = 'apps.online_store.views.forms.collection.'
 const CollectionForm = () => {
    const { t } = useTranslation()
 
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { setTitle: setTabTitle } = useTabs()
+   const { id: collectionId } = useParams()
+
    const [collectionState, collectionDispatch] = React.useReducer(
       reducer,
       initialState
@@ -38,7 +41,7 @@ const CollectionForm = () => {
    // Subscription
    const { loading } = useSubscription(S_COLLECTION, {
       variables: {
-         id: tabs.current.id,
+         id: collectionId,
       },
       onSubscriptionData: data => {
          console.log(data)
@@ -56,13 +59,7 @@ const CollectionForm = () => {
       onCompleted: () => {
          setBusy(false)
          toast.success('Updated!')
-         dispatch({
-            type: 'SET_TITLE',
-            payload: {
-               oldTitle: tabs.current.title,
-               title,
-            },
-         })
+         setTabTitle(title)
       },
       onError: error => {
          console.log(error)

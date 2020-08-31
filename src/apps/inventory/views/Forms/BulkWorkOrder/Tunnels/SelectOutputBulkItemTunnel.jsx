@@ -4,31 +4,78 @@ import {
    ListOptions,
    ListSearch,
    useSingleList,
+   Loader,
+   TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext, useState } from 'react'
+import { toast } from 'react-toastify'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { Spacer, TunnelContainer, TunnelHeader } from '../../../../components'
-import { BulkOrderContext } from '../../../../context/bulkOrder'
+import { Spacer, TunnelContainer } from '../../../../components'
+
+import {
+   GET_BULK_ITEMS_SUBSCRIPTION,
+   UPDATE_BULK_WORK_ORDER,
+} from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
-export default function SelectOutputBulkItem({ close, bulkItems }) {
+export default function SelectOutputBulkItem({ close, state }) {
    const { t } = useTranslation()
-   const { bulkOrderDispatch } = useContext(BulkOrderContext)
    const [search, setSearch] = useState('')
-
+   const [bulkItems, setBulkItems] = useState([])
    const [list, current, selectOption] = useSingleList(bulkItems)
+
+   const { loading } = useSubscription(GET_BULK_ITEMS_SUBSCRIPTION, {
+      variables: {
+         supplierItemId: state.supplierItem.id,
+      },
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+      onSubscriptionData: data => {
+         const { bulkItems } = data.subscriptionData.data
+
+         const refinedItems = bulkItems.filter(
+            item => item.id !== state.inputBulkItem.id
+         )
+
+         setBulkItems(refinedItems)
+      },
+   })
+
+   const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+      onCompleted: () => {
+         toast.success('Supplier Item added!')
+         close(1)
+      },
+   })
+
+   const handleSave = () => {
+      updateBulkWorkOrder({
+         variables: {
+            id: state.id,
+            object: {
+               outputBulkItemId: current.id,
+            },
+         },
+      })
+   }
+
+   if (loading) return <Loader />
+
    return (
       <TunnelContainer>
          <TunnelHeader
             title={t(address.concat('select output bulk item processing'))}
-            next={() => {
-               bulkOrderDispatch({ type: 'ADD_OUTPUT_ITEM', payload: current })
-               close(1)
-            }}
+            right={{ title: 'Save', action: handleSave }}
             close={() => close(1)}
-            nextAction="Save"
          />
 
          <Spacer />

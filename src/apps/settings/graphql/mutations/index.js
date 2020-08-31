@@ -206,17 +206,12 @@ export const CREATE_STATION_USERS = gql`
    }
 `
 
-export const CREATE_STATION = gql`
+export const UPSERT_STATION = gql`
    mutation insertStation($object: settings_station_insert_input!) {
-      insertStation(object: $object) {
-         id
-      }
-   }
-`
-
-export const UPDATE_STATION = gql`
-   mutation updateStation($id: Int!, $_set: settings_station_set_input!) {
-      updateStation(pk_columns: { id: $id }, _set: $_set) {
+      insertStation(
+         object: $object
+         on_conflict: { constraint: station_pkey, update_columns: [name] }
+      ) {
          id
          name
       }

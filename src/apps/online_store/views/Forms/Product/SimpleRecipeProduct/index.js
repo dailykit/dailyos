@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
@@ -9,7 +10,12 @@ import {
    SimpleProductContext,
    state as initialState,
 } from '../../../../context/product/simpleProduct'
-import { Context } from '../../../../context/tabs'
+import {
+   reducers as modifiersReducers,
+   ModifiersContext,
+   state as initialModifiersState,
+} from '../../../../context/product/modifiers'
+import { useTabs } from '../../../../context'
 import {
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
@@ -23,10 +29,16 @@ const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()
 
-   const { state: tabs, dispatch } = React.useContext(Context)
+   const { id: productId } = useParams()
+
+   const { setTitle: setTabTitle } = useTabs()
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
+   )
+   const [modifiersState, modifiersDispatch] = React.useReducer(
+      modifiersReducers,
+      initialModifiersState
    )
 
    const [title, setTitle] = React.useState('')
@@ -35,7 +47,7 @@ export default function SimpleRecipeProduct() {
    // Subscription
    const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
       variables: {
-         id: tabs.current.id,
+         id: productId,
       },
       onSubscriptionData: data => {
          console.log(data)
@@ -67,10 +79,7 @@ export default function SimpleRecipeProduct() {
             },
          })
          if (data) {
-            dispatch({
-               type: 'SET_TITLE',
-               payload: { oldTitle: tabs.current.title, title },
-            })
+            setTabTitle(title)
          }
       }
    }
@@ -88,59 +97,80 @@ export default function SimpleRecipeProduct() {
          },
       })
    }
+   const togglePopup = val => {
+      return updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               isPopupAllowed: val,
+            },
+         },
+      })
+   }
 
    if (loading) return <Loader />
 
    return (
       <SimpleProductContext.Provider value={{ productState, productDispatch }}>
-         <StyledWrapper>
-            <StyledHeader>
-               <div>
-                  <Input
-                     label={t(address.concat('product name'))}
-                     type="text"
-                     name="name"
-                     value={title}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
-                  />
-               </div>
-               <MasterSettings>
+         <ModifiersContext.Provider
+            value={{ modifiersState, modifiersDispatch }}
+         >
+            <StyledWrapper>
+               <StyledHeader>
                   <div>
-                     {state.isValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isValid?.error}</Text>
-                        </>
-                     )}
-                  </div>
-                  <div>
-                     <Toggle
-                        checked={state.isPublished}
-                        setChecked={togglePublish}
-                        label="Published"
+                     <Input
+                        label={t(address.concat('product name'))}
+                        type="text"
+                        name="name"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        onBlur={updateName}
                      />
                   </div>
-               </MasterSettings>
-            </StyledHeader>
-            <StyledBody>
-               <StyledMeta>
-                  <div>
-                     <Description state={state} />
-                  </div>
-                  <div>
-                     <Assets state={state} />
-                  </div>
-               </StyledMeta>
-               <StyledRule />
-               <Recipe state={state} />
-            </StyledBody>
-         </StyledWrapper>
+                  <MasterSettings>
+                     <div>
+                        {state.isValid?.status ? (
+                           <>
+                              <TickIcon color="#00ff00" stroke={2} />
+                              <Text as="p">All good!</Text>
+                           </>
+                        ) : (
+                           <>
+                              <CloseIcon color="#ff0000" />
+                              <Text as="p">{state.isValid?.error}</Text>
+                           </>
+                        )}
+                     </div>
+                     <div>
+                        <Checkbox
+                           id="label"
+                           checked={state.isPopupAllowed}
+                           onChange={togglePopup}
+                        >
+                           Popup Allowed
+                        </Checkbox>
+                        <Toggle
+                           checked={state.isPublished}
+                           setChecked={togglePublish}
+                           label="Published"
+                        />
+                     </div>
+                  </MasterSettings>
+               </StyledHeader>
+               <StyledBody>
+                  <StyledMeta>
+                     <div>
+                        <Description state={state} />
+                     </div>
+                     <div>
+                        <Assets state={state} />
+                     </div>
+                  </StyledMeta>
+                  <StyledRule />
+                  <Recipe state={state} />
+               </StyledBody>
+            </StyledWrapper>
+         </ModifiersContext.Provider>
       </SimpleProductContext.Provider>
    )
 }

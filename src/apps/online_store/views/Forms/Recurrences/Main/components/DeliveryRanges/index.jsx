@@ -1,5 +1,7 @@
 import React from 'react'
 import { ButtonTile, Toggle } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 
 import { TableRecord } from './styled'
 
@@ -7,8 +9,6 @@ import { DeliveryCharges } from '../'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon } from '../../../../../../assets/icons'
-import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
 import { DELETE_MILE_RANGE, UPDATE_MILE_RANGE } from '../../../../../../graphql'
 
 const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {

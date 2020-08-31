@@ -17,7 +17,12 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { DeleteIcon, EditIcon, UserIcon } from '../../../../../assets/icons'
+import {
+   DeleteIcon,
+   EditIcon,
+   UserIcon,
+   InfoIcon,
+} from '../../../../../assets/icons'
 import { RecipeContext } from '../../../../../context/recipee'
 import {
    DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
@@ -29,12 +34,18 @@ import {
    IngredientsTunnel,
    ProcessingsTunnel,
    SachetTunnel,
+   YieldInfoTunnel,
 } from '../../tunnels'
 
 const Ingredients = ({ state }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [
+      yieldInfoTunnels,
+      openYieldInfoTunnel,
+      closeYieldInfoTunnel,
+   ] = useTunnel(1)
 
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
@@ -145,6 +156,11 @@ const Ingredients = ({ state }) => {
                <SachetTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={yieldInfoTunnels}>
+            <Tunnel layer={1}>
+               <YieldInfoTunnel close={closeYieldInfoTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Container top="32" paddingX="32">
             <Text as="subtitle">Ingredients</Text>
             {!state.simpleRecipeYields?.length ? (
@@ -162,8 +178,30 @@ const Ingredients = ({ state }) => {
                                  <TableCell>Processing</TableCell>
                                  {state.simpleRecipeYields.map(serving => (
                                     <TableCell key={serving.id}>
-                                       <UserIcon color="#555B6E" />
-                                       {serving.yield.serving}
+                                       <UserIcon color="#555B6E" />{' '}
+                                       {serving.yield.serving}{' '}
+                                       <span
+                                          tabIndex="0"
+                                          role="button"
+                                          onKeyPress={e => {
+                                             if (e.charCode === 13) {
+                                                recipeDispatch({
+                                                   type: 'SERVING',
+                                                   payload: serving,
+                                                })
+                                             }
+                                             openYieldInfoTunnel(1)
+                                          }}
+                                          onClick={() => {
+                                             recipeDispatch({
+                                                type: 'SERVING',
+                                                payload: serving,
+                                             })
+                                             openYieldInfoTunnel(1)
+                                          }}
+                                       >
+                                          <InfoIcon color="#555B6E" />
+                                       </span>
                                     </TableCell>
                                  ))}
                                  <TableCell>Actions</TableCell>
