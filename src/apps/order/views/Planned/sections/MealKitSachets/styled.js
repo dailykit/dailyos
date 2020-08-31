@@ -4,7 +4,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 export const StyledTabs = styled(Tabs)(
    () => css`
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 280px 1fr;
    `
 )
 

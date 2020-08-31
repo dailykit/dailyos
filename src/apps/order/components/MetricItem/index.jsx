@@ -5,9 +5,9 @@ import { useOrder } from '../../context'
 
 export const MetricItem = ({
    title,
-   count,
+   count = 0,
    variant,
-   amount,
+   amount = 0,
    currency,
    average,
 }) => {

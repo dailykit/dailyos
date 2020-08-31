@@ -39,7 +39,7 @@ export const ProductOption = styled.li(
          margin-top: 4px;
       }
       span {
-         width: 240px;
+         width: 280px;
          font-size: 14px;
          font-weight: 400;
       }
@@ -64,7 +64,7 @@ export const OptionsHeader = styled.section`
    display: flex;
    align-items: center;
    span {
-      width: 240px;
+      width: 280px;
       font-size: 14px;
       padding: 0 12px;
       color: rgb(136, 141, 157);

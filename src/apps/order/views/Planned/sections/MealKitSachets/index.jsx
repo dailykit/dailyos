@@ -52,6 +52,50 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                   <ProductTitle title={ingredient.name}>
                      {ingredient.name}
                   </ProductTitle>
+                  <h3>
+                     <label>Total: </label>
+                     {ingredient.processings.nodes
+                        .map(processing =>
+                           processing.sachets.nodes.reduce(
+                              (a, b) =>
+                                 b.completedOrderSachets.aggregate.count + a,
+                              0
+                           )
+                        )
+                        .reduce((a, b) => b + a, 0)}
+                     /
+                     {ingredient.processings.nodes
+                        .map(processing =>
+                           processing.sachets.nodes.reduce(
+                              (a, b) => b.allOrderSachets.aggregate.count + a,
+                              0
+                           )
+                        )
+                        .reduce((a, b) => b + a, 0)}
+                  </h3>
+                  <h3>
+                     <label>Quantity: </label>
+                     {ingredient.processings.nodes
+                        .map(processing =>
+                           processing.sachets.nodes.reduce(
+                              (a, b) =>
+                                 b.completedOrderSachets.aggregate.sum
+                                    .quantity + a,
+                              0
+                           )
+                        )
+                        .reduce((a, b) => b + a, 0)}
+                     /
+                     {ingredient.processings.nodes
+                        .map(processing =>
+                           processing.sachets.nodes.reduce(
+                              (a, b) =>
+                                 b.allOrderSachets.aggregate.sum.quantity + a,
+                              0
+                           )
+                        )
+                        .reduce((a, b) => b + a, 0)}
+                  </h3>
                </Flex>
                <Spacer size="12px" />
                <OptionsHeader>
@@ -65,7 +109,23 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                      <StyledTabList>
                         {ingredient.processings.nodes.map(processing => (
                            <StyledTab key={processing.id}>
-                              <span>{processing.name}</span>{' '}
+                              <span>
+                                 {processing.name} (
+                                 {processing.sachets.nodes.reduce(
+                                    (a, b) =>
+                                       b.completedOrderSachets.aggregate.sum
+                                          .quantity + a,
+                                    0
+                                 )}
+                                 /
+                                 {processing.sachets.nodes.reduce(
+                                    (a, b) =>
+                                       b.allOrderSachets.aggregate.sum
+                                          .quantity + a,
+                                    0
+                                 )}
+                                 )
+                              </span>{' '}
                               <span title="Total">
                                  ({processing.sachets.aggregate.count})
                               </span>
@@ -74,7 +134,10 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                      </StyledTabList>
                      <StyledTabPanels>
                         {ingredient.processings.nodes.map(processing => (
-                           <Processing processing={processing} />
+                           <Processing
+                              key={processing.id}
+                              processing={processing}
+                           />
                         ))}
                      </StyledTabPanels>
                   </StyledTabs>
@@ -95,10 +158,25 @@ const Processing = ({ processing }) => {
             <StyledTabList>
                {processing.sachets.nodes.map(sachet => (
                   <StyledTab key={sachet.id}>
-                     <span>
-                        {sachet.quantity}
-                        {sachet.unit}
-                     </span>{' '}
+                     <section>
+                        <span>
+                           {sachet.quantity}
+                           {sachet.unit}
+                        </span>
+                        &nbsp;
+                        <span>
+                           (
+                           <span title="Required">
+                              {sachet.completedOrderSachets.aggregate.sum
+                                 .quantity || 0}
+                           </span>
+                           /
+                           <span title="Total">
+                              {sachet.allOrderSachets.aggregate.sum.quantity}
+                           </span>
+                           ){sachet.unit}
+                        </span>
+                     </section>
                      <span title="Total">
                         ({sachet.completedOrderSachets.aggregate.count}
                         &nbsp;/&nbsp;{sachet.allOrderSachets.aggregate.count})
