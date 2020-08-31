@@ -3,6 +3,8 @@
    "recipe": "Receta",
    "online store": "Tienda online",
    "settings": "Configuración",
+   "crm": "CRM",
+   "subscription": "Subscription",
    "units": {
       "gm": "gm",
       "gms": "gms",
@@ -161,7 +163,7 @@
                         "cholestrol": "Colesterol",
                         "sodium": "Sodio",
                         "total carbohydrates": "Total de Carbohidratos",
-                        "dietry fibre": "Fibra de dietría",
+                        "dietry fiber": "Dietry Fiber",
                         "sugar": "Azar",
                         "protein": "Proteína",
                         "vitamin A": "Vitamina A",
@@ -509,7 +511,8 @@
             "sidebar": {
                "listings": "Listas",
                "products": "Productos",
-               "collections": "Collections"
+               "collections": "Collections",
+               "store settings": "Store Settings"
             }
          },
          "views": {
@@ -559,7 +562,13 @@
                         "sep": "Sept",
                         "oct": "Oct",
                         "nov": "Nov",
-                        "dec": "Dec"
+                        "dec": "Dec",
+                        "freq": "freq",
+                        "dtstart": "dtstart",
+                        "until": "until",
+                        "wkst": "wkst",
+                        "byweekday": "byweekday",
+                        "bymonth": "bymonth"
                      }
                   },
                   "tunnels": {
@@ -570,7 +579,7 @@
                      },
                      "producttypetunnel": {
                         "select product type": "Seleccionar tipo de producto",
-                        "inventory product": "Producto de Inventario",
+                        "inventory product": "Inventory Product",
                         "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                         "simple recipe product": "Producto receta simple",
                         "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer",
@@ -608,16 +617,28 @@
                            "discount": "Descuento",
                            "discounted price": "Discounted Price",
                            "meal kit": "Kit de comida",
-                           "ready to eat": "Listo para compartir"
+                           "ready to eat": "Listo para compartir",
+                           "label removed!": "Label Removed!",
+                           "error": "Error",
+                           "are you sure you want to remove label": "Are you sure you want to remove label",
+                           "are you sure you want to remove product from": "Are you sure you want to remove product from",
+                           "cannot display pricing for a customizable product": "Cannot Display pricing for Customizable Product"
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "descriptiontunnel": {
                            "add description and tags": "Añadir Descripción y Etiquetas",
                            "saving": "Guardando...",
                            "save": "Guardar",
                            "tags": "Etiquetas",
-                           "description": "Descripción"
+                           "description": "Descripción",
+                           "updated!": "Updated!",
+                           "error!": "Error!"
                         },
                         "itemstunnel": {
                            "add items": "Agregar elemento",
@@ -625,15 +646,18 @@
                            "save": "Guardar",
                            "label your items to add recipes for": "Etiqueta tus objetos para añadir recetas para",
                            "enter": "Entrar",
-                           "add another item": "Añadir otro elemento"
+                           "add another item": "Añadir otro elemento",
+                           "items added!": "Items Added!",
+                           "no labels added!": "No labels added!"
                         },
                         "productstunnel": {
                            "select product to add": "Seleccionar tipo de producto",
-                           "type what you're looking for": "escribe lo que estás buscando..."
+                           "type what you're looking for": "escribe lo que estás buscando...",
+                           "product added!": "Product Added!"
                         },
                         "producttypetunnel": {
                            "select product type": "Seleccionar tipo de producto",
-                           "inventory product": "Producto de Inventario",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                            "simple recipe product": "Producto receta simple",
                            "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer",
@@ -643,7 +667,12 @@
                      },
                      "product name": "Producto",
                      "save": "Guardar",
-                     "publish": "Publicar"
+                     "publish": "Publicar",
+                     "updated!": "Updated!",
+                     "error!": "Error!",
+                     "product should be valid!": "Product should be valid!",
+                     "all good!": "All Good!",
+                     "published": "Published"
                   },
                   "customizableproduct": {
                      "components": {
@@ -671,24 +700,49 @@
                         },
                         "products": {
                            "add products": "Añadir productos",
-                           "discount as accompaniment": "Descuento como acompañante"
+                           "discount as accompaniment": "Descuento como acompañante",
+                           "product deleted": "Product Deleted",
+                           "error": "Error",
+                           "default updated!": "Default Updated!",
+                           "are you sure you want to delete product": "Are you sure you want to delete product",
+                           "default": "Default",
+                           "make default": "Make Default",
+                           "pricing": "Pricing",
+                           "price": "Price",
+                           "discounted price": "Discounted Price",
+                           "accompaniments": "Accompaniments",
+                           "labels": "Labels",
+                           "servings": "Servings",
+                           "options": "Options",
+                           "discount": "Discount",
+                           "meal kit": "Meal Kit",
+                           "ready to eat": "Ready to eat",
+                           "accompanients are taken as per added on the selected product": "Accompanients are taken as per added on the selected product"
                         }
                      },
                      "tunnels": {
-                        "accompanimenttypetunnel": {
-                           "select accompaniment type": "Seleccionar tipo de acompañamiento",
-                           "save": "Guardar",
-                           "type what you're looking for": "escribe lo que estás buscando..."
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Añadir Descripción y Etiquetas",
                            "save": "Guardar",
                            "tags": "Etiquetas",
-                           "description": "Descripción"
+                           "updated!": "Updated!",
+                           "description": "Descripción",
+                           "error!": "Error!",
+                           "saving": "Saving..."
+                        },
+                        "accompanimenttypetunnel": {
+                           "select accompaniment type": "Seleccionar tipo de acompañamiento",
+                           "save": "Guardar",
+                           "type what you're looking for": "escribe lo que estás buscando..."
                         },
                         "itemstunnel": {
                            "select": "Seleccionar",
-                           "inventory products": "Producto de Inventario",
+                           "inventory products": "Inventory Products",
                            "simple recipe products": "Producto receta simple",
                            "to add": "Añadir",
                            "save": "Guardar",
@@ -697,19 +751,25 @@
                         },
                         "itemtypetunnel": {
                            "select product type": "Seleccionar tipo de producto",
-                           "inventory product": "Producto de Inventario",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                            "simple recipe product": "Producto receta simple",
                            "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer"
                         },
                         "productstunnel": {
-                           "select products to add": "Seleccionar tipo de producto",
+                           "select": "Select",
+                           "to add": "To Add",
                            "save": "Guardar",
-                           "type what you're looking for": "escribe lo que estás buscando..."
+                           "type what you're looking for": "escribe lo que estás buscando...",
+                           "product added!": "Product Added!",
+                           "error": "Error",
+                           "inventory products": "Inventroy Product",
+                           "simple recipe products": "Simple Recipe Product",
+                           "saving": "Saving..."
                         },
                         "productstypetunnel": {
                            "select product type": "Seleccionar tipo de producto",
-                           "inventory product": "Producto de Inventario",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                            "simple recipe product": "Producto receta simple",
                            "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer"
@@ -717,7 +777,12 @@
                      },
                      "product name": "Producto",
                      "save": "Guardar",
-                     "publish": "Publicar"
+                     "publish": "Publicar",
+                     "updated!": "Updated!",
+                     "error": "Error",
+                     "product should be valid!": "Product should be valid!",
+                     "all good!": "All Good!",
+                     "published": "Published"
                   },
                   "inventoryproduct": {
                      "components": {
@@ -731,32 +796,55 @@
                            "unit size": "Tamaño de unidad",
                            "pricing": "Precios",
                            "accompaniments": "Acompañantes",
+                           "default": "Default",
                            "options": "Opciones",
                            "quantity": "Cantidad",
                            "price": "Precio",
                            "discount": "Descuento",
                            "discounted price": "Discounted Price",
+                           "modifiers": "Modifiers",
                            "add option": "Añadir opción",
-                           "add item": "Agregar elemento"
+                           "add item": "Agregar elemento",
+                           "option(s) deleted!": "Option(s) deleted!",
+                           "could not delete!": "Could not delete!",
+                           "item deleted!": "Item Deleted!",
+                           "error": "Error"
                         },
                         "products": {
                            "add products": "Añadir productos",
-                           "discount as accompaniment": "Descuento como acompañante"
+                           "discount as accompaniment": "Descuento como acompañante",
+                           "updated!": "Updated!",
+                           "error": "Error",
+                           "are you sure you want to delete ": "Are you sure you want to delete "
+                        },
+                        "assets": {
+                           "image removed!": "Image Removed!",
+                           "add photo to your product": "Add Photo to your Product",
+                           "upto 1MB - only JPG, PNG, PDF allowed": "upto 1MB - only JPG, PNG, PDF allowed"
                         }
                      },
                      "tunnels": {
+                        "assetstunnel": {
+                           "image added!": "Image added!",
+                           "error": "Error",
+                           "select photo": "Select photo"
+                        },
                         "accompanimenttypetunnel": {
                            "select accompaniment type": "Seleccionar tipo de acompañamiento",
                            "save": "Guardar",
                            "saving": "Saving...",
-                           "type what you're looking for": "escribe lo que estás buscando..."
+                           "type what you're looking for": "escribe lo que estás buscando...",
+                           "accompaniment types added!": "Accompaniment types added!",
+                           "error": "Error"
                         },
                         "descriptiontunnel": {
                            "add description and tags": "Añadir Descripción y Etiquetas",
                            "save": "Guardar",
                            "saving": "Saving...",
                            "tags": "Etiquetas",
-                           "description": "Descripción"
+                           "description": "Descripción",
+                           "updated!": "Updated!",
+                           "error!": "Error!"
                         },
                         "itemtunnel": {
                            "select an item": "Seleccionar elemento",
@@ -767,9 +855,9 @@
                         "itemtypetunnel": {
                            "select item type": "Seleccionar tipo de artículo",
                            "inventory item": "App de inventario",
-                           "subtitle 1": "bla....",
+                           "subtitle 1": "Items bought directly from a supplier",
                            "sachet item": "Objeto de bolsa",
-                           "subtitle 2": "bla ..."
+                           "subtitle 2": "Items processed and packaged from a supplier item"
                         },
                         "productstunnel": {
                            "select products to add": "Select Products to Add",
@@ -779,7 +867,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Seleccionar tipo de producto",
-                           "inventory product": "Producto de Inventario",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                            "simple recipe product": "Producto receta simple",
                            "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer"
@@ -814,6 +902,7 @@
                            "visibility": "Visibility",
                            "default": "Default",
                            "price": "Precio",
+                           "recommended price": "Recommended Price",
                            "discount": "Descuento",
                            "discounted price": "Discounted Price",
                            "meal kit": "Kit de comida",
@@ -857,7 +946,7 @@
                         },
                         "productstypetunnel": {
                            "select product type": "Seleccionar tipo de producto",
-                           "inventory product": "Producto de Inventario",
+                           "inventory product": "Inventory Product",
                            "subtitle 1": "El producto de inventario es sólo un artículo, suministrado o comprado",
                            "simple recipe product": "Producto receta simple",
                            "subtitle 2": "Producto de receta simple es sólo una receta, vendida como Kits de Comida, así como listo para comer"
@@ -989,7 +1078,8 @@
                "devices": "Dispositivos",
                "roles": "Roles",
                "apps": "Aplicaciones",
-               "station": "Emisora"
+               "station": "Emisora",
+               "store settings": "Store Settings"
             }
          },
          "views": {
@@ -1081,7 +1171,7 @@
                }
             },
             "home": {
-               "settings app": "Aplicación de ajustes",
+               "settings app": "Settings App",
                "users": "Usuarios",
                "roles": "Roles",
                "apps": "Aplicaciones",
@@ -1093,12 +1183,6 @@
                "appslisting": {
                   "apps": "Aplicaciones",
                   "users assigned": "Usuario asignado"
-               },
-               "deviceslisting": {
-                  "devices": "Dispositivos",
-                  "stations": "Emisora",
-                  "users assigned": "Usuario asignado",
-                  "actions": "Acciones"
                },
                "roleslisting": {
                   "roles": "Roles",
@@ -1116,6 +1200,173 @@
                   "units": "Units"
                }
             }
+         }
+      },
+      "order": {
+         "components": {
+            "button": {},
+            "loader": {},
+            "metricitem": {},
+            "orderlistitem": {
+               "items": "Items",
+               "inventory": "Inventory",
+               "servings": "Servings",
+               "ready to eat": "Ready to eat",
+               "ordered on": "Ordered On",
+               "ready by": "Ready By",
+               "Delivery": "Delivery",
+               "pickup": "Pick Up",
+               "tax": "Tax",
+               "discount": "Discount",
+               "delivery price": "Delivery Price",
+               "total": "Total",
+               "all": "All",
+               "meal kits": "Meal Kits",
+               "no inventories": "No Inventories",
+               "no meal kits": "No Meal Kits",
+               "no ready to eat": "No Ready to Eat"
+            },
+            "ordersummary": {
+               "loading": "loading",
+               "quick info": "Quick Info",
+               "all orders": "ALL ORDERS",
+               "no orders yet!": "No Orders Yet!",
+               "mode": "Mode",
+               "summary": "Summary",
+               "ready to eat": "Ready To Eat"
+            },
+            "tabs": {
+               "close tab": "Close Tab"
+            }
+         },
+         "sections": {
+            "main": {},
+            "header": {
+               "menu": "Menu",
+               "go back": "Go Back",
+               "go forward": "Go Forward"
+            },
+            "sidebar": {
+               "listings": "Listings",
+               "orders": "Orders"
+            }
+         },
+         "utils": {},
+         "views": {
+            "home": {
+               "order app": "Order App",
+               "orders": "Orders"
+            },
+            "orders": {
+               "no orders yet!": "No Orders Yet!"
+            },
+            "order": {
+               "something went wrong!": "Something Went Wrong!",
+               "order no": "Order no.",
+               "ordered": "Ordered",
+               "ready by": "Ready By",
+               "delivery": "Delivery",
+               "items": "Items",
+               "servings": "Servings",
+               "legends": "Legends",
+               "pending": "Pending",
+               "processing": "Processing",
+               "done": "Done",
+               "ingredients": "Ingredients",
+               "supplier item": "Supplier Item",
+               "quantity": "Quantity",
+               "sachet id": "Sachet Id",
+               "packaging name": "Packaging Name",
+               "label template": "Label Template",
+               "link": "Link",
+               "bulk density": "Bulk density",
+               "shelf life": "Shelf Life",
+               "yield": "Yield"
+            }
+         }
+      },
+      "safety": {
+         "components": {
+            "formheading": {},
+            "tabs": {
+               "close tab": "Close Tab"
+            }
+         },
+         "sections": {
+            "main": {},
+            "header": {},
+            "sidebar": {
+               "listings": "Listings",
+               "Safety Checks": "Safety Checks"
+            }
+         },
+         "views": {
+            "forms": {
+               "safetyform": {
+                  "tunnels": {
+                     "checktunnel": {
+                        "checkup added!": "Checkup Added!",
+                        "error": "Error",
+                        "enter checkup details for": "Enter Checkup details for",
+                        "saving": "Saving...",
+                        "save": "Save",
+                        "uses mask": "Uses Mask",
+                        "uses sanitizer": "Uses Sanitizer",
+                        "temprature": "temprature"
+                     },
+                     "usertunnel": {
+                        "select user": "Select User",
+                        "type what you’re looking for": "type what you're looking for..."
+                     }
+                  },
+                  "check deleted!": "Check Deleted!",
+                  "error": "Error",
+                  "users": "Users",
+                  "name": "Name",
+                  "uses mask": "Uses Mask",
+                  "uses sanitizer": "Uses Sanitizer",
+                  "temprature": "temprature",
+                  "add user": "Add User"
+               }
+            },
+            "home": {
+               "safety and precautions app": "Safety and Precautions App",
+               "safety checks": "Safety Checks"
+            },
+            "listings": {
+               "safetycheckslisting": {
+                  "initiated!": "Initiated!",
+                  "some error occured!": "Some error occured!",
+                  "safety check deleted!": "Safety check deleted!",
+                  "error": "Error",
+                  "safety checks": "Safety Checks",
+                  "time": "Time",
+                  "users tested": "Users Tested"
+               }
+            }
+         }
+      }
+   },
+   "shared": {
+      "components": {
+         "nutrition": {
+            "calories": "Calories",
+            "amount": "Amount",
+            "serving": "Serving",
+            "daily value": "Daily value",
+            "total fat": "Total Fat",
+            "saturated fat": "Saturated Fat",
+            "trans fat": "Trans Fat",
+            "cholesterol": "Cholesterol",
+            "sodium": "Sodium",
+            "total carbohydrates": "Total Carbohydrates",
+            "dietary fibre": "Dietary Fibre",
+            "sugars": "Sugars",
+            "protein": "Protein",
+            "vitamin A": "Vitamin A",
+            "vitamin C": "Vitamin C",
+            "calcium": "Calcium",
+            "iron": "Iron"
          }
       }
    }
