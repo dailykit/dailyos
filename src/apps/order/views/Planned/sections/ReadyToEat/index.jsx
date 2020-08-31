@@ -6,11 +6,13 @@ import { useOrder, useTabs } from '../../../../context'
 import { NewTabIcon } from '../../../../assets/icons'
 import { InlineLoader, Flex } from '../../../../../../shared/components'
 import {
-   SimpleRecipeProducts,
-   SimpleRecipeProduct,
+   Product,
+   Products,
+   ProductTitle,
+   OptionsHeader,
    ProductOptions,
    ProductOption,
-} from './styled'
+} from '../styled'
 
 export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
    const { addTab } = useTabs()
@@ -37,16 +39,17 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
 
    if (simpleRecipeProducts.nodes.length === 0)
       return (
-         <SimpleRecipeProducts>
+         <Products>
             <span>No Ready to eats</span>
-         </SimpleRecipeProducts>
+         </Products>
       )
    return (
-      <SimpleRecipeProducts>
+      <Products>
          {simpleRecipeProducts.nodes.map(product => (
-            <SimpleRecipeProduct key={product.id}>
+            <Product key={product.id}>
                <Flex container alignItems="center">
-                  <h2
+                  <ProductTitle
+                     isLink
                      tabIndex="-1"
                      role="button"
                      title={product.name}
@@ -59,24 +62,34 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
                      <NewTabIcon size={16} color="#b9b9b9" />
                      &nbsp;
                      {product.name}
-                  </h2>
+                  </ProductTitle>
                </Flex>
-               <section className="optionsHeader">
+               <OptionsHeader>
                   <span>Yield</span>
                   <span>Total</span>
                   <span>Quantity</span>
-               </section>
+               </OptionsHeader>
                <ProductOptions>
                   {product.options.length > 0 ? (
                      product.options.map(option => (
-                        <ProductOption key={option.id}>
+                        <ProductOption
+                           key={option.id}
+                           isAssembled={
+                              option.assembledProducts.aggregate.count ===
+                              option.products.aggregate.count
+                           }
+                        >
                            <span title={option.yield.size}>
                               {option.yield.size} Serving
                            </span>
                            <span title={option.products.aggregate.count}>
-                              {option.products.aggregate.count}
+                              {option.assembledProducts.aggregate.count}
+                              &nbsp;/&nbsp;{option.products.aggregate.count}
                            </span>
                            <span title={option.products.aggregate.sum.quantity}>
+                              {option.assembledProducts.aggregate.sum
+                                 .quantity || 0}
+                              &nbsp;/&nbsp;
                               {option.products.aggregate.sum.quantity}
                            </span>
                         </ProductOption>
@@ -85,8 +98,8 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
                      <span>No servings</span>
                   )}
                </ProductOptions>
-            </SimpleRecipeProduct>
+            </Product>
          ))}
-      </SimpleRecipeProducts>
+      </Products>
    )
 }

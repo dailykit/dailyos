@@ -7,11 +7,13 @@ import { NewTabIcon } from '../../../../assets/icons'
 import { PLANNED } from '../../../../graphql/queries'
 import { InlineLoader, Flex } from '../../../../../../shared/components'
 import {
-   InventoryProducts,
-   InventoryProduct,
+   Product,
+   Products,
+   ProductTitle,
+   OptionsHeader,
    ProductOptions,
    ProductOption,
-} from './styled'
+} from '../styled'
 
 export const InventorySection = ({ setInventoryTotal }) => {
    const { state } = useOrder()
@@ -38,20 +40,21 @@ export const InventorySection = ({ setInventoryTotal }) => {
 
    if (inventoryProducts.nodes.length === 0)
       return (
-         <InventoryProducts>
+         <Products>
             <span>No Inventories</span>
-         </InventoryProducts>
+         </Products>
       )
 
    return (
-      <InventoryProducts>
+      <Products>
          {inventoryProducts.nodes.map(product => (
-            <InventoryProduct key={product.id}>
+            <Product key={product.id}>
                <Flex container alignItems="center">
-                  <h2
-                     title={product.name}
+                  <ProductTitle
+                     isLink
                      tabIndex="-1"
                      role="button"
+                     title={product.name}
                      onClick={() => openProduct(product.id, product.name)}
                      onKeyPress={e =>
                         e.charCode === 13 &&
@@ -61,7 +64,7 @@ export const InventorySection = ({ setInventoryTotal }) => {
                      <NewTabIcon size={16} color="#b9b9b9" />
                      &nbsp;
                      {product.name}
-                  </h2>
+                  </ProductTitle>
                   <h3 title={product.products.aggregate.count}>
                      <label>Total:</label> {product.products.aggregate.count}
                   </h3>
@@ -71,20 +74,30 @@ export const InventorySection = ({ setInventoryTotal }) => {
                   </h3>
                </Flex>
                <Spacer size="16px" />
-               <section className="optionsHeader">
+               <OptionsHeader>
                   <span>Label</span>
                   <span>Total</span>
                   <span>Quantity</span>
-               </section>
+               </OptionsHeader>
                <ProductOptions>
                   {product.options.length > 0 ? (
                      product.options.map(option => (
-                        <ProductOption key={option.id}>
+                        <ProductOption
+                           key={option.id}
+                           isAssembled={
+                              option.assembledProducts.aggregate.count ===
+                              option.products.aggregate.count
+                           }
+                        >
                            <span title={option.label}>{option.label}</span>
                            <span title={option.products.aggregate.count}>
-                              {option.products.aggregate.count}
+                              {option.assembledProducts.aggregate.count}
+                              &nbsp;/&nbsp;{option.products.aggregate.count}
                            </span>
                            <span title={option.products.aggregate.sum.quantity}>
+                              {option.assembledProducts.aggregate.sum
+                                 .quantity || 0}
+                              &nbsp;/&nbsp;
                               {option.products.aggregate.sum.quantity}
                            </span>
                         </ProductOption>
@@ -93,8 +106,8 @@ export const InventorySection = ({ setInventoryTotal }) => {
                      <span>No product options</span>
                   )}
                </ProductOptions>
-            </InventoryProduct>
+            </Product>
          ))}
-      </InventoryProducts>
+      </Products>
    )
 }

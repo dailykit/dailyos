@@ -591,6 +591,16 @@ export const PLANNED = {
                         }
                      }
                   }
+                  assembledProducts: orderInventoryProducts_aggregate(
+                     where: { order: $order, isAssembled: { _eq: true } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
                }
             }
          }
@@ -657,6 +667,16 @@ export const PLANNED = {
                   }
                   products: orderReadyToEatProducts_aggregate(
                      where: { order: $order }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+                  assembledProducts: orderReadyToEatProducts_aggregate(
+                     where: { order: $order, isAssembled: { _eq: true } }
                   ) {
                      aggregate {
                         count(columns: id)
@@ -737,6 +757,16 @@ export const PLANNED = {
                   }
                   products: orderMealKitProducts_aggregate(
                      where: { order: $order }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+                  assembledProducts: orderMealKitProducts_aggregate(
+                     where: { order: $order, isAssembled: { _eq: true } }
                   ) {
                      aggregate {
                         count(columns: id)
@@ -834,6 +864,7 @@ export const PLANNED = {
                         }
                         nodes {
                            id
+                           unit
                            quantity
                            allOrderSachets: orderSachets_aggregate(
                               where: { orderMealKitProduct: { order: $order } }
@@ -846,7 +877,6 @@ export const PLANNED = {
                               }
                               nodes {
                                  id
-                                 quantity
                                  isAssembled
                                  orderMealKitProduct {
                                     id
@@ -861,7 +891,7 @@ export const PLANNED = {
                            completedOrderSachets: orderSachets_aggregate(
                               where: {
                                  orderMealKitProduct: { order: $order }
-                                 status: { _eq: "COMPLETED" }
+                                 status: { _eq: "PACKED" }
                               }
                            ) {
                               aggregate {

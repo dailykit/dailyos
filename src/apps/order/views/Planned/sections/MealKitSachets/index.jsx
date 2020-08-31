@@ -3,22 +3,21 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { Spacer } from '../../../../styled'
 import { PLANNED } from '../../../../graphql'
+import { NewTabIcon } from '../../../../assets/icons'
 import { useTabs, useOrder } from '../../../../context'
 import { InlineLoader, Flex } from '../../../../../../shared/components'
+import { Products, ProductTitle, OptionsHeader, Product } from '../styled'
 import {
    List,
    ListBody,
    StyledTab,
    StyledTabs,
-   Ingredient,
-   Ingredients,
    StyledButton,
    ListBodyItem,
    StyledTabList,
    StyledTabPanel,
    StyledTabPanels,
 } from './styled'
-import { NewTabIcon } from '../../../../assets/icons'
 
 export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
    const { state } = useOrder()
@@ -40,31 +39,36 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
 
    if (ingredients.nodes.length === 0)
       return (
-         <Ingredients>
+         <Products>
             <span>No ingredients</span>
-         </Ingredients>
+         </Products>
       )
 
    return (
-      <Ingredients>
+      <Products>
          {ingredients.nodes.map(ingredient => (
-            <Ingredient key={ingredient.id}>
+            <Product key={ingredient.id}>
                <Flex container alignItems="center">
-                  <h2 title={ingredient.name}>{ingredient.name}</h2>
+                  <ProductTitle title={ingredient.name}>
+                     {ingredient.name}
+                  </ProductTitle>
                </Flex>
                <Spacer size="12px" />
-               <section className="optionsHeader">
+               <OptionsHeader>
                   <span>
                      Processings({ingredient.processings.aggregate.count})
                   </span>
                   <span>Sachets</span>
-               </section>
+               </OptionsHeader>
                {ingredient.processings.nodes.length > 0 ? (
                   <StyledTabs>
                      <StyledTabList>
                         {ingredient.processings.nodes.map(processing => (
                            <StyledTab key={processing.id}>
-                              {processing.name}
+                              <span>{processing.name}</span>{' '}
+                              <span title="Total">
+                                 ({processing.sachets.aggregate.count})
+                              </span>
                            </StyledTab>
                         ))}
                      </StyledTabList>
@@ -77,9 +81,9 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                ) : (
                   <span>No processings</span>
                )}
-            </Ingredient>
+            </Product>
          ))}
-      </Ingredients>
+      </Products>
    )
 }
 
@@ -90,7 +94,16 @@ const Processing = ({ processing }) => {
          <StyledTabs>
             <StyledTabList>
                {processing.sachets.nodes.map(sachet => (
-                  <StyledTab key={sachet.id}>{sachet.quantity}</StyledTab>
+                  <StyledTab key={sachet.id}>
+                     <span>
+                        {sachet.quantity}
+                        {sachet.unit}
+                     </span>{' '}
+                     <span title="Total">
+                        ({sachet.completedOrderSachets.aggregate.count}
+                        &nbsp;/&nbsp;{sachet.allOrderSachets.aggregate.count})
+                     </span>
+                  </StyledTab>
                ))}
             </StyledTabList>
             <StyledTabPanels>
@@ -143,7 +156,6 @@ const Sachet = ({ sachet }) => {
                            <NewTabIcon size={14} />
                         </StyledButton>
                      </span>
-                     <span>{sachet.quantity}</span>
                      <span>
                         {sachet.orderMealKitProduct.simpleRecipeProduct.name}
                      </span>
