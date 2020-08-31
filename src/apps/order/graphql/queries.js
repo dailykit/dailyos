@@ -585,6 +585,7 @@ export const PLANNED = {
                      where: { order: $order }
                   ) {
                      aggregate {
+                        count(columns: id)
                         sum {
                            quantity
                         }

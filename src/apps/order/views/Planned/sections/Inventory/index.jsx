@@ -35,6 +35,14 @@ export const InventorySection = ({ setInventoryTotal }) => {
    }
 
    if (loading) return <InlineLoader />
+
+   if (inventoryProducts.nodes.length === 0)
+      return (
+         <InventoryProducts>
+            <span>No Inventories</span>
+         </InventoryProducts>
+      )
+
    return (
       <InventoryProducts>
          {inventoryProducts.nodes.map(product => (
@@ -65,17 +73,25 @@ export const InventorySection = ({ setInventoryTotal }) => {
                <Spacer size="16px" />
                <section className="optionsHeader">
                   <span>Label</span>
+                  <span>Total</span>
                   <span>Quantity</span>
                </section>
                <ProductOptions>
-                  {product.options.map(option => (
-                     <ProductOption key={option.id}>
-                        <span title={option.label}>{option.label}</span>
-                        <span title={option.products.aggregate.sum.quantity}>
-                           {option.products.aggregate.sum.quantity}
-                        </span>
-                     </ProductOption>
-                  ))}
+                  {product.options.length > 0 ? (
+                     product.options.map(option => (
+                        <ProductOption key={option.id}>
+                           <span title={option.label}>{option.label}</span>
+                           <span title={option.products.aggregate.count}>
+                              {option.products.aggregate.count}
+                           </span>
+                           <span title={option.products.aggregate.sum.quantity}>
+                              {option.products.aggregate.sum.quantity}
+                           </span>
+                        </ProductOption>
+                     ))
+                  ) : (
+                     <span>No product options</span>
+                  )}
                </ProductOptions>
             </InventoryProduct>
          ))}

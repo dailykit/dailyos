@@ -69,6 +69,9 @@ export const ListBody = styled.div(() => css``)
 export const ListBodyItem = styled.div(
    ({ isOpen, isAssembled }) => css`
       background: ${isAssembled ? '#79df54' : '#f9daa8'};
+      border-left: ${isOpen
+         ? `4px solid rgba(0, 0, 0, 0.5)`
+         : '4px solid transparent'};
       header {
          height: 48px;
          display: grid;
@@ -77,29 +80,26 @@ export const ListBodyItem = styled.div(
          grid-template-columns: repeat(2, 1fr) 48px;
          span {
             padding: 0 14px;
-         }
-         button {
-            border: none;
             display: flex;
-            cursor: pointer;
             align-items: center;
-            background: transparent;
-            justify-content: center;
-            :hover {
-               background: rgba(0, 0, 0, 0.05);
-            }
-            :focus {
-               outline: none;
-               background: rgba(0, 0, 0, 0.1);
-            }
          }
-      }
-      main {
-         padding: 16px;
-         grid-gap: 24px;
-         display: ${isOpen ? 'block' : 'none'};
-         border-top: 1px solid rgba(0, 0, 0, 0.2);
-         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
       }
    `
 )
+
+export const StyledButton = styled.button`
+   border: 2px;
+   height: 28px;
+   display: flex;
+   padding: 0 8px;
+   color: #787d91;
+   cursor: pointer;
+   font-weight: 500;
+   background: white;
+   align-items: center;
+   text-transform: uppercase;
+   border: 1px solid rgba(0, 0, 0, 0.2);
+   svg {
+      margin-left: 2px;
+   }
+`

@@ -4,8 +4,8 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { Spacer } from '../../../styled'
 import { PLANNED } from '../../../graphql'
+import { NewTabIcon } from '../../../assets/icons'
 import { useOrder, useTabs } from '../../../context'
-import { ArrowDownIcon, ArrowUpIcon } from '../../../assets/icons'
 import { InlineLoader, Flex } from '../../../../../shared/components'
 import {
    List,
@@ -14,6 +14,7 @@ import {
    Wrapper,
    ListHead,
    ListBody,
+   StyledButton,
    ListBodyItem,
 } from './styled'
 
@@ -54,6 +55,11 @@ export const InventoryProduct = () => {
       setCurrentPanel(currentPanel === id ? '' : id)
    }
 
+   const openOrder = (e, id) => {
+      e.stopPropagation()
+      addTab(`ORD${id}`, `/apps/order/orders/${id}`)
+   }
+
    if (loading) return <InlineLoader />
    return (
       <Wrapper>
@@ -68,59 +74,69 @@ export const InventoryProduct = () => {
             </h3>
          </Flex>
          <Spacer size="16px" />
-         <Labels>
-            {inventoryProduct.options.map(option => (
-               <Label
-                  key={option.id}
-                  onClick={() => setCurrent(option)}
-                  isActive={current?.id === option.id}
-               >
-                  <h3>{option.label}</h3>
-                  <section>
-                     {
-                        option.orderInventoryProducts.nodes.filter(
-                           node => node.isAssembled
-                        ).length
-                     }
-                     &nbsp;/&nbsp;
-                     {option.orderInventoryProducts.aggregate.total}
-                  </section>
-               </Label>
-            ))}
-         </Labels>
-         <Spacer size="8px" />
-         {Object.keys(current).length > 0 && (
-            <List>
-               <ListHead>
-                  <span>Order Id</span>
-                  <span>Quantity</span>
-               </ListHead>
-               <ListBody>
-                  {current.orderInventoryProducts.nodes.map(node => (
-                     <ListBodyItem
-                        key={node.id}
-                        isAssembled={node.isAssembled}
-                        isOpen={currentPanel === node.id}
+         {inventoryProduct.options.length > 0 ? (
+            <>
+               <Labels>
+                  {inventoryProduct.options.map(option => (
+                     <Label
+                        key={option.id}
+                        onClick={() => setCurrent(option)}
+                        isActive={current?.id === option.id}
                      >
-                        <header>
-                           <span>{node.orderId}</span>
-                           <span>{node.quantity}</span>
-                           <button
-                              type="button"
-                              onClick={() => selectOption(node.id)}
-                           >
-                              {currentPanel === node.id ? (
-                                 <ArrowDownIcon />
-                              ) : (
-                                 <ArrowUpIcon />
-                              )}
-                           </button>
-                        </header>
-                        <main>{node.quantity}</main>
-                     </ListBodyItem>
+                        <h3>{option.label}</h3>
+                        <section>
+                           {
+                              option.orderInventoryProducts.nodes.filter(
+                                 node => node.isAssembled
+                              ).length
+                           }
+                           &nbsp;/&nbsp;
+                           {option.orderInventoryProducts.aggregate.total}
+                        </section>
+                     </Label>
                   ))}
-               </ListBody>
-            </List>
+               </Labels>
+               <Spacer size="8px" />
+               {Object.keys(current).length > 0 && (
+                  <List>
+                     <ListHead>
+                        <span>Order Id</span>
+                        <span>Quantity</span>
+                     </ListHead>
+                     {current.orderInventoryProducts.nodes.length > 0 ? (
+                        <ListBody>
+                           {current.orderInventoryProducts.nodes.map(node => (
+                              <ListBodyItem
+                                 key={node.id}
+                                 isAssembled={node.isAssembled}
+                                 isOpen={currentPanel === node.id}
+                                 onClick={() => selectOption(node.id)}
+                              >
+                                 <header>
+                                    <span>
+                                       <StyledButton
+                                          type="button"
+                                          onClick={e =>
+                                             openOrder(e, node.orderId)
+                                          }
+                                       >
+                                          ORD{node.orderId}
+                                          <NewTabIcon size={14} />
+                                       </StyledButton>
+                                    </span>
+                                    <span>{node.quantity}</span>
+                                 </header>
+                              </ListBodyItem>
+                           ))}
+                        </ListBody>
+                     ) : (
+                        <span>No products</span>
+                     )}
+                  </List>
+               )}
+            </>
+         ) : (
+            <span>No inventory options</span>
          )}
       </Wrapper>
    )

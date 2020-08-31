@@ -37,21 +37,29 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
    )
 
    if (loading) return <InlineLoader />
+
+   if (ingredients.nodes.length === 0)
+      return (
+         <Ingredients>
+            <span>No ingredients</span>
+         </Ingredients>
+      )
+
    return (
       <Ingredients>
-         {ingredients.nodes.length > 0 &&
-            ingredients.nodes.map(ingredient => (
-               <Ingredient key={ingredient.id}>
-                  <Flex container alignItems="center">
-                     <h2 title={ingredient.name}>{ingredient.name}</h2>
-                  </Flex>
-                  <Spacer size="12px" />
-                  <section className="optionsHeader">
-                     <span>
-                        Processings({ingredient.processings.aggregate.count})
-                     </span>
-                     <span>Sachets</span>
-                  </section>
+         {ingredients.nodes.map(ingredient => (
+            <Ingredient key={ingredient.id}>
+               <Flex container alignItems="center">
+                  <h2 title={ingredient.name}>{ingredient.name}</h2>
+               </Flex>
+               <Spacer size="12px" />
+               <section className="optionsHeader">
+                  <span>
+                     Processings({ingredient.processings.aggregate.count})
+                  </span>
+                  <span>Sachets</span>
+               </section>
+               {ingredient.processings.nodes.length > 0 ? (
                   <StyledTabs>
                      <StyledTabList>
                         {ingredient.processings.nodes.map(processing => (
@@ -66,13 +74,17 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                         ))}
                      </StyledTabPanels>
                   </StyledTabs>
-               </Ingredient>
-            ))}
+               ) : (
+                  <span>No processings</span>
+               )}
+            </Ingredient>
+         ))}
       </Ingredients>
    )
 }
 
 const Processing = ({ processing }) => {
+   if (processing.sachets.nodes.length === 0) return <span>No sachets</span>
    return (
       <StyledTabPanel>
          <StyledTabs>

@@ -35,6 +35,12 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
 
    if (loading) return <InlineLoader />
 
+   if (simpleRecipeProducts.nodes.length === 0)
+      return (
+         <SimpleRecipeProducts>
+            <span>No Ready to eats</span>
+         </SimpleRecipeProducts>
+      )
    return (
       <SimpleRecipeProducts>
          {simpleRecipeProducts.nodes.map(product => (
@@ -61,19 +67,23 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
                   <span>Quantity</span>
                </section>
                <ProductOptions>
-                  {product.options.map(option => (
-                     <ProductOption key={option.id}>
-                        <span title={option.yield.size}>
-                           {option.yield.size} Serving
-                        </span>
-                        <span title={option.products.aggregate.count}>
-                           {option.products.aggregate.count}
-                        </span>
-                        <span title={option.products.aggregate.sum.quantity}>
-                           {option.products.aggregate.sum.quantity}
-                        </span>
-                     </ProductOption>
-                  ))}
+                  {product.options.length > 0 ? (
+                     product.options.map(option => (
+                        <ProductOption key={option.id}>
+                           <span title={option.yield.size}>
+                              {option.yield.size} Serving
+                           </span>
+                           <span title={option.products.aggregate.count}>
+                              {option.products.aggregate.count}
+                           </span>
+                           <span title={option.products.aggregate.sum.quantity}>
+                              {option.products.aggregate.sum.quantity}
+                           </span>
+                        </ProductOption>
+                     ))
+                  ) : (
+                     <span>No servings</span>
+                  )}
                </ProductOptions>
             </SimpleRecipeProduct>
          ))}

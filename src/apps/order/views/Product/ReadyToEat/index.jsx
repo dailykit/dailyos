@@ -11,11 +11,12 @@ import {
    List,
    ListHead,
    ListBody,
+   StyledButton,
    ListBodyItem,
 } from './styled'
+import { NewTabIcon } from '../../../assets/icons'
 import { useOrder, useTabs } from '../../../context'
 import { Flex, InlineLoader } from '../../../../../shared/components'
-import { ArrowDownIcon, ArrowUpIcon } from '../../../assets/icons'
 
 export const ReadyToEatProduct = () => {
    const params = useParams()
@@ -54,6 +55,11 @@ export const ReadyToEatProduct = () => {
       setCurrentPanel(currentPanel === id ? '' : id)
    }
 
+   const openOrder = (e, id) => {
+      e.stopPropagation()
+      addTab(`ORD${id}`, `/apps/order/orders/${id}`)
+   }
+
    if (loading) return <InlineLoader />
    return (
       <Wrapper>
@@ -69,59 +75,69 @@ export const ReadyToEatProduct = () => {
             </h3>
          </Flex>
          <Spacer size="16px" />
-         <Labels>
-            {simpleRecipeProduct.options.map(option => (
-               <Label
-                  key={option.id}
-                  onClick={() => setCurrent(option)}
-                  isActive={current?.id === option.id}
-               >
-                  <h3>{option.yield.size}</h3>
-                  <section>
-                     {
-                        option.orderReadyToEatProducts.nodes.filter(
-                           node => node.isAssembled
-                        ).length
-                     }
-                     &nbsp;/&nbsp;
-                     {option.orderReadyToEatProducts.aggregate.total}
-                  </section>
-               </Label>
-            ))}
-         </Labels>
-         <Spacer size="8px" />
-         {Object.keys(current).length > 0 && (
-            <List>
-               <ListHead>
-                  <span>Order Id</span>
-                  <span>Quantity</span>
-               </ListHead>
-               <ListBody>
-                  {current.orderReadyToEatProducts.nodes.map(node => (
-                     <ListBodyItem
-                        key={node.id}
-                        isAssembled={node.isAssembled}
-                        isOpen={currentPanel === node.id}
+         {simpleRecipeProduct.options.length > 0 ? (
+            <>
+               <Labels>
+                  {simpleRecipeProduct.options.map(option => (
+                     <Label
+                        key={option.id}
+                        onClick={() => setCurrent(option)}
+                        isActive={current?.id === option.id}
                      >
-                        <header>
-                           <span>{node.orderId}</span>
-                           <span>{node.quantity}</span>
-                           <button
-                              type="button"
-                              onClick={() => selectOption(node.id)}
-                           >
-                              {currentPanel === node.id ? (
-                                 <ArrowDownIcon />
-                              ) : (
-                                 <ArrowUpIcon />
-                              )}
-                           </button>
-                        </header>
-                        <main>{node.quantity}</main>
-                     </ListBodyItem>
+                        <h3>{option.yield.size} Servings</h3>
+                        <section>
+                           {
+                              option.orderReadyToEatProducts.nodes.filter(
+                                 node => node.isAssembled
+                              ).length
+                           }
+                           &nbsp;/&nbsp;
+                           {option.orderReadyToEatProducts.aggregate.total}
+                        </section>
+                     </Label>
                   ))}
-               </ListBody>
-            </List>
+               </Labels>
+               <Spacer size="8px" />
+               {Object.keys(current).length > 0 && (
+                  <List>
+                     <ListHead>
+                        <span>Order Id</span>
+                        <span>Quantity</span>
+                     </ListHead>
+                     {current.orderReadyToEatProducts.nodes.length > 0 ? (
+                        <ListBody>
+                           {current.orderReadyToEatProducts.nodes.map(node => (
+                              <ListBodyItem
+                                 key={node.id}
+                                 isAssembled={node.isAssembled}
+                                 isOpen={currentPanel === node.id}
+                                 onClick={() => selectOption(node.id)}
+                              >
+                                 <header>
+                                    <span>
+                                       <StyledButton
+                                          type="button"
+                                          onClick={e =>
+                                             openOrder(e, node.orderId)
+                                          }
+                                       >
+                                          ORD{node.orderId}
+                                          <NewTabIcon size={14} />
+                                       </StyledButton>
+                                    </span>
+                                    <span>{node.quantity}</span>
+                                 </header>
+                              </ListBodyItem>
+                           ))}
+                        </ListBody>
+                     ) : (
+                        <span>No products</span>
+                     )}
+                  </List>
+               )}
+            </>
+         ) : (
+            <span>No product options</span>
          )}
       </Wrapper>
    )
