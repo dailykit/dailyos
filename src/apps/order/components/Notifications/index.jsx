@@ -1,10 +1,11 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { Loader, Tunnel, Tunnels, useTunnel, TunnelHeader } from '@dailykit/ui'
+import { Tunnel, Tunnels, useTunnel, TunnelHeader } from '@dailykit/ui'
 
 import { useTabs } from '../../context'
 import { NOTIFICATIONS } from '../../graphql'
 import { Notifs, Notif, Main } from './styled'
+import { InlineLoader } from '../../../../shared/components'
 
 export const Notifications = ({ isOpen, closePortal }) => {
    const { addTab } = useTabs()
@@ -35,7 +36,7 @@ export const Notifications = ({ isOpen, closePortal }) => {
          <Tunnel layer={1} size="sm">
             <TunnelHeader title="Notifications" close={closePortal} />
             <Main>
-               {loading && <Loader />}
+               {loading && <InlineLoader />}
                {error && <div>{error.message}</div>}
                {notifications.length > 0 && (
                   <Notifs>

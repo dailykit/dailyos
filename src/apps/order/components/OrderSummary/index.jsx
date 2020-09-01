@@ -8,7 +8,7 @@ import Loader from '../Loader'
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
 import { Flex } from '../../../../shared/components'
-import { ORDER_BY_STATUS, STATION } from '../../graphql'
+import { ORDER_BY_STATUS, STATION, ALL_ORDERS_AGGREGATE } from '../../graphql'
 import { Wrapper, FilterSection, Spacer } from './styled'
 
 const address = 'apps.order.components.ordersummary.'
@@ -16,6 +16,7 @@ const address = 'apps.order.components.ordersummary.'
 export const OrderSummary = () => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
+   const { data: { orders = {} } = {} } = useSubscription(ALL_ORDERS_AGGREGATE)
    const {
       loading,
       error,
@@ -49,6 +50,14 @@ export const OrderSummary = () => {
    return (
       <Wrapper>
          <h2>{t(address.concat('quick info'))}</h2>
+         <MetricItem
+            title="ALL"
+            variant="ALL"
+            currency="usd"
+            count={orders?.aggregate.count}
+            amount={orders?.aggregate.sum.amount}
+            average={orders?.aggregate.avg.amountPaid}
+         />
          <ul>
             {orderByStatus.map(({ value, orders }) => (
                <MetricItem

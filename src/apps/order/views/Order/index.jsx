@@ -7,8 +7,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { useOrder } from '../../context'
 import { ORDER, STATIONS } from '../../graphql'
 import { formatDate } from '../../utils'
-import { Loader } from '../../components'
-import { Flex } from '../../../../shared/components'
+import { Flex, InlineLoader } from '../../../../shared/components'
 import { UserIcon, PrintIcon } from '../../assets/icons'
 import MealKitProductDetails from './MealKitProductDetails'
 
@@ -86,7 +85,7 @@ const Order = () => {
    if (loading || !order)
       return (
          <Wrapper>
-            <Loader />
+            <InlineLoader />
          </Wrapper>
       )
    if (error)

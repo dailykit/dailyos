@@ -68,6 +68,22 @@ export const NOTIFICATIONS = gql`
    }
 `
 
+export const ALL_ORDERS_AGGREGATE = gql`
+   subscription orders {
+      orders: ordersAggregate {
+         aggregate {
+            count
+            sum {
+               amount: amountPaid
+            }
+            avg {
+               amountPaid
+            }
+         }
+      }
+   }
+`
+
 export const ORDER_BY_STATUS = gql`
    subscription orderByStatus {
       orderByStatus: order_orderStatusEnum {
@@ -553,3 +569,360 @@ export const STATION = gql`
       }
    }
 `
+
+export const PLANNED = {
+   INVENTORY_PRODUCTS: gql`
+      subscription inventoryProducts($order: order_order_bool_exp) {
+         inventoryProducts: inventoryProductsAggregate(
+            where: { orderInventoryProducts: { order: $order } }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               products: orderInventoryProducts_aggregate(
+                  where: { order: $order }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                     sum {
+                        quantity
+                     }
+                  }
+               }
+               options: inventoryProductOptions(
+                  where: { orderInventoryProducts: { order: $order } }
+               ) {
+                  id
+                  label
+                  products: orderInventoryProducts_aggregate(
+                     where: { order: $order }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+                  assembledProducts: orderInventoryProducts_aggregate(
+                     where: { order: $order, isAssembled: { _eq: true } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
+   INVENTORY_PRODUCT: gql`
+      subscription inventoryProduct(
+         $id: Int!
+         $order: order_order_bool_exp = {}
+      ) {
+         inventoryProduct(id: $id) {
+            id
+            name
+            products: orderInventoryProducts_aggregate(
+               where: { order: $order }
+            ) {
+               aggregate {
+                  count(columns: id)
+                  sum {
+                     quantity
+                  }
+               }
+            }
+            options: inventoryProductOptions(
+               where: { orderInventoryProducts: { order: $order } }
+            ) {
+               id
+               label
+               orderInventoryProducts: orderInventoryProducts_aggregate(
+                  where: { order: $order }
+               ) {
+                  aggregate {
+                     total: count(columns: id)
+                  }
+                  nodes {
+                     id
+                     orderId
+                     quantity
+                     isAssembled
+                  }
+               }
+            }
+         }
+      }
+   `,
+   READY_TO_EAT_PRODUCTS: gql`
+      subscription simpleRecipeProducts($order: order_order_bool_exp) {
+         simpleRecipeProducts: simpleRecipeProductsAggregate(
+            where: { orderReadyToEatProducts: { order: $order } }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               options: simpleRecipeProductOptions(
+                  where: { orderReadyToEatProducts: { order: $order } }
+               ) {
+                  id
+                  yield: simpleRecipeYield {
+                     id
+                     size: yield(path: "serving")
+                  }
+                  products: orderReadyToEatProducts_aggregate(
+                     where: { order: $order }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+                  assembledProducts: orderReadyToEatProducts_aggregate(
+                     where: { order: $order, isAssembled: { _eq: true } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
+   READY_TO_EAT_PRODUCT: gql`
+      subscription simpleRecipeProduct(
+         $id: Int!
+         $order: order_order_bool_exp = {}
+      ) {
+         simpleRecipeProduct(id: $id) {
+            id
+            name
+            products: orderReadyToEatProducts_aggregate(
+               where: { order: $order }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     quantity
+                  }
+               }
+            }
+            options: simpleRecipeProductOptions(
+               where: { orderReadyToEatProducts: { order: $order } }
+            ) {
+               id
+               yield: simpleRecipeYield {
+                  id
+                  size: yield(path: "serving")
+               }
+               orderReadyToEatProducts: orderReadyToEatProducts_aggregate(
+                  where: { order: $order }
+               ) {
+                  aggregate {
+                     total: count(columns: id)
+                     sum {
+                        quantity
+                     }
+                  }
+                  nodes {
+                     id
+                     orderId
+                     quantity
+                     isAssembled
+                  }
+               }
+            }
+         }
+      }
+   `,
+   MEAL_KIT_PRODUCTS: gql`
+      subscription simpleRecipeProducts($order: order_order_bool_exp) {
+         simpleRecipeProducts: simpleRecipeProductsAggregate(
+            where: { orderMealKitProducts: { order: $order } }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               options: simpleRecipeProductOptions(
+                  where: { orderMealKitProducts: { order: $order } }
+               ) {
+                  id
+                  yield: simpleRecipeYield {
+                     id
+                     size: yield(path: "serving")
+                  }
+                  products: orderMealKitProducts_aggregate(
+                     where: { order: $order }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+                  assembledProducts: orderMealKitProducts_aggregate(
+                     where: { order: $order, isAssembled: { _eq: true } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                        sum {
+                           quantity
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
+   MEAL_KIT_PRODUCT: gql`
+      subscription simpleRecipeProduct(
+         $id: Int!
+         $order: order_order_bool_exp = {}
+      ) {
+         simpleRecipeProduct(id: $id) {
+            id
+            name
+            products: orderMealKitProducts_aggregate(where: { order: $order }) {
+               aggregate {
+                  count
+                  sum {
+                     quantity
+                  }
+               }
+            }
+            options: simpleRecipeProductOptions(
+               where: { orderMealKitProducts: { order: $order } }
+            ) {
+               id
+               yield: simpleRecipeYield {
+                  id
+                  size: yield(path: "serving")
+               }
+               orderMealKitProducts: orderMealKitProducts_aggregate(
+                  where: { order: $order }
+               ) {
+                  aggregate {
+                     total: count(columns: id)
+                     sum {
+                        quantity
+                     }
+                  }
+                  nodes {
+                     id
+                     orderId
+                     quantity
+                     isAssembled
+                  }
+               }
+            }
+         }
+      }
+   `,
+   MEAL_KIT_SACHETS: gql`
+      subscription ingredients($order: order_order_bool_exp = {}) {
+         ingredients: ingredientsAggregate(
+            where: {
+               ingredientSachets: {
+                  orderSachets: { orderMealKitProduct: { order: $order } }
+               }
+            }
+         ) {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               name
+               processings: ingredientProcessings_aggregate(
+                  where: {
+                     ingredientSachets: {
+                        orderSachets: { orderMealKitProduct: { order: $order } }
+                     }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: processingName)
+                  }
+                  nodes {
+                     id
+                     name: processingName
+                     sachets: ingredientSachets_aggregate(
+                        where: {
+                           orderSachets: {
+                              orderMealKitProduct: { order: $order }
+                           }
+                        }
+                     ) {
+                        aggregate {
+                           count(columns: id)
+                        }
+                        nodes {
+                           id
+                           unit
+                           quantity
+                           allOrderSachets: orderSachets_aggregate(
+                              where: { orderMealKitProduct: { order: $order } }
+                           ) {
+                              aggregate {
+                                 count(columns: id)
+                                 sum {
+                                    quantity
+                                 }
+                              }
+                              nodes {
+                                 id
+                                 isAssembled
+                                 orderMealKitProduct {
+                                    id
+                                    orderId
+                                    simpleRecipeProduct {
+                                       id
+                                       name
+                                    }
+                                 }
+                              }
+                           }
+                           completedOrderSachets: orderSachets_aggregate(
+                              where: {
+                                 orderMealKitProduct: { order: $order }
+                                 status: { _eq: "PACKED" }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: id)
+                                 sum {
+                                    quantity
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   `,
+}

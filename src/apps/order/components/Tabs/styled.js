@@ -16,7 +16,11 @@ export const StyledTab = styled.li(
       background: ${active ? '#fff' : 'transparent'};
       border-right: 1px solid #b4d5e6;
       span {
+         width: 180px;
          padding-left: 12px;
+         text-overflow: ellipsis;
+         white-space: nowrap;
+         overflow: hidden;
       }
       div {
          height: 40px;

@@ -38,15 +38,6 @@ const Orders = () => {
       onSubscriptionData: ({
          subscriptionData: { data: { orders = [] } = {} } = {},
       }) => {
-         console.log(
-            'Orders -> orders',
-            {
-               where: state.orders.where,
-               ...(state.orders.limit && { limit: state.orders.limit }),
-               ...(state.orders.offset && { offset: state.orders.offset }),
-            },
-            orders
-         )
          setOrders(orders)
          if (state.orders.limit) {
             if (!loadingAggregate && ordersAggregate?.aggregate?.count > 10) {
