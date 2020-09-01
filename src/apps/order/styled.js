@@ -4,10 +4,11 @@ export const StyledWrapper = styled.div(
    ({ position }) => css`
       display: grid;
       height: 100vh;
-      grid-template-rows: 1fr;
+      overflow: hidden;
+      grid-template-rows: 1fr 40px;
       grid-template-areas: ${position === 'left'
-         ? '"aside main"'
-         : '"main aside"'};
+         ? '"aside main" "footer footer"'
+         : '"main aside" "footer footer"'};
       grid-template-columns: ${position === 'left' ? '340px 1fr' : '1fr 340px'};
       > aside {
          grid-area: aside;
@@ -16,8 +17,11 @@ export const StyledWrapper = styled.div(
          grid-area: main;
          > main {
             overflow-y: auto;
-            height: calc(100vh - 40px);
+            height: calc(100vh - 80px);
          }
+      }
+      > footer {
+         grid-area: footer;
       }
    `
 )
