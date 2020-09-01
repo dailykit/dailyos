@@ -125,11 +125,14 @@ export const BULK_WORK_ORDERS_SUBSCRIPTION = gql`
       bulkWorkOrders {
          id
          status
+         name
          scheduledOn
          station {
+            id
             name
          }
          user {
+            id
             firstName
             lastName
          }
@@ -144,9 +147,11 @@ export const SACHET_WORK_ORDERS_SUBSCRIPTION = gql`
          status
          scheduledOn
          station {
+            id
             name
          }
          user {
+            id
             firstName
             lastName
          }
@@ -158,11 +163,14 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
    subscription PurchaseOrderItems {
       purchaseOrderItems {
          id
+         type
          supplierItem {
+            id
             name
          }
          status
          packaging {
+            id
             packagingName: name
          }
       }
@@ -215,6 +223,7 @@ export const PACKAGING_SUBSCRIPTION = gql`
          images: assets(path: "images")
 
          supplier {
+            id
             name
             contactPerson
          }
@@ -417,27 +426,34 @@ export const SACHET_ITEMS_SUBSCRIPTION = gql`
 export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
    subscription BulkWorkOrder($id: Int!) {
       bulkWorkOrder(id: $id) {
+         id
          status
+         isPublished
          station {
             name
             id
          }
          user {
+            id
             lastName
             firstName
          }
          scheduledOn
+         outputYield
          outputBulkItem {
+            id
             yield
             processingName
             onHand
             shelfLife
-            supplierItem {
-               name
-            }
+         }
+         supplierItem {
+            id
+            name
          }
          outputQuantity
          inputBulkItem {
+            id
             processingName
             onHand
             shelfLife
@@ -449,16 +465,20 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
 export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
    subscription SachetWorkOrder($id: Int!) {
       sachetWorkOrder(id: $id) {
+         id
          status
+         isPublished
          station {
             name
             id
          }
          user {
+            id
             lastName
             firstName
          }
          scheduledOn
+         outputQuantity
          outputSachetItem {
             id
             onHand
@@ -467,12 +487,24 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             unit
          }
 
+         supplierItem {
+            id
+            name
+         }
+
+         packaging {
+            id
+            name
+         }
+         label
+
          bulkItem {
             id
             processingName
             onHand
             shelfLife
             supplierItem {
+               id
                name
             }
          }
@@ -487,7 +519,10 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
          supplierItem {
             id
             name
-            unit
+            bulkItemAsShipped {
+               id
+               unit
+            }
          }
          status
          orderQuantity
@@ -518,6 +553,7 @@ export const PACKAGINGS_LISTINGS_SUBSCRIPTION = gql`
          id
          packagingName: name
          supplier {
+            id
             name
          }
 
@@ -551,6 +587,18 @@ export const PACKAGING_SPECS_SUBSCRIPTION = gql`
             compressibility
             packagingMaterial
          }
+      }
+   }
+`
+
+export const GET_BULK_ITEMS_SUBSCRIPTION = gql`
+   subscription GetBulkItems($supplierItemId: Int!) {
+      bulkItems(where: { supplierItemId: { _eq: $supplierItemId } }) {
+         id
+         processingName
+         shelfLife
+         onHand
+         unit
       }
    }
 `

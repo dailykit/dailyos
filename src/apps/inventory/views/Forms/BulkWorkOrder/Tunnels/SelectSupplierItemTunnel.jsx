@@ -7,19 +7,21 @@ import {
    useSingleList,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext, useState } from 'react'
+import { toast } from 'react-toastify'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import { TunnelContainer } from '../../../../components'
-import { BulkOrderContext } from '../../../../context/bulkOrder'
-import { SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../../graphql'
+import {
+   SUPPLIER_ITEMS_SUBSCRIPTION,
+   UPDATE_BULK_WORK_ORDER,
+} from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
-export default function SelectSupplierTunnel({ close }) {
+export default function SelectSupplierTunnel({ close, state }) {
    const { t } = useTranslation()
-   const { bulkOrderDispatch } = useContext(BulkOrderContext)
 
    const [search, setSearch] = useState('')
    const [data, setData] = useState([])
@@ -33,12 +35,28 @@ export default function SelectSupplierTunnel({ close }) {
       },
    })
 
-   const handleNext = () => {
-      bulkOrderDispatch({
-         type: 'ADD_SUPPLIER_ITEM',
-         payload: current,
+   const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+      onCompleted: () => {
+         toast.success('Supplier Item added!')
+         close(1)
+      },
+   })
+
+   const handleSave = () => {
+      if (!current || !current.id) return toast.error('Please select an item.')
+      // save supplierItem
+      updateBulkWorkOrder({
+         variables: {
+            id: state.id,
+            object: {
+               supplierItemId: current.id,
+            },
+         },
       })
-      close(1)
    }
 
    if (loading) return <Loader />
@@ -47,7 +65,7 @@ export default function SelectSupplierTunnel({ close }) {
       <>
          <TunnelHeader
             title={t(address.concat('select supplier item'))}
-            right={{ title: 'Save', action: handleNext }}
+            right={{ title: 'Save', action: handleSave }}
             close={() => close(1)}
          />
          <TunnelContainer>

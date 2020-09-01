@@ -121,6 +121,7 @@ export const TITLE = gql`
          defaultSubscriptionServingId
          servings: subscriptionServings(order_by: { servingSize: asc }) {
             id
+            isActive
             size: servingSize
          }
       }
@@ -136,6 +137,7 @@ export const SERVING = gql`
          counts: subscriptionItemCounts(order_by: { count: asc }) {
             id
             count
+            isActive
          }
       }
    }
@@ -218,6 +220,16 @@ export const SUBSCRIPTION_CUSTOMERS = gql`
                }
             }
          }
+      }
+   }
+`
+
+export const SUBSCRIPTION = gql`
+   subscription subscription($id: Int!) {
+      subscription: subscription_subscription_by_pk(id: $id) {
+         id
+         endDate
+         startDate
       }
    }
 `

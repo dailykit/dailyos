@@ -1,11 +1,11 @@
 import React from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 // Components
 import { TextButton, Input, Loader } from '@dailykit/ui'
 
-import { CREATE_STATION, STATION, UPDATE_STATION } from '../../../graphql'
+import { STATION, UPSERT_STATION } from '../../../graphql'
 
 // State
 import { useTabs } from '../../../context'
@@ -29,32 +29,26 @@ import { LabelPrinters } from './sections/LabelPrinters'
 
 const StationForm = () => {
    const params = useParams()
-   const history = useHistory()
-   const { tabs, removeTab, doesTabExists } = useTabs()
+   const { tab, addTab, setTabTitle } = useTabs()
+   const [update] = useMutation(UPSERT_STATION)
    const { loading, data: { station = {} } = {} } = useSubscription(STATION, {
-      variables: { id: params.name },
-   })
-
-   const [update] = useMutation(UPDATE_STATION)
-   const [create] = useMutation(CREATE_STATION, {
-      onCompleted: () => {
-         const condition = node =>
-            node.path === `/settings/stations/${params.name}`
-         const index = tabs.findIndex(condition)
-         const tab = tabs.find(condition)
-         removeTab(null, { tab, index })
+      variables: { id: params.id },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         const { station } = data
+         setForm({ ...form, name: station.name })
+         setTabTitle(station.name)
       },
    })
+
    const [form, setForm] = React.useState({
       name: '',
    })
 
    React.useEffect(() => {
-      const tab = doesTabExists(`/settings/stations/${params.name}`)
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/settings/stations')
+      if (!tab) {
+         addTab(station?.name, `/settings/stations/${params.id}`)
       }
-   }, [params.name, history])
+   }, [tab, params.id])
 
    const handleChange = e => {
       const { name, value } = e.target
@@ -62,21 +56,11 @@ const StationForm = () => {
    }
 
    const handleSubmit = () => {
-      create({
-         variables: {
-            object: {
-               name: form.name,
-            },
-         },
-      })
-   }
-
-   const handleUpdate = () => {
       update({
          variables: {
-            id: params.name,
-            _set: {
-               name: form.name || station.name,
+            object: {
+               id: params.id,
+               name: form.name,
             },
          },
       })
@@ -89,20 +73,14 @@ const StationForm = () => {
             <Input
                type="text"
                name="name"
+               value={form.name}
                style={{ width: '320px' }}
                onChange={e => handleChange(e)}
-               value={form.name || station.name}
                placeholder="Enter the station name"
             />
-            {station?.name ? (
-               <TextButton type="solid" onClick={() => handleUpdate()}>
-                  Update
-               </TextButton>
-            ) : (
-               <TextButton type="solid" onClick={() => handleSubmit()}>
-                  Publish
-               </TextButton>
-            )}
+            <TextButton type="solid" onClick={() => handleSubmit()}>
+               Publish
+            </TextButton>
          </StyledHeader>
          {station?.name && (
             <StyledMain>

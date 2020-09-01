@@ -7,20 +7,23 @@ import {
    Loader,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import { TunnelContainer } from '../../../../../components'
-import { PurchaseOrderContext } from '../../../../../context/purchaseOrder'
-import { SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../../../graphql'
+import {
+   SUPPLIER_ITEMS_SUBSCRIPTION,
+   UPDATE_PURCHASE_ORDER_ITEM,
+} from '../../../../../graphql'
 
 const address =
    'apps.inventory.views.forms.purchaseorders.tunnels.selectsupplieritemtunnel.'
 
-export default function AddressTunnel({ close }) {
+export default function AddressTunnel({ close, state }) {
    const { t } = useTranslation()
-   const { purchaseOrderDispatch } = useContext(PurchaseOrderContext)
    const [search, setSearch] = useState('')
    const [data, setData] = useState([])
 
@@ -33,16 +36,28 @@ export default function AddressTunnel({ close }) {
       },
    })
 
-   const handleNext = () => {
-      const bulkItemAsShipped = current.bulkItems.find(
-         item => item.id === current.bulkItemAsShippedId
-      )
-      const payload = { ...current, bulkItemAsShipped, bulkItems: [] }
-      purchaseOrderDispatch({
-         type: 'ADD_SUPPLIER_ITEM',
-         payload,
+   const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+      },
+      onCompleted: () => {
+         toast.success('Supplier Item added!')
+         close(1)
+      },
+   })
+
+   const handleSave = () => {
+      updatePurchaseOrder({
+         variables: {
+            id: state.id,
+            set: {
+               supplierItemId: current.id,
+               bulkItemId: current.bulkItemAsShippedId,
+               supplierId: current.supplier?.id,
+            },
+         },
       })
-      close(1)
    }
 
    if (loading) return <Loader />
@@ -52,7 +67,7 @@ export default function AddressTunnel({ close }) {
          <TunnelHeader
             title={t(address.concat('select supplier item'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            right={{ title: 'Save', action: handleSave }}
          />
          <TunnelContainer>
             <List>

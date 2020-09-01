@@ -399,22 +399,23 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                      <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
-               {state.configurable.nutrients?.fat ||
-               state.configurable.nutrients?.cal ? (
+               {state.configurable.nutrients?.totalFat ||
+               state.configurable.nutrients?.calories ? (
                   <Nutrition
                      data={{
-                        calories: state.configurable.nutrients.cal,
-                        totalFat: state.configurable.nutrients.fat,
+                        calories: state.configurable.nutrients.calories,
+                        totalFat: state.configurable.nutrients.totalFat,
                         transFat: state.configurable.nutrients.transFat,
                         saturatedFat: state.configurable.nutrients.saturatedFat,
-                        cholesterol: state.configurable.nutrients.cholestrol,
+                        cholesterol: state.configurable.nutrients.cholesterol,
                         sodium: state.configurable.nutrients.sodium,
-                        totalCarbohydrates: state.configurable.nutrients.carbs,
-                        dietaryFibre: state.configurable.nutrients.dietryFiber,
-                        sugars: state.configurable.nutrients.sugar,
+                        totalCarbohydrates:
+                           state.configurable.nutrients.totalCarbohydrates,
+                        dietaryFibre: state.configurable.nutrients.dietaryFibre,
+                        sugars: state.configurable.nutrients.sugars,
                         protein: state.configurable.nutrients.protein,
-                        vitaminA: state.configurable.nutrients.vitA,
-                        vitaminC: state.configurable.nutrients.vitC,
+                        vitaminA: state.configurable.nutrients.vitaminA,
+                        vitaminC: state.configurable.nutrients.vitaminC,
                         iron: state.configurable.nutrients.iron,
                         calcium: state.configurable.nutrients.calcium,
                      }}

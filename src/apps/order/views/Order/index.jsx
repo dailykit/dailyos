@@ -1,13 +1,16 @@
 import React from 'react'
+import { Dropdown } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { useOrder } from '../../context'
-import { ORDER } from '../../graphql'
+import { ORDER, STATIONS } from '../../graphql'
 import { formatDate } from '../../utils'
 import { Loader } from '../../components'
+import { Flex } from '../../../../shared/components'
 import { UserIcon, PrintIcon } from '../../assets/icons'
+import MealKitProductDetails from './MealKitProductDetails'
 
 import {
    Wrapper,
@@ -28,8 +31,6 @@ import {
    StyledStatus,
 } from './styled'
 
-import MealKitProductDetails from './MealKitProductDetails'
-
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 const address = 'apps.order.views.order.'
@@ -38,13 +39,19 @@ const Order = () => {
    const params = useParams()
    const { switchView, dispatch } = useOrder()
    const [order, setOrder] = React.useState(null)
+   const [station, setStation] = React.useState(null)
    const [mealkits, setMealKits] = React.useState([])
    const [inventories, setInventories] = React.useState([])
    const [readytoeats, setReadyToEats] = React.useState([])
+   const { data: { stations = [] } = {} } = useSubscription(STATIONS)
 
    const { loading, error } = useSubscription(ORDER, {
       variables: {
          id: params.id,
+         ...(station && {
+            packingStationId: { _eq: station },
+            assemblyStationId: { _eq: station },
+         }),
       },
       onSubscriptionData: async ({ subscriptionData: { data = {} } }) => {
          const {
@@ -140,10 +147,22 @@ const Order = () => {
             </section>
          </Header>
          <section>
-            <StyledCount>
-               0 / {inventories.length + mealkits.length + readytoeats.length}
-               &nbsp;{t(address.concat('items'))}
-            </StyledCount>
+            <Flex container alignItems="center" justifyContent="space-between">
+               <StyledCount>
+                  0 /{' '}
+                  {inventories.length + mealkits.length + readytoeats.length}
+                  &nbsp;{t(address.concat('items'))}
+               </StyledCount>
+               <div style={{ width: '280px' }}>
+                  <Dropdown
+                     type="single"
+                     options={stations}
+                     searchedOption={() => {}}
+                     placeholder="select a station"
+                     selectedOption={option => setStation(option.id)}
+                  />
+               </div>
+            </Flex>
             <StyledTabs>
                <StyledTabList>
                   <StyledTab>Meal Kits ({mealkits.length})</StyledTab>
@@ -207,9 +226,10 @@ const MealKits = ({ mealkits }) => {
                   <div>
                      <StyledProductTitle>
                         {mealkit?.simpleRecipeProduct?.name}
-                        &nbsp;-&nbsp;
-                        {mealkit?.comboProduct?.name}(
-                        {mealkit?.comboProductComponent?.label})
+                        {mealkit?.comboProduct?.name}
+                        &nbsp;
+                        {mealkit?.comboProductComponent?.label &&
+                           `(${mealkit?.comboProductComponent?.label})`}
                      </StyledProductTitle>
                   </div>
                   <section>
@@ -299,9 +319,10 @@ const Inventories = ({ inventories }) => {
             >
                <StyledProductTitle>
                   {inventory?.inventoryProduct?.name}
-                  &nbsp;-&nbsp;
-                  {inventory?.comboProduct?.name}(
-                  {inventory?.comboProductComponent?.label})
+                  {inventory?.comboProduct?.name}
+                  &nbsp;
+                  {inventory?.comboProductComponent?.label &&
+                     `(${inventory?.comboProductComponent?.label})`}
                </StyledProductTitle>
                <section>
                   <span>
@@ -357,9 +378,11 @@ const ReadyToEats = ({ readytoeats }) => {
             >
                <div>
                   <StyledProductTitle>
+                     {readytoeat?.simpleRecipeProduct?.name}
                      {readytoeat?.comboProduct?.name}
-                     &nbsp;(
-                     {readytoeat?.comboProductComponent?.label})
+                     &nbsp;
+                     {readytoeat?.comboProductComponent?.label &&
+                        `(${readytoeat?.comboProductComponent?.label})`}
                   </StyledProductTitle>
                </div>
                <section>

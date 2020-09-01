@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import { useMutation } from '@apollo/react-hooks'
 
 import { UPDATE_ORDER } from '../../graphql'
@@ -6,6 +7,9 @@ import { UPDATE_ORDER } from '../../graphql'
 const Context = React.createContext()
 
 const initialState = {
+   filter: {
+      tunnel: false,
+   },
    delivery_config: {
       orderId: null,
    },
@@ -19,6 +23,15 @@ const initialState = {
    },
    readytoeat: {
       id: null,
+   },
+   orders: {
+      loading: true,
+      limit: 10,
+      offset: 0,
+      where: {
+         orderStatus: { _eq: 'PENDING' },
+         // fulfillmentTimestamp: { _gte: moment().format('YYYY-MM-DD HH:MM') },
+      },
    },
 }
 
@@ -73,6 +86,112 @@ const reducers = (state, { type, payload }) => {
                ...state.delivery_config,
                ...payload,
             },
+         }
+      }
+      case 'SET_FILTER': {
+         return {
+            ...state,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: { ...state.orders.where, ...payload },
+            },
+         }
+      }
+      case 'SET_PAGINATION': {
+         return {
+            ...state,
+            orders: {
+               ...state.orders,
+               limit: payload.limit,
+               offset: payload.offset,
+            },
+         }
+      }
+      case 'CLEAR_READY_BY_FILTER': {
+         const { readyByTimestamp, ...rest } = state.orders.where
+         return {
+            ...state,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
+      case 'CLEAR_FULFILLMENT_FILTER': {
+         const { fulfillmentTimestamp, ...rest } = state.orders.where
+         return {
+            ...state,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
+      case 'CLEAR_FULFILLMENT_TYPE_FILTER': {
+         const { fulfillmentType, ...rest } = state.orders.where
+         return {
+            ...state,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
+      case 'CLEAR_SOURCE_FILTER': {
+         const { source, ...rest } = state.orders.where
+         return {
+            ...state,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
+      case 'CLEAR_AMOUNT_FILTER': {
+         const { amountPaid, ...rest } = state.orders.where
+         return {
+            ...state,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
+      case 'CLEAR_STATION_FILTER': {
+         const { _or, ...rest } = state.orders.where
+         return {
+            ...state,
+            loading: true,
+            orders: {
+               loading: true,
+               limit: 10,
+               offset: 0,
+               where: rest,
+            },
+         }
+      }
+      case 'TOGGLE_FILTER_TUNNEL': {
+         return {
+            ...state,
+            filter: payload,
+         }
+      }
+      case 'SET_ORDERS_STATUS': {
+         return {
+            ...state,
+            orders: { ...state.orders, loading: payload },
          }
       }
       default:

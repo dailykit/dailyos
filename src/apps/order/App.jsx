@@ -1,6 +1,6 @@
 import React from 'react'
 import usePortal from 'react-useportal'
-import { Tunnels, Tunnel, useTunnel, TunnelHeader } from '@dailykit/ui'
+import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // Context
@@ -15,6 +15,7 @@ import { StyledWrapper } from './styled'
 import {
    OrderSummary,
    ProcessOrder,
+   FilterTunnel,
    DeliveryConfig,
    Notifications,
    ProcessInventory,
@@ -24,6 +25,7 @@ import {
 const App = () => {
    const { state } = useOrder()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('notifications'),
@@ -34,6 +36,14 @@ const App = () => {
          openTunnel(1)
       }
    }, [state.delivery_config])
+
+   React.useEffect(() => {
+      if (state.filter.tunnel) {
+         openFilterTunnel(1)
+      } else {
+         closeFilterTunnel(1)
+      }
+   }, [state.filter.tunnel])
 
    if (position === 'left')
       return (
@@ -69,6 +79,13 @@ const App = () => {
                   </Tunnel>
                </Tunnels>
             </Portal>
+            <Portal>
+               <Tunnels tunnels={filterTunnels}>
+                  <Tunnel layer="1" size="sm">
+                     <FilterTunnel />
+                  </Tunnel>
+               </Tunnels>
+            </Portal>
          </StyledWrapper>
       )
    return (
@@ -77,6 +94,13 @@ const App = () => {
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1" size="md">
                   <DeliveryConfig />
+               </Tunnel>
+            </Tunnels>
+         </Portal>
+         <Portal>
+            <Tunnels tunnels={filterTunnels}>
+               <Tunnel layer="1" size="sm">
+                  <FilterTunnel />
                </Tunnel>
             </Tunnels>
          </Portal>

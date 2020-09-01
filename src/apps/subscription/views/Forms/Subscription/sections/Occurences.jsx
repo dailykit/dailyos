@@ -15,8 +15,10 @@ const Occurences = ({ id, setOccurencesTotal }) => {
    } = useSubscription(SUBSCRIPTION_OCCURENCES_LIST, {
       variables: { id },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         const { aggregate } = data.subscription_occurences.occurences_aggregate
-         setOccurencesTotal(aggregate.count)
+         const {
+            aggregate = {},
+         } = data.subscription_occurences?.occurences_aggregate
+         setOccurencesTotal(aggregate?.count || 0)
       },
    })
 
@@ -51,7 +53,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          ref={tableRef}
          columns={columns}
          options={{ ...tableOptions, layout: 'fitColumns' }}
-         data={subscription_occurences.occurences_aggregate.nodes}
+         data={subscription_occurences?.occurences_aggregate?.nodes || []}
       />
    )
 }

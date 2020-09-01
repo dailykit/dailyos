@@ -68,11 +68,21 @@ export const NOTIFICATIONS = gql`
    }
 `
 
-export const SUMMARY = gql`
-   subscription ordersSummary {
-      orders(limit: 1) {
-         summary
-         currency
+export const ORDER_BY_STATUS = gql`
+   subscription orderByStatus {
+      orderByStatus: order_orderStatusEnum {
+         value
+         orders: orders_aggregate {
+            aggregate {
+               count
+               sum {
+                  amount: amountPaid
+               }
+               avg {
+                  amountPaid
+               }
+            }
+         }
       }
    }
 `
@@ -96,10 +106,16 @@ export const ORDER_STATUSES = gql`
 `
 
 export const ORDERS = gql`
-   subscription orders {
+   subscription orders(
+      $limit: Int
+      $offset: Int
+      $where: order_order_bool_exp = {}
+   ) {
       orders(
+         limit: $limit
+         offset: $offset
          order_by: { updated_at: desc }
-         where: { orderStatus: { _neq: "DELIVERED" } }
+         where: $where
       ) {
          id
          created_at
@@ -126,7 +142,6 @@ export const ORDERS = gql`
             comboProductComponent {
                label
             }
-            recipeCardUri
             orderSachets {
                status
                isAssembled
@@ -196,7 +211,11 @@ export const ORDERS = gql`
 `
 
 export const ORDER = gql`
-   subscription order($id: oid!) {
+   subscription order(
+      $id: oid!
+      $packingStationId: Int_comparison_exp = {}
+      $assemblyStationId: Int_comparison_exp = {}
+   ) {
       order(id: $id) {
          id
          created_at
@@ -212,7 +231,6 @@ export const ORDER = gql`
          orderMealKitProducts {
             id
             assemblyStatus
-            recipeCardUri
             assemblyStation {
                name
             }
@@ -230,10 +248,9 @@ export const ORDER = gql`
                   yield
                }
             }
-            orderSachets {
+            orderSachets(where: { packingStationId: $packingStationId }) {
                id
                status
-               labelUri
                quantity
                isAssembled
                isLabelled
@@ -270,7 +287,9 @@ export const ORDER = gql`
                }
             }
          }
-         orderReadyToEatProducts {
+         orderReadyToEatProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
             id
             assemblyStatus
             simpleRecipeProduct {
@@ -296,7 +315,9 @@ export const ORDER = gql`
                }
             }
          }
-         orderInventoryProducts {
+         orderInventoryProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
             id
             inventoryProduct {
                name
@@ -328,7 +349,6 @@ export const FETCH_ORDER_MEALKIT = gql`
       orderMealKitProduct(id: $id) {
          id
          assemblyStatus
-         recipeCardUri
          assemblyStation {
             name
          }
@@ -349,7 +369,6 @@ export const FETCH_ORDER_MEALKIT = gql`
          orderSachets {
             id
             status
-            labelUri
             quantity
             isAssembled
             ingredientName
@@ -394,7 +413,6 @@ export const FETCH_ORDER_SACHET = gql`
       orderSachet(id: $id) {
          id
          status
-         labelUri
          quantity
          isAssembled
          ingredientName
@@ -432,6 +450,7 @@ export const FETCH_ORDER_SACHET = gql`
       }
    }
 `
+
 export const FETCH_INVENTORY = gql`
    subscription orderInventoryProduct($id: Int!) {
       orderInventoryProduct(id: $id) {
@@ -503,6 +522,34 @@ export const FETCH_READYTOEAT = gql`
                yield
             }
          }
+      }
+   }
+`
+
+export const ORDERS_AGGREGATE = gql`
+   query ordersAggregate($where: order_order_bool_exp = {}) {
+      ordersAggregate(where: $where) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const STATIONS = gql`
+   subscription stations {
+      stations {
+         id
+         title: name
+      }
+   }
+`
+
+export const STATION = gql`
+   query station($id: Int!) {
+      station(id: $id) {
+         id
+         name
       }
    }
 `

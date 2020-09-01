@@ -2,6 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import { RRule } from 'rrule'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Text,
@@ -75,17 +76,23 @@ const ItemCount = ({ id, openItemTunnel }) => {
    }, [])
 
    const toggleIsActive = value => {
-      upsertItemCount({
-         variables: {
-            object: {
-               isActive: value,
-               id: state.item.id,
-               count: state.item.count,
-               price: state.item.price,
-               subscriptionServingId: state.serving.id,
+      if (itemCount.subscriptions.length > 0) {
+         return upsertItemCount({
+            variables: {
+               object: {
+                  isActive: value,
+                  id: state.item.id,
+                  count: state.item.count,
+                  price: state.item.price,
+                  subscriptionServingId: state.serving.id,
+               },
             },
-         },
+         })
+      }
+      toast.error('Can not be published without any subscriptions!', {
+         position: 'top-center',
       })
+      return
    }
 
    if (loading) return <InlineLoader />

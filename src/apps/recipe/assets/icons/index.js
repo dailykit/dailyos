@@ -10,6 +10,9 @@ import ChevronRightIcon from './ChevronRight'
 import CircleIcon from './Circle'
 import EyeIcon from './Eye'
 import TickIcon from './Tick'
+import FileIcon from './File'
+import DollarIcon from './Dollar'
+import InfoIcon from './Info'
 
 export {
    MenuIcon,
@@ -24,4 +27,7 @@ export {
    CircleIcon,
    EyeIcon,
    TickIcon,
+   FileIcon,
+   DollarIcon,
+   InfoIcon,
 }

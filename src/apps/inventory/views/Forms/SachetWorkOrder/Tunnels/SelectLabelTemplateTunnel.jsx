@@ -8,17 +8,23 @@ import {
    useMultiList,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import React from 'react'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 
 import { TunnelContainer } from '../../../../components'
-import { SachetOrderContext } from '../../../../context/sachetOrder'
+import { UPDATE_SACHET_WORK_ORDER } from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
-export default function SelectLabelTemplateTunnel({ close }) {
+const onError = error => {
+   console.log(error)
+   toast.error(error.message)
+}
+
+export default function SelectLabelTemplateTunnel({ close, state }) {
    const { t } = useTranslation()
-   const { sachetOrderDispatch } = useContext(SachetOrderContext)
 
    const [search, setSearch] = React.useState('')
    const [data] = React.useState([
@@ -37,12 +43,23 @@ export default function SelectLabelTemplateTunnel({ close }) {
 
    const [list, selected, selectOption] = useMultiList(data || [])
 
+   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
+      onCompleted: () => {
+         toast.info('Work Order updated successfully!')
+         close(1)
+      },
+      onError,
+   })
+
    const handleNext = () => {
-      sachetOrderDispatch({
-         type: 'SELECT_TEMPLATE_OPTIONS',
-         payload: selected,
+      updateSachetWorkOrder({
+         variables: {
+            id: state.id,
+            set: {
+               label: selected,
+            },
+         },
       })
-      close(1)
    }
 
    return (

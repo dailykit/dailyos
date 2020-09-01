@@ -48,7 +48,7 @@ const Main = () => {
             <Route path="/settings/stations" exact>
                <StationsListing />
             </Route>
-            <Route path="/settings/stations/:name">
+            <Route path="/settings/stations/:id">
                <StationForm />
             </Route>
             <Route path="/settings/master-lists" exact>
