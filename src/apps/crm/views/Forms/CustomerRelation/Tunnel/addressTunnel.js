@@ -2,7 +2,7 @@ import React from 'react'
 import { Tunnels, Tunnel, TunnelHeader, Loader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
-import { concatAddress } from '../../../../Utils'
+import { addressStringify } from '../../../../Utils'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
 
 const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
@@ -29,7 +29,7 @@ const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
                      return (
                         <CustomerAddress key={address.id}>
                            <Text as="subtitle">Delivery Address</Text>
-                           <Text as="title">{concatAddress(address)}</Text>
+                           <Text as="title">{addressStringify(address)}</Text>
                         </CustomerAddress>
                      )
                   }
