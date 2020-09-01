@@ -58,3 +58,17 @@ export const UPDATE_READYTOEAT = gql`
       }
    }
 `
+
+export const UPSERT_SETTING = gql`
+   mutation upsertSetting($object: settings_appSettings_insert_input!) {
+      upsertSetting: insert_settings_appSettings_one(
+         object: $object
+         on_conflict: {
+            constraint: appSettings_pkey
+            update_columns: [value, app, type, identifier]
+         }
+      ) {
+         id
+      }
+   }
+`

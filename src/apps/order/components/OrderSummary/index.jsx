@@ -54,9 +54,9 @@ export const OrderSummary = () => {
             title="ALL"
             variant="ALL"
             currency="usd"
-            count={orders?.aggregate.count}
-            amount={orders?.aggregate.sum.amount}
-            average={orders?.aggregate.avg.amountPaid}
+            count={orders?.aggregate?.count}
+            amount={orders?.aggregate?.sum?.amount}
+            average={orders?.aggregate?.avg?.amountPaid}
          />
          <ul>
             {orderByStatus.map(({ value, orders }) => (

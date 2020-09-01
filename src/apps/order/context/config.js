@@ -6,13 +6,23 @@ import { SETTINGS } from '../graphql'
 const ConfigContext = React.createContext()
 
 const initialState = {
-   weight_simultation: {},
+   tunnel: { visible: false },
+   scale: {
+      weight_simulation: {
+         app: 'order',
+         type: 'scale',
+         value: { value: false },
+         identifier: 'weight simulation',
+      },
+   },
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_SETTING':
          return { ...state, [payload.field]: payload.value }
+      case 'TOGGLE_TUNNEL':
+         return { ...state, tunnel: payload }
       default:
          return state
    }
@@ -28,11 +38,15 @@ export const ConfigProvider = ({ children }) => {
             setting => setting.identifier === 'weight simulation'
          )
          if (weighIndex !== -1) {
+            const { __typename, ...rest } = settings[weighIndex]
             dispatch({
                type: 'SET_SETTING',
                payload: {
-                  field: 'weight_simultation',
-                  value: settings[weighIndex],
+                  field: 'scale',
+                  value: {
+                     ...state.scale,
+                     weight_simulation: rest,
+                  },
                },
             })
          }

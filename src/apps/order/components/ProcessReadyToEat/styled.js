@@ -8,7 +8,7 @@ export const Wrapper = styled.aside`
 `
 
 export const StyledMode = styled.div`
-   height: 32px;
+   height: 40px;
    display: flex;
    align-items: center;
    justify-content: space-between;

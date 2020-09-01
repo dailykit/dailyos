@@ -20,7 +20,7 @@ export const StyledStat = styled.span(
 )
 
 export const StyledMode = styled.div`
-   height: 32px;
+   height: 40px;
    display: flex;
    align-items: center;
    justify-content: space-between;

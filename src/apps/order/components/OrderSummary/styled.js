@@ -7,7 +7,7 @@ export const Wrapper = styled.aside`
    border-left: 1px solid #e7e7e7;
    > h2,
    > div > h2 {
-      margin: 8px 0;
+      height: 40px;
       text-transform: uppercase;
       font-size: 14px;
       font-weight: 500;
