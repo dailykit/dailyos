@@ -20,7 +20,6 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
                   allCards?.customer?.platform_customers[0]
                      ?.stripePaymentMethods?.length || 'N/A'
                })`}
-               //   right={{ action: () => openTunnel(2), title: 'Next' }}
                close={() => closeTunnel(1)}
             />
             <TunnelHeaderContainer>

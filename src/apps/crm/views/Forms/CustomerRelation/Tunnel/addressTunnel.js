@@ -2,27 +2,26 @@ import React from 'react'
 import { Tunnels, Tunnel, TunnelHeader, Loader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
-import { ConcatAddress } from '../../../../Utils'
+import { concatAddress } from '../../../../Utils'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
 
-const AddressTunnel = props => {
+const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
    const { loading: listLoading, data: allAddress } = useQuery(ALL_DATA, {
       variables: {
-         keycloakId: props.id,
+         keycloakId: id,
       },
    })
    if (listLoading) return <Loader />
 
    return (
-      <Tunnels tunnels={props.tunnels}>
+      <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
             <TunnelHeader
                title={`Address Cards(${
                   allAddress?.customer?.platform_customers[0]?.customerAddresses
                      ?.length || 'N/A'
                })`}
-               //   right={{ action: () => openTunnel(2), title: 'Next' }}
-               close={() => props.closeTunnel(1)}
+               close={() => closeTunnel(1)}
             />
             <TunnelHeaderContainer>
                {allAddress?.customer?.platform_customers[0]?.customerAddresses?.map(
@@ -30,7 +29,7 @@ const AddressTunnel = props => {
                      return (
                         <CustomerAddress key={address.id}>
                            <Text as="subtitle">Delivery Address</Text>
-                           <Text as="title">{ConcatAddress(address)}</Text>
+                           <Text as="title">{concatAddress(address)}</Text>
                         </CustomerAddress>
                      )
                   }

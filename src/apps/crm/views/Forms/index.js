@@ -1,3 +1,3 @@
-import customerRelation from './CustomerRelation'
+import CustomerRelation from './CustomerRelation'
 
-export { customerRelation }
+export { CustomerRelation }

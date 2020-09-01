@@ -42,7 +42,7 @@ const OrderInfo = () => {
          type: 'STORE_TAB_DATA',
          payload: {
             path: tab.path,
-            data: { oid: orderId, isOrderClicked: order },
+            data: { oid: orderId, isOccurencesClicked: order },
          },
       })
    }
@@ -127,7 +127,7 @@ const OrderInfo = () => {
                <StyledInput
                   type="button"
                   onClick={() => setOrder('', false)}
-                  value="Orders"
+                  value="Occurences"
                />
                <ChevronRight size="20" />
                <Text as="p">Order Id: #{tab.data.oid}</Text>

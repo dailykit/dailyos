@@ -76,27 +76,6 @@ export const StyledSection = styled.div`
    margin-top: 48px;
 `
 
-export const StyledTunnelHeader = styled.div`
-   padding: 24px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   > div {
-      display: flex;
-      align-items: center;
-
-      svg {
-         cursor: pointer;
-      }
-   }
-   h1 {
-      color: #888d9d;
-      font-size: 18px;
-      font-weight: 400;
-      margin-left: 12px;
-   }
-`
-
 export const StyledTunnelMain = styled.div`
    padding: 0 24px 24px 24px;
 `
