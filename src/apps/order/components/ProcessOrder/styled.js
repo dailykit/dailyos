@@ -70,24 +70,28 @@ export const StyledButton = styled.button`
    background: #53c22b;
 `
 
-export const StyledWeigh = styled.section`
-   color: #fff;
-   height: 180px;
-   display: grid;
-   padding: 0 16px;
-   background: #0ead69;
-   border-radius: 4px;
-   grid-template-rows: 48px 1fr 48px;
-   * {
-      display: flex;
-      align-items: center;
-   }
-   h2 {
+export const StyledWeigh = styled.section(
+   ({ state }) => css`
       color: #fff;
-      font-size: 32px;
-      font-weight: 300;
-   }
-`
+      height: 180px;
+      display: grid;
+      padding: 0 16px;
+      border-radius: 4px;
+      grid-template-rows: 48px 1fr 48px;
+      ${state === 'low' && `background: #e7c439`};
+      ${state === 'match' && `background: #0ead69`};
+      ${state === 'above' && `background: #ea3838`};
+      * {
+         display: flex;
+         align-items: center;
+      }
+      h2 {
+         color: #fff;
+         font-size: 32px;
+         font-weight: 300;
+      }
+   `
+)
 
 export const StyledPackaging = styled.section`
    display: grid;
@@ -154,5 +158,25 @@ export const StyledSOP = styled.section`
          object-fit: cover;
          position: absolute;
       }
+   }
+`
+
+export const ManualWeight = styled.section`
+   display: flex;
+   margin-top: 16px;
+   align-items: center;
+   justify-content: space-between;
+   input {
+      width: 180px;
+      height: 32px;
+      padding: 0 8px;
+      margin-right: 8px;
+      border-radius: 2px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+   }
+   button {
+      height: 32px;
+      padding: 0 8px;
+      font-size: 14px;
    }
 `
