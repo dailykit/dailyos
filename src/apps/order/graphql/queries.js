@@ -926,3 +926,29 @@ export const PLANNED = {
       }
    `,
 }
+
+export const STATION_USER = gql`
+   subscription station_user($email: String_comparison_exp!) {
+      station_user(where: { user: { email: $email } }) {
+         active
+         station {
+            id
+            name
+            defaultKotPrinter {
+               name
+               state
+            }
+            defaultLabelPrinter {
+               name
+               state
+            }
+            defaultScale {
+               id
+               active
+               deviceNum
+               deviceName
+            }
+         }
+      }
+   }
+`

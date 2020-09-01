@@ -1,5 +1,8 @@
 import React from 'react'
 import Keycloak from 'keycloak-js'
+import { useSubscription } from '@apollo/react-hooks'
+
+import { STATION_USER } from '../../graphql'
 
 const keycloak = new Keycloak({
    realm: process.env.REACT_APP_KEYCLOAK_REALM,
@@ -18,7 +21,20 @@ const AuthContext = React.createContext()
 export const AuthProvider = ({ children }) => {
    const [isAuthenticated, setIsAuthenticated] = React.useState(false)
    const [user, setUser] = React.useState({})
+   const [station, setStation] = React.useState([])
    const [isInitialized, setIsInitialized] = React.useState(false)
+   useSubscription(STATION_USER, {
+      variables: {
+         email: { _eq: user.email },
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { station_user = [] } = {} } = {},
+      }) => {
+         if (station_user.length > 0) {
+            setStation(station_user[0].station)
+         }
+      },
+   })
 
    const initialize = async () => {
       const authenticated = await keycloak.init({
@@ -49,6 +65,7 @@ export const AuthProvider = ({ children }) => {
             user,
             login,
             logout,
+            station,
             clearToken,
             updateToken,
             isInitialized,

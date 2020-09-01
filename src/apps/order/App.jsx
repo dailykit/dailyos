@@ -9,6 +9,7 @@ import { useOrder } from './context'
 // Sections
 import Header from './sections/Header'
 import Main from './sections/Main'
+import Footer from './sections/Footer'
 
 // Styled
 import { StyledWrapper } from './styled'
@@ -62,6 +63,7 @@ const App = () => {
                <Main />
             </main>
          </Router>
+         <Footer />
          {isOpen && (
             <Portal>
                <Notifications
