@@ -13,8 +13,8 @@ const LabelPrinterIcon = () => {
             fill="#4f595e"
          />
          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M4.61 17.227V12.46h10.703v6.367c0 .647-.525 1.172-1.172 1.172H5.78a1.172 1.172 0 01-1.172-1.172v-1.601zm1.257-3.894v5.334h.666v-5.334h-.666zm7.466 5.334v-5.334H14v5.334h-.667zm-6.266-5.334v5.334h.4v-5.334h-.4zM12 18.667v-5.334h.4v5.334H12zm-4-5.334v5.334h1.333v-5.334H8zm2.667 5.334v-5.334h.8v5.334h-.8zM10 13.333v5.334h.267v-5.334H10z"
             fill="#4f595e"
          />
