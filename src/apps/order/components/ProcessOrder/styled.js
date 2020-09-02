@@ -58,17 +58,25 @@ export const StyledMain = styled.main`
    }
 `
 
-export const StyledButton = styled.button`
-   color: #fff;
-   height: 32px;
-   border: none;
-   padding: 0 12px;
-   cursor: pointer;
-   margin-top: 16px;
-   margin-right: 16px;
-   border-radius: 6px;
-   background: #53c22b;
-`
+export const StyledButton = styled.button(
+   ({ disabled }) => css`
+      color: #fff;
+      height: 32px;
+      border: none;
+      padding: 0 12px;
+      cursor: pointer;
+      margin-top: 16px;
+      margin-right: 16px;
+      border-radius: 6px;
+      background: #53c22b;
+      ${disabled &&
+      css`
+         color: #9e9292;
+         background: #e2e2e2;
+         cursor: not-allowed;
+      `}
+   `
+)
 
 export const StyledWeigh = styled.section(
    ({ state }) => css`

@@ -170,13 +170,13 @@ export const ListBody = styled.div(() => css``)
 const selectBg = (arg1, arg2) => {
    const args = [arg1, arg2]
    if (args.every(item => item === true)) {
-      return '#79df54'
+      return '#79df54' // green
    }
    if (args.every(item => item === false)) {
-      return '#f9daa8'
+      return '#f9daa8' //pending
    }
    if (args.some(item => item === false)) {
-      return '#65c6ff'
+      return '#65c6ff' // processing
    }
    return ''
 }
