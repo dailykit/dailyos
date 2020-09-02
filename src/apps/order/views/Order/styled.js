@@ -167,23 +167,25 @@ export const ListHead = styled.header(
 
 export const ListBody = styled.div(() => css``)
 
-const selectBg = (arg1, arg2) => {
-   const args = [arg1, arg2]
-   if (args.every(item => item === true)) {
+const selectBg = (isPacked, isAssembled) => {
+   if (isPacked && isAssembled) {
       return '#79df54' // green
    }
-   if (args.every(item => item === false)) {
+   if (!isPacked && !isAssembled) {
       return '#f9daa8' //pending
    }
-   if (args.some(item => item === false)) {
+   if (isPacked && !isAssembled) {
       return '#65c6ff' // processing
    }
    return ''
 }
 
 export const ListBodyItem = styled.div(
-   ({ isOpen, variant: { isLabelled, isPortioned } }) => css`
-      background: ${selectBg(isLabelled, isPortioned)};
+   ({ isOpen, variant: { isPacked, isAssembled } }) => css`
+      overflow: hidden;
+      margin-bottom: 4px;
+      border-radius: 2px;
+      background: ${selectBg(isPacked, isAssembled)};
       header {
          height: 48px;
          display: grid;
@@ -214,7 +216,6 @@ export const ListBodyItem = styled.div(
          grid-gap: 24px;
          display: ${isOpen ? 'grid' : 'none'};
          border-top: 1px solid rgba(0, 0, 0, 0.2);
-         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
          > section {
             display: flex;
