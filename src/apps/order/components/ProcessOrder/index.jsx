@@ -157,7 +157,7 @@ export const ProcessOrder = () => {
                <span />
             </StyledWeigh>
             {sachet.status !== 'PACKED' &&
-               state.scale.weight_simulation.value.value && (
+               state.scale.weight_simulation.value.isActive && (
                   <ManualWeight>
                      <input
                         type="number"

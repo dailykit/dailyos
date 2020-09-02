@@ -11,8 +11,16 @@ const initialState = {
       weight_simulation: {
          app: 'order',
          type: 'scale',
-         value: { value: false },
+         value: { isActive: false },
          identifier: 'weight simulation',
+      },
+   },
+   print: {
+      print_simulation: {
+         app: 'order',
+         type: 'print',
+         value: { isActive: false },
+         identifier: 'print simulation',
       },
    },
 }
@@ -46,6 +54,22 @@ export const ConfigProvider = ({ children }) => {
                   value: {
                      ...state.scale,
                      weight_simulation: rest,
+                  },
+               },
+            })
+         }
+         const printIndex = settings.findIndex(
+            setting => setting.identifier === 'print simulation'
+         )
+         if (printIndex !== -1) {
+            const { __typename, ...rest } = settings[printIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'print',
+                  value: {
+                     ...state.print,
+                     print_simulation: rest,
                   },
                },
             })
