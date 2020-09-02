@@ -48,7 +48,7 @@ export const InventoryProduct = () => {
             `/apps/order/planned/inventory/${params.id}`
          )
       }
-   }, [tab, loading])
+   }, [tab, loading, addTab, inventoryProduct, params.id])
 
    const selectOption = id => {
       selectInventory(id)

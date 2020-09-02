@@ -67,7 +67,7 @@ const Title = () => {
       if (!loading && !tab && title?.id) {
          addTab(title.title, `/subscription/subscriptions/${title.id}`)
       }
-   }, [loading, tab, title])
+   }, [loading, tab, title, addTab])
 
    const handleChange = e => {
       dispatch({
@@ -101,7 +101,7 @@ const Title = () => {
             },
          })
       }
-   }, [loading, title])
+   }, [loading, title, upsertTitle])
 
    const toggleIsActive = value => {
       if (

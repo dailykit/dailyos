@@ -28,7 +28,7 @@ const Planned = () => {
       if (!tab) {
          addTab('Planned', '/apps/order/planned')
       }
-   }, [tab])
+   }, [tab, addTab])
 
    return (
       <Wrapper>

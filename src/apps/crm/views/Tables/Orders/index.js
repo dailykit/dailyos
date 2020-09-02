@@ -36,19 +36,22 @@ const OrdersTable = ({ id }) => {
       { title: 'Delivered On', field: 'deliveredOn', align: 'center' },
    ]
 
-   const setOrder = (orderId, order) => {
-      dispatch({
-         type: 'STORE_TAB_DATA',
-         payload: {
-            path: tab?.path,
-            data: { oid: orderId, isOrderClicked: order },
-         },
-      })
-   }
+   const setOrder = React.useCallback(
+      (orderId, order) => {
+         dispatch({
+            type: 'STORE_TAB_DATA',
+            payload: {
+               path: tab?.path,
+               data: { oid: orderId, isOrderClicked: order },
+            },
+         })
+      },
+      [tab, dispatch]
+   )
 
    useEffect(() => {
       setOrder('', false)
-   }, [])
+   }, [setOrder])
 
    const data = []
    if (ordersListing) {

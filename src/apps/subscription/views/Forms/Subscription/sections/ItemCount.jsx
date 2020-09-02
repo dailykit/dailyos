@@ -73,7 +73,7 @@ const ItemCount = ({ id, openItemTunnel }) => {
             },
          })
       }
-   }, [])
+   }, [dispatch])
 
    const toggleIsActive = value => {
       if (itemCount.subscriptions.length > 0) {

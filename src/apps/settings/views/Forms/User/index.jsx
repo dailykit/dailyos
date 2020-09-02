@@ -18,7 +18,7 @@ import { Section, StyledTemp } from './styled'
 const UserForm = () => {
    const params = useParams()
    const history = useHistory()
-   const { tabs, doesTabExists, removeTab } = useTabs()
+   const { tabs, tab, removeTab } = useTabs()
    const [state, dispatch] = React.useReducer(reducers, initialState)
 
    const {
@@ -38,11 +38,10 @@ const UserForm = () => {
    })
 
    React.useEffect(() => {
-      const tab = doesTabExists(`/settings/users/${params.name}`)
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          history.push('/settings/users')
       }
-   }, [params.name, history])
+   }, [history, tab])
 
    const handleChange = e => {
       const { name, value } = e.target

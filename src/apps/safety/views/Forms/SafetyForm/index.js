@@ -25,8 +25,8 @@ import {
 } from '../../../context/check'
 
 import { SAFETY_CHECK, USERS, DELETE_CHECKUP } from '../../../graphql'
-import { StyledWrapper, MasterSettings, Container } from '../styled'
-import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
+import { StyledWrapper, Container } from '../styled'
+import { StyledBody, StyledHeader } from '../styled'
 import { UserTunnel, CheckTunnel } from './tunnels'
 import { Context } from '../../../context'
 
@@ -109,9 +109,15 @@ export default function SimpleRecipeProduct() {
                         <TableHead>
                            <TableRow>
                               <TableCell>{t(address.concat('name'))}</TableCell>
-                              <TableCell>{t(address.concat('uses mask'))}</TableCell>
-                              <TableCell>{t(address.concat('uses sanitizer'))}</TableCell>
-                              <TableCell>{t(address.concat('temprature'))}</TableCell>
+                              <TableCell>
+                                 {t(address.concat('uses mask'))}
+                              </TableCell>
+                              <TableCell>
+                                 {t(address.concat('uses sanitizer'))}
+                              </TableCell>
+                              <TableCell>
+                                 {t(address.concat('temprature'))}
+                              </TableCell>
                               <TableCell></TableCell>
                            </TableRow>
                         </TableHead>
@@ -159,7 +165,7 @@ export default function SimpleRecipeProduct() {
                   <Container>
                      <ButtonTile
                         type="secondary"
-                        text={t(address.concat("add user"))}
+                        text={t(address.concat('add user'))}
                         onClick={() => openTunnel(1)}
                      />
                   </Container>

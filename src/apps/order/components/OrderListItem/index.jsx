@@ -44,8 +44,6 @@ import pickUpIcon from '../../assets/svgs/pickup.png'
 
 import { formatDate } from '../../utils'
 
-import { InlineLoader } from '../../../../shared/components'
-
 import { useTabs, useOrder } from '../../context'
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
 

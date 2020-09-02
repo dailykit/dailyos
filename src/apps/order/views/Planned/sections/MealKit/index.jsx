@@ -2,8 +2,8 @@ import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { PLANNED } from '../../../../graphql'
-import { useOrder, useTabs } from '../../../../context'
-import { InlineLoader, Flex } from '../../../../../../shared/components'
+import { useOrder } from '../../../../context'
+import { InlineLoader } from '../../../../../../shared/components'
 import {
    Product,
    Products,

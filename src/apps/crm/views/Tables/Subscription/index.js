@@ -91,19 +91,22 @@ const SubscriptionTable = ({ id, sid }) => {
       { title: 'Amount Paid', field: 'amountPaid' },
    ]
 
-   const setOrder = (orderId, order) => {
-      dispatch({
-         type: 'STORE_TAB_DATA',
-         payload: {
-            path: tab?.path,
-            data: { oid: orderId, isOccurencesClicked: order },
-         },
-      })
-   }
+   const setOrder = React.useCallback(
+      (orderId, order) => {
+         dispatch({
+            type: 'STORE_TAB_DATA',
+            payload: {
+               path: tab?.path,
+               data: { oid: orderId, isOccurencesClicked: order },
+            },
+         })
+      },
+      [tab, dispatch]
+   )
 
    useEffect(() => {
       setOrder('', false)
-   }, [])
+   }, [setOrder])
 
    const data = []
    if (occurencesData) {

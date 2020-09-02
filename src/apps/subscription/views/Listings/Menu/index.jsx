@@ -12,14 +12,13 @@ import { useTabs } from '../../../context'
 
 export const Menu = () => {
    const history = useHistory()
-   const { tabs, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
 
    React.useEffect(() => {
-      const tab = tabs.find(item => item.path === `/subscription/menu`) || {}
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          addTab('Menu', '/subscription/menu')
       }
-   }, [history, tabs])
+   }, [history, tab, addTab])
 
    return (
       <MenuProvider>
