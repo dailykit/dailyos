@@ -48,12 +48,17 @@ export const UPDATE_INVENTORY_PRODUCT = gql`
 `
 
 export const UPDATE_READYTOEAT = gql`
-   mutation updateOrderReadyToEatProduct($id: Int!, $assemblyStatus: String!) {
+   mutation updateOrderReadyToEatProduct(
+      $id: Int!
+      $assemblyStatus: String!
+      $isAssembled: Boolean!
+   ) {
       updateOrderReadyToEatProduct(
          pk_columns: { id: $id }
-         _set: { assemblyStatus: $assemblyStatus }
+         _set: { assemblyStatus: $assemblyStatus, isAssembled: $isAssembled }
       ) {
          id
+         isAssembled
          assemblyStatus
       }
    }

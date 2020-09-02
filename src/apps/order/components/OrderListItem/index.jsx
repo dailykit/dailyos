@@ -273,12 +273,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                     {inventory?.inventoryProductOption?.label}
                                  </span>
                               </StyledServings>
-                              <span>
-                                 {inventory.assemblyStatus === 'COMPLETED'
-                                    ? 1
-                                    : 0}{' '}
-                                 / 1
-                              </span>
+                              <span>{inventory.isAssembled ? 1 : 0} / 1</span>
                            </StyledProductItem>
                         ))}
                         {mealkits.map(mealkit => (
@@ -334,12 +329,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                     &nbsp; {t(address.concat('servings'))}
                                  </span>
                               </StyledServings>
-                              <span>
-                                 {readytoeat?.assemblyStatus === 'COMPLETED'
-                                    ? 1
-                                    : 0}{' '}
-                                 / 1
-                              </span>
+                              <span>{readytoeat?.isAssembled ? 1 : 0} / 1</span>
                            </StyledProductItem>
                         ))}
                      </StyledTabPanel>
@@ -370,10 +360,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                       </span>
                                    </StyledServings>
                                    <span>
-                                      {inventory.assemblyStatus === 'COMPLETED'
-                                         ? 1
-                                         : 0}{' '}
-                                      / 1
+                                      {inventory.isAssembled ? 1 : 0} / 1
                                    </span>
                                 </StyledProductItem>
                              ))
@@ -445,11 +432,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                       </span>
                                    </StyledServings>
                                    <span>
-                                      {readytoeat?.assemblyStatus ===
-                                      'COMPLETED'
-                                         ? 1
-                                         : 0}{' '}
-                                      / 1
+                                      {readytoeat?.isAssembled ? 1 : 0} / 1
                                    </span>
                                 </StyledProductItem>
                              ))

@@ -148,6 +148,7 @@ export const ORDERS = gql`
          orderMealKitProducts {
             id
             price
+            isAssembled
             assemblyStatus
             assemblyStation {
                name
@@ -174,6 +175,7 @@ export const ORDERS = gql`
          orderReadyToEatProducts {
             id
             price
+            isAssembled
             assemblyStatus
             simpleRecipeProduct {
                name
@@ -201,6 +203,7 @@ export const ORDERS = gql`
          orderInventoryProducts {
             id
             price
+            isAssembled
             inventoryProduct {
                name
             }
@@ -246,6 +249,7 @@ export const ORDER = gql`
          fulfillmentType
          orderMealKitProducts {
             id
+            isAssembled
             assemblyStatus
             assemblyStation {
                name
@@ -307,6 +311,7 @@ export const ORDER = gql`
             where: { assemblyStationId: $assemblyStationId }
          ) {
             id
+            isAssembled
             assemblyStatus
             simpleRecipeProduct {
                name
@@ -335,6 +340,7 @@ export const ORDER = gql`
             where: { assemblyStationId: $assemblyStationId }
          ) {
             id
+            isAssembled
             inventoryProduct {
                name
             }
