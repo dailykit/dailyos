@@ -1,16 +1,23 @@
 import React from 'react'
 
-import { AuthProvider, TabProvider, OrderProvider } from './context'
+import {
+   AuthProvider,
+   TabProvider,
+   OrderProvider,
+   ConfigProvider,
+} from './context'
 
 import App from './App'
 
 const Settings = () => (
    <AuthProvider>
-      <TabProvider>
-         <OrderProvider>
-            <App />
-         </OrderProvider>
-      </TabProvider>
+      <ConfigProvider>
+         <TabProvider>
+            <OrderProvider>
+               <App />
+            </OrderProvider>
+         </TabProvider>
+      </ConfigProvider>
    </AuthProvider>
 )
 

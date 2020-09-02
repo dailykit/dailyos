@@ -9,7 +9,7 @@ export const MetricItem = ({
    variant,
    amount = 0,
    currency,
-   average,
+   average = 0,
 }) => {
    const { state, dispatch } = useOrder()
 

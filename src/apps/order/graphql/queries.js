@@ -952,3 +952,15 @@ export const STATION_USER = gql`
       }
    }
 `
+
+export const SETTINGS = gql`
+   subscription settings {
+      settings: settings_appSettings {
+         id
+         app
+         type
+         identifier
+         value
+      }
+   }
+`

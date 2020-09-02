@@ -38,8 +38,8 @@ const ProductDetails = ({ product }) => {
                   onClick={() => selectSachet(item.id)}
                   isOpen={currentPanel === item.id}
                   variant={{
-                     isLabelled: item.isLabelled,
-                     isPortioned: item.isPortioned,
+                     isAssembled: item.isAssembled,
+                     isPacked: item.status === 'PACKED',
                   }}
                >
                   <header>

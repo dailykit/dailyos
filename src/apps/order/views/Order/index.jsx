@@ -270,11 +270,11 @@ const MealKits = ({ mealkits }) => {
             </section>
             <section>
                <span />
-               <span>{t(address.concat('processing'))}</span>
+               <span>{t(address.concat('packed'))}</span>
             </section>
             <section>
                <span />
-               <span>{t(address.concat('done'))}</span>
+               <span>{t(address.concat('assembled'))}</span>
             </section>
          </Legend>
          {current && (
