@@ -86,7 +86,7 @@ export const ALL_ORDERS_AGGREGATE = gql`
 
 export const ORDER_BY_STATUS = gql`
    subscription orderByStatus {
-      orderByStatus: order_orderStatusEnum {
+      orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
          value
          orders: orders_aggregate {
             aggregate {
