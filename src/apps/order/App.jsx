@@ -4,7 +4,7 @@ import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // Context
-import { useOrder } from './context'
+import { useOrder, useConfig } from './context'
 
 // Sections
 import Header from './sections/Header'
@@ -17,6 +17,7 @@ import {
    OrderSummary,
    ProcessOrder,
    FilterTunnel,
+   ConfigTunnel,
    DeliveryConfig,
    Notifications,
    ProcessInventory,
@@ -25,8 +26,10 @@ import {
 
 const App = () => {
    const { state } = useOrder()
+   const { state: configState } = useConfig()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
+   const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('notifications'),
@@ -37,6 +40,14 @@ const App = () => {
          openTunnel(1)
       }
    }, [state.delivery_config])
+
+   React.useEffect(() => {
+      if (configState.tunnel.visible) {
+         openConfigTunnel(1)
+      } else {
+         closeConfigTunnel(1)
+      }
+   }, [configState.tunnel.visible])
 
    React.useEffect(() => {
       if (state.filter.tunnel) {
@@ -84,6 +95,13 @@ const App = () => {
             <Tunnels tunnels={filterTunnels}>
                <Tunnel layer="1" size="sm">
                   <FilterTunnel />
+               </Tunnel>
+            </Tunnels>
+         </Portal>
+         <Portal>
+            <Tunnels tunnels={configTunnels}>
+               <Tunnel layer="1" size="full">
+                  <ConfigTunnel />
                </Tunnel>
             </Tunnels>
          </Portal>

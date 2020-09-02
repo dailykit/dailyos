@@ -1,8 +1,10 @@
 import React from 'react'
+import { TextButton } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import Loader from '../Loader'
-import { useOrder } from '../../context/order'
+import { ScaleIcon } from '../../assets/icons'
+import { useOrder, useConfig } from '../../context'
+import { InlineLoader } from '../../../../shared/components'
 import { FETCH_ORDER_SACHET, UPDATE_ORDER_SACHET } from '../../graphql'
 import {
    Wrapper,
@@ -14,16 +16,18 @@ import {
    StyledPackaging,
    StyledSOP,
    StyledButton,
+   ManualWeight,
 } from './styled'
-
-import { WeighIcon } from '../../assets/icons'
 
 export const ProcessOrder = () => {
    const {
       state: { current_view, mealkit },
       switchView,
    } = useOrder()
+   const { state } = useConfig()
+   const [weight, setWeight] = React.useState(0)
    const [sachet, setSachet] = React.useState(null)
+   const [scaleState, setScaleState] = React.useState('low')
    const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
    const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
       variables: {
@@ -39,6 +43,18 @@ export const ProcessOrder = () => {
    const changeView = view => {
       switchView(view)
    }
+
+   React.useEffect(() => {
+      if (sachet) {
+         if (Number(weight) < sachet.quantity) {
+            setScaleState('low')
+         } else if (Number(weight) > sachet.quantity) {
+            setScaleState('above')
+         } else if (Number(weight) === sachet.quantity) {
+            setScaleState('match')
+         }
+      }
+   }, [weight, sachet])
 
    if (!mealkit.sachet_id) {
       return (
@@ -64,7 +80,7 @@ export const ProcessOrder = () => {
    if (loading || !sachet)
       return (
          <Wrapper>
-            <Loader />
+            <InlineLoader />
          </Wrapper>
       )
    if (error)
@@ -133,13 +149,30 @@ export const ProcessOrder = () => {
                   <span>{sachet.quantity}gm</span>
                </section>
             </section>
-            <StyledWeigh>
+            <StyledWeigh state={scaleState}>
                <span>
-                  <WeighIcon />
+                  <ScaleIcon size={24} color="#fff" />
                </span>
-               <h2>Weighing scale is not active!</h2>
+               <h2>{weight || 'Weighing scale is not active!'}</h2>
                <span />
             </StyledWeigh>
+            {sachet.status !== 'PACKED' &&
+               state.scale.weight_simulation.value.value && (
+                  <ManualWeight>
+                     <input
+                        type="number"
+                        value={weight}
+                        placeholder="Enter weight"
+                        onChange={e => setWeight(e.target.value)}
+                     />
+                     <TextButton
+                        type="outline"
+                        onClick={() => setWeight(sachet.quantity)}
+                     >
+                        Match Amount
+                     </TextButton>
+                  </ManualWeight>
+               )}
          </StyledMain>
          <StyledPackaging>
             <h3>Packaging</h3>
@@ -174,42 +207,42 @@ export const ProcessOrder = () => {
                   )}
             </div>
          </StyledSOP>
-         {sachet.status === 'PENDING' && (
-            <StyledButton
-               type="button"
-               onClick={() =>
-                  updateSachet({
-                     variables: {
-                        id: sachet.id,
-                        _set: {
-                           status: 'PACKED',
-                           isLabelled: true,
-                           isPortioned: true,
-                        },
+         <StyledButton
+            type="button"
+            disabled={
+               sachet.status === 'PACKED' || Number(weight) !== sachet.quantity
+            }
+            onClick={() =>
+               updateSachet({
+                  variables: {
+                     id: sachet.id,
+                     _set: {
+                        status: 'PACKED',
+                        isLabelled: true,
+                        isPortioned: true,
                      },
-                  })
-               }
-            >
-               Mark Packed
-            </StyledButton>
-         )}
-         {!sachet.isAssembled && (
-            <StyledButton
-               type="button"
-               onClick={() =>
-                  updateSachet({
-                     variables: {
-                        id: sachet.id,
-                        _set: {
-                           isAssembled: true,
-                        },
+                  },
+               })
+            }
+         >
+            {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
+         </StyledButton>
+         <StyledButton
+            type="button"
+            disabled={sachet.isAssembled || sachet.status === 'PENDING'}
+            onClick={() =>
+               updateSachet({
+                  variables: {
+                     id: sachet.id,
+                     _set: {
+                        isAssembled: true,
                      },
-                  })
-               }
-            >
-               Mark Assembled
-            </StyledButton>
-         )}
+                  },
+               })
+            }
+         >
+            {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
+         </StyledButton>
       </Wrapper>
    )
 }

@@ -19,12 +19,15 @@ import {
    RightPanelIcon,
 } from '../../assets/icons'
 import { NEW_NOTIF } from '../../graphql'
+import { useConfig } from '../../context'
+import { SettingsIcon } from '../../../../shared/assets/icons'
 
 const address = 'apps.order.sections.header.'
 
 const Header = ({ setPosition, isOpen, openPortal, closePortal }) => {
    const history = useHistory()
    const { t } = useTranslation()
+   const { state, dispatch } = useConfig()
    const {
       loading,
       data: { displayNotifications: notifications = [] } = {},
@@ -66,6 +69,23 @@ const Header = ({ setPosition, isOpen, openPortal, closePortal }) => {
          </StyledNav>
          <Tabs />
          <StyledNav align="right">
+            <button
+               type="button"
+               title="Settings"
+               onClick={() =>
+                  state.tunnel.visible
+                     ? dispatch({
+                          type: 'TOGGLE_TUNNEL',
+                          payload: { visible: false },
+                       })
+                     : dispatch({
+                          type: 'TOGGLE_TUNNEL',
+                          payload: { visible: true },
+                       })
+               }
+            >
+               <SettingsIcon color="#000" size="20" />
+            </button>
             <button
                type="button"
                title="Notifications"
