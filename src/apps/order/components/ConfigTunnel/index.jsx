@@ -10,7 +10,7 @@ import { UPSERT_SETTING } from '../../graphql'
 export const ConfigTunnel = () => {
    const { dispatch } = useConfig()
 
-   const clostTunnel = () =>
+   const closeTunnel = () =>
       dispatch({
          type: 'TOGGLE_TUNNEL',
          payload: { tunnel: false },
@@ -20,10 +20,10 @@ export const ConfigTunnel = () => {
       <>
          <TunnelHeader
             title="Advanced Filters"
-            close={() => clostTunnel()}
+            close={() => closeTunnel()}
             right={{
                title: 'Close',
-               action: () => clostTunnel(),
+               action: () => closeTunnel(),
             }}
          />
          <Main>

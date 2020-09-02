@@ -207,8 +207,8 @@ const DeliveryDetails = ({ details }) => {
             <Text as="title">Delivery Status</Text>
             <Avatar
                withName
-               title={deliveryInfo.deliveryCompany.name}
                url={deliveryInfo.deliveryCompany.logo}
+               title={deliveryInfo.deliveryCompany.name || 'N/A'}
             />
          </StyledDeliveryBy>
          <LoadScript googleMapsApiKey={process.env.REACT_APP_MAPS_API_KEY}>
@@ -262,7 +262,11 @@ const DeliveryDetails = ({ details }) => {
                      <Avatar
                         withName
                         url={deliveryInfo.assigned.driverInfo.driverPicture}
-                        title={`${deliveryInfo.assigned.driverInfo.driverFirstName} ${deliveryInfo.assigned.driverInfo.driverLastName}`}
+                        title={
+                           deliveryInfo.assigned.driverInfo.driverFirstName
+                              ? `${deliveryInfo.assigned.driverInfo.driverFirstName} ${deliveryInfo.assigned.driverInfo.driverLastName}`
+                              : 'N/A'
+                        }
                      />
                      &nbsp;&middot;&nbsp;
                      {deliveryInfo.assigned.driverInfo.driverPhone || 'N/A'}
