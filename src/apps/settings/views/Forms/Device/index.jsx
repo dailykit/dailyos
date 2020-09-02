@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 // Components
 import {
@@ -46,9 +46,8 @@ const address = 'apps.settings.views.forms.device.'
 
 const DeviceForm = () => {
    const { t } = useTranslation()
-   const params = useParams()
    const history = useHistory()
-   const { doesTabExists } = useTabs()
+   const { tab } = useTabs()
    const [usersTunnels, openUsersTunnel, closeUsersTunnel] = useTunnel(1)
    const [search, setSearch] = React.useState('')
    const [form, setForm] = React.useState({
@@ -57,13 +56,12 @@ const DeviceForm = () => {
    })
 
    React.useEffect(() => {
-      const tab = doesTabExists(`/settings/devices/${params.name}`)
-      if (Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (tab) {
          setForm(form => ({ ...form, ...tab }))
       } else {
          history.push('/settings/devices')
       }
-   }, [params.name, history])
+   }, [tab, history])
 
    const [usersList, selectedUsers, selectUser] = useMultiList([
       { id: 1, title: 'Praveen Bisht', img: '' },
@@ -99,7 +97,7 @@ const DeviceForm = () => {
                style={{ width: '320px' }}
                value={form.name || ''}
                onChange={e => setForm({ ...form, name: e.target.value })}
-               placeholder={t(address.concat("enter the device name"))}
+               placeholder={t(address.concat('enter the device name'))}
             />
             <TextButton type="solid">{t(address.concat('launch'))}</TextButton>
          </StyledHeader>
@@ -121,7 +119,7 @@ const DeviceForm = () => {
                noIcon
                size="sm"
                type="secondary"
-               text={t(address.concat("select and assign users"))}
+               text={t(address.concat('select and assign users'))}
                onClick={() => openUsersTunnel(1)}
             />
             <Tunnels tunnels={usersTunnels}>
@@ -134,7 +132,9 @@ const DeviceForm = () => {
                         >
                            <ClearIcon size={20} />
                         </IconButton>
-                        <Text as="h2">{t(address.concat('configure apps'))}</Text>
+                        <Text as="h2">
+                           {t(address.concat('configure apps'))}
+                        </Text>
                      </div>
                      <TextButton
                         type="solid"
@@ -150,7 +150,9 @@ const DeviceForm = () => {
                      <List>
                         <ListSearch
                            onChange={value => setSearch(value)}
-                           placeholder={t(address.concat("type what you're looking for")).concat('...')}
+                           placeholder={t(
+                              address.concat("type what you're looking for")
+                           ).concat('...')}
                         />
                         <ListOptions>
                            {usersList

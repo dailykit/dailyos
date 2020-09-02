@@ -6,7 +6,7 @@ import { Context } from '../../context/tabs'
 
 import { StyledHome, StyledCardList } from './styled'
 
-import { useTranslation, Trans } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 import { SAFETY_CHECKS } from '../../graphql'
 const address = 'apps.safety.views.home.'
@@ -33,7 +33,7 @@ const Home = () => {
          <h1>{t(address.concat('safety and precautions app'))}</h1>
          <StyledCardList>
             <DashboardTile
-               title={t(address.concat("safety checks"))}
+               title={t(address.concat('safety checks'))}
                count={safeyCheckCount}
                conf="All available"
                onClick={() => addTab('Safety Checks', 'checks')}

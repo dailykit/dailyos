@@ -48,7 +48,7 @@ const StationForm = () => {
       if (!tab) {
          addTab(station?.name, `/settings/stations/${params.id}`)
       }
-   }, [tab, params.id])
+   }, [tab, params.id, addTab, station])
 
    const handleChange = e => {
       const { name, value } = e.target

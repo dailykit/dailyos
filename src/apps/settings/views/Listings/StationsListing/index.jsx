@@ -22,7 +22,7 @@ import tableOptions from '../tableOption'
 
 const StationsListing = () => {
    const history = useHistory()
-   const { tabs, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
    const tableRef = React.useRef()
    const { error, loading, data: { stations } = {} } = useSubscription(STATIONS)
    const [create] = useMutation(UPSERT_STATION, {
@@ -55,11 +55,10 @@ const StationsListing = () => {
    ]
 
    React.useEffect(() => {
-      const tab = tabs.find(item => item.path === `/settings/stations`) || {}
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          addTab('Stations', `/settings/stations`)
       }
-   }, [history, tabs])
+   }, [history, tab, addTab])
 
    return (
       <StyledWrapper>

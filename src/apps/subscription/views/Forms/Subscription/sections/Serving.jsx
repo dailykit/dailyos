@@ -23,8 +23,8 @@ import {
 import { usePlan } from '../state'
 import ItemCount from './ItemCount'
 import { Flex } from '../../../../components'
+import { ItemCountsSection } from '../styled'
 import { Spacer, Stack } from '../../../../styled'
-import { ItemCountsSection, ServingHeader } from '../styled'
 import { EditIcon } from '../../../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../../../shared/components'
 import {
@@ -66,7 +66,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             },
          })
       }
-   }, [])
+   }, [dispatch])
 
    const editServing = () => {
       openServingTunnel(1)
@@ -101,7 +101,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             },
          })
       }
-   }, [loading, serving])
+   }, [loading, serving, state.title.id, upsertServing])
 
    const toggleIsActive = value => {
       if (

@@ -39,7 +39,7 @@ const App = () => {
       if (state.delivery_config.orderId) {
          openTunnel(1)
       }
-   }, [state.delivery_config])
+   }, [state.delivery_config, openTunnel])
 
    React.useEffect(() => {
       if (configState.tunnel.visible) {
@@ -47,7 +47,7 @@ const App = () => {
       } else {
          closeConfigTunnel(1)
       }
-   }, [configState.tunnel.visible])
+   }, [configState.tunnel.visible, openConfigTunnel, closeConfigTunnel])
 
    React.useEffect(() => {
       if (state.filter.tunnel) {
@@ -55,7 +55,7 @@ const App = () => {
       } else {
          closeFilterTunnel(1)
       }
-   }, [state.filter.tunnel])
+   }, [state.filter.tunnel, openFilterTunnel, closeFilterTunnel])
 
    return (
       <StyledWrapper position={position}>

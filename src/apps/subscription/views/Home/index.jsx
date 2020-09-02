@@ -1,7 +1,6 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
 
-import { DashboardTile, Text, Loader } from '@dailykit/ui'
+import { DashboardTile, Text } from '@dailykit/ui'
 
 // State
 import { useTabs } from '../../context'

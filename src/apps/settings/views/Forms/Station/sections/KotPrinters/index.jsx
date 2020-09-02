@@ -183,7 +183,7 @@ const AddPrinterTunnel = ({
       } else {
          closeTunnel(1)
       }
-   }, [isOpen])
+   }, [isOpen, openTunnel, closeTunnel])
 
    const insert = () => {
       create({

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 // Components
 import {
@@ -43,9 +43,8 @@ const address = 'apps.settings.views.forms.role.'
 
 const RoleForm = () => {
    const { t } = useTranslation()
-   const params = useParams()
    const history = useHistory()
-   const { doesTabExists } = useTabs()
+   const { tab } = useTabs()
    const [isOpen, setIsOpen] = React.useState('')
    const [selectedApp, setSelectedApp] = React.useState({})
    const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
@@ -61,13 +60,12 @@ const RoleForm = () => {
    const [search, setSearch] = React.useState('')
 
    React.useEffect(() => {
-      const tab = doesTabExists(`/settings/roles/${params.name}`)
-      if (Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          setForm(form => ({ ...form, ...tab }))
       } else {
          history.push('/settings/roles')
       }
-   }, [params.name, history])
+   }, [tab, history, setForm])
 
    const [list, selected, selectOption] = useMultiList([
       {
@@ -129,12 +127,14 @@ const RoleForm = () => {
                style={{ width: '320px' }}
                value={form.roleName || ''}
                onChange={e => handleChange(e)}
-               placeholder={t(address.concat("enter the role name"))}
+               placeholder={t(address.concat('enter the role name'))}
             />
             <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
          </StyledHeader>
          <StyledSection>
-            <Text as="h2">{t(address.concat('apps'))} ({form.apps.length})</Text>
+            <Text as="h2">
+               {t(address.concat('apps'))} ({form.apps.length})
+            </Text>
             {form.apps.length > 0 &&
                form.apps.map(option => (
                   <StyledAppItem key={option.id}>
@@ -164,8 +164,8 @@ const RoleForm = () => {
                               {isOpen === option.title ? (
                                  <ArrowUpIcon color="#555B6E" size={24} />
                               ) : (
-                                    <ArrowDownIcon color="#555B6E" size={24} />
-                                 )}
+                                 <ArrowDownIcon color="#555B6E" size={24} />
+                              )}
                            </span>
                         </div>
                         <TextButton
@@ -186,8 +186,8 @@ const RoleForm = () => {
                                     {permission.allowed ? (
                                        <TickIcon color="#28C1F7" size={20} />
                                     ) : (
-                                          <ClearIcon color="#FF5A52" size={20} />
-                                       )}
+                                       <ClearIcon color="#FF5A52" size={20} />
+                                    )}
                                  </span>
                                  <span>{permission.title}</span>
                               </li>
@@ -200,7 +200,7 @@ const RoleForm = () => {
                noIcon
                size="sm"
                type="secondary"
-               text={t(address.concat("select and configure apps"))}
+               text={t(address.concat('select and configure apps'))}
                onClick={() => openAppsTunnel(1)}
             />
          </StyledSection>
@@ -230,7 +230,9 @@ const RoleForm = () => {
                   <List>
                      <ListSearch
                         onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you're looking for")).concat('...')}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        ).concat('...')}
                      />
                      <ListOptions>
                         {list
@@ -279,7 +281,8 @@ const RoleForm = () => {
                </StyledTunnelHeader>
                <StyledTunnelMain>
                   <Text as="title">
-                     {t(address.concat('permissions for role'))}: {form.roleName || 'Untitled'}
+                     {t(address.concat('permissions for role'))}:{' '}
+                     {form.roleName || 'Untitled'}
                   </Text>
                   <StyledPermissions>
                      {Object.keys(selectedApp).length > 0 &&

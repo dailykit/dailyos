@@ -1,5 +1,4 @@
 import React from 'react'
-import moment from 'moment'
 import { useMutation } from '@apollo/react-hooks'
 
 import { UPDATE_ORDER } from '../../graphql'

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-fragments */
 import React from 'react'
 import { Text } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from 'react-tabulator'
 import { useTabs } from '../../../context'
 
 const WalletTable = props => {
@@ -49,7 +49,7 @@ const WalletTable = props => {
       },
    ]
    const rowClick = (e, row) => {
-      const { id, name } = row._row.data
+      const { name } = row._row.data
 
       const param = '/crm/customers/'.concat(name)
       addTab(name, param)

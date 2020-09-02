@@ -4,12 +4,10 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Text,
    useSingleList,
    TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { CloseIcon } from '../../../../../assets/icons'
 import { TunnelBody } from '../styled'
 import { SafetyCheckContext } from '../../../../../context/check'
 
@@ -30,7 +28,7 @@ const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
          })
          openTunnel(2)
       }
-   }, [current])
+   }, [current, checkDispatch, openTunnel])
 
    return (
       <>

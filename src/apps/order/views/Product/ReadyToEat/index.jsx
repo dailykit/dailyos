@@ -48,7 +48,7 @@ export const ReadyToEatProduct = () => {
             `/apps/order/planned/ready-to-eat/${params.id}`
          )
       }
-   }, [tab, loading])
+   }, [tab, loading, addTab, simpleRecipeProduct, params.id])
 
    const selectOption = id => {
       selectReadyToEat(id)

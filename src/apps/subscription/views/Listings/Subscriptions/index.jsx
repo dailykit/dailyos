@@ -15,7 +15,7 @@ import { TITLES, UPSERT_SUBSCRIPTION_TITLE } from '../../../graphql'
 export const Subscriptions = () => {
    const history = useHistory()
    const tableRef = React.useRef()
-   const { tab, tabs, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
    const { loading, data: { titles = [] } = {} } = useSubscription(TITLES)
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
       onCompleted: ({ upsertSubscriptionTitle = {} }) => {
@@ -28,7 +28,7 @@ export const Subscriptions = () => {
       if (!tab) {
          addTab('Subscriptions', '/subscription/subscriptions')
       }
-   }, [history, tabs])
+   }, [history, addTab, tab])
 
    const columns = [
       {
