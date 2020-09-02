@@ -19,7 +19,7 @@ export const RECIPE_SALE_COUNT = gql`
    }
 `
 
-const query = `
+const query = gql`
    query mealKitProductsOrders(
       $includeSimpleRecipeProductName: Boolean!
       $includeDefaultCartItem: Boolean!
@@ -34,8 +34,9 @@ const query = `
             simpleRecipeProduct {
                id
                name @include(if: $includeSimpleRecipeProductName)
-               defaultCartItem
+               DefaultCartItemName: defaultCartItem(path: "name")
                   @include(if: $includeDefaultCartItem)
+               option: defaultCartItem(path: "option")
             }
          }
       }
