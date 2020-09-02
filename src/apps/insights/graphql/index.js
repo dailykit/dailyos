@@ -1,1 +1,1 @@
-export * from './subscriptions/recipe'
+export * from './queries/insight'
