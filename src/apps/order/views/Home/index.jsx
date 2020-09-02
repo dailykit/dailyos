@@ -36,6 +36,12 @@ const Home = () => {
                count={data?.ordersAggregate?.aggregate?.count}
                onClick={() => addTab('Orders', '/apps/order/orders')}
             />
+            <DashboardTile
+               count={0}
+               title="Planned"
+               conf="All available"
+               onClick={() => addTab('Planned', '/apps/order/planned')}
+            />
          </StyledCardList>
       </StyledHome>
    )

@@ -38,15 +38,6 @@ const Orders = () => {
       onSubscriptionData: ({
          subscriptionData: { data: { orders = [] } = {} } = {},
       }) => {
-         console.log(
-            'Orders -> orders',
-            {
-               where: state.orders.where,
-               ...(state.orders.limit && { limit: state.orders.limit }),
-               ...(state.orders.offset && { offset: state.orders.offset }),
-            },
-            orders
-         )
          setOrders(orders)
          if (state.orders.limit) {
             if (!loadingAggregate && ordersAggregate?.aggregate?.count > 10) {
@@ -114,7 +105,7 @@ const Orders = () => {
          {state.orders.loading ? (
             <InlineLoader />
          ) : (
-            <section style={{ overflowY: 'auto', height: 'calc(100vh - 88px' }}>
+            <section style={{ overflowY: 'auto', height: 'calc(100vh - 128px' }}>
                {orders.length > 0 ? (
                   orders.map((order, index) => (
                      <OrderListItem

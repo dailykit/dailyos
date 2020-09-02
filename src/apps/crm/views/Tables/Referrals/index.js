@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-fragments */
 import React from 'react'
 import { Text } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from 'react-tabulator'
 import { useTabs } from '../../../context'
 
-const ReferralTable = props => {
+const ReferralTable = () => {
    const { addTab } = useTabs()
    const columns = [
       { title: 'Invitation Sent To', field: 'invitation', headerFilter: true },

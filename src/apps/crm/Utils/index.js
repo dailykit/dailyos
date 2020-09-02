@@ -1,4 +1,5 @@
-import Capitalize from './Capitalize'
-import ConcatAddress from './ConcatAddress'
+import capitalizeString from './capitalizeString'
+import addressStringify from './addressStringify'
+import rruleToText from './rruleToText'
 
-export { Capitalize, ConcatAddress }
+export { capitalizeString, addressStringify, rruleToText }

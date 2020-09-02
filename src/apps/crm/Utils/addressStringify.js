@@ -1,4 +1,4 @@
-const concatAddress = address => {
+const addressStringify = address => {
    if (
       !address?.line1 &&
       !address?.line2 &&
@@ -12,4 +12,4 @@ const concatAddress = address => {
    return `${address?.line1}, ${address?.line2}, ${address?.city}, ${address?.zipcode}, ${address?.state}, ${address?.country}`
 }
 
-export default concatAddress
+export default addressStringify

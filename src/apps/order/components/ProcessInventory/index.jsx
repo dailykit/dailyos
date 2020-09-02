@@ -108,6 +108,7 @@ export const ProcessInventory = () => {
                      updateProduct({
                         variables: {
                            id: inventory.id,
+                           isAssembled: true,
                            assemblyStatus: 'COMPLETED',
                         },
                      })

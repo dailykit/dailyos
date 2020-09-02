@@ -33,8 +33,8 @@ const CustomerListing = () => {
    }
    const columns = [
       { title: 'Customer Name', field: 'name', headerFilter: true },
-      { title: 'Phone', field: 'phone' },
-      { title: 'Email', field: 'email' },
+      { title: 'Phone', field: 'phone', headerFilter: true },
+      { title: 'Email', field: 'email', headerFilter: true },
       { title: 'Source', field: 'source' },
       { title: 'Referrals Sent', field: 'refSent' },
       { title: 'Total Paid', field: 'paid' },

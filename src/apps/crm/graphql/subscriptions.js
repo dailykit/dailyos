@@ -20,3 +20,11 @@ export const TOTAL_REVENUE = gql`
       }
    }
 `
+
+export const CUSTOMER_ISTEST = gql`
+   subscription CUSTOMER_ISTEST($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         isTest
+      }
+   }
+`

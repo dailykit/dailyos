@@ -30,7 +30,6 @@ const initialState = {
       offset: 0,
       where: {
          orderStatus: { _eq: 'PENDING' },
-         // fulfillmentTimestamp: { _gte: moment().format('YYYY-MM-DD HH:MM') },
       },
    },
 }
