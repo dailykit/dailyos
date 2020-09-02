@@ -1272,6 +1272,7 @@
                "pending": "Pending",
                "packed": "Packed",
                "assembled": "Assembled",
+               "processing": "Processing",
                "ingredients": "Ingredients",
                "supplier item": "Supplier Item",
                "quantity": "Quantity",
