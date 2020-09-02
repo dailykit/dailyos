@@ -9,7 +9,7 @@ function flattenObject(object, prefix) {
    let result = {}
    Object.keys(object).forEach(key => {
       if (!isObject(object[key])) {
-         result[`${prefix} ${key}`] = object[key]
+         if (key !== '__typename') result[`${prefix} ${key}`] = object[key]
       } else {
          const otherResults = flattenObject(object[key], `${prefix} ${key} `)
          result = { ...otherResults, ...result }
@@ -26,10 +26,9 @@ function flattenQuery(responseObject) {
       if (isObject(node)) {
          Object.keys(node).forEach(key => {
             if (!isObject(node[key])) {
-               result[key] = node[key]
+               if (key !== '__typename') result[key] = node[key]
             } else {
                const temp = flattenObject(node[key], '')
-
                result = { ...result, ...temp }
             }
          })
