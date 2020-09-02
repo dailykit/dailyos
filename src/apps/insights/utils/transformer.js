@@ -21,21 +21,27 @@ function flattenObject(object, prefix) {
 
 function flattenQuery(responseObject) {
    const results = []
-   responseObject.nodes.forEach(node => {
-      let result = {}
-      if (isObject(node)) {
-         Object.keys(node).forEach(key => {
-            if (!isObject(node[key])) {
-               if (key !== '__typename') result[key] = node[key]
-            } else {
-               const temp = flattenObject(node[key], '')
-               result = { ...result, ...temp }
-            }
-         })
 
-         results.push(result)
-      }
-   })
+   if (
+      responseObject &&
+      responseObject.nodes &&
+      Array.isArray(responseObject.nodes)
+   )
+      responseObject.nodes.forEach(node => {
+         let result = {}
+         if (isObject(node)) {
+            Object.keys(node).forEach(key => {
+               if (!isObject(node[key])) {
+                  if (key !== '__typename') result[key] = node[key]
+               } else {
+                  const temp = flattenObject(node[key], '')
+                  result = { ...result, ...temp }
+               }
+            })
+
+            results.push(result)
+         }
+      })
 
    return results
 }
