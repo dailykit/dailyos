@@ -434,13 +434,15 @@ export const FETCH_ORDER_SACHET = gql`
    subscription orderSachet($id: Int!) {
       orderSachet(id: $id) {
          id
+         unit
          status
          quantity
          isAssembled
-         ingredientName
-         processingName
          isLabelled
          isPortioned
+         ingredientName
+         processingName
+         labelTemplateId
          packaging {
             name
          }
@@ -943,10 +945,12 @@ export const STATION_USER = gql`
             defaultKotPrinter {
                name
                state
+               printNodeId
             }
             defaultLabelPrinter {
                name
                state
+               printNodeId
             }
             defaultScale {
                id
@@ -967,6 +971,15 @@ export const SETTINGS = gql`
          type
          identifier
          value
+      }
+   }
+`
+
+export const LABEL_TEMPLATE = gql`
+   query labelTemplate($id: Int!) {
+      labelTemplate(id: $id) {
+         id
+         name
       }
    }
 `
