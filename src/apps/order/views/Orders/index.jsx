@@ -105,7 +105,11 @@ const Orders = () => {
             <InlineLoader />
          ) : (
             <section
-               style={{ overflowY: 'auto', height: 'calc(100vh - 128px' }}
+               style={{
+                  overflowY: 'auto',
+                  scrollBehavior: 'smooth',
+                  height: 'calc(100vh - 128px',
+               }}
             >
                {orders.length > 0 ? (
                   orders.map((order, index) => (

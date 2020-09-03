@@ -116,6 +116,7 @@ export const ProcessReadyToEat = () => {
                      updateProduct({
                         variables: {
                            id: readytoeat.id,
+                           isAssembled: true,
                            assemblyStatus: 'COMPLETED',
                         },
                      })

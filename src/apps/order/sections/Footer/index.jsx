@@ -1,12 +1,22 @@
 import React from 'react'
 
-import { useAuth } from '../../context'
+import { useConfig } from '../../context'
 import { Wrapper, Section, StatusBadge } from './styled'
 import { LabelPrinterIcon, KotPrinterIcon, ScaleIcon } from '../../assets/icons'
 
 const Footer = () => {
-   const { station } = useAuth()
+   const {
+      state: { station },
+   } = useConfig()
 
+   if (Object.keys(station).length === 0)
+      return (
+         <Wrapper>
+            <Section title="Station">
+               Station: You're are not assigned to any station!
+            </Section>
+         </Wrapper>
+      )
    return (
       <Wrapper>
          {Object.keys(station).length > 0 && (

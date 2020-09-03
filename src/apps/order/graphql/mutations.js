@@ -48,12 +48,17 @@ export const UPDATE_INVENTORY_PRODUCT = gql`
 `
 
 export const UPDATE_READYTOEAT = gql`
-   mutation updateOrderReadyToEatProduct($id: Int!, $assemblyStatus: String!) {
+   mutation updateOrderReadyToEatProduct(
+      $id: Int!
+      $assemblyStatus: String!
+      $isAssembled: Boolean!
+   ) {
       updateOrderReadyToEatProduct(
          pk_columns: { id: $id }
-         _set: { assemblyStatus: $assemblyStatus }
+         _set: { assemblyStatus: $assemblyStatus, isAssembled: $isAssembled }
       ) {
          id
+         isAssembled
          assemblyStatus
       }
    }
@@ -69,6 +74,27 @@ export const UPSERT_SETTING = gql`
          }
       ) {
          id
+      }
+   }
+`
+
+export const CREATE_PRINT_JOB = gql`
+   mutation createPrintJob(
+      $url: String!
+      $title: String!
+      $printerId: Int!
+      $source: String!
+      $contentType: String!
+   ) {
+      createPrintJob(
+         url: $url
+         title: $title
+         source: $source
+         printerId: $printerId
+         contentType: $contentType
+      ) {
+         success
+         message
       }
    }
 `

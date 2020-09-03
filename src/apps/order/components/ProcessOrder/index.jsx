@@ -1,11 +1,17 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { TextButton } from '@dailykit/ui'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
 import { ScaleIcon } from '../../assets/icons'
 import { useOrder, useConfig } from '../../context'
 import { InlineLoader } from '../../../../shared/components'
-import { FETCH_ORDER_SACHET, UPDATE_ORDER_SACHET } from '../../graphql'
+import {
+   FETCH_ORDER_SACHET,
+   UPDATE_ORDER_SACHET,
+   LABEL_TEMPLATE,
+   CREATE_PRINT_JOB,
+} from '../../graphql'
 import {
    Wrapper,
    StyledHeader,
@@ -28,7 +34,24 @@ export const ProcessOrder = () => {
    const [weight, setWeight] = React.useState(0)
    const [sachet, setSachet] = React.useState(null)
    const [scaleState, setScaleState] = React.useState('low')
+   const [printLabel] = useMutation(CREATE_PRINT_JOB, {
+      onCompleted: () => {
+         toast.success(
+            `Label for ${sachet.ingredientName} - ${sachet.processingName} has been printed!`
+         )
+      },
+      onError: () => {
+         toast.success(
+            `Printing label for ${sachet.ingredientName} - ${sachet.processingName} failed!`
+         )
+      },
+   })
    const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
+   const [
+      fetchLabaleTemplate,
+      { data: { labelTemplate = {} } = {} },
+   ] = useLazyQuery(LABEL_TEMPLATE)
+
    const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
       variables: {
          id: mealkit.sachet_id,
@@ -37,8 +60,23 @@ export const ProcessOrder = () => {
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
          setSachet(orderSachet)
+         fetchLabaleTemplate({
+            variables: {
+               id: Number(orderSachet.labelTemplateId),
+            },
+         })
       },
    })
+
+   React.useEffect(() => {
+      let timer
+      if (weight === sachet?.quantity) {
+         timer = setTimeout(() => {
+            print()
+         }, 3000)
+      }
+      return () => clearTimeout(timer)
+   }, [weight, sachet])
 
    const changeView = view => {
       switchView(view)
@@ -46,15 +84,58 @@ export const ProcessOrder = () => {
 
    React.useEffect(() => {
       if (sachet) {
-         if (Number(weight) < sachet.quantity) {
+         if (weight < sachet.quantity) {
             setScaleState('low')
-         } else if (Number(weight) > sachet.quantity) {
+         } else if (weight > sachet.quantity) {
             setScaleState('above')
-         } else if (Number(weight) === sachet.quantity) {
+         } else if (weight === sachet.quantity) {
             setScaleState('match')
          }
       }
    }, [weight, sachet])
+
+   const print = () => {
+      if (Object.keys(labelTemplate).length === 0) {
+         toast.error('No label template available')
+         return
+      }
+      if (
+         Object.keys(state.station).length === 0 ||
+         !state.station?.defaultLabelPrinter
+      ) {
+         toast.error('No label printer available!')
+         return
+      }
+      const template = encodeURIComponent(
+         JSON.stringify({
+            name: labelTemplate?.name,
+            type: 'label',
+            format: 'pdf',
+         })
+      )
+
+      const data = encodeURIComponent(
+         JSON.stringify({
+            id: sachet.id,
+            unit: sachet.unit,
+            quantity: sachet.quantity,
+            product: sachet.mealkit.product,
+            order: { id: sachet.mealkit.orderId },
+            ingredient: { name: sachet.ingredientName },
+            processing: { name: sachet.processingName },
+         })
+      )
+      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
+      printLabel({
+         variables: {
+            url,
+            source: 'DailyOS',
+            contentType: 'pdf_uri',
+            printerId: state.station.defaultLabelPrinter.printNodeId,
+            title: `${sachet.ingredientName} - ${sachet.processingName}`,
+         },
+      })
+   }
 
    if (!mealkit.sachet_id) {
       return (
@@ -149,21 +230,47 @@ export const ProcessOrder = () => {
                   <span>{sachet.quantity}gm</span>
                </section>
             </section>
-            <StyledWeigh state={scaleState}>
-               <span>
-                  <ScaleIcon size={24} color="#fff" />
-               </span>
-               <h2>{weight || 'Weighing scale is not active!'}</h2>
+            <StyledWeigh
+               state={scaleState}
+               isPrintDisabled={weight !== sachet.quantity}
+            >
+               <header>
+                  <span>
+                     <ScaleIcon size={24} color="#fff" />
+                  </span>
+                  <button
+                     disabled={weight !== sachet.quantity}
+                     onClick={() => print()}
+                  >
+                     Print Label
+                  </button>
+               </header>
+               <h2>
+                  {weight}
+                  {sachet.unit}
+               </h2>
+               {weight > 0 && weight > sachet.quantity && (
+                  <h3>
+                     Reduce weight by {Math.abs(sachet.quantity - weight)}
+                     {sachet.unit}
+                  </h3>
+               )}
+               {weight > 0 && weight < sachet.quantity && (
+                  <h3>
+                     Add {Math.abs(sachet.quantity - weight)}
+                     {sachet.unit} more
+                  </h3>
+               )}
                <span />
             </StyledWeigh>
             {sachet.status !== 'PACKED' &&
-               state.scale.weight_simulation.value.value && (
+               state.scale.weight_simulation.value.isActive && (
                   <ManualWeight>
                      <input
                         type="number"
                         value={weight}
                         placeholder="Enter weight"
-                        onChange={e => setWeight(e.target.value)}
+                        onChange={e => setWeight(Number(e.target.value))}
                      />
                      <TextButton
                         type="outline"

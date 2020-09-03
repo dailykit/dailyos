@@ -10,7 +10,7 @@ import { UPSERT_SETTING } from '../../graphql'
 export const ConfigTunnel = () => {
    const { dispatch } = useConfig()
 
-   const clostTunnel = () =>
+   const closeTunnel = () =>
       dispatch({
          type: 'TOGGLE_TUNNEL',
          payload: { tunnel: false },
@@ -20,10 +20,10 @@ export const ConfigTunnel = () => {
       <>
          <TunnelHeader
             title="Advanced Filters"
-            close={() => clostTunnel()}
+            close={() => closeTunnel()}
             right={{
                title: 'Close',
-               action: () => clostTunnel(),
+               action: () => closeTunnel(),
             }}
          />
          <Main>
@@ -32,6 +32,7 @@ export const ConfigTunnel = () => {
             </Sidebar>
             <Content>
                <ScaleSection />
+               <PrintSection />
             </Content>
          </Main>
       </>
@@ -41,7 +42,10 @@ export const ConfigTunnel = () => {
 const Navbar = () => {
    const location = useLocation()
    const [active, setActive] = React.useState('#scale')
-   const [links] = React.useState([{ to: '#scale', title: 'Scale' }])
+   const [links] = React.useState([
+      { to: '#scale', title: 'Scale' },
+      { to: '#print', title: 'Print' },
+   ])
 
    React.useEffect(() => {
       setActive(location.hash)
@@ -78,7 +82,7 @@ const WeightSimulation = () => {
          variables: {
             object: {
                ...state.scale.weight_simulation,
-               value: { value },
+               value: { isActive: value },
             },
          },
       })
@@ -89,7 +93,42 @@ const WeightSimulation = () => {
          <Toggle
             label="Weight Simulation"
             setChecked={value => handleChange(value)}
-            checked={state.scale.weight_simulation.value.value}
+            checked={state.scale.weight_simulation.value.isActive}
+         />
+      </div>
+   )
+}
+
+const PrintSection = () => {
+   return (
+      <section id="print">
+         <Text as="title">Print</Text>
+         <PrintSimulation />
+      </section>
+   )
+}
+
+const PrintSimulation = () => {
+   const { state } = useConfig()
+   const [upsert] = useMutation(UPSERT_SETTING)
+
+   const handleChange = value => {
+      upsert({
+         variables: {
+            object: {
+               ...state.print.print_simulation,
+               value: { isActive: value },
+            },
+         },
+      })
+   }
+
+   return (
+      <div>
+         <Toggle
+            label="Print Simulation"
+            setChecked={value => handleChange(value)}
+            checked={state.print.print_simulation.value.isActive}
          />
       </div>
    )
