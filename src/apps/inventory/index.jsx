@@ -4,10 +4,14 @@ import { AuthProvider } from './context'
 
 import App from './App'
 
-const Inventory = () => (
-   <AuthProvider>
-      <App />
-   </AuthProvider>
-)
+const Inventory = () => {
+   if (process.env.NODE_ENV === 'development') return <App />
+
+   return (
+      <AuthProvider>
+         <App />
+      </AuthProvider>
+   )
+}
 
 export default Inventory
