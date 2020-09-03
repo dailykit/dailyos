@@ -9,7 +9,10 @@ function flattenObject(object, prefix) {
    let result = {}
    Object.keys(object).forEach(key => {
       if (!isObject(object[key])) {
-         if (key !== '__typename') result[`${prefix} ${key}`] = object[key]
+         if (key !== '__typename') {
+            const tempKey = `${prefix} ${key}`.trim()
+            result[tempKey] = object[key]
+         }
       } else {
          const otherResults = flattenObject(object[key], `${prefix} ${key} `)
          result = { ...otherResults, ...result }
