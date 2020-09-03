@@ -70,10 +70,7 @@ export const ProcessOrder = () => {
 
    React.useEffect(() => {
       let timer
-      if (
-         weight === sachet?.quantity &&
-         !state.print.print_simulation.value.isActive
-      ) {
+      if (weight === sachet?.quantity) {
          timer = setTimeout(() => {
             print()
          }, 3000)
@@ -116,13 +113,16 @@ export const ProcessOrder = () => {
             format: 'pdf',
          })
       )
+
       const data = encodeURIComponent(
          JSON.stringify({
             id: sachet.id,
-            recipe: mealkit.name,
+            unit: sachet.unit,
             quantity: sachet.quantity,
-            name: sachet.ingredientName,
-            processing: sachet.processingName,
+            product: sachet.mealkit.product,
+            order: { id: sachet.mealkit.orderId },
+            ingredient: { name: sachet.ingredientName },
+            processing: { name: sachet.processingName },
          })
       )
       const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`

@@ -471,6 +471,13 @@ export const FETCH_ORDER_SACHET = gql`
                name
             }
          }
+         mealkit: orderMealKitProduct {
+            orderId
+            product: simpleRecipeProduct {
+               id
+               name
+            }
+         }
       }
    }
 `
