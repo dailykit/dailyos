@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css'
 // Apollo Client Imports
 import { ApolloProvider } from '@apollo/react-hooks'
 import { ApolloClient } from 'apollo-client'
+import { setContext } from 'apollo-link-context'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { split } from 'apollo-link'
@@ -29,10 +30,24 @@ const App = Loadable({
    loading: Loader,
 })
 
+const authLink = setContext((_, { headers }) => {
+   return {
+      headers: {
+         ...headers,
+         'x-hasura-admin-secret': `${process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
+      },
+   }
+})
+
 const wsLink = new WebSocketLink({
    uri: process.env.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI,
    options: {
       reconnect: true,
+      connectionParams: {
+         headers: {
+            'x-hasura-admin-secret': `${process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
+         },
+      },
    },
 })
 
@@ -49,7 +64,7 @@ const link = split(
       )
    },
    wsLink,
-   httpLink
+   authLink.concat(httpLink)
 )
 
 const client = new ApolloClient({
