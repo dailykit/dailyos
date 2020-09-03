@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useState } from 'react'
+import { groupBy } from 'lodash'
 
 import { GET_INSIGHT } from '../graphql'
 import { transformer } from '../utils/transformer'
@@ -43,13 +44,18 @@ let gqlQuery = {
 /**
  *
  * @param {string} insightId
- * @param {{chart: boolean, table: boolean, switches: boolean, options: boolean}} [options]
+ * @param {{chart?: {type: 'bar' | 'pie', x: string, name: string}, table: boolean, switches: boolean, options: boolean}} [options]
  *
- * @returns {{loading: boolean, tableData: any[], switches: any, options: any, updateSwitches: () => {}, updateOptions: () => {}}} insight
+ * @returns {{loading: boolean, tableData: any[], chartData: any, switches: any, options: any, updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
 export const useInsights = (
    insightId,
-   options = { chart: false, table: true, switches: true, options: true }
+   options = {
+      chart: {},
+      table: true,
+      switches: true,
+      options: true,
+   }
 ) => {
    const [variableSwitches, setVariableSwitches] = useState({})
    const [variableOptions, setVariableOptions] = useState({})
@@ -85,9 +91,7 @@ export const useInsights = (
 
    transformedData = transformer(data, queryName)
 
-   // TODO: generate chart data if options.chart is true
-
-   return {
+   const result = {
       loading,
       tableData: transformedData,
       switches: variableSwitches,
@@ -95,4 +99,22 @@ export const useInsights = (
       updateSwitches: setVariableSwitches,
       updateOptions: setVariableOptions,
    }
+
+   if (options.chart && options.chart.x) {
+      const groupedData = groupBy(transformedData, options.chart.x)
+
+      const chartData = {
+         labels: Object.keys(groupedData),
+         datasets: [
+            {
+               label: options.chart.name,
+               data: Object.values(groupedData).map(data => data.length),
+            },
+         ],
+      }
+
+      result.chartData = chartData
+   }
+
+   return result
 }
