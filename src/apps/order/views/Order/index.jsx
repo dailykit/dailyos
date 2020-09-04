@@ -189,31 +189,14 @@ export default Order
 
 const MealKits = ({ mealkits }) => {
    const { t } = useTranslation()
-   const { selectMealKit, switchView } = useOrder()
    const [current, setCurrent] = React.useState(null)
-
-   const selectProduct = React.useCallback(
-      id => {
-         setCurrent(id)
-         const product = mealkits.find(mealkit => id === mealkit.id)
-         if (product.orderSachets.length > 0) {
-            selectMealKit(
-               product.orderSachets[0].id,
-               product.simpleRecipeProduct.name
-            )
-         } else {
-            switchView('SUMMARY')
-         }
-      },
-      [switchView, selectMealKit, mealkits]
-   )
 
    React.useEffect(() => {
       if (mealkits.length > 0) {
          const [product] = mealkits
-         selectProduct(product.id)
+         setCurrent(product.id)
       }
-   }, [mealkits, selectProduct])
+   }, [mealkits, setCurrent])
 
    if (mealkits.length === 0) return <div>No mealkit products!</div>
    return (
@@ -223,7 +206,7 @@ const MealKits = ({ mealkits }) => {
                <OrderItem
                   key={mealkit.id}
                   isActive={current === mealkit.id}
-                  onClick={() => selectProduct(mealkit.id)}
+                  onClick={() => setCurrent(mealkit.id)}
                >
                   <div>
                      <StyledProductTitle>
