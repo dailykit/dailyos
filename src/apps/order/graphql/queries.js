@@ -86,7 +86,7 @@ export const ALL_ORDERS_AGGREGATE = gql`
 
 export const ORDER_BY_STATUS = gql`
    subscription orderByStatus {
-      orderByStatus: order_orderStatusEnum {
+      orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
          value
          orders: orders_aggregate {
             aggregate {
@@ -148,6 +148,7 @@ export const ORDERS = gql`
          orderMealKitProducts {
             id
             price
+            isAssembled
             assemblyStatus
             assemblyStation {
                name
@@ -174,6 +175,7 @@ export const ORDERS = gql`
          orderReadyToEatProducts {
             id
             price
+            isAssembled
             assemblyStatus
             simpleRecipeProduct {
                name
@@ -201,6 +203,7 @@ export const ORDERS = gql`
          orderInventoryProducts {
             id
             price
+            isAssembled
             inventoryProduct {
                name
             }
@@ -246,6 +249,7 @@ export const ORDER = gql`
          fulfillmentType
          orderMealKitProducts {
             id
+            isAssembled
             assemblyStatus
             assemblyStation {
                name
@@ -307,6 +311,7 @@ export const ORDER = gql`
             where: { assemblyStationId: $assemblyStationId }
          ) {
             id
+            isAssembled
             assemblyStatus
             simpleRecipeProduct {
                name
@@ -335,6 +340,7 @@ export const ORDER = gql`
             where: { assemblyStationId: $assemblyStationId }
          ) {
             id
+            isAssembled
             inventoryProduct {
                name
             }
@@ -428,13 +434,15 @@ export const FETCH_ORDER_SACHET = gql`
    subscription orderSachet($id: Int!) {
       orderSachet(id: $id) {
          id
+         unit
          status
          quantity
          isAssembled
-         ingredientName
-         processingName
          isLabelled
          isPortioned
+         ingredientName
+         processingName
+         labelTemplateId
          packaging {
             name
          }
@@ -460,6 +468,13 @@ export const FETCH_ORDER_SACHET = gql`
             shelfLife
             bulkDensity
             supplierItem {
+               name
+            }
+         }
+         mealkit: orderMealKitProduct {
+            orderId
+            product: simpleRecipeProduct {
+               id
                name
             }
          }
@@ -937,10 +952,12 @@ export const STATION_USER = gql`
             defaultKotPrinter {
                name
                state
+               printNodeId
             }
             defaultLabelPrinter {
                name
                state
+               printNodeId
             }
             defaultScale {
                id
@@ -961,6 +978,15 @@ export const SETTINGS = gql`
          type
          identifier
          value
+      }
+   }
+`
+
+export const LABEL_TEMPLATE = gql`
+   query labelTemplate($id: Int!) {
+      labelTemplate(id: $id) {
+         id
+         name
       }
    }
 `

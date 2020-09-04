@@ -327,9 +327,7 @@ const Inventories = ({ inventories }) => {
                      `(${inventory?.comboProductComponent?.label})`}
                </StyledProductTitle>
                <section>
-                  <span>
-                     {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
-                  </span>
+                  <span>{inventory.isAssembled ? 1 : 0} / 1</span>
                   <StyledServings>
                      <span>
                         <UserIcon size={16} color="#555B6E" />
@@ -388,9 +386,7 @@ const ReadyToEats = ({ readytoeats }) => {
                   </StyledProductTitle>
                </div>
                <section>
-                  <span>
-                     {readytoeat?.assemblyStatus === 'ASSEMBLED' ? 1 : 0} / 1
-                  </span>
+                  <span>{readytoeat?.isAssembled ? 1 : 0} / 1</span>
                   <StyledServings>
                      <span>
                         <UserIcon size={16} color="#555B6E" />

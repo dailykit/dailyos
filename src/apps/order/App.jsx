@@ -39,7 +39,7 @@ const App = () => {
       if (state.delivery_config.orderId) {
          openTunnel(1)
       }
-   }, [state.delivery_config, openTunnel])
+   }, [state.delivery_config])
 
    React.useEffect(() => {
       if (configState.tunnel.visible) {
@@ -47,7 +47,7 @@ const App = () => {
       } else {
          closeConfigTunnel(1)
       }
-   }, [configState.tunnel.visible, openConfigTunnel, closeConfigTunnel])
+   }, [configState.tunnel.visible])
 
    React.useEffect(() => {
       if (state.filter.tunnel) {
@@ -55,7 +55,7 @@ const App = () => {
       } else {
          closeFilterTunnel(1)
       }
-   }, [state.filter.tunnel, openFilterTunnel, closeFilterTunnel])
+   }, [state.filter.tunnel])
 
    return (
       <StyledWrapper position={position}>
@@ -84,27 +84,21 @@ const App = () => {
                />
             </Portal>
          )}
-         <Portal>
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer="1" size="md">
-                  <DeliveryConfig closeTunnel={closeTunnel} />
-               </Tunnel>
-            </Tunnels>
-         </Portal>
-         <Portal>
-            <Tunnels tunnels={filterTunnels}>
-               <Tunnel layer="1" size="sm">
-                  <FilterTunnel />
-               </Tunnel>
-            </Tunnels>
-         </Portal>
-         <Portal>
-            <Tunnels tunnels={configTunnels}>
-               <Tunnel layer="1" size="full">
-                  <ConfigTunnel />
-               </Tunnel>
-            </Tunnels>
-         </Portal>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer="1" size="md">
+               <DeliveryConfig closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={filterTunnels}>
+            <Tunnel layer="1" size="sm">
+               <FilterTunnel />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={configTunnels}>
+            <Tunnel layer="1" size="full">
+               <ConfigTunnel />
+            </Tunnel>
+         </Tunnels>
       </StyledWrapper>
    )
 }

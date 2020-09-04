@@ -36,6 +36,9 @@ export const Content = styled.main`
    scroll-behavior: smooth;
    height: calc(100vh - 104px);
    section {
+      + section {
+         margin-top: 24px;
+      }
       > span {
          margin-bottom: 16px;
       }
