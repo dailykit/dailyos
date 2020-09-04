@@ -190,6 +190,27 @@ export const StyledSOP = styled.section`
    }
 `
 
+export const StyledLabelPreview = styled.section`
+   margin-top: 16px;
+   header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+   }
+   h3 {
+      font-size: 18px;
+      font-weight: 400;
+      color: #555b6e;
+   }
+   div {
+      width: 100%;
+      margin-top: 8px;
+      background: #fff;
+      overflow: hidden;
+      border-radius: 6px;
+   }
+`
+
 export const ManualWeight = styled.section`
    display: flex;
    margin-top: 16px;

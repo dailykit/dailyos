@@ -11,11 +11,6 @@ const ProductDetails = ({ product }) => {
    const { selectMealKit } = useOrder()
    const { t } = useTranslation()
    const [currentPanel, setCurrentPanel] = React.useState(null)
-   React.useEffect(() => {
-      if ('id' in product && product.orderSachets.length > 0) {
-         setCurrentPanel(product?.orderSachets[0]?.id)
-      }
-   }, [product])
 
    const selectSachet = id => {
       selectMealKit(id, product.simpleRecipeProduct.name)

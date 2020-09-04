@@ -12,6 +12,7 @@ export const StyledWrapper = styled.div(
       grid-template-columns: ${position === 'left' ? '340px 1fr' : '1fr 340px'};
       > aside {
          grid-area: aside;
+         overflow-y: auto;
       }
       > main {
          grid-area: main;
