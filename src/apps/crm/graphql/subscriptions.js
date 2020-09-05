@@ -28,3 +28,32 @@ export const CUSTOMER_ISTEST = gql`
       }
    }
 `
+
+export const COUPON_LISTING = gql`
+   subscription COUPON_LISTING {
+      coupons {
+         id
+         code
+         isActive
+      }
+   }
+`
+
+export const COUPON_TOTAL = gql`
+   subscription COUPON_TOTAL {
+      couponsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+export const COUPON_DATA = gql`
+   subscription COUPON_DATA($id: Int!) {
+      coupon(id: $id) {
+         id
+         code
+         isActive
+      }
+   }
+`

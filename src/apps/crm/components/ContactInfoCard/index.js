@@ -8,7 +8,7 @@ import {
    SmallText,
 } from './styled'
 import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
-import { addressStringify } from '../../Utils'
+import { concatAddress } from '../../Utils'
 
 const ContactInfoCard = ({
    defaultTag1,
@@ -32,7 +32,7 @@ const ContactInfoCard = ({
       <CustomerAddress>
          <Text as="subtitle">Delivery Address{defaultTag2}</Text>
          <Text as="title">
-            {addressStringify(customerData?.defaultCustomerAddress || 'N/A')}
+            {concatAddress(customerData?.defaultCustomerAddress || 'N/A')}
          </Text>
       </CustomerAddress>
    </ContactCard>

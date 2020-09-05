@@ -92,22 +92,19 @@ const CustomerRelation = ({ match }) => {
       }
    }, [history, tab])
 
-   const setActiveCard = React.useCallback(
-      card => {
-         dispatch({
-            type: 'STORE_TAB_DATA',
-            payload: {
-               path: tab?.path,
-               data: { activeCard: card },
-            },
-         })
-      },
-      [tab, dispatch]
-   )
+   const setActiveCard = card => {
+      dispatch({
+         type: 'STORE_TAB_DATA',
+         payload: {
+            path: tab?.path,
+            data: { activeCard: card },
+         },
+      })
+   }
 
    useEffect(() => {
       setActiveCard('Orders')
-   }, [setActiveCard])
+   }, [])
 
    let table = null
    if (tab?.data?.activeCard === 'Orders') {
