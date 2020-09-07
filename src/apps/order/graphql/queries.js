@@ -247,7 +247,9 @@ export const ORDER = gql`
          deliveryPrice
          transactionId
          fulfillmentType
-         orderMealKitProducts {
+         orderMealKitProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
             id
             isAssembled
             assemblyStatus
