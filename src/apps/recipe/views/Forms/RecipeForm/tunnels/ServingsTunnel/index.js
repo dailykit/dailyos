@@ -10,8 +10,6 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    const [busy, setBusy] = React.useState(false)
    const [servings, setServings] = React.useState([''])
 
-   // {simpleRecipeId: 10, yield: ""}
-
    // Mutation
    const [createYields] = useMutation(CREATE_SIMPLE_RECIPE_YIELDS, {
       onCompleted: () => {
@@ -65,9 +63,9 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                />
             </Container>
             {servings.map((serving, i) => (
-               <Container bottom="16" key={serving}>
+               <Container bottom="16" key={i}>
                   <Input
-                     type="text"
+                     type="number"
                      label="Serving"
                      name={`serving-${i}`}
                      value={serving}

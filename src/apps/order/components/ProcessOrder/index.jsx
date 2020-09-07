@@ -1,6 +1,7 @@
 import React from 'react'
+import _ from 'lodash'
 import { toast } from 'react-toastify'
-import { TextButton } from '@dailykit/ui'
+import { TextButton, IconButton, CloseIcon } from '@dailykit/ui'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
 import { ScaleIcon } from '../../assets/icons'
@@ -23,6 +24,7 @@ import {
    StyledSOP,
    StyledButton,
    ManualWeight,
+   StyledLabelPreview,
 } from './styled'
 
 export const ProcessOrder = () => {
@@ -34,6 +36,7 @@ export const ProcessOrder = () => {
    const [weight, setWeight] = React.useState(0)
    const [sachet, setSachet] = React.useState(null)
    const [scaleState, setScaleState] = React.useState('low')
+   const [labelPreview, setLabelPreview] = React.useState('')
    const [printLabel] = useMutation(CREATE_PRINT_JOB, {
       onCompleted: () => {
          toast.success(
@@ -69,6 +72,12 @@ export const ProcessOrder = () => {
    })
 
    React.useEffect(() => {
+      setWeight(0)
+      setScaleState('low')
+      setLabelPreview('')
+   }, [mealkit.sachet_id])
+
+   React.useEffect(() => {
       let timer
       if (weight === sachet?.quantity) {
          timer = setTimeout(() => {
@@ -95,14 +104,11 @@ export const ProcessOrder = () => {
    }, [weight, sachet])
 
    const print = () => {
-      if (Object.keys(labelTemplate).length === 0) {
+      if (!_.isObject(labelTemplate) || _.isEmpty(labelTemplate)) {
          toast.error('No label template available')
          return
       }
-      if (
-         Object.keys(state.station).length === 0 ||
-         !state.station?.defaultLabelPrinter
-      ) {
+      if (_.isEmpty(state.station) || !state.station?.defaultLabelPrinter) {
          toast.error('No label printer available!')
          return
       }
@@ -110,7 +116,9 @@ export const ProcessOrder = () => {
          JSON.stringify({
             name: labelTemplate?.name,
             type: 'label',
-            format: 'pdf',
+            format: state.print.print_simulation.value.isActive
+               ? 'html'
+               : 'pdf',
          })
       )
 
@@ -126,13 +134,35 @@ export const ProcessOrder = () => {
          })
       )
       const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
-      printLabel({
+
+      updateSachet({
          variables: {
-            url,
-            source: 'DailyOS',
-            contentType: 'pdf_uri',
-            printerId: state.station.defaultLabelPrinter.printNodeId,
-            title: `${sachet.ingredientName} - ${sachet.processingName}`,
+            id: sachet.id,
+            _set: {
+               isPortioned: true,
+            },
+         },
+      })
+      if (state.print.print_simulation.value.isActive) {
+         setLabelPreview(url)
+      } else {
+         printLabel({
+            variables: {
+               url,
+               source: 'DailyOS',
+               contentType: 'pdf_uri',
+               printerId: state.station.defaultLabelPrinter.printNodeId,
+               title: `${sachet.ingredientName} - ${sachet.processingName}`,
+            },
+         })
+      }
+      updateSachet({
+         variables: {
+            id: sachet.id,
+            _set: {
+               status: 'PACKED',
+               isLabelled: true,
+            },
          },
       })
    }
@@ -281,6 +311,19 @@ export const ProcessOrder = () => {
                   </ManualWeight>
                )}
          </StyledMain>
+         {labelPreview && (
+            <StyledLabelPreview>
+               <header>
+                  <h3>Label Preview</h3>
+                  <IconButton type="ghost" onClick={() => setLabelPreview('')}>
+                     <CloseIcon />
+                  </IconButton>
+               </header>
+               <div>
+                  <iframe src={labelPreview} frameborder="0" />
+               </div>
+            </StyledLabelPreview>
+         )}
          <StyledPackaging>
             <h3>Packaging</h3>
             <span>{sachet?.packging?.name || 'N/A'}</span>
