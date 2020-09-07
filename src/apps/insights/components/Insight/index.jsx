@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Chart } from 'react-google-charts'
 import { ReactTabulator } from 'react-tabulator'
@@ -9,34 +9,55 @@ import { useInsights } from '../../hooks/useInsights'
 import { tableConfig } from './tableConfig'
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', availableChartTypes?: Array<string>, tablePosition?: 'bottom' | 'top' | 'right' | 'left', chartOptions?: {xLabel: string, xKey: string, yLabel: string, type: 'Bar' | 'Line' | 'PieChart', width?: string, height?: string, showLegend?: boolean}, id: string  }} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', chartOptions?: {xLabel: string, xKey: string, yLabel: string, type: 'Bar' | 'Line' | 'PieChart', width?: string, height?: string, showLegend?: boolean, availableChartTypes: Array<string>, }, id: string  }} props
  */
 export default function Insight({
    includeTable = true,
    includeChart = false,
    alignment = 'column',
-   availableChartTypes = ['Bar'],
    tablePosition = 'bottom',
-   chartOptions = {},
+   chartOptions = {
+      availableChartTypes: ['Bar'],
+   },
    id = '',
 }) {
    const { chartData, tableData } = useInsights(id, {
       chart: chartOptions,
       includeTableData: includeChart ? chartOptions : {},
    })
+   const [chartType, setChartType] = useState(
+      chartOptions.availableChartTypes[0]
+   )
 
    return (
       <StyledContainer alignment={alignment} position={tablePosition}>
          {includeChart ? (
-            <Chart
-               data={chartData}
-               chartType={chartOptions.type}
-               loader={<div>loading...</div>}
-               style={{ flex: '1' }}
-               height={chartOptions.height || '400px'}
-               width={chartOptions.width || '600px'}
-               options={{ legend: chartOptions.showLegend ? {} : 'none' }}
-            />
+            <div>
+               <select
+                  style={{ marginBottom: '12px' }}
+                  name="chartTypes"
+                  id="chartTypes"
+                  defaultValue={chartOptions.availableChartTypes[0]}
+                  onChange={e => {
+                     setChartType(e.target.value)
+                  }}
+               >
+                  {chartOptions.availableChartTypes.map(type => (
+                     <option value={type} key={type}>
+                        {type}
+                     </option>
+                  ))}
+               </select>
+               <Chart
+                  data={chartData}
+                  chartType={chartType}
+                  loader={<div>loading...</div>}
+                  style={{ flex: '1' }}
+                  height={chartOptions.height || '400px'}
+                  width={chartOptions.width || '600px'}
+                  options={{ legend: chartOptions.showLegend ? {} : 'none' }}
+               />
+            </div>
          ) : null}
 
          {includeTable ? (

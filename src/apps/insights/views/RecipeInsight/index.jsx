@@ -15,10 +15,10 @@ const ReferralPlansListing = () => {
             includeChart
             tablePosition="left"
             chartOptions={{
-               type: 'Bar',
                xKey: 'name',
                xLabel: 'Total Sales',
                yLabel: 'count',
+               availableChartTypes: ['Bar', 'PieChart', 'Line'],
             }}
          />
       </StyledWrapper>
