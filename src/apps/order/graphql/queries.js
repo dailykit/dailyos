@@ -942,29 +942,26 @@ export const PLANNED = {
    `,
 }
 
-export const STATION_USER = gql`
-   subscription station_user($email: String_comparison_exp!) {
-      station_user(where: { user: { email: $email } }) {
-         active
-         station {
-            id
+export const STATIONS_BY_USER = gql`
+   subscription stations($email: String_comparison_exp!) {
+      stations(where: { assignedUsers: { user: { email: $email } } }) {
+         id
+         name
+         defaultKotPrinter {
             name
-            defaultKotPrinter {
-               name
-               state
-               printNodeId
-            }
-            defaultLabelPrinter {
-               name
-               state
-               printNodeId
-            }
-            defaultScale {
-               id
-               active
-               deviceNum
-               deviceName
-            }
+            state
+            printNodeId
+         }
+         defaultLabelPrinter {
+            name
+            state
+            printNodeId
+         }
+         defaultScale {
+            id
+            active
+            deviceNum
+            deviceName
          }
       }
    }
