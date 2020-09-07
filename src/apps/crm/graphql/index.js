@@ -23,6 +23,7 @@ import {
    COUPON_ACTIVE,
    CREATE_COUPON,
    UPDATE_COUPON,
+   DELETE_COUPON,
 } from './mutations'
 
 export {
@@ -45,4 +46,5 @@ export {
    CREATE_COUPON,
    COUPON_DATA,
    UPDATE_COUPON,
+   DELETE_COUPON,
 }

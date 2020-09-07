@@ -40,3 +40,11 @@ export const UPDATE_COUPON = gql`
       }
    }
 `
+
+export const DELETE_COUPON = gql`
+   mutation DELETE_COUPON($id: Int!) {
+      deleteCoupon(id: $id) {
+         id
+      }
+   }
+`

@@ -1,26 +1,50 @@
-import React from 'react'
-import { Text, ButtonGroup, IconButton, PlusIcon, Toggle } from '@dailykit/ui'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from 'react-tabulator'
-import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
-import tableOptions from '../tableOptions'
-import { randomSuffix } from '../../../../../shared/utils'
+import {
+   Text,
+   ButtonGroup,
+   IconButton,
+   PlusIcon,
+   Toggle,
+   Loader,
+} from '@dailykit/ui'
 import {
    COUPON_LISTING,
    COUPON_TOTAL,
    COUPON_ACTIVE,
    CREATE_COUPON,
+   DELETE_COUPON,
 } from '../../../graphql'
+import { useTabs } from '../../../context'
+import { StyledHeader, StyledWrapper } from './styled'
+import tableOptions from '../tableOptions'
+import { randomSuffix } from '../../../../../shared/utils'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
-
+   const [coupons, setCoupons] = useState([])
+   const tableRef = useRef(null)
    // Subscription
-   const { data: couponListing } = useSubscription(COUPON_LISTING)
-   const { data: couponTotal } = useSubscription(COUPON_TOTAL)
+   const { loading: listLoading } = useSubscription(COUPON_LISTING, {
+      onSubscriptionData: data => {
+         const result = data.subscriptionData.data.coupons.map(coupon => {
+            return {
+               id: coupon.id,
+               code: coupon.code,
+               used: 'N/A',
+               rate: 'N/A',
+               amount: 'N/A',
+               active: coupon.isActive,
+               duration: 'N/A',
+            }
+         })
+         setCoupons(result)
+      },
+   })
+   const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
 
    // Mutation
    const [updateCouponActive] = useMutation(COUPON_ACTIVE, {
@@ -50,6 +74,12 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
+   useEffect(() => {
+      if (tableRef.current) {
+         tableRef.current.table.setData(coupons)
+      }
+   })
+
    const toggleHandler = (toggle, id) => {
       updateCouponActive({
          variables: {
@@ -69,6 +99,32 @@ const CustomerListing = () => {
       )
    }
 
+   const [deleteCoupon] = useMutation(DELETE_COUPON, {
+      onCompleted: () => {
+         toast.success('Coupon deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
+   // Handler
+   const deleteHandler = (e, coupon) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete Coupon - ${coupon.code}?`
+         )
+      ) {
+         deleteCoupon({
+            variables: {
+               id: coupon.id,
+            },
+         })
+      }
+   }
+
    const rowClick = (e, row) => {
       const { id, code } = row._row.data
       const param = `/crm/coupons/${id}`
@@ -86,27 +142,23 @@ const CustomerListing = () => {
          field: 'active',
          formatter: reactFormatter(<ToggleButton />),
       },
-      { title: 'Duration', field: 'duration' },
+      {
+         title: 'Action',
+         field: 'action',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+      },
    ]
-   const data = []
-   if (couponListing) {
-      couponListing.coupons.map(coupon => {
-         return data.push({
-            id: coupon?.id,
-            code: coupon?.code,
-            used: 'N/A',
-            rate: 'N/A',
-            amount: 'N/A',
-            active: coupon?.isActive,
-            duration: 'N/A',
-         })
-      })
-   }
+   if (loading) return <Loader />
+   if (listLoading) return <Loader />
    return (
       <StyledWrapper>
          <StyledHeader gridCol="10fr  1fr">
             <Text as="title">
-               Customers(
+               Coupons(
                {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
             </Text>
             <ButtonGroup>
@@ -118,9 +170,10 @@ const CustomerListing = () => {
 
          <ReactTabulator
             columns={columns}
-            data={data}
+            data={coupons}
             rowClick={rowClick}
             options={tableOptions}
+            ref={tableRef}
          />
       </StyledWrapper>
    )

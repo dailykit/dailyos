@@ -26,7 +26,6 @@ const CustomerListing = () => {
          id: couponId,
       },
       onSubscriptionData: data => {
-         console.log(`subscriptionData  ${data.subscriptionData.data.coupon}`)
          setState(data.subscriptionData.data.coupon)
          setCodeTitle(data.subscriptionData.data.coupon.code)
          setToggle(data.subscriptionData.data.coupon.isActive)
