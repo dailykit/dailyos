@@ -34,13 +34,9 @@ export const UPDATE_ORDER_STATUS = gql`
 export const UPDATE_INVENTORY_PRODUCT = gql`
    mutation updateOrderInventoryProduct(
       $id: Int!
-      $assemblyStatus: String!
-      $isAssembled: Boolean!
+      $_set: order_orderInventoryProduct_set_input!
    ) {
-      updateOrderInventoryProduct(
-         pk_columns: { id: $id }
-         _set: { assemblyStatus: $assemblyStatus, isAssembled: $isAssembled }
-      ) {
+      updateOrderInventoryProduct(pk_columns: { id: $id }, _set: $_set) {
          id
          assemblyStatus
       }
@@ -50,13 +46,9 @@ export const UPDATE_INVENTORY_PRODUCT = gql`
 export const UPDATE_READYTOEAT = gql`
    mutation updateOrderReadyToEatProduct(
       $id: Int!
-      $assemblyStatus: String!
-      $isAssembled: Boolean!
+      $_set: order_orderReadyToEatProduct_set_input!
    ) {
-      updateOrderReadyToEatProduct(
-         pk_columns: { id: $id }
-         _set: { assemblyStatus: $assemblyStatus, isAssembled: $isAssembled }
-      ) {
+      updateOrderReadyToEatProduct(pk_columns: { id: $id }, _set: $_set) {
          id
          isAssembled
          assemblyStatus

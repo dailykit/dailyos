@@ -1,13 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
-import { Dropdown } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { useOrder } from '../../context'
-import { ORDER, STATIONS } from '../../graphql'
+import { ORDER } from '../../graphql'
 import { formatDate } from '../../utils'
+import { useOrder, useTabs } from '../../context'
 import { Flex, InlineLoader } from '../../../../shared/components'
 import { UserIcon, PrintIcon } from '../../assets/icons'
 import MealKitProductDetails from './MealKitProductDetails'
@@ -37,6 +36,7 @@ const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
+   const { tab, addTab } = useTabs()
    const [order, setOrder] = React.useState(null)
    const { state, switchView, dispatch } = useOrder()
    const [mealkits, setMealKits] = React.useState([])
@@ -73,6 +73,12 @@ const Order = () => {
          setReadyToEats(orderReadyToEatProducts)
       },
    })
+
+   React.useEffect(() => {
+      if (!loading && order && !tab) {
+         addTab(`ORD${order.id}`, `/apps/order/orders/${order.id}`)
+      }
+   }, [loading, order, tab, addTab])
 
    React.useEffect(() => {
       return () => switchView('SUMMARY')
@@ -297,15 +303,25 @@ const Inventories = ({ inventories }) => {
                isActive={current === inventory.id}
                onClick={() => selectProduct(inventory.id)}
             >
-               <StyledProductTitle>
-                  {inventory?.inventoryProduct?.name}
-                  {inventory?.comboProduct?.name}
-                  &nbsp;
-                  {inventory?.comboProductComponent?.label &&
-                     `(${inventory?.comboProductComponent?.label})`}
-               </StyledProductTitle>
+               <Flex
+                  container
+                  alignitems="center"
+                  justifyContent="space-between"
+               >
+                  <StyledProductTitle>
+                     {inventory?.inventoryProduct?.name}
+                     {inventory?.comboProduct?.name}
+                     &nbsp;
+                     {inventory?.comboProductComponent?.label &&
+                        `(${inventory?.comboProductComponent?.label})`}
+                  </StyledProductTitle>
+                  <span>Quantity: {inventory.quantity}</span>
+               </Flex>
                <section>
-                  <span>{inventory.isAssembled ? 1 : 0} / 1</span>
+                  <span>
+                     {inventory.isAssembled ? 1 : 0} /{' '}
+                     {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+                  </span>
                   <StyledServings>
                      <span>
                         <UserIcon size={16} color="#555B6E" />
@@ -364,7 +380,10 @@ const ReadyToEats = ({ readytoeats }) => {
                   </StyledProductTitle>
                </div>
                <section>
-                  <span>{readytoeat?.isAssembled ? 1 : 0} / 1</span>
+                  <span>
+                     {readytoeat.isAssembled ? 1 : 0} /{' '}
+                     {readytoeat.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+                  </span>
                   <StyledServings>
                      <span>
                         <UserIcon size={16} color="#555B6E" />

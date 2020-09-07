@@ -313,6 +313,7 @@ export const ORDER = gql`
             where: { assemblyStationId: $assemblyStationId }
          ) {
             id
+            quantity
             isAssembled
             assemblyStatus
             simpleRecipeProduct {
@@ -342,7 +343,9 @@ export const ORDER = gql`
             where: { assemblyStationId: $assemblyStationId }
          ) {
             id
+            quantity
             isAssembled
+            assemblyStatus
             inventoryProduct {
                name
             }
@@ -355,7 +358,6 @@ export const ORDER = gql`
             assemblyStation {
                name
             }
-            assemblyStatus
             customizableProduct {
                name
             }
