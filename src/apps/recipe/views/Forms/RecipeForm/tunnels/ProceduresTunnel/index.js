@@ -8,115 +8,18 @@ import { Container, InputWrapper, TunnelBody } from '../styled'
 import { RecipeContext } from '../../../../../context/recipee'
 import { ImageContainer, PhotoTileWrapper } from './styled'
 
-const reducer = (state, { type, payload }) => {
-   switch (type) {
-      case 'ADD_PROCEDURE': {
-         return {
-            ...state,
-            procedures: state.procedures
-               ? [...state.procedures, { title: '', steps: [] }]
-               : [{ title: '', steps: [] }],
-         }
-      }
-      case 'ADD_STEP': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].steps.push({
-            title: '',
-            isVisible: true,
-            assets: {
-               images: [],
-               videos: [],
-            },
-            description: '',
-         })
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'PROCEDURE_TITLE': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].title = payload.value
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'DELETE_PROCEDURE': {
-         const updatedProcedures = state.procedures
-         updatedProcedures.splice(payload.index, 1)
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'STEP_TITLE': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].steps[payload.stepIndex].title =
-            payload.value
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'STEP_VISIBILITY': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].steps[
-            payload.stepIndex
-         ].isVisible = !updatedProcedures[payload.index].steps[
-            payload.stepIndex
-         ].isVisible
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'STEP_DESCRIPTION': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].steps[payload.stepIndex].description =
-            payload.value
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'DELETE_STEP': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].steps.splice(payload.stepIndex, 1)
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      case 'REMOVE_STEP_PHOTO': {
-         const updatedProcedures = state.procedures
-         updatedProcedures[payload.index].steps[payload.stepIndex].assets = {
-            images: [],
-            videos: [],
-         }
-         return {
-            ...state,
-            procedures: updatedProcedures,
-         }
-      }
-      default:
-         return state
-   }
-}
-
 const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
-   const { recipeDispatch } = React.useContext(RecipeContext)
+   const { recipeState, recipeDispatch } = React.useContext(RecipeContext)
 
    // State
    const [busy, setBusy] = React.useState(false)
-   const [_state, _dispatch] = React.useReducer(reducer, state)
 
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       variables: {
          id: state.id,
          set: {
-            procedures: _state.procedures,
+            procedures: recipeState.procedures,
          },
       },
       onCompleted: () => {
@@ -146,6 +49,15 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
       updateRecipe()
    }
 
+   React.useEffect(() => {
+      recipeDispatch({
+         type: 'SEED_PROCEDURES',
+         payload: {
+            value: state.procedures || [],
+         },
+      })
+   }, [])
+
    return (
       <>
          <TunnelHeader
@@ -154,7 +66,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
             close={() => closeTunnel(1)}
          />
          <TunnelBody>
-            {_state.procedures?.map((procedure, index) => (
+            {recipeState.procedures?.map((procedure, index) => (
                <Container bottom="32">
                   <InputWrapper>
                      <div style={{ marginRight: '16px', maxWidth: '240px' }}>
@@ -164,7 +76,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                            name={`procedure-${index}-title`}
                            value={procedure.title}
                            onChange={e =>
-                              _dispatch({
+                              recipeDispatch({
                                  type: 'PROCEDURE_TITLE',
                                  payload: { index, value: e.target.value },
                               })
@@ -176,13 +88,13 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                         role="button"
                         onKeyDown={e =>
                            e.charCode === 13 &&
-                           _dispatch({
+                           recipeDispatch({
                               type: 'DELETE_PROCEDURE',
                               payload: { index },
                            })
                         }
                         onClick={() =>
-                           _dispatch({
+                           recipeDispatch({
                               type: 'DELETE_PROCEDURE',
                               payload: { index },
                            })
@@ -207,7 +119,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                     name={`step-${stepIndex}-title`}
                                     value={step.title}
                                     onChange={e => {
-                                       _dispatch({
+                                       recipeDispatch({
                                           type: 'STEP_TITLE',
                                           payload: {
                                              index,
@@ -223,7 +135,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                     checked={step.isVisible}
                                     label="Visibility"
                                     setChecked={() => {
-                                       _dispatch({
+                                       recipeDispatch({
                                           type: 'STEP_VISIBILITY',
                                           payload: {
                                              index,
@@ -237,13 +149,13 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                     role="button"
                                     onKeyDown={e =>
                                        e.charCode === 13 &&
-                                       _dispatch({
+                                       recipeDispatch({
                                           type: 'DELETE_STEP',
                                           payload: { index, stepIndex },
                                        })
                                     }
                                     onClick={() =>
-                                       _dispatch({
+                                       recipeDispatch({
                                           type: 'DELETE_STEP',
                                           payload: { index, stepIndex },
                                        })
@@ -276,13 +188,13 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                        role="button"
                                        onKeyDown={e =>
                                           e.charCode === 13 &&
-                                          _dispatch({
+                                          recipeDispatch({
                                              type: 'REMOVE_STEP_PHOTO',
                                              payload: { index, stepIndex },
                                           })
                                        }
                                        onClick={() =>
-                                          _dispatch({
+                                          recipeDispatch({
                                              type: 'REMOVE_STEP_PHOTO',
                                              payload: { index, stepIndex },
                                           })
@@ -316,7 +228,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                               rows="3"
                               value={step.description}
                               onChange={e => {
-                                 _dispatch({
+                                 recipeDispatch({
                                     type: 'STEP_DESCRIPTION',
                                     payload: {
                                        index,
@@ -333,7 +245,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                      type="secondary"
                      text="Add a Step"
                      onClick={() => {
-                        _dispatch({
+                        recipeDispatch({
                            type: 'ADD_STEP',
                            payload: { index },
                         })
@@ -345,7 +257,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                type="secondary"
                text="Add a Procedure"
                onClick={() => {
-                  _dispatch({
+                  recipeDispatch({
                      type: 'ADD_PROCEDURE',
                   })
                }}

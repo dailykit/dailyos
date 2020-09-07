@@ -13,7 +13,7 @@ import { Image } from './styled'
 import { ProceduresTunnel, StepPhotoTunnel } from '../../tunnels'
 
 const Procedures = ({ state }) => {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(0)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
 
    return (
       <>
@@ -26,7 +26,7 @@ const Procedures = ({ state }) => {
                />
             </Tunnel>
             <Tunnel layer={2}>
-               <StepPhotoTunnel state={state} closeTunnel={closeTunnel} />
+               <StepPhotoTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Container top="32" paddingX="32">
