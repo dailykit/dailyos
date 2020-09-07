@@ -1,17 +1,11 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { Input, TunnelHeader } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { COUPON_DATA, UPDATE_COUPON } from '../../../../../graphql'
+import { UPDATE_COUPON } from '../../../../../graphql'
 import { StyledRow, TunnelBody } from '../styled'
 
-const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.descriptiontunnel.'
-
 const DescriptionTunnel = ({ state, close }) => {
-   const { t } = useTranslation()
-
    const [busy, setBusy] = React.useState(false)
    const [description, setDescription] = React.useState(state.description || '')
 
@@ -43,12 +37,10 @@ const DescriptionTunnel = ({ state, close }) => {
    return (
       <>
          <TunnelHeader
-            title={t(address.concat('add description'))}
+            title="Add description"
             right={{
                action: save,
-               title: busy
-                  ? t(address.concat('saving'))
-                  : t(address.concat('save')),
+               title: busy ? 'Saving' : 'Save',
             }}
             close={() => close(1)}
          />
@@ -56,7 +48,7 @@ const DescriptionTunnel = ({ state, close }) => {
             <StyledRow>
                <Input
                   type="textarea"
-                  label={t(address.concat('description'))}
+                  label="Description"
                   name="textarea"
                   rows="5"
                   value={description}

@@ -42,3 +42,9 @@ export const Flex = styled.div`
    justify-content: space-between;
    align-items: center;
 `
+export const StyledDiv = styled.div`
+   padding: 16px 0;
+   p .addFact {
+      color: #00a7e1;
+   }
+`

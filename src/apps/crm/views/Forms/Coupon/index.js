@@ -13,7 +13,7 @@ import {
    RewardComp,
 } from './components'
 
-const CustomerListing = () => {
+const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
    const { id: couponId } = useParams()
    const [codeTitle, setCodeTitle] = useState('')
@@ -95,12 +95,12 @@ const CustomerListing = () => {
             />
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
-         <DescriptionComp />
-         <ImageComp />
-         <ConditionComp />
-         <RewardComp />
+         <DescriptionComp state={state} />
+         <ImageComp state={state} />
+         <ConditionComp state={state} />
+         <RewardComp state={state} />
       </StyledWrapper>
    )
 }
 
-export default CustomerListing
+export default CouponForm

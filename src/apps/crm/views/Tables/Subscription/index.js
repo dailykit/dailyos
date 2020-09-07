@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Text, Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
@@ -14,10 +14,48 @@ import './style.css'
 const SubscriptionTable = ({ id, sid }) => {
    const { dispatch, tab } = useTabs()
    const history = useHistory()
+   const [occurences, setOccurences] = useState([])
+   const tableRef = useRef(null)
    const { loading: listLoading, data: occurencesData } = useQuery(OCCURENCES, {
       variables: {
          keycloakId: id,
          sid,
+      },
+      onCompleted: ({ subscriptionOccurencesAggregate = {} }) => {
+         let action = ''
+         const result = subscriptionOccurencesAggregate.nodes.map(occurence => {
+            if (
+               occurence.customers.length !== 0 &&
+               occurence.customers[0].isSkipped
+            ) {
+               action = 'Skipped'
+            } else if (
+               occurence.customers.length !== 0 &&
+               occurence.customers[0].orderCart &&
+               occurence.customers[0].orderCart.orderId
+            ) {
+               action = 'Order Placed'
+            } else if (
+               occurence.customers.length !== 0 &&
+               occurence.customers[0].orderCart &&
+               occurence.customers[0].orderCart.id
+            ) {
+               action = 'Added To Cart'
+            } else {
+               action = 'No Action'
+            }
+            return {
+               startTimeStamp: occurence?.startTimeStamp || 'N/A',
+               cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
+               date: occurence?.fulfillmentDate || 'N/A',
+               action,
+               oid: occurence?.customers?.[0]?.orderCart?.orderId || '',
+               amountPaid: `$ ${
+                  occurence?.customers?.[0]?.orderCart?.amount || 'N/A'
+               }`,
+            }
+         })
+         setOccurences(result)
       },
    })
    useEffect(() => {
@@ -25,6 +63,12 @@ const SubscriptionTable = ({ id, sid }) => {
          history.push('/crm/customers')
       }
    }, [history, tab])
+
+   useEffect(() => {
+      if (tableRef.current) {
+         tableRef.current.table.setData(occurences)
+      }
+   })
 
    const InfoButton = ({ cell }) => {
       const rowData = cell._cell.row.data
@@ -105,73 +149,38 @@ const SubscriptionTable = ({ id, sid }) => {
       setOrder('', false)
    }, [])
 
-   const data = []
-   if (occurencesData) {
-      let action = ''
-      occurencesData.subscriptionOccurencesAggregate.nodes.map(occurence => {
-         if (
-            occurence.customers.length !== 0 &&
-            occurence.customers[0].isSkipped
-         ) {
-            action = 'Skipped'
-         } else if (
-            occurence.customers.length !== 0 &&
-            occurence.customers[0].orderCart &&
-            occurence.customers[0].orderCart.orderId
-         ) {
-            action = 'Order Placed'
-         } else if (
-            occurence.customers.length !== 0 &&
-            occurence.customers[0].orderCart &&
-            occurence.customers[0].orderCart.id
-         ) {
-            action = 'Added To Cart'
-         } else {
-            action = 'No Action'
-         }
-         return data.push({
-            startTimeStamp: occurence?.startTimeStamp || 'N/A',
-            cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
-            date: occurence?.fulfillmentDate || 'N/A',
-            action,
-            oid: occurence?.customers?.[0]?.orderCart?.orderId || '',
-            amountPaid: `$ ${
-               occurence?.customers?.[0]?.orderCart?.amount || 'N/A'
-            }`,
-         })
-      })
-   }
    const rowClick = (e, row) => {
       const orderId = row._row.data.oid.toString()
 
       setOrder(orderId, true)
    }
-   let showTable = (
-      <>
-         <div style={{ padding: '16px' }}>
-            <Text as="title">
-               Occurences(
-               {occurencesData?.subscriptionOccurencesAggregate?.occurenceCount
-                  ?.count || 'N/A'}
-               )
-            </Text>
-         </div>
-         <ReactTabulator
-            columns={columns}
-            data={data}
-            rowClick={rowClick}
-            options={tableOptions}
-         />
-      </>
-   )
-   if (tab.data.isOccurencesClicked) {
-      showTable = <OrderComp />
-   }
 
    if (listLoading) return <Loader />
    return (
       <>
-         <div style={{ overflowX: 'scroll' }}>{showTable}</div>
+         <div style={{ overflowX: 'scroll' }}>
+            {tab.data.isOccurencesClicked ? (
+               <OrderComp />
+            ) : (
+               <>
+                  <div style={{ padding: '16px' }}>
+                     <Text as="title">
+                        Occurences(
+                        {occurencesData?.subscriptionOccurencesAggregate
+                           ?.occurenceCount?.count || 'N/A'}
+                        )
+                     </Text>
+                  </div>
+                  <ReactTabulator
+                     columns={columns}
+                     data={occurences}
+                     rowClick={rowClick}
+                     options={tableOptions}
+                     ref={tableRef}
+                  />
+               </>
+            )}
+         </div>
       </>
    )
 }
