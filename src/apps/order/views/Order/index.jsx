@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 import { Dropdown } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -36,20 +37,26 @@ const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
-   const { switchView, dispatch } = useOrder()
    const [order, setOrder] = React.useState(null)
-   const [station, setStation] = React.useState(null)
+   const { state, switchView, dispatch } = useOrder()
    const [mealkits, setMealKits] = React.useState([])
    const [inventories, setInventories] = React.useState([])
    const [readytoeats, setReadyToEats] = React.useState([])
-   const { data: { stations = [] } = {} } = useSubscription(STATIONS)
 
    const { loading, error } = useSubscription(ORDER, {
       variables: {
          id: params.id,
-         ...(station && {
-            packingStationId: { _eq: station },
-            assemblyStationId: { _eq: station },
+         ...(!_.isEmpty(state.orders.where?._or) && {
+            packingStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
+            assemblyStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
          }),
       },
       onSubscriptionData: async ({ subscriptionData: { data = {} } }) => {
@@ -146,22 +153,10 @@ const Order = () => {
             </section>
          </Header>
          <section>
-            <Flex container alignItems="center" justifyContent="space-between">
-               <StyledCount>
-                  0 /{' '}
-                  {inventories.length + mealkits.length + readytoeats.length}
-                  &nbsp;{t(address.concat('items'))}
-               </StyledCount>
-               <div style={{ width: '280px' }}>
-                  <Dropdown
-                     type="single"
-                     options={stations}
-                     searchedOption={() => {}}
-                     placeholder="select a station"
-                     selectedOption={option => setStation(option.id)}
-                  />
-               </div>
-            </Flex>
+            <StyledCount>
+               0 / {inventories.length + mealkits.length + readytoeats.length}
+               &nbsp;{t(address.concat('items'))}
+            </StyledCount>
             <StyledTabs>
                <StyledTabList>
                   <StyledTab>Meal Kits ({mealkits.length})</StyledTab>
