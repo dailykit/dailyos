@@ -108,7 +108,10 @@ export const ProcessOrder = () => {
          toast.error('No label template available')
          return
       }
-      if (_.isEmpty(state.station) || !state.station?.defaultLabelPrinter) {
+      if (
+         _.isEmpty(state.stations) ||
+         _.isNull(state.stations[0]?.defaultLabelPrinter)
+      ) {
          toast.error('No label printer available!')
          return
       }
