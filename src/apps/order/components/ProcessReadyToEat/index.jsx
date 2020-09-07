@@ -109,22 +109,36 @@ export const ProcessReadyToEat = () => {
                <span>Assembly</span>
                <span>{product.assemblyStatus}</span>
             </StyledStat>
-            {product.assemblyStatus === 'PENDING' && (
-               <StyledButton
-                  type="button"
-                  onClick={() =>
-                     updateProduct({
-                        variables: {
-                           id: readytoeat.id,
-                           isAssembled: true,
-                           assemblyStatus: 'COMPLETED',
-                        },
-                     })
-                  }
-               >
-                  Mark Done
-               </StyledButton>
-            )}
+            <StyledButton
+               type="button"
+               disabled={product.assemblyStatus === 'COMPLETED'}
+               onClick={() =>
+                  updateProduct({
+                     variables: {
+                        id: readytoeat.id,
+                        _set: { assemblyStatus: 'COMPLETED' },
+                     },
+                  })
+               }
+            >
+               {product.assemblyStatus === 'COMPLETED'
+                  ? 'Packed'
+                  : 'Mark Packed'}
+            </StyledButton>
+            <StyledButton
+               type="button"
+               disabled={product.isAssembled}
+               onClick={() =>
+                  updateProduct({
+                     variables: {
+                        id: readytoeat.id,
+                        _set: { isAssembled: true },
+                     },
+                  })
+               }
+            >
+               {product.isAssembled ? 'Assembled' : 'Mark Assembled'}
+            </StyledButton>
          </main>
       </Wrapper>
    )

@@ -62,6 +62,7 @@ export const ProcessOrder = () => {
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
+         setWeight(0)
          setSachet(orderSachet)
          fetchLabaleTemplate({
             variables: {
@@ -76,16 +77,6 @@ export const ProcessOrder = () => {
       setScaleState('low')
       setLabelPreview('')
    }, [mealkit.sachet_id])
-
-   React.useEffect(() => {
-      let timer
-      if (weight === sachet?.quantity) {
-         timer = setTimeout(() => {
-            print()
-         }, 3000)
-      }
-      return () => clearTimeout(timer)
-   }, [weight, sachet])
 
    const changeView = view => {
       switchView(view)
@@ -103,7 +94,7 @@ export const ProcessOrder = () => {
       }
    }, [weight, sachet])
 
-   const print = () => {
+   const print = React.useCallback(() => {
       if (!_.isObject(labelTemplate) || _.isEmpty(labelTemplate)) {
          toast.error('No label template available')
          return
@@ -154,7 +145,7 @@ export const ProcessOrder = () => {
                url,
                source: 'DailyOS',
                contentType: 'pdf_uri',
-               printerId: state.station.defaultLabelPrinter.printNodeId,
+               printerId: state.stations[0].defaultLabelPrinter.printNodeId,
                title: `${sachet.ingredientName} - ${sachet.processingName}`,
             },
          })
@@ -168,7 +159,17 @@ export const ProcessOrder = () => {
             },
          },
       })
-   }
+   }, [sachet, state.stations, state.print, labelTemplate])
+
+   React.useEffect(() => {
+      let timer
+      if (weight === sachet?.quantity) {
+         timer = setTimeout(() => {
+            print()
+         }, 3000)
+      }
+      return () => clearTimeout(timer)
+   }, [weight, sachet, print])
 
    if (!mealkit.sachet_id) {
       return (
@@ -323,7 +324,11 @@ export const ProcessOrder = () => {
                   </IconButton>
                </header>
                <div>
-                  <iframe src={labelPreview} frameborder="0" />
+                  <iframe
+                     src={labelPreview}
+                     title="label preview"
+                     frameborder="0"
+                  />
                </div>
             </StyledLabelPreview>
          )}
