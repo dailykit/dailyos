@@ -13,7 +13,7 @@ function onError(error) {
 // prettier-ignore
 const buildQuery = query => gql`${query}`
 
-let transformedData = []
+let transformedData = null
 
 let gqlQuery = {
    kind: 'Document',
@@ -44,7 +44,7 @@ let gqlQuery = {
 /**
  *
  * @param {string} insightId
- * @param {{chart?: {title: string, x: string, xKey: string, y: string}, table: boolean, switches: boolean, options: boolean}} [options]
+ * @param {{chart?: {xKey: string, yLabel: string, xLabel: string}, includeTableData: boolean}} [options]
  *
  * @returns {{loading: boolean, tableData: any[], chartData: any, switches: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
@@ -52,9 +52,7 @@ export const useInsights = (
    insightId,
    options = {
       chart: {},
-      table: true,
-      switches: true,
-      options: true,
+      includeTableData: true,
    }
 ) => {
    const [variableSwitches, setVariableSwitches] = useState({})
@@ -95,7 +93,7 @@ export const useInsights = (
 
    const queryName = Object.keys(data)[0]
 
-   transformedData = transformer(data, queryName)
+   if (options.includeTableData) transformedData = transformer(data, queryName)
 
    const result = {
       loading,
@@ -107,17 +105,19 @@ export const useInsights = (
       allowedCharts: insight.allowedCharts,
    }
 
-   if (options.chart && options.chart.x) {
+   if (options.chart && options.chart.xKey) {
       const groupedData = groupBy(transformedData, options.chart.xKey)
 
       const chartData = []
 
-      chartData.unshift([options.chart.x, options.chart.y])
+      chartData.unshift([options.chart.xLabel, options.chart.yLabel])
       chartData.push(
          ...Object.keys(groupedData).map(key => [key, groupedData[key].length])
       )
 
       result.chartData = chartData
+   } else {
+      result.chartData = null
    }
 
    return result
