@@ -1,6 +1,4 @@
-import { generate } from 'patternomaly'
-
-export const colors = generate([
+export const colors = [
    '#1f77b4',
    '#ff7f0e',
    '#2ca02c',
@@ -27,4 +25,4 @@ export const colors = generate([
    '#CC80CC',
    '#66664D',
    '#991AFF',
-])
+]

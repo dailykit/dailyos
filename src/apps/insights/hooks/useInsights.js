@@ -44,7 +44,7 @@ let gqlQuery = {
 /**
  *
  * @param {string} insightId
- * @param {{chart?: {type: 'bar' | 'pie', x: string, name: string}, table: boolean, switches: boolean, options: boolean}} [options]
+ * @param {{chart?: {title: string, x: string, xKey: string, y: string}, table: boolean, switches: boolean, options: boolean}} [options]
  *
  * @returns {{loading: boolean, tableData: any[], chartData: any, switches: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
@@ -108,17 +108,14 @@ export const useInsights = (
    }
 
    if (options.chart && options.chart.x) {
-      const groupedData = groupBy(transformedData, options.chart.x)
+      const groupedData = groupBy(transformedData, options.chart.xKey)
 
-      const chartData = {
-         labels: Object.keys(groupedData),
-         datasets: [
-            {
-               label: options.chart.name,
-               data: Object.values(groupedData).map(data => data.length),
-            },
-         ],
-      }
+      const chartData = []
+
+      chartData.unshift([options.chart.x, options.chart.y])
+      chartData.push(
+         ...Object.keys(groupedData).map(key => [key, groupedData[key].length])
+      )
 
       result.chartData = chartData
    }
