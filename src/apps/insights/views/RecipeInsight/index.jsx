@@ -11,8 +11,9 @@ const ReferralPlansListing = () => {
 
          <Insight
             id="e9b59cd3-7a22-426b-bd63-37ff70e76a45"
-            alignment="column"
+            alignment="row"
             includeChart
+            tablePosition="left"
             chartOptions={{
                type: 'Bar',
                xKey: 'name',
