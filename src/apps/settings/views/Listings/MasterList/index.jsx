@@ -3,7 +3,7 @@ import { Text } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useTabs } from '../../../context'
 import {
@@ -52,7 +52,7 @@ const MasterList = () => {
    const data = [
       {
          listName: t(address.concat('accompaniment types')),
-         length: accompaniments?.master_accompanimentType.length || '...',
+         length: accompaniments?.accompaniments.length || '...',
          _click() {
             addTab(
                'Accompaniment Types',

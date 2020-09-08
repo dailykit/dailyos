@@ -214,7 +214,7 @@ export const CUISINES = gql`
 
 export const ACCOMPANIMENT_TYPES = gql`
    subscription AccompanimentTypes {
-      master_accompanimentType {
+      accompaniments {
          id
          name
       }

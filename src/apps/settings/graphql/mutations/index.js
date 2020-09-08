@@ -244,10 +244,8 @@ export const DELETE_USER = gql`
 `
 
 export const CREATE_ACCOMPANIMENT_TYPES = gql`
-   mutation CreateAccompanimentTypes(
-      $objects: [master_accompanimentType_insert_input!]!
-   ) {
-      insert_master_accompanimentType(objects: $objects) {
+   mutation MyMutation($objects: [master_accompanimentType_insert_input!]!) {
+      createAccompaniments(objects: $objects) {
          returning {
             id
             name
@@ -257,10 +255,11 @@ export const CREATE_ACCOMPANIMENT_TYPES = gql`
 `
 
 export const DELETE_ACCOMPANIMENT_TYPES = gql`
-   mutation DeleteAccompanimentTypes($ids: [Int!]!) {
-      delete_master_accompanimentType(where: { id: { _in: $ids } }) {
+   mutation deleteAccompaniments($ids: [Int!]!) {
+      deleteAccompaniments(where: { id: { _in: $ids } }) {
          returning {
             id
+            name
          }
       }
    }
