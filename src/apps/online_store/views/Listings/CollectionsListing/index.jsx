@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 // Components
 import { IconButton, Loader, TextButton } from '@dailykit/ui'

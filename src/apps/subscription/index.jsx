@@ -4,8 +4,8 @@ import { AuthProvider, TabProvider } from './context'
 
 import App from './App'
 
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import 'react-tabulator/lib/styles.css'
+import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
+import '@dailykit/react-tabulator/lib/styles.css'
 import './tableStyle.css'
 
 const Subscription = () => (
