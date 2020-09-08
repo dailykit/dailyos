@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import 'react-tabulator/lib/styles.css'
+import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
+import '@dailykit/react-tabulator/lib/styles.css'
 import './views/Listings/tableStyle.css'
 
 // Sections

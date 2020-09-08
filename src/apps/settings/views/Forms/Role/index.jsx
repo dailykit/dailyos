@@ -1,303 +1,173 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
-
-// Components
+import _ from 'lodash'
+import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
+import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import {
-   TextButton,
+   Text,
+   Table,
+   TableHead,
+   TableBody,
+   TableRow,
+   TableCell,
+   Avatar,
    IconButton,
-   Input,
-   ButtonTile,
+   ButtonGroup,
+   PlusIcon,
    Tunnels,
    Tunnel,
    useTunnel,
-   ClearIcon,
+   TunnelHeader,
    useMultiList,
-   ListItem,
    List,
-   ListOptions,
    ListSearch,
-   Avatar,
-   TickIcon,
-   ArrowUpIcon,
-   ArrowDownIcon,
-   Toggle,
-   Text,
+   TagGroup,
+   Tag,
+   ListOptions,
+   ListItem,
 } from '@dailykit/ui'
 
-// State
 import { useTabs } from '../../../context'
-
-// Styled
-import {
-   StyledWrapper,
-   StyledHeader,
-   StyledSection,
-   StyledTunnelHeader,
-   StyledTunnelMain,
-} from '../styled'
-import { StyledAppItem, StyledPermissions } from './styled'
-
-import { useTranslation } from 'react-i18next'
-
-const address = 'apps.settings.views.forms.role.'
+import { Spacer } from '../../../../../shared/styled'
+import { StyledWrapper, StyledHeader } from '../styled'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { ROLES, DELETE_USERS_APPS_ROLES } from '../../../graphql'
+import { InlineLoader, Flex } from '../../../../../shared/components'
 
 const RoleForm = () => {
-   const { t } = useTranslation()
-   const history = useHistory()
-   const { tab } = useTabs()
-   const [isOpen, setIsOpen] = React.useState('')
-   const [selectedApp, setSelectedApp] = React.useState({})
-   const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
-   const [
-      permissionTunnels,
-      openPermissionsTunnel,
-      closePermissionsTunnel,
-   ] = useTunnel(1)
-   const [form, setForm] = React.useState({
-      roleName: '',
-      apps: [],
+   const params = useParams()
+   const { tab, addTab } = useTabs()
+   const [selectedApp, setSelectedApp] = React.useState(null)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [deleteUserFromApp] = useMutation(DELETE_USERS_APPS_ROLES, {
+      onCompleted: () => {
+         toast.success('Succesfully removed user!')
+      },
+      onError: error => {
+         toast.error(error.message)
+      },
    })
-   const [search, setSearch] = React.useState('')
+   const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
+      variables: {
+         id: params.id,
+      },
+   })
+   const { data: { apps = [] } = {} } = useSubscription(ROLES.APPS, {
+      variables: {
+         title: { _eq: role.title },
+      },
+   })
 
    React.useEffect(() => {
-      if (!tab) {
-         setForm(form => ({ ...form, ...tab }))
-      } else {
-         history.push('/settings/roles')
+      if (!loading && !tab && role?.id) {
+         addTab(role.title, `/settings/roles/${role.id}`)
       }
-   }, [tab, history, setForm])
+   }, [loading, role.title, params.id, tab, addTab])
 
-   const [list, selected, selectOption] = useMultiList([
-      {
-         id: 1,
-         title: 'Ingredient App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: true },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: false },
-         ],
-      },
-      {
-         id: 2,
-         title: 'Recipe App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: false },
-            { title: 'Read', allowed: true },
-            { title: 'Update', allowed: false },
-            { title: 'Delete', allowed: true },
-         ],
-      },
-      {
-         id: 3,
-         title: 'Inventory App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: true },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: true },
-         ],
-      },
-      {
-         id: 4,
-         title: 'Settings App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: false },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: false },
-         ],
-      },
-   ])
-
-   const handleChange = e => {
-      const { name, value } = e.target
-      setForm({ ...form, [name]: value })
+   const deleteUser = (userId, appId) => {
+      deleteUserFromApp({
+         variables: {
+            where: {
+               appId: { _eq: appId },
+               roleId: { _eq: role.id },
+               keycloakId: { _eq: userId },
+            },
+         },
+      })
    }
+
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Input
-               type="text"
-               name="roleName"
-               style={{ width: '320px' }}
-               value={form.roleName || ''}
-               onChange={e => handleChange(e)}
-               placeholder={t(address.concat('enter the role name'))}
-            />
-            <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
+            <Text as="title">{role.title}</Text>
          </StyledHeader>
-         <StyledSection>
-            <Text as="h2">
-               {t(address.concat('apps'))} ({form.apps.length})
-            </Text>
-            {form.apps.length > 0 &&
-               form.apps.map(option => (
-                  <StyledAppItem key={option.id}>
-                     <div>
-                        <div>
-                           <Avatar
-                              withName
-                              type="round"
-                              url={option.icon}
-                              title={option.title}
-                           />
-                           <span
-                              tabIndex="0"
-                              role="button"
-                              onClick={() =>
-                                 setIsOpen(value =>
-                                    value === option.title ? '' : option.title
-                                 )
-                              }
-                              onKeyPress={e =>
-                                 e.charCode === 32 &&
-                                 setIsOpen(value =>
-                                    value === option.title ? '' : option.title
-                                 )
-                              }
-                           >
-                              {isOpen === option.title ? (
-                                 <ArrowUpIcon color="#555B6E" size={24} />
-                              ) : (
-                                 <ArrowDownIcon color="#555B6E" size={24} />
-                              )}
-                           </span>
-                        </div>
-                        <TextButton
-                           type="ghost"
+         <Flex
+            margin="0 auto"
+            padding="24px 0"
+            maxWidth="980px"
+            width="calc(100vw - 40px)"
+         >
+            <Text as="h2">Apps</Text>
+            <Spacer size="24px" />
+            <ul>
+               {apps.map(app => (
+                  <li key={app.id} style={{ listStyle: 'none' }}>
+                     <Flex
+                        container
+                        padding="0 12px"
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Text as="title">{app.title}</Text>
+                        <IconButton
+                           type="solid"
                            onClick={() => {
-                              setSelectedApp(option)
-                              openPermissionsTunnel(1)
+                              openTunnel(1)
+                              setSelectedApp(app.id)
                            }}
                         >
-                           {t(address.concat('configure'))}
-                        </TextButton>
-                     </div>
-                     {isOpen === option.title && (
-                        <ul>
-                           {option.permissions.map(permission => (
-                              <li key={permission.title}>
-                                 <span>
-                                    {permission.allowed ? (
-                                       <TickIcon color="#28C1F7" size={20} />
-                                    ) : (
-                                       <ClearIcon color="#FF5A52" size={20} />
-                                    )}
-                                 </span>
-                                 <span>{permission.title}</span>
-                              </li>
-                           ))}
-                        </ul>
-                     )}
-                  </StyledAppItem>
+                           <PlusIcon />
+                        </IconButton>
+                     </Flex>
+                     <Spacer size="16px" />
+                     <Table>
+                        <TableHead>
+                           <TableRow>
+                              <TableCell>User</TableCell>
+                              <TableCell align="right">Actions</TableCell>
+                           </TableRow>
+                        </TableHead>
+                        <TableBody>
+                           {_.isEmpty(app.users) ? (
+                              <Flex padding="16px 0">
+                                 <span>No user's assigned.</span>
+                              </Flex>
+                           ) : (
+                              app.users.map(({ user }) => (
+                                 <TableRow key={user.id}>
+                                    <TableCell>
+                                       <Avatar
+                                          url=""
+                                          key={user.id}
+                                          withName
+                                          title={
+                                             user.firstName
+                                                ? user.firstName +
+                                                  ' ' +
+                                                  user.lastName
+                                                : 'N A'
+                                          }
+                                       />
+                                    </TableCell>
+                                    <TableCell align="right">
+                                       <ButtonGroup align="right">
+                                          <IconButton
+                                             type="outline"
+                                             onClick={() =>
+                                                deleteUser(
+                                                   user.keycloakId,
+                                                   app.id
+                                                )
+                                             }
+                                          >
+                                             <DeleteIcon color="#000" />
+                                          </IconButton>
+                                       </ButtonGroup>
+                                    </TableCell>
+                                 </TableRow>
+                              ))
+                           )}
+                        </TableBody>
+                     </Table>
+                     <Spacer size="24px" />
+                  </li>
                ))}
-            <ButtonTile
-               noIcon
-               size="sm"
-               type="secondary"
-               text={t(address.concat('select and configure apps'))}
-               onClick={() => openAppsTunnel(1)}
-            />
-         </StyledSection>
-         <Tunnels tunnels={appsTunnels}>
-            <Tunnel layer={1}>
-               <StyledTunnelHeader>
-                  <div>
-                     <IconButton
-                        type="ghost"
-                        onClick={() => closeAppsTunnel(1)}
-                     >
-                        <ClearIcon size={20} />
-                     </IconButton>
-                     <Text as="h2">{t(address.concat('configure apps'))}</Text>
-                  </div>
-                  <TextButton
-                     type="solid"
-                     onClick={() => {
-                        closeAppsTunnel(1)
-                        setForm({ ...form, apps: [...selected] })
-                     }}
-                  >
-                     {t(address.concat('add'))}
-                  </TextButton>
-               </StyledTunnelHeader>
-               <StyledTunnelMain>
-                  <List>
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        ).concat('...')}
-                     />
-                     <ListOptions>
-                        {list
-                           .filter(option =>
-                              option.title.toLowerCase().includes(search)
-                           )
-                           .map(option => (
-                              <ListItem
-                                 type="MSL1101"
-                                 key={option.id}
-                                 content={{
-                                    icon: option.icon,
-                                    title: option.title,
-                                 }}
-                                 onClick={() => selectOption('id', option.id)}
-                                 isActive={selected.find(
-                                    item => item.id === option.id
-                                 )}
-                              />
-                           ))}
-                     </ListOptions>
-                  </List>
-               </StyledTunnelMain>
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={permissionTunnels}>
-            <Tunnel layer={1}>
-               <StyledTunnelHeader>
-                  <div>
-                     <IconButton
-                        type="ghost"
-                        onClick={() => closePermissionsTunnel(1)}
-                     >
-                        <ClearIcon size={20} />
-                     </IconButton>
-                     <Text as="h2">{selectedApp.title}</Text>
-                  </div>
-                  <TextButton
-                     type="solid"
-                     onClick={() => {
-                        closePermissionsTunnel(1)
-                     }}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-               </StyledTunnelHeader>
-               <StyledTunnelMain>
-                  <Text as="title">
-                     {t(address.concat('permissions for role'))}:{' '}
-                     {form.roleName || 'Untitled'}
-                  </Text>
-                  <StyledPermissions>
-                     {Object.keys(selectedApp).length > 0 &&
-                        selectedApp.permissions.map(permission => (
-                           <Toggle
-                              key={permission.title}
-                              label={permission.title}
-                              checked={permission.allowed}
-                              setChecked={() =>
-                                 console.log('toggle permission')
-                              }
-                           />
-                        ))}
-                  </StyledPermissions>
-               </StyledTunnelMain>
+            </ul>
+         </Flex>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="sm">
+               <AddUserTunnel closeTunnel={closeTunnel} appId={selectedApp} />
             </Tunnel>
          </Tunnels>
       </StyledWrapper>
@@ -305,3 +175,105 @@ const RoleForm = () => {
 }
 
 export default RoleForm
+
+const AddUserTunnel = ({ closeTunnel, appId }) => {
+   const params = useParams()
+   const [users, setUsers] = React.useState([])
+   const [search, setSearch] = React.useState('')
+   const [insert] = useMutation(ROLES.INSERT_USERS_ROLES_APPS, {
+      onCompleted: () => {
+         closeTunnel(1)
+         toast.success('Succesfully assigned role to the selected users.')
+      },
+      onError: () => {
+         toast.error('Failed to assign role to the selected users.')
+      },
+   })
+   const { loading } = useQuery(ROLES.USERS, {
+      variables: {
+         roleId: { _eq: params.id },
+      },
+      onCompleted: ({ users: list = [] }) => {
+         const formatted = list
+            .filter(
+               node =>
+                  _.isEmpty(node.users_roles_apps) ||
+                  node.users_roles_apps.some(node => node.app.id !== appId)
+            )
+            .map(node => ({
+               id: node.keycloakId,
+               description: node.email,
+               title: node.firstName
+                  ? node.firstName + ' ' + node.lastName
+                  : 'N/A',
+            }))
+         setUsers(formatted)
+      },
+   })
+   const [list, selected, selectOption] = useMultiList(users)
+
+   const addUser = () => {
+      const objects = selected.map(node => ({
+         appId,
+         roleId: params.id,
+         keycloakId: node.id,
+      }))
+      insert({
+         variables: {
+            objects,
+         },
+      })
+   }
+
+   if (loading) return <InlineLoader />
+   return (
+      <>
+         <TunnelHeader
+            title="Add User"
+            close={() => closeTunnel(1)}
+            right={{ action: () => addUser(), title: 'Save' }}
+         />
+         <Flex padding="16px">
+            <List>
+               <ListSearch
+                  onChange={value => setSearch(value)}
+                  placeholder="type what you’re looking for..."
+               />
+               {selected.length > 0 && (
+                  <TagGroup style={{ margin: '8px 0' }}>
+                     {selected.map(option => (
+                        <Tag
+                           key={option.id}
+                           title={option.title}
+                           onClick={() => selectOption('id', option.id)}
+                        >
+                           {option.title}
+                        </Tag>
+                     ))}
+                  </TagGroup>
+               )}
+               <ListOptions>
+                  {list
+                     .filter(option =>
+                        option.title.toLowerCase().includes(search)
+                     )
+                     .map(option => (
+                        <ListItem
+                           type="MSL2"
+                           key={option.id}
+                           content={{
+                              title: option.title,
+                              description: option.description,
+                           }}
+                           onClick={() => selectOption('id', option.id)}
+                           isActive={selected.find(
+                              item => item.id === option.id
+                           )}
+                        />
+                     ))}
+               </ListOptions>
+            </List>
+         </Flex>
+      </>
+   )
+}

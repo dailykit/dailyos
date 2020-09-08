@@ -1093,18 +1093,6 @@
                   "add": "Add",
                   "type what you're looking for": "type what you're looking for"
                },
-               "role": {
-                  "enter the role name": "Enter the role name",
-                  "publish": "Publish",
-                  "apps": "Apps",
-                  "configure": "Configure",
-                  "select and configure apps": "Select and Configure Apps",
-                  "configure apps": "Configure Apps",
-                  "add": "Add",
-                  "type what you're looking for": "type what you're looking for",
-                  "save": "Save",
-                  "permissions for role": "Permissions for role"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",

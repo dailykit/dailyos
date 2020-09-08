@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 // Components
 import { IconButton, Text, Loader } from '@dailykit/ui'

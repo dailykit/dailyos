@@ -2,7 +2,7 @@ import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 // Components
 import { Loader, IconButton, Avatar, Text } from '@dailykit/ui'

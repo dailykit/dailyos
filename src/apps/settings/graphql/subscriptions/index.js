@@ -214,7 +214,7 @@ export const CUISINES = gql`
 
 export const ACCOMPANIMENT_TYPES = gql`
    subscription AccompanimentTypes {
-      master_accompanimentType {
+      accompaniments {
          id
          name
       }
@@ -289,3 +289,84 @@ export const DEVICES = gql`
       }
    }
 `
+
+export const ROLES = {
+   AGGREGATE: gql`
+      subscription rolesAggregate {
+         rolesAggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   ROLE: gql`
+      subscription role($id: Int!) {
+         role(id: $id) {
+            id
+            title
+         }
+      }
+   `,
+   LIST: gql`
+      subscription roles {
+         roles {
+            id
+            title
+            user_roles {
+               id
+               user {
+                  id
+                  email
+                  lastName
+                  firstName
+               }
+            }
+         }
+      }
+   `,
+   APPS: gql`
+      subscription apps($title: String_comparison_exp!) {
+         apps {
+            id
+            title
+            users(where: { role: { title: $title } }) {
+               id
+               user {
+                  id
+                  email
+                  firstName
+                  lastName
+                  keycloakId
+               }
+            }
+         }
+      }
+   `,
+   USERS: gql`
+      query users($roleId: Int_comparison_exp!) {
+         users: settings_user {
+            id
+            firstName
+            lastName
+            email
+            keycloakId
+            users_roles_apps(where: { roleId: $roleId }) {
+               app {
+                  id
+                  title
+               }
+            }
+         }
+      }
+   `,
+   INSERT_USERS_ROLES_APPS: gql`
+      mutation insert_users_apps_roles(
+         $objects: [settings_user_role_app_insert_input!]!
+      ) {
+         insert_users_apps_roles(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+}
