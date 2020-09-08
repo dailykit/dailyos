@@ -21,26 +21,13 @@ import { ROLES } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { InlineLoader } from '../../../../../shared/components'
-import {
-   EditIcon,
-   DeleteIcon,
-   AddIcon,
-} from '../../../../../shared/assets/icons'
+import { EditIcon } from '../../../../../shared/assets/icons'
 
 const address = 'apps.settings.views.listings.roleslisting.'
 
 const RolesListing = () => {
    const { t } = useTranslation()
    const { tab, addTab } = useTabs()
-   const [insert] = useMutation(ROLES.CREATE, {
-      onCompleted: ({ insertRole = {} }) => {
-         const { id, title } = insertRole
-         addTab(title, `/settings/roles/${id}`)
-      },
-      onError: () => {
-         toast.error('Failed to create the role!')
-      },
-   })
    const { loading, data: { roles = [] } = {} } = useSubscription(ROLES.LIST)
 
    React.useEffect(() => {
@@ -48,15 +35,6 @@ const RolesListing = () => {
          addTab('Roles', '/settings/roles')
       }
    }, [tab, addTab])
-
-   const addRole = () => {
-      const hash = `role${uuid().split('-')[0]}`
-      insert({
-         variables: {
-            role: hash,
-         },
-      })
-   }
 
    const editRole = (id, role) => {
       addTab(role, `/settings/roles/${id}`)
@@ -67,15 +45,12 @@ const RolesListing = () => {
       <StyledWrapper>
          <StyledHeader>
             <Text as="h2">{t(address.concat('roles'))}</Text>
-            <IconButton type="solid" onClick={() => addRole()}>
-               <AddIcon color="#fff" size={24} />
-            </IconButton>
          </StyledHeader>
          <Table>
             <TableHead>
                <TableRow>
                   <TableCell>{t(address.concat('roles'))}</TableCell>
-                  <TableCell>{t(address.concat('apps configured'))}</TableCell>
+                  <TableCell>Users</TableCell>
                   <TableCell align="right">
                      {t(address.concat('actions'))}
                   </TableCell>
@@ -93,8 +68,14 @@ const RolesListing = () => {
                               {row.user_roles.map(node => (
                                  <Avatar
                                     url=""
-                                    key={node.app.id}
-                                    title={node.app.title}
+                                    key={node.user.id}
+                                    title={
+                                       node.user.firstName
+                                          ? node.user.firstName +
+                                            ' ' +
+                                            node.user.lastName
+                                          : 'N/A'
+                                    }
                                  />
                               ))}
                            </AvatarGroup>

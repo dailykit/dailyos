@@ -300,22 +300,6 @@ export const ROLES = {
          }
       }
    `,
-   CREATE: gql`
-      mutation insertRole($object: settings_role_insert_input!) {
-         insertRole(object: $object) {
-            id
-            title
-         }
-      }
-   `,
-   UPDATE: gql`
-      mutation updateRole($id: Int!, $_set: settings_role_set_input!) {
-         updateRole(pk_columns: { id: $id }, _set: $_set) {
-            id
-            title
-         }
-      }
-   `,
    ROLE: gql`
       subscription role($id: Int!) {
          role(id: $id) {
@@ -336,10 +320,6 @@ export const ROLES = {
                   email
                   lastName
                   firstName
-               }
-               app {
-                  id
-                  title
                }
             }
          }
