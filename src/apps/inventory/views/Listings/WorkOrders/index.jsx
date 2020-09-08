@@ -9,7 +9,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import { toast } from 'react-toastify'

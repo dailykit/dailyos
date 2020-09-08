@@ -42,8 +42,6 @@ export default function SelectDerivedProcessingTunnel({
       }
    )
 
-   console.log(data)
-
    if (processingsLoading) return <Loader />
 
    return (
