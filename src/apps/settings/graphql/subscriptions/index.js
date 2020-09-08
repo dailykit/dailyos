@@ -289,3 +289,15 @@ export const DEVICES = gql`
       }
    }
 `
+
+export const ROLES = {
+   AGGREGATE: gql`
+      subscription rolesAggregate {
+         rolesAggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+}
