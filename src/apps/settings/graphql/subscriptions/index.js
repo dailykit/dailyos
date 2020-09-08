@@ -343,4 +343,30 @@ export const ROLES = {
          }
       }
    `,
+   USERS: gql`
+      query users($roleId: Int_comparison_exp!) {
+         users: settings_user {
+            id
+            firstName
+            lastName
+            email
+            keycloakId
+            users_roles_apps(where: { roleId: $roleId }) {
+               app {
+                  id
+                  title
+               }
+            }
+         }
+      }
+   `,
+   INSERT_USERS_ROLES_APPS: gql`
+      mutation insert_users_apps_roles(
+         $objects: [settings_user_role_app_insert_input!]!
+      ) {
+         insert_users_apps_roles(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
 }

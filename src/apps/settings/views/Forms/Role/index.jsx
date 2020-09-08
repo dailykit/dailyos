@@ -2,9 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import {
-   Input,
    Text,
    Table,
    TableHead,
@@ -14,6 +13,18 @@ import {
    Avatar,
    IconButton,
    ButtonGroup,
+   PlusIcon,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   TunnelHeader,
+   useMultiList,
+   List,
+   ListSearch,
+   TagGroup,
+   Tag,
+   ListOptions,
+   ListItem,
 } from '@dailykit/ui'
 
 import { useTabs } from '../../../context'
@@ -25,18 +36,9 @@ import { InlineLoader, Flex } from '../../../../../shared/components'
 
 const RoleForm = () => {
    const params = useParams()
-   const { tab, addTab, setTabTitle } = useTabs()
-   const [title, setTitle] = React.useState('')
-   const [update] = useMutation(ROLES.UPDATE, {
-      onCompleted: ({ updateRole = {} }) => {
-         setTabTitle(updateRole.title)
-         toast.success('Successfully updated the role title!')
-      },
-      onError: () => {
-         setTitle(role.title)
-         toast.error("Can not edit, user's are assigned to this role")
-      },
-   })
+   const { tab, addTab } = useTabs()
+   const [selectedApp, setSelectedApp] = React.useState(null)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [deleteUserFromApp] = useMutation(DELETE_USERS_APPS_ROLES, {
       onCompleted: () => {
          toast.success('Succesfully removed user!')
@@ -48,11 +50,6 @@ const RoleForm = () => {
    const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
       variables: {
          id: params.id,
-      },
-      onSubscriptionData: ({
-         subscriptionData: { data: { role = {} } = {} } = {},
-      }) => {
-         setTitle(role.title)
       },
    })
    const { data: { apps = [] } = {} } = useSubscription(ROLES.APPS, {
@@ -83,22 +80,7 @@ const RoleForm = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Input
-               type="text"
-               value={title}
-               name="title"
-               label="Title"
-               style={{ maxWidth: '280px' }}
-               onChange={e => setTitle(e.target.value)}
-               onBlur={e =>
-                  update({
-                     variables: {
-                        id: role.id,
-                        _set: { title: e.target.value },
-                     },
-                  })
-               }
-            />
+            <Text as="title">{role.title}</Text>
          </StyledHeader>
          <Flex
             margin="0 auto"
@@ -118,6 +100,15 @@ const RoleForm = () => {
                         justifyContent="space-between"
                      >
                         <Text as="title">{app.title}</Text>
+                        <IconButton
+                           type="solid"
+                           onClick={() => {
+                              openTunnel(1)
+                              setSelectedApp(app.id)
+                           }}
+                        >
+                           <PlusIcon />
+                        </IconButton>
                      </Flex>
                      <Spacer size="16px" />
                      <Table>
@@ -174,8 +165,115 @@ const RoleForm = () => {
                ))}
             </ul>
          </Flex>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="sm">
+               <AddUserTunnel closeTunnel={closeTunnel} appId={selectedApp} />
+            </Tunnel>
+         </Tunnels>
       </StyledWrapper>
    )
 }
 
 export default RoleForm
+
+const AddUserTunnel = ({ closeTunnel, appId }) => {
+   const params = useParams()
+   const [users, setUsers] = React.useState([])
+   const [search, setSearch] = React.useState('')
+   const [insert] = useMutation(ROLES.INSERT_USERS_ROLES_APPS, {
+      onCompleted: () => {
+         closeTunnel(1)
+         toast.success('Succesfully assigned role to the selected users.')
+      },
+      onError: () => {
+         toast.error('Failed to assign role to the selected users.')
+      },
+   })
+   const { loading } = useQuery(ROLES.USERS, {
+      variables: {
+         roleId: { _eq: params.id },
+      },
+      onCompleted: ({ users: list = [] }) => {
+         const formatted = list
+            .filter(
+               node =>
+                  _.isEmpty(node.users_roles_apps) ||
+                  node.users_roles_apps.some(node => node.app.id !== appId)
+            )
+            .map(node => ({
+               id: node.keycloakId,
+               description: node.email,
+               title: node.firstName
+                  ? node.firstName + ' ' + node.lastName
+                  : 'N/A',
+            }))
+         setUsers(formatted)
+      },
+   })
+   const [list, selected, selectOption] = useMultiList(users)
+
+   const addUser = () => {
+      const objects = selected.map(node => ({
+         appId,
+         roleId: params.id,
+         keycloakId: node.id,
+      }))
+      insert({
+         variables: {
+            objects,
+         },
+      })
+   }
+
+   if (loading) return <InlineLoader />
+   return (
+      <>
+         <TunnelHeader
+            title="Add User"
+            close={() => closeTunnel(1)}
+            right={{ action: () => addUser(), title: 'Save' }}
+         />
+         <Flex padding="16px">
+            <List>
+               <ListSearch
+                  onChange={value => setSearch(value)}
+                  placeholder="type what you’re looking for..."
+               />
+               {selected.length > 0 && (
+                  <TagGroup style={{ margin: '8px 0' }}>
+                     {selected.map(option => (
+                        <Tag
+                           key={option.id}
+                           title={option.title}
+                           onClick={() => selectOption('id', option.id)}
+                        >
+                           {option.title}
+                        </Tag>
+                     ))}
+                  </TagGroup>
+               )}
+               <ListOptions>
+                  {list
+                     .filter(option =>
+                        option.title.toLowerCase().includes(search)
+                     )
+                     .map(option => (
+                        <ListItem
+                           type="MSL2"
+                           key={option.id}
+                           content={{
+                              title: option.title,
+                              description: option.description,
+                           }}
+                           onClick={() => selectOption('id', option.id)}
+                           isActive={selected.find(
+                              item => item.id === option.id
+                           )}
+                        />
+                     ))}
+               </ListOptions>
+            </List>
+         </Flex>
+      </>
+   )
+}
