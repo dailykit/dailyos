@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const HeaderWrapper = styled.div`
    position: fixed;
@@ -11,3 +11,10 @@ export const HeaderWrapper = styled.div`
 export const MainWrapper = styled.div`
    padding-top: 40px;
 `
+
+export const Spacer = styled.div(
+   ({ size, xAxis }) => css`
+      flex-shrink: 0;
+      ${xAxis ? `width: ${size};` : `height: ${size};`}
+   `
+)

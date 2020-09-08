@@ -36,7 +36,7 @@ const Main = () => {
             <Route path="/settings/roles" exact>
                <RolesListing />
             </Route>
-            <Route path="/settings/roles/:name">
+            <Route path="/settings/roles/:id">
                <RoleForm />
             </Route>
             <Route path="/settings/devices" exact>

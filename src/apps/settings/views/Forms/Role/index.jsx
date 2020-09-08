@@ -1,305 +1,179 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
-
-// Components
+import _ from 'lodash'
+import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
-   TextButton,
-   IconButton,
    Input,
-   ButtonTile,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-   ClearIcon,
-   useMultiList,
-   ListItem,
-   List,
-   ListOptions,
-   ListSearch,
-   Avatar,
-   TickIcon,
-   ArrowUpIcon,
-   ArrowDownIcon,
-   Toggle,
    Text,
+   Table,
+   TableHead,
+   TableBody,
+   TableRow,
+   TableCell,
+   Avatar,
+   IconButton,
+   ButtonGroup,
 } from '@dailykit/ui'
 
-// State
 import { useTabs } from '../../../context'
-
-// Styled
-import {
-   StyledWrapper,
-   StyledHeader,
-   StyledSection,
-   StyledTunnelHeader,
-   StyledTunnelMain,
-} from '../styled'
-import { StyledAppItem, StyledPermissions } from './styled'
-
-import { useTranslation } from 'react-i18next'
-
-const address = 'apps.settings.views.forms.role.'
+import { Spacer } from '../../../../../shared/styled'
+import { StyledWrapper, StyledHeader } from '../styled'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { ROLES, DELETE_USERS_APPS_ROLES } from '../../../graphql'
+import { InlineLoader, Flex } from '../../../../../shared/components'
 
 const RoleForm = () => {
-   const { t } = useTranslation()
-   const history = useHistory()
-   const { tab } = useTabs()
-   const [isOpen, setIsOpen] = React.useState('')
-   const [selectedApp, setSelectedApp] = React.useState({})
-   const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
-   const [
-      permissionTunnels,
-      openPermissionsTunnel,
-      closePermissionsTunnel,
-   ] = useTunnel(1)
-   const [form, setForm] = React.useState({
-      roleName: '',
-      apps: [],
+   const params = useParams()
+   const { tab, addTab, setTabTitle } = useTabs()
+   const [title, setTitle] = React.useState('')
+   const [update] = useMutation(ROLES.UPDATE, {
+      onCompleted: ({ updateRole = {} }) => {
+         setTabTitle(updateRole.title)
+         toast.success('Successfully updated the role title!')
+      },
+      onError: () => {
+         setTitle(role.title)
+         toast.error("Can not edit, user's are assigned to this role")
+      },
    })
-   const [search, setSearch] = React.useState('')
+   const [deleteUserFromApp] = useMutation(DELETE_USERS_APPS_ROLES, {
+      onCompleted: () => {
+         toast.success('Succesfully removed user!')
+      },
+      onError: error => {
+         toast.error(error.message)
+      },
+   })
+   const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
+      variables: {
+         id: params.id,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { role = {} } = {} } = {},
+      }) => {
+         setTitle(role.title)
+      },
+   })
+   const { data: { apps = [] } = {} } = useSubscription(ROLES.APPS, {
+      variables: {
+         title: { _eq: role.title },
+      },
+   })
 
    React.useEffect(() => {
-      if (!tab) {
-         setForm(form => ({ ...form, ...tab }))
-      } else {
-         history.push('/settings/roles')
+      if (!loading && !tab && role?.id) {
+         addTab(role.title, `/settings/roles/${role.id}`)
       }
-   }, [tab, history, setForm])
+   }, [loading, role.title, params.id, tab, addTab])
 
-   const [list, selected, selectOption] = useMultiList([
-      {
-         id: 1,
-         title: 'Ingredient App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: true },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: false },
-         ],
-      },
-      {
-         id: 2,
-         title: 'Recipe App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: false },
-            { title: 'Read', allowed: true },
-            { title: 'Update', allowed: false },
-            { title: 'Delete', allowed: true },
-         ],
-      },
-      {
-         id: 3,
-         title: 'Inventory App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: true },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: true },
-         ],
-      },
-      {
-         id: 4,
-         title: 'Settings App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: false },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: false },
-         ],
-      },
-   ])
-
-   const handleChange = e => {
-      const { name, value } = e.target
-      setForm({ ...form, [name]: value })
+   const deleteUser = (userId, appId) => {
+      deleteUserFromApp({
+         variables: {
+            where: {
+               appId: { _eq: appId },
+               roleId: { _eq: role.id },
+               keycloakId: { _eq: userId },
+            },
+         },
+      })
    }
+
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <StyledHeader>
             <Input
                type="text"
-               name="roleName"
-               style={{ width: '320px' }}
-               value={form.roleName || ''}
-               onChange={e => handleChange(e)}
-               placeholder={t(address.concat('enter the role name'))}
+               value={title}
+               name="title"
+               label="Title"
+               style={{ maxWidth: '280px' }}
+               onChange={e => setTitle(e.target.value)}
+               onBlur={e =>
+                  update({
+                     variables: {
+                        id: role.id,
+                        _set: { title: e.target.value },
+                     },
+                  })
+               }
             />
-            <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
          </StyledHeader>
-         <StyledSection>
-            <Text as="h2">
-               {t(address.concat('apps'))} ({form.apps.length})
-            </Text>
-            {form.apps.length > 0 &&
-               form.apps.map(option => (
-                  <StyledAppItem key={option.id}>
-                     <div>
-                        <div>
-                           <Avatar
-                              withName
-                              type="round"
-                              url={option.icon}
-                              title={option.title}
-                           />
-                           <span
-                              tabIndex="0"
-                              role="button"
-                              onClick={() =>
-                                 setIsOpen(value =>
-                                    value === option.title ? '' : option.title
-                                 )
-                              }
-                              onKeyPress={e =>
-                                 e.charCode === 32 &&
-                                 setIsOpen(value =>
-                                    value === option.title ? '' : option.title
-                                 )
-                              }
-                           >
-                              {isOpen === option.title ? (
-                                 <ArrowUpIcon color="#555B6E" size={24} />
-                              ) : (
-                                 <ArrowDownIcon color="#555B6E" size={24} />
-                              )}
-                           </span>
-                        </div>
-                        <TextButton
-                           type="ghost"
-                           onClick={() => {
-                              setSelectedApp(option)
-                              openPermissionsTunnel(1)
-                           }}
-                        >
-                           {t(address.concat('configure'))}
-                        </TextButton>
-                     </div>
-                     {isOpen === option.title && (
-                        <ul>
-                           {option.permissions.map(permission => (
-                              <li key={permission.title}>
-                                 <span>
-                                    {permission.allowed ? (
-                                       <TickIcon color="#28C1F7" size={20} />
-                                    ) : (
-                                       <ClearIcon color="#FF5A52" size={20} />
-                                    )}
-                                 </span>
-                                 <span>{permission.title}</span>
-                              </li>
-                           ))}
-                        </ul>
-                     )}
-                  </StyledAppItem>
+         <Flex
+            margin="0 auto"
+            padding="24px 0"
+            maxWidth="980px"
+            width="calc(100vw - 40px)"
+         >
+            <Text as="h2">Apps</Text>
+            <Spacer size="24px" />
+            <ul>
+               {apps.map(app => (
+                  <li key={app.id} style={{ listStyle: 'none' }}>
+                     <Flex
+                        container
+                        padding="0 12px"
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Text as="title">{app.title}</Text>
+                     </Flex>
+                     <Spacer size="16px" />
+                     <Table>
+                        <TableHead>
+                           <TableRow>
+                              <TableCell>User</TableCell>
+                              <TableCell align="right">Actions</TableCell>
+                           </TableRow>
+                        </TableHead>
+                        <TableBody>
+                           {_.isEmpty(app.users) ? (
+                              <Flex padding="16px 0">
+                                 <span>No user's assigned.</span>
+                              </Flex>
+                           ) : (
+                              app.users.map(({ user }) => (
+                                 <TableRow key={user.id}>
+                                    <TableCell>
+                                       <Avatar
+                                          url=""
+                                          key={user.id}
+                                          withName
+                                          title={
+                                             user.firstName
+                                                ? user.firstName +
+                                                  ' ' +
+                                                  user.lastName
+                                                : 'N A'
+                                          }
+                                       />
+                                    </TableCell>
+                                    <TableCell align="right">
+                                       <ButtonGroup align="right">
+                                          <IconButton
+                                             type="outline"
+                                             onClick={() =>
+                                                deleteUser(
+                                                   user.keycloakId,
+                                                   app.id
+                                                )
+                                             }
+                                          >
+                                             <DeleteIcon color="#000" />
+                                          </IconButton>
+                                       </ButtonGroup>
+                                    </TableCell>
+                                 </TableRow>
+                              ))
+                           )}
+                        </TableBody>
+                     </Table>
+                     <Spacer size="24px" />
+                  </li>
                ))}
-            <ButtonTile
-               noIcon
-               size="sm"
-               type="secondary"
-               text={t(address.concat('select and configure apps'))}
-               onClick={() => openAppsTunnel(1)}
-            />
-         </StyledSection>
-         <Tunnels tunnels={appsTunnels}>
-            <Tunnel layer={1}>
-               <StyledTunnelHeader>
-                  <div>
-                     <IconButton
-                        type="ghost"
-                        onClick={() => closeAppsTunnel(1)}
-                     >
-                        <ClearIcon size={20} />
-                     </IconButton>
-                     <Text as="h2">{t(address.concat('configure apps'))}</Text>
-                  </div>
-                  <TextButton
-                     type="solid"
-                     onClick={() => {
-                        closeAppsTunnel(1)
-                        setForm({ ...form, apps: [...selected] })
-                     }}
-                  >
-                     {t(address.concat('add'))}
-                  </TextButton>
-               </StyledTunnelHeader>
-               <StyledTunnelMain>
-                  <List>
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        ).concat('...')}
-                     />
-                     <ListOptions>
-                        {list
-                           .filter(option =>
-                              option.title.toLowerCase().includes(search)
-                           )
-                           .map(option => (
-                              <ListItem
-                                 type="MSL1101"
-                                 key={option.id}
-                                 content={{
-                                    icon: option.icon,
-                                    title: option.title,
-                                 }}
-                                 onClick={() => selectOption('id', option.id)}
-                                 isActive={selected.find(
-                                    item => item.id === option.id
-                                 )}
-                              />
-                           ))}
-                     </ListOptions>
-                  </List>
-               </StyledTunnelMain>
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={permissionTunnels}>
-            <Tunnel layer={1}>
-               <StyledTunnelHeader>
-                  <div>
-                     <IconButton
-                        type="ghost"
-                        onClick={() => closePermissionsTunnel(1)}
-                     >
-                        <ClearIcon size={20} />
-                     </IconButton>
-                     <Text as="h2">{selectedApp.title}</Text>
-                  </div>
-                  <TextButton
-                     type="solid"
-                     onClick={() => {
-                        closePermissionsTunnel(1)
-                     }}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-               </StyledTunnelHeader>
-               <StyledTunnelMain>
-                  <Text as="title">
-                     {t(address.concat('permissions for role'))}:{' '}
-                     {form.roleName || 'Untitled'}
-                  </Text>
-                  <StyledPermissions>
-                     {Object.keys(selectedApp).length > 0 &&
-                        selectedApp.permissions.map(permission => (
-                           <Toggle
-                              key={permission.title}
-                              label={permission.title}
-                              checked={permission.allowed}
-                              setChecked={() =>
-                                 console.log('toggle permission')
-                              }
-                           />
-                        ))}
-                  </StyledPermissions>
-               </StyledTunnelMain>
-            </Tunnel>
-         </Tunnels>
+            </ul>
+         </Flex>
       </StyledWrapper>
    )
 }

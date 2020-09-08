@@ -300,4 +300,67 @@ export const ROLES = {
          }
       }
    `,
+   CREATE: gql`
+      mutation insertRole($object: settings_role_insert_input!) {
+         insertRole(object: $object) {
+            id
+            title
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateRole($id: Int!, $_set: settings_role_set_input!) {
+         updateRole(pk_columns: { id: $id }, _set: $_set) {
+            id
+            title
+         }
+      }
+   `,
+   ROLE: gql`
+      subscription role($id: Int!) {
+         role(id: $id) {
+            id
+            title
+         }
+      }
+   `,
+   LIST: gql`
+      subscription roles {
+         roles {
+            id
+            title
+            user_roles {
+               id
+               user {
+                  id
+                  email
+                  lastName
+                  firstName
+               }
+               app {
+                  id
+                  title
+               }
+            }
+         }
+      }
+   `,
+   APPS: gql`
+      subscription apps($title: String_comparison_exp!) {
+         apps {
+            id
+            title
+            users(where: { role: { title: $title } }) {
+               id
+               user {
+                  id
+                  email
+                  firstName
+                  lastName
+                  keycloakId
+               }
+            }
+         }
+      }
+   `,
 }
