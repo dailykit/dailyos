@@ -54,6 +54,7 @@ export const COUPON_DATA = gql`
          id
          code
          isActive
+         metaDetails
       }
    }
 `

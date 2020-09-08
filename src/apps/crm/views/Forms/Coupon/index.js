@@ -6,12 +6,7 @@ import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
-import {
-   ConditionComp,
-   DescriptionComp,
-   ImageComp,
-   RewardComp,
-} from './components'
+import { ConditionComp, DetailsComp, ImageComp, RewardComp } from './components'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -95,7 +90,7 @@ const CouponForm = () => {
             />
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
-         <DescriptionComp state={state} />
+         <DetailsComp state={state} />
          <ImageComp state={state} />
          <ConditionComp state={state} />
          <RewardComp state={state} />

@@ -2,24 +2,26 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { Input, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { UPDATE_COUPON } from '../../../../../graphql'
-import { StyledRow, TunnelBody } from '../styled'
+import { UPDATE_COUPON } from '../../../../../../graphql'
+import { StyledRow, TunnelBody } from '../../styled'
 
 const DescriptionTunnel = ({ state, close }) => {
    const [busy, setBusy] = React.useState(false)
-   const [description, setDescription] = React.useState(state.description || '')
+   const [metaDetails, setMetaDetails] = React.useState(
+      state?.metaDetails || ''
+   )
 
    // Mutations
    const [updateProduct] = useMutation(UPDATE_COUPON, {
       variables: {
          id: state.id,
          set: {
-            description,
+            metaDetails,
          },
       },
       onCompleted: () => {
          toast.success('Updated!')
-         close(1)
+         close(2)
       },
       onError: () => {
          toast.error('Error!')
@@ -42,7 +44,7 @@ const DescriptionTunnel = ({ state, close }) => {
                action: save,
                title: busy ? 'Saving' : 'Save',
             }}
-            close={() => close(1)}
+            close={() => close(2)}
          />
          <TunnelBody>
             <StyledRow>
@@ -51,8 +53,13 @@ const DescriptionTunnel = ({ state, close }) => {
                   label="Description"
                   name="textarea"
                   rows="5"
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
+                  value={metaDetails.description}
+                  onChange={e =>
+                     setMetaDetails({
+                        ...metaDetails,
+                        description: e.target.value,
+                     })
+                  }
                />
             </StyledRow>
          </TunnelBody>

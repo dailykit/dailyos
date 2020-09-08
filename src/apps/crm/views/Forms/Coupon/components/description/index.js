@@ -9,7 +9,7 @@ import {
 } from '@dailykit/ui'
 import { DescriptionTunnel } from '../../tunnels'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
-import { StyledContainer, StyledRow } from './styled'
+import { StyledContainer, StyledRow } from '../styled'
 
 const Description = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -20,11 +20,11 @@ const Description = ({ state }) => {
                <DescriptionTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         {state.description ? (
+         {state?.metaDetails?.description ? (
             <StyledContainer>
                <Text as="title">Description</Text>
                <StyledRow>
-                  <Text as="p">{state.description}</Text>
+                  <Text as="p">{state?.metaDetails?.description}</Text>
                   <IconButton type="outline" onClick={() => openTunnel(1)}>
                      <EditIcon />
                   </IconButton>
