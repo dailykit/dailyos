@@ -24,7 +24,7 @@ export const COUPON_ACTIVE = gql`
 
 export const CREATE_COUPON = gql`
    mutation CREATE_COUPON($couponCode: String!) {
-      createCoupon(object: { code: $couponCode, condition: {} }) {
+      createCoupon(object: { code: $couponCode }) {
          id
          code
       }

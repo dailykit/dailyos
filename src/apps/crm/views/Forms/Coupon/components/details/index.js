@@ -39,7 +39,7 @@ const Description = ({ state }) => {
             set: {
                metaDetails: {
                   ...state.metaDetails,
-                  images: '',
+                  image: '',
                },
             },
          },
