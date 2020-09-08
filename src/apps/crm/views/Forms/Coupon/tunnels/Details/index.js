@@ -1,34 +1,98 @@
 import React from 'react'
-import { TunnelHeader, Text, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
-import DescriptionTunnel from './Description'
-import TitleTunnel from './Title'
-import { TunnelBody, SolidTile } from '../styled'
+import { TunnelHeader, Input } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { UPDATE_COUPON } from '../../../../../graphql'
+import { TunnelBody, StyledRow } from '../styled'
+import { AssetUploader } from '../../../../../../../shared/components'
 
 const DetailsTunnel = ({ state, close }) => {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [busy, setBusy] = React.useState(false)
+   const [metaDetails, setMetaDetails] = React.useState(
+      state?.metaDetails || ''
+   )
+
+   // Mutations
+   const [updateProduct] = useMutation(UPDATE_COUPON, {
+      variables: {
+         id: state.id,
+         set: {
+            metaDetails,
+         },
+      },
+      onCompleted: () => {
+         toast.success('Updated!')
+         close(1)
+      },
+      onError: () => {
+         toast.error('Error!')
+         setBusy(false)
+      },
+   })
+
+   // Handlers
+   const save = () => {
+      if (busy) return
+      setBusy(true)
+      updateProduct()
+   }
+
+   const addImage = image => {
+      updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               metaDetails: {
+                  ...metaDetails,
+                  image: image.url,
+               },
+            },
+         },
+      })
+   }
 
    return (
       <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={2}>
-               <TitleTunnel state={state} close={() => closeTunnel(1)} />
-            </Tunnel>
-            <Tunnel layer={3}>
-               <DescriptionTunnel state={state} close={() => closeTunnel(2)} />
-            </Tunnel>
-         </Tunnels>
-         <TunnelHeader title="Select type of Details" close={() => close(1)} />
+         <TunnelHeader
+            title="Add details of the coupon"
+            right={{
+               action: save,
+               title: busy ? 'Saving' : 'Save',
+            }}
+            close={() => close(1)}
+         />
          <TunnelBody>
-            <SolidTile onClick={() => openTunnel(1)}>
-               <Text as="h1">Title</Text>
-               <Text as="subtitle">Give a title to this coupon</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => openTunnel(2)}>
-               <Text as="h1">Description</Text>
-               <Text as="subtitle">Write a Description of this coupon</Text>
-            </SolidTile>
-            <br />
+            <StyledRow>
+               <Input
+                  type="textarea"
+                  label="Title"
+                  name="textarea"
+                  rows="5"
+                  value={metaDetails.title}
+                  onChange={e =>
+                     setMetaDetails({ ...metaDetails, title: e.target.value })
+                  }
+               />
+            </StyledRow>
+            <StyledRow>
+               <Input
+                  type="textarea"
+                  label="Description"
+                  name="textarea"
+                  rows="5"
+                  value={metaDetails.description}
+                  onChange={e =>
+                     setMetaDetails({
+                        ...metaDetails,
+                        description: e.target.value,
+                     })
+                  }
+               />
+            </StyledRow>
+            <AssetUploader
+               onImageSelect={image => addImage(image)}
+               onAssetUpload={url => addImage(url)}
+            />
          </TunnelBody>
       </>
    )
