@@ -65,11 +65,11 @@ const RolesListing = () => {
                         <TableCell>{row.title}</TableCell>
                         <TableCell>
                            <AvatarGroup>
-                              {row.users_roles_apps.map(node => (
+                              {row.apps.map(({ app }) => (
                                  <Avatar
                                     url=""
-                                    key={node.app.id}
-                                    title={node.app.title}
+                                    key={app.id}
+                                    title={app.title}
                                  />
                               ))}
                            </AvatarGroup>
