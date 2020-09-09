@@ -1,26 +1,13 @@
 import styled from 'styled-components'
 
-export const StyledContainer = styled.div`
-   position: relative;
-`
-
-export const StyledRow = styled.div`
-   margin-bottom: 16px;
-   display: flex;
-   flex-direction: row;
-   justify-content: space-between;
-`
-
-export const StyledAction = styled.div`
-   position: absolute;
-   right: 16px;
-   top: 16px;
-`
-
 export const TunnelBody = styled.div`
    padding: 32px;
    height: calc(100% - 106px);
    overflow: auto;
+`
+
+export const StyledRow = styled.div`
+   margin-bottom: 32px;
 `
 
 export const SolidTile = styled.button`
@@ -38,11 +25,28 @@ export const SolidTile = styled.button`
    }
 `
 
-export const StyledWrapper = styled.div`
+export const StyledInputWrapper = styled.div`
+   width: ${props => props.width}px;
    display: flex;
-   flex-direction: row;
+   align-items: center;
+`
+
+export const Grid = styled.div`
+   display: grid;
+   grid-gap: 16px;
+   grid-template-columns: repeat(${props => props.cols || 2}, 1fr);
+`
+
+export const Flex = styled.div`
+   display: flex;
    justify-content: space-between;
-   padding: 16px;
+   align-items: center;
+`
+export const StyledDiv = styled.div`
+   padding: 16px 0;
+   p .addFact {
+      color: #00a7e1;
+   }
 `
 
 export const ImageContainer = styled.div`
@@ -68,24 +72,4 @@ export const ImageContainer = styled.div`
       }
    }
 `
-export const HorizontalCard = styled.div`
-   display: flex;
-   flex-direction: row;
-   padding: 0 10px 10px 10px;
-`
-
-export const StyledCard = styled.div`
-   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-   transition: 0.3s;
-   width: 40%;
-   margin: 0 20em;
-   img {
-      width: 100%;
-   }
-   &:hover {
-      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-   }
-`
-export const StyledInfo = styled.span`
-   display: inline;
-`
+// Made by Deepak Negi
