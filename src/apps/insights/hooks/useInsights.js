@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { groupBy } from 'lodash'
 
 import { GET_INSIGHT } from '../graphql'
-import { transformer } from '../utils/transformer'
+import { transformer, buildOptions } from '../utils/transformer'
 
 function onError(error) {
    console.log(error)
@@ -46,7 +46,7 @@ let gqlQuery = {
  * @param {string} insightId
  * @param {{chart?: {xKey: string, yLabel: string, xLabel: string}, includeTableData: boolean}} [options]
  *
- * @returns {{loading: boolean, tableData: any[], chartData: any, switches: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
+ * @returns {{loading: boolean, tableData: any[], chartData: any, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
 export const useInsights = (
    insightId,
@@ -87,7 +87,7 @@ export const useInsights = (
       onError,
       variables: {
          ...variableSwitches,
-         ...variableOptions,
+         options: variableOptions,
       },
    })
 
@@ -95,11 +95,14 @@ export const useInsights = (
 
    if (options.includeTableData) transformedData = transformer(data, queryName)
 
+   const whereObject = buildOptions(variableOptions)
+
    const result = {
       loading,
       tableData: transformedData,
       switches: variableSwitches,
-      options: variableOptions,
+      optionVariables: variableOptions,
+      options: whereObject,
       updateSwitches: setVariableSwitches,
       updateOptions: setVariableOptions,
       allowedCharts: insight.allowedCharts,

@@ -5,6 +5,28 @@
 
 import { isObject } from '../../../shared/utils/isObject'
 
+export const buildOptions = (object, prefix = '') => {
+   let result = {}
+
+   if (Object.keys(object).some(key => key.startsWith('_'))) {
+      const temp = prefix.trim()
+      result[temp] = object
+   } else
+      Object.keys(object).forEach(key => {
+         const tempKey = `${prefix} ${key}`.trim()
+         if (!isObject(object[key])) {
+            if (key !== '__typename') {
+               result[tempKey] = object[key]
+            }
+         } else {
+            const otherResults = buildOptions(object[key], `${prefix} ${key} `)
+            result = { ...otherResults, ...result }
+         }
+      })
+
+   return result
+}
+
 function flattenObject(object, prefix) {
    let result = {}
    Object.keys(object).forEach(key => {
