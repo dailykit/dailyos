@@ -312,6 +312,15 @@ export const ROLES = {
                   title
                }
             }
+            users {
+               user {
+                  id
+                  email
+                  lastName
+                  firstName
+                  keycloakId
+               }
+            }
          }
       }
    `,
@@ -331,7 +340,7 @@ export const ROLES = {
       }
    `,
    APPS: gql`
-      subscription apps($roleId: Int_comparison_exp!) {
+      query apps($roleId: Int_comparison_exp!) {
          apps(where: { _not: { roles: { roleId: $roleId } } }) {
             id
             title
@@ -344,6 +353,26 @@ export const ROLES = {
       ) {
          insert_settings_role_app(objects: $objects) {
             affected_rows
+         }
+      }
+   `,
+   INSERT_ROLES_USERS: gql`
+      mutation insert_settings_user_role(
+         $objects: [settings_user_role_insert_input!]!
+      ) {
+         insert_settings_user_role(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+   USERS: gql`
+      query users($roleId: Int_comparison_exp!) {
+         users: settings_user(where: { _not: { roles: { roleId: $roleId } } }) {
+            id
+            email
+            lastName
+            firstName
+            keycloakId
          }
       }
    `,
