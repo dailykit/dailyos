@@ -1,6 +1,7 @@
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { TunnelHeader, Input, Text, Dropdown, Loader } from '@dailykit/ui'
+import gql from 'graphql-tag'
 import styled, { css } from 'styled-components'
 import { useConditions } from './context'
 import { FACTS } from './graphql'
@@ -28,6 +29,9 @@ const FactTunnel = ({ closeTunnel }) => {
             const value = Object.values(data)[0]
             setValueData(value)
          },
+         onError: error => {
+            console.log(error)
+         },
       }
    )
 
@@ -36,7 +40,12 @@ const FactTunnel = ({ closeTunnel }) => {
       { loading: factsLoading, error: factsError },
    ] = useLazyQuery(FACTS_QUERY.current, {
       onCompleted: data => {
-         setFacts(data.facts[0])
+         const facts = Object.values(data.facts[0])
+         facts.pop()
+         setFacts(facts)
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
@@ -48,6 +57,9 @@ const FactTunnel = ({ closeTunnel }) => {
             `
             factsQuery()
          }
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
@@ -80,7 +92,9 @@ const FactTunnel = ({ closeTunnel }) => {
          console.log(currFactObj)
          setFactObj(currFactObj)
          if (currFactObj.value.datapoint === 'query') {
-            DATA_QUERY.current = currFactObj.value.query
+            DATA_QUERY.current = gql`
+               ${currFactObj.value.query}
+            `
             dataQuery()
          }
       }
@@ -100,7 +114,7 @@ const FactTunnel = ({ closeTunnel }) => {
                <Text as="subtitle">Select Fact</Text>
                <Dropdown
                   type="single"
-                  options={Object.values(facts)}
+                  options={facts}
                   searchedOption={text => console.log(text)}
                   selectedOption={fact => setSelectedFact(fact.fact)}
                   placeholder="type what you're looking for..."

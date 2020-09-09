@@ -1,6 +1,7 @@
 import React from 'react'
 
 export const initialState = {
+   conditionId: undefined,
    data: undefined,
    nodeId: undefined,
    parentNodeId: undefined,
@@ -8,6 +9,12 @@ export const initialState = {
 
 export const reducer = (state = initialState, { type, payload }) => {
    switch (type) {
+      case 'CONDITION_ID': {
+         return {
+            ...state,
+            conditionId: payload.conditionId,
+         }
+      }
       case 'DATA': {
          return {
             ...state,

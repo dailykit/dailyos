@@ -1,32 +1,108 @@
 import React from 'react'
-import styled from 'styled-components'
 import { TextButton, TunnelHeader } from '@dailykit/ui'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import styled from 'styled-components'
 
 import Condition from './Condition'
 import { useConditions } from './context'
+import { CONDITION, UPDATE_CONDITION, CREATE_CONDITION } from './graphql'
 
 const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
    const { state, dispatch } = useConditions()
 
-   const save = () => {
-      //mutation: onSave
-   }
-
-   const fetchData = () => {
-      // query: id
-      dispatch({
-         type: 'DATA',
-         payload: {
-            data: {
-               id: 909090,
-               all: [],
+   // Queries
+   const [fetchCondition, { loading, error }] = useLazyQuery(CONDITION, {
+      variables: {
+         id,
+      },
+      onCompleted: data => {
+         dispatch({
+            type: 'DATA',
+            payload: {
+               data: data.condition.condition,
             },
+         })
+      },
+   })
+
+   // Mutations
+   const [updateCondition] = useMutation(UPDATE_CONDITION, {
+      variables: {
+         id: state.conditionId,
+         set: {
+            condition: state.data,
          },
-      })
+      },
+      onCompleted: data => {
+         console.log(data)
+         toast.success('Condition saved')
+         dispatch({
+            type: 'CONDITION_ID',
+            payload: {
+               conditionId: undefined,
+            },
+         })
+         onSave(data.createCondition.id)
+         closeTunnel(1)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error while saving condition')
+      },
+   })
+   const [createCondition] = useMutation(CREATE_CONDITION, {
+      variables: {
+         object: {
+            condition: state.data,
+         },
+      },
+      onCompleted: data => {
+         console.log(data)
+         toast.success('Condition saved')
+         dispatch({
+            type: 'CONDITION_ID',
+            payload: {
+               conditionId: undefined,
+            },
+         })
+         onSave(data.createCondition.id)
+         closeTunnel(1)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Error while saving condition')
+      },
+   })
+
+   const save = () => {
+      if (state.conditionId) {
+         updateCondition()
+      } else {
+         createCondition()
+      }
    }
 
    React.useEffect(() => {
-      fetchData()
+      if (id) {
+         fetchCondition()
+         dispatch({
+            type: 'CONDITION_ID',
+            payload: {
+               conditionId: id,
+            },
+         })
+      } else {
+         dispatch({
+            type: 'DATA',
+            payload: {
+               data: {
+                  id: Math.floor(Math.random() * 1000),
+                  all: [],
+               },
+            },
+         })
+      }
    }, [])
 
    return (
@@ -52,7 +128,7 @@ const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
                         type: 'DATA',
                         payload: {
                            data: {
-                              id: 121313131,
+                              id: Math.floor(Math.random() * 1000),
                               all: [],
                            },
                         },
@@ -70,7 +146,6 @@ const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
 export default MainTunnel
 
 const Info = styled.p`
-   font-family: Roboto;
    font-style: italic;
    font-weight: normal;
    font-size: 12px;

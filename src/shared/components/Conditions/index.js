@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { Tunnels, Tunnel } from '@dailykit/ui'
 
 import FactTunnel from './FactTunnel'
 import MainTunnel from './MainTunnel'
