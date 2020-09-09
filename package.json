@@ -45,6 +45,7 @@
       "rrule": "2.6.4",
       "styled-components": "5.1.0",
       "subscriptions-transport-ws": "0.9.16",
+      "unflatten": "1.0.4",
       "uuid": "8.1.0"
    },
    "scripts": {

@@ -1,8 +1,8 @@
 /**
  * @todo support for multiple queries in a request.
- * @body Adding this would enable to use multiple queries in a single request which can be helpfull in some cases, [see](https://hasura.io/docs/1.0/graphql/core/queries/multiple-queries.html). It is not super imoprtant for now.
+ * @body Adding this would enable to use multiple queries in a single request which can be helpfull in some cases, [see](https://hasura.io/docs/1.0/graphql/core/queries/multiple-queries.html). It is not super important for now.
  */
-
+import unflatten from 'unflatten'
 import { isObject } from '../../../shared/utils/isObject'
 
 export const buildOptions = (object, prefix = '') => {
@@ -25,6 +25,10 @@ export const buildOptions = (object, prefix = '') => {
       })
 
    return result
+}
+
+export const buildOptionVariables = data => {
+   return unflatten(data, { separator: '  ' })
 }
 
 function flattenObject(object, prefix) {
