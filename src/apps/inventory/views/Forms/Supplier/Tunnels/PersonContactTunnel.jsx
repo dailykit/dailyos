@@ -137,7 +137,7 @@ export default function PersonContactTunnel({ close, formState }) {
                   }}
                >
                   <CircleButton onClick={() => openPhotoTunnel(1)}>
-                     {formState.contactPerson.imageUrl ? (
+                     {formState.contactPerson?.imageUrl ? (
                         <img
                            src={formState.contactPerson.imageUrl}
                            alt="profile"

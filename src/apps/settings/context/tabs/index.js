@@ -64,23 +64,29 @@ export const useTabs = () => {
 
    const tab = tabs.find(tab => tab.path === location.pathname)
 
-   const setTabTitle = title => {
-      dispatch({
-         type: 'SET_TITLE',
-         payload: {
-            title,
-            path: tab.path,
-         },
-      })
-   }
+   const setTabTitle = React.useCallback(
+      title => {
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               title,
+               path: tab.path,
+            },
+         })
+      },
+      [dispatch, tab]
+   )
 
-   const addTab = (title, path) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { title, path },
-      })
-      history.push(path)
-   }
+   const addTab = React.useCallback(
+      (title, path) => {
+         dispatch({
+            type: 'ADD_TAB',
+            payload: { title, path },
+         })
+         history.push(path)
+      },
+      [dispatch]
+   )
 
    const switchTab = path => history.push(path)
 
