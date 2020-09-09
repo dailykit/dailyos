@@ -32,13 +32,13 @@ export default function SupplierTunnel({ close, formState }) {
          onSubscriptionData: input => {
             const newSuppliers = input.subscriptionData.data.suppliers.map(
                sup => {
+                  const title = sup.contactPerson?.firstName || ''
+                  const lastName = title ? `${sup.contactPerson?.lastName}` : ''
                   return {
                      id: sup.id,
                      supplier: { title: sup.name },
                      contact: {
-                        title: `${sup.contactPerson?.firstName || ''} ${
-                           sup.contactPerson?.lastName || ''
-                        }`,
+                        title: title + lastName,
                         img: '',
                      },
                   }
@@ -106,18 +106,26 @@ export default function SupplierTunnel({ close, formState }) {
                      .filter(option =>
                         option.supplier.title.toLowerCase().includes(search)
                      )
-                     .map(option => (
-                        <ListItem
-                           type="SSL22"
-                           key={option.id}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                           content={{
-                              supplier: option.supplier,
-                              contact: option.contact,
-                           }}
-                        />
-                     ))}
+                     .map(option => {
+                        return (
+                           <ListItem
+                              type="SSL22"
+                              key={option.id}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                              content={{
+                                 supplier: option.supplier,
+                                 contact:
+                                    option.contact && option.contact.title
+                                       ? option.contact
+                                       : {
+                                            title: 'N/A',
+                                            img: '',
+                                         },
+                              }}
+                           />
+                        )
+                     })}
                </ListOptions>
             </List>
          </TunnelContainer>

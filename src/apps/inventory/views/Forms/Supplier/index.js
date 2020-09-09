@@ -247,7 +247,7 @@ export default function SupplierForm() {
 }
 
 function ShowAvailability({ formState }) {
-   const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
+   const [updateSupplier] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
          toast.success('Updated availability!')
       },
@@ -256,8 +256,6 @@ function ShowAvailability({ formState }) {
          toast.error('Error! Please try again')
       },
    })
-
-   if (loading) return <Loader />
 
    return (
       <Toggle
