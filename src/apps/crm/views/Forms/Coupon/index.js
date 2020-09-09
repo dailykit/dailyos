@@ -13,7 +13,6 @@ const CouponForm = () => {
    const { id: couponId } = useParams()
    const [codeTitle, setCodeTitle] = useState('')
    const [state, setState] = useState({})
-   const [busy, setBusy] = React.useState(false)
    const [toggle, setToggle] = useState(false)
    // Subscription
    const { loading } = useSubscription(COUPON_DATA, {
@@ -34,14 +33,12 @@ const CouponForm = () => {
    // Mutation
    const [updateCoupon] = useMutation(UPDATE_COUPON, {
       onCompleted: () => {
-         setBusy(false)
          toast.success('Updated!')
          setTabTitle(codeTitle)
       },
       onError: error => {
          console.log(error)
          toast.error('Error')
-         setBusy(false)
       },
    })
 

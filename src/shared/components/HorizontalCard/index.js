@@ -13,7 +13,7 @@ const HorizontalStyledCard = ({ data, open }) => {
             </IconButton>
          </StyledWrapper>
          <HorizontalCard>
-            <img src={data.image} alt="Avatar" />
+            <img src={data.image} alt="CardImage" />
             <StyledInfo>
                <Card>
                   <Card.Body>

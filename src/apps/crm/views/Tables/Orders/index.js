@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Text, Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
@@ -68,10 +68,6 @@ const OrdersTable = ({ id }) => {
       },
       [tab, dispatch]
    )
-
-   // useEffect(() => {
-   //    setOrder('', false)
-   // }, [])
 
    const rowClick = (e, row) => {
       const orderId = row._row.data.id

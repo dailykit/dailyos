@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { ReactTabulator, reactFormatter } from 'react-tabulator'
+import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import {
    Text,

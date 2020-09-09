@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import {
-   TunnelHeader,
-   Input,
-   useTunnel,
-   Tunnels,
-   Tunnel,
-   ButtonTile,
-} from '@dailykit/ui'
+import { TunnelHeader, Input, Tunnels, Tunnel, ButtonTile } from '@dailykit/ui'
 import { TunnelBody, StyledRow, ImageContainer } from './styled'
 import AssetTunnel from './asset'
 import { DeleteIcon } from '../../assets/icons'
 
 const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
-   const [busy, setBusy] = useState(false)
    const [info, setInfo] = useState(data || {})
    const afterSave = info => {
-      if (busy) return
-      setBusy(true)
       onSave(info)
    }
    useEffect(() => {
@@ -32,7 +22,7 @@ const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
                   title="Add Basic Information"
                   right={{
                      action: () => afterSave(info),
-                     title: busy ? 'Saving' : 'Save',
+                     title: 'Save',
                   }}
                   close={() => closeTunnel(1)}
                />

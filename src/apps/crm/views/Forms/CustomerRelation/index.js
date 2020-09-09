@@ -16,7 +16,7 @@ import {
    ReferralTable,
    WalletTable,
    SubscriptionTable,
-} from '../../index'
+} from '../../Tables'
 import {
    StyledWrapper,
    StyledContainer,

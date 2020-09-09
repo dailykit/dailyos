@@ -1,5 +1,5 @@
 import React from 'react'
-import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { ButtonTile, useTunnel } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { UPDATE_COUPON } from '../../../../../graphql'
