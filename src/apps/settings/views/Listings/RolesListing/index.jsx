@@ -65,17 +65,11 @@ const RolesListing = () => {
                         <TableCell>{row.title}</TableCell>
                         <TableCell>
                            <AvatarGroup>
-                              {row.user_roles.map(node => (
+                              {row.users_roles_apps.map(node => (
                                  <Avatar
                                     url=""
-                                    key={node.user.id}
-                                    title={
-                                       node.user.firstName
-                                          ? node.user.firstName +
-                                            ' ' +
-                                            node.user.lastName
-                                          : 'N/A'
-                                    }
+                                    key={node.app.id}
+                                    title={node.app.title}
                                  />
                               ))}
                            </AvatarGroup>
