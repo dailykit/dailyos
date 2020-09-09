@@ -7,7 +7,7 @@ import BasicInfoTunnel from '../../../../../../../shared/components/BasicInfo'
 import HorizontalCard from '../../../../../../../shared/components/HorizontalCard'
 
 const Details = ({ state }) => {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    // Mutations
    const [updateCoupon] = useMutation(UPDATE_COUPON, {
       onCompleted: () => {
@@ -34,16 +34,13 @@ const Details = ({ state }) => {
 
    return (
       <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <BasicInfoTunnel
-                  data={state.metaDetails}
-                  close={() => closeTunnel(1)}
-                  open={() => openTunnel(1)}
-                  onSave={info => saveInfo(info)}
-               />
-            </Tunnel>
-         </Tunnels>
+         <BasicInfoTunnel
+            data={state.metaDetails}
+            closeTunnel={closeTunnel}
+            openTunnel={openTunnel}
+            tunnels={tunnels}
+            onSave={info => saveInfo(info)}
+         />
          {state?.metaDetails?.title ||
          state?.metaDetails?.description ||
          state?.metaDetails?.image ? (
