@@ -4,7 +4,7 @@ import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 
-const WalletTable = props => {
+const WalletTable = () => {
    const { addTab } = useTabs()
    const columns = [
       { title: 'Txn Date', field: 'date', headerFilter: true },
@@ -49,7 +49,7 @@ const WalletTable = props => {
       },
    ]
    const rowClick = (e, row) => {
-      const { name } = row._row.data
+      const { id, name } = row._row.data
 
       const param = '/crm/customers/'.concat(name)
       addTab(name, param)

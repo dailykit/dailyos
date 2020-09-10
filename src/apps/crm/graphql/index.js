@@ -2,6 +2,9 @@ import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
    CUSTOMER_ISTEST,
+   COUPON_LISTING,
+   COUPON_TOTAL,
+   COUPON_DATA,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -15,7 +18,13 @@ import {
    OCCURENCES,
 } from './queries'
 
-import { ISTEST } from './mutations'
+import {
+   ISTEST,
+   COUPON_ACTIVE,
+   CREATE_COUPON,
+   UPDATE_COUPON,
+   DELETE_COUPON,
+} from './mutations'
 
 export {
    CUSTOMERS_COUNT,
@@ -31,4 +40,11 @@ export {
    OCCURENCES,
    ISTEST,
    CUSTOMER_ISTEST,
+   COUPON_LISTING,
+   COUPON_ACTIVE,
+   COUPON_TOTAL,
+   CREATE_COUPON,
+   COUPON_DATA,
+   UPDATE_COUPON,
+   DELETE_COUPON,
 }

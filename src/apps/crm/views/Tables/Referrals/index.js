@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-fragments */
 import React from 'react'
 import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
@@ -32,20 +33,25 @@ const ReferralTable = () => {
       },
    ]
    const rowClick = (e, row) => {
-      const { name } = row._row.data
+      const { id, name } = row._row.data
 
       const param = '/crm/customers/'.concat(name)
       addTab(name, param)
    }
    return (
-      <>
+      <React.Fragment>
          <div style={{ padding: '16px' }}>
             <Text as="title">Refferals(3)</Text>
          </div>
          <div style={{ overflowX: 'scroll' }}>
-            <ReactTabulator columns={columns} data={data} rowClick={rowClick} />
+            <ReactTabulator
+               columns={columns}
+               data={data}
+               rowClick={rowClick}
+               // options={tableOptions}
+            />
          </div>
-      </>
+      </React.Fragment>
    )
 }
 

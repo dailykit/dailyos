@@ -140,9 +140,9 @@ const Title = () => {
                type="text"
                name="title"
                label="Subscription Title"
+               value={state.title.title}
                onBlur={e => saveTitle(e)}
                onChange={e => handleChange(e)}
-               value={state.title.title || title.title}
             />
             <Toggle
                label="Publish"
