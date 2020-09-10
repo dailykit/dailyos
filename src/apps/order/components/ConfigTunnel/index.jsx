@@ -53,8 +53,8 @@ const Navbar = () => {
 
    return (
       <ul>
-         {links.map(link => (
-            <li key={link}>
+         {links.map((link, index) => (
+            <li key={`${link}-${index}`}>
                <a href={link.to} className={active === link.to ? 'active' : ''}>
                   {link.title}
                </a>

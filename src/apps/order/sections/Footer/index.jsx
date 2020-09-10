@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 
 import { useConfig } from '../../context'
 import { Wrapper, Section, StatusBadge } from './styled'
@@ -6,10 +7,10 @@ import { LabelPrinterIcon, KotPrinterIcon, ScaleIcon } from '../../assets/icons'
 
 const Footer = () => {
    const {
-      state: { station },
+      state: { stations },
    } = useConfig()
 
-   if (Object.keys(station).length === 0)
+   if (_.isEmpty(stations))
       return (
          <Wrapper>
             <Section title="Station">
@@ -17,11 +18,10 @@ const Footer = () => {
             </Section>
          </Wrapper>
       )
+   const [station] = stations
    return (
       <Wrapper>
-         {Object.keys(station).length > 0 && (
-            <Section title="Station">Station: {station.name}</Section>
-         )}
+         <Section title="Station">Station: {station.name}</Section>
          {station?.defaultKotPrinter && (
             <Section title="KOT Printer">
                <span>

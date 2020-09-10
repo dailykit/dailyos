@@ -9,7 +9,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
@@ -95,7 +95,7 @@ const AccompanimentTypesForm = () => {
                   </Text>
                </div>
                <div>
-                  <Text as="title">{data.master_accompanimentType.length}</Text>
+                  <Text as="title">{data.accompaniments.length}</Text>
                   <span onClick={() => openTunnel(1)}>
                      <AddIcon color="#00A7E1" size={24} />
                   </span>
@@ -105,7 +105,7 @@ const AccompanimentTypesForm = () => {
                <ListingHeader>
                   <Text as="p">
                      {t(address.concat('accompaniment types'))} (
-                     {data.master_accompanimentType.length})
+                     {data.accompaniments.length})
                   </Text>
                   <IconButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon size={24} />
@@ -114,7 +114,7 @@ const AccompanimentTypesForm = () => {
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
-                  data={data.master_accompanimentType}
+                  data={data.accompaniments}
                   options={tableOptions}
                />
             </Listing>

@@ -88,13 +88,13 @@ export default function ConfigTunnel({ close, formState }) {
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onCompleted: () => {
-         close(4)
+         close(2)
          toast.success('Bulk Item as Shipped Added!')
       },
       onError: error => {
          console.log(error)
          toast.error('Error adding bulk item as shipped. Please try again')
-         close(4)
+         close(2)
       },
    })
    const [createBulkItem, { loading: createBulkItemLoading }] = useMutation(

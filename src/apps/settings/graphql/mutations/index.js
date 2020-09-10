@@ -244,10 +244,8 @@ export const DELETE_USER = gql`
 `
 
 export const CREATE_ACCOMPANIMENT_TYPES = gql`
-   mutation CreateAccompanimentTypes(
-      $objects: [master_accompanimentType_insert_input!]!
-   ) {
-      insert_master_accompanimentType(objects: $objects) {
+   mutation MyMutation($objects: [master_accompanimentType_insert_input!]!) {
+      createAccompaniments(objects: $objects) {
          returning {
             id
             name
@@ -257,10 +255,11 @@ export const CREATE_ACCOMPANIMENT_TYPES = gql`
 `
 
 export const DELETE_ACCOMPANIMENT_TYPES = gql`
-   mutation DeleteAccompanimentTypes($ids: [Int!]!) {
-      delete_master_accompanimentType(where: { id: { _in: $ids } }) {
+   mutation deleteAccompaniments($ids: [Int!]!) {
+      deleteAccompaniments(where: { id: { _in: $ids } }) {
          returning {
             id
+            name
          }
       }
    }
@@ -348,6 +347,14 @@ export const DELETE_UNITS = gql`
          returning {
             id
          }
+      }
+   }
+`
+
+export const DELETE_USERS_APPS_ROLES = gql`
+   mutation delete_users_apps_roles($where: settings_user_role_app_bool_exp!) {
+      delete_users_apps_roles(where: $where) {
+         affected_rows
       }
    }
 `

@@ -3,7 +3,7 @@ import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import * as moment from 'moment'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import tableOptions from '../tableOption'
 

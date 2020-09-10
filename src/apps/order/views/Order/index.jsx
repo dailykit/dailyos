@@ -1,12 +1,12 @@
 import React from 'react'
-import { Dropdown } from '@dailykit/ui'
+import _ from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { useOrder } from '../../context'
-import { ORDER, STATIONS } from '../../graphql'
+import { ORDER } from '../../graphql'
 import { formatDate } from '../../utils'
+import { useOrder, useTabs } from '../../context'
 import { Flex, InlineLoader } from '../../../../shared/components'
 import { UserIcon, PrintIcon } from '../../assets/icons'
 import MealKitProductDetails from './MealKitProductDetails'
@@ -36,20 +36,27 @@ const address = 'apps.order.views.order.'
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
-   const { switchView, dispatch } = useOrder()
+   const { tab, addTab } = useTabs()
    const [order, setOrder] = React.useState(null)
-   const [station, setStation] = React.useState(null)
+   const { state, switchView, dispatch } = useOrder()
    const [mealkits, setMealKits] = React.useState([])
    const [inventories, setInventories] = React.useState([])
    const [readytoeats, setReadyToEats] = React.useState([])
-   const { data: { stations = [] } = {} } = useSubscription(STATIONS)
 
    const { loading, error } = useSubscription(ORDER, {
       variables: {
          id: params.id,
-         ...(station && {
-            packingStationId: { _eq: station },
-            assemblyStationId: { _eq: station },
+         ...(!_.isEmpty(state.orders.where?._or) && {
+            packingStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
+            assemblyStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
          }),
       },
       onSubscriptionData: async ({ subscriptionData: { data = {} } }) => {
@@ -66,6 +73,12 @@ const Order = () => {
          setReadyToEats(orderReadyToEatProducts)
       },
    })
+
+   React.useEffect(() => {
+      if (!loading && order && !tab) {
+         addTab(`ORD${order.id}`, `/apps/order/orders/${order.id}`)
+      }
+   }, [loading, order, tab, addTab])
 
    React.useEffect(() => {
       return () => switchView('SUMMARY')
@@ -146,22 +159,10 @@ const Order = () => {
             </section>
          </Header>
          <section>
-            <Flex container alignItems="center" justifyContent="space-between">
-               <StyledCount>
-                  0 /{' '}
-                  {inventories.length + mealkits.length + readytoeats.length}
-                  &nbsp;{t(address.concat('items'))}
-               </StyledCount>
-               <div style={{ width: '280px' }}>
-                  <Dropdown
-                     type="single"
-                     options={stations}
-                     searchedOption={() => {}}
-                     placeholder="select a station"
-                     selectedOption={option => setStation(option.id)}
-                  />
-               </div>
-            </Flex>
+            <StyledCount>
+               0 / {inventories.length + mealkits.length + readytoeats.length}
+               &nbsp;{t(address.concat('items'))}
+            </StyledCount>
             <StyledTabs>
                <StyledTabList>
                   <StyledTab>Meal Kits ({mealkits.length})</StyledTab>
@@ -189,31 +190,14 @@ export default Order
 
 const MealKits = ({ mealkits }) => {
    const { t } = useTranslation()
-   const { selectMealKit, switchView } = useOrder()
    const [current, setCurrent] = React.useState(null)
-
-   const selectProduct = React.useCallback(
-      id => {
-         setCurrent(id)
-         const product = mealkits.find(mealkit => id === mealkit.id)
-         if (product.orderSachets.length > 0) {
-            selectMealKit(
-               product.orderSachets[0].id,
-               product.simpleRecipeProduct.name
-            )
-         } else {
-            switchView('SUMMARY')
-         }
-      },
-      [switchView, selectMealKit, mealkits]
-   )
 
    React.useEffect(() => {
       if (mealkits.length > 0) {
          const [product] = mealkits
-         selectProduct(product.id)
+         setCurrent(product.id)
       }
-   }, [mealkits, selectProduct])
+   }, [mealkits, setCurrent])
 
    if (mealkits.length === 0) return <div>No mealkit products!</div>
    return (
@@ -223,7 +207,7 @@ const MealKits = ({ mealkits }) => {
                <OrderItem
                   key={mealkit.id}
                   isActive={current === mealkit.id}
-                  onClick={() => selectProduct(mealkit.id)}
+                  onClick={() => setCurrent(mealkit.id)}
                >
                   <div>
                      <StyledProductTitle>
@@ -319,15 +303,25 @@ const Inventories = ({ inventories }) => {
                isActive={current === inventory.id}
                onClick={() => selectProduct(inventory.id)}
             >
-               <StyledProductTitle>
-                  {inventory?.inventoryProduct?.name}
-                  {inventory?.comboProduct?.name}
-                  &nbsp;
-                  {inventory?.comboProductComponent?.label &&
-                     `(${inventory?.comboProductComponent?.label})`}
-               </StyledProductTitle>
+               <Flex
+                  container
+                  alignitems="center"
+                  justifyContent="space-between"
+               >
+                  <StyledProductTitle>
+                     {inventory?.inventoryProduct?.name}
+                     {inventory?.comboProduct?.name}
+                     &nbsp;
+                     {inventory?.comboProductComponent?.label &&
+                        `(${inventory?.comboProductComponent?.label})`}
+                  </StyledProductTitle>
+                  <span>Quantity: {inventory.quantity}</span>
+               </Flex>
                <section>
-                  <span>{inventory.isAssembled ? 1 : 0} / 1</span>
+                  <span>
+                     {inventory.isAssembled ? 1 : 0} /{' '}
+                     {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+                  </span>
                   <StyledServings>
                      <span>
                         <UserIcon size={16} color="#555B6E" />
@@ -386,7 +380,10 @@ const ReadyToEats = ({ readytoeats }) => {
                   </StyledProductTitle>
                </div>
                <section>
-                  <span>{readytoeat?.isAssembled ? 1 : 0} / 1</span>
+                  <span>
+                     {readytoeat.isAssembled ? 1 : 0} /{' '}
+                     {readytoeat.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+                  </span>
                   <StyledServings>
                      <span>
                         <UserIcon size={16} color="#555B6E" />

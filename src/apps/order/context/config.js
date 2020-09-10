@@ -1,14 +1,17 @@
 import React from 'react'
+import _ from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { SETTINGS, STATION_USER } from '../graphql'
 import { useAuth } from './auth'
+import { Loader } from '../components'
+import { Flex } from '../../../shared/components'
+import { SETTINGS, STATIONS_BY_USER } from '../graphql'
 
 const ConfigContext = React.createContext()
 
 const initialState = {
    tunnel: { visible: false },
-   station: {},
+   stations: [],
    scale: {
       weight_simulation: {
          app: 'order',
@@ -31,6 +34,8 @@ const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_SETTING':
          return { ...state, [payload.field]: payload.value }
+      case 'SET_STATIONS':
+         return { ...state, stations: payload }
       case 'TOGGLE_TUNNEL':
          return { ...state, tunnel: payload }
       default:
@@ -41,21 +46,14 @@ const reducers = (state, { type, payload }) => {
 export const ConfigProvider = ({ children }) => {
    const { user } = useAuth()
    const [state, dispatch] = React.useReducer(reducers, initialState)
-   useSubscription(STATION_USER, {
-      variables: {
-         ...(user.email && { email: { _eq: user.email } }),
-      },
-      onSubscriptionData: ({
-         subscriptionData: { data: { station_user = [] } = {} } = {},
-      }) => {
-         if (station_user.length > 0) {
-            dispatch({
-               type: 'SET_SETTING',
-               payload: { field: 'station', value: station_user[0].station },
-            })
-         }
-      },
-   })
+   const { loading, data: { stations = [] } = {} } = useSubscription(
+      STATIONS_BY_USER,
+      {
+         variables: {
+            ...(user.email && { email: { _eq: user.email } }),
+         },
+      }
+   )
    useSubscription(SETTINGS, {
       onSubscriptionData: ({
          subscriptionData: { data: { settings = [] } = {} } = {},
@@ -95,6 +93,24 @@ export const ConfigProvider = ({ children }) => {
       },
    })
 
+   React.useEffect(() => {
+      if (!loading && !_.isEmpty(stations)) {
+         dispatch({ type: 'SET_STATIONS', payload: stations })
+      }
+   }, [loading, stations])
+
+   if (loading) return <Loader />
+   if (_.isEmpty(stations))
+      return (
+         <Flex
+            container
+            height="100vh"
+            alignItems="center"
+            justifyContent="center"
+         >
+            You're not authorized to access Order App.
+         </Flex>
+      )
    return (
       <ConfigContext.Provider value={{ state, dispatch, methods: {} }}>
          {children}
