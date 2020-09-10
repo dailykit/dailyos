@@ -12,20 +12,15 @@ import Main from './sections/Main'
 
 // Styled
 import { StyledWrapper } from '../../styled'
-import { HeaderWrapper, MainWrapper } from '../../shared/styled'
 
 const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
    return (
       <StyledWrapper>
          <Router basename={process.env.PUBLIC_URL}>
-            <HeaderWrapper>
-               <Header toggleSidebar={toggleSidebar} />
-            </HeaderWrapper>
+            <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <MainWrapper>
-               <Main />
-            </MainWrapper>
+            <Main />
          </Router>
       </StyledWrapper>
    )
