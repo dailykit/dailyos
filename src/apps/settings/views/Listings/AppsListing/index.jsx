@@ -63,44 +63,48 @@ const AppsListing = () => {
    ]
    return (
       <StyledWrapper>
-         <StyledHeader>
-            <Text as="h2">{t(address.concat('apps'))}</Text>
-         </StyledHeader>
-         <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>{t(address.concat('apps'))}</TableCell>
-                  <TableCell>{t(address.concat('users assigned'))}</TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               {data.map(row => (
-                  <TableRow key={row.title}>
+         <div>
+            <StyledHeader>
+               <Text as="h2">{t(address.concat('apps'))}</Text>
+            </StyledHeader>
+            <Table>
+               <TableHead>
+                  <TableRow>
+                     <TableCell>{t(address.concat('apps'))}</TableCell>
                      <TableCell>
-                        <AvatarGroup>
-                           <Avatar
-                              withName
-                              type="round"
-                              url={row.url}
-                              title={row.title}
-                           />
-                        </AvatarGroup>
-                     </TableCell>
-                     <TableCell>
-                        <AvatarGroup>
-                           {row.users.map(user => (
-                              <Avatar
-                                 key={user.title}
-                                 title={user.title}
-                                 url={user.url}
-                              />
-                           ))}
-                        </AvatarGroup>
+                        {t(address.concat('users assigned'))}
                      </TableCell>
                   </TableRow>
-               ))}
-            </TableBody>
-         </Table>
+               </TableHead>
+               <TableBody>
+                  {data.map(row => (
+                     <TableRow key={row.title}>
+                        <TableCell>
+                           <AvatarGroup>
+                              <Avatar
+                                 withName
+                                 type="round"
+                                 url={row.url}
+                                 title={row.title}
+                              />
+                           </AvatarGroup>
+                        </TableCell>
+                        <TableCell>
+                           <AvatarGroup>
+                              {row.users.map(user => (
+                                 <Avatar
+                                    key={user.title}
+                                    title={user.title}
+                                    url={user.url}
+                                 />
+                              ))}
+                           </AvatarGroup>
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               </TableBody>
+            </Table>
+         </div>
       </StyledWrapper>
    )
 }

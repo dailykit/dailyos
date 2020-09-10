@@ -377,3 +377,12 @@ export const ROLES = {
       }
    `,
 }
+
+export const PRINTNODE_CREDS = gql`
+   query admins {
+      admins: organizationAdmins {
+         email
+         password: printNodePassword
+      }
+   }
+`

@@ -1,12 +1,11 @@
 import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
-   margin: 0 auto;
-   padding: 0 20px;
-   overflow-y: auto;
-   max-width: 980px;
-   width: calc(100vw - 40px);
-   height: calc(100vh - 40px);
+   > div {
+      margin: 0 auto;
+      max-width: 980px;
+      width: calc(100vw - 40px);
+   }
 `
 
 export const StyledHeader = styled.div`
