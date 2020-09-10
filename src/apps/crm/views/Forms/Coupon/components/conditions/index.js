@@ -9,7 +9,6 @@ import {
    IconButton,
    Text,
 } from '@dailykit/ui'
-import { ConditionsTunnel } from '../../tunnels'
 import { UPDATE_COUPON } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'

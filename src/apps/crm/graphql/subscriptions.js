@@ -38,6 +38,18 @@ export const COUPON_LISTING = gql`
       }
    }
 `
+export const CAMPAIGN_LISTING = gql`
+   subscription CAMPAIGN_LISTING {
+      campaigns {
+         id
+         campaignType
+         conditionId
+         isActive
+         isRewardMulti
+         metaDetails
+      }
+   }
+`
 
 export const COUPON_TOTAL = gql`
    subscription COUPON_TOTAL {

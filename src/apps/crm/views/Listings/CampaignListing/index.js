@@ -14,7 +14,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import {
-   CAMPAIGN_DATA,
+   CAMPAIGN_LISTING,
    CAMPAIGN_TOTAL,
    CAMPAIGN_ACTIVE,
    DELETE_CAMPAIGN,
@@ -31,12 +31,12 @@ const CampaignListing = () => {
    const tableRef = useRef(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    // Subscription
-   const { loading: listLoading } = useSubscription(CAMPAIGN_DATA, {
+   const { loading: listLoading } = useSubscription(CAMPAIGN_LISTING, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.campaigns.map(campaign => {
             return {
                id: campaign.id,
-               name: campaign?.metaDetails?.title || {},
+               name: campaign?.metaDetails?.title || '',
                type: campaign.campaignType,
                active: campaign.isActive,
             }
@@ -60,12 +60,6 @@ const CampaignListing = () => {
          addTab('Customers', '/crm/customers')
       }
    }, [addTab, tab])
-
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(campaign)
-      }
-   })
 
    const toggleHandler = (toggle, id) => {
       updateCampaignActive({

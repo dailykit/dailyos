@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader } from '@dailykit/ui'
+import { Toggle, Input, Loader, Text } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -8,10 +8,11 @@ import { StyledHeader, StyledWrapper } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
 
-const CouponForm = () => {
+const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
    const { id: campaignId } = useParams()
    const [campaignTitle, setCampaignTitle] = useState('')
+   const [campaignType, setCampaignType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    // Subscription
@@ -20,9 +21,10 @@ const CouponForm = () => {
          id: campaignId,
       },
       onSubscriptionData: data => {
-         setState(data.subscriptionData.data.coupon)
-         setCampaignTitle(data.subscriptionData.data.coupon.code)
-         setToggle(data.subscriptionData.data.coupon.isActive)
+         setState(data.subscriptionData.data.campaign)
+         setCampaignTitle(data.subscriptionData.data.campaign.metaDetails.title)
+         setCampaignType(data.subscriptionData.data.campaign.campaignType)
+         setToggle(data.subscriptionData.data.campaign.isActive)
          // collectionDispatch({
          //    type: 'SEED',
          //    payload: data.coupon,
@@ -48,7 +50,7 @@ const CouponForm = () => {
             variables: {
                id: campaignId,
                set: {
-                  campaignType: campaignTitle,
+                  metaDetails: { title: campaignTitle },
                },
             },
          })
@@ -76,15 +78,16 @@ const CouponForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
+         <StyledHeader gridCol="10fr 1fr 1fr">
             <Input
                type="text"
-               label="Coupon Code"
+               label="Campaign Name"
                name="code"
                value={campaignTitle}
                onChange={e => setCampaignTitle(e.target.value)}
                onBlur={updateCampaignTitle}
             />
+            <Text as="title">`Campaign Type ${campaignType}`</Text>
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
          <DetailsComp state={state} />
@@ -94,4 +97,4 @@ const CouponForm = () => {
    )
 }
 
-export default CouponForm
+export default CampaignForm

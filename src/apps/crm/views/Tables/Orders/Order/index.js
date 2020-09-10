@@ -60,12 +60,6 @@ const OrderInfo = () => {
       })
    }
 
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(products)
-      }
-   })
-
    const columns = [
       { title: 'Products', field: 'products' },
       { title: 'Servings', field: 'servings' },

@@ -5,13 +5,14 @@ import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../context'
 import { CREATE_CAMPAIGN } from '../../../../graphql'
+import { randomSuffix } from '../../../../../../shared/utils'
 
-export default function ProductTypeTunnel({ close }) {
+export default function CampaignTypeTunnel({ close }) {
    const { addTab } = useTabs()
    const [createCampaign] = useMutation(CREATE_CAMPAIGN, {
       onCompleted: data => {
          addTab(
-            data.createCampaign.campaignType,
+            data.createCampaign.metaDetails.title,
             `/crm/campaign/${data.createCampaign.id}`
          )
          toast.success('Campaign created!')
@@ -24,6 +25,7 @@ export default function ProductTypeTunnel({ close }) {
       createCampaign({
          variables: {
             campaignType: type,
+            metaDetails: { title: `Campaign Title-${randomSuffix()}` },
          },
       })
    }

@@ -74,12 +74,6 @@ const CouponListing = () => {
       }
    }, [addTab, tab])
 
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(coupons)
-      }
-   })
-
    const toggleHandler = (toggle, id) => {
       updateCouponActive({
          variables: {

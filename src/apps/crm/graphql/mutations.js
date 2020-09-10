@@ -36,11 +36,14 @@ export const CAMPAIGN_ACTIVE = gql`
 `
 
 export const CREATE_CAMPAIGN = gql`
-   mutation CREATE_CAMPAIGN($campaignType: String!) {
-      createCampaign(object: { campaignType: $campaignType }) {
+   mutation CREATE_CAMPAIGN($campaignType: String!, $metaDetails: jsonb!) {
+      createCampaign(
+         object: { campaignType: $campaignType, metaDetails: $metaDetails }
+      ) {
          id
          campaignType
          isActive
+         metaDetails
       }
    }
 `

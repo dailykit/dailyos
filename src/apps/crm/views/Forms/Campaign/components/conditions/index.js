@@ -1,4 +1,6 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
 import {
    ButtonTile,
    Tunnels,
@@ -7,40 +9,65 @@ import {
    IconButton,
    Text,
 } from '@dailykit/ui'
-// import { ConditionsTunnel } from '../../tunnels'
+import { UPDATE_CAMPAIGN } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
+import Conditions from '../../../../../../../shared/components/Conditions'
 import { StyledContainer, StyledRow } from './styled'
-
-const Conditions = ({ state }) => {
+const ConditionComp = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+
+   // Mutation
+   const [updateCoupon] = useMutation(UPDATE_CAMPAIGN, {
+      onCompleted: () => {
+         toast.success('Updated!')
+         closeTunnel(1)
+      },
+      onError: () => {
+         toast.error('Error!')
+         closeTunnel(1)
+      },
+   })
+
+   // Handlers
+   const saveInfo = conditionId => {
+      updateCoupon({
+         variables: {
+            id: state.id,
+            set: {
+               conditionId,
+            },
+         },
+      })
+   }
    return (
       <>
-         {/* <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <ConditionsTunnel state={state} close={closeTunnel} />
-            </Tunnel>
-         </Tunnels>
-         {state.condition ? (
+         <Conditions
+            id={state.conditionId}
+            onSave={id => saveInfo(id)}
+            tunnels={tunnels}
+            openTunnel={openTunnel}
+            closeTunnel={closeTunnel}
+         />
+         {state.conditionId ? (
             <StyledContainer>
-               <Text as="title">Description</Text>
                <StyledRow>
-                  <Text as="p">{state.condition}</Text>
+                  <Text as="p">View/Edit Conditions</Text>
                   <IconButton type="outline" onClick={() => openTunnel(1)}>
                      <EditIcon />
                   </IconButton>
                </StyledRow>
             </StyledContainer>
-         ) : ( */}
-         <ButtonTile
-            type="primary"
-            size="sm"
-            text="Add Coupon's Condition"
-            style={{ margin: '20px 0' }}
-            onClick={() => openTunnel(1)}
-         />
-         {/* )} */}
+         ) : (
+            <ButtonTile
+               type="primary"
+               size="sm"
+               text="Add Coupon's Condition"
+               style={{ margin: '20px 0' }}
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </>
    )
 }
 
-export default Conditions
+export default ConditionComp
