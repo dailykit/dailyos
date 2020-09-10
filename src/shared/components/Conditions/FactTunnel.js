@@ -2,6 +2,7 @@ import React from 'react'
 import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { TunnelHeader, Input, Text, Dropdown, Loader } from '@dailykit/ui'
 import gql from 'graphql-tag'
+import ReactRRule from 'react-rrule'
 import styled, { css } from 'styled-components'
 import { useConditions } from './context'
 import { FACTS } from './graphql'
@@ -73,6 +74,10 @@ const FactTunnel = ({ closeTunnel }) => {
       if (factObj.value.duration) {
          fact.duration = `${duration.typed} ${duration.selected}`
       }
+      if (factObj.value.type === "rrule") {
+         fact.value = value.psqlObject;
+         fact.text = value.text;
+       }
       console.log(fact)
       addFact(fact)
       closeTunnel(2)
@@ -194,6 +199,9 @@ const FactTunnel = ({ closeTunnel }) => {
                            }
                            placeholder="type what you're looking for..."
                         />
+                     )}
+                     {Boolean(factObj.value.type === "rrule") && (
+                        <ReactRRule onChange={(val) => setValue(val)} />
                      )}
                   </>
                )}
