@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-fragments */
 import React from 'react'
 import { Text } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 
-const WalletTable = props => {
+const WalletTable = () => {
    const { addTab } = useTabs()
    const columns = [
       { title: 'Txn Date', field: 'date', headerFilter: true },
