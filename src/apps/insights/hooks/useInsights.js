@@ -95,7 +95,7 @@ export const useInsights = (
 
    if (options.includeTableData) transformedData = transformer(data, queryName)
 
-   const whereObject = buildOptions(variableOptions)
+   const whereObject = buildOptions(insight.options || {})
 
    const result = {
       loading,
