@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, ButtonGroup, IconButton, PlusIcon, Loader } from '@dailykit/ui'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'

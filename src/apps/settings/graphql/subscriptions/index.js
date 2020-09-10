@@ -305,6 +305,22 @@ export const ROLES = {
          role(id: $id) {
             id
             title
+            apps {
+               id
+               app {
+                  id
+                  title
+               }
+            }
+            users {
+               user {
+                  id
+                  email
+                  lastName
+                  firstName
+                  keycloakId
+               }
+            }
          }
       }
    `,
@@ -313,45 +329,8 @@ export const ROLES = {
          roles {
             id
             title
-            user_roles {
+            apps {
                id
-               user {
-                  id
-                  email
-                  lastName
-                  firstName
-               }
-            }
-         }
-      }
-   `,
-   APPS: gql`
-      subscription apps($title: String_comparison_exp!) {
-         apps {
-            id
-            title
-            users(where: { role: { title: $title } }) {
-               id
-               user {
-                  id
-                  email
-                  firstName
-                  lastName
-                  keycloakId
-               }
-            }
-         }
-      }
-   `,
-   USERS: gql`
-      query users($roleId: Int_comparison_exp!) {
-         users: settings_user {
-            id
-            firstName
-            lastName
-            email
-            keycloakId
-            users_roles_apps(where: { roleId: $roleId }) {
                app {
                   id
                   title
@@ -360,13 +339,50 @@ export const ROLES = {
          }
       }
    `,
-   INSERT_USERS_ROLES_APPS: gql`
-      mutation insert_users_apps_roles(
-         $objects: [settings_user_role_app_insert_input!]!
+   APPS: gql`
+      query apps($roleId: Int_comparison_exp!) {
+         apps(where: { _not: { roles: { roleId: $roleId } } }) {
+            id
+            title
+         }
+      }
+   `,
+   INSERT_ROLES_APPS: gql`
+      mutation insert_settings_role_app(
+         $objects: [settings_role_app_insert_input!]!
       ) {
-         insert_users_apps_roles(objects: $objects) {
+         insert_settings_role_app(objects: $objects) {
             affected_rows
          }
       }
    `,
+   INSERT_ROLES_USERS: gql`
+      mutation insert_settings_user_role(
+         $objects: [settings_user_role_insert_input!]!
+      ) {
+         insert_settings_user_role(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+   USERS: gql`
+      query users($roleId: Int_comparison_exp!) {
+         users: settings_user(where: { _not: { roles: { roleId: $roleId } } }) {
+            id
+            email
+            lastName
+            firstName
+            keycloakId
+         }
+      }
+   `,
 }
+
+export const PRINTNODE_CREDS = gql`
+   query admins {
+      admins: organizationAdmins {
+         email
+         password: printNodePassword
+      }
+   }
+`

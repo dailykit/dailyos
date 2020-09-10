@@ -1,60 +1,78 @@
 import React from 'react'
 import _ from 'lodash'
-import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
+
+// Components
 import {
-   Text,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   Avatar,
-   IconButton,
-   ButtonGroup,
-   PlusIcon,
+   TextButton,
+   ButtonTile,
    Tunnels,
    Tunnel,
    useTunnel,
-   TunnelHeader,
    useMultiList,
+   ListItem,
    List,
+   ListOptions,
    ListSearch,
+   Avatar,
+   ArrowUpIcon,
+   ArrowDownIcon,
+   Text,
+   TunnelHeader,
    TagGroup,
    Tag,
-   ListOptions,
-   ListItem,
 } from '@dailykit/ui'
 
 import { useTabs } from '../../../context'
-import { Spacer } from '../../../../../shared/styled'
-import { StyledWrapper, StyledHeader } from '../styled'
-import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { ROLES, DELETE_USERS_APPS_ROLES } from '../../../graphql'
+import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
+import { ROLES } from '../../../graphql'
+import { StyledAppItem, StyledPermissions } from './styled'
 import { InlineLoader, Flex } from '../../../../../shared/components'
+import { toast } from 'react-toastify'
 
 const RoleForm = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
-   const [selectedApp, setSelectedApp] = React.useState(null)
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [deleteUserFromApp] = useMutation(DELETE_USERS_APPS_ROLES, {
+   const [apps, setApps] = React.useState([])
+   const [users, setUsers] = React.useState([])
+   const [insertApps] = useMutation(ROLES.INSERT_ROLES_APPS, {
       onCompleted: () => {
-         toast.success('Succesfully removed user!')
+         toast.success('Apps added successfully to the role.')
       },
-      onError: error => {
-         toast.error(error.message)
+      onError: () => {
+         toast.error('Failed to add apps to the role.')
       },
    })
+   const [insertUsers] = useMutation(ROLES.INSERT_ROLES_USERS, {
+      onCompleted: () => {
+         toast.success('Users added successfully to the role.')
+      },
+      onError: () => {
+         toast.error('Failed to add users to the role.')
+      },
+   })
+   const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
+   const [usersTunnels, openUsersTunnel, closeUsersTunnel] = useTunnel(1)
    const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
       variables: {
          id: params.id,
       },
-   })
-   const { data: { apps = [] } = {} } = useSubscription(ROLES.APPS, {
-      variables: {
-         title: { _eq: role.title },
+      onSubscriptionData: ({
+         subscriptionData: { data: { role = {} } = {} } = {},
+      }) => {
+         setApps(role.apps)
+         setUsers(
+            role.users.map(({ user }) => ({
+               user: {
+                  id: user.keycloakId,
+                  title: user.firstName
+                     ? user.firstName + ' ' + user.lastName
+                     : 'Not Available',
+                  description: user.email,
+               },
+            }))
+         )
       },
    })
 
@@ -64,16 +82,36 @@ const RoleForm = () => {
       }
    }, [loading, role.title, params.id, tab, addTab])
 
-   const deleteUser = (userId, appId) => {
-      deleteUserFromApp({
-         variables: {
-            where: {
-               appId: { _eq: appId },
-               roleId: { _eq: role.id },
-               keycloakId: { _eq: userId },
+   const publish = () => {
+      const _apps = _.differenceBy(apps, role.apps, 'app.id')
+      if (!_.isEmpty(_apps)) {
+         insertApps({
+            variables: {
+               objects: _apps.map(({ app }) => ({
+                  appId: app.id,
+                  roleId: role.id,
+               })),
             },
-         },
-      })
+         })
+      }
+
+      const _users = _.differenceBy(
+         users,
+         role.users.map(node => ({
+            user: { ...node.user, id: node.user.keycloakId },
+         })),
+         'user.id'
+      )
+      if (!_.isEmpty(_users)) {
+         insertUsers({
+            variables: {
+               objects: _users.map(({ user }) => ({
+                  userId: user.id,
+                  roleId: role.id,
+               })),
+            },
+         })
+      }
    }
 
    if (loading) return <InlineLoader />
@@ -81,93 +119,46 @@ const RoleForm = () => {
       <StyledWrapper>
          <StyledHeader>
             <Text as="title">{role.title}</Text>
+            <TextButton type="solid" onClick={publish}>
+               Publish
+            </TextButton>
          </StyledHeader>
-         <Flex
-            margin="0 auto"
-            padding="24px 0"
-            maxWidth="980px"
-            width="calc(100vw - 40px)"
-         >
-            <Text as="h2">Apps</Text>
-            <Spacer size="24px" />
-            <ul>
-               {apps.map(app => (
-                  <li key={app.id} style={{ listStyle: 'none' }}>
-                     <Flex
-                        container
-                        padding="0 12px"
-                        alignItems="center"
-                        justifyContent="space-between"
-                     >
-                        <Text as="title">{app.title}</Text>
-                        <IconButton
-                           type="solid"
-                           onClick={() => {
-                              openTunnel(1)
-                              setSelectedApp(app.id)
-                           }}
-                        >
-                           <PlusIcon />
-                        </IconButton>
-                     </Flex>
-                     <Spacer size="16px" />
-                     <Table>
-                        <TableHead>
-                           <TableRow>
-                              <TableCell>User</TableCell>
-                              <TableCell align="right">Actions</TableCell>
-                           </TableRow>
-                        </TableHead>
-                        <TableBody>
-                           {_.isEmpty(app.users) ? (
-                              <Flex padding="16px 0">
-                                 <span>No user's assigned.</span>
-                              </Flex>
-                           ) : (
-                              app.users.map(({ user }) => (
-                                 <TableRow key={user.id}>
-                                    <TableCell>
-                                       <Avatar
-                                          url=""
-                                          key={user.id}
-                                          withName
-                                          title={
-                                             user.firstName
-                                                ? user.firstName +
-                                                  ' ' +
-                                                  user.lastName
-                                                : 'N A'
-                                          }
-                                       />
-                                    </TableCell>
-                                    <TableCell align="right">
-                                       <ButtonGroup align="right">
-                                          <IconButton
-                                             type="outline"
-                                             onClick={() =>
-                                                deleteUser(
-                                                   user.keycloakId,
-                                                   app.id
-                                                )
-                                             }
-                                          >
-                                             <DeleteIcon color="#000" />
-                                          </IconButton>
-                                       </ButtonGroup>
-                                    </TableCell>
-                                 </TableRow>
-                              ))
-                           )}
-                        </TableBody>
-                     </Table>
-                     <Spacer size="24px" />
-                  </li>
-               ))}
-            </ul>
-         </Flex>
-         <Tunnels tunnels={tunnels}>
+         <StyledSection>
+            <Text as="h2">Apps ({apps.length})</Text>
+            {apps.length > 0 && <Apps apps={apps} />}
+            <ButtonTile
+               noIcon
+               size="sm"
+               type="secondary"
+               text="Select and Configure Apps"
+               onClick={() => openAppsTunnel(1)}
+            />
+         </StyledSection>
+         <StyledSection>
+            <Text as="h2">Users ({users.length})</Text>
+            {users.length > 0 && <Users users={users} />}
+            <ButtonTile
+               noIcon
+               size="sm"
+               type="secondary"
+               text="Select and Configure Users"
+               onClick={() => openUsersTunnel(1)}
+            />
+         </StyledSection>
+         <Tunnels tunnels={appsTunnels}>
             <Tunnel layer={1} size="sm">
-               <AddUserTunnel closeTunnel={closeTunnel} appId={selectedApp} />
+               <AppsTunnel
+                  selectedApps={setApps}
+                  closeTunnel={closeAppsTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={usersTunnels}>
+            <Tunnel layer={1} size="sm">
+               <UsersTunnel
+                  selectedUsers={setUsers}
+                  closeTunnel={closeUsersTunnel}
+               />
             </Tunnel>
          </Tunnels>
       </StyledWrapper>
@@ -176,103 +167,229 @@ const RoleForm = () => {
 
 export default RoleForm
 
-const AddUserTunnel = ({ closeTunnel, appId }) => {
+const Apps = ({ apps }) => {
+   const [isOpen, setIsOpen] = React.useState('')
+
+   return (
+      <>
+         {apps.map(({ app }) => (
+            <StyledAppItem key={app.id}>
+               <div>
+                  <div>
+                     <Avatar url="" withName type="round" title={app.title} />
+                     <span
+                        tabIndex="0"
+                        role="button"
+                        onClick={() =>
+                           setIsOpen(value =>
+                              value === app.title ? '' : app.title
+                           )
+                        }
+                        onKeyPress={e =>
+                           e.charCode === 32 &&
+                           setIsOpen(value =>
+                              value === app.title ? '' : app.title
+                           )
+                        }
+                     >
+                        {isOpen === app.title ? (
+                           <ArrowUpIcon color="#555B6E" size={24} />
+                        ) : (
+                           <ArrowDownIcon color="#555B6E" size={24} />
+                        )}
+                     </span>
+                  </div>
+               </div>
+            </StyledAppItem>
+         ))}
+      </>
+   )
+}
+
+const AppsTunnel = ({ closeTunnel, selectedApps }) => {
+   const params = useParams()
+   const [apps, setApps] = React.useState([])
+   const [search, setSearch] = React.useState('')
+   const { loading } = useQuery(ROLES.APPS, {
+      variables: {
+         roleId: {
+            _eq: params.id,
+         },
+      },
+      onCompleted: ({ apps: list = [] } = {}) => {
+         if (!_.isEmpty(list)) {
+            setApps(list.map(node => ({ ...node, icon: '' })))
+         }
+      },
+   })
+   const [list, selected, selectOption] = useMultiList(apps)
+
+   const save = () => {
+      closeTunnel(1)
+      selectedApps(value =>
+         _.uniqBy(
+            [...value, ...selected.map(node => ({ app: node }))],
+            'app.id'
+         )
+      )
+   }
+
+   return (
+      <>
+         <TunnelHeader
+            title="Add Apps"
+            right={{ action: save, title: 'Save' }}
+            close={() => closeTunnel(1)}
+         />
+         <Flex padding="16px">
+            {loading ? (
+               <InlineLoader />
+            ) : (
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder="type what you’re looking for..."
+                  />
+                  {selected.length > 0 && (
+                     <TagGroup style={{ margin: '8px 0' }}>
+                        {selected.map(option => (
+                           <Tag
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                           >
+                              {option.title}
+                           </Tag>
+                        ))}
+                     </TagGroup>
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="MSL1101"
+                              key={option.id}
+                              content={{
+                                 icon: option.icon,
+                                 title: option.title,
+                              }}
+                              onClick={() => selectOption('id', option.id)}
+                              isActive={selected.find(
+                                 item => item.id === option.id
+                              )}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
+         </Flex>
+      </>
+   )
+}
+
+const Users = ({ users }) => {
+   return (
+      <ul>
+         {users.map(({ user }) => (
+            <li
+               key={user.id}
+               style={{ marginBottom: '16px', listStyle: 'none' }}
+            >
+               <Avatar withName url="" title={user.title} />
+            </li>
+         ))}
+      </ul>
+   )
+}
+
+const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
    const params = useParams()
    const [users, setUsers] = React.useState([])
    const [search, setSearch] = React.useState('')
-   const [insert] = useMutation(ROLES.INSERT_USERS_ROLES_APPS, {
-      onCompleted: () => {
-         closeTunnel(1)
-         toast.success('Succesfully assigned role to the selected users.')
-      },
-      onError: () => {
-         toast.error('Failed to assign role to the selected users.')
-      },
-   })
    const { loading } = useQuery(ROLES.USERS, {
       variables: {
-         roleId: { _eq: params.id },
+         roleId: {
+            _eq: params.id,
+         },
       },
-      onCompleted: ({ users: list = [] }) => {
-         const formatted = list
-            .filter(
-               node =>
-                  _.isEmpty(node.users_roles_apps) ||
-                  node.users_roles_apps.some(node => node.app.id !== appId)
+      onCompleted: ({ users: list = [] } = {}) => {
+         if (!_.isEmpty(list)) {
+            setUsers(
+               list.map(node => ({
+                  id: node.keycloakId,
+                  title: node.firstName + ' ' + node.lastName,
+                  description: node.email,
+               }))
             )
-            .map(node => ({
-               id: node.keycloakId,
-               description: node.email,
-               title: node.firstName
-                  ? node.firstName + ' ' + node.lastName
-                  : 'N/A',
-            }))
-         setUsers(formatted)
+         }
       },
    })
    const [list, selected, selectOption] = useMultiList(users)
 
-   const addUser = () => {
-      const objects = selected.map(node => ({
-         appId,
-         roleId: params.id,
-         keycloakId: node.id,
-      }))
-      insert({
-         variables: {
-            objects,
-         },
-      })
+   const save = () => {
+      closeTunnel(1)
+      selectedUsers(value =>
+         _.uniqBy(
+            [...value, ...selected.map(node => ({ user: node }))],
+            'user.id'
+         )
+      )
    }
 
-   if (loading) return <InlineLoader />
    return (
       <>
          <TunnelHeader
-            title="Add User"
+            title="Add Apps"
+            right={{ action: save, title: 'Save' }}
             close={() => closeTunnel(1)}
-            right={{ action: () => addUser(), title: 'Save' }}
          />
          <Flex padding="16px">
-            <List>
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder="type what you’re looking for..."
-               />
-               {selected.length > 0 && (
-                  <TagGroup style={{ margin: '8px 0' }}>
-                     {selected.map(option => (
-                        <Tag
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                        >
-                           {option.title}
-                        </Tag>
-                     ))}
-                  </TagGroup>
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="MSL2"
-                           key={option.id}
-                           content={{
-                              title: option.title,
-                              description: option.description,
-                           }}
-                           onClick={() => selectOption('id', option.id)}
-                           isActive={selected.find(
-                              item => item.id === option.id
-                           )}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {loading ? (
+               <InlineLoader />
+            ) : (
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder="type what you’re looking for..."
+                  />
+                  {selected.length > 0 && (
+                     <TagGroup style={{ margin: '8px 0' }}>
+                        {selected.map(option => (
+                           <Tag
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                           >
+                              {option.title}
+                           </Tag>
+                        ))}
+                     </TagGroup>
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="MSL2"
+                              key={option.id}
+                              content={{
+                                 icon: option.icon,
+                                 title: option.title,
+                              }}
+                              onClick={() => selectOption('id', option.id)}
+                              isActive={selected.find(
+                                 item => item.id === option.id
+                              )}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
          </Flex>
       </>
    )

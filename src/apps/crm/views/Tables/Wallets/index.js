@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-fragments */
 import React from 'react'
 import { Text } from '@dailykit/ui'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 
 const WalletTable = props => {

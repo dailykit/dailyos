@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Avatar, useTunnel } from '@dailykit/ui'
-import { ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
 import { useTabs } from '../../../../context'

@@ -7,7 +7,7 @@
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.5",
       "@dailykit/ui": "0.7.3",
-      "@reach/tabs": "0.10.0",
+      "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
       "@testing-library/jest-dom": "4.2.4",
       "@testing-library/react": "9.3.2",
