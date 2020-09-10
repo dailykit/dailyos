@@ -43,52 +43,54 @@ const RolesListing = () => {
    if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
-         <StyledHeader>
-            <Text as="h2">{t(address.concat('roles'))}</Text>
-         </StyledHeader>
-         <Table>
-            <TableHead>
-               <TableRow>
-                  <TableCell>{t(address.concat('roles'))}</TableCell>
-                  <TableCell>Users</TableCell>
-                  <TableCell align="right">
-                     {t(address.concat('actions'))}
-                  </TableCell>
-               </TableRow>
-            </TableHead>
-            <TableBody>
-               {_.isEmpty(roles) ? (
-                  <span>No roles</span>
-               ) : (
-                  roles.map(row => (
-                     <TableRow key={row.id}>
-                        <TableCell>{row.title}</TableCell>
-                        <TableCell>
-                           <AvatarGroup>
-                              {row.apps.map(({ app }) => (
-                                 <Avatar
-                                    url=""
-                                    key={app.id}
-                                    title={app.title}
-                                 />
-                              ))}
-                           </AvatarGroup>
-                        </TableCell>
-                        <TableCell align="right">
-                           <ButtonGroup align="right">
-                              <IconButton
-                                 type="outline"
-                                 onClick={() => editRole(row.id, row.title)}
-                              >
-                                 <EditIcon />
-                              </IconButton>
-                           </ButtonGroup>
-                        </TableCell>
-                     </TableRow>
-                  ))
-               )}
-            </TableBody>
-         </Table>
+         <div>
+            <StyledHeader>
+               <Text as="h2">{t(address.concat('roles'))}</Text>
+            </StyledHeader>
+            <Table>
+               <TableHead>
+                  <TableRow>
+                     <TableCell>{t(address.concat('roles'))}</TableCell>
+                     <TableCell>Users</TableCell>
+                     <TableCell align="right">
+                        {t(address.concat('actions'))}
+                     </TableCell>
+                  </TableRow>
+               </TableHead>
+               <TableBody>
+                  {_.isEmpty(roles) ? (
+                     <span>No roles</span>
+                  ) : (
+                     roles.map(row => (
+                        <TableRow key={row.id}>
+                           <TableCell>{row.title}</TableCell>
+                           <TableCell>
+                              <AvatarGroup>
+                                 {row.apps.map(({ app }) => (
+                                    <Avatar
+                                       url=""
+                                       key={app.id}
+                                       title={app.title}
+                                    />
+                                 ))}
+                              </AvatarGroup>
+                           </TableCell>
+                           <TableCell align="right">
+                              <ButtonGroup align="right">
+                                 <IconButton
+                                    type="outline"
+                                    onClick={() => editRole(row.id, row.title)}
+                                 >
+                                    <EditIcon />
+                                 </IconButton>
+                              </ButtonGroup>
+                           </TableCell>
+                        </TableRow>
+                     ))
+                  )}
+               </TableBody>
+            </Table>
+         </div>
       </StyledWrapper>
    )
 }
