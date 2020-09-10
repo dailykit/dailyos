@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Text, Avatar, useTunnel } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
@@ -31,9 +31,22 @@ const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
+   const [products, setProducts] = useState([])
+   const tableRef = useRef()
    const { data: orderData } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
+      },
+      onCompleted: ({ order = {} }) => {
+         const result = order.orderCart.cartInfo.products.map(product => {
+            return {
+               products: product?.name || 'N/A',
+               servings: product?.quantity || 'N/A',
+               discount: product.discount || 'N/A',
+               discountedPrice: product?.totalPrice || 'N/A',
+            }
+         })
+         setProducts(result)
       },
    })
 
@@ -47,24 +60,18 @@ const OrderInfo = () => {
       })
    }
 
+   useEffect(() => {
+      if (tableRef.current) {
+         tableRef.current.table.setData(products)
+      }
+   })
+
    const columns = [
       { title: 'Products', field: 'products' },
       { title: 'Servings', field: 'servings' },
       { title: 'Discount', field: 'discount' },
       { title: 'Discounted Price', field: 'discountedPrice' },
    ]
-
-   const data = []
-   if (orderData && orderData.order.orderCart !== null) {
-      orderData.order.orderCart.cartInfo.products.map(product => {
-         return data.push({
-            products: product?.name || 'N/A',
-            servings: product?.quantity || 'N/A',
-            discount: product.discount || 'N/A',
-            discountedPrice: product?.totalPrice || 'N/A',
-         })
-      })
-   }
 
    let deliveryPartner = null
    let deliveryAgent = null
@@ -153,7 +160,11 @@ const OrderInfo = () => {
                   </StyledSpan>
                </StyledDiv>
                <StyledTable>
-                  <ReactTabulator columns={columns} data={data} />
+                  <ReactTabulator
+                     columns={columns}
+                     data={products}
+                     ref={tableRef}
+                  />
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">

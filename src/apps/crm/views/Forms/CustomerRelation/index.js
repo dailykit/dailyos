@@ -16,7 +16,7 @@ import {
    ReferralTable,
    WalletTable,
    SubscriptionTable,
-} from '../../index'
+} from '../../Tables'
 import {
    StyledWrapper,
    StyledContainer,
@@ -41,9 +41,12 @@ const CustomerRelation = ({ match }) => {
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const { dispatch, tab } = useTabs()
    const history = useHistory()
-   const { data: customerIsTest } = useSubscription(CUSTOMER_ISTEST, {
-      variables: { keycloakId: match.params.id },
-   })
+   const { data: customerIsTest, loading: customerloading } = useSubscription(
+      CUSTOMER_ISTEST,
+      {
+         variables: { keycloakId: match.params.id },
+      }
+   )
    const { loading: listLoading, data: customerData } = useQuery(
       CUSTOMER_DATA,
       {
@@ -92,22 +95,19 @@ const CustomerRelation = ({ match }) => {
       }
    }, [history, tab])
 
-   const setActiveCard = React.useCallback(
-      card => {
-         dispatch({
-            type: 'STORE_TAB_DATA',
-            payload: {
-               path: tab?.path,
-               data: { activeCard: card },
-            },
-         })
-      },
-      [tab, dispatch]
-   )
+   const setActiveCard = card => {
+      dispatch({
+         type: 'STORE_TAB_DATA',
+         payload: {
+            path: tab?.path,
+            data: { activeCard: card },
+         },
+      })
+   }
 
    useEffect(() => {
       setActiveCard('Orders')
-   }, [setActiveCard])
+   }, [])
 
    let table = null
    if (tab?.data?.activeCard === 'Orders') {
@@ -127,6 +127,7 @@ const CustomerRelation = ({ match }) => {
    if (listLoading) return <Loader />
    if (list_Loading) return <Loader />
    if (list__Loading) return <Loader />
+   if (customerloading) return <Loader />
    return (
       <StyledWrapper>
          <StyledContainer>
