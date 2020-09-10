@@ -19,7 +19,7 @@ import {
 
 const Main = () => {
    return (
-      <main style={{ overflowY: 'auto', height: 'calc(100vh - 40px)' }}>
+      <main>
          <Switch>
             <Route path="/settings" exact>
                <Home />
