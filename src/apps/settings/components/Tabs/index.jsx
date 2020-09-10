@@ -22,7 +22,7 @@ const Tabs = () => {
       <StyledTabs>
          {tabs.map((tab, index) => (
             <StyledTab
-               key={tab.title}
+               key={tab.path}
                onClick={() => switchTab(tab.path)}
                active={tab.path === location.pathname}
             >
@@ -31,7 +31,7 @@ const Tabs = () => {
                   <div
                      role="button"
                      tabIndex={0}
-                     title={t(address.concat("close tab"))}
+                     title={t(address.concat('close tab'))}
                      onClick={e => removeTab(e, { tab, index })}
                      onKeyPress={e =>
                         e.charCode === 32 && removeTab(e, { tab, index })
