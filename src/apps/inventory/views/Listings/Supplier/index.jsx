@@ -2,7 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'

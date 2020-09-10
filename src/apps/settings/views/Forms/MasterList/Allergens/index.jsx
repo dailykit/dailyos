@@ -10,7 +10,7 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import tableOptions from '../../../Listings/tableOption'
 
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'

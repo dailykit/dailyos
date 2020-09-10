@@ -8,7 +8,7 @@ import {
    Loader,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 

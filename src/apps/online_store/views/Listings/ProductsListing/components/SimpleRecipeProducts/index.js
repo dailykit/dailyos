@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { Loader, Text, TextButton } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 
