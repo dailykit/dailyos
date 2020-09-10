@@ -74,10 +74,10 @@ const FactTunnel = ({ closeTunnel }) => {
       if (factObj.value.duration) {
          fact.duration = `${duration.typed} ${duration.selected}`
       }
-      if (factObj.value.type === "rrule") {
-         fact.value = value.psqlObject;
-         fact.text = value.text;
-       }
+      if (factObj.value.type === 'rrule') {
+         fact.value = value.psqlObject
+         fact.text = value.text
+      }
       console.log(fact)
       addFact(fact)
       closeTunnel(2)
@@ -200,8 +200,8 @@ const FactTunnel = ({ closeTunnel }) => {
                            placeholder="type what you're looking for..."
                         />
                      )}
-                     {Boolean(factObj.value.type === "rrule") && (
-                        <ReactRRule onChange={(val) => setValue(val)} />
+                     {Boolean(factObj.value.type === 'rrule') && (
+                        <ReactRRule onChange={val => setValue(val)} />
                      )}
                   </>
                )}
@@ -249,6 +249,8 @@ export default FactTunnel
 
 const TunnelBody = styled.div`
    padding: 16px;
+   overflow-y: scroll;
+   height: calc(100vh - 40px - 64px);
 `
 
 const StyledSection = styled.div`
