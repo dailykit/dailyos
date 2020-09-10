@@ -14,7 +14,7 @@ import {
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
-   const tableRef = useRef(null)
+   const tableRef = useRef()
    const [customersList, setCustomersList] = useState([])
 
    // Subscription

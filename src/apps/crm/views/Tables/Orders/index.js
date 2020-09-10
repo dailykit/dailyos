@@ -11,7 +11,7 @@ import tableOptions from '../../Listings/tableOptions'
 const OrdersTable = ({ id }) => {
    const { dispatch, tab } = useTabs()
    const [orders, setOrders] = useState([])
-   const tableRef = useRef(null)
+   const tableRef = useRef()
    const history = useHistory()
    const { loading: listLoading } = useQuery(ORDERS_LISTING, {
       variables: {
