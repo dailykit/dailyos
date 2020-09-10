@@ -23,7 +23,7 @@ import tableOptions from '../tableOptions'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 
-const CustomerListing = () => {
+const CouponListing = () => {
    const { addTab, tab } = useTabs()
    const [coupons, setCoupons] = useState([])
    const tableRef = useRef(null)
@@ -179,4 +179,4 @@ const CustomerListing = () => {
    )
 }
 
-export default CustomerListing
+export default CouponListing

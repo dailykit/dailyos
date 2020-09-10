@@ -216,3 +216,12 @@ export const OCCURENCES = gql`
       }
    }
 `
+export const CAMPAIGN_TOTAL = gql`
+   query CAMPAIGN_TOTAL {
+      campaignsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`

@@ -58,3 +58,16 @@ export const COUPON_DATA = gql`
       }
    }
 `
+
+export const CAMPAIGN_DATA = gql`
+   subscription CAMPAIGN_DATA($id: Int!) {
+      campaign(id: $id) {
+         campaignType
+         conditionId
+         id
+         isActive
+         isRewardMulti
+         metaDetails
+      }
+   }
+`

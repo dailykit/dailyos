@@ -22,6 +22,29 @@ export const COUPON_ACTIVE = gql`
    }
 `
 
+export const CAMPAIGN_ACTIVE = gql`
+   mutation CAMPAIGN_ACTIVE($campaignId: Int!, $isActive: Boolean!) {
+      updateCampaign(
+         pk_columns: { id: $campaignId }
+         _set: { isActive: $isActive }
+      ) {
+         id
+         isActive
+         campaignType
+      }
+   }
+`
+
+export const CREATE_CAMPAIGN = gql`
+   mutation CREATE_CAMPAIGN($campaignType: String!) {
+      createCampaign(object: { campaignType: $campaignType }) {
+         id
+         campaignType
+         isActive
+      }
+   }
+`
+
 export const CREATE_COUPON = gql`
    mutation CREATE_COUPON($couponCode: String!) {
       createCoupon(object: { code: $couponCode }) {
@@ -40,11 +63,29 @@ export const UPDATE_COUPON = gql`
       }
    }
 `
+export const UPDATE_CAMPAIGN = gql`
+   mutation UPDATE_CAMPAIGN($id: Int!, $set: crm_campaign_set_input) {
+      updateCampaign(pk_columns: { id: $id }, _set: $set) {
+         id
+         campaignType
+         isActive
+      }
+   }
+`
 
 export const DELETE_COUPON = gql`
    mutation DELETE_COUPON($id: Int!) {
       deleteCoupon(id: $id) {
          id
+      }
+   }
+`
+
+export const DELETE_CAMPAIGN = gql`
+   mutation DELETE_CAMPAIGN($campaignId: Int!) {
+      deleteCampaign(id: $campaignId) {
+         id
+         campaignType
       }
    }
 `
