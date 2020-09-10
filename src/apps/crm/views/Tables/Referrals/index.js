@@ -1,11 +1,11 @@
-/* eslint-disable react/jsx-fragments */
-import React from 'react'
+import React, { useRef } from 'react'
 import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 
 const ReferralTable = () => {
    const { addTab } = useTabs()
+   const tableRef = useRef()
    const columns = [
       { title: 'Invitation Sent To', field: 'invitation', headerFilter: true },
       { title: 'Email Address', field: 'email' },
@@ -48,7 +48,7 @@ const ReferralTable = () => {
                columns={columns}
                data={data}
                rowClick={rowClick}
-               // options={tableOptions}
+               ref={tableRef}
             />
          </div>
       </React.Fragment>

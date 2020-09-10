@@ -39,12 +39,6 @@ const OrdersTable = ({ id }) => {
       }
    }, [history, tab])
 
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(orders)
-      }
-   })
-
    const columns = [
       { title: 'Order Id', field: 'id', headerFilter: true },
       { title: 'Products', field: 'products' },

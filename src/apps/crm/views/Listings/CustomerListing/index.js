@@ -54,12 +54,6 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(customersList)
-      }
-   })
-
    const rowClick = (e, row) => {
       const { keycloakId, name } = row._row.data
       const param = '/crm/customers/'.concat(keycloakId)
