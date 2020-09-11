@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextButton, TunnelHeader } from '@dailykit/ui'
+import { TextButton, TunnelHeader, Loader } from '@dailykit/ui'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
@@ -43,7 +43,7 @@ const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
                conditionId: undefined,
             },
          })
-         onSave(data.createCondition.id)
+         onSave(data.updateCondition.id)
          closeTunnel(1)
       },
       onError: error => {
@@ -77,8 +77,10 @@ const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
 
    const save = () => {
       if (state.conditionId) {
+         console.log('updating...')
          updateCondition()
       } else {
+         console.log('creating...')
          createCondition()
       }
    }
@@ -104,6 +106,8 @@ const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
          })
       }
    }, [])
+
+   if (loading) return <Loader />
 
    return (
       <>
@@ -155,4 +159,6 @@ const Info = styled.p`
 
 const TunnelBody = styled.div`
    padding: 16px;
+   overflow-y: scroll;
+   height: calc(100vh - 40px - 64px);
 `

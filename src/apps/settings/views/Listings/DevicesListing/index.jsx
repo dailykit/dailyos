@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
 
 // Components
@@ -21,6 +22,8 @@ import { Loader } from '../../../components'
 
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
+import { Flex } from '../../../../../shared/components'
+import { Spacer } from '../../../../../shared/styled'
 
 const DevicesListing = () => {
    const { tab, addTab } = useTabs()
@@ -66,6 +69,29 @@ const DevicesListing = () => {
                      Password:{' '}
                      {admins.length > 0 && admins[0].password.slice(0, 8)}
                   </Text>
+                  <Text as="h2">Support Links</Text>
+                  <StyledLinks>
+                     <li>
+                        <a href="https://www.printnode.com/en/download">
+                           Download Printnode
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.printnode.com/en/docs/installation">
+                           Installation
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.printnode.com/en/docs/supported-printers">
+                           Supported Printers
+                        </a>
+                     </li>
+                     <li>
+                        <a href="https://www.printnode.com/en/docs/supported-scales">
+                           Supported Scales
+                        </a>
+                     </li>
+                  </StyledLinks>
                </section>
                <StyledHeader>
                   <Text as="h2">Computers</Text>
@@ -163,3 +189,14 @@ const DevicesListing = () => {
 }
 
 export default DevicesListing
+
+const StyledLinks = styled.ul`
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
+   li {
+      list-style: none;
+      margin-bottom: 16px;
+      margin-right: 16px;
+   }
+`
