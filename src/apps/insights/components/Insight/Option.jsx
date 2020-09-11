@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import DatePicker from 'react-datepicker'
+
+import 'react-datepicker/dist/react-datepicker.css'
 
 import { LeftIcon } from '../../../../shared/assets/icons'
 import { buildOptionVariables } from '../../utils/transformer'
@@ -61,7 +64,7 @@ export default function Option({ options, state, updateOptions }) {
             ...optionsState,
             [submenu]: {
                ...optionsState[submenu],
-               [field]: value.length ? value : null,
+               [field]: value || null,
             },
          })
       }
@@ -74,7 +77,12 @@ export default function Option({ options, state, updateOptions }) {
                <span style={{ width: '10px' }} />
 
                {checkDateField(submenu) ? (
-                  <div>TODO: add date picker</div>
+                  <DatePicker
+                     selected={optionsState[submenu]?.[option] || ''}
+                     onSelect={date => {
+                        handleChange(date, option)
+                     }}
+                  />
                ) : (
                   <Input
                      type="text"
