@@ -80,6 +80,7 @@ export default function Option({ options, state, updateOptions }) {
                   <DatePicker
                      selected={optionsState[submenu]?.[option] || ''}
                      onSelect={date => {
+                        setFilterable(true)
                         handleChange(date, option)
                      }}
                   />
