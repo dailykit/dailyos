@@ -26,7 +26,7 @@ import { DeleteIcon } from '../../../../../shared/assets/icons'
 const CouponListing = () => {
    const { addTab, tab } = useTabs()
    const [coupons, setCoupons] = useState([])
-   const tableRef = useRef(null)
+   const tableRef = useRef()
    // Subscription
    const { loading: listLoading } = useSubscription(COUPON_LISTING, {
       onSubscriptionData: data => {

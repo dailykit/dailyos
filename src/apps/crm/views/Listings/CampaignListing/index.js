@@ -28,7 +28,7 @@ import CampaignTypeTunnel from './Tunnel'
 const CampaignListing = () => {
    const { addTab, tab } = useTabs()
    const [campaign, setCampaign] = useState([])
-   const tableRef = useRef(null)
+   const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    // Subscription
    const { loading: listLoading } = useSubscription(CAMPAIGN_LISTING, {
@@ -36,7 +36,7 @@ const CampaignListing = () => {
          const result = data.subscriptionData.data.campaigns.map(campaign => {
             return {
                id: campaign.id,
-               name: campaign?.metaDetails?.title || '',
+               name: campaign.metaDetails.title,
                type: campaign.campaignType,
                active: campaign.isActive,
             }
@@ -44,7 +44,7 @@ const CampaignListing = () => {
          setCampaign(result)
       },
    })
-   const { data: campaignTotal, loading } = useQuery(CAMPAIGN_TOTAL)
+   const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
 
    // Mutation
    const [updateCampaignActive] = useMutation(CAMPAIGN_ACTIVE, {
@@ -134,35 +134,32 @@ const CampaignListing = () => {
    if (loading) return <Loader />
    if (listLoading) return <Loader />
    return (
-      <>
+      <StyledWrapper>
+         <StyledHeader gridCol="10fr  1fr">
+            <Text as="title">
+               Campaign(
+               {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})
+            </Text>
+            <ButtonGroup>
+               <IconButton type="solid" onClick={() => openTunnel(1)}>
+                  <PlusIcon />
+               </IconButton>
+            </ButtonGroup>
+         </StyledHeader>
+
+         <ReactTabulator
+            columns={columns}
+            data={campaign}
+            rowClick={rowClick}
+            options={tableOptions}
+            ref={tableRef}
+         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <CampaignTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <StyledWrapper>
-            <StyledHeader gridCol="10fr  1fr">
-               <Text as="title">
-                  Campaign(
-                  {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
-                  )
-               </Text>
-               <ButtonGroup>
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
-                     <PlusIcon />
-                  </IconButton>
-               </ButtonGroup>
-            </StyledHeader>
-
-            <ReactTabulator
-               columns={columns}
-               data={campaign}
-               rowClick={rowClick}
-               options={tableOptions}
-               ref={tableRef}
-            />
-         </StyledWrapper>
-      </>
+      </StyledWrapper>
    )
 }
 

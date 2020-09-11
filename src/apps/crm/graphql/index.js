@@ -7,6 +7,7 @@ import {
    COUPON_TOTAL,
    COUPON_DATA,
    CAMPAIGN_DATA,
+   CAMPAIGN_TOTAL,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -18,7 +19,6 @@ import {
    SUBSCRIPTION,
    SUBSCRIPTION_PLAN,
    OCCURENCES,
-   CAMPAIGN_TOTAL,
 } from './queries'
 
 import {

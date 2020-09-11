@@ -60,6 +60,15 @@ export const COUPON_TOTAL = gql`
       }
    }
 `
+export const CAMPAIGN_TOTAL = gql`
+   subscription CAMPAIGN_TOTAL {
+      campaignsAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
 export const COUPON_DATA = gql`
    subscription COUPON_DATA($id: Int!) {
       coupon(id: $id) {
