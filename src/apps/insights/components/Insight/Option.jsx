@@ -11,6 +11,8 @@ import { Input, TextButton } from '@dailykit/ui'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
 import { isObject } from '../../../../shared/utils/isObject'
 
+import '../../../../shared/styled/datepicker.css'
+
 /**
  *
  * @param {{options: {}, state: {}, updateOptions: () => {}}} props
