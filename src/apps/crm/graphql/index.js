@@ -8,6 +8,7 @@ import {
    COUPON_DATA,
    CAMPAIGN_DATA,
    CAMPAIGN_TOTAL,
+   CAMPAIGN_TYPE,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -61,4 +62,5 @@ export {
    CREATE_CAMPAIGN,
    UPDATE_CAMPAIGN,
    CAMPAIGN_LISTING,
+   CAMPAIGN_TYPE,
 }

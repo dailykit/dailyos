@@ -93,3 +93,11 @@ export const CAMPAIGN_DATA = gql`
       }
    }
 `
+export const CAMPAIGN_TYPE = gql`
+   subscription CAMPAIGN_TYPE {
+      crm_campaignType {
+         id
+         value
+      }
+   }
+`
