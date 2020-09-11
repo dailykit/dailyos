@@ -11,19 +11,21 @@ import {
    Tunnel,
    useTunnel,
 } from '@dailykit/ui'
-const Rewards = () => {
+import { RewardsTunnel } from '../../tunnels'
+const Rewards = ({ state }) => {
+   const [tunnels, openTunnel, closeTunnel] = useTunnel()
    return (
       <>
          <ButtonTile
             type="primary"
             size="sm"
             text="Add Rewards"
-            // onClick={ e => console.log('Tile clicked') }
+            onClick={() => openTunnel(1)}
             style={{ margin: '20px 0' }}
          />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <CampaignTypeTunnel close={closeTunnel} />
+               <RewardsTunnel close={closeTunnel} state={state} />
             </Tunnel>
          </Tunnels>
       </>

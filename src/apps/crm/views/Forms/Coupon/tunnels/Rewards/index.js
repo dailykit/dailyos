@@ -1,52 +1,65 @@
-import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { Text, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Text, TunnelHeader, Loader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
-import { useTabs } from '../../../../context'
-import { CREATE_CAMPAIGN } from '../../../../graphql'
-import { randomSuffix } from '../../../../../../shared/utils'
+import { useTabs } from '../../../../../context'
+import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
+import { randomSuffix } from '../../../../../../../shared/utils'
 
-export default function CampaignTypeTunnel({ close }) {
+export default function CampaignTypeTunnel({ state, close }) {
    const { addTab } = useTabs()
-   const [createCampaign] = useMutation(CREATE_CAMPAIGN, {
+   const [types, setTypes] = useState([])
+   // Subscription
+   const { data: rewardType, loading } = useSubscription(REWARD_TYPE, {
+      onSubscriptionData: data => {
+         const result = data.subscriptionData.data.crm_rewardType.map(type => {
+            return {
+               id: type.id,
+               value: type.value,
+            }
+         })
+         setTypes(result)
+      },
+   })
+
+   //Mutation
+   const [createReward] = useMutation(CREATE_REWARD, {
       onCompleted: data => {
-         addTab(
-            data.createCampaign.metaDetails.title,
-            `/crm/campaign/${data.createCampaign.id}`
-         )
-         toast.success('Campaign created!')
+         console.log(data.insert_crm_reward.returning[0].id)
+         toast.success('Reward created!')
       },
       onError: error => {
          toast.error(`Error : ${error.message}`)
       },
    })
+
    const createRewardHandler = type => {
-      createCampaign({
+      createReward({
          variables: {
-            campaignType: type,
-            metaDetails: { title: `Campaign Title-${randomSuffix()}` },
+            rewardType: type,
+            couponId: state?.id,
          },
       })
    }
+   if (loading) return <Loader />
    return (
       <>
-         <TunnelHeader title="Select Type of Campaign" close={() => close(1)} />
+         <TunnelHeader title="Select Type of Reward" close={() => close(1)} />
          <TunnelBody>
-            <SolidTile onClick={() => createRewardHandler('Sign Up')}>
-               <Text as="h1">Sign Up</Text>
-               <Text as="subtitle">Create Campaign For Sign Up Type.</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => createRewardHandler('Referral')}>
-               <Text as="h1">Referral</Text>
-               <Text as="subtitle">Create Campaign For Referral Type.</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => createRewardHandler('Post Order')}>
-               <Text as="h1">Post Order</Text>
-               <Text as="subtitle">Create Campaign For Post Order Type.</Text>
-            </SolidTile>
+            {types.map(type => {
+               return (
+                  <SolidTile
+                     key={type.id}
+                     onClick={() => createRewardHandler(type.value)}
+                  >
+                     <Text as="h1">{type.value}</Text>
+                     <Text as="subtitle">
+                        Create Reward For {type.value} Type.
+                     </Text>
+                  </SolidTile>
+               )
+            })}
          </TunnelBody>
       </>
    )

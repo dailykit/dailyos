@@ -1,3 +1,3 @@
-import ConditionsTunnel from './Conditions'
+import RewardsTunnel from './Rewards'
 
-export { ConditionsTunnel }
+export { RewardsTunnel }

@@ -42,7 +42,7 @@ export default function CampaignTypeTunnel({ close }) {
    const createCampaignHandler = type => {
       createCampaign({
          variables: {
-            campaignType: type,
+            type,
             metaDetails: { title: `Campaign Title-${randomSuffix()}` },
          },
       })

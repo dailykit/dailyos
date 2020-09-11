@@ -9,6 +9,7 @@ import {
    CAMPAIGN_DATA,
    CAMPAIGN_TOTAL,
    CAMPAIGN_TYPE,
+   REWARD_TYPE,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -32,6 +33,7 @@ import {
    UPDATE_CAMPAIGN,
    DELETE_COUPON,
    DELETE_CAMPAIGN,
+   CREATE_REWARD,
 } from './mutations'
 
 export {
@@ -63,4 +65,6 @@ export {
    UPDATE_CAMPAIGN,
    CAMPAIGN_LISTING,
    CAMPAIGN_TYPE,
+   REWARD_TYPE,
+   CREATE_REWARD,
 }

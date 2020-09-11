@@ -12,7 +12,7 @@ const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
    const { id: campaignId } = useParams()
    const [campaignTitle, setCampaignTitle] = useState('')
-   const [campaignType, setCampaignType] = useState('')
+   const [type, setType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    // Subscription
@@ -23,8 +23,9 @@ const CampaignForm = () => {
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.campaign)
          setCampaignTitle(data.subscriptionData.data.campaign.metaDetails.title)
-         setCampaignType(data.subscriptionData.data.campaign.campaignType)
+         setType(data.subscriptionData.data.campaign.type)
          setToggle(data.subscriptionData.data.campaign.isActive)
+         setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
          // collectionDispatch({
          //    type: 'SEED',
          //    payload: data.coupon,
@@ -50,7 +51,7 @@ const CampaignForm = () => {
             variables: {
                id: campaignId,
                set: {
-                  metaDetails: { title: campaignTitle },
+                  metaDetails: { ...state.metaDetails, title: campaignTitle },
                },
             },
          })
@@ -79,7 +80,7 @@ const CampaignForm = () => {
    return (
       <StyledWrapper>
          <CenterDiv>
-            <Text as="title">Campaign Type: {campaignType}</Text>
+            <Text as="title">Campaign Type: {type}</Text>
          </CenterDiv>
          <StyledHeader gridCol="10fr 1fr">
             <Input

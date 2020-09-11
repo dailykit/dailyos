@@ -30,18 +30,16 @@ export const CAMPAIGN_ACTIVE = gql`
       ) {
          id
          isActive
-         campaignType
+         type
       }
    }
 `
 
 export const CREATE_CAMPAIGN = gql`
-   mutation CREATE_CAMPAIGN($campaignType: String!, $metaDetails: jsonb!) {
-      createCampaign(
-         object: { campaignType: $campaignType, metaDetails: $metaDetails }
-      ) {
+   mutation CREATE_CAMPAIGN($type: String!, $metaDetails: jsonb!) {
+      createCampaign(object: { type: $type, metaDetails: $metaDetails }) {
          id
-         campaignType
+         type
          isActive
          metaDetails
       }
@@ -53,6 +51,15 @@ export const CREATE_COUPON = gql`
       createCoupon(object: { code: $couponCode }) {
          id
          code
+      }
+   }
+`
+export const CREATE_REWARD = gql`
+   mutation CREATE_REWARD($rewardType: String!, $couponId: Int!) {
+      insert_crm_reward(objects: { type: $rewardType, couponId: $couponId }) {
+         returning {
+            id
+         }
       }
    }
 `
@@ -70,7 +77,7 @@ export const UPDATE_CAMPAIGN = gql`
    mutation UPDATE_CAMPAIGN($id: Int!, $set: crm_campaign_set_input) {
       updateCampaign(pk_columns: { id: $id }, _set: $set) {
          id
-         campaignType
+         type
          isActive
       }
    }
@@ -88,7 +95,7 @@ export const DELETE_CAMPAIGN = gql`
    mutation DELETE_CAMPAIGN($campaignId: Int!) {
       deleteCampaign(id: $campaignId) {
          id
-         campaignType
+         type
       }
    }
 `

@@ -42,7 +42,7 @@ export const CAMPAIGN_LISTING = gql`
    subscription CAMPAIGN_LISTING {
       campaigns {
          id
-         campaignType
+         type
          conditionId
          isActive
          isRewardMulti
@@ -84,18 +84,33 @@ export const COUPON_DATA = gql`
 export const CAMPAIGN_DATA = gql`
    subscription CAMPAIGN_DATA($id: Int!) {
       campaign(id: $id) {
-         campaignType
+         type
          conditionId
          id
          isActive
          isRewardMulti
          metaDetails
+         campaignType {
+            rewardTypes {
+               rewardType {
+                  value
+               }
+            }
+         }
       }
    }
 `
 export const CAMPAIGN_TYPE = gql`
    subscription CAMPAIGN_TYPE {
       crm_campaignType {
+         id
+         value
+      }
+   }
+`
+export const REWARD_TYPE = gql`
+   subscription REWARD_TYPE {
+      crm_rewardType(where: { useForCoupon: { _eq: true } }) {
          id
          value
       }

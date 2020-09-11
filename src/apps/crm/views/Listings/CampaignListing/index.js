@@ -37,7 +37,7 @@ const CampaignListing = () => {
             return {
                id: campaign.id,
                name: campaign.metaDetails.title,
-               type: campaign.campaignType,
+               type: campaign.type,
                active: campaign.isActive,
             }
          })
