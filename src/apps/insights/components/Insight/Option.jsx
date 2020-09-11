@@ -2,10 +2,16 @@ import React, { useState } from 'react'
 
 import { LeftIcon } from '../../../../shared/assets/icons'
 import { buildOptionVariables } from '../../utils/transformer'
+import { checkDateField } from '../../utils/checkDateField'
+import { optionsMap } from '../../utils/optionsMap'
 import { Input, TextButton } from '@dailykit/ui'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
 import { isObject } from '../../../../shared/utils/isObject'
 
+/**
+ *
+ * @param {{options: {}, state: {}, updateOptions: () => {}}} props
+ */
 export default function Option({ options, state, updateOptions }) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
@@ -37,6 +43,19 @@ export default function Option({ options, state, updateOptions }) {
    }
 
    const renderOption = option => {
+      /**
+       *
+       * @param {string} option
+       * @param {string} parent
+       */
+      const renderOptionName = (option, parent) => {
+         if (checkDateField(parent)) {
+            return optionsMap['created_at'][option]
+         }
+
+         return optionsMap[option] || option
+      }
+
       const handleChange = (value, field) => {
          setOptionsState({
             ...optionsState,
@@ -50,17 +69,21 @@ export default function Option({ options, state, updateOptions }) {
       if (option.startsWith('_')) {
          return (
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-               {option}
+               {renderOptionName(option, submenu)}
 
                <span style={{ width: '10px' }} />
 
-               <Input
-                  type="text"
-                  value={optionsState[submenu]?.[option] || ''}
-                  onChange={e => handleChange(e.target.value, option)}
-                  name={option}
-                  onBlur={() => setFilterable(true)}
-               />
+               {checkDateField(submenu) ? (
+                  <div>TODO: add date picker</div>
+               ) : (
+                  <Input
+                     type="text"
+                     value={optionsState[submenu]?.[option] || ''}
+                     onChange={e => handleChange(e.target.value, option)}
+                     name={option}
+                     onBlur={() => setFilterable(true)}
+                  />
+               )}
             </div>
          )
       }
