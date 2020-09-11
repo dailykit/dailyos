@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-fragments */
 import React, { useRef } from 'react'
 import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'

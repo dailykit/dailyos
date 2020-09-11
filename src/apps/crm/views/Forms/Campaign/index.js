@@ -4,7 +4,7 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledHeader, StyledWrapper, CenterDiv } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
 
@@ -78,7 +78,10 @@ const CampaignForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr 1fr 1fr">
+         <CenterDiv>
+            <Text as="title">Campaign Type: {campaignType}</Text>
+         </CenterDiv>
+         <StyledHeader gridCol="10fr 1fr">
             <Input
                type="text"
                label="Campaign Name"
@@ -87,7 +90,6 @@ const CampaignForm = () => {
                onChange={e => setCampaignTitle(e.target.value)}
                onBlur={updateCampaignTitle}
             />
-            <Text as="title">`Campaign Type ${campaignType}`</Text>
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
          <DetailsComp state={state} />
