@@ -12,6 +12,7 @@ import { Dropdown, DropdownItem } from '../DropdownMenu'
 import { isObject } from '../../../../shared/utils/isObject'
 
 import '../../../../shared/styled/datepicker.css'
+import { fromMixed } from '../../utils/textTransform'
 
 /**
  *
@@ -109,7 +110,7 @@ export default function Option({ options, state, updateOptions }) {
                      onClick={() => setDropdownView(option)}
                      key={option}
                   >
-                     {option}
+                     {fromMixed(option)}
                   </DropdownItem>
                )
             })}
