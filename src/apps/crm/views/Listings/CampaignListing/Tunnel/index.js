@@ -1,14 +1,31 @@
-import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { Text, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Text, TunnelHeader, Loader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../context'
-import { CREATE_CAMPAIGN } from '../../../../graphql'
+import { CREATE_CAMPAIGN, CAMPAIGN_TYPE } from '../../../../graphql'
 import { randomSuffix } from '../../../../../../shared/utils'
 
 export default function CampaignTypeTunnel({ close }) {
    const { addTab } = useTabs()
+   const [types, setTypes] = useState([])
+   // Subscription
+   const { data: campaignType, loading } = useSubscription(CAMPAIGN_TYPE, {
+      onSubscriptionData: data => {
+         const result = data.subscriptionData.data.crm_campaignType.map(
+            type => {
+               return {
+                  id: type.id,
+                  value: type.value,
+               }
+            }
+         )
+         setTypes(result)
+      },
+   })
+
+   //Mutation
    const [createCampaign] = useMutation(CREATE_CAMPAIGN, {
       onCompleted: data => {
          addTab(
@@ -21,6 +38,7 @@ export default function CampaignTypeTunnel({ close }) {
          toast.error(`Error : ${error.message}`)
       },
    })
+
    const createCampaignHandler = type => {
       createCampaign({
          variables: {
@@ -29,24 +47,24 @@ export default function CampaignTypeTunnel({ close }) {
          },
       })
    }
+   if (loading) return <Loader />
    return (
       <>
          <TunnelHeader title="Select Type of Campaign" close={() => close(1)} />
          <TunnelBody>
-            <SolidTile onClick={() => createCampaignHandler('Sign Up')}>
-               <Text as="h1">Sign Up</Text>
-               <Text as="subtitle">Create Campaign For Sign Up Type.</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => createCampaignHandler('Referral')}>
-               <Text as="h1">Referral</Text>
-               <Text as="subtitle">Create Campaign For Referral Type.</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => createCampaignHandler('Post Order')}>
-               <Text as="h1">Post Order</Text>
-               <Text as="subtitle">Create Campaign For Post Order Type.</Text>
-            </SolidTile>
+            {types.map(type => {
+               return (
+                  <SolidTile
+                     key={type.id}
+                     onClick={() => createCampaignHandler(type.value)}
+                  >
+                     <Text as="h1">{type.value}</Text>
+                     <Text as="subtitle">
+                        Create Campaign For {type.value} Type.
+                     </Text>
+                  </SolidTile>
+               )
+            })}
          </TunnelBody>
       </>
    )
