@@ -1,3 +1,4 @@
 import RewardsTunnel from './Rewards'
+import RewardDetailsTunnel from './RewardDetails'
 
-export { RewardsTunnel }
+export { RewardsTunnel, RewardDetailsTunnel }

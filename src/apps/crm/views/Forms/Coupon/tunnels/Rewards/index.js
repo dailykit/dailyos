@@ -1,14 +1,21 @@
 import React, { useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, TunnelHeader, Loader } from '@dailykit/ui'
+import { Text, TunnelHeader, Loader, Tunnel, Tunnels } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
-import { randomSuffix } from '../../../../../../../shared/utils'
+import RewardDetailsTunnel from '../RewardDetails'
 
-export default function CampaignTypeTunnel({ state, close }) {
+export default function RewardTypeTunnel({
+   state,
+   closeTunnel,
+   tunnels,
+   openRewardTunnel,
+   getRewardId,
+}) {
    const { addTab } = useTabs()
+
    const [types, setTypes] = useState([])
    // Subscription
    const { data: rewardType, loading } = useSubscription(REWARD_TYPE, {
@@ -26,7 +33,8 @@ export default function CampaignTypeTunnel({ state, close }) {
    //Mutation
    const [createReward] = useMutation(CREATE_REWARD, {
       onCompleted: data => {
-         console.log(data.insert_crm_reward.returning[0].id)
+         openRewardTunnel(1)
+         getRewardId(data.insert_crm_reward.returning[0].id)
          toast.success('Reward created!')
       },
       onError: error => {
@@ -42,25 +50,33 @@ export default function CampaignTypeTunnel({ state, close }) {
          },
       })
    }
+
    if (loading) return <Loader />
    return (
       <>
-         <TunnelHeader title="Select Type of Reward" close={() => close(1)} />
-         <TunnelBody>
-            {types.map(type => {
-               return (
-                  <SolidTile
-                     key={type.id}
-                     onClick={() => createRewardHandler(type.value)}
-                  >
-                     <Text as="h1">{type.value}</Text>
-                     <Text as="subtitle">
-                        Create Reward For {type.value} Type.
-                     </Text>
-                  </SolidTile>
-               )
-            })}
-         </TunnelBody>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <TunnelHeader
+                  title="Select Type of Reward"
+                  close={() => closeTunnel(1)}
+               />
+               <TunnelBody>
+                  {types.map(type => {
+                     return (
+                        <SolidTile
+                           key={type.id}
+                           onClick={() => createRewardHandler(type.value)}
+                        >
+                           <Text as="h1">{type.value}</Text>
+                           <Text as="subtitle">
+                              Create Reward For {type.value} Type.
+                           </Text>
+                        </SolidTile>
+                     )
+                  })}
+               </TunnelBody>
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }

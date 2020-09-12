@@ -45,7 +45,7 @@ const Home = () => {
                onClick={() => addTab('Coupons', '/crm/coupons')}
             />
             <DashboardTile
-               title="Coupon Campaign"
+               title="Campaigns"
                count={
                   campaignTotal?.campaignsAggregate?.aggregate?.count || '...'
                }

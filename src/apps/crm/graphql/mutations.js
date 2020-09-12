@@ -99,3 +99,12 @@ export const DELETE_CAMPAIGN = gql`
       }
    }
 `
+
+export const UPDATE_REWARD = gql`
+   mutation UPDATE_REWARD($id: Int!, $set: crm_reward_set_input!) {
+      update_crm_reward_by_pk(pk_columns: { id: $id }, _set: $set) {
+         id
+         type
+      }
+   }
+`

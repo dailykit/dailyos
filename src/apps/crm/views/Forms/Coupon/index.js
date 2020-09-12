@@ -69,7 +69,7 @@ const CouponForm = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Customers', '/crm/coupons')
       }
    }, [addTab, tab])
 
