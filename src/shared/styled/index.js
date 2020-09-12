@@ -10,6 +10,8 @@ export const HeaderWrapper = styled.div`
 
 export const MainWrapper = styled.div`
    padding-top: 40px;
+   min-height: calc(100vh - 36px);
+   overflow-y: auto;
 `
 
 export const Spacer = styled.div(
