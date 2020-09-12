@@ -35,3 +35,6 @@ export {
    CalendarIcon,
    NewInfoIcon,
 }
+
+export * from './ChevronUp'
+export * from './ChevronDown'
