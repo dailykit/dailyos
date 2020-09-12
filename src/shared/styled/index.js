@@ -10,7 +10,7 @@ export const HeaderWrapper = styled.div`
 
 export const MainWrapper = styled.div`
    padding-top: 40px;
-   min-height: calc(100vh - 36px);
+   min-height: 100vh;
    overflow-y: auto;
 `
 
