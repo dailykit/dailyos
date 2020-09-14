@@ -36,11 +36,11 @@ function flattenObject(object, prefix) {
    Object.keys(object).forEach(key => {
       if (!isObject(object[key])) {
          if (key !== '__typename') {
-            const tempKey = `${prefix} ${key}`.trim()
+            const tempKey = ` ${prefix} ${key}`.trim()
             result[tempKey] = object[key]
          }
       } else {
-         const otherResults = flattenObject(object[key], `${prefix} ${key} `)
+         const otherResults = flattenObject(object[key], `${prefix} ${key}`)
          result = { ...otherResults, ...result }
       }
    })
@@ -58,18 +58,14 @@ function flattenQuery(responseObject) {
    )
       responseObject.nodes.forEach(node => {
          let result = {}
-         if (isObject(node)) {
-            Object.keys(node).forEach(key => {
-               if (!isObject(node[key])) {
-                  if (key !== '__typename') result[key] = node[key]
-               } else {
-                  const temp = flattenObject(node[key], '')
-                  result = { ...result, ...temp }
-               }
-            })
-
-            results.push(result)
+         if (!isObject(node)) {
+            if (node !== '__typename') result[node] = node
+         } else {
+            const temp = flattenObject(node, '')
+            result = { ...result, ...temp }
          }
+
+         results.push(result)
       })
 
    return results
