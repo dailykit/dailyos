@@ -26,7 +26,7 @@ import { DeleteIcon } from '../../../../../shared/assets/icons'
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
    const [coupons, setCoupons] = useState([])
-   const tableRef = useRef(null)
+   const tableRef = useRef()
    // Subscription
    const { loading: listLoading } = useSubscription(COUPON_LISTING, {
       onSubscriptionData: data => {
@@ -73,12 +73,6 @@ const CustomerListing = () => {
          addTab('Customers', '/crm/customers')
       }
    }, [addTab, tab])
-
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(coupons)
-      }
-   })
 
    const toggleHandler = (toggle, id) => {
       updateCouponActive({

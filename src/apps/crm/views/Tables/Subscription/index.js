@@ -64,12 +64,6 @@ const SubscriptionTable = ({ id, sid }) => {
       }
    }, [history, tab])
 
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(occurences)
-      }
-   })
-
    const InfoButton = ({ cell }) => {
       const rowData = cell._cell.row.data
       return (
