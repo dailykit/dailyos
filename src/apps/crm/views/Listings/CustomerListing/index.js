@@ -15,7 +15,7 @@ import {
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
    const tableRef = useRef(null)
-   const [customersList, setCustomersList] = useState([])
+   const [customersList, setCustomersList] = useState(undefined)
 
    // Subscription
    const { data: totalRevenue, loading } = useSubscription(TOTAL_REVENUE)
@@ -24,7 +24,7 @@ const CustomerListing = () => {
    )
 
    // Query
-   const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
+   const { loading: listloading, error } = useQuery(CUSTOMERS_LISTING, {
       onCompleted: ({ customers = {} }) => {
          const result = customers.map(customer => {
             return {
@@ -47,6 +47,9 @@ const CustomerListing = () => {
          setCustomersList(result)
       },
    })
+   if (error) {
+      console.log(error)
+   }
 
    useEffect(() => {
       if (!tab) {
@@ -106,14 +109,15 @@ const CustomerListing = () => {
                </IconButton>
             </ButtonGroup>
          </StyledHeader>
-
-         <ReactTabulator
-            columns={columns}
-            data={customersList}
-            rowClick={rowClick}
-            options={tableOptions}
-            ref={tableRef}
-         />
+         {Boolean(customersList) && (
+            <ReactTabulator
+               columns={columns}
+               data={customersList}
+               rowClick={rowClick}
+               options={tableOptions}
+               ref={tableRef}
+            />
+         )}
       </StyledWrapper>
    )
 }

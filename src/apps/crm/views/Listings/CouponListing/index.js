@@ -25,10 +25,10 @@ import { DeleteIcon } from '../../../../../shared/assets/icons'
 
 const CouponListing = () => {
    const { addTab, tab } = useTabs()
-   const [coupons, setCoupons] = useState([])
+   const [coupons, setCoupons] = useState(undefined)
    const tableRef = useRef()
    // Subscription
-   const { loading: listLoading } = useSubscription(COUPON_LISTING, {
+   const { loading: listLoading, error } = useSubscription(COUPON_LISTING, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.coupons.map(coupon => {
             return {
@@ -44,6 +44,9 @@ const CouponListing = () => {
          setCoupons(result)
       },
    })
+   if (error) {
+      console.log(error)
+   }
    const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
 
    // Mutation
@@ -161,14 +164,15 @@ const CouponListing = () => {
                </IconButton>
             </ButtonGroup>
          </StyledHeader>
-
-         <ReactTabulator
-            columns={columns}
-            data={coupons}
-            rowClick={rowClick}
-            options={tableOptions}
-            ref={tableRef}
-         />
+         {Boolean(coupons) && (
+            <ReactTabulator
+               columns={columns}
+               data={coupons}
+               rowClick={rowClick}
+               options={tableOptions}
+               ref={tableRef}
+            />
+         )}
       </StyledWrapper>
    )
 }
