@@ -10,7 +10,7 @@ export const Dropdown = ({ title, children, view, setView }) => {
          <DropdownButton onClick={() => setShow(value => !value)}>
             <p>{title}</p>
 
-            <ChevronDown />
+            <ChevronDown color="#888d9d" />
          </DropdownButton>
 
          {show && <Box>{children}</Box>}
