@@ -1,12 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
+import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
 import { IconButton, CloseIcon } from '@dailykit/ui'
 
 import { UserIcon } from '../../../assets/icons'
-import { CREATE_PRINT_JOB } from '../../../graphql'
 import { useOrder, useConfig } from '../../../context'
 import { Flex } from '../../../../../shared/components'
 import { StyledButton, StyledLabelPreview } from './styled'
@@ -23,62 +22,61 @@ export const ReadyToEats = ({ readytoeats }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
-   const { switchView, selectReadyToEat } = useOrder()
-   const [current, setCurrent] = React.useState(null)
+   const { selectReadyToEat } = useOrder()
+   const [current, setCurrent] = React.useState({})
 
-   const [printLabel] = useMutation(CREATE_PRINT_JOB, {
-      onCompleted: () => {
-         const product = readytoeats.find(node => node.id === current)
-         toast.success(
-            `Label for ${product?.simpleRecipeProduct?.name} has been printed!`
-         )
-      },
-      onError: () => {
-         const product = readytoeats.find(node => node.id === current)
-         toast.error(
-            `Printing label for ${product?.simpleRecipeProduct?.name} failed!`
-         )
-      },
-   })
-
-   const selectProduct = id => {
-      setCurrent(id)
+   const selectProduct = product => {
+      setCurrent(product)
       setLabel('')
-      const product = readytoeats.find(node => id === node.id)
-      if ('id' in product) {
-         selectReadyToEat(product.id)
-      } else {
-         switchView('SUMMARY')
-      }
+      selectReadyToEat(product.id)
    }
 
    const print = () => {
-      if (_.isEmpty(state.stations)) {
-         toast.error('No printers available')
+      if (_.isNull(current?.labelTemplateId)) {
+         toast.error('No template assigned!')
          return
       }
-      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"readytoeat_product1","type":"label","format":"html"}&data={"id":${current}}`
+      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"readytoeat_product1","type":"label","format":"html"}&data={"id":${current.id}}`
 
       if (state.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
-         const product = readytoeats.find(node => node.id === current)
-         printLabel({
-            variables: {
-               url,
-               source: 'DailyOS',
-               contentType: 'pdf_uri',
-               title: `${product?.simpleRecipeProduct?.name}`,
-               printerId: state.stations[0].defaultLabelPrinter.printNodeId,
+         const url = `${
+            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+
+         const data = {
+            id: current.id,
+            assemblyStatus: 'COMPLETED',
+            labelTemplateId: current.labelTemplateId,
+            assemblyStationId: current.assemblyStationId,
+            simpleRecipeProductId: current.simpleRecipeProductId,
+            simpleRecipeProductOptionId: current.simpleRecipeProductOptionId,
+         }
+         axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printOrderReadyToEatProductLabel',
+                  payload: { new: data },
+               },
             },
-         })
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'x-hasura-admin-secret':
+                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+               },
+            }
+         )
       }
    }
 
    React.useEffect(() => {
       if (readytoeats.length > 0) {
          const [product] = readytoeats
-         setCurrent(product.id)
+         setCurrent(product)
       }
    }, [readytoeats])
 
@@ -89,8 +87,8 @@ export const ReadyToEats = ({ readytoeats }) => {
             {readytoeats.map(readytoeat => (
                <OrderItem
                   key={readytoeat.id}
-                  onClick={() => selectProduct(readytoeat.id)}
-                  isActive={current === readytoeat.id}
+                  onClick={() => selectProduct(readytoeat)}
+                  isActive={current?.id === readytoeat.id}
                >
                   <div>
                      <StyledProductTitle>
@@ -137,7 +135,7 @@ export const ReadyToEats = ({ readytoeats }) => {
                   <div>
                      <iframe
                         src={label}
-                        frameborder="0"
+                        frameBorder="0"
                         title="label preview"
                      />
                   </div>

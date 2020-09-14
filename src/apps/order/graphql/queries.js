@@ -325,9 +325,8 @@ export const ORDER = gql`
             assemblyStatus
             labelTemplateId
             assemblyStationId
-            simpleRecipeProduct {
-               name
-            }
+            simpleRecipeProductId
+            simpleRecipeProductOptionId
             assemblyStation {
                id
                name
@@ -345,6 +344,7 @@ export const ORDER = gql`
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
                   yield
                }
