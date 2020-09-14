@@ -22,7 +22,7 @@ export const Notifications = ({ isOpen, closePortal }) => {
       } else {
          closeTunnel(1)
       }
-   }, [isOpen, openTunnel, closeTunnel])
+   }, [isOpen])
 
    const createTab = (e, notif) => {
       const index = notif?.content?.action?.url.lastIndexOf('/') + 1
