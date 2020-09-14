@@ -27,11 +27,11 @@ import CampaignTypeTunnel from './Tunnel'
 
 const CampaignListing = () => {
    const { addTab, tab } = useTabs()
-   const [campaign, setCampaign] = useState([])
+   const [campaign, setCampaign] = useState(undefined)
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    // Subscription
-   const { loading: listLoading } = useSubscription(CAMPAIGN_LISTING, {
+   const { loading: listLoading, error } = useSubscription(CAMPAIGN_LISTING, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.campaigns.map(campaign => {
             return {
@@ -44,6 +44,9 @@ const CampaignListing = () => {
          setCampaign(result)
       },
    })
+   if (error) {
+      console.log(error)
+   }
    const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
 
    // Mutation
@@ -131,8 +134,7 @@ const CampaignListing = () => {
          formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
       },
    ]
-   if (loading) return <Loader />
-   if (listLoading) return <Loader />
+   if (listLoading || loading) return <Loader />
    return (
       <StyledWrapper>
          <StyledHeader gridCol="10fr  1fr">
@@ -146,14 +148,15 @@ const CampaignListing = () => {
                </IconButton>
             </ButtonGroup>
          </StyledHeader>
-
-         <ReactTabulator
-            columns={columns}
-            data={campaign}
-            rowClick={rowClick}
-            options={tableOptions}
-            ref={tableRef}
-         />
+         {Boolean(campaign) && (
+            <ReactTabulator
+               columns={columns}
+               data={campaign}
+               rowClick={rowClick}
+               options={tableOptions}
+               ref={tableRef}
+            />
+         )}
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <CampaignTypeTunnel close={closeTunnel} />
