@@ -1,7 +1,5 @@
 import React from 'react'
-
-// State
-import { Context } from '../../context/tabs'
+import { useTranslation } from 'react-i18next'
 
 // Styled
 import {
@@ -11,22 +9,23 @@ import {
    StyledHeading,
 } from './styled'
 
-import { useTranslation } from 'react-i18next'
+import { useTabs } from '../../context'
 
 const address = 'apps.safety.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
+   const { addTab: createTab } = useTabs()
+
+   const addTab = title => {
       toggleSidebar(visible => !visible)
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
+      createTab(title, '/apps/safety/checks')
    }
    return (
       <StyledSidebar visible={visible}>
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
-            <StyledListItem onClick={() => addTab('Safety Checks', 'checks')}>
+            <StyledListItem onClick={() => addTab('Safety Checks')}>
                {t(address.concat('Safety Checks'))}
             </StyledListItem>
          </StyledList>
