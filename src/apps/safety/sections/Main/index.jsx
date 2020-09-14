@@ -11,10 +11,10 @@ export default function Main() {
             <Route path="/apps/safety" exact>
                <Home />
             </Route>
-            <Route path="/safety/checks" exact>
+            <Route path="/apps/safety/checks" exact>
                <SafetyChecksListing />
             </Route>
-            <Route path="/safety/checks/:id" exact>
+            <Route path="/apps/safety/checks/:id" exact>
                <SafetyForm />
             </Route>
          </Switch>
