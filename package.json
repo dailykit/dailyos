@@ -5,8 +5,8 @@
    "homepage": "/apps",
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
-      "@dailykit/react-tabulator": "0.13.5",
-      "@dailykit/ui": "0.7.3",
+      "@dailykit/react-tabulator": "0.13.6",
+      "@dailykit/ui": "0.7.5",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
       "@testing-library/jest-dom": "4.2.4",
@@ -36,6 +36,7 @@
       "react-loadable": "5.5.0",
       "react-phone-input-2": "2.13.5",
       "react-router-dom": "5.1.2",
+      "react-rrule": "0.1.0",
       "react-scripts": "3.4.1",
       "react-scroll": "1.7.16",
       "react-tabulator": "0.12.7",
@@ -68,13 +69,13 @@
       ]
    },
    "devDependencies": {
-      "eslint": "6.8.0",
-      "eslint-config-airbnb": "18.2.0",
-      "eslint-config-prettier": "6.11.0",
-      "eslint-plugin-import": "2.22.0",
-      "eslint-plugin-jsx-a11y": "6.3.1",
-      "eslint-plugin-prettier": "3.1.4",
-      "eslint-plugin-react": "7.20.6",
-      "prettier": "2.1.1"
+      "eslint": "^6.8.0",
+      "eslint-config-airbnb": "^18.2.0",
+      "eslint-config-prettier": "^6.11.0",
+      "eslint-plugin-import": "^2.22.0",
+      "eslint-plugin-jsx-a11y": "^6.3.1",
+      "eslint-plugin-prettier": "^3.1.4",
+      "eslint-plugin-react": "^7.20.6",
+      "prettier": "^2.1.1"
    }
 }
