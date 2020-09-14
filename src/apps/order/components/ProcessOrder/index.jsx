@@ -63,13 +63,15 @@ export const ProcessOrder = () => {
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
-         setWeight(0)
-         setSachet(orderSachet)
-         fetchLabaleTemplate({
-            variables: {
-               id: Number(orderSachet.labelTemplateId),
-            },
-         })
+         if (!_.isEmpty(orderSachet)) {
+            setWeight(0)
+            setSachet(orderSachet)
+            fetchLabaleTemplate({
+               variables: {
+                  id: Number(orderSachet?.labelTemplateId),
+               },
+            })
+         }
       },
    })
 
@@ -165,7 +167,7 @@ export const ProcessOrder = () => {
       return () => clearTimeout(timer)
    }, [weight, sachet, print])
 
-   if (!mealkit.sachet_id) {
+   if (_.isNull(mealkit.sachet_id)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -186,7 +188,7 @@ export const ProcessOrder = () => {
          </Wrapper>
       )
    }
-   if (loading || !sachet)
+   if (loading)
       return (
          <Wrapper>
             <InlineLoader />
