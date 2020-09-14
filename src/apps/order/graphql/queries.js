@@ -254,20 +254,25 @@ export const ORDER = gql`
             isAssembled
             assemblyStatus
             labelTemplateId
+            assemblyStationId
             assemblyStation {
                id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
                   yield
                }
@@ -319,6 +324,7 @@ export const ORDER = gql`
             isAssembled
             assemblyStatus
             labelTemplateId
+            assemblyStationId
             simpleRecipeProduct {
                name
             }
@@ -335,6 +341,7 @@ export const ORDER = gql`
                label
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
@@ -351,13 +358,17 @@ export const ORDER = gql`
             isAssembled
             assemblyStatus
             labelTemplateId
+            assemblyStationId
             inventoryProduct {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             assemblyStation {
@@ -365,6 +376,7 @@ export const ORDER = gql`
                name
             }
             customizableProduct {
+               id
                name
             }
             inventoryProductOption {
@@ -500,6 +512,7 @@ export const FETCH_INVENTORY = gql`
          quantity
          assemblyStatus
          inventoryProduct {
+            id
             name
             sachetItem {
                id
@@ -507,10 +520,13 @@ export const FETCH_INVENTORY = gql`
                unitSize
                onHand
                bulkItem {
+                  id
                   processingName
                   supplierItem {
+                     id
                      name
                      supplier {
+                        id
                         name
                      }
                   }
@@ -522,6 +538,7 @@ export const FETCH_INVENTORY = gql`
                unit
                unitSize
                supplier {
+                  id
                   name
                }
                bulkItemAsShipped {
@@ -531,12 +548,15 @@ export const FETCH_INVENTORY = gql`
             }
          }
          comboProduct {
+            id
             name
          }
          comboProductComponent {
+            id
             label
          }
          customizableProduct {
+            id
             name
          }
       }
