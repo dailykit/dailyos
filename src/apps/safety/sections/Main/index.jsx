@@ -1,22 +1,23 @@
 import React from 'react'
-
-// State
-import { Context } from '../../context/tabs'
+import { Switch, Route } from 'react-router-dom'
 
 // Views
 import { Home, SafetyChecksListing, SafetyForm } from '../../views'
 
-const renderComponent = (type, view) => {
-   // Listings
-   if (type === 'listings' && view === 'checks') return <SafetyChecksListing />
-   // Forms
-   if (type === 'forms' && view === 'check') return <SafetyForm />
+export default function Main() {
+   return (
+      <main>
+         <Switch>
+            <Route path="/apps/safety" exact>
+               <Home />
+            </Route>
+            <Route path="/safety/checks" exact>
+               <SafetyChecksListing />
+            </Route>
+            <Route path="/safety/checks/:id" exact>
+               <SafetyForm />
+            </Route>
+         </Switch>
+      </main>
+   )
 }
-
-const Main = () => {
-   const { state } = React.useContext(Context)
-   if (state.listings.length === 0 && state.forms.length === 0) return <Home />
-   return <main>{renderComponent(state.current.type, state.current.view)}</main>
-}
-
-export default Main
