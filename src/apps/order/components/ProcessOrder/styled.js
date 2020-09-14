@@ -79,7 +79,7 @@ export const StyledButton = styled.button(
 )
 
 export const StyledWeigh = styled.section(
-   ({ state, isPrintDisabled }) => css`
+   ({ state }) => css`
       color: #fff;
       height: 180px;
       display: grid;
@@ -102,11 +102,6 @@ export const StyledWeigh = styled.section(
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.5);
             box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
-            ${isPrintDisabled &&
-            css`
-               box-shadow: none;
-               cursor: not-allowed;
-            `}
          }
       }
       h2 {
