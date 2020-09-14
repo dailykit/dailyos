@@ -27,7 +27,7 @@ const ProductDetails = ({ product }) => {
             <span />
          </ListHead>
          <ListBody>
-            {product.orderSachets.map(item => (
+            {product?.orderSachets?.map(item => (
                <ListBodyItem
                   key={item.id}
                   onClick={() => selectSachet(item.id)}

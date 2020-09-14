@@ -12,7 +12,6 @@ import {
    FETCH_ORDER_SACHET,
    UPDATE_ORDER_SACHET,
    LABEL_TEMPLATE,
-   CREATE_PRINT_JOB,
 } from '../../graphql'
 import {
    Wrapper,
@@ -38,18 +37,7 @@ export const ProcessOrder = () => {
    const [sachet, setSachet] = React.useState(null)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
-   const [printLabel] = useMutation(CREATE_PRINT_JOB, {
-      onCompleted: () => {
-         toast.success(
-            `Label for ${sachet.ingredientName} - ${sachet.processingName} has been printed!`
-         )
-      },
-      onError: () => {
-         toast.success(
-            `Printing label for ${sachet.ingredientName} - ${sachet.processingName} failed!`
-         )
-      },
-   })
+
    const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
    const [
       fetchLabaleTemplate,
@@ -188,7 +176,7 @@ export const ProcessOrder = () => {
          </Wrapper>
       )
    }
-   if (loading)
+   if (loading || !sachet)
       return (
          <Wrapper>
             <InlineLoader />

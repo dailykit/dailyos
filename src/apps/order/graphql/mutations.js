@@ -74,24 +74,3 @@ export const UPDATE_SETTING = gql`
       }
    }
 `
-
-export const CREATE_PRINT_JOB = gql`
-   mutation createPrintJob(
-      $url: String!
-      $title: String!
-      $printerId: Int!
-      $source: String!
-      $contentType: String!
-   ) {
-      createPrintJob(
-         url: $url
-         title: $title
-         source: $source
-         printerId: $printerId
-         contentType: $contentType
-      ) {
-         success
-         message
-      }
-   }
-`

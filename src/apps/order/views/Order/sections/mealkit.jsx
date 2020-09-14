@@ -1,13 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
+import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
 import { IconButton, CloseIcon } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
 import { UserIcon } from '../../../assets/icons'
-import { CREATE_PRINT_JOB } from '../../../graphql'
 import ProductDetails from './MealKitProductDetails'
 import { Flex } from '../../../../../shared/components'
 import { StyledButton, StyledLabelPreview } from './styled'
@@ -25,49 +24,54 @@ export const MealKits = ({ mealkits }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
-   const [current, setCurrent] = React.useState(null)
-   const [printLabel] = useMutation(CREATE_PRINT_JOB, {
-      onCompleted: () => {
-         const product = mealkits.find(mealkit => mealkit.id === current)
-         toast.success(
-            `Label for ${product?.simpleRecipeProduct?.name} has been printed!`
-         )
-      },
-      onError: () => {
-         const product = mealkits.find(mealkit => mealkit.id === current)
-         toast.error(
-            `Printing label for ${product?.simpleRecipeProduct?.name} failed!`
-         )
-      },
-   })
+   const [current, setCurrent] = React.useState({})
 
    React.useEffect(() => {
       if (mealkits.length > 0) {
          const [product] = mealkits
-         setCurrent(product.id)
+         setCurrent(product)
       }
    }, [mealkits, setCurrent])
 
    const print = () => {
-      if (_.isEmpty(state.stations)) {
-         toast.error('No printers available')
+      if (_.isNull(current?.labelTemplateId)) {
+         toast.error('No template assigned!')
          return
       }
-      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"mealkit_product1","type":"label","format":"html"}&data={"id":${current}}`
+      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"mealkit_product1","type":"label","format":"html"}&data={"id":${current.id}}`
 
       if (state.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
-         const product = mealkits.find(mealkit => mealkit.id === current)
-         printLabel({
-            variables: {
-               url,
-               source: 'DailyOS',
-               contentType: 'pdf_uri',
-               title: `${product?.simpleRecipeProduct?.name}`,
-               printerId: state.stations[0].defaultLabelPrinter.printNodeId,
+         const url = `${
+            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+
+         const data = {
+            id: current.id,
+            assemblyStatus: 'COMPLETED',
+            labelTemplateId: current.labelTemplateId,
+            assemblyStationId: current.assemblyStationId,
+            simpleRecipeProductId: current.simpleRecipeProductId,
+            simpleRecipeProductOptionId: current.simpleRecipeProductOptionId,
+         }
+         axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printOrderMealKitProductLabel',
+                  payload: { new: data },
+               },
             },
-         })
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'x-hasura-admin-secret':
+                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+               },
+            }
+         )
       }
    }
 
@@ -78,10 +82,10 @@ export const MealKits = ({ mealkits }) => {
             {mealkits.map(mealkit => (
                <OrderItem
                   key={mealkit.id}
-                  isActive={current === mealkit.id}
+                  isActive={current?.id === mealkit.id}
                   onClick={() => {
                      setLabel('')
-                     setCurrent(mealkit.id)
+                     setCurrent(mealkit)
                   }}
                >
                   <div>
@@ -139,7 +143,7 @@ export const MealKits = ({ mealkits }) => {
                   <div>
                      <iframe
                         src={label}
-                        frameborder="0"
+                        frameBorder="0"
                         title="label preview"
                      />
                   </div>
@@ -161,11 +165,7 @@ export const MealKits = ({ mealkits }) => {
                <span>{t(address.concat('assembled'))}</span>
             </section>
          </Legend>
-         {current && (
-            <ProductDetails
-               product={mealkits.find(({ id }) => id === current)}
-            />
-         )}
+         {current && <ProductDetails product={current} />}
       </>
    )
 }
