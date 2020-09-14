@@ -253,19 +253,28 @@ export const ORDER = gql`
             id
             isAssembled
             assemblyStatus
+            labelTemplateId
+            assemblyStationId
+            simpleRecipeProductId
+            simpleRecipeProductOptionId
             assemblyStation {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
                   yield
                }
@@ -316,10 +325,12 @@ export const ORDER = gql`
             quantity
             isAssembled
             assemblyStatus
-            simpleRecipeProduct {
-               name
-            }
+            labelTemplateId
+            assemblyStationId
+            simpleRecipeProductId
+            simpleRecipeProductOptionId
             assemblyStation {
+               id
                name
             }
             comboProduct {
@@ -331,9 +342,11 @@ export const ORDER = gql`
                label
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
                   yield
                }
@@ -346,19 +359,26 @@ export const ORDER = gql`
             quantity
             isAssembled
             assemblyStatus
+            labelTemplateId
+            assemblyStationId
             inventoryProduct {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             assemblyStation {
+               id
                name
             }
             customizableProduct {
+               id
                name
             }
             inventoryProductOption {
@@ -447,6 +467,7 @@ export const FETCH_ORDER_SACHET = gql`
          ingredientName
          processingName
          labelTemplateId
+         packingStationId
          packaging {
             name
          }
@@ -493,6 +514,7 @@ export const FETCH_INVENTORY = gql`
          quantity
          assemblyStatus
          inventoryProduct {
+            id
             name
             sachetItem {
                id
@@ -500,10 +522,13 @@ export const FETCH_INVENTORY = gql`
                unitSize
                onHand
                bulkItem {
+                  id
                   processingName
                   supplierItem {
+                     id
                      name
                      supplier {
+                        id
                         name
                      }
                   }
@@ -515,6 +540,7 @@ export const FETCH_INVENTORY = gql`
                unit
                unitSize
                supplier {
+                  id
                   name
                }
                bulkItemAsShipped {
@@ -524,12 +550,15 @@ export const FETCH_INVENTORY = gql`
             }
          }
          comboProduct {
+            id
             name
          }
          comboProductComponent {
+            id
             label
          }
          customizableProduct {
+            id
             name
          }
       }

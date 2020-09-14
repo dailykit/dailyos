@@ -1,9 +1,9 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useOrder } from '../../context'
-import { ArrowUpIcon, ArrowDownIcon } from '../../assets/icons'
-import { List, ListHead, ListBody, ListBodyItem } from './styled'
+import { useOrder } from '../../../context'
+import { ArrowUpIcon, ArrowDownIcon } from '../../../assets/icons'
+import { List, ListHead, ListBody, ListBodyItem } from '../styled'
 
 const address = 'apps.order.views.order.'
 
@@ -27,7 +27,7 @@ const ProductDetails = ({ product }) => {
             <span />
          </ListHead>
          <ListBody>
-            {product.orderSachets.map(item => (
+            {product?.orderSachets?.map(item => (
                <ListBodyItem
                   key={item.id}
                   onClick={() => selectSachet(item.id)}

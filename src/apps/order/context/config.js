@@ -34,6 +34,7 @@ const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_SETTING':
          return { ...state, [payload.field]: payload.value }
+
       case 'SET_STATIONS':
          return { ...state, stations: payload }
       case 'TOGGLE_TUNNEL':
@@ -54,10 +55,13 @@ export const ConfigProvider = ({ children }) => {
          },
       }
    )
-   useSubscription(SETTINGS, {
-      onSubscriptionData: ({
-         subscriptionData: { data: { settings = [] } = {} } = {},
-      }) => {
+   const {
+      loading: loadingSettings,
+      data: { settings = [] } = {},
+   } = useSubscription(SETTINGS)
+
+   React.useEffect(() => {
+      if (!loadingSettings && !_.isEmpty(settings)) {
          const weighIndex = settings.findIndex(
             setting => setting.identifier === 'weight simulation'
          )
@@ -90,8 +94,8 @@ export const ConfigProvider = ({ children }) => {
                },
             })
          }
-      },
-   })
+      }
+   }, [loadingSettings, settings])
 
    React.useEffect(() => {
       if (!loading && !_.isEmpty(stations)) {

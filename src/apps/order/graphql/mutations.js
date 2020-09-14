@@ -56,37 +56,21 @@ export const UPDATE_READYTOEAT = gql`
    }
 `
 
-export const UPSERT_SETTING = gql`
-   mutation upsertSetting($object: settings_appSettings_insert_input!) {
-      upsertSetting: insert_settings_appSettings_one(
-         object: $object
-         on_conflict: {
-            constraint: appSettings_pkey
-            update_columns: [value, app, type, identifier]
-         }
-      ) {
-         id
-      }
-   }
-`
-
-export const CREATE_PRINT_JOB = gql`
-   mutation createPrintJob(
-      $url: String!
-      $title: String!
-      $printerId: Int!
-      $source: String!
-      $contentType: String!
+export const UPDATE_SETTING = gql`
+   mutation update_settings_appSettings(
+      $app: String_comparison_exp!
+      $identifier: String_comparison_exp!
+      $type: String_comparison_exp!
+      $_set: settings_appSettings_set_input!
    ) {
-      createPrintJob(
-         url: $url
-         title: $title
-         source: $source
-         printerId: $printerId
-         contentType: $contentType
+      update_settings_appSettings(
+         where: { app: $app, identifier: $identifier, type: $type }
+         _set: $_set
       ) {
-         success
-         message
+         affected_rows
+         returning {
+            value
+         }
       }
    }
 `

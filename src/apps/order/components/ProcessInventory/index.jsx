@@ -50,7 +50,7 @@ export const ProcessInventory = () => {
          </Wrapper>
       )
    }
-   if (loading || !product)
+   if (loading)
       return (
          <Wrapper>
             <Loader />
