@@ -95,40 +95,6 @@ export const ProcessOrder = () => {
    }, [weight, sachet])
 
    const print = React.useCallback(() => {
-      if (!_.isObject(labelTemplate) || _.isEmpty(labelTemplate)) {
-         toast.error('No label template available')
-         return
-      }
-      if (
-         _.isEmpty(state.stations) ||
-         _.isNull(state.stations[0]?.defaultLabelPrinter)
-      ) {
-         toast.error('No label printer available!')
-         return
-      }
-      const template = encodeURIComponent(
-         JSON.stringify({
-            name: labelTemplate?.name,
-            type: 'label',
-            format: state.print.print_simulation.value.isActive
-               ? 'html'
-               : 'pdf',
-         })
-      )
-
-      const data = encodeURIComponent(
-         JSON.stringify({
-            id: sachet.id,
-            unit: sachet.unit,
-            quantity: sachet.quantity,
-            product: sachet.mealkit.product,
-            order: { id: sachet.mealkit.orderId },
-            ingredient: { name: sachet.ingredientName },
-            processing: { name: sachet.processingName },
-         })
-      )
-      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
-
       updateSachet({
          variables: {
             id: sachet.id,
@@ -137,29 +103,27 @@ export const ProcessOrder = () => {
             },
          },
       })
-      if (state.print.print_simulation.value.isActive) {
+      if (
+         state.print.print_simulation.value.isActive &&
+         !_.isNull(labelTemplate)
+      ) {
+         const template = encodeURIComponent(
+            JSON.stringify({
+               name: labelTemplate?.name,
+               type: 'label',
+               format: 'html',
+            })
+         )
+
+         const data = encodeURIComponent(
+            JSON.stringify({
+               id: sachet.id,
+            })
+         )
+         const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
          setLabelPreview(url)
-      } else {
-         printLabel({
-            variables: {
-               url,
-               source: 'DailyOS',
-               contentType: 'pdf_uri',
-               printerId: state.stations[0].defaultLabelPrinter.printNodeId,
-               title: `${sachet.ingredientName} - ${sachet.processingName}`,
-            },
-         })
       }
-      updateSachet({
-         variables: {
-            id: sachet.id,
-            _set: {
-               status: 'PACKED',
-               isLabelled: true,
-            },
-         },
-      })
-   }, [sachet, state.stations, state.print, labelTemplate])
+   }, [sachet, labelTemplate])
 
    React.useEffect(() => {
       let timer
@@ -272,12 +236,14 @@ export const ProcessOrder = () => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  <button
-                     disabled={weight !== sachet.quantity}
-                     onClick={() => print()}
-                  >
-                     Print Label
-                  </button>
+                  {!_.isNull(labelTemplate) && (
+                     <button
+                        disabled={weight !== sachet.quantity}
+                        onClick={() => print()}
+                     >
+                        Print Label
+                     </button>
+                  )}
                </header>
                <h2>
                   {weight}
