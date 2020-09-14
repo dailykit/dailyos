@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Text, Avatar, useTunnel } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
@@ -29,6 +29,7 @@ import {
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
+   const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const { data: orderData } = useQuery(ORDER, {
@@ -153,7 +154,11 @@ const OrderInfo = () => {
                   </StyledSpan>
                </StyledDiv>
                <StyledTable>
-                  <ReactTabulator columns={columns} data={data} />
+                  <ReactTabulator
+                     columns={columns}
+                     data={data}
+                     ref={tableRef}
+                  />
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">
