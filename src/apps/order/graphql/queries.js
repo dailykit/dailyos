@@ -253,7 +253,9 @@ export const ORDER = gql`
             id
             isAssembled
             assemblyStatus
+            labelTemplateId
             assemblyStation {
+               id
                name
             }
             comboProduct {
@@ -316,10 +318,12 @@ export const ORDER = gql`
             quantity
             isAssembled
             assemblyStatus
+            labelTemplateId
             simpleRecipeProduct {
                name
             }
             assemblyStation {
+               id
                name
             }
             comboProduct {
@@ -346,6 +350,7 @@ export const ORDER = gql`
             quantity
             isAssembled
             assemblyStatus
+            labelTemplateId
             inventoryProduct {
                name
             }
@@ -356,6 +361,7 @@ export const ORDER = gql`
                label
             }
             assemblyStation {
+               id
                name
             }
             customizableProduct {
@@ -447,6 +453,7 @@ export const FETCH_ORDER_SACHET = gql`
          ingredientName
          processingName
          labelTemplateId
+         packingStationId
          packaging {
             name
          }
