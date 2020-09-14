@@ -44,9 +44,9 @@ let gqlQuery = {
 /**
  *
  * @param {string} insightId
- * @param {{chart?: {xKey: string, yLabel: string, xLabel: string}, includeTableData: boolean}} [options]
+ * @param {{chart?: {xKeys: Array<{key: string, action: {name: string, key: SUM | COUNT}}>, xLabels: string[]}, includeTableData: boolean}} [options]
  *
- * @returns {{loading: boolean, tableData: any[], chartData: any, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
+ * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
 export const useInsights = (
    insightId,
@@ -93,7 +93,8 @@ export const useInsights = (
 
    const queryName = Object.keys(data)[0]
 
-   if (options.includeTableData) transformedData = transformer(data, queryName)
+   if (options.includeTableData || options.chart)
+      transformedData = transformer(data, queryName)
 
    const whereObject = buildOptions(insight.options || {})
 
@@ -108,15 +109,8 @@ export const useInsights = (
       allowedCharts: insight.allowedCharts,
    }
 
-   if (options.chart && options.chart.xKey) {
-      const groupedData = groupBy(transformedData, options.chart.xKey)
-
-      const chartData = []
-
-      chartData.unshift([options.chart.xLabel, options.chart.yLabel])
-      chartData.push(
-         ...Object.keys(groupedData).map(key => [key, groupedData[key].length])
-      )
+   if (options.chart && options.chart.xKeys && options.chart.xKeys.length) {
+      const chartData = genChartData(options.chart, transformedData)
 
       result.chartData = chartData
    } else {
@@ -124,4 +118,54 @@ export const useInsights = (
    }
 
    return result
+}
+
+/**
+ *
+ * @param {{xKeys: Array<{key: string, action: {name: string, key: SUM | COUNT}}>, xLabels: string[]}} chartOptions
+ */
+function genChartData(chartOptions, transformedData) {
+   const groupedData = groupBy(transformedData, chartOptions.xKeys[0]?.key)
+
+   let chartData = [[]]
+
+   // set chart header
+   chartOptions.xKeys.forEach((key, idx) => {
+      if (idx === 0) {
+         chartData[0].push(chartOptions.xLabels[idx], key.action.name)
+      } else {
+         chartData[0].push(key.action?.name)
+      }
+   })
+
+   // fil chart data
+   chartData.push(
+      ...Object.keys(groupedData).map(key => {
+         const result = [key]
+
+         chartOptions.xKeys.forEach(option => {
+            result.push(getChartValue(option, groupedData, key) || 0)
+         })
+
+         return result
+      })
+   )
+
+   return chartData
+}
+
+function getChartValue(option, groupedData, key) {
+   switch (option.action?.op) {
+      case 'SUM':
+         return groupedData[key].reduce(
+            (acc, curr) => acc + curr[option.key],
+            0
+         )
+
+      case 'COUNT':
+         return groupedData[key]?.length
+
+      default:
+         return 0
+   }
 }
