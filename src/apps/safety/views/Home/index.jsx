@@ -3,7 +3,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { DashboardTile } from '@dailykit/ui'
 
 import { useTranslation } from 'react-i18next'
-import { SAFETY_CHECKS } from '../../graphql'
+import { SAFETY_CHECKS_COUNT } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
 import { useTabs } from '../../context'
 
@@ -20,7 +20,7 @@ const Home = () => {
             aggregate: { count = '...' } = {},
          } = {},
       } = {},
-   } = useSubscription(SAFETY_CHECKS)
+   } = useSubscription(SAFETY_CHECKS_COUNT)
 
    return (
       <StyledHome>

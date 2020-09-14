@@ -1,10 +1,22 @@
 import gql from 'graphql-tag'
 
-export const SAFETY_CHECKS = gql`
+export const SAFETY_CHECKS_COUNT = gql`
    subscription SafetyChecksCount {
       safety_safetyCheck_aggregate {
          aggregate {
             count
+         }
+      }
+   }
+`
+
+export const SAFETY_CHECKS = gql`
+   subscription {
+      safety_safetyCheck {
+         id
+         created_at
+         SafetyCheckPerUsers {
+            id
          }
       }
    }
