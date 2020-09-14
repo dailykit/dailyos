@@ -15,10 +15,12 @@ export const HorizontalCard = styled.div`
 export const StyledCard = styled.div`
    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
    transition: 0.3s;
-   width: 40%;
+   width: 45%;
    margin: 0 20em;
    img {
-      width: 100%;
+      width: 160px;
+      height: auto;
+      object-fit: auto;
    }
    &:hover {
       box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
@@ -26,4 +28,6 @@ export const StyledCard = styled.div`
 `
 export const StyledInfo = styled.span`
    display: inline;
+   min-width: 298px;
+   max-width: 350px;
 `

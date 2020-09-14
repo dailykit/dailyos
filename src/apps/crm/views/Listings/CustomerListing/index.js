@@ -14,7 +14,7 @@ import {
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
-   const tableRef = useRef(null)
+   const tableRef = useRef()
    const [customersList, setCustomersList] = useState([])
 
    // Subscription
@@ -53,12 +53,6 @@ const CustomerListing = () => {
          addTab('Customers', '/crm/customers')
       }
    }, [addTab, tab])
-
-   useEffect(() => {
-      if (tableRef.current) {
-         tableRef.current.table.setData(customersList)
-      }
-   })
 
    const rowClick = (e, row) => {
       const { keycloakId, name } = row._row.data
