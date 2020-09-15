@@ -91,9 +91,11 @@ export default function Option({ options, state, updateOptions }) {
                   <Input
                      type="text"
                      value={optionsState[submenu]?.[option] || ''}
-                     onChange={e => handleChange(e.target.value, option)}
+                     onChange={e => {
+                        setFilterable(true)
+                        handleChange(e.target.value, option)
+                     }}
                      name={option}
-                     onBlur={() => setFilterable(true)}
                   />
                )}
             </div>
