@@ -28,7 +28,7 @@ const UserTunnel = ({ openTunnel, closeTunnel, users }) => {
          })
          openTunnel(2)
       }
-   }, [current, checkDispatch, openTunnel])
+   }, [current])
 
    return (
       <>
