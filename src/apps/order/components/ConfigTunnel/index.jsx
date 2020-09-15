@@ -5,7 +5,7 @@ import { Text, Toggle, TunnelHeader } from '@dailykit/ui'
 import { useConfig } from '../../context'
 import { Main, Sidebar, Content } from './styled'
 import { useMutation } from '@apollo/react-hooks'
-import { UPSERT_SETTING } from '../../graphql'
+import { UPDATE_SETTING } from '../../graphql'
 
 export const ConfigTunnel = () => {
    const { dispatch } = useConfig()
@@ -75,13 +75,15 @@ const ScaleSection = () => {
 
 const WeightSimulation = () => {
    const { state } = useConfig()
-   const [upsert] = useMutation(UPSERT_SETTING)
+   const [update] = useMutation(UPDATE_SETTING)
 
    const handleChange = value => {
-      upsert({
+      update({
          variables: {
-            object: {
-               ...state.scale.weight_simulation,
+            app: { _eq: 'order' },
+            identifier: { _eq: 'weight simulation' },
+            type: { _eq: 'scale' },
+            _set: {
                value: { isActive: value },
             },
          },
@@ -110,13 +112,15 @@ const PrintSection = () => {
 
 const PrintSimulation = () => {
    const { state } = useConfig()
-   const [upsert] = useMutation(UPSERT_SETTING)
+   const [update] = useMutation(UPDATE_SETTING)
 
    const handleChange = value => {
-      upsert({
+      update({
          variables: {
-            object: {
-               ...state.print.print_simulation,
+            app: { _eq: 'order' },
+            identifier: { _eq: 'print simulation' },
+            type: { _eq: 'print' },
+            _set: {
                value: { isActive: value },
             },
          },

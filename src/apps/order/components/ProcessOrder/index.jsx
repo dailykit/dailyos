@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import axios from 'axios'
 import { toast } from 'react-toastify'
 import { TextButton, IconButton, CloseIcon } from '@dailykit/ui'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
@@ -11,7 +12,6 @@ import {
    FETCH_ORDER_SACHET,
    UPDATE_ORDER_SACHET,
    LABEL_TEMPLATE,
-   CREATE_PRINT_JOB,
 } from '../../graphql'
 import {
    Wrapper,
@@ -37,18 +37,7 @@ export const ProcessOrder = () => {
    const [sachet, setSachet] = React.useState(null)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
-   const [printLabel] = useMutation(CREATE_PRINT_JOB, {
-      onCompleted: () => {
-         toast.success(
-            `Label for ${sachet.ingredientName} - ${sachet.processingName} has been printed!`
-         )
-      },
-      onError: () => {
-         toast.success(
-            `Printing label for ${sachet.ingredientName} - ${sachet.processingName} failed!`
-         )
-      },
-   })
+
    const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
    const [
       fetchLabaleTemplate,
@@ -62,13 +51,15 @@ export const ProcessOrder = () => {
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
-         setWeight(0)
-         setSachet(orderSachet)
-         fetchLabaleTemplate({
-            variables: {
-               id: Number(orderSachet.labelTemplateId),
-            },
-         })
+         if (!_.isEmpty(orderSachet)) {
+            setWeight(0)
+            setSachet(orderSachet)
+            fetchLabaleTemplate({
+               variables: {
+                  id: Number(orderSachet?.labelTemplateId),
+               },
+            })
+         }
       },
    })
 
@@ -95,40 +86,6 @@ export const ProcessOrder = () => {
    }, [weight, sachet])
 
    const print = React.useCallback(() => {
-      if (!_.isObject(labelTemplate) || _.isEmpty(labelTemplate)) {
-         toast.error('No label template available')
-         return
-      }
-      if (
-         _.isEmpty(state.stations) ||
-         _.isNull(state.stations[0]?.defaultLabelPrinter)
-      ) {
-         toast.error('No label printer available!')
-         return
-      }
-      const template = encodeURIComponent(
-         JSON.stringify({
-            name: labelTemplate?.name,
-            type: 'label',
-            format: state.print.print_simulation.value.isActive
-               ? 'html'
-               : 'pdf',
-         })
-      )
-
-      const data = encodeURIComponent(
-         JSON.stringify({
-            id: sachet.id,
-            unit: sachet.unit,
-            quantity: sachet.quantity,
-            product: sachet.mealkit.product,
-            order: { id: sachet.mealkit.orderId },
-            ingredient: { name: sachet.ingredientName },
-            processing: { name: sachet.processingName },
-         })
-      )
-      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
-
       updateSachet({
          variables: {
             id: sachet.id,
@@ -137,29 +94,56 @@ export const ProcessOrder = () => {
             },
          },
       })
+      if (_.isNull(sachet.labelTemplateId)) return
+
       if (state.print.print_simulation.value.isActive) {
+         const template = encodeURIComponent(
+            JSON.stringify({
+               name: labelTemplate?.name,
+               type: 'label',
+               format: 'html',
+            })
+         )
+
+         const data = encodeURIComponent(
+            JSON.stringify({
+               id: sachet.id,
+            })
+         )
+         const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
          setLabelPreview(url)
       } else {
-         printLabel({
-            variables: {
-               url,
-               source: 'DailyOS',
-               contentType: 'pdf_uri',
-               printerId: state.stations[0].defaultLabelPrinter.printNodeId,
-               title: `${sachet.ingredientName} - ${sachet.processingName}`,
-            },
-         })
-      }
-      updateSachet({
-         variables: {
+         const url = `${
+            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+
+         const data = {
             id: sachet.id,
-            _set: {
-               status: 'PACKED',
-               isLabelled: true,
+            isPortioned: true,
+            ingredientName: sachet.ingredientName,
+            processingName: sachet.processingName,
+            labelTemplateId: sachet.labelTemplateId,
+            packingStationId: sachet.packingStationId,
+         }
+         axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printOrderSachet',
+                  payload: { new: data },
+               },
             },
-         },
-      })
-   }, [sachet, state.stations, state.print, labelTemplate])
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'x-hasura-admin-secret':
+                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+               },
+            }
+         )
+      }
+   }, [sachet, labelTemplate])
 
    React.useEffect(() => {
       let timer
@@ -171,7 +155,7 @@ export const ProcessOrder = () => {
       return () => clearTimeout(timer)
    }, [weight, sachet, print])
 
-   if (!mealkit.sachet_id) {
+   if (_.isNull(mealkit.sachet_id)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -264,20 +248,14 @@ export const ProcessOrder = () => {
                   <span>{sachet.quantity}gm</span>
                </section>
             </section>
-            <StyledWeigh
-               state={scaleState}
-               isPrintDisabled={weight !== sachet.quantity}
-            >
+            <StyledWeigh state={scaleState}>
                <header>
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  <button
-                     disabled={weight !== sachet.quantity}
-                     onClick={() => print()}
-                  >
-                     Print Label
-                  </button>
+                  {!_.isNull(sachet.labelTemplateId) && (
+                     <button onClick={() => print()}>Print Label</button>
+                  )}
                </header>
                <h2>
                   {weight}
