@@ -8,13 +8,13 @@ export default function Main() {
    return (
       <main>
          <Switch>
-            <Route path="/apps/safety" exact>
+            <Route path="/safety" exact>
                <Home />
             </Route>
-            <Route path="/apps/safety/checks" exact>
+            <Route path="/safety/checks" exact>
                <SafetyChecksListing />
             </Route>
-            <Route path="/apps/safety/checks/:id" exact>
+            <Route path="/safety/checks/:id" exact>
                <SafetyForm />
             </Route>
          </Switch>

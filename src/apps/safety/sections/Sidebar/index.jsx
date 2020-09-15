@@ -19,7 +19,7 @@ const Sidebar = ({ visible, toggleSidebar }) => {
 
    const addTab = title => {
       toggleSidebar(visible => !visible)
-      createTab(title, '/apps/safety/checks')
+      createTab(title, '/safety/checks')
    }
    return (
       <StyledSidebar visible={visible}>

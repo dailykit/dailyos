@@ -17,7 +17,7 @@ const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
    return (
       <StyledWrapper>
-         <BrowserRouter>
+         <BrowserRouter basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
             <Main />

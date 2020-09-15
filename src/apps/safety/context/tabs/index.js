@@ -97,7 +97,7 @@ export const useTabs = () => {
       const tabsCount = tabs.length
       // closing last remaining tab
       if (index === 0 && tabsCount === 1) {
-         history.push('/apps/safety')
+         history.push('/safety')
       }
       // closing first tab when there's more than one tab
       else if (index === 0 && tabsCount > 1) {

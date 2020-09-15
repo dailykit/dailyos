@@ -22,7 +22,7 @@ const SafetyChecksListing = () => {
    const { addTab: createTab } = useTabs()
 
    const addTab = (title, id) => {
-      createTab(title, `/apps/safety/checks/${id}`)
+      createTab(title, `/safety/checks/${id}`)
    }
 
    const { data: { safety_safetyCheck = [] } = {}, loading } = useSubscription(
