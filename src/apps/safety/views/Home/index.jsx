@@ -16,9 +16,7 @@ const Home = () => {
 
    const {
       data: {
-         safety_safetyCheck_aggregate: {
-            aggregate: { count = '...' } = {},
-         } = {},
+         safety_safetyCheck_aggregate: { aggregate: { count = 0 } = {} } = {},
       } = {},
    } = useSubscription(SAFETY_CHECKS_COUNT)
 
@@ -28,9 +26,9 @@ const Home = () => {
          <StyledCardList>
             <DashboardTile
                title={t(address.concat('safety checks'))}
-               count={count}
+               count={count || '...'}
                conf="All available"
-               onClick={() => addTab('Safety Checks', '/apps/safety/checks')}
+               onClick={() => addTab('Safety Checks', '/safety/checks')}
             />
          </StyledCardList>
       </StyledHome>
