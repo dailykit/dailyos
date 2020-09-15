@@ -15,17 +15,18 @@ const address = 'apps.safety.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
-   const { addTab: createTab } = useTabs()
+   const { addTab } = useTabs()
 
-   const addTab = title => {
-      toggleSidebar(visible => !visible)
-      createTab(title, '/safety/checks')
-   }
    return (
       <StyledSidebar visible={visible}>
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
-            <StyledListItem onClick={() => addTab('Safety Checks')}>
+            <StyledListItem
+               onClick={() => {
+                  toggleSidebar(visible => !visible)
+                  addTab('Safety Checks', '/safety/checks')
+               }}
+            >
                {t(address.concat('Safety Checks'))}
             </StyledListItem>
          </StyledList>
