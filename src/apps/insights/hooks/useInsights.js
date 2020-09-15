@@ -44,12 +44,14 @@ let gqlQuery = {
 /**
  *
  * @param {string} insightId
- * @param {{chart?: {xKeys: Array<{key: string, action: {name: string, key: SUM | COUNT}}>, xLabels: string[]}, includeTableData: boolean}} [options]
+ * @param {string} nodeKey
+ * @param {{chart?: {xKeys: Array<{key: string, label: string}>, xLabel: string}, includeTableData: boolean}} [options]
  *
  * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
 export const useInsights = (
    insightId,
+   nodeKey,
    options = {
       chart: {},
       includeTableData: true,
@@ -91,10 +93,8 @@ export const useInsights = (
       },
    })
 
-   const queryName = Object.keys(data)[0]
-
    if (options.includeTableData || options.chart)
-      transformedData = transformer(data, queryName)
+      transformedData = transformer(data, nodeKey)
 
    const whereObject = buildOptions(insight.options || {})
 
@@ -132,7 +132,7 @@ function genChartData(chartOptions, transformedData) {
    // set chart header
    chartOptions.xKeys.forEach((key, idx) => {
       if (idx === 0) {
-         chartData[0].push(chartOptions.xLabels[idx], key.action.name)
+         chartData[0].push(chartOptions.xLabel, key)
       } else {
          chartData[0].push(key.action?.name)
       }

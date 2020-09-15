@@ -12,16 +12,21 @@ const ReferralPlansListing = () => {
          <Insight
             id="e9b59cd3-7a22-426b-bd63-37ff70e76a45"
             alignment="column"
+            nodeKey="inventoryProducts"
             includeChart
             tablePosition="left"
             chartOptions={{
                xKeys: [
                   {
                      key: 'inventoryProduct name',
-                     action: { name: 'Sales', op: 'COUNT' },
+                     label: 'Sales',
+                  },
+                  {
+                     key: 'inventoryProduct defaultCartItem totalPrice',
+                     label: 'Revenue',
                   },
                ],
-               xLabels: ['Total sales'],
+               xLabel: 'Total sales',
                availableChartTypes: ['Bar', 'PieChart', 'Line'],
                width: '900px',
             }}

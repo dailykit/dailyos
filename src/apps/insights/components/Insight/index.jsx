@@ -11,7 +11,7 @@ import Option from './Option'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', chartOptions?: {xLabels: string[], xKeys: Array<{key: string, action: {name: string, op: 'COUNT' | 'SUM'}}>, type: 'Bar' | 'Line' | 'PieChart', width?: string, height?: string, showLegend?: boolean, availableChartTypes: Array<string>, }, id: string  }} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', chartOptions?: {xLabel: string, xKeys: Array<{key: string, label: string}>, type: 'Bar' | 'Line' | 'PieChart', width?: string, height?: string, showLegend?: boolean, availableChartTypes: Array<string>, }, id: string, nodeKey: string  }} props
  */
 export default function Insight({
    includeTable = true,
@@ -22,6 +22,7 @@ export default function Insight({
       availableChartTypes: ['Bar'],
    },
    id = '',
+   nodeKey = 'nodes',
 }) {
    const {
       chartData,
@@ -29,7 +30,7 @@ export default function Insight({
       options,
       optionVariables,
       updateOptions,
-   } = useInsights(id, {
+   } = useInsights(id, nodeKey, {
       chart: chartOptions,
       includeTableData: includeChart ? chartOptions : {},
    })
