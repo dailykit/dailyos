@@ -11,16 +11,13 @@ import Option from './Option'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', chartOptions?: {xLabel: string, xKeys: Array<{key: string, label: string}>, type: 'Bar' | 'Line' | 'PieChart', width?: string, height?: string, showLegend?: boolean, availableChartTypes: Array<string>, }, id: string, nodeKey: string  }} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', id: string, nodeKey: string  }} props
  */
 export default function Insight({
    includeTable = true,
    includeChart = false,
    alignment = 'column',
    tablePosition = 'bottom',
-   chartOptions = {
-      availableChartTypes: ['Bar'],
-   },
    id = '',
    nodeKey = 'nodes',
 }) {
@@ -29,14 +26,17 @@ export default function Insight({
       tableData,
       options,
       optionVariables,
+      allowedCharts,
       updateOptions,
    } = useInsights(id, nodeKey, {
-      chart: chartOptions,
-      includeTableData: includeChart ? chartOptions : {},
+      includeTableData: true,
+      includeChart,
    })
-   const [chartType, setChartType] = useState(
-      chartOptions.availableChartTypes[0]
-   )
+   const [chartType, setChartType] = useState(allowedCharts[0]?.type)
+
+   React.useEffect(() => {
+      setChartType(allowedCharts[0]?.type)
+   }, [allowedCharts])
 
    return (
       <StyledContainer alignment={alignment} position={tablePosition}>
@@ -47,14 +47,14 @@ export default function Insight({
                      style={{ marginBottom: '12px' }}
                      name="chartTypes"
                      id="chartTypes"
-                     defaultValue={chartOptions.availableChartTypes[0]}
+                     defaultValue={chartType || ''}
                      onChange={e => {
                         setChartType(e.target.value)
                      }}
                   >
-                     {chartOptions.availableChartTypes.map(type => (
-                        <option value={type} key={type}>
-                           {type}
+                     {allowedCharts.map((chart, i) => (
+                        <option value={i} key={chart.type}>
+                           {chart.type}
                         </option>
                      ))}
                   </select>
@@ -75,9 +75,9 @@ export default function Insight({
                   chartType={chartType}
                   loader={<div>loading...</div>}
                   style={{ flex: '1' }}
-                  height={chartOptions.height || '400px'}
-                  width={chartOptions.width || '600px'}
-                  options={{ legend: chartOptions.showLegend ? {} : 'none' }}
+                  height="400px"
+                  width="600px"
+                  options={{ legend: 'none' }}
                />
             </div>
          ) : null}

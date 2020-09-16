@@ -45,7 +45,7 @@ let gqlQuery = {
  *
  * @param {string} insightId
  * @param {string} nodeKey
- * @param {{chart?: {xKeys: Array<{key: string, label: string}>, xLabel: string}, includeTableData: boolean}} [options]
+ * @param {{chart?: {chartTypeIndex: number}, includeTableData: boolean, includeChart: boolean}} [options]
  *
  * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
@@ -109,9 +109,8 @@ export const useInsights = (
       allowedCharts: insight.allowedCharts,
    }
 
-   if (options.chart && options.chart.xKeys && options.chart.xKeys.length) {
-      const chartData = genChartData(options.chart, transformedData)
-
+   if (options.includeChart && insight.allowedCharts) {
+      const chartData = genChartData(insight.allowedCharts, transformedData)
       result.chartData = chartData
    } else {
       result.chartData = null
@@ -124,48 +123,39 @@ export const useInsights = (
  *
  * @param {{xKeys: Array<{key: string, action: {name: string, key: SUM | COUNT}}>, xLabels: string[]}} chartOptions
  */
-function genChartData(chartOptions, transformedData) {
-   const groupedData = groupBy(transformedData, chartOptions.xKeys[0]?.key)
-
+function genChartData(allowedCharts, transformedData, chartTypeIndex = 0) {
    let chartData = [[]]
 
-   // set chart header
-   chartOptions.xKeys.forEach((key, idx) => {
-      if (idx === 0) {
-         chartData[0].push(chartOptions.xLabel, key)
-      } else {
-         chartData[0].push(key.action?.name)
-      }
+   // add chart header
+   if (
+      Array.isArray(allowedCharts) &&
+      allowedCharts.length &&
+      allowedCharts[chartTypeIndex] &&
+      allowedCharts[chartTypeIndex].x
+   )
+      chartData[0].push(allowedCharts[chartTypeIndex].x[0])
+
+   if (
+      Array.isArray(allowedCharts) &&
+      allowedCharts.length &&
+      allowedCharts[chartTypeIndex] &&
+      allowedCharts[chartTypeIndex].y
+   )
+      allowedCharts[chartTypeIndex].y.forEach(column => {
+         chartData[0].push(column)
+      })
+
+   // add chart data
+
+   transformedData.forEach(data => {
+      const row = []
+
+      chartData[0].forEach(label => {
+         row.push(data[label.key])
+      })
+
+      chartData.push(row)
    })
 
-   // fil chart data
-   chartData.push(
-      ...Object.keys(groupedData).map(key => {
-         const result = [key]
-
-         chartOptions.xKeys.forEach(option => {
-            result.push(getChartValue(option, groupedData, key) || 0)
-         })
-
-         return result
-      })
-   )
-
    return chartData
-}
-
-function getChartValue(option, groupedData, key) {
-   switch (option.action?.op) {
-      case 'SUM':
-         return groupedData[key].reduce(
-            (acc, curr) => acc + curr[option.key],
-            0
-         )
-
-      case 'COUNT':
-         return groupedData[key]?.length
-
-      default:
-         return 0
-   }
 }

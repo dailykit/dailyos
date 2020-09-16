@@ -16,18 +16,6 @@ const ReferralPlansListing = () => {
             includeChart
             tablePosition="left"
             chartOptions={{
-               xKeys: [
-                  {
-                     key: 'inventoryProduct name',
-                     label: 'Sales',
-                  },
-                  {
-                     key: 'inventoryProduct defaultCartItem totalPrice',
-                     label: 'Revenue',
-                  },
-               ],
-               xLabel: 'Total sales',
-               availableChartTypes: ['Bar', 'PieChart', 'Line'],
                width: '900px',
             }}
          />
