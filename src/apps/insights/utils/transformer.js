@@ -31,16 +31,15 @@ export const buildOptionVariables = data => {
    return unflatten(data, { separator: '  ' })
 }
 
-function flattenObject(object, prefix) {
+function flattenObject(object) {
    let result = {}
    Object.keys(object).forEach(key => {
       if (!isObject(object[key])) {
          if (key !== '__typename') {
-            const tempKey = ` ${prefix} ${key}`.trim()
-            result[tempKey] = object[key]
+            result[key] = object[key]
          }
       } else {
-         const otherResults = flattenObject(object[key], `${prefix} ${key}`)
+         const otherResults = flattenObject(object[key])
          result = { ...otherResults, ...result }
       }
    })
@@ -57,7 +56,7 @@ function flattenQuery(entities) {
          if (!isObject(node)) {
             if (node !== '__typename') result[node] = node
          } else {
-            const temp = flattenObject(node, '')
+            const temp = flattenObject(node)
             result = { ...result, ...temp }
          }
 
