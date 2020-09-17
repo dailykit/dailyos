@@ -96,6 +96,7 @@ export default function Insight({
                                  column={column}
                                  setYColumns={setYColumns}
                                  yColumns={yColumns}
+                                 multiple={chartType.multiple}
                               />
                            )
                         })}
@@ -153,7 +154,7 @@ export default function Insight({
    )
 }
 
-function ChartColumn({ column, setYColumns, yColumns }) {
+function ChartColumn({ column, setYColumns, yColumns, multiple }) {
    const [checked, setChecked] = useState(false)
 
    React.useEffect(() => {
@@ -165,16 +166,26 @@ function ChartColumn({ column, setYColumns, yColumns }) {
       }
    }, [checked])
 
+   const selectColumn = () => {
+      if (!multiple) {
+         setYColumns([column])
+      }
+   }
+
    return (
-      <DropdownItem>
-         <Checkbox
-            checked={checked}
-            onChange={() => {
-               setChecked(!checked)
-            }}
-         >
-            {column.label}
-         </Checkbox>
+      <DropdownItem onClick={selectColumn}>
+         {multiple ? (
+            <Checkbox
+               checked={checked}
+               onChange={() => {
+                  setChecked(!checked)
+               }}
+            >
+               {column.label}
+            </Checkbox>
+         ) : (
+            <>{column.label}</>
+         )}
       </DropdownItem>
    )
 }
