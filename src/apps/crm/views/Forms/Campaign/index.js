@@ -1,40 +1,39 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader } from '@dailykit/ui'
+import { Toggle, Input, Loader, Text } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
-import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
+import { StyledHeader, StyledWrapper, CenterDiv } from './styled'
+import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
 
-const CouponForm = () => {
+const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
-   const { id: couponId } = useParams()
-   const [codeTitle, setCodeTitle] = useState('')
+   const { id: campaignId } = useParams()
+   const [campaignTitle, setCampaignTitle] = useState('')
+   const [type, setType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    // Subscription
-   const { loading } = useSubscription(COUPON_DATA, {
+   const { loading } = useSubscription(CAMPAIGN_DATA, {
       variables: {
-         id: couponId,
+         id: campaignId,
       },
       onSubscriptionData: data => {
-         setState(data.subscriptionData.data.coupon)
-         setCodeTitle(data.subscriptionData.data.coupon.code)
-         setToggle(data.subscriptionData.data.coupon.isActive)
-         // collectionDispatch({
-         //    type: 'SEED',
-         //    payload: data.coupon,
-         // })
+         setState(data.subscriptionData.data.campaign)
+         setCampaignTitle(data.subscriptionData.data.campaign.metaDetails.title)
+         setType(data.subscriptionData.data.campaign.type)
+         setToggle(data.subscriptionData.data.campaign.isActive)
+         setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
       },
    })
 
    // Mutation
-   const [updateCoupon] = useMutation(UPDATE_COUPON, {
+   const [updateCoupon] = useMutation(UPDATE_CAMPAIGN, {
       onCompleted: () => {
          toast.success('Updated!')
-         setTabTitle(codeTitle)
+         setTabTitle(campaignTitle)
       },
       onError: error => {
          console.log(error)
@@ -42,13 +41,13 @@ const CouponForm = () => {
       },
    })
 
-   const updateCodeTitle = () => {
-      if (codeTitle) {
+   const updateCampaignTitle = () => {
+      if (campaignTitle) {
          updateCoupon({
             variables: {
-               id: couponId,
+               id: campaignId,
                set: {
-                  code: codeTitle,
+                  metaDetails: { ...state.metaDetails, title: campaignTitle },
                },
             },
          })
@@ -58,7 +57,7 @@ const CouponForm = () => {
       if (toggle || !toggle) {
          updateCoupon({
             variables: {
-               id: couponId,
+               id: campaignId,
                set: {
                   isActive: !toggle,
                },
@@ -69,21 +68,24 @@ const CouponForm = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/coupons')
+         addTab('Customers', '/crm/customers')
       }
    }, [addTab, tab])
 
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
+         <CenterDiv>
+            <Text as="title">Campaign Type: {type}</Text>
+         </CenterDiv>
+         <StyledHeader gridCol="10fr 1fr">
             <Input
                type="text"
-               label="Coupon Code"
+               label="Campaign Name"
                name="code"
-               value={codeTitle}
-               onChange={e => setCodeTitle(e.target.value)}
-               onBlur={updateCodeTitle}
+               value={campaignTitle}
+               onChange={e => setCampaignTitle(e.target.value)}
+               onBlur={updateCampaignTitle}
             />
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
@@ -94,4 +96,4 @@ const CouponForm = () => {
    )
 }
 
-export default CouponForm
+export default CampaignForm

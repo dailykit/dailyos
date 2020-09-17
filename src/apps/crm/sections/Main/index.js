@@ -9,6 +9,8 @@ import {
    CustomerRelation,
    CouponListing,
    CouponForm,
+   CampaignListing,
+   CampaignForm,
 } from '../../views'
 
 const Main = () => {
@@ -27,7 +29,9 @@ const Main = () => {
                component={ReferralPlansListing}
             />
             <Route path="/crm/coupons/:id" exact component={CouponForm} />
+            <Route path="/crm/campaign/:id" exact component={CampaignForm} />
             <Route path="/crm/coupons" component={CouponListing} exact />
+            <Route path="/crm/campaign" component={CampaignListing} exact />
             <Route path="/crm" component={Home} exact />
          </Switch>
       </main>

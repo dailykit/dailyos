@@ -10,10 +10,10 @@ import tableOptions from '../../Listings/tableOptions'
 
 const OrdersTable = ({ id }) => {
    const { dispatch, tab } = useTabs()
-   const [orders, setOrders] = useState([])
-   const tableRef = useRef()
+   const [orders, setOrders] = useState(undefined)
+   const tableRef = useRef(null)
    const history = useHistory()
-   const { loading: listLoading } = useQuery(ORDERS_LISTING, {
+   const { loading: listLoading, error } = useQuery(ORDERS_LISTING, {
       variables: {
          keycloakId: id,
       },
@@ -33,6 +33,9 @@ const OrdersTable = ({ id }) => {
          setOrders(result)
       },
    })
+   if (error) {
+      console.log(error)
+   }
    useEffect(() => {
       if (!tab) {
          history.push('/crm/customers')
@@ -81,13 +84,15 @@ const OrdersTable = ({ id }) => {
                      {orders.length})
                   </Text>
                </div>
-               <ReactTabulator
-                  columns={columns}
-                  data={orders}
-                  rowClick={rowClick}
-                  options={tableOptions}
-                  ref={tableRef}
-               />
+               {Boolean(orders) && (
+                  <ReactTabulator
+                     columns={columns}
+                     data={orders}
+                     rowClick={rowClick}
+                     options={tableOptions}
+                     ref={tableRef}
+                  />
+               )}
             </>
          )}
       </div>

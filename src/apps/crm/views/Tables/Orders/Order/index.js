@@ -31,9 +31,9 @@ const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const [products, setProducts] = useState([])
+   const [products, setProducts] = useState(undefined)
    const tableRef = useRef()
-   const { data: orderData } = useQuery(ORDER, {
+   const { data: orderData, error } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
       },
@@ -49,7 +49,9 @@ const OrderInfo = () => {
          setProducts(result)
       },
    })
-
+   if (error) {
+      console.log(error)
+   }
    const setOrder = (orderId, order) => {
       dispatch({
          type: 'STORE_TAB_DATA',
@@ -154,11 +156,13 @@ const OrderInfo = () => {
                   </StyledSpan>
                </StyledDiv>
                <StyledTable>
-                  <ReactTabulator
-                     columns={columns}
-                     data={products}
-                     ref={tableRef}
-                  />
+                  {Boolean(products) && (
+                     <ReactTabulator
+                        columns={columns}
+                        data={products}
+                        ref={tableRef}
+                     />
+                  )}
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">

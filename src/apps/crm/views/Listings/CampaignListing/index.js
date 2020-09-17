@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import {
@@ -9,48 +9,48 @@ import {
    PlusIcon,
    Toggle,
    Loader,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
 import {
-   COUPON_LISTING,
-   COUPON_TOTAL,
-   COUPON_ACTIVE,
-   CREATE_COUPON,
-   DELETE_COUPON,
+   CAMPAIGN_LISTING,
+   CAMPAIGN_TOTAL,
+   CAMPAIGN_ACTIVE,
+   DELETE_CAMPAIGN,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import tableOptions from '../tableOptions'
-import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
+import CampaignTypeTunnel from './Tunnel'
 
-const CouponListing = () => {
+const CampaignListing = () => {
    const { addTab, tab } = useTabs()
-   const [coupons, setCoupons] = useState(undefined)
+   const [campaign, setCampaign] = useState(undefined)
    const tableRef = useRef()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel()
    // Subscription
-   const { loading: listLoading, error } = useSubscription(COUPON_LISTING, {
+   const { loading: listLoading, error } = useSubscription(CAMPAIGN_LISTING, {
       onSubscriptionData: data => {
-         const result = data.subscriptionData.data.coupons.map(coupon => {
+         const result = data.subscriptionData.data.campaigns.map(campaign => {
             return {
-               id: coupon.id,
-               code: coupon.code,
-               used: 'N/A',
-               rate: 'N/A',
-               amount: 'N/A',
-               active: coupon.isActive,
-               duration: 'N/A',
+               id: campaign.id,
+               name: campaign.metaDetails.title,
+               type: campaign.type,
+               active: campaign.isActive,
             }
          })
-         setCoupons(result)
+         setCampaign(result)
       },
    })
    if (error) {
       console.log(error)
    }
-   const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
+   const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
 
    // Mutation
-   const [updateCouponActive] = useMutation(COUPON_ACTIVE, {
+   const [updateCampaignActive] = useMutation(CAMPAIGN_ACTIVE, {
       onCompleted: () => {
          toast.info('Coupon Updated!')
       },
@@ -58,19 +58,6 @@ const CouponListing = () => {
          toast.error(`Error : ${error.message}`)
       },
    })
-   const [createCoupon] = useMutation(CREATE_COUPON, {
-      variables: {
-         couponCode: `coupon-${randomSuffix()}`,
-      },
-      onCompleted: data => {
-         addTab(data.createCoupon.code, `/crm/coupons/${data.createCoupon.id}`)
-         toast.success('Coupon created!')
-      },
-      onError: error => {
-         toast.error(`Error : ${error.message}`)
-      },
-   })
-
    React.useEffect(() => {
       if (!tab) {
          addTab('Customers', '/crm/customers')
@@ -78,9 +65,9 @@ const CouponListing = () => {
    }, [addTab, tab])
 
    const toggleHandler = (toggle, id) => {
-      updateCouponActive({
+      updateCampaignActive({
          variables: {
-            couponId: id,
+            campaignId: id,
             isActive: toggle,
          },
       })
@@ -96,9 +83,9 @@ const CouponListing = () => {
       )
    }
 
-   const [deleteCoupon] = useMutation(DELETE_COUPON, {
+   const [deleteCampaign] = useMutation(DELETE_CAMPAIGN, {
       onCompleted: () => {
-         toast.success('Coupon deleted!')
+         toast.success('Campaign deleted!')
       },
       onError: error => {
          console.log(error)
@@ -107,33 +94,31 @@ const CouponListing = () => {
    })
 
    // Handler
-   const deleteHandler = (e, coupon) => {
+   const deleteHandler = (e, Campaign) => {
       e.stopPropagation()
       if (
          window.confirm(
-            `Are you sure you want to delete Coupon - ${coupon.code}?`
+            `Are you sure you want to delete Campaign - ${Campaign.type}?`
          )
       ) {
-         deleteCoupon({
+         deleteCampaign({
             variables: {
-               id: coupon.id,
+               campaignId: Campaign.id,
             },
          })
       }
    }
 
    const rowClick = (e, row) => {
-      const { id, code } = row._row.data
-      const param = `/crm/coupons/${id}`
-      const tabTitle = code
+      const { id, name } = row._row.data
+      const param = `/crm/campaign/${id}`
+      const tabTitle = name
       addTab(tabTitle, param)
    }
 
    const columns = [
-      { title: 'Coupon Code', field: 'code', headerFilter: true },
-      { title: 'Used', field: 'used', headerFilter: true },
-      { title: 'Conversion Rate', field: 'rate', headerFilter: true },
-      { title: 'Amount Spent', field: 'amount' },
+      { title: 'Campaign Name', field: 'name', headerFilter: true },
+      { title: 'Campaign Type', field: 'type', headerFilter: true },
       {
          title: 'Active',
          field: 'active',
@@ -149,32 +134,36 @@ const CouponListing = () => {
          formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
       },
    ]
-   if (loading) return <Loader />
-   if (listLoading) return <Loader />
+   if (listLoading || loading) return <Loader />
    return (
       <StyledWrapper>
          <StyledHeader gridCol="10fr  1fr">
             <Text as="title">
-               Coupons(
-               {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
+               Campaign(
+               {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})
             </Text>
             <ButtonGroup>
-               <IconButton type="solid" onClick={createCoupon}>
+               <IconButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
                </IconButton>
             </ButtonGroup>
          </StyledHeader>
-         {Boolean(coupons) && (
+         {Boolean(campaign) && (
             <ReactTabulator
                columns={columns}
-               data={coupons}
+               data={campaign}
                rowClick={rowClick}
                options={tableOptions}
                ref={tableRef}
             />
          )}
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <CampaignTypeTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
       </StyledWrapper>
    )
 }
 
-export default CouponListing
+export default CampaignListing

@@ -5,13 +5,14 @@ import { useSubscription } from '@apollo/react-hooks'
 // State
 import { useTabs } from '../../context'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
-import { CUSTOMERS_COUNT, COUPON_TOTAL } from '../../graphql'
+import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
 
 const Home = () => {
    const { addTab } = useTabs()
    // const { t } = useTranslation()
    const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
    const { data: couponTotal } = useSubscription(COUPON_TOTAL)
+   const { data: campaignTotal } = useSubscription(CAMPAIGN_TOTAL)
 
    const [search, setSearch] = React.useState('')
    return (
@@ -42,6 +43,13 @@ const Home = () => {
                title="Coupons"
                count={couponTotal?.couponsAggregate?.aggregate?.count || '...'}
                onClick={() => addTab('Coupons', '/crm/coupons')}
+            />
+            <DashboardTile
+               title="Campaigns"
+               count={
+                  campaignTotal?.campaignsAggregate?.aggregate?.count || '...'
+               }
+               onClick={() => addTab('Campaign', '/crm/campaign')}
             />
          </StyledCardList>
       </StyledHome>

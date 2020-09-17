@@ -6,17 +6,14 @@ export const TunnelBody = styled.div`
    overflow: auto;
 `
 
-export const InputWrap = styled.div`
+export const StyledRow = styled.div`
    margin-bottom: 32px;
-`
-export const Wrap = styled.div`
-   padding: 16px;
 `
 
 export const SolidTile = styled.button`
    width: 70%;
    display: block;
-   margin: 0 auto;
+   margin: 0 auto 16px auto;
    border: 1px solid #cecece;
    padding: 10px 20px;
    border-radius: 2px;
@@ -45,39 +42,34 @@ export const Flex = styled.div`
    justify-content: space-between;
    align-items: center;
 `
-export const InputWrapper = styled.div`
+export const StyledDiv = styled.div`
    padding: 16px 0;
    p .addFact {
       color: #00a7e1;
    }
 `
 
-export const StyledContainer = styled.div`
-   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-   transition: 0.3s;
-   width: 40%;
-   margin: 16px 20em;
-   padding: 16px;
-   p {
-      color: #00a7e1;
-      &:hover {
-         text-decoration: underline;
+export const ImageContainer = styled.div`
+   width: 464px;
+   height: 128px;
+   position: relative;
+   margin-bottom: 16px;
+   img {
+      width: 464px;
+      height: 128px;
+      object-fit: cover;
+   }
+   div {
+      position: absolute;
+      padding: 12px;
+      right: 0;
+      left: 0;
+      text-align: right;
+      background: linear-gradient(to bottom, #111, transparent);
+      span {
+         margin-right: 16px;
+         cursor: pointer;
       }
    }
-   &:hover {
-      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-   }
 `
-
-export const StyledRow = styled.div`
-   margin-bottom: 16px;
-   display: flex;
-   flex-direction: row;
-   justify-content: space-between;
-`
-
-export const StyledAction = styled.div`
-   position: absolute;
-   right: 16px;
-   top: 16px;
-`
+// Made by Deepak Negi
