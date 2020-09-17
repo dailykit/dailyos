@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-
+import tableOption from '../../Listings/tableOptions'
 const WalletTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
@@ -65,6 +65,7 @@ const WalletTable = () => {
                data={data}
                rowClick={rowClick}
                ref={tableRef}
+               options={tableOption}
             />
          </div>
       </React.Fragment>

@@ -41,12 +41,10 @@ export default function RewardDetailsunnel({
    const [rewardValue, setRewardValue] = useState(
       rewardInfo?.rewardValue || {
          type: 'absolute',
-         value: 0 || {},
+         value: '',
       }
    )
-   const [rewardValueType, setRewardValueType] = useState(
-      rewardInfo?.rewardValue?.type || ''
-   )
+   const [rewardValueType, setRewardValueType] = useState('absolute')
    const [options] = useState([
       { id: 1, title: 'absolute' },
       { id: 2, title: 'conditional' },
@@ -60,7 +58,7 @@ export default function RewardDetailsunnel({
          closeRewardTypeTunnel(1)
       },
       onError: () => {
-         toast.error('Error!')
+         toast.error('Failed to update the reward, please try again!')
          closeTunnel(1)
       },
    })
@@ -79,7 +77,7 @@ export default function RewardDetailsunnel({
          },
       })
    }
-   //    if (loading) return <Loader />
+
    return (
       <>
          <Tunnels tunnels={tunnels}>

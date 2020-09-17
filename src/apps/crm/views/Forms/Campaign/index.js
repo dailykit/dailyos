@@ -26,10 +26,6 @@ const CampaignForm = () => {
          setType(data.subscriptionData.data.campaign.type)
          setToggle(data.subscriptionData.data.campaign.isActive)
          setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
-         // collectionDispatch({
-         //    type: 'SEED',
-         //    payload: data.coupon,
-         // })
       },
    })
 
