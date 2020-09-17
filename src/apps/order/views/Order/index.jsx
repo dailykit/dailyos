@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
@@ -8,8 +9,12 @@ import { ORDER } from '../../graphql'
 import { formatDate } from '../../utils'
 import { PrintIcon } from '../../assets/icons'
 import { useOrder, useTabs } from '../../context'
-import { InlineLoader } from '../../../../shared/components'
 import { MealKits, Inventories, ReadyToEats } from './sections'
+import {
+   Flex,
+   InlineLoader,
+   DropdownButton,
+} from '../../../../shared/components'
 
 import {
    Wrapper,
@@ -54,7 +59,7 @@ const Order = () => {
             },
          }),
       },
-      onSubscriptionData: async ({ subscriptionData: { data = {} } }) => {
+      onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
          const {
             orderMealKitProducts,
             orderInventoryProducts,
@@ -89,6 +94,54 @@ const Order = () => {
          '_blank'
       )
    }
+
+   const printKOT = async () => {
+      try {
+         const url = `${
+            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+         await axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printKOT',
+                  payload: {
+                     new: {
+                        id: order.id,
+                        orderStatus: 'UNDER_PROCESSING',
+                     },
+                  },
+               },
+            },
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'x-hasura-admin-secret':
+                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+               },
+            }
+         )
+      } catch (error) {
+         console.log(error)
+      }
+   }
+
+   const viewKOT = React.useCallback(() => {
+      const kots = async () => {
+         try {
+            const { data: { data = {}, success } = {} } = await axios.get(
+               `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/kot-urls?id=${order.id}`
+            )
+            if (success) {
+               data.forEach(node => window.open(node.url, '_blank'))
+            }
+         } catch (error) {
+            console.log('viewKOT -> error', error)
+         }
+      }
+      kots()
+   }, [order])
 
    if (loading || !order)
       return (
@@ -154,10 +207,25 @@ const Order = () => {
             </section>
          </Header>
          <section>
-            <StyledCount>
-               0 / {inventories.length + mealkits.length + readytoeats.length}
-               &nbsp;{t(address.concat('items'))}
-            </StyledCount>
+            <Flex container alignItems="center" justifyContent="space-between">
+               <StyledCount>
+                  0 /{' '}
+                  {inventories.length + mealkits.length + readytoeats.length}
+                  &nbsp;{t(address.concat('items'))}
+               </StyledCount>
+               <Flex width="240px">
+                  <DropdownButton title="KOT Options">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option onClick={() => printKOT()}>
+                           Print KOT
+                        </DropdownButton.Option>
+                        <DropdownButton.Option onClick={() => viewKOT()}>
+                           View in browser
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>
+               </Flex>
+            </Flex>
             <StyledTabs>
                <StyledTabList>
                   <StyledTab>Meal Kits ({mealkits.length})</StyledTab>
