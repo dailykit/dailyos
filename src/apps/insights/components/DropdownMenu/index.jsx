@@ -3,14 +3,18 @@ import styled from 'styled-components'
 
 import { ChevronDown } from '../../../../shared/assets/icons'
 
-export const Dropdown = ({ title, children, view, setView }) => {
+/**
+ *
+ * @param {{title: string, withIcon: boolean}} param0
+ */
+export const Dropdown = ({ title, children, withIcon }) => {
    const [show, setShow] = useState(false)
    return (
       <div style={{ position: 'relative' }}>
          <DropdownButton onClick={() => setShow(value => !value)}>
             <p>{title}</p>
 
-            <ChevronDown color="#888d9d" />
+            {withIcon && <ChevronDown color="#888d9d" />}
          </DropdownButton>
 
          {show && <Box>{children}</Box>}
