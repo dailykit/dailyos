@@ -45,7 +45,7 @@ let gqlQuery = {
  *
  * @param {string} insightId
  * @param {string} nodeKey
- * @param {{chart?: {chartTypeIndex: number}, includeTableData: boolean, includeChart: boolean}} [options]
+ * @param {{chart?: {chartTypeIndex: number}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumn?: string}} [options]
  *
  * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
@@ -110,7 +110,11 @@ export const useInsights = (
    }
 
    if (options.includeChart && insight.allowedCharts) {
-      const chartData = genChartData(insight.allowedCharts, transformedData)
+      const chartData = genChartData(insight.allowedCharts, transformedData, {
+         chartTypeIndex: 0,
+         xColumn: options.xColumn,
+         yColumns: options.yColumns,
+      })
       result.chartData = chartData
    } else {
       result.chartData = null
@@ -121,9 +125,15 @@ export const useInsights = (
 
 /**
  *
- * @param {{xKeys: Array<{key: string, action: {name: string, key: SUM | COUNT}}>, xLabels: string[]}} chartOptions
+ * @param {Array<{type: string, columns: any[]}>} allowedCharts
+ * @param {any[]} transformedData
+ * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[]}} option
  */
-function genChartData(allowedCharts, transformedData, chartTypeIndex = 0) {
+function genChartData(
+   allowedCharts,
+   transformedData,
+   { chartTypeIndex, xColumn, yColumns }
+) {
    let chartData = [[]]
 
    // add chart header
@@ -132,18 +142,32 @@ function genChartData(allowedCharts, transformedData, chartTypeIndex = 0) {
       allowedCharts.length &&
       allowedCharts[chartTypeIndex] &&
       allowedCharts[chartTypeIndex].x
-   )
-      chartData[0].push(allowedCharts[chartTypeIndex].x[0])
+   ) {
+      if (xColumn) {
+         const index = allowedCharts[chartTypeIndex].x.findIndex(
+            col => col.key === xColumn
+         )
 
-   if (
-      Array.isArray(allowedCharts) &&
-      allowedCharts.length &&
-      allowedCharts[chartTypeIndex] &&
-      allowedCharts[chartTypeIndex].y
-   )
-      allowedCharts[chartTypeIndex].y.forEach(column => {
+         if (index >= 0)
+            chartData[0].push(allowedCharts[chartTypeIndex].x[index])
+      } else {
+         // push the first column from x in header
+         chartData[0].push(allowedCharts[chartTypeIndex].x[0])
+      }
+   }
+
+   if (yColumns.length) {
+      yColumns.forEach(column => {
          chartData[0].push(column)
       })
+   } else {
+      if (
+         Array.isArray(allowedCharts) &&
+         allowedCharts[chartTypeIndex] &&
+         allowedCharts[chartTypeIndex].y
+      )
+         chartData[0].push(allowedCharts[chartTypeIndex].y[0])
+   }
 
    // add chart data
 
