@@ -1020,3 +1020,14 @@ export const LABEL_TEMPLATE = gql`
       }
    }
 `
+
+export const DEVICES = {
+   PRINTERS: gql`
+      query printers($type: String_comparison_exp!) {
+         printers(where: { printerType: $type }) {
+            name
+            printNodeId
+         }
+      }
+   `,
+}
