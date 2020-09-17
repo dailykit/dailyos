@@ -4,10 +4,12 @@ import { Chart } from 'react-google-charts'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import styled from 'styled-components'
+import { Checkbox } from '@dailykit/ui'
 
 import { useInsights } from '../../hooks/useInsights'
 import { tableConfig } from './tableConfig'
 import Option from './Option'
+import { Dropdown, DropdownItem } from '../DropdownMenu'
 
 /**
  *
@@ -21,6 +23,10 @@ export default function Insight({
    id = '',
    nodeKey = 'nodes',
 }) {
+   const [chartType, setChartType] = useState({ index: 0 })
+   const [xColumn, setXColumn] = useState('')
+   const [yColumns, setYColumns] = useState([])
+
    const {
       chartData,
       tableData,
@@ -31,12 +37,13 @@ export default function Insight({
    } = useInsights(id, nodeKey, {
       includeTableData: true,
       includeChart,
+      xColumn,
+      yColumns,
    })
-   const [chartType, setChartType] = useState(allowedCharts[0]?.type)
 
    React.useEffect(() => {
-      setChartType(allowedCharts[0]?.type)
-   }, [allowedCharts])
+      if (allowedCharts.length) setChartType({ ...allowedCharts[0], index: 0 })
+   }, [allowedCharts.length])
 
    return (
       <StyledContainer alignment={alignment} position={tablePosition}>
@@ -49,7 +56,10 @@ export default function Insight({
                      id="chartTypes"
                      defaultValue={chartType || ''}
                      onChange={e => {
-                        setChartType(e.target.value)
+                        setChartType({
+                           index: e.target.value,
+                           type: allowedCharts[e.target.value].type,
+                        })
                      }}
                   >
                      {allowedCharts.map((chart, i) => (
@@ -58,6 +68,38 @@ export default function Insight({
                         </option>
                      ))}
                   </select>
+
+                  <select
+                     style={{ marginBottom: '12px' }}
+                     name="x-options"
+                     id="x-options"
+                     onChange={e => {
+                        setXColumn(e.target.value)
+                     }}
+                  >
+                     {allowedCharts.length &&
+                        allowedCharts[chartType.index].x.map(column => {
+                           return (
+                              <option value={column.key} key={column.key}>
+                                 {column.label}
+                              </option>
+                           )
+                        })}
+                  </select>
+
+                  <Dropdown title="sources" withIcon>
+                     {allowedCharts.length &&
+                        allowedCharts[chartType.index].y.map(column => {
+                           return (
+                              <ChartColumn
+                                 key={column.key}
+                                 column={column}
+                                 setYColumns={setYColumns}
+                                 yColumns={yColumns}
+                              />
+                           )
+                        })}
+                  </Dropdown>
 
                   {!includeTable ? (
                      <>
@@ -72,7 +114,7 @@ export default function Insight({
                </div>
                <Chart
                   data={chartData}
-                  chartType={chartType}
+                  chartType={chartType.type}
                   loader={<div>loading...</div>}
                   style={{ flex: '1' }}
                   height="400px"
@@ -108,6 +150,32 @@ export default function Insight({
             </>
          ) : null}
       </StyledContainer>
+   )
+}
+
+function ChartColumn({ column, setYColumns, yColumns }) {
+   const [checked, setChecked] = useState(false)
+
+   React.useEffect(() => {
+      if (checked) {
+         setYColumns(cols => [...cols, column])
+      } else {
+         const newColumns = yColumns.filter(col => col.key !== column.key)
+         setYColumns(newColumns)
+      }
+   }, [checked])
+
+   return (
+      <DropdownItem>
+         <Checkbox
+            checked={checked}
+            onChange={() => {
+               setChecked(!checked)
+            }}
+         >
+            {column.label}
+         </Checkbox>
+      </DropdownItem>
    )
 }
 
