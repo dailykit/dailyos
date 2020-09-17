@@ -5,11 +5,11 @@ import { AuthProvider, TabProvider } from './context'
 import App from './App'
 
 const OnlineStore = () => (
-   //<AuthProvider>
+   <AuthProvider>
    <TabProvider>
       <App />
    </TabProvider>
-   //</AuthProvider>
+   </AuthProvider>
 )
 
 export default OnlineStore
