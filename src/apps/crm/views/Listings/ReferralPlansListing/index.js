@@ -9,7 +9,7 @@ const ReferralPlansListing = () => {
             <h1>Referral Plans</h1>
             <StyledPagination>Total: 10000</StyledPagination>
          </StyledHeader>
-         <div>Heelo I am cusotmer listing</div>
+         <h1>This part of the CRM App is not ready.</h1>
       </StyledWrapper>
    )
 }

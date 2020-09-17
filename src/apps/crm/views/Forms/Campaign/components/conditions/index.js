@@ -9,7 +9,7 @@ import {
    IconButton,
    Text,
 } from '@dailykit/ui'
-import { UPDATE_COUPON } from '../../../../../graphql'
+import { UPDATE_CAMPAIGN } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'
 import { StyledContainer, StyledRow } from './styled'
@@ -17,7 +17,7 @@ const ConditionComp = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Mutation
-   const [updateCoupon] = useMutation(UPDATE_COUPON, {
+   const [updateCoupon] = useMutation(UPDATE_CAMPAIGN, {
       onCompleted: () => {
          toast.success('Updated!')
          closeTunnel(1)
@@ -34,7 +34,7 @@ const ConditionComp = ({ state }) => {
          variables: {
             id: state.id,
             set: {
-               visibleConditionId: conditionId,
+               conditionId,
             },
          },
       })
@@ -42,15 +42,14 @@ const ConditionComp = ({ state }) => {
    return (
       <>
          <Conditions
-            id={state.visibleConditionId}
+            id={state.conditionId}
             onSave={id => saveInfo(id)}
             tunnels={tunnels}
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
          />
-         {state.visibleConditionId ? (
+         {state.conditionId ? (
             <StyledContainer>
-               <Text as="title">Coupon Condition</Text>
                <StyledRow>
                   <Text as="p">View/Edit Conditions</Text>
                   <IconButton type="outline" onClick={() => openTunnel(1)}>
