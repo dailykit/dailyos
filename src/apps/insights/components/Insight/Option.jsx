@@ -105,7 +105,7 @@ export default function Option({ options, state, updateOptions }) {
 
    if (submenu === 'main')
       return (
-         <Dropdown title="Filters">
+         <Dropdown title="Filters" withIcon>
             {Object.keys(options).map(option => {
                return (
                   <DropdownItem
@@ -122,7 +122,7 @@ export default function Option({ options, state, updateOptions }) {
       )
 
    return (
-      <Dropdown title="Filters">
+      <Dropdown title="Filters" withIcon>
          <DropdownItem
             onClick={() => setDropdownView('main')}
             leftIcon={<LeftIcon color="#888d9d" />}
