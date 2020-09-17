@@ -39,6 +39,7 @@ export default function Insight({
       includeChart,
       xColumn,
       yColumns,
+      chartType,
    })
 
    React.useEffect(() => {

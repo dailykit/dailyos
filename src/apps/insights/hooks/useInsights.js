@@ -45,7 +45,7 @@ let gqlQuery = {
  *
  * @param {string} insightId
  * @param {string} nodeKey
- * @param {{chart?: {chartTypeIndex: number}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumn?: string}} [options]
+ * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumn?: string}} [options]
  *
  * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
@@ -114,6 +114,7 @@ export const useInsights = (
          chartTypeIndex: 0,
          xColumn: options.xColumn,
          yColumns: options.yColumns,
+         chartType: options.chartType,
       })
       result.chartData = chartData
    } else {
@@ -127,9 +128,34 @@ export const useInsights = (
  *
  * @param {Array<{type: string, columns: any[]}>} allowedCharts
  * @param {any[]} transformedData
- * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[]}} option
+ * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[], chartType: {multiple: boolean, type: string, index: number}}} option
  */
 function genChartData(
+   allowedCharts,
+   transformedData,
+   { chartTypeIndex, xColumn, yColumns, chartType }
+) {
+   let chartData = []
+   switch (chartType.type) {
+      case 'Bar':
+         chartData = generateBarChartData(allowedCharts, transformedData, {
+            chartTypeIndex,
+            xColumn,
+            yColumns,
+         })
+         return chartData
+
+      default:
+         chartData = generateBarChartData(allowedCharts, transformedData, {
+            chartTypeIndex,
+            xColumn,
+            yColumns,
+         })
+         return chartData
+   }
+}
+
+function generateBarChartData(
    allowedCharts,
    transformedData,
    { chartTypeIndex, xColumn, yColumns }
