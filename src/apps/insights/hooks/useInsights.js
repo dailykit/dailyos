@@ -111,7 +111,6 @@ export const useInsights = (
 
    if (options.includeChart && insight.allowedCharts) {
       const chartData = genChartData(insight.allowedCharts, transformedData, {
-         chartTypeIndex: 0,
          xColumn: options.xColumn,
          yColumns: options.yColumns,
          chartType: options.chartType,
@@ -133,21 +132,29 @@ export const useInsights = (
 function genChartData(
    allowedCharts,
    transformedData,
-   { chartTypeIndex, xColumn, yColumns, chartType }
+   { xColumn, yColumns, chartType }
 ) {
    let chartData = []
+
    switch (chartType.type) {
       case 'Bar':
          chartData = generateBarChartData(allowedCharts, transformedData, {
-            chartTypeIndex,
             xColumn,
             yColumns,
+            chartTypeIndex: chartType.index,
          })
+         return chartData
+
+      case 'PieChart':
+         chartData = generatePieChartData(allowedCharts, transformedData, {
+            chartTypeIndex: chartType.index,
+         })
+
          return chartData
 
       default:
          chartData = generateBarChartData(allowedCharts, transformedData, {
-            chartTypeIndex,
+            chartTypeIndex: chartType.index,
             xColumn,
             yColumns,
          })
@@ -197,6 +204,45 @@ function generateBarChartData(
 
    // add chart data
 
+   transformedData.forEach(data => {
+      const row = []
+
+      chartData[0].forEach(label => {
+         row.push(data[label.key])
+      })
+
+      chartData.push(row)
+   })
+
+   return chartData
+}
+
+function generatePieChartData(
+   allowedCharts,
+   transformedData,
+   { chartTypeIndex }
+) {
+   let chartData = [[]]
+
+   if (
+      Array.isArray(allowedCharts) &&
+      allowedCharts.length &&
+      allowedCharts[chartTypeIndex] &&
+      allowedCharts[chartTypeIndex].slices?.length
+   ) {
+      chartData[0].push(allowedCharts[chartTypeIndex].slices[0])
+   }
+
+   if (
+      Array.isArray(allowedCharts) &&
+      allowedCharts.length &&
+      allowedCharts[chartTypeIndex] &&
+      allowedCharts[chartTypeIndex].metrices?.length
+   ) {
+      chartData[0].push(allowedCharts[chartTypeIndex].metrices[0])
+   }
+
+   // add chart data
    transformedData.forEach(data => {
       const row = []
 
