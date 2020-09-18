@@ -164,7 +164,7 @@ const AddUserTunnel = ({
       } else {
          closeTunnel(1)
       }
-   }, [isOpen, openTunnel, closeTunnel])
+   }, [isOpen])
 
    const handleSubmit = () => {
       createStationUsers({

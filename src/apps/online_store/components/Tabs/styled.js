@@ -12,12 +12,15 @@ export const StyledTab = styled.li(
       height: 40px;
       display: grid;
       cursor: pointer;
-      overflow: hidden;
+      align-items: center;
       grid-template-columns: 1fr 40px;
       background: ${active ? '#fff' : 'transparent'};
       border-right: 1px solid #b4d5e6;
       &.in_dropdown {
          background: ${active ? '#d3e5ef' : 'transparent'};
+         button {
+            background: ${active ? '#d3e5ef' : 'transparent'};
+         }
       }
       span {
          padding-left: 12px;
@@ -26,11 +29,14 @@ export const StyledTab = styled.li(
          overflow: hidden;
          align-self: center;
       }
-      div {
+      button {
          height: 40px;
+         border: none;
          display: flex;
+         cursor: pointer;
          align-items: center;
          justify-content: center;
+         background: ${active ? 'transparent' : '#d3e5ef'};
          :hover {
             background: #f5f5f5;
          }
@@ -67,6 +73,17 @@ export const Dropdown = styled.div`
    li {
       width: 100%;
       border-right: none;
+      &#close_all {
+         height: 40px;
+         display: flex;
+         cursor: pointer;
+         background: #fff;
+         padding-left: 12px;
+         align-items: center;
+         :hover {
+            background: #d3e5ef;
+         }
+      }
    }
    ul > span {
       height: 40px;

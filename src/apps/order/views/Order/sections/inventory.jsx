@@ -6,7 +6,6 @@ import { IconButton, CloseIcon } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
 import { useOrder } from '../../../context'
-import { UserIcon } from '../../../assets/icons'
 import { Flex } from '../../../../../shared/components'
 import { StyledButton, StyledLabelPreview } from './styled'
 import {
@@ -92,13 +91,13 @@ export const Inventories = ({ inventories }) => {
                      justifyContent="space-between"
                   >
                      <StyledProductTitle>
-                        {inventory?.inventoryProduct?.name}
-                        {inventory?.comboProduct?.name}
-                        &nbsp;
-                        {inventory?.comboProductComponent?.label &&
-                           `(${inventory?.comboProductComponent?.label})`}
+                        {productTitle(inventory)}
                      </StyledProductTitle>
-                     <span>Quantity: {inventory.quantity}</span>
+                     <span>
+                        Quantity:{' '}
+                        {inventory.quantity *
+                           inventory?.inventoryProductOption?.quantity || 1}
+                     </span>
                   </Flex>
                   <section>
                      <span>
@@ -106,14 +105,7 @@ export const Inventories = ({ inventories }) => {
                         {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
                      </span>
                      <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {inventory?.inventoryProductOption?.quantity}
-                           &nbsp;-&nbsp;
-                           {inventory?.inventoryProductOption?.label}
-                        </span>
+                        <span>{inventory?.inventoryProductOption?.label}</span>
                      </StyledServings>
                   </section>
                </OrderItem>
@@ -144,4 +136,18 @@ export const Inventories = ({ inventories }) => {
          </Flex>
       </>
    )
+}
+
+const productTitle = inventory => {
+   let name = ''
+   if (inventory?.inventoryProductId) {
+      name += inventory?.inventoryProduct?.name
+   }
+   if (inventory?.comboProductId) {
+      name += ` - ${inventory?.comboProduct?.name}`
+   }
+   if (inventory?.comboProductComponentId) {
+      name += ` (${inventory?.comboProductComponent?.label})`
+   }
+   return name || 'N/A'
 }

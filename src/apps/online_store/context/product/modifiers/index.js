@@ -93,7 +93,7 @@ export const reducers = (state, { type, payload }) => {
             payload.label === 'isRequired' &&
             payload.value &&
             updatedCategories[payload.index].type === 'multiple' &&
-            updatedCategories[payload.index].limits.min == 0
+            updatedCategories[payload.index].limits.min === 0
          ) {
             updatedCategories[payload.index].limits.min = 1
          }

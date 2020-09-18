@@ -72,3 +72,22 @@ export const StyledStat = styled.div(
       }
    `
 )
+
+export const StyledSection = styled.section`
+   display: flex;
+   margin: 4px 0;
+   align-items: flex-start;
+   justify-content: space-between;
+   span:first-child {
+      flex: 1;
+      color: #9aa5ab;
+      font-size: 14px;
+      font-weight: 500;
+      margin-right: 16px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+   }
+   span:last-child {
+      text-align: right;
+   }
+`

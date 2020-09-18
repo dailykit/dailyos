@@ -27,7 +27,7 @@ import {
 import { useTabs } from '../../../context'
 import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
 import { ROLES } from '../../../graphql'
-import { StyledAppItem, StyledPermissions } from './styled'
+import { StyledAppItem } from './styled'
 import { InlineLoader, Flex } from '../../../../../shared/components'
 import { toast } from 'react-toastify'
 
@@ -80,7 +80,7 @@ const RoleForm = () => {
       if (!loading && !tab && role?.id) {
          addTab(role.title, `/settings/roles/${role.id}`)
       }
-   }, [loading, role.title, params.id, tab, addTab])
+   }, [loading, role, params.id, tab, addTab])
 
    const publish = () => {
       const _apps = _.differenceBy(apps, role.apps, 'app.id')

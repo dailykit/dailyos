@@ -1,7 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
 import axios from 'axios'
-import { toast } from 'react-toastify'
 import { TextButton, IconButton, CloseIcon } from '@dailykit/ui'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 

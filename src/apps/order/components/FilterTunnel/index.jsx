@@ -41,7 +41,7 @@ export const FilterTunnel = () => {
          )
          setActiveStation(index + 1)
       }
-   }, [config.stations, state.orders.where])
+   }, [config.stations, state, state.orders.where])
 
    const handleStationChange = option => {
       dispatch({
