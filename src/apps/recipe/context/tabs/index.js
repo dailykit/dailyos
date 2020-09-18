@@ -9,16 +9,33 @@ const initialState = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
-      // Add Tab
-      case 'ADD_TAB': {
-         const tabExists = state.tabs.find(tab => tab.path === payload.path)
-         if (tabExists) {
-            return state
+      case 'SET_TITLE': {
+         const { tabs } = state
+         const index = tabs.findIndex(tab => tab.path === payload.path)
+         tabs[index] = {
+            ...tabs[index],
+            title: payload.title,
          }
          return {
             ...state,
-            tabs: [...state.tabs, { title: payload.title, path: payload.path }],
+            tabs,
          }
+      }
+      case 'ADD_TAB': {
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex === -1) {
+            return {
+               ...state,
+               tabs: [
+                  {
+                     title: payload.title,
+                     path: payload.path,
+                  },
+                  ...state.tabs,
+               ],
+            }
+         }
+         return state
       }
       // Delete Tab
       case 'DELETE_TAB': {
@@ -27,19 +44,11 @@ const reducers = (state, { type, payload }) => {
             tabs: state.tabs.filter((_, index) => index !== payload.index),
          }
       }
-      // Set Title
-      case 'SET_TITLE': {
-         const index = state.tabs.findIndex(tab => tab.path === payload.path)
-         if (index !== -1) {
-            const newTabs = state.tabs
-            newTabs[index].title = payload.title
-            return {
-               ...state,
-               tabs: newTabs,
-            }
+      case 'CLOSE_ALL_TABS':
+         return {
+            ...state,
+            tabs: [],
          }
-         return state
-      }
       default:
          return state
    }
@@ -64,43 +73,70 @@ export const useTabs = () => {
       dispatch,
    } = React.useContext(Context)
 
-   const addTab = (title, path) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { title, path },
-      })
-      history.push(path)
-   }
+   const tab = tabs.find(tab => tab.path === location.pathname)
 
-   const setTitle = title => {
-      dispatch({
-         type: 'SET_TITLE',
-         payload: { title, path: location.pathname },
-      })
-   }
+   const setTitle = React.useCallback(
+      title => {
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               title,
+               path: tab.path,
+            },
+         })
+      },
+      [dispatch, tab]
+   )
+
+   const addTab = React.useCallback(
+      (title, path) => {
+         dispatch({
+            type: 'ADD_TAB',
+            payload: { title, path },
+         })
+         history.push(path)
+      },
+      [dispatch]
+   )
 
    const switchTab = path => history.push(path)
 
-   const removeTab = (e, { tab, index }) => {
-      e && e.stopPropagation()
-      dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
+   const removeTab = React.useCallback(
+      ({ tab, index }) => {
+         dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
 
-      const tabsCount = tabs.length
-      // closing last remaining tab
-      if (index === 0 && tabsCount === 1) {
-         history.push('/recipe')
-      }
-      // closing first tab when there's more than one tab
-      else if (index === 0 && tabsCount > 1) {
-         history.push(tabs[index + 1].path)
-      }
-      // closing any tab when there's more than one tab
-      else if (index > 0 && tabsCount > 1) {
-         history.push(tabs[index - 1].path)
-      }
-   }
+         const tabsCount = tabs.length
+         // closing last remaining tab
+         if (index === 0 && tabsCount === 1) {
+            history.push('/recipe')
+         }
+         // closing first tab when there's more than one tab
+         else if (index === 0 && tabsCount > 1) {
+            history.push(tabs[index + 1].path)
+         }
+         // closing any tab when there's more than one tab
+         else if (index > 0 && tabsCount > 1) {
+            history.push(tabs[index - 1].path)
+         }
+      },
+      [tabs, dispatch, history]
+   )
+
+   const closeAllTabs = React.useCallback(() => {
+      dispatch({ type: 'CLOSE_ALL_TABS' })
+      switchTab('/recipe')
+   }, [switchTab, dispatch])
 
    const doesTabExists = path => tabs.find(tab => tab.path === path) || false
 
-   return { tabs, addTab, switchTab, removeTab, doesTabExists, setTitle }
+   return {
+      tab,
+      tabs,
+      addTab,
+      setTitle,
+      switchTab,
+      removeTab,
+      closeAllTabs,
+      doesTabExists,
+   }
 }
