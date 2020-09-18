@@ -96,10 +96,10 @@ export const useTabs = () => {
          })
          history.push(path)
       },
-      [dispatch]
+      [dispatch, history]
    )
 
-   const switchTab = path => history.push(path)
+   const switchTab = React.useCallback(path => history.push(path), [history])
 
    const removeTab = React.useCallback(
       ({ tab, index }) => {

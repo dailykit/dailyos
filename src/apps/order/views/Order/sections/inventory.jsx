@@ -6,7 +6,6 @@ import { IconButton, CloseIcon } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
 import { useOrder } from '../../../context'
-import { UserIcon } from '../../../assets/icons'
 import { Flex } from '../../../../../shared/components'
 import { StyledButton, StyledLabelPreview } from './styled'
 import {

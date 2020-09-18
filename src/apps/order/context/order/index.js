@@ -211,35 +211,47 @@ export const useOrder = () => {
    const { state, dispatch } = React.useContext(Context)
    const [update] = useMutation(UPDATE_ORDER)
 
-   const selectMealKit = React.useCallback((id, name) => {
-      dispatch({
-         type: 'SELECT_MEALKIT',
-         payload: { id, name },
-      })
-   }, [])
+   const selectMealKit = React.useCallback(
+      (id, name) => {
+         dispatch({
+            type: 'SELECT_MEALKIT',
+            payload: { id, name },
+         })
+      },
+      [dispatch]
+   )
 
-   const selectInventory = React.useCallback(id => {
-      dispatch({
-         type: 'SELECT_INVENTORY',
-         payload: id,
-      })
-   }, [])
+   const selectInventory = React.useCallback(
+      id => {
+         dispatch({
+            type: 'SELECT_INVENTORY',
+            payload: id,
+         })
+      },
+      [dispatch]
+   )
 
-   const selectReadyToEat = React.useCallback(id => {
-      dispatch({
-         type: 'SELECT_READYTOEAT',
-         payload: id,
-      })
-   }, [])
+   const selectReadyToEat = React.useCallback(
+      id => {
+         dispatch({
+            type: 'SELECT_READYTOEAT',
+            payload: id,
+         })
+      },
+      [dispatch]
+   )
 
-   const switchView = React.useCallback(view => {
-      dispatch({
-         type: 'SWITCH_VIEW',
-         payload: {
-            view,
-         },
-      })
-   }, [])
+   const switchView = React.useCallback(
+      view => {
+         dispatch({
+            type: 'SWITCH_VIEW',
+            payload: {
+               view,
+            },
+         })
+      },
+      [dispatch]
+   )
 
    const updateOrder = ({ id, set, append }) => {
       update({

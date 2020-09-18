@@ -47,7 +47,6 @@ const Home = () => {
                onClick={() => addTab('Users', '/settings/users')}
             />
             <DashboardTile
-               count={0}
                conf="All available"
                count={rolesAggregate.aggregate.count}
                title={t(address.concat('roles'))}

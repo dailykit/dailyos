@@ -22,8 +22,6 @@ import { Loader } from '../../../components'
 
 // Styled
 import { StyledWrapper, StyledHeader } from '../styled'
-import { Flex } from '../../../../../shared/components'
-import { Spacer } from '../../../../../shared/styled'
 
 const DevicesListing = () => {
    const { tab, addTab } = useTabs()

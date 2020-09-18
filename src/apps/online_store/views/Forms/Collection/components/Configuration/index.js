@@ -29,8 +29,8 @@ const Configuration = () => {
    const [byMonth, setByMonth] = React.useState([])
 
    const toggleByDay = obj => {
-      const index = byWeekDay.findIndex(wk => wk.weekday == obj.weekday)
-      if (index == -1) {
+      const index = byWeekDay.findIndex(wk => wk.weekday === obj.weekday)
+      if (index === -1) {
          const copy = byWeekDay
          copy.push(obj)
          setByWeekDay([...copy])
@@ -43,8 +43,8 @@ const Configuration = () => {
 
    const toggleByMonth = e => {
       const { value } = e.target
-      const index = byMonth.findIndex(mon => mon == value)
-      if (index == -1) {
+      const index = byMonth.findIndex(mon => mon === value)
+      if (index === -1) {
          const copy = byMonth
          copy.push(value)
          setByMonth([...copy])
@@ -143,7 +143,7 @@ const Configuration = () => {
                         name={t(address.concat('freq'))}
                         type="radio"
                         value="0"
-                        checked={freq == '0'}
+                        checked={freq === '0'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat yearly'))}
@@ -153,7 +153,7 @@ const Configuration = () => {
                         name={t(address.concat('freq'))}
                         type="radio"
                         value="1"
-                        checked={freq == '1'}
+                        checked={freq === '1'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat monthly'))}
@@ -163,7 +163,7 @@ const Configuration = () => {
                         name={t(address.concat('freq'))}
                         type="radio"
                         value="2"
-                        checked={freq == '2'}
+                        checked={freq === '2'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat weekly'))}
@@ -173,7 +173,7 @@ const Configuration = () => {
                         name={t(address.concat('freq'))}
                         type="radio"
                         value="3"
-                        checked={freq == '3'}
+                        checked={freq === '3'}
                         onChange={e => setFreq(e.target.value)}
                      />
                      {t(address.concat('repeat daily'))}
@@ -231,7 +231,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="0"
-                        checked={wkst == '0'}
+                        checked={wkst === '0'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('monday'))}
@@ -241,7 +241,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="1"
-                        checked={wkst == '1'}
+                        checked={wkst === '1'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('tuesday'))}
@@ -251,7 +251,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="2"
-                        checked={wkst == '2'}
+                        checked={wkst === '2'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('wednesday'))}
@@ -261,7 +261,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="3"
-                        checked={wkst == '3'}
+                        checked={wkst === '3'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('thursday'))}
@@ -271,7 +271,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="4"
-                        checked={wkst == '4'}
+                        checked={wkst === '4'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('friday'))}
@@ -281,7 +281,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="5"
-                        checked={wkst == '5'}
+                        checked={wkst === '5'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('saturday'))}
@@ -291,7 +291,7 @@ const Configuration = () => {
                         type="radio"
                         name={t(address.concat('wkst'))}
                         value="6"
-                        checked={wkst == '6'}
+                        checked={wkst === '6'}
                         onChange={e => setWkst(e.target.value)}
                      />
                      {t(address.concat('sunday'))}
