@@ -7,11 +7,10 @@ import { ChevronDown } from '../../../../shared/assets/icons'
  *
  * @param {{title: string, withIcon: boolean}} param0
  */
-export const Dropdown = ({ title, children, withIcon }) => {
-   const [show, setShow] = useState(false)
+export const Dropdown = ({ title, children, withIcon, show, setShow }) => {
    return (
       <div style={{ position: 'relative' }}>
-         <DropdownButton onClick={() => setShow(value => !value)}>
+         <DropdownButton onClick={() => setShow(!show)}>
             <p>{title}</p>
 
             {withIcon && <ChevronDown color="#888d9d" />}
