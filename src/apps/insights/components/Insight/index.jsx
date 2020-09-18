@@ -66,7 +66,7 @@ export default function Insight({
                      id: index,
                      title: chart.type,
                   }))}
-                  active={0}
+                  active={chartType.index}
                   onChange={option => setChartType(option)}
                />
             </div>
