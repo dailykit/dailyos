@@ -4,12 +4,13 @@ import { Chart } from 'react-google-charts'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import styled from 'styled-components'
-import { Checkbox } from '@dailykit/ui'
+import { Checkbox, TextButton, RadioGroup, Text } from '@dailykit/ui'
 
 import { useInsights } from '../../hooks/useInsights'
 import { tableConfig } from './tableConfig'
 import Option from './Option'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
+import Modal from '../Modal'
 
 /**
  *
@@ -46,102 +47,107 @@ export default function Insight({
       metrices,
    })
 
+   const [showModal, setShowModal] = useState(false)
+
    React.useEffect(() => {
       if (allowedCharts.length && !chartType.type)
          setChartType({ ...allowedCharts[0], index: 0 })
    }, [allowedCharts.length])
 
    return (
-      <StyledContainer alignment={alignment} position={tablePosition}>
-         {includeChart ? (
-            <div>
-               <div style={{ display: 'flex' }}>
-                  <select
-                     style={{ marginBottom: '12px' }}
-                     name="chartTypes"
-                     id="chartTypes"
-                     defaultValue={chartType || ''}
-                     onChange={e => {
-                        setYColumns([])
-                        setXColumn('')
-                        setSlice('')
-                        setMetrices([])
-                        setChartType({
-                           index: e.target.value,
-                           ...allowedCharts[e.target.value],
-                        })
-                     }}
-                  >
-                     {allowedCharts.map((chart, i) => (
-                        <option value={i} key={chart.type}>
-                           {chart.type}
-                        </option>
-                     ))}
-                  </select>
-
-                  <ChartOptions
-                     setXColumn={setXColumn}
-                     allowedCharts={allowedCharts}
-                     yColumns={yColumns}
-                     setYColumns={setYColumns}
-                     chartType={chartType}
-                     setSlice={setSlice}
-                     setMetrices={setMetrices}
-                  />
-
-                  {!includeTable ? (
-                     <>
-                        <span style={{ width: '20px' }} />
-                        <Option
-                           options={options}
-                           state={optionVariables}
-                           updateOptions={updateOptions}
-                        />
-                     </>
-                  ) : null}
-               </div>
-               <Chart
-                  data={chartData}
-                  chartType={chartType.type}
-                  loader={<div>loading...</div>}
-                  style={{ flex: '1' }}
-                  height="400px"
-                  width="600px"
-                  options={{ legend: 'none' }}
+      <>
+         <Modal show={showModal} close={setShowModal} width="40%">
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+               <Text as="h1">Chart Types</Text>
+               <RadioGroup
+                  options={allowedCharts.map((chart, index) => ({
+                     ...chart,
+                     index,
+                     id: index,
+                     title: chart.type,
+                  }))}
+                  active={0}
+                  onChange={option => setChartType(option)}
                />
             </div>
-         ) : null}
 
-         {includeTable ? (
-            <>
-               <span style={{ width: '1rem' }} />
-               {alignment === 'column' ? <br /> : null}
-               <div
-                  style={{
-                     flex: 1,
-                     width: alignment === 'column' ? '100%' : null,
-                  }}
-               >
-                  {includeTable ? (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+               <ChartOptions
+                  setXColumn={setXColumn}
+                  allowedCharts={allowedCharts}
+                  yColumns={yColumns}
+                  setYColumns={setYColumns}
+                  chartType={chartType}
+                  setSlice={setSlice}
+                  setMetrices={setMetrices}
+               />
+
+               {!includeTable ? (
+                  <>
+                     <span style={{ width: '20px' }} />
                      <Option
                         options={options}
                         state={optionVariables}
                         updateOptions={updateOptions}
                      />
-                  ) : null}
-                  <ReactTabulator
-                     columns={[]}
-                     options={tableConfig}
-                     data={tableData}
+                  </>
+               ) : null}
+            </div>
+         </Modal>
+         <StyledContainer alignment={alignment} position={tablePosition}>
+            {includeChart ? (
+               <div>
+                  <div style={{ marginBottom: '12px' }}>
+                     <TextButton
+                        onClick={() => setShowModal(true)}
+                        type="solid"
+                     >
+                        Config
+                     </TextButton>
+                  </div>
+                  <Chart
+                     data={chartData}
+                     chartType={chartType.type}
+                     loader={<div>loading...</div>}
+                     style={{ flex: '1' }}
+                     height="400px"
+                     width="600px"
+                     options={{ legend: 'none' }}
                   />
                </div>
-            </>
-         ) : null}
-      </StyledContainer>
+            ) : null}
+
+            {includeTable ? (
+               <>
+                  <span style={{ width: '1rem' }} />
+                  {alignment === 'column' ? <br /> : null}
+                  <div
+                     style={{
+                        flex: 1,
+                        width: alignment === 'column' ? '100%' : null,
+                     }}
+                  >
+                     {includeTable ? (
+                        <Option
+                           options={options}
+                           state={optionVariables}
+                           updateOptions={updateOptions}
+                        />
+                     ) : null}
+                     <ReactTabulator
+                        columns={[]}
+                        options={tableConfig}
+                        data={tableData}
+                     />
+                  </div>
+               </>
+            ) : null}
+         </StyledContainer>
+      </>
    )
 }
 
-function ChartColumn({ column, updateFunc, yColumns, multiple }) {
+function ChartColumn({ column, updateFunc, yColumns, multiple, setShow }) {
    const [checked, setChecked] = useState(false)
 
    React.useEffect(() => {
@@ -156,6 +162,7 @@ function ChartColumn({ column, updateFunc, yColumns, multiple }) {
    const selectColumn = () => {
       if (!multiple) {
          updateFunc([column])
+         setShow(false)
       }
    }
 
@@ -188,6 +195,8 @@ function ChartOptions({
 }) {
    let xOrSlice = []
    let yOrMetrices = []
+   const [showX, setShowX] = useState(false)
+   const [showY, setShowY] = useState(false)
 
    switch (chartType.type) {
       case 'Bar':
@@ -223,37 +232,36 @@ function ChartOptions({
       }
    }
 
-   const handleXOrMetrices = e => {
+   const handleXOrMetrices = key => {
       switch (chartType.type) {
          case 'Bar':
-            return setXColumn(e.target.value)
-
+            setXColumn(key)
+            return setShowX(false)
          case 'PieChart':
-            return setSlice(e.target.value)
+            setSlice(key)
+            return setShowX(false)
          default:
-            return setXColumn(e.target.value)
+            setXColumn(key)
+            return setShowX(false)
       }
    }
 
    return (
       <>
-         <select
-            style={{ marginBottom: '12px' }}
-            name="x-options"
-            id="x-options"
-            onChange={handleXOrMetrices}
-         >
+         <Dropdown title="Label" withIcon show={showX} setShow={setShowX}>
             {allowedCharts.length &&
                xOrSlice.map(column => {
                   return (
-                     <option value={column.key} key={column.key}>
+                     <DropdownItem
+                        onClick={() => handleXOrMetrices(column.key)}
+                     >
                         {column.label}
-                     </option>
+                     </DropdownItem>
                   )
                })}
-         </select>
+         </Dropdown>
 
-         <Dropdown title="sources" withIcon>
+         <Dropdown title="sources" withIcon show={showY} setShow={setShowY}>
             {allowedCharts.length &&
                yOrMetrices.map(column => {
                   return (
@@ -263,6 +271,7 @@ function ChartOptions({
                         updateFunc={handleYOrMetrices()}
                         yColumns={yColumns}
                         multiple={chartType.multiple}
+                        setShow={setShowY}
                      />
                   )
                })}
