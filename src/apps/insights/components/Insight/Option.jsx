@@ -22,6 +22,7 @@ export default function Option({ options, state, updateOptions }) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
    const [filterable, setFilterable] = useState(false)
+   const [show, setShow] = useState(false)
 
    /**
     *
@@ -35,6 +36,7 @@ export default function Option({ options, state, updateOptions }) {
       const handleClick = () => {
          const newOptions = buildOptionVariables(optionsState)
          updateOptions(newOptions)
+         setShow(false)
       }
 
       return (
@@ -105,7 +107,7 @@ export default function Option({ options, state, updateOptions }) {
 
    if (submenu === 'main')
       return (
-         <Dropdown title="Filters" withIcon>
+         <Dropdown title="Filters" withIcon show={show} setShow={setShow}>
             {Object.keys(options).map(option => {
                return (
                   <DropdownItem
@@ -122,7 +124,7 @@ export default function Option({ options, state, updateOptions }) {
       )
 
    return (
-      <Dropdown title="Filters" withIcon>
+      <Dropdown title="Filters" withIcon setShow={setShow} show={show}>
          <DropdownItem
             onClick={() => setDropdownView('main')}
             leftIcon={<LeftIcon color="#888d9d" />}
