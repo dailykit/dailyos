@@ -45,7 +45,7 @@ let gqlQuery = {
  *
  * @param {string} insightId
  * @param {string} nodeKey
- * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumn?: string}} [options]
+ * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumns?: any[], slice: string, metrices: any[]}} [options]
  *
  * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
@@ -53,7 +53,6 @@ export const useInsights = (
    insightId,
    nodeKey,
    options = {
-      chart: {},
       includeTableData: true,
    }
 ) => {
@@ -114,6 +113,8 @@ export const useInsights = (
          xColumn: options.xColumn,
          yColumns: options.yColumns,
          chartType: options.chartType,
+         slice: options.slice,
+         metrices: options.metrices,
       })
       result.chartData = chartData
    } else {
@@ -127,12 +128,12 @@ export const useInsights = (
  *
  * @param {Array<{type: string, columns: any[]}>} allowedCharts
  * @param {any[]} transformedData
- * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[], chartType: {multiple: boolean, type: string, index: number}}} option
+ * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[], chartType: {multiple: boolean, type: string, index: number}, slice: string, metrices: Array<{key: string, label: string}>}} option
  */
 function genChartData(
    allowedCharts,
    transformedData,
-   { xColumn, yColumns, chartType }
+   { xColumn, yColumns, chartType, slice, metrices }
 ) {
    let chartData = []
 
@@ -148,6 +149,8 @@ function genChartData(
       case 'PieChart':
          chartData = generatePieChartData(allowedCharts, transformedData, {
             chartTypeIndex: chartType.index,
+            slice,
+            metrices,
          })
 
          return chartData
@@ -220,26 +223,42 @@ function generateBarChartData(
 function generatePieChartData(
    allowedCharts,
    transformedData,
-   { chartTypeIndex }
+   { chartTypeIndex, slice, metrices }
 ) {
    let chartData = [[]]
 
+   // add chart headers
    if (
       Array.isArray(allowedCharts) &&
       allowedCharts.length &&
       allowedCharts[chartTypeIndex] &&
       allowedCharts[chartTypeIndex].slices?.length
    ) {
-      chartData[0].push(allowedCharts[chartTypeIndex].slices[0])
+      if (slice) {
+         const index = allowedCharts[chartTypeIndex].slices.findIndex(
+            col => col.key === slice
+         )
+
+         if (index >= 0)
+            chartData[0].push(allowedCharts[chartTypeIndex].slices[index])
+      } else {
+         chartData[0].push(allowedCharts[chartTypeIndex].slices[0])
+      }
    }
 
-   if (
-      Array.isArray(allowedCharts) &&
-      allowedCharts.length &&
-      allowedCharts[chartTypeIndex] &&
-      allowedCharts[chartTypeIndex].metrices?.length
-   ) {
-      chartData[0].push(allowedCharts[chartTypeIndex].metrices[0])
+   if (metrices.length) {
+      metrices.forEach(column => {
+         chartData[0].push(column)
+      })
+   } else {
+      if (
+         Array.isArray(allowedCharts) &&
+         allowedCharts.length &&
+         allowedCharts[chartTypeIndex] &&
+         allowedCharts[chartTypeIndex].metrices?.length
+      ) {
+         chartData[0].push(allowedCharts[chartTypeIndex].metrices[0])
+      }
    }
 
    // add chart data

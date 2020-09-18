@@ -26,6 +26,8 @@ export default function Insight({
    const [chartType, setChartType] = useState({ index: 0 })
    const [xColumn, setXColumn] = useState('')
    const [yColumns, setYColumns] = useState([])
+   const [slice, setSlice] = useState('')
+   const [metrices, setMetrices] = useState([])
 
    const {
       chartData,
@@ -40,10 +42,13 @@ export default function Insight({
       xColumn,
       yColumns,
       chartType,
+      slice,
+      metrices,
    })
 
    React.useEffect(() => {
-      if (allowedCharts.length) setChartType({ ...allowedCharts[0], index: 0 })
+      if (allowedCharts.length && !chartType.type)
+         setChartType({ ...allowedCharts[0], index: 0 })
    }, [allowedCharts.length])
 
    return (
@@ -57,9 +62,13 @@ export default function Insight({
                      id="chartTypes"
                      defaultValue={chartType || ''}
                      onChange={e => {
+                        setYColumns([])
+                        setXColumn('')
+                        setSlice('')
+                        setMetrices([])
                         setChartType({
                            index: e.target.value,
-                           type: allowedCharts[e.target.value].type,
+                           ...allowedCharts[e.target.value],
                         })
                      }}
                   >
@@ -70,38 +79,15 @@ export default function Insight({
                      ))}
                   </select>
 
-                  <select
-                     style={{ marginBottom: '12px' }}
-                     name="x-options"
-                     id="x-options"
-                     onChange={e => {
-                        setXColumn(e.target.value)
-                     }}
-                  >
-                     {allowedCharts.length &&
-                        allowedCharts[chartType.index].x.map(column => {
-                           return (
-                              <option value={column.key} key={column.key}>
-                                 {column.label}
-                              </option>
-                           )
-                        })}
-                  </select>
-
-                  <Dropdown title="sources" withIcon>
-                     {allowedCharts.length &&
-                        allowedCharts[chartType.index].y.map(column => {
-                           return (
-                              <ChartColumn
-                                 key={column.key}
-                                 column={column}
-                                 setYColumns={setYColumns}
-                                 yColumns={yColumns}
-                                 multiple={chartType.multiple}
-                              />
-                           )
-                        })}
-                  </Dropdown>
+                  <ChartOptions
+                     setXColumn={setXColumn}
+                     allowedCharts={allowedCharts}
+                     yColumns={yColumns}
+                     setYColumns={setYColumns}
+                     chartType={chartType}
+                     setSlice={setSlice}
+                     setMetrices={setMetrices}
+                  />
 
                   {!includeTable ? (
                      <>
@@ -155,21 +141,21 @@ export default function Insight({
    )
 }
 
-function ChartColumn({ column, setYColumns, yColumns, multiple }) {
+function ChartColumn({ column, updateFunc, yColumns, multiple }) {
    const [checked, setChecked] = useState(false)
 
    React.useEffect(() => {
       if (checked) {
-         setYColumns(cols => [...cols, column])
+         updateFunc(cols => [...cols, column])
       } else {
          const newColumns = yColumns.filter(col => col.key !== column.key)
-         setYColumns(newColumns)
+         updateFunc(newColumns)
       }
    }, [checked])
 
    const selectColumn = () => {
       if (!multiple) {
-         setYColumns([column])
+         updateFunc([column])
       }
    }
 
@@ -188,6 +174,100 @@ function ChartColumn({ column, setYColumns, yColumns, multiple }) {
             <>{column.label}</>
          )}
       </DropdownItem>
+   )
+}
+
+function ChartOptions({
+   allowedCharts,
+   setXColumn,
+   chartType,
+   yColumns,
+   setYColumns,
+   setSlice,
+   setMetrices,
+}) {
+   let xOrSlice = []
+   let yOrMetrices = []
+
+   switch (chartType.type) {
+      case 'Bar':
+         if (allowedCharts.length) {
+            xOrSlice = allowedCharts[chartType.index].x
+            yOrMetrices = allowedCharts[chartType.index].y
+         }
+         break
+
+      case 'PieChart':
+         if (allowedCharts.length) {
+            xOrSlice = allowedCharts[chartType.index].slices
+            yOrMetrices = allowedCharts[chartType.index].metrices
+         }
+         break
+      default:
+         if (allowedCharts.length) {
+            xOrSlice = allowedCharts[chartType.index].x
+            yOrMetrices = allowedCharts[chartType.index].y
+         }
+         break
+   }
+
+   const handleYOrMetrices = () => {
+      switch (chartType.type) {
+         case 'Bar':
+            return setYColumns
+
+         case 'PieChart':
+            return setMetrices
+         default:
+            return setYColumns
+      }
+   }
+
+   const handleXOrMetrices = e => {
+      switch (chartType.type) {
+         case 'Bar':
+            return setXColumn(e.target.value)
+
+         case 'PieChart':
+            return setSlice(e.target.value)
+         default:
+            return setXColumn(e.target.value)
+      }
+   }
+
+   return (
+      <>
+         <select
+            style={{ marginBottom: '12px' }}
+            name="x-options"
+            id="x-options"
+            onChange={handleXOrMetrices}
+         >
+            {allowedCharts.length &&
+               xOrSlice.map(column => {
+                  return (
+                     <option value={column.key} key={column.key}>
+                        {column.label}
+                     </option>
+                  )
+               })}
+         </select>
+
+         <Dropdown title="sources" withIcon>
+            {allowedCharts.length &&
+               yOrMetrices.map(column => {
+                  return (
+                     <ChartColumn
+                        key={column.key}
+                        column={column}
+                        updateFunc={handleYOrMetrices()}
+                        yColumns={yColumns}
+                        multiple={chartType.multiple}
+                     />
+                  )
+               })}
+         </Dropdown>
+      </>
    )
 }
 
