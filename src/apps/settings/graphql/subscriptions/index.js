@@ -184,6 +184,7 @@ export const USER = gql`
          email
          phoneNo
          tempPassword
+         keycloakId
       }
    }
 `

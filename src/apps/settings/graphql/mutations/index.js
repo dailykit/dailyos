@@ -231,6 +231,18 @@ export const CREATE_USER = gql`
    mutation insert_settings_user_one($object: settings_user_insert_input!) {
       insert_settings_user_one(object: $object) {
          id
+         firstName
+      }
+   }
+`
+
+export const UPDATE_USER = gql`
+   mutation update_settings_user_by_pk(
+      $id: Int!
+      $_set: settings_user_set_input!
+   ) {
+      update_settings_user_by_pk(pk_columns: { id: $id }, _set: $_set) {
+         id
       }
    }
 `
