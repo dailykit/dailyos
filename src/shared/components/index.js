@@ -7,3 +7,4 @@ export { Lang, Nutrition, BasicInfo, HorizontalCard }
 export * from './AssetUploader'
 export * from './InlineLoader'
 export * from './Flex'
+export * from './DropdownButton'

@@ -62,6 +62,24 @@ export const FilterTunnel = () => {
                      },
                   },
                },
+               {
+                  orderMealKitProducts: {
+                     _or: [
+                        {
+                           assemblyStationId: {
+                              _eq: option.id,
+                           },
+                        },
+                        {
+                           orderSachets: {
+                              packingStationId: {
+                                 _eq: option.id,
+                              },
+                           },
+                        },
+                     ],
+                  },
+               },
             ],
          },
       })
