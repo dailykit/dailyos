@@ -7,7 +7,7 @@ import RecipeInsight from '../../views/RecipeInsight'
 
 const Main = () => {
    return (
-      <main>
+      <main style={{ position: 'relative' }}>
          <Switch>
             <Route path="/insights" component={Home} exact />
             <Route path="/insights/recipe" component={RecipeInsight} exact />
