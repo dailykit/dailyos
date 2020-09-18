@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useState } from 'react'
-import { groupBy } from 'lodash'
 
 import { GET_INSIGHT } from '../graphql'
 import { transformer, buildOptions } from '../utils/transformer'
