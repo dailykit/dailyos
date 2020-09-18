@@ -255,24 +255,26 @@ export const ORDER = gql`
             assemblyStatus
             labelTemplateId
             assemblyStationId
-            simpleRecipeProductId
-            simpleRecipeProductOptionId
             assemblyStation {
                id
                name
             }
+            comboProductId
             comboProduct {
                id
                name
             }
+            comboProductComponentId
             comboProductComponent {
                id
                label
             }
+            simpleRecipeProductId
             simpleRecipeProduct {
                id
                name
             }
+            simpleRecipeProductOptionId
             simpleRecipeProductOption {
                id
                simpleRecipeYield {
@@ -294,12 +296,14 @@ export const ORDER = gql`
                sachetItemId
                sachetItem {
                   id
+                  bulkItemId
                   bulkItem {
                      id
                      sop
                      yield
                      shelfLife
                      bulkDensity
+                     supplierItemId
                      supplierItem {
                         name
                      }
@@ -312,6 +316,7 @@ export const ORDER = gql`
                   yield
                   shelfLife
                   bulkDensity
+                  supplierItemId
                   supplierItem {
                      name
                   }
@@ -327,24 +332,26 @@ export const ORDER = gql`
             assemblyStatus
             labelTemplateId
             assemblyStationId
-            simpleRecipeProductId
-            simpleRecipeProductOptionId
             assemblyStation {
                id
                name
             }
+            comboProductId
             comboProduct {
                id
                name
             }
+            comboProductComponentId
             comboProductComponent {
                id
                label
             }
+            simpleRecipeProductId
             simpleRecipeProduct {
                id
                name
             }
+            simpleRecipeProductOptionId
             simpleRecipeProductOption {
                id
                simpleRecipeYield {
@@ -360,27 +367,27 @@ export const ORDER = gql`
             isAssembled
             assemblyStatus
             labelTemplateId
-            assemblyStationId
+            inventoryProductId
             inventoryProduct {
                id
                name
             }
+            comboProductId
             comboProduct {
                id
                name
             }
+            comboProductComponentId
             comboProductComponent {
                id
                label
             }
+            assemblyStationId
             assemblyStation {
                id
                name
             }
-            customizableProduct {
-               id
-               name
-            }
+            inventoryProductOptionId
             inventoryProductOption {
                quantity
                label
@@ -513,20 +520,34 @@ export const FETCH_INVENTORY = gql`
          id
          quantity
          assemblyStatus
+         inventoryProductId
          inventoryProduct {
             id
             name
-            sachetItem {
+            supplierItemId
+            supplierItem {
                id
+               name
                unit
                unitSize
-               onHand
-               bulkItem {
+               supplierId
+               supplier {
                   id
-                  processingName
+                  name
+               }
+            }
+            sachetItemId
+            sachetItem {
+               unit
+               unitSize
+               bulkItemId
+               bulkItem {
+                  supplierItemId
                   supplierItem {
-                     id
+                     unit
                      name
+                     unitSize
+                     supplierId
                      supplier {
                         id
                         name
@@ -534,32 +555,16 @@ export const FETCH_INVENTORY = gql`
                   }
                }
             }
-            supplierItem {
-               id
-               name
-               unit
-               unitSize
-               supplier {
-                  id
-                  name
-               }
-               bulkItemAsShipped {
-                  processingName
-                  onHand
-               }
-            }
          }
+         comboProductId
          comboProduct {
             id
             name
          }
+         comboProductComponentId
          comboProductComponent {
             id
             label
-         }
-         customizableProduct {
-            id
-            name
          }
       }
    }
