@@ -117,6 +117,7 @@ export const TITLE = gql`
       title: subscription_subscriptionTitle_by_pk(id: $id) {
          id
          title
+         isValid
          isActive
          defaultSubscriptionServingId
          servings: subscriptionServings(order_by: { servingSize: asc }) {
@@ -132,6 +133,7 @@ export const SERVING = gql`
    subscription serving($id: Int!) {
       serving: subscription_subscriptionServing_by_pk(id: $id) {
          id
+         isValid
          isActive
          size: servingSize
          counts: subscriptionItemCounts(order_by: { count: asc }) {
@@ -149,6 +151,7 @@ export const ITEM_COUNT = gql`
          id
          count
          price
+         isValid
          isActive
          subscriptions {
             id

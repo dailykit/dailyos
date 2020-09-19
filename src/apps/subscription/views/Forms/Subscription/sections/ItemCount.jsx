@@ -25,16 +25,19 @@ import {
 
 import { usePlan } from '../state'
 import DeliveryDay from './DeliveryDay'
-import { Flex } from '../../../../components'
-import { Spacer, Stack } from '../../../../styled'
 import { ItemCountSection } from '../styled'
-import { InlineLoader } from '../../../../../../shared/components'
+import { Spacer, Stack } from '../../../../styled'
 import {
    ITEM_COUNT,
    INSERT_SUBSCRIPTION,
    UPSERT_ITEM_COUNT,
 } from '../../../../graphql'
-import { EditIcon } from '../../../../../../shared/assets/icons'
+import { Flex, InlineLoader } from '../../../../../../shared/components'
+import {
+   EditIcon,
+   TickIcon,
+   CloseIcon,
+} from '../../../../../../shared/assets/icons'
 
 const ItemCount = ({ id, openItemTunnel }) => {
    const { state, dispatch } = usePlan()
@@ -76,7 +79,7 @@ const ItemCount = ({ id, openItemTunnel }) => {
    }, [dispatch])
 
    const toggleIsActive = value => {
-      if (itemCount.subscriptions.length > 0) {
+      if (itemCount.isValid) {
          return upsertItemCount({
             variables: {
                object: {
@@ -107,6 +110,20 @@ const ItemCount = ({ id, openItemTunnel }) => {
          >
             <Text as="title">Price per week: {itemCount.price}</Text>
             <Flex container>
+               {itemCount.isValid ? (
+                  <Flex container flex="1" alignItems="center">
+                     <TickIcon size={22} color="green" />
+                     <Spacer size="8px" xAxis />
+                     <span>All good!</span>
+                  </Flex>
+               ) : (
+                  <Flex container flex="1" alignItems="center">
+                     <CloseIcon size={22} color="red" />
+                     <Spacer size="8px" xAxis />
+                     <span>Must have atleast one active item count!</span>
+                  </Flex>
+               )}
+               <Spacer size="24px" xAxis />
                <Toggle
                   label="Publish"
                   checked={state.item.isActive}
