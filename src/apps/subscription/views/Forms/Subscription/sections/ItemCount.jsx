@@ -120,7 +120,7 @@ const ItemCount = ({ id, openItemTunnel }) => {
                   <Flex container flex="1" alignItems="center">
                      <CloseIcon size={22} color="red" />
                      <Spacer size="8px" xAxis />
-                     <span>Must have atleast one active item count!</span>
+                     <span>Must have atleast one delivery day!</span>
                   </Flex>
                )}
                <Spacer size="24px" xAxis />
