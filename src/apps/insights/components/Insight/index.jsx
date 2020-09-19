@@ -13,10 +13,11 @@ import Option from './Option'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
 import Modal from '../Modal'
 import { Box } from '../'
+import { Counter } from '../Counter'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', id: string, nodeKey: string, chartOptions: {height: string, width: string}  }} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', statsPosition: 'table' | 'chart', id: string, nodeKey: string, chartOptions: {height: string, width: string}  }} props
  */
 export default function Insight({
    includeTable = true,
@@ -26,6 +27,7 @@ export default function Insight({
    id = '',
    nodeKey = 'nodes',
    chartOptions = {},
+   statsPosition,
 }) {
    const [chartType, setChartType] = useState({ index: 0 })
    const [xColumn, setXColumn] = useState('')
@@ -107,9 +109,11 @@ export default function Insight({
                      display: 'flex',
                      flexDirection: 'column',
                      alignItems: 'center',
-                     height: '500px',
                   }}
                >
+                  {statsPosition === 'chart' || statsPosition !== 'table' ? (
+                     <CounterBar />
+                  ) : null}
                   <Chart
                      data={chartData}
                      chartType={chartType.type}
@@ -145,6 +149,7 @@ export default function Insight({
                         <br />
                      </>
                   ) : null}
+                  {statsPosition === 'table' ? <CounterBar /> : null}
                   <Box
                      style={{
                         flex: 1,
@@ -304,9 +309,22 @@ function ChartOptions({
    )
 }
 
+function CounterBar() {
+   return (
+      <Counter
+         counters={[
+            { title: 'Revenue', count: 4300, type: 'price' },
+            { title: 'Sales', count: 100 },
+            { title: 'Refunds', count: 24 },
+         ]}
+      />
+   )
+}
+
 const StyledContainer = styled.div`
    position: relative;
    width: 100%;
+   height: 100%;
    padding: 1rem 2rem;
    display: flex;
    flex-direction: ${({ alignment, position }) => {

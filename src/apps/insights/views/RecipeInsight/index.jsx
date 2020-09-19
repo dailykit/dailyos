@@ -10,9 +10,11 @@ const ReferralPlansListing = () => {
             alignment="column"
             nodeKey="inventoryProducts"
             includeChart
+            statsPosition="chart"
             tablePosition="left"
             chartOptions={{
                width: '100%',
+               height: '460px',
             }}
          />
       </StyledWrapper>
