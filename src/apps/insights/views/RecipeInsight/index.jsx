@@ -16,7 +16,7 @@ const ReferralPlansListing = () => {
             includeChart
             tablePosition="left"
             chartOptions={{
-               width: '900px',
+               width: '100%',
             }}
          />
       </StyledWrapper>

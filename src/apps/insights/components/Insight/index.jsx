@@ -14,7 +14,7 @@ import Modal from '../Modal'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', id: string, nodeKey: string  }} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', id: string, nodeKey: string, chartOptions: {height: string, width: string}  }} props
  */
 export default function Insight({
    includeTable = true,
@@ -23,6 +23,7 @@ export default function Insight({
    tablePosition = 'bottom',
    id = '',
    nodeKey = 'nodes',
+   chartOptions = {},
 }) {
    const [chartType, setChartType] = useState({ index: 0 })
    const [xColumn, setXColumn] = useState('')
@@ -96,7 +97,17 @@ export default function Insight({
          </Modal>
          <StyledContainer alignment={alignment} position={tablePosition}>
             {includeChart ? (
-               <div>
+               <div
+                  style={{
+                     width: '100%',
+                     overflowX: 'auto',
+                     margin: '0 auto',
+                     display: 'flex',
+                     flexDirection: 'column',
+                     alignItems: 'center',
+                     height: '500px',
+                  }}
+               >
                   <div style={{ marginBottom: '12px' }}>
                      <TextButton
                         onClick={() => setShowModal(true)}
@@ -110,9 +121,16 @@ export default function Insight({
                      chartType={chartType.type}
                      loader={<div>loading...</div>}
                      style={{ flex: '1' }}
-                     height="400px"
-                     width="600px"
-                     options={{ legend: 'none' }}
+                     options={{
+                        legend:
+                           chartType.type === 'PieChart'
+                              ? 'none'
+                              : { position: 'right' },
+                        hAxis: { slantedText: false },
+                        height: chartOptions.height || '100%',
+                        width: chartOptions.width || '100%',
+                        ...chartOptions,
+                     }}
                   />
                </div>
             ) : null}
