@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Chart } from 'react-google-charts'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
+import '../../../../shared/styled/tableStyles.css'
 import styled from 'styled-components'
 import { Checkbox, TextButton, RadioGroup, Text } from '@dailykit/ui'
 
@@ -11,6 +12,7 @@ import { tableConfig } from './tableConfig'
 import Option from './Option'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
 import Modal from '../Modal'
+import { Box } from '../'
 
 /**
  *
@@ -97,7 +99,7 @@ export default function Insight({
          </Modal>
          <StyledContainer alignment={alignment} position={tablePosition}>
             {includeChart ? (
-               <div
+               <Box
                   style={{
                      width: '100%',
                      overflowX: 'auto',
@@ -108,14 +110,6 @@ export default function Insight({
                      height: '500px',
                   }}
                >
-                  <div style={{ marginBottom: '12px' }}>
-                     <TextButton
-                        onClick={() => setShowModal(true)}
-                        type="solid"
-                     >
-                        Config
-                     </TextButton>
-                  </div>
                   <Chart
                      data={chartData}
                      chartType={chartType.type}
@@ -132,14 +126,26 @@ export default function Insight({
                         ...chartOptions,
                      }}
                   />
-               </div>
+                  <ChartConfigContainer>
+                     <TextButton
+                        onClick={() => setShowModal(true)}
+                        type="solid"
+                     >
+                        Config
+                     </TextButton>
+                  </ChartConfigContainer>
+               </Box>
             ) : null}
 
             {includeTable ? (
                <>
-                  <span style={{ width: '1rem' }} />
-                  {alignment === 'column' ? <br /> : null}
-                  <div
+                  {alignment === 'column' ? (
+                     <>
+                        <br />
+                        <br />
+                     </>
+                  ) : null}
+                  <Box
                      style={{
                         flex: 1,
                         width: alignment === 'column' ? '100%' : null,
@@ -157,7 +163,7 @@ export default function Insight({
                         options={tableConfig}
                         data={tableData}
                      />
-                  </div>
+                  </Box>
                </>
             ) : null}
          </StyledContainer>
@@ -302,7 +308,6 @@ const StyledContainer = styled.div`
    position: relative;
    width: 100%;
    padding: 1rem 2rem;
-   background-color: #fff;
    display: flex;
    flex-direction: ${({ alignment, position }) => {
       if (alignment === 'column' && position === 'top')
@@ -316,4 +321,11 @@ const StyledContainer = styled.div`
    }};
    align-items: center;
    justify-content: space-between;
+`
+const ChartConfigContainer = styled.div`
+   display: flex;
+   margin-top: 16px;
+   width: 100%;
+   border-top: 1px solid #eef0f7;
+   padding-top: 8px;
 `
