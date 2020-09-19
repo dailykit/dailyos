@@ -18,7 +18,7 @@ export default function Modal({
    if (showProp)
       return (
          <>
-            <Background />
+            <Background onClick={() => close(false)} />
             <Box width={width}>
                <Header title="Column" action={action} setShow={close} />
                <div style={{ padding: '1rem 2rem' }}>{children}</div>
