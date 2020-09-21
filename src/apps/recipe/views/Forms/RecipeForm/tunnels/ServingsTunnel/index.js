@@ -26,10 +26,10 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
       if (busy) return
       setBusy(true)
       const objects = servings
-         .filter(serving => serving.length)
+         .filter(serving => serving.trim().length)
          .map(serving => ({
             simpleRecipeId: state.id,
-            yield: { serving },
+            yield: { serving: +serving.trim() },
          }))
       if (!objects.length) {
          toast.error('No serving to add!')
@@ -46,6 +46,12 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
       const newServings = servings
       newServings[i] = val
       setServings([...newServings])
+   }
+
+   const addField = () => {
+      if (servings.every(serving => serving.trim().length)) {
+         setServings([...servings, ''])
+      }
    }
 
    return (
@@ -73,11 +79,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                   />
                </Container>
             ))}
-            <ButtonTile
-               type="secondary"
-               text="Add More"
-               onClick={() => setServings([...servings, ''])}
-            />
+            <ButtonTile type="secondary" text="Add More" onClick={addField} />
          </TunnelBody>
       </>
    )
