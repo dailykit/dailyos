@@ -6,9 +6,9 @@ import App from './App'
 
 const OnlineStore = () => (
    <AuthProvider>
-      <TabProvider>
-         <App />
-      </TabProvider>
+   <TabProvider>
+      <App />
+   </TabProvider>
    </AuthProvider>
 )
 

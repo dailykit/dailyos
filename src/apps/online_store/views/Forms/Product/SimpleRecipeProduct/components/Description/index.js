@@ -11,7 +11,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { EditIcon } from '../../../../../../assets/icons'
 import { StyledAction, StyledContainer, StyledRow } from './styled'
-import { DescriptionTunnel } from '../../../InventoryProduct/tunnels'
+import { DescriptionTunnel } from '../../../SimpleRecipeProduct/tunnels'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.description.'
