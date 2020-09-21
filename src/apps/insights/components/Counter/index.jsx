@@ -1,14 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
+import { fromMixed } from '../../utils/textTransform'
+
+import { flattenObject } from '../../utils/transformer'
 
 /**
  *
- * @param {{counters: Array<{title: string, count: number, type?: 'price' }>, colors: string[]}} props
+ * @param {{aggregates: any}} props
  */
 export const Counter = ({
-   counters,
+   aggregates,
    colors = ['#FF7A00', '#6F52ED', '#FFB800'],
 }) => {
+   const flattenedAggregates = flattenObject(aggregates)
+   const regex = new RegExp(/amount|price/i)
+
    return (
       <div
          style={{
@@ -20,14 +26,18 @@ export const Counter = ({
             marginBottom: '8px',
          }}
       >
-         {counters.map((counter, i) => (
-            <StyledCounterElement key={i} color={colors[i % 2]}>
-               <span>{counter.title}</span>
-               <h5>
-                  {counter.type === 'price' ? '$' : null} {counter.count}
-               </h5>
-            </StyledCounterElement>
-         ))}
+         {Object.keys(flattenedAggregates).map((counter, i) => {
+            if (flattenedAggregates[counter])
+               return (
+                  <StyledCounterElement key={i} color={colors[i % 2]}>
+                     <span>{fromMixed(counter)}</span>
+                     <h5>
+                        {regex.test(counter) ? '$' : null}{' '}
+                        {flattenedAggregates[counter]}
+                     </h5>
+                  </StyledCounterElement>
+               )
+         })}
       </div>
    )
 }

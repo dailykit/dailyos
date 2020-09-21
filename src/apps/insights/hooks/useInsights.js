@@ -45,7 +45,7 @@ let gqlQuery = {
  * @param {string} insightId
  * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumns?: any[], slice: string, metrices: any[]}} [options]
  *
- * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
+ * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}, aggregates: {}} insight
  */
 export const useInsights = (
    insightId,
@@ -105,6 +105,7 @@ export const useInsights = (
       updateSwitches: setVariableSwitches,
       updateOptions: setVariableOptions,
       allowedCharts: insight.allowedCharts,
+      aggregates: data[nodeKey]?.aggregate,
    }
 
    if (options.includeChart && insight.allowedCharts) {

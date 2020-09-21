@@ -31,7 +31,7 @@ export const buildOptionVariables = data => {
    return unflatten(data, { separator: '  ' })
 }
 
-function flattenObject(object) {
+export function flattenObject(object) {
    let result = {}
    Object.keys(object).forEach(key => {
       if (!isObject(object[key])) {

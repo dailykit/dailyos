@@ -42,6 +42,7 @@ export default function Insight({
       optionVariables,
       allowedCharts,
       updateOptions,
+      aggregates,
    } = useInsights(id, {
       includeTableData: true,
       includeChart,
@@ -114,7 +115,7 @@ export default function Insight({
                   }}
                >
                   {statsPosition === 'chart' || statsPosition !== 'table' ? (
-                     <CounterBar />
+                     <CounterBar aggregates={aggregates} />
                   ) : null}
                   <Chart
                      data={chartData}
@@ -153,7 +154,9 @@ export default function Insight({
                   ) : (
                      <span style={{ width: '20px' }} />
                   )}
-                  {statsPosition === 'table' ? <CounterBar /> : null}
+                  {statsPosition === 'table' ? (
+                     <CounterBar aggregates={aggregates} />
+                  ) : null}
                   <Box
                      style={{
                         flex: 1,
@@ -313,16 +316,11 @@ function ChartOptions({
    )
 }
 
-function CounterBar() {
-   return (
-      <Counter
-         counters={[
-            { title: 'Revenue', count: 4300, type: 'price' },
-            { title: 'Sales', count: 100 },
-            { title: 'Refunds', count: 24 },
-         ]}
-      />
-   )
+function CounterBar({ aggregates }) {
+   const keys = (aggregates && Object.keys(aggregates)) || []
+
+   if (keys.length) return <Counter aggregates={aggregates} keys={keys} />
+   return null
 }
 
 const StyledContainer = styled.div`
