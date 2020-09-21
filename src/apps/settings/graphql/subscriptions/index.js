@@ -377,6 +377,69 @@ export const ROLES = {
          }
       }
    `,
+   ROLE_APP: gql`
+      query role_app($appId: Int!, $roleId: Int!) {
+         role_app: settings_role_app_by_pk(appId: $appId, roleId: $roleId) {
+            id
+         }
+      }
+   `,
+   ASSIGNED_PERMISSIONS: gql`
+      subscription assigned_permissions(
+         $role: settings_role_bool_exp!
+         $app: settings_app_bool_exp!
+      ) {
+         assigned_permissions: settings_role_appPermission(
+            where: { role_app: { role: $role, app: $app } }
+         ) {
+            permission {
+               id
+               route
+               title
+            }
+            value
+         }
+      }
+   `,
+   UNASSIGNED_PERMISSIONS: gql`
+      subscription unassigned_permissions {
+         unassigned_permissions: settings_appPermission(
+            where: {
+               _not: {
+                  role_appPermissions: { role_appId: { _is_null: false } }
+               }
+            }
+         ) {
+            id
+            route
+            title
+         }
+      }
+   `,
+   UPDATE_PERMISSION: gql`
+      mutation updateRole_AppPermission(
+         $appPermissionId: Int_comparison_exp!
+         $value: Boolean!
+      ) {
+         updateRole_AppPermission: update_settings_role_appPermission(
+            where: { appPermissionId: $appPermissionId }
+            _set: { value: $value }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   INSERT_PERMISSION: gql`
+      mutation insertRole_AppPermission(
+         $object: settings_role_appPermission_insert_input!
+      ) {
+         insertRole_AppPermission: insert_settings_role_appPermission_one(
+            object: $object
+         ) {
+            role_appId
+         }
+      }
+   `,
 }
 
 export const PRINTNODE_CREDS = gql`
