@@ -71,19 +71,19 @@ const IngredientForm = () => {
    const [state, setState] = React.useState({})
 
    // Subscriptions
-   const { loading } = useSubscription(S_INGREDIENT, {
+   const { loading, error } = useSubscription(S_INGREDIENT, {
       variables: {
          id: ingredientId,
       },
       onSubscriptionData: data => {
+         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.ingredient)
          setTitle(data.subscriptionData.data.ingredient.name)
          setCategory(data.subscriptionData.data.ingredient.category || '')
       },
-      onError: error => {
-         console.log(error)
-      },
    })
+
+   if (error) console.log('Ingredient error: ', error)
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {

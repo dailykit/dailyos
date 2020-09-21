@@ -39,7 +39,7 @@ export const S_INGREDIENTS = gql`
 `
 
 export const S_INGREDIENT = gql`
-   subscription($id: Int!) {
+   subscription Ingredient($id: Int!) {
       ingredient(id: $id) {
          id
          name
@@ -85,6 +85,7 @@ export const S_INGREDIENT = gql`
                      id
                      processingName
                      supplierItem {
+                        id
                         name
                      }
                   }
@@ -95,6 +96,7 @@ export const S_INGREDIENT = gql`
                      bulkItem {
                         processingName
                         supplierItem {
+                           id
                            name
                         }
                      }
@@ -121,7 +123,7 @@ export const RECIPES_COUNT = gql`
 `
 
 export const S_RECIPES = gql`
-   subscription {
+   subscription SimpleRecipes {
       simpleRecipes {
          id
          name
@@ -137,7 +139,7 @@ export const S_RECIPES = gql`
 `
 
 export const S_RECIPE = gql`
-   subscription($id: Int!) {
+   subscription SimpleRecipe($id: Int!) {
       simpleRecipe(id: $id) {
          id
          name
@@ -178,7 +180,7 @@ export const S_RECIPE = gql`
 `
 
 export const FETCH_PROCESSING_NAMES = gql`
-   subscription {
+   subscription MasterProcessings {
       masterProcessings {
          id
          title: name
@@ -187,7 +189,7 @@ export const FETCH_PROCESSING_NAMES = gql`
 `
 
 export const FETCH_UNITS = gql`
-   subscription {
+   subscription Units {
       units {
          id
          title: name
@@ -196,7 +198,7 @@ export const FETCH_UNITS = gql`
 `
 
 export const FETCH_STATIONS = gql`
-   subscription {
+   subscription Stations {
       stations {
          id
          title: name
@@ -205,7 +207,7 @@ export const FETCH_STATIONS = gql`
 `
 
 export const FETCH_PACKAGINGS = gql`
-   subscription {
+   subscription Packagings {
       packagings {
          id
          title: name
@@ -214,7 +216,7 @@ export const FETCH_PACKAGINGS = gql`
 `
 
 export const FETCH_LABEL_TEMPLATES = gql`
-   subscription {
+   subscription LabelTemplates {
       labelTemplates {
          id
          title: name
