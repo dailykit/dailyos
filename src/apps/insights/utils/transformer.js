@@ -49,9 +49,8 @@ function flattenObject(object) {
 
 function flattenQuery(entities) {
    const results = []
-
-   if (Array.isArray(entities))
-      entities.forEach(node => {
+   if (entities.nodes && Array.isArray(entities.nodes))
+      entities.nodes.forEach(node => {
          let result = {}
          if (!isObject(node)) {
             if (node !== '__typename') result[node] = node
@@ -80,8 +79,7 @@ function flattenQuery(entities) {
  * ```
  */
 export const transformer = (queryResponse, nodeKey) => {
-   const entities = queryResponse[nodeKey]
-
+   const entities = queryResponse[nodeKey] || {}
    const result = flattenQuery(entities)
 
    return result

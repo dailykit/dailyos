@@ -43,14 +43,12 @@ let gqlQuery = {
 /**
  *
  * @param {string} insightId
- * @param {string} nodeKey
  * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumns?: any[], slice: string, metrices: any[]}} [options]
  *
  * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}}} insight
  */
 export const useInsights = (
    insightId,
-   nodeKey,
    options = {
       includeTableData: true,
    }
@@ -90,6 +88,8 @@ export const useInsights = (
          options: variableOptions,
       },
    })
+
+   const nodeKey = Object.keys(data)[0]
 
    if (options.includeTableData || options.chart)
       transformedData = transformer(data, nodeKey)

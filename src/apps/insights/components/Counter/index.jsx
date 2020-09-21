@@ -21,7 +21,7 @@ export const Counter = ({
          }}
       >
          {counters.map((counter, i) => (
-            <StyledCounterElement color={colors[i % 2]}>
+            <StyledCounterElement key={i} color={colors[i % 2]}>
                <span>{counter.title}</span>
                <h5>
                   {counter.type === 'price' ? '$' : null} {counter.count}

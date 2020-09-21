@@ -42,7 +42,7 @@ export default function Insight({
       optionVariables,
       allowedCharts,
       updateOptions,
-   } = useInsights(id, nodeKey, {
+   } = useInsights(id, {
       includeTableData: true,
       includeChart,
       xColumn,
