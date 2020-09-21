@@ -30,6 +30,7 @@ export const S_INGREDIENTS = gql`
                unit
                nutritionalInfo
                ingredient {
+                  id
                   name
                }
             }
