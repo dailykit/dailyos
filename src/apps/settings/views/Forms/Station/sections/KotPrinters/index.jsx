@@ -189,6 +189,7 @@ const AddPrinterTunnel = ({
       create({
          variables: {
             objects: selected.map(printer => ({
+               active: true,
                stationId: station,
                printNodeId: printer.id,
             })),

@@ -32,15 +32,12 @@ const IngredientsListing = () => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
 
-   const { loading, data: { ingredients = [] } = {} } = useSubscription(
-      S_INGREDIENTS,
-      {
-         onError: error => {
-            console.log(error)
-            toast.error(error.message)
-         },
-      }
+   const { loading, data: { ingredients = [] } = {}, error } = useSubscription(
+      S_INGREDIENTS
    )
+
+   if (error) console.log(error)
+
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
