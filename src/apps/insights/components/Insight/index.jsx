@@ -208,10 +208,10 @@ function ChartColumn({ column, updateFunc, yColumns, multiple, setShow }) {
                   setChecked(!checked)
                }}
             >
-               {column.label}
+               {column.key}
             </Checkbox>
          ) : (
-            <>{column.label}</>
+            <>{column.key}</>
          )}
       </DropdownItem>
    )
@@ -288,7 +288,7 @@ function ChartOptions({
                      <DropdownItem
                         onClick={() => handleXOrMetrices(column.key)}
                      >
-                        {column.label}
+                        {column.key}
                      </DropdownItem>
                   )
                })}

@@ -184,16 +184,22 @@ function generateBarChartData(
          )
 
          if (index >= 0)
-            chartData[0].push(allowedCharts[chartTypeIndex].x[index])
+            chartData[0].push({
+               ...allowedCharts[chartTypeIndex].x[index],
+               label: allowedCharts[chartTypeIndex].x[index].key,
+            })
       } else {
          // push the first column from x in header
-         chartData[0].push(allowedCharts[chartTypeIndex].x[0])
+         chartData[0].push({
+            ...allowedCharts[chartTypeIndex].x[0],
+            label: allowedCharts[chartTypeIndex].x[0].key,
+         })
       }
    }
 
    if (yColumns.length) {
       yColumns.forEach(column => {
-         chartData[0].push(column)
+         chartData[0].push({ ...column, label: column.key })
       })
    } else {
       if (
@@ -201,7 +207,10 @@ function generateBarChartData(
          allowedCharts[chartTypeIndex] &&
          allowedCharts[chartTypeIndex].y
       )
-         chartData[0].push(allowedCharts[chartTypeIndex].y[0])
+         chartData[0].push({
+            ...allowedCharts[chartTypeIndex].y[0],
+            label: allowedCharts[chartTypeIndex].y[0].key,
+         })
    }
 
    // add chart data
@@ -239,9 +248,16 @@ function generatePieChartData(
          )
 
          if (index >= 0)
-            chartData[0].push(allowedCharts[chartTypeIndex].slices[index])
+            chartData[0].push({
+               ...allowedCharts[chartTypeIndex].slices[index],
+               label: allowedCharts[chartTypeIndex].slices[index].key,
+            })
       } else {
          chartData[0].push(allowedCharts[chartTypeIndex].slices[0])
+         chartData[0].push({
+            ...allowedCharts[chartTypeIndex].slices[0],
+            label: allowedCharts[chartTypeIndex].slices[0].key,
+         })
       }
    }
 
@@ -256,7 +272,10 @@ function generatePieChartData(
          allowedCharts[chartTypeIndex] &&
          allowedCharts[chartTypeIndex].metrices?.length
       ) {
-         chartData[0].push(allowedCharts[chartTypeIndex].metrices[0])
+         chartData[0].push({
+            ...allowedCharts[chartTypeIndex].metrices[0],
+            label: allowedCharts[chartTypeIndex].metrices[0].key,
+         })
       }
    }
 
