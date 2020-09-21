@@ -1092,7 +1092,7 @@
             "listings": {
                "appslisting": {
                   "apps": "Applications",
-                  "users assigned": "Assignation des utilisateurs"
+                  "roles assigned": "Assignation des utilisateurs"
                },
                "deviceslisting": {
                   "devices": "Appareils",

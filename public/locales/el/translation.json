@@ -1092,7 +1092,7 @@
             "listings": {
                "appslisting": {
                   "apps": "Εφαρμογές",
-                  "users assigned": "Αντιστοίχιση χρήστη"
+                  "roles assigned": "Αντιστοίχιση χρήστη"
                },
                "deviceslisting": {
                   "devices": "Σσκευές",

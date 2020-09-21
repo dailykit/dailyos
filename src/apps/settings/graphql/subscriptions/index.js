@@ -387,3 +387,19 @@ export const PRINTNODE_CREDS = gql`
       }
    }
 `
+
+export const APPS = gql`
+   subscription apps {
+      apps {
+         id
+         title
+         roles {
+            id
+            role {
+               id
+               title
+            }
+         }
+      }
+   }
+`
