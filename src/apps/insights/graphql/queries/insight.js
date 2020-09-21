@@ -11,3 +11,10 @@ export const GET_INSIGHT = gql`
       }
    }
 `
+export const INSIGHTS = gql`
+   query Insights {
+      insights_insights(where: { isActive: { _eq: true } }) {
+         id
+      }
+   }
+`
