@@ -109,6 +109,8 @@ export default function Insight({
                      display: 'flex',
                      flexDirection: 'column',
                      alignItems: 'center',
+                     height: '100%',
+                     flex: 1,
                   }}
                >
                   {statsPosition === 'chart' || statsPosition !== 'table' ? (
@@ -125,7 +127,7 @@ export default function Insight({
                               ? 'none'
                               : { position: 'right' },
                         hAxis: { slantedText: false },
-                        height: chartOptions.height || '100%',
+                        height: chartOptions.height || '454px',
                         width: chartOptions.width || '100%',
                         ...chartOptions,
                      }}
@@ -148,7 +150,9 @@ export default function Insight({
                         <br />
                         <br />
                      </>
-                  ) : null}
+                  ) : (
+                     <span style={{ width: '20px' }} />
+                  )}
                   {statsPosition === 'table' ? <CounterBar /> : null}
                   <Box
                      style={{

@@ -9,4 +9,5 @@ const StyledBox = styled.div`
    background: #ffffff;
    border-radius: 10px;
    padding: 20px;
+   overflow-x: auto;
 `
