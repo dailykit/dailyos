@@ -47,9 +47,16 @@ const RoleForm = () => {
       variables: {
          id: params.id,
       },
-      onSubscriptionData: ({
-         subscriptionData: { data: { role = {} } = {} } = {},
-      }) => {
+   })
+
+   React.useEffect(() => {
+      if (!loading && !tab && role?.id) {
+         addTab(role.title, `/settings/roles/${role.id}`)
+      }
+   }, [loading, role, params.id, tab, addTab])
+
+   React.useEffect(() => {
+      if (!loading && role?.id) {
          setApps(role.apps)
          setUsers(
             role.users.map(({ user }) => ({
@@ -62,14 +69,8 @@ const RoleForm = () => {
                },
             }))
          )
-      },
-   })
-
-   React.useEffect(() => {
-      if (!loading && !tab && role?.id) {
-         addTab(role.title, `/settings/roles/${role.id}`)
       }
-   }, [loading, role, params.id, tab, addTab])
+   }, [loading, role])
 
    const publish = () => {
       const _apps = differenceBy(apps, role.apps, 'app.id')
