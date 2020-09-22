@@ -1,55 +1,36 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { isEmpty, groupBy } from 'lodash'
+import { Toggle, TunnelHeader } from '@dailykit/ui'
+import { mergeWith, isArray, isEmpty, groupBy } from 'lodash'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
-// Components
-import { Toggle, TunnelHeader } from '@dailykit/ui'
-
-import { ROLES } from '../../../../graphql'
 import {
    PermissionSection,
    StyledSectionItem,
    StyledPermissionItem,
 } from './styled'
+import { ROLES } from '../../../../graphql'
 import { Spacer } from '../../../../../../shared/styled'
 import { InlineLoader, Flex } from '../../../../../../shared/components'
 
 export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
    const params = useParams()
-   const [assigned, setAssigned] = React.useState({})
-   const [unassigned, setUnassigned] = React.useState({})
-   const { loading: loadingAssigned } = useSubscription(
-      ROLES.ASSIGNED_PERMISSIONS,
-      {
-         variables: {
-            role: { id: { _eq: params.id } },
-            app: { id: { _eq: app.id } },
-         },
-         onSubscriptionData: ({
-            subscriptionData: { data: { assigned_permissions = [] } = {} } = {},
-         }) => {
-            setAssigned(formatData(assigned_permissions))
-         },
-      }
-   )
-   const { loading: loadingUnassigned } = useSubscription(
-      ROLES.UNASSIGNED_PERMISSIONS,
-      {
-         onSubscriptionData: ({
-            subscriptionData: {
-               data: { unassigned_permissions = [] } = {},
-            } = {},
-         }) => {
-            setUnassigned(
-               formatData(
-                  unassigned_permissions.map(node => ({ permission: node }))
-               )
-            )
-         },
-      }
-   )
+   const [isLoading, setIsLoading] = React.useState(true)
+   const [permissions, setPermissions] = React.useState({})
+   const {
+      loading: loadingAssigned,
+      data: { assigned_permissions = [] } = {},
+   } = useSubscription(ROLES.ASSIGNED_PERMISSIONS, {
+      variables: {
+         role: { id: { _eq: params.id } },
+         app: { id: { _eq: app.id } },
+      },
+   })
+   const {
+      loading: loadingUnassigned,
+      data: { unassigned_permissions = [] } = {},
+   } = useSubscription(ROLES.UNASSIGNED_PERMISSIONS)
 
    const [fetchRoleApp, { data: { role_app = {} } = {} }] = useLazyQuery(
       ROLES.ROLE_APP
@@ -66,6 +47,37 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
       }
    }, [app])
 
+   React.useEffect(() => {
+      if (!loadingAssigned && !loadingUnassigned) {
+         setPermissions(
+            mergeWith(
+               formatData(
+                  assigned_permissions.map(node => ({
+                     ...node,
+                     permission: { ...node.permission, assigned: true },
+                  }))
+               ),
+               formatData(
+                  unassigned_permissions.map(node => ({
+                     permission: { ...node, assigned: false },
+                  }))
+               ),
+               (a, b) => {
+                  if (isArray(a)) {
+                     return a.concat(b)
+                  }
+               }
+            )
+         )
+         setIsLoading(false)
+      }
+   }, [
+      loadingAssigned,
+      loadingUnassigned,
+      assigned_permissions,
+      unassigned_permissions,
+   ])
+
    const save = () => {
       close()
    }
@@ -80,50 +92,28 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
             right={{ action: save, title: 'Save' }}
             close={() => close()}
          />
-         <Flex padding="24px" overflowY="auto" height="calc(100vh - 104px)">
+         <Flex
+            overflowY="auto"
+            padding="0 24px 24px 24px"
+            height="calc(100vh - 104px)"
+         >
             <PermissionSection>
-               <h2>Assigned</h2>
-               {loadingAssigned ? (
+               {isLoading ? (
                   <InlineLoader />
                ) : (
                   <>
-                     {isEmpty(assigned) ? (
+                     {isEmpty(permissions) ? (
                         <span className="is_empty">
                            No permissions available
                         </span>
                      ) : (
                         <ul>
-                           {Object.keys(assigned).map(key => (
+                           {Object.keys(permissions).map(key => (
                               <SectionItem
                                  key={key}
                                  title={key}
                                  role_app={role_app}
-                                 permissions={assigned}
-                              />
-                           ))}
-                        </ul>
-                     )}
-                  </>
-               )}
-            </PermissionSection>
-            <PermissionSection>
-               <h2>Unassigned</h2>
-               {loadingUnassigned ? (
-                  <InlineLoader />
-               ) : (
-                  <>
-                     {isEmpty(unassigned) ? (
-                        <span className="is_empty">
-                           No permissions available
-                        </span>
-                     ) : (
-                        <ul>
-                           {Object.keys(unassigned).map(key => (
-                              <SectionItem
-                                 key={key}
-                                 title={key}
-                                 role_app={role_app}
-                                 permissions={unassigned}
+                                 permissions={permissions}
                               />
                            ))}
                         </ul>
@@ -138,11 +128,27 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
 }
 
 const SectionItem = ({ title, permissions, role_app }) => {
+   const [isDisabled, setIsDisabled] = React.useState(false)
+
+   React.useEffect(() => {
+      if (!isEmpty(permissions[title].global)) {
+         const permission = permissions[title].global.find(
+            node => node.title === 'ROUTE_READ'
+         )
+
+         if (permission.value) {
+            setIsDisabled(false)
+         } else {
+            setIsDisabled(true)
+         }
+      }
+   }, [permissions])
+
    return (
       <StyledSectionItem>
          <h3>{title}</h3>
          <h4>Global</h4>
-         {permissions[title].global.length > 0 ? (
+         {permissions[title]?.global?.length > 0 ? (
             <ul>
                {permissions[title].global.map((permission, index) => (
                   <PermissionItem
@@ -156,8 +162,8 @@ const SectionItem = ({ title, permissions, role_app }) => {
             <span className="is_empty">No global permissions set!</span>
          )}
          <h4>Local</h4>
-         {permissions[title].local.length > 0 ? (
-            <ul>
+         {permissions[title]?.local?.length > 0 ? (
+            <ul className={`${isDisabled ? 'is_disabled' : ''}`}>
                {permissions[title].local.map((permission, index) => (
                   <PermissionItem
                      role_app={role_app}
@@ -195,7 +201,7 @@ const PermissionItem = ({ permission, role_app }) => {
    )
 
    React.useEffect(() => {
-      if ('value' in permission && checked !== permission.value) {
+      if (permission.assigned && checked !== permission.value) {
          updatePermission({
             variables: {
                appPermissionId: {
@@ -205,8 +211,7 @@ const PermissionItem = ({ permission, role_app }) => {
             },
          })
          return
-      } else if ('id' in role_app && checked) {
-         console.log(checked)
+      } else if ('id' in role_app && checked && !permission.assigned) {
          insertPermission({
             variables: {
                object: {
@@ -243,6 +248,7 @@ const formatData = list => {
       id: node.permission.id,
       route: node.permission.route,
       title: node.permission.title,
+      assigned: node.permission.assigned,
       ...('value' in node && { value: node.value }),
    })
 
@@ -256,5 +262,6 @@ const formatData = list => {
             .map(transform),
       }
    }
+   console.log(data)
    return data
 }

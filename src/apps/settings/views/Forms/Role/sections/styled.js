@@ -39,13 +39,6 @@ export const PermissionSection = styled.section`
    + section {
       margin-top: 32px;
    }
-   h2 {
-      color: #3c404e;
-      font-size: 20px;
-      font-weight: 500;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #e3e3e3;
-   }
    h3 {
       color: #3c404e;
       font-size: 18px;
@@ -67,6 +60,30 @@ export const PermissionSection = styled.section`
       color: #aca5a5;
       display: block;
       margin: 8px 0 8px 24px;
+   }
+   ul.is_disabled {
+      position: relative;
+      ::before {
+         top: -8px;
+         left: 8px;
+         content: '';
+         z-index: 1000;
+         border-radius: 2px;
+         position: absolute;
+         width: calc(100% + 8px);
+         height: calc(100% + 16px);
+         background: rgba(174, 164, 164, 0.2);
+      }
+      ::after {
+         top: 50%;
+         width: 70%;
+         z-index: 1001;
+         text-align: center;
+         position: absolute;
+         left: calc(50% + 8px);
+         transform: translate(-50%, -50%);
+         content: 'Enable route read permission to access these!';
+      }
    }
 `
 
