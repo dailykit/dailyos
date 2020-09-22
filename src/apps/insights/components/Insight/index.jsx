@@ -25,7 +25,6 @@ export default function Insight({
    alignment = 'column',
    tablePosition = 'bottom',
    id = '',
-   nodeKey = 'nodes',
    chartOptions = {},
    statsPosition,
 }) {

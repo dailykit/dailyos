@@ -33,7 +33,7 @@ export const Counter = ({
                      <span>{fromMixed(counter)}</span>
                      <h5>
                         {regex.test(counter) ? '$' : null}{' '}
-                        {flattenedAggregates[counter]}
+                        {flattenedAggregates[counter].toFixed(2)}
                      </h5>
                   </StyledCounterElement>
                )
