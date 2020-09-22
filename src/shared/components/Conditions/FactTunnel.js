@@ -79,7 +79,16 @@ const FactTunnel = ({ closeTunnel }) => {
          fact.text = value.text
       }
       if (factObj.value.type === 'int') {
-         fact.value = +fact.value
+         fact.value = +value
+      }
+      if (factObj.value.type === 'select') {
+         if (factObj.value.multi) {
+            fact.text = value.map(item => item.title).join(', ')
+            fact.value = value.map(item => item[factObj.value.select])
+         } else {
+            fact.text = value.title
+            fact.value = value[factObj.value.select]
+         }
       }
       console.log(fact)
       addFact(fact)
@@ -172,16 +181,10 @@ const FactTunnel = ({ closeTunnel }) => {
                            factObj.value.datapoint === 'query'
                      ) && (
                         <Dropdown
-                           type={factObj.value.single ? 'single' : 'multi'}
+                           type={factObj.value.multi ? 'multi' : 'single'}
                            options={valueData}
                            searchedOption={text => console.log(text)}
-                           selectedOption={value =>
-                              factObj.value.single
-                                 ? setValue(value[factObj.value.select])
-                                 : setValue(
-                                      value.map(op => op[factObj.value.select])
-                                   )
-                           }
+                           selectedOption={value => setValue(value)}
                            placeholder="type what you're looking for..."
                         />
                      )}
@@ -190,16 +193,10 @@ const FactTunnel = ({ closeTunnel }) => {
                            factObj.value.datapoint === 'list'
                      ) && (
                         <Dropdown
-                           type={factObj.value.single ? 'single' : 'multi'}
+                           type={factObj.value.multi ? 'multi' : 'single'}
                            options={factObj.value.list}
                            searchedOption={text => console.log(text)}
-                           selectedOption={value =>
-                              factObj.value.single
-                                 ? setValue(value[factObj.value.select])
-                                 : setValue(
-                                      value.map(op => op[factObj.value.select])
-                                   )
-                           }
+                           selectedOption={value => setValue(value)}
                            placeholder="type what you're looking for..."
                         />
                      )}

@@ -44,7 +44,9 @@ const ConditionTree = ({ data, nodeId, openTunnel }) => {
                   <Text as="title">
                      {Array.isArray(datum.value)
                         ? datum.value.join(', ')
-                        : datum.operator === 'rruleHasDate' ? datum.text : datum.value}
+                        : datum.operator === 'rruleHasDate'
+                        ? datum.text
+                        : datum.value}
                   </Text>
                </StyledFact>
             ) : (
