@@ -1,4 +1,5 @@
 import React from 'react'
+import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
@@ -10,8 +11,12 @@ import {
    InventoryProduct,
    ReadyToEatProduct,
 } from '../../views'
+import { useAccess } from '../../context'
+import { Flex } from '../../../../shared/components'
 
 const Main = () => {
+   const { canAccessRoute, accessPermission } = useAccess()
+
    return (
       <main>
          <Switch>
@@ -19,13 +24,42 @@ const Main = () => {
                <Home />
             </Route>
             <Route path="/apps/order/orders" exact>
-               <Orders />
+               {canAccessRoute('orders') ? (
+                  <Orders />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'orders')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access orders listing.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/apps/order/orders/:id" exact>
                <Order />
             </Route>
             <Route path="/apps/order/planned" exact>
-               <Planned />
+               {canAccessRoute('planned') ? (
+                  <Planned />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ')?.fallbackMessage ||
+                           'You do not have sufficient permission to access planned mode.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/apps/order/planned/inventory/:id" exact>
                <InventoryProduct />
