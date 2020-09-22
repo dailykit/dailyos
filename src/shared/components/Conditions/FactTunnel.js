@@ -78,6 +78,9 @@ const FactTunnel = ({ closeTunnel }) => {
          fact.value = value.psqlObject
          fact.text = value.text
       }
+      if (factObj.value.type === 'int') {
+         fact.value = +fact.value
+      }
       console.log(fact)
       addFact(fact)
       closeTunnel(2)
