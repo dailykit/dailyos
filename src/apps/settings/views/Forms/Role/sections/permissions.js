@@ -30,7 +30,13 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
    const {
       loading: loadingUnassigned,
       data: { unassigned_permissions = [] } = {},
-   } = useSubscription(ROLES.UNASSIGNED_PERMISSIONS)
+   } = useSubscription(ROLES.UNASSIGNED_PERMISSIONS, {
+      variables: {
+         appId: {
+            _eq: app.id,
+         },
+      },
+   })
 
    const [fetchRoleApp, { data: { role_app = {} } = {} }] = useLazyQuery(
       ROLES.ROLE_APP
@@ -262,6 +268,5 @@ const formatData = list => {
             .map(transform),
       }
    }
-   console.log(data)
    return data
 }

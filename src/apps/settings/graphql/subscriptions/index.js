@@ -402,9 +402,10 @@ export const ROLES = {
       }
    `,
    UNASSIGNED_PERMISSIONS: gql`
-      subscription unassigned_permissions {
+      subscription unassigned_permissions($appId: Int_comparison_exp!) {
          unassigned_permissions: settings_appPermission(
             where: {
+               appId: $appId
                _not: {
                   role_appPermissions: { role_appId: { _is_null: false } }
                }
