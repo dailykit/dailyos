@@ -182,15 +182,24 @@ export default function Insight({
    )
 }
 
-function ChartColumn({ column, updateFunc, yColumns, multiple, setShow }) {
-   const [checked, setChecked] = useState(false)
+function ChartColumn({
+   column,
+   updateFunc,
+   multiple,
+   setShow,
+   yChecked,
+   setYChecked,
+   isChecked,
+}) {
+   const [checked, setChecked] = useState(isChecked)
 
    React.useEffect(() => {
+      const isExist = yChecked.findIndex(col => col.key === column.key)
       if (checked) {
-         updateFunc(cols => [...cols, column])
+         if (isExist < 0) setYChecked([...yChecked, column])
       } else {
-         const newColumns = yColumns.filter(col => col.key !== column.key)
-         updateFunc(newColumns)
+         const newCols = yChecked.filter(col => col.key !== column.key)
+         if (isExist >= 0) setYChecked(newCols)
       }
    }, [checked])
 
@@ -207,7 +216,7 @@ function ChartColumn({ column, updateFunc, yColumns, multiple, setShow }) {
             <Checkbox
                checked={checked}
                onChange={() => {
-                  setChecked(!checked)
+                  setChecked(bool => !bool)
                }}
             >
                {column.key}
@@ -254,6 +263,7 @@ function ChartOptions({
          }
          break
    }
+   const [yOrSlices, setYOrSlices] = useState([yOrMetrices[0]])
 
    const handleYOrMetrices = () => {
       switch (chartType.type) {
@@ -288,6 +298,7 @@ function ChartOptions({
                xOrSlice.map(column => {
                   return (
                      <DropdownItem
+                        key={column.key}
                         onClick={() => handleXOrMetrices(column.key)}
                      >
                         {column.key}
@@ -297,19 +308,41 @@ function ChartOptions({
          </Dropdown>
 
          <Dropdown title="sources" withIcon show={showY} setShow={setShowY}>
-            {allowedCharts.length &&
-               yOrMetrices.map(column => {
-                  return (
-                     <ChartColumn
-                        key={column.key}
-                        column={column}
-                        updateFunc={handleYOrMetrices()}
-                        yColumns={yColumns}
-                        multiple={chartType.multiple}
-                        setShow={setShowY}
-                     />
-                  )
-               })}
+            {allowedCharts.length && (
+               <>
+                  {yOrMetrices.map(column => {
+                     return (
+                        <ChartColumn
+                           key={column.key}
+                           column={column}
+                           updateFunc={handleYOrMetrices()}
+                           yColumns={yColumns}
+                           multiple={chartType.multiple}
+                           setShow={setShowY}
+                           yChecked={yOrSlices}
+                           setYChecked={setYOrSlices}
+                           isChecked={
+                              yOrSlices.findIndex(
+                                 col => col.key === column.key
+                              ) >= 0
+                           }
+                        />
+                     )
+                  })}
+
+                  <DropdownItem>
+                     <TextButton
+                        type="solid"
+                        onClick={() => {
+                           handleYOrMetrices()(yOrSlices)
+                           setShowY(false)
+                        }}
+                     >
+                        Apply
+                     </TextButton>
+                  </DropdownItem>
+               </>
+            )}
          </Dropdown>
       </>
    )
