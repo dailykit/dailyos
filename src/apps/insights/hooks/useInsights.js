@@ -60,7 +60,7 @@ export const useInsights = (
       data: {
          insight = {
             query: null,
-            options: null,
+            availableOptions: null,
             switches: null,
             id: null,
             allowedCharts: [],
@@ -72,7 +72,7 @@ export const useInsights = (
          id: insightId,
       },
       onCompleted: data => {
-         setVariableOptions(data.insight.options)
+         setVariableOptions(data.insight.defaultOptions)
          setVariableSwitches(data.insight.switches)
       },
    })
@@ -94,7 +94,7 @@ export const useInsights = (
    if (options.includeTableData || options.chart)
       transformedData = transformer(data, nodeKey)
 
-   const whereObject = buildOptions(insight.options || {})
+   const whereObject = buildOptions(insight.availableOptions || {})
 
    const result = {
       loading,
