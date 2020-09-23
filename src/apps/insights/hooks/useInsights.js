@@ -4,6 +4,9 @@ import { useState } from 'react'
 
 import { GET_INSIGHT } from '../graphql'
 import { transformer, buildOptions } from '../utils/transformer'
+import { generateBarChartData } from '../utils/generateBarChartData'
+import { generatePieChartData } from '../utils/generatePieChartData'
+import { generateCalendarChartData } from '../utils/generateCalendarChartData'
 
 function onError(error) {
    console.log(error)
@@ -45,7 +48,7 @@ let gqlQuery = {
  * @param {string} insightId
  * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumns?: any[], slice: string, metrices: any[]}} [options]
  *
- * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: string[], updateSwitches: () => {}, updateOptions: () => {}, aggregates: {}} insight
+ * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: any[], updateSwitches: () => {}, updateOptions: () => {}, aggregates: {}} insight
  */
 export const useInsights = (
    insightId,
@@ -115,6 +118,8 @@ export const useInsights = (
          chartType: options.chartType,
          slice: options.slice,
          metrices: options.metrices,
+         // TODO: add dateKeys from options here
+         dateKeys: [],
       })
       result.chartData = chartData
    } else {
@@ -128,12 +133,12 @@ export const useInsights = (
  *
  * @param {Array<{type: string, columns: any[]}>} allowedCharts
  * @param {any[]} transformedData
- * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[], chartType: {multiple: boolean, type: string, index: number}, slice: string, metrices: Array<{key: string, label: string}>}} option
+ * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[], chartType: {multiple: boolean, type: string, index: number}, slice: string, metrices: Array<{key: string, label: string}>, dateKeys: string[]}} option
  */
 function genChartData(
    allowedCharts,
    transformedData,
-   { xColumn, yColumns, chartType, slice, metrices }
+   { xColumn, yColumns, chartType, slice, metrices, dateKeys }
 ) {
    let chartData = []
 
@@ -155,6 +160,14 @@ function genChartData(
 
          return chartData
 
+      case 'Calendar':
+         chartData = generateCalendarChartData(allowedCharts, transformedData, {
+            chartTypeIndex: chartType.index,
+            metrices,
+            dateKeys,
+         })
+         return chartData
+
       default:
          chartData = generateBarChartData(allowedCharts, transformedData, {
             chartTypeIndex: chartType.index,
@@ -163,133 +176,4 @@ function genChartData(
          })
          return chartData
    }
-}
-
-function generateBarChartData(
-   allowedCharts,
-   transformedData,
-   { chartTypeIndex, xColumn, yColumns }
-) {
-   let chartData = [[]]
-
-   // add chart header
-   if (
-      Array.isArray(allowedCharts) &&
-      allowedCharts.length &&
-      allowedCharts[chartTypeIndex] &&
-      allowedCharts[chartTypeIndex].x
-   ) {
-      if (xColumn) {
-         const index = allowedCharts[chartTypeIndex].x.findIndex(
-            col => col.key === xColumn
-         )
-
-         if (index >= 0)
-            chartData[0].push({
-               ...allowedCharts[chartTypeIndex].x[index],
-               label: allowedCharts[chartTypeIndex].x[index].key,
-            })
-      } else {
-         // push the first column from x in header
-         chartData[0].push({
-            ...allowedCharts[chartTypeIndex].x[0],
-            label: allowedCharts[chartTypeIndex].x[0].key,
-         })
-      }
-   }
-
-   if (yColumns.length) {
-      yColumns.forEach(column => {
-         chartData[0].push({ ...column, label: column.key })
-      })
-   } else {
-      if (
-         Array.isArray(allowedCharts) &&
-         allowedCharts[chartTypeIndex] &&
-         allowedCharts[chartTypeIndex].y
-      )
-         chartData[0].push({
-            ...allowedCharts[chartTypeIndex].y[0],
-            label: allowedCharts[chartTypeIndex].y[0].key,
-         })
-   }
-
-   // add chart data
-
-   transformedData.forEach(data => {
-      const row = []
-
-      chartData[0].forEach(label => {
-         row.push(data[label.key])
-      })
-
-      chartData.push(row)
-   })
-
-   return chartData
-}
-
-function generatePieChartData(
-   allowedCharts,
-   transformedData,
-   { chartTypeIndex, slice, metrices }
-) {
-   let chartData = [[]]
-
-   // add chart headers
-   if (
-      Array.isArray(allowedCharts) &&
-      allowedCharts.length &&
-      allowedCharts[chartTypeIndex] &&
-      allowedCharts[chartTypeIndex].slices?.length
-   ) {
-      if (slice) {
-         const index = allowedCharts[chartTypeIndex].slices.findIndex(
-            col => col.key === slice
-         )
-
-         if (index >= 0)
-            chartData[0].push({
-               ...allowedCharts[chartTypeIndex].slices[index],
-               label: allowedCharts[chartTypeIndex].slices[index].key,
-            })
-      } else {
-         chartData[0].push(allowedCharts[chartTypeIndex].slices[0])
-         chartData[0].push({
-            ...allowedCharts[chartTypeIndex].slices[0],
-            label: allowedCharts[chartTypeIndex].slices[0].key,
-         })
-      }
-   }
-
-   if (metrices.length) {
-      metrices.forEach(column => {
-         chartData[0].push(column)
-      })
-   } else {
-      if (
-         Array.isArray(allowedCharts) &&
-         allowedCharts.length &&
-         allowedCharts[chartTypeIndex] &&
-         allowedCharts[chartTypeIndex].metrices?.length
-      ) {
-         chartData[0].push({
-            ...allowedCharts[chartTypeIndex].metrices[0],
-            label: allowedCharts[chartTypeIndex].metrices[0].key,
-         })
-      }
-   }
-
-   // add chart data
-   transformedData.forEach(data => {
-      const row = []
-
-      chartData[0].forEach(label => {
-         row.push(data[label.key])
-      })
-
-      chartData.push(row)
-   })
-
-   return chartData
 }
