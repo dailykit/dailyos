@@ -56,20 +56,20 @@ export const Header = ({ title, action, setShow }) => {
 }
 
 const Background = styled.div`
-   position: absolute;
+   position: fixed;
    top: 0;
    left: 0;
    height: 100%;
    width: 100%;
-   background: red;
    z-index: 100;
    background: rgba(217, 233, 241, 0.38);
    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
 `
 const Box = styled.div`
-   position: absolute;
+   position: fixed;
    right: 0%;
    left: 0%;
+   top: 15%;
    width: ${({ width }) => width};
    margin: 0 auto;
    background-color: #fff;
