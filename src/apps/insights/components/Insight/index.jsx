@@ -70,9 +70,12 @@ export default function Insight({
                      index,
                      id: index,
                      title: chart.type,
+                     chartTitle: chart.title,
                   }))}
                   active={chartType.index}
-                  onChange={option => setChartType(option)}
+                  onChange={option =>
+                     setChartType({ ...option, title: option.chartTitle })
+                  }
                />
             </div>
 
@@ -130,6 +133,7 @@ export default function Insight({
                         height: chartOptions.height || '454px',
                         width: chartOptions.width || '100%',
                         ...chartOptions,
+                        title: chartType.title,
                      }}
                   />
                   <ChartConfigContainer>
@@ -256,6 +260,13 @@ function ChartOptions({
             yOrMetrices = allowedCharts[chartType.index].metrices
          }
          break
+      case 'Calendar':
+         if (allowedCharts.length) {
+            xOrSlice = allowedCharts[chartType.index].dateKeys
+            yOrMetrices = allowedCharts[chartType.index].metrices
+         }
+         break
+
       default:
          if (allowedCharts.length) {
             xOrSlice = allowedCharts[chartType.index].x
