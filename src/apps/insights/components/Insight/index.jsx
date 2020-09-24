@@ -312,7 +312,7 @@ function ChartOptions({
                         key={column.key}
                         onClick={() => handleXOrMetrices(column.key)}
                      >
-                        {column.key}
+                        {typeof column === 'string' ? column : column.key}
                      </DropdownItem>
                   )
                })}
