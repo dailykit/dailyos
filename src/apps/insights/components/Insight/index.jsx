@@ -283,6 +283,10 @@ function ChartOptions({
 
          case 'PieChart':
             return setMetrices
+
+         case 'Calendar':
+            return setMetrices
+
          default:
             return setYColumns
       }
@@ -296,6 +300,11 @@ function ChartOptions({
          case 'PieChart':
             setSlice(key)
             return setShowX(false)
+
+         case 'Calendar':
+            setSlice(key)
+            return setShowX(false)
+
          default:
             setXColumn(key)
             return setShowX(false)
@@ -311,7 +320,7 @@ function ChartOptions({
                   return (
                      <DropdownItem
                         key={label}
-                        onClick={() => handleXOrMetrices(column.key)}
+                        onClick={() => handleXOrMetrices(label)}
                      >
                         {label}
                      </DropdownItem>
