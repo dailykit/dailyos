@@ -307,12 +307,13 @@ function ChartOptions({
          <Dropdown title="Label" withIcon show={showX} setShow={setShowX}>
             {allowedCharts.length &&
                xOrSlice.map(column => {
+                  const label = typeof column === 'string' ? column : column.key
                   return (
                      <DropdownItem
-                        key={column.key}
+                        key={label}
                         onClick={() => handleXOrMetrices(column.key)}
                      >
-                        {typeof column === 'string' ? column : column.key}
+                        {label}
                      </DropdownItem>
                   )
                })}
@@ -340,18 +341,19 @@ function ChartOptions({
                         />
                      )
                   })}
-
-                  <DropdownItem>
-                     <TextButton
-                        type="solid"
-                        onClick={() => {
-                           handleYOrMetrices()(yOrSlices)
-                           setShowY(false)
-                        }}
-                     >
-                        Apply
-                     </TextButton>
-                  </DropdownItem>
+                  {chartType.multiple && (
+                     <DropdownItem>
+                        <TextButton
+                           type="solid"
+                           onClick={() => {
+                              handleYOrMetrices()(yOrSlices)
+                              setShowY(false)
+                           }}
+                        >
+                           Apply
+                        </TextButton>
+                     </DropdownItem>
+                  )}
                </>
             )}
          </Dropdown>
