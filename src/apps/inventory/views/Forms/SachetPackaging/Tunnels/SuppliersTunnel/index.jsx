@@ -29,13 +29,15 @@ export default function SuppliersTunnel({ close, state }) {
    const { loading } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const newSuppliers = input.subscriptionData.data.suppliers.map(sup => {
+            const firstName = sup.contactPerson?.firstName || ''
+            const lastName = firstName ? `${sup.contactPerson?.lastName}` : ''
+            const title = firstName + lastName || sup.name
+
             return {
                id: sup.id,
                supplier: { title: sup.name },
                contact: {
-                  title: `${sup.contactPerson?.firstName || ''} ${
-                     sup.contactPerson?.lastName || ''
-                  }`,
+                  title,
                   img: '',
                },
             }
