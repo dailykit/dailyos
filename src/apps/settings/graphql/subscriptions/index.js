@@ -403,11 +403,11 @@ export const ROLES = {
    `,
    UPDATE_PERMISSION: gql`
       mutation updateRole_AppPermission(
-         $appPermissionId: Int_comparison_exp!
          $value: Boolean!
+         $where: settings_role_appPermission_bool_exp!
       ) {
          updateRole_AppPermission: update_settings_role_appPermission(
-            where: { appPermissionId: $appPermissionId }
+            where: $where
             _set: { value: $value }
          ) {
             affected_rows

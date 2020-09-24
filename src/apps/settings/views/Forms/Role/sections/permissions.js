@@ -182,10 +182,15 @@ const PermissionItem = ({ permission, role_app }) => {
       if (permission.assigned && checked !== permission.value) {
          updatePermission({
             variables: {
-               appPermissionId: {
-                  _eq: permission.id,
-               },
                value: checked,
+               where: {
+                  appPermissionId: {
+                     _eq: permission.id,
+                  },
+                  role_appId: {
+                     _eq: role_app.id,
+                  },
+               },
             },
          })
          return
