@@ -384,36 +384,20 @@ export const ROLES = {
          }
       }
    `,
-   ASSIGNED_PERMISSIONS: gql`
-      subscription assigned_permissions(
-         $role: settings_role_bool_exp!
-         $app: settings_app_bool_exp!
+   PERMISSIONS: gql`
+      subscription permissions(
+         $appId: Int_comparison_exp!
+         $roleId: Int_comparison_exp!
       ) {
-         assigned_permissions: settings_role_appPermission(
-            where: { role_app: { role: $role, app: $app } }
-         ) {
-            permission {
-               id
-               route
-               title
-            }
-            value
-         }
-      }
-   `,
-   UNASSIGNED_PERMISSIONS: gql`
-      subscription unassigned_permissions($appId: Int_comparison_exp!) {
-         unassigned_permissions: settings_appPermission(
-            where: {
-               appId: $appId
-               _not: {
-                  role_appPermissions: { role_appId: { _is_null: false } }
-               }
-            }
-         ) {
+         permissions: settings_appPermission(where: { appId: $appId }) {
             id
             route
             title
+            roleAppPermissions: role_appPermissions(
+               where: { role_app: { appId: $appId, roleId: $roleId } }
+            ) {
+               value
+            }
          }
       }
    `,

@@ -1,8 +1,8 @@
 import React from 'react'
 import { toast } from 'react-toastify'
+import { isEmpty, groupBy } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { Toggle, TunnelHeader } from '@dailykit/ui'
-import { mergeWith, isArray, isEmpty, groupBy } from 'lodash'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
 import {
@@ -19,24 +19,34 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [permissions, setPermissions] = React.useState({})
    const {
-      loading: loadingAssigned,
-      data: { assigned_permissions = [] } = {},
-   } = useSubscription(ROLES.ASSIGNED_PERMISSIONS, {
-      variables: {
-         role: { id: { _eq: params.id } },
-         app: { id: { _eq: app.id } },
-      },
-   })
-   const {
-      loading: loadingUnassigned,
-      data: { unassigned_permissions = [] } = {},
-   } = useSubscription(ROLES.UNASSIGNED_PERMISSIONS, {
+      loading,
+      data: { permissions: permissionsList = [] } = {},
+   } = useSubscription(ROLES.PERMISSIONS, {
       variables: {
          appId: {
             _eq: app.id,
          },
+         roleId: {
+            _eq: params.id,
+         },
       },
    })
+
+   React.useEffect(() => {
+      if (!loading && !isEmpty(permissionsList)) {
+         const transform = node => ({
+            id: node.id,
+            route: node.route,
+            title: node.title,
+            assigned: isEmpty(node.roleAppPermissions) ? false : true,
+            ...(!isEmpty(node.roleAppPermissions) && {
+               value: node.roleAppPermissions[0].value,
+            }),
+         })
+         setPermissions(formatData(permissionsList.map(transform)))
+         setIsLoading(false)
+      }
+   }, [loading, permissionsList])
 
    const [fetchRoleApp, { data: { role_app = {} } = {} }] = useLazyQuery(
       ROLES.ROLE_APP
@@ -53,51 +63,13 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
       }
    }, [app])
 
-   React.useEffect(() => {
-      if (!loadingAssigned && !loadingUnassigned) {
-         setPermissions(
-            mergeWith(
-               formatData(
-                  assigned_permissions.map(node => ({
-                     ...node,
-                     permission: { ...node.permission, assigned: true },
-                  }))
-               ),
-               formatData(
-                  unassigned_permissions.map(node => ({
-                     permission: { ...node, assigned: false },
-                  }))
-               ),
-               (a, b) => {
-                  if (isArray(a)) {
-                     return a.concat(b)
-                  }
-               }
-            )
-         )
-         setIsLoading(false)
-      }
-   }, [
-      loadingAssigned,
-      loadingUnassigned,
-      assigned_permissions,
-      unassigned_permissions,
-   ])
-
-   const save = () => {
-      close()
-   }
    const close = () => {
       closeTunnel(1)
       setApp(null)
    }
    return (
       <>
-         <TunnelHeader
-            title="Manage Permissions"
-            right={{ action: save, title: 'Save' }}
-            close={() => close()}
-         />
+         <TunnelHeader title="Manage Permissions" close={() => close()} />
          <Flex
             overflowY="auto"
             padding="0 24px 24px 24px"
@@ -250,22 +222,11 @@ const capitalize = (str, lower = false) =>
 
 const formatData = list => {
    const data = {}
-   const transform = node => ({
-      id: node.permission.id,
-      route: node.permission.route,
-      title: node.permission.title,
-      assigned: node.permission.assigned,
-      ...('value' in node && { value: node.value }),
-   })
 
-   for (let [key, value] of Object.entries(groupBy(list, 'permission.route'))) {
+   for (let [key, value] of Object.entries(groupBy(list, 'route'))) {
       data[key] = {
-         global: value
-            .filter(node => node.permission.title.includes('ROUTE'))
-            .map(transform),
-         local: value
-            .filter(node => !node.permission.title.includes('ROUTE'))
-            .map(transform),
+         global: value.filter(node => node.title.includes('ROUTE')),
+         local: value.filter(node => !node.title.includes('ROUTE')),
       }
    }
    return data
