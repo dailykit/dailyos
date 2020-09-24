@@ -27,3 +27,7 @@
 6. Online Store: The seller app is to create and manage menu, products for sales channels. Each sales channel for e.g.: Online Store, RestaurantMealKits.com, uberEats, and more will have different seller app for each sales channel. 
     1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/online_store/README.md "View Features")
     2. [View Docs](http://docs.dailykit.org/docs/store/overview "View Docs")
+7. CRM App: 
+    1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/crm/README.md "View Features")
+8. Safety App: 
+    1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/safety/README.md "View Features")
