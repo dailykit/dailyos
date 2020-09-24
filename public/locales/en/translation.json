@@ -1170,7 +1170,7 @@
             "listings": {
                "appslisting": {
                   "apps": "Apps",
-                  "users assigned": "Users Assigned"
+                  "roles assigned": "Roles Assigned"
                },
                "roleslisting": {
                   "roles": "Roles",

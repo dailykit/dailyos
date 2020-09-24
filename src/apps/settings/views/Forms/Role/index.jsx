@@ -1,7 +1,8 @@
 import React from 'react'
-import _ from 'lodash'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
+import { isEmpty, differenceBy } from 'lodash'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
@@ -10,26 +11,14 @@ import {
    Tunnels,
    Tunnel,
    useTunnel,
-   useMultiList,
-   ListItem,
-   List,
-   ListOptions,
-   ListSearch,
-   Avatar,
-   ArrowUpIcon,
-   ArrowDownIcon,
    Text,
-   TunnelHeader,
-   TagGroup,
-   Tag,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../../context'
-import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
 import { ROLES } from '../../../graphql'
-import { StyledAppItem } from './styled'
-import { InlineLoader, Flex } from '../../../../../shared/components'
-import { toast } from 'react-toastify'
+import { useTabs } from '../../../context'
+import { InlineLoader } from '../../../../../shared/components'
+import { Apps, AppsTunnel, Users, UsersTunnel } from './sections'
+import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
 
 const RoleForm = () => {
    const params = useParams()
@@ -58,9 +47,16 @@ const RoleForm = () => {
       variables: {
          id: params.id,
       },
-      onSubscriptionData: ({
-         subscriptionData: { data: { role = {} } = {} } = {},
-      }) => {
+   })
+
+   React.useEffect(() => {
+      if (!loading && !tab && role?.id) {
+         addTab(role.title, `/settings/roles/${role.id}`)
+      }
+   }, [loading, role, params.id, tab, addTab])
+
+   React.useEffect(() => {
+      if (!loading && role?.id) {
          setApps(role.apps)
          setUsers(
             role.users.map(({ user }) => ({
@@ -73,18 +69,12 @@ const RoleForm = () => {
                },
             }))
          )
-      },
-   })
-
-   React.useEffect(() => {
-      if (!loading && !tab && role?.id) {
-         addTab(role.title, `/settings/roles/${role.id}`)
       }
-   }, [loading, role, params.id, tab, addTab])
+   }, [loading, role])
 
    const publish = () => {
-      const _apps = _.differenceBy(apps, role.apps, 'app.id')
-      if (!_.isEmpty(_apps)) {
+      const _apps = differenceBy(apps, role.apps, 'app.id')
+      if (!isEmpty(_apps)) {
          insertApps({
             variables: {
                objects: _apps.map(({ app }) => ({
@@ -95,14 +85,14 @@ const RoleForm = () => {
          })
       }
 
-      const _users = _.differenceBy(
+      const _users = differenceBy(
          users,
          role.users.map(node => ({
             user: { ...node.user, id: node.user.keycloakId },
          })),
          'user.id'
       )
-      if (!_.isEmpty(_users)) {
+      if (!isEmpty(_users)) {
          insertUsers({
             variables: {
                objects: _users.map(({ user }) => ({
@@ -166,231 +156,3 @@ const RoleForm = () => {
 }
 
 export default RoleForm
-
-const Apps = ({ apps }) => {
-   const [isOpen, setIsOpen] = React.useState('')
-
-   return (
-      <>
-         {apps.map(({ app }) => (
-            <StyledAppItem key={app.id}>
-               <div>
-                  <div>
-                     <Avatar url="" withName type="round" title={app.title} />
-                     <span
-                        tabIndex="0"
-                        role="button"
-                        onClick={() =>
-                           setIsOpen(value =>
-                              value === app.title ? '' : app.title
-                           )
-                        }
-                        onKeyPress={e =>
-                           e.charCode === 32 &&
-                           setIsOpen(value =>
-                              value === app.title ? '' : app.title
-                           )
-                        }
-                     >
-                        {isOpen === app.title ? (
-                           <ArrowUpIcon color="#555B6E" size={24} />
-                        ) : (
-                           <ArrowDownIcon color="#555B6E" size={24} />
-                        )}
-                     </span>
-                  </div>
-               </div>
-            </StyledAppItem>
-         ))}
-      </>
-   )
-}
-
-const AppsTunnel = ({ closeTunnel, selectedApps }) => {
-   const params = useParams()
-   const [apps, setApps] = React.useState([])
-   const [search, setSearch] = React.useState('')
-   const { loading } = useQuery(ROLES.APPS, {
-      variables: {
-         roleId: {
-            _eq: params.id,
-         },
-      },
-      onCompleted: ({ apps: list = [] } = {}) => {
-         if (!_.isEmpty(list)) {
-            setApps(list.map(node => ({ ...node, icon: '' })))
-         }
-      },
-   })
-   const [list, selected, selectOption] = useMultiList(apps)
-
-   const save = () => {
-      closeTunnel(1)
-      selectedApps(value =>
-         _.uniqBy(
-            [...value, ...selected.map(node => ({ app: node }))],
-            'app.id'
-         )
-      )
-   }
-
-   return (
-      <>
-         <TunnelHeader
-            title="Add Apps"
-            right={{ action: save, title: 'Save' }}
-            close={() => closeTunnel(1)}
-         />
-         <Flex padding="16px">
-            {loading ? (
-               <InlineLoader />
-            ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
-                  )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1101"
-                              key={option.id}
-                              content={{
-                                 icon: option.icon,
-                                 title: option.title,
-                              }}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
-            )}
-         </Flex>
-      </>
-   )
-}
-
-const Users = ({ users }) => {
-   return (
-      <ul>
-         {users.map(({ user }) => (
-            <li
-               key={user.id}
-               style={{ marginBottom: '16px', listStyle: 'none' }}
-            >
-               <Avatar withName url="" title={user.title} />
-            </li>
-         ))}
-      </ul>
-   )
-}
-
-const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
-   const params = useParams()
-   const [users, setUsers] = React.useState([])
-   const [search, setSearch] = React.useState('')
-   const { loading } = useQuery(ROLES.USERS, {
-      variables: {
-         roleId: {
-            _eq: params.id,
-         },
-      },
-      onCompleted: ({ users: list = [] } = {}) => {
-         if (!_.isEmpty(list)) {
-            setUsers(
-               list.map(node => ({
-                  id: node.keycloakId,
-                  title: node.firstName + ' ' + node.lastName,
-                  description: node.email,
-               }))
-            )
-         }
-      },
-   })
-   const [list, selected, selectOption] = useMultiList(users)
-
-   const save = () => {
-      closeTunnel(1)
-      selectedUsers(value =>
-         _.uniqBy(
-            [...value, ...selected.map(node => ({ user: node }))],
-            'user.id'
-         )
-      )
-   }
-
-   return (
-      <>
-         <TunnelHeader
-            title="Add Apps"
-            right={{ action: save, title: 'Save' }}
-            close={() => closeTunnel(1)}
-         />
-         <Flex padding="16px">
-            {loading ? (
-               <InlineLoader />
-            ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
-                  )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL2"
-                              key={option.id}
-                              content={{
-                                 icon: option.icon,
-                                 title: option.title,
-                              }}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
-            )}
-         </Flex>
-      </>
-   )
-}
