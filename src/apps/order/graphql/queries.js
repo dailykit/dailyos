@@ -1052,12 +1052,11 @@ export const APP_PERMISSIONS = gql`
          title
          apps(where: { app: { title: $title } }) {
             id
-            permissions {
+            permissions(where: { value: { _eq: true } }) {
                permission {
                   id
                   route
                   title
-                  fallbackMessage
                }
                value
             }

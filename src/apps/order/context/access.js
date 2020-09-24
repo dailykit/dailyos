@@ -52,7 +52,7 @@ export const AccessProvider = ({ children }) => {
 
          const _routes = groupBy(
             uniqBy(roles.reduce(flatten, []).map(transform), v =>
-               [v.route, v.title].join()
+               [v.value, v.route, v.title].join()
             ),
             'route'
          )
@@ -73,10 +73,9 @@ export const useAccess = (route = '') => {
 
    const canAccessRoute = React.useCallback(
       path => {
-         const isAllowed = state.routes[path].find(
-            node => node.title === 'ROUTE_READ'
-         ).value
-         return isAllowed
+         const route = state.routes[path] || []
+         const index = route.findIndex(node => node.title === 'ROUTE_READ')
+         return index === -1 ? false : route[index].value
       },
       [state.routes]
    )
