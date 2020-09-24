@@ -1093,18 +1093,6 @@
                   "add": "Ajouter",
                   "type what you're looking for": "tapez ce que vous cherchez"
                },
-               "role": {
-                  "enter the role name": "Nommer le fichier",
-                  "publish": "Publier",
-                  "apps": "Applications",
-                  "configure": "Configurer",
-                  "select and configure apps": "Sélectionner et configurer",
-                  "configure apps": "Configurer les applis",
-                  "add": "Ajouter",
-                  "type what you're looking for": "tapez ce que vous cherchez",
-                  "save": "Enregistrer",
-                  "permissions for role": "Permissions pour le rôle"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1182,7 +1170,7 @@
             "listings": {
                "appslisting": {
                   "apps": "Applications",
-                  "users assigned": "Assignation des utilisateurs"
+                  "roles assigned": "Roles Assigned"
                },
                "roleslisting": {
                   "roles": "Rôles",
@@ -1270,8 +1258,9 @@
                "servings": "Servings",
                "legends": "Legends",
                "pending": "Pending",
+               "packed": "Packed",
+               "assembled": "Assembled",
                "processing": "Processing",
-               "done": "Done",
                "ingredients": "Ingredients",
                "supplier item": "Supplier Item",
                "quantity": "Quantity",
