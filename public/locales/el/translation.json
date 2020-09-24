@@ -1093,18 +1093,6 @@
                   "add": "Προσθήκη",
                   "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε"
                },
-               "role": {
-                  "enter the role name": "Εισαγάγετε το όνομα του ρόλου",
-                  "publish": "Δημοσίευση",
-                  "apps": "Εφαρμογές",
-                  "configure": "Διαμορφώστε",
-                  "select and configure apps": "Επιλέξτε και διαμόρφωση εφαρμογών",
-                  "configure apps": "Διαμόρφωση εφαρμογών",
-                  "add": "Προσθήκη",
-                  "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε",
-                  "save": "Αποθήκευση",
-                  "permissions for role": "Άδειες για ρόλο"
-               },
                "accompanimenttypes": {
                   "accompaniment types": "Accompaniment Types",
                   "type": "Type",
@@ -1182,7 +1170,7 @@
             "listings": {
                "appslisting": {
                   "apps": "Εφαρμογές",
-                  "users assigned": "Αντιστοίχιση χρήστη"
+                  "roles assigned": "Roles Assigned"
                },
                "roleslisting": {
                   "roles": "Ρόλοι",
@@ -1270,8 +1258,9 @@
                "servings": "Servings",
                "legends": "Legends",
                "pending": "Pending",
+               "packed": "Packed",
+               "assembled": "Assembled",
                "processing": "Processing",
-               "done": "Done",
                "ingredients": "Ingredients",
                "supplier item": "Supplier Item",
                "quantity": "Quantity",
