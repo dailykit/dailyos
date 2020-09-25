@@ -1,10 +1,10 @@
 import React from 'react'
+import { Loader } from '@dailykit/ui'
 import { groupBy, isEmpty, uniqBy } from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { useAuth } from './auth'
 import { APP_PERMISSIONS } from '../graphql'
-import { InlineLoader } from '../../../shared/components'
+import { useAuth } from '../../../shared/providers'
 
 const AccessContext = React.createContext()
 
@@ -60,7 +60,7 @@ export const AccessProvider = ({ children }) => {
       }
    }, [loading, roles])
 
-   if (loading) return <InlineLoader />
+   if (loading) return <Loader />
    return (
       <AccessContext.Provider value={{ state, dispatch }}>
          {children}

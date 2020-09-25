@@ -10,7 +10,6 @@ import {
    DevicesListing,
    UserForm,
    RoleForm,
-   DeviceForm,
    MasterListForm,
    StationsListing,
    StationForm,
@@ -41,9 +40,6 @@ const Main = () => {
             </Route>
             <Route path="/settings/devices" exact>
                <DevicesListing />
-            </Route>
-            <Route path="/settings/devices/:name">
-               <DeviceForm />
             </Route>
             <Route path="/settings/stations" exact>
                <StationsListing />
