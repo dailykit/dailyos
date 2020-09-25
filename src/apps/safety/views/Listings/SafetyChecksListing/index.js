@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { IconButton, Loader } from '@dailykit/ui'
@@ -19,7 +20,7 @@ import tableOptions from '../tableOption'
 const address = 'apps.safety.views.listings.safetycheckslisting.'
 const SafetyChecksListing = () => {
    const { t } = useTranslation()
-   const { addTab: createTab } = useTabs()
+   const { addTab: createTab, tab } = useTabs()
 
    const addTab = (title, id) => {
       createTab(title, `/safety/checks/${id}`)
@@ -53,6 +54,12 @@ const SafetyChecksListing = () => {
          toast.error('Error')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab) {
+         createTab('Safety Checks', '/safety/checks')
+      }
+   }, [tab, createTab])
 
    if (loading) return <Loader />
 

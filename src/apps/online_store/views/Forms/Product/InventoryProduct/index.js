@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
@@ -39,7 +40,7 @@ export default function InventoryProduct() {
       modifiersReducers,
       initialModifiersState
    )
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
 
    // State
    const [title, setTitle] = React.useState('')
@@ -58,6 +59,12 @@ export default function InventoryProduct() {
          console.log(error)
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/online-store/inventory-products/${productId}`)
+      }
+   }, [tab, addTab, loading, title])
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {

@@ -75,7 +75,7 @@ export const useTabs = () => {
 
    const tab = tabs.find(tab => tab.path === location.pathname)
 
-   const setTitle = React.useCallback(
+   const setTabTitle = React.useCallback(
       title => {
          dispatch({
             type: 'SET_TITLE',
@@ -133,9 +133,9 @@ export const useTabs = () => {
       tab,
       tabs,
       addTab,
-      setTitle,
       switchTab,
       removeTab,
+      setTabTitle,
       closeAllTabs,
       doesTabExists,
    }

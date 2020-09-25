@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -46,7 +47,7 @@ import {
 import StationTunnel from './tunnels/StationTunnel'
 
 const IngredientForm = () => {
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
    const { id: ingredientId } = useParams()
    const [ingredientState, ingredientDispatch] = React.useReducer(
       reducers,
@@ -94,6 +95,12 @@ const IngredientForm = () => {
          toast.error('Error')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/recipe/ingredients/${ingredientId}`)
+      }
+   }, [tab, loading, title, addTab])
 
    // Handlers
    const updateName = async () => {
