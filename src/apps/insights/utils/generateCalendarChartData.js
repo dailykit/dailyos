@@ -1,7 +1,13 @@
+/**
+ *
+ * @param {Array<{type: string, columns: any[]}>} allowedCharts
+ * @param {any[]} transformedData
+ * @param {{chartTypeIndex: number, metrices: Array<{key: string, label: string}>, slice: string}} param2
+ */
 export function generateCalendarChartData(
    allowedCharts,
    transformedData,
-   { chartTypeIndex, metrices, dateKeys }
+   { chartTypeIndex, metrices, slice }
 ) {
    let chartData = [[]]
 
@@ -13,16 +19,15 @@ export function generateCalendarChartData(
       allowedCharts[chartTypeIndex].dateKeys &&
       allowedCharts[chartTypeIndex].dateKeys.length
    ) {
-      if (dateKeys && dateKeys.length) {
-         // TODO: finish this
-         // const index = allowedCharts[chartTypeIndex].slices.findIndex(
-         //    col => col.key === slice
-         // )
-         // if (index >= 0)
-         //    chartData[0].push({
-         //       ...allowedCharts[chartTypeIndex].slices[index],
-         //       label: allowedCharts[chartTypeIndex].slices[index].key,
-         //    })
+      if (slice) {
+         const index = allowedCharts[chartTypeIndex].dateKeys.findIndex(
+            col => col === slice
+         )
+         if (index >= 0)
+            chartData[0].push({
+               key: allowedCharts[chartTypeIndex].dateKeys[index],
+               type: 'date',
+            })
       } else {
          chartData[0].push({
             type: 'date',
@@ -63,6 +68,6 @@ export function generateCalendarChartData(
 
       chartData.push(row)
    })
-
+   console.log(chartData)
    return chartData
 }
