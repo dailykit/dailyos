@@ -2,9 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { useAuth } from './auth'
 import { Loader } from '../components'
-import { Flex } from '../../../shared/components'
+import { useAuth } from '../../../shared/providers'
 import { SETTINGS, STATIONS_BY_USER } from '../graphql'
 
 const ConfigContext = React.createContext()
