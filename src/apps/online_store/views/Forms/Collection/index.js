@@ -1,9 +1,11 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, TextButton } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { Input, Loader, TextButton } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+
 import { ChevronRight } from '../../../assets/icons'
 import {
    CollectionContext,
@@ -26,7 +28,7 @@ const address = 'apps.online_store.views.forms.collection.'
 const CollectionForm = () => {
    const { t } = useTranslation()
 
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTitle: setTabTitle, tab, addTab } = useTabs()
    const { id: collectionId } = useParams()
 
    const [collectionState, collectionDispatch] = React.useReducer(
@@ -67,6 +69,12 @@ const CollectionForm = () => {
          setBusy(false)
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/online-store/collections/${collectionId}`)
+      }
+   }, [tab, addTab, loading, title])
 
    // Handlers
    const save = () => {

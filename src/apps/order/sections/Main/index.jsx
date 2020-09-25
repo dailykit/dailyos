@@ -11,8 +11,8 @@ import {
    InventoryProduct,
    ReadyToEatProduct,
 } from '../../views'
-import { useAccess } from '../../context'
 import { Flex } from '../../../../shared/components'
+import { useAccess } from '../../../../shared/providers'
 
 const Main = () => {
    const { canAccessRoute, accessPermission } = useAccess()
@@ -21,7 +21,22 @@ const Main = () => {
       <main>
          <Switch>
             <Route path="/apps/order" exact>
-               <Home />
+               {canAccessRoute('home') ? (
+                  <Home />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'home')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access order app.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/apps/order/orders" exact>
                {canAccessRoute('orders') ? (
@@ -42,7 +57,22 @@ const Main = () => {
                )}
             </Route>
             <Route path="/apps/order/orders/:id" exact>
-               <Order />
+               {canAccessRoute('order') ? (
+                  <Order />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'order')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access order details.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/apps/order/planned" exact>
                {canAccessRoute('planned') ? (
@@ -62,10 +92,40 @@ const Main = () => {
                )}
             </Route>
             <Route path="/apps/order/planned/inventory/:id" exact>
-               <InventoryProduct />
+               {canAccessRoute('planned/inventory') ? (
+                  <InventoryProduct />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'planned/inventory')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access planned inventory product.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/apps/order/planned/ready-to-eat/:id" exact>
-               <ReadyToEatProduct />
+               {canAccessRoute('planned/ready-to-eat') ? (
+                  <ReadyToEatProduct />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'planned/ready-to-eat')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access planned ready to eat product.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
          </Switch>
       </main>

@@ -19,11 +19,13 @@ import {
    SimpleRecipeProducts,
 } from './components'
 import { ProductTypeTunnel } from './tunnels'
+import { useTabs } from '../../../context'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
 const ProductsListing = () => {
    const { t } = useTranslation()
+   const { tab, addTab } = useTabs()
    const [view, setView] = React.useState('inventory')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
@@ -33,6 +35,12 @@ const ProductsListing = () => {
       { id: 'customizable', title: t(address.concat('customizable')) },
       { id: 'combo', title: t(address.concat('combo')) },
    ]
+
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Products', `/online-store/products`)
+      }
+   }, [tab, addTab])
 
    const renderListing = () => {
       switch (view) {

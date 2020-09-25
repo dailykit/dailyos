@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { toast } from 'react-toastify'
@@ -28,7 +29,7 @@ const address = 'apps.online_store.views.forms.product.customizableproduct.'
 export default function CustomizableProduct() {
    const { t } = useTranslation()
 
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
 
    const { id: productId } = useParams()
 
@@ -66,6 +67,12 @@ export default function CustomizableProduct() {
          toast.error(t(address.concat('error')))
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/online-store/customizable-products/${productId}`)
+      }
+   }, [tab, addTab, loading, title])
 
    // Handlers
    const updateName = async () => {

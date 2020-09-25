@@ -1,15 +1,10 @@
 import React from 'react'
 import Keycloak from 'keycloak-js'
 
-import {
-   TabProvider,
-   OrderProvider,
-   ConfigProvider,
-   AccessProvider,
-} from './context'
+import { TabProvider, OrderProvider, ConfigProvider } from './context'
 
 import App from './App'
-import { AuthProvider } from '../../shared/providers'
+import { AuthProvider, AccessProvider } from '../../shared/providers'
 
 const keycloak = new Keycloak({
    realm: process.env.REACT_APP_KEYCLOAK_REALM,
@@ -25,7 +20,7 @@ const keycloak = new Keycloak({
 
 const Settings = () => (
    <AuthProvider keycloak={keycloak}>
-      <AccessProvider>
+      <AccessProvider app="Order App">
          <ConfigProvider>
             <TabProvider>
                <OrderProvider>

@@ -30,7 +30,7 @@ const address = 'apps.recipe.views.listings.ingredientslisting.'
 
 const IngredientsListing = () => {
    const { t } = useTranslation()
-   const { addTab } = useTabs()
+   const { addTab, tab } = useTabs()
 
    const { loading, data: { ingredients = [] } = {}, error } = useSubscription(
       S_INGREDIENTS
@@ -61,6 +61,12 @@ const IngredientsListing = () => {
          toast.error('Failed to delete!')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Ingredients', '/recipe/ingredients')
+      }
+   }, [tab, addTab])
 
    const createIngredientHandler = async () => {
       const name = `ingredient-${randomSuffix()}`

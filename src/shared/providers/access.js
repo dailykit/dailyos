@@ -3,8 +3,8 @@ import { Loader } from '@dailykit/ui'
 import { groupBy, isEmpty, uniqBy } from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { APP_PERMISSIONS } from '../graphql'
-import { useAuth } from '../../../shared/providers'
+import { APPS } from '../graphql'
+import { useAuth } from '../providers'
 
 const AccessContext = React.createContext()
 
@@ -21,18 +21,18 @@ const reducers = (state, { type, payload }) => {
    }
 }
 
-export const AccessProvider = ({ children }) => {
+export const AccessProvider = ({ app, children }) => {
    const { user } = useAuth()
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const { loading, data: { roles = [] } = {} } = useSubscription(
-      APP_PERMISSIONS,
+      APPS.PERMISSIONS,
       {
          variables: {
             email: {
                _eq: user.email,
             },
             title: {
-               _eq: 'Order App',
+               _eq: app,
             },
          },
       }

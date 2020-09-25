@@ -2,7 +2,7 @@ import React from 'react'
 import Keycloak from 'keycloak-js'
 
 import { TabProvider } from './context'
-import { AuthProvider } from '../../shared/providers'
+import { AuthProvider, AccessProvider } from '../../shared/providers'
 
 import App from './App'
 
@@ -24,9 +24,11 @@ const keycloak = new Keycloak({
 
 const Subscription = () => (
    <AuthProvider keycloak={keycloak}>
-      <TabProvider>
-         <App />
-      </TabProvider>
+      <AccessProvider app="Subscription App">
+         <TabProvider>
+            <App />
+         </TabProvider>
+      </AccessProvider>
    </AuthProvider>
 )
 

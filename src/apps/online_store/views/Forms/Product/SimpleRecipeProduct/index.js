@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
@@ -31,7 +32,7 @@ export default function SimpleRecipeProduct() {
 
    const { id: productId } = useParams()
 
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -66,6 +67,12 @@ export default function SimpleRecipeProduct() {
          toast.error('Error!')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/online-store/simple-recipe-products/${productId}`)
+      }
+   }, [tab, addTab, loading, title])
 
    // Handlers
    const updateName = async () => {

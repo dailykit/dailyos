@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
@@ -27,7 +28,7 @@ export default function ComboProduct() {
 
    const { id: productId } = useParams()
 
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -61,6 +62,12 @@ export default function ComboProduct() {
          toast.error(t(address.concat('error!')))
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/online-store/combo-products/${productId}`)
+      }
+   }, [tab, addTab, loading, title])
 
    // Handlers
    const updateName = async () => {
