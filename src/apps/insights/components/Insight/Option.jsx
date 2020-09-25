@@ -39,14 +39,25 @@ export default function Option({ options, state, updateOptions }) {
          setShow(false)
       }
 
+      const handleReset = () => {
+         updateOptions({})
+         setOptionsState({})
+         setShow(false)
+      }
+
       return (
-         <TextButton
-            style={{ marginLeft: '12px', marginTop: '12px' }}
-            type="solid"
-            onClick={handleClick}
+         <div
+            style={{ marginLeft: '12px', marginTop: '12px', display: 'flex' }}
          >
-            Apply
-         </TextButton>
+            <TextButton type="solid" onClick={handleClick}>
+               Apply
+            </TextButton>
+            <span style={{ width: '12px' }} />
+
+            <TextButton type="solid" onClick={handleReset}>
+               Reset
+            </TextButton>
+         </div>
       )
    }
 

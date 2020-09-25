@@ -25,7 +25,6 @@ export default function Insight({
    alignment = 'column',
    tablePosition = 'bottom',
    id = '',
-   nodeKey = 'nodes',
    chartOptions = {},
    statsPosition,
 }) {
@@ -60,6 +59,9 @@ export default function Insight({
          setChartType({ ...allowedCharts[0], index: 0 })
    }, [allowedCharts.length])
 
+   // prettier-ignore
+   const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
+
    return (
       <>
          <Modal show={showModal} close={setShowModal} width="40%">
@@ -71,9 +73,12 @@ export default function Insight({
                      index,
                      id: index,
                      title: chart.type,
+                     chartTitle: chart.title,
                   }))}
                   active={chartType.index}
-                  onChange={option => setChartType(option)}
+                  onChange={option =>
+                     setChartType({ ...option, title: option.chartTitle })
+                  }
                />
             </div>
 
@@ -131,6 +136,7 @@ export default function Insight({
                         height: chartOptions.height || '454px',
                         width: chartOptions.width || '100%',
                         ...chartOptions,
+                        title: chartTitle,
                      }}
                   />
                   <ChartConfigContainer>
@@ -183,15 +189,24 @@ export default function Insight({
    )
 }
 
-function ChartColumn({ column, updateFunc, yColumns, multiple, setShow }) {
-   const [checked, setChecked] = useState(false)
+function ChartColumn({
+   column,
+   updateFunc,
+   multiple,
+   setShow,
+   yChecked,
+   setYChecked,
+   isChecked,
+}) {
+   const [checked, setChecked] = useState(isChecked)
 
    React.useEffect(() => {
+      const isExist = yChecked.findIndex(col => col.key === column.key)
       if (checked) {
-         updateFunc(cols => [...cols, column])
+         if (isExist < 0) setYChecked([...yChecked, column])
       } else {
-         const newColumns = yColumns.filter(col => col.key !== column.key)
-         updateFunc(newColumns)
+         const newCols = yChecked.filter(col => col.key !== column.key)
+         if (isExist >= 0) setYChecked(newCols)
       }
    }, [checked])
 
@@ -208,7 +223,7 @@ function ChartColumn({ column, updateFunc, yColumns, multiple, setShow }) {
             <Checkbox
                checked={checked}
                onChange={() => {
-                  setChecked(!checked)
+                  setChecked(bool => !bool)
                }}
             >
                {column.key}
@@ -248,6 +263,13 @@ function ChartOptions({
             yOrMetrices = allowedCharts[chartType.index].metrices
          }
          break
+      case 'Calendar':
+         if (allowedCharts.length) {
+            xOrSlice = allowedCharts[chartType.index].dateKeys
+            yOrMetrices = allowedCharts[chartType.index].metrices
+         }
+         break
+
       default:
          if (allowedCharts.length) {
             xOrSlice = allowedCharts[chartType.index].x
@@ -255,6 +277,7 @@ function ChartOptions({
          }
          break
    }
+   const [yOrSlices, setYOrSlices] = useState([yOrMetrices[0]])
 
    const handleYOrMetrices = () => {
       switch (chartType.type) {
@@ -263,6 +286,10 @@ function ChartOptions({
 
          case 'PieChart':
             return setMetrices
+
+         case 'Calendar':
+            return setMetrices
+
          default:
             return setYColumns
       }
@@ -276,6 +303,11 @@ function ChartOptions({
          case 'PieChart':
             setSlice(key)
             return setShowX(false)
+
+         case 'Calendar':
+            setSlice(key)
+            return setShowX(false)
+
          default:
             setXColumn(key)
             return setShowX(false)
@@ -287,30 +319,55 @@ function ChartOptions({
          <Dropdown title="Label" withIcon show={showX} setShow={setShowX}>
             {allowedCharts.length &&
                xOrSlice.map(column => {
+                  const label = typeof column === 'string' ? column : column.key
                   return (
                      <DropdownItem
-                        onClick={() => handleXOrMetrices(column.key)}
+                        key={label}
+                        onClick={() => handleXOrMetrices(label)}
                      >
-                        {column.key}
+                        {label}
                      </DropdownItem>
                   )
                })}
          </Dropdown>
 
          <Dropdown title="sources" withIcon show={showY} setShow={setShowY}>
-            {allowedCharts.length &&
-               yOrMetrices.map(column => {
-                  return (
-                     <ChartColumn
-                        key={column.key}
-                        column={column}
-                        updateFunc={handleYOrMetrices()}
-                        yColumns={yColumns}
-                        multiple={chartType.multiple}
-                        setShow={setShowY}
-                     />
-                  )
-               })}
+            {allowedCharts.length && (
+               <>
+                  {yOrMetrices.map(column => {
+                     return (
+                        <ChartColumn
+                           key={column.key}
+                           column={column}
+                           updateFunc={handleYOrMetrices()}
+                           yColumns={yColumns}
+                           multiple={chartType.multiple}
+                           setShow={setShowY}
+                           yChecked={yOrSlices}
+                           setYChecked={setYOrSlices}
+                           isChecked={
+                              yOrSlices.findIndex(
+                                 col => col.key === column.key
+                              ) >= 0
+                           }
+                        />
+                     )
+                  })}
+                  {chartType.multiple && (
+                     <DropdownItem>
+                        <TextButton
+                           type="solid"
+                           onClick={() => {
+                              handleYOrMetrices()(yOrSlices)
+                              setShowY(false)
+                           }}
+                        >
+                           Apply
+                        </TextButton>
+                     </DropdownItem>
+                  )}
+               </>
+            )}
          </Dropdown>
       </>
    )

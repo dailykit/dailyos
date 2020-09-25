@@ -27,16 +27,21 @@ export const Counter = ({
          }}
       >
          {Object.keys(flattenedAggregates).map((counter, i) => {
-            if (flattenedAggregates[counter])
+            if (flattenedAggregates[counter]) {
+               const count = flattenedAggregates[counter]
+                  .toString()
+                  .includes('.')
+                  ? flattenedAggregates[counter].toFixed(2)
+                  : flattenedAggregates[counter]
                return (
                   <StyledCounterElement key={i} color={colors[i % 2]}>
                      <span>{fromMixed(counter)}</span>
                      <h5>
-                        {regex.test(counter) ? '$' : null}{' '}
-                        {flattenedAggregates[counter]}
+                        {regex.test(counter) ? '$' : null} {count}
                      </h5>
                   </StyledCounterElement>
                )
+            }
          })}
       </div>
    )

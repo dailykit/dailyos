@@ -6,22 +6,27 @@ import { useQuery } from '@apollo/react-hooks'
 import { INSIGHTS } from '../../graphql'
 
 const ReferralPlansListing = () => {
-   const { data = {}, loading } = useQuery(INSIGHTS)
+   const {
+      data: { insights_insights: insights = [] } = {},
+      loading,
+   } = useQuery(INSIGHTS)
 
    if (loading) return <p>Loading...</p>
 
    return (
       <StyledWrapper>
-         {data.insights_insights.map(insight => (
-            <Insight
-               key={insight.id}
-               id={insight.id}
-               alignment="column"
-               includeChart
-               statsPosition="chart"
-               tablePosition="left"
-            />
-         ))}
+         {insights.map(insight => {
+            return (
+               <Insight
+                  key={insight.id}
+                  id={insight.id}
+                  alignment="column"
+                  includeChart
+                  statsPosition="chart"
+                  tablePosition="left"
+               />
+            )
+         })}
       </StyledWrapper>
    )
 }
