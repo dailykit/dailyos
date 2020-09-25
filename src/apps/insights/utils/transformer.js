@@ -5,6 +5,14 @@
 import unflatten from 'unflatten'
 import { isObject } from '../../../shared/utils/isObject'
 
+const _dateMatcher = new RegExp(/created_at|date|month|year/i)
+const _dateFmt = new Intl.DateTimeFormat('en-US', {
+   weekday: 'long',
+   year: 'numeric',
+   month: 'numeric',
+   day: 'numeric',
+})
+
 export const buildOptions = (object, prefix = '') => {
    let result = {}
 
@@ -36,7 +44,9 @@ export function flattenObject(object) {
    Object.keys(object).forEach(key => {
       if (!isObject(object[key])) {
          if (key !== '__typename') {
-            result[key] = object[key]
+            if (_dateMatcher.test(key)) {
+               result[key] = _dateFmt.format(new Date(object[key]))
+            } else result[key] = object[key]
          }
       } else {
          const otherResults = flattenObject(object[key])
