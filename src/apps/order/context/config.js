@@ -191,17 +191,6 @@ export const ConfigProvider = ({ children }) => {
    }, [loading, stations])
 
    if (loading) return <Loader />
-   if (_.isEmpty(stations))
-      return (
-         <Flex
-            container
-            height="100vh"
-            alignItems="center"
-            justifyContent="center"
-         >
-            You're not authorized to access Order App.
-         </Flex>
-      )
    return (
       <ConfigContext.Provider value={{ state, dispatch, methods: {} }}>
          {children}
