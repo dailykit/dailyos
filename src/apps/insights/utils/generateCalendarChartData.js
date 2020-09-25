@@ -68,6 +68,5 @@ export function generateCalendarChartData(
 
       chartData.push(row)
    })
-   console.log(chartData)
    return chartData
 }

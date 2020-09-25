@@ -118,8 +118,6 @@ export const useInsights = (
          chartType: options.chartType,
          slice: options.slice,
          metrices: options.metrices,
-         // TODO: add dateKeys from options here
-         dateKeys: [],
       })
       result.chartData = chartData
    } else {
@@ -138,7 +136,7 @@ export const useInsights = (
 function genChartData(
    allowedCharts,
    transformedData,
-   { xColumn, yColumns, chartType, slice, metrices, dateKeys }
+   { xColumn, yColumns, chartType, slice, metrices }
 ) {
    let chartData = []
 
@@ -164,7 +162,7 @@ function genChartData(
          chartData = generateCalendarChartData(allowedCharts, transformedData, {
             chartTypeIndex: chartType.index,
             metrices,
-            dateKeys,
+            slice,
          })
          return chartData
 
