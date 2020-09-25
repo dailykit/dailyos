@@ -59,6 +59,9 @@ export default function Insight({
          setChartType({ ...allowedCharts[0], index: 0 })
    }, [allowedCharts.length])
 
+   // prettier-ignore
+   const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
+
    return (
       <>
          <Modal show={showModal} close={setShowModal} width="40%">
@@ -133,7 +136,7 @@ export default function Insight({
                         height: chartOptions.height || '454px',
                         width: chartOptions.width || '100%',
                         ...chartOptions,
-                        title: chartType.title,
+                        title: chartTitle,
                      }}
                   />
                   <ChartConfigContainer>
