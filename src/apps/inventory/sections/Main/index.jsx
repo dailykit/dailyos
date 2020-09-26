@@ -63,6 +63,9 @@ const Main = () => {
             <Route path="/inventory/items" exact>
                <ItemListing />
             </Route>
+            <Route path="/inventory/items/:id" exact>
+               <ItemListing />
+            </Route>
             <Route path="/inventory/work-orders" exact>
                <WorkOrdersListing />
             </Route>
