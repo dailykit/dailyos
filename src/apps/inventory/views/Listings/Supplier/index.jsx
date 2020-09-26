@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import { randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
-import { Context } from '../../../context/tabs'
+// import { Context } from '../../../context/tabs'
 import {
    CREATE_SUPPLIER,
    DELETE_SUPPLIER,
@@ -17,19 +17,13 @@ import {
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
+import { useTabs } from '../../../context'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
 export default function SupplierListing() {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
+   const { addTab } = useTabs()
 
    const {
       loading: listLoading,
@@ -45,7 +39,7 @@ export default function SupplierListing() {
       onCompleted: input => {
          const supplierData = input.createSupplier.returning[0]
          toast.success('Supplier Added!')
-         addTab(supplierData.name, 'suppliers', supplierData.id)
+         addTab(supplierData.name, `/inventory/suppliers/${supplierData.id}`)
       },
       onError: error => {
          console.log(error)
@@ -114,7 +108,7 @@ export default function SupplierListing() {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, 'suppliers', id)
+      addTab(name, `/inventory/suppliers/${id}`)
    }
 
    if (listLoading) return <Loader />
