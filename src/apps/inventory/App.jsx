@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter } from 'react-router-dom'
 
 import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
@@ -16,9 +17,11 @@ const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
    return (
       <StyledWrapper>
-         <Header toggleSidebar={toggleSidebar} />
-         <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-         <Main />
+         <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <Header toggleSidebar={toggleSidebar} />
+            <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+            <Main />
+         </BrowserRouter>
       </StyledWrapper>
    )
 }
