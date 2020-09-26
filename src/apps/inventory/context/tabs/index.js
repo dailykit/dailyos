@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
-const Context = React.createContext({ state: { tabs: [] } })
+const Context = React.createContext()
 
 const initialState = {
    tabs: [],
