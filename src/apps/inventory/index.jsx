@@ -18,7 +18,12 @@ const keycloak = new Keycloak({
 })
 
 const Inventory = () => {
-   if (process.env.NODE_ENV === 'development') return <App />
+   if (process.env.NODE_ENV === 'development')
+      return (
+         <TabProvider>
+            <App />
+         </TabProvider>
+      )
 
    return (
       <AuthProvider keycloak={keycloak}>
