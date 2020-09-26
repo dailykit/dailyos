@@ -2,6 +2,7 @@ import React from 'react'
 import Keycloak from 'keycloak-js'
 
 import App from './App'
+import { TabProvider } from './context/tabs'
 import { AuthProvider } from '../../shared/providers'
 
 const keycloak = new Keycloak({
@@ -21,7 +22,9 @@ const Inventory = () => {
 
    return (
       <AuthProvider keycloak={keycloak}>
-         <App />
+         <TabProvider>
+            <App />
+         </TabProvider>
       </AuthProvider>
    )
 }
