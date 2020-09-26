@@ -57,6 +57,9 @@ const Main = () => {
             <Route path="/inventory/suppliers" exact>
                <SupplierListing />
             </Route>
+            <Route path="/inventory/suppliers/:id" exact>
+               <SupplierForm />
+            </Route>
             <Route path="/inventory/items" exact>
                <ItemListing />
             </Route>
