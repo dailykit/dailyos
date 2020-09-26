@@ -1,5 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Avatar,
    Input,
    Loader,
    Text,
@@ -7,21 +8,22 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
-   Avatar,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
+import { useTabs } from '../../../context'
 import {
    ItemContext,
    reducer,
    state as initialState,
 } from '../../../context/item'
-import { Context } from '../../../context/tabs'
+// import { Context } from '../../../context/tabs'
 import {
    DELETE_BULK_ITEM,
    SUPPLIER_ITEM_SUBSCRIPTION,
@@ -52,11 +54,12 @@ const address = 'apps.inventory.views.forms.item.'
 
 export default function ItemForm() {
    const { t } = useTranslation()
-   const { state: tabState, dispatch: tabDispatch } = useContext(Context)
    const [state, dispatch] = React.useReducer(reducer, initialState)
    const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
    const [itemName, setItemName] = React.useState('')
+   const { id } = useParams()
+   const { setTabTitle } = useTabs()
 
    const [supplierTunnel, openSupplierTunnel, closeSupplierTunnel] = useTunnel(
       1
@@ -83,7 +86,7 @@ export default function ItemForm() {
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
       {
-         variables: { id: tabState.current.id },
+         variables: { id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
 
@@ -113,10 +116,7 @@ export default function ItemForm() {
       },
       onCompleted: () => {
          toast.info('Item name updated successfully')
-         tabDispatch({
-            type: 'SET_TITLE',
-            payload: { title: itemName, oldTitle: tabState.current.title },
-         })
+         setTabTitle(itemName)
       },
    })
 
