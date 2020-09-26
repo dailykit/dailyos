@@ -23,7 +23,6 @@ import {
    reducer,
    state as initialState,
 } from '../../../context/item'
-// import { Context } from '../../../context/tabs'
 import {
    DELETE_BULK_ITEM,
    SUPPLIER_ITEM_SUBSCRIPTION,
@@ -247,45 +246,6 @@ export default function ItemForm() {
                         </div>
                      </div>
                   </div>
-                  {/* <div>
-                        <div>
-                           <CaseIcon />
-                        </div>
-                        <div>
-                           <span>{t(address.concat('case qty'))}</span>
-                           <div>
-                              <span>
-                                 {state.case_quantity.value +
-                                    state.case_quantity.unit || formState?.supplierItem?.unitSize +
-                                    supplierItemData?.supplierItem?.unit}
-                              </span>
-                              <span>
-                                 $
-                                 {+state.unit_price.value *
-                                    +state.case_quantity.value}
-                              </span>
-                           </div>
-                        </div>
-                     </div> */}
-                  {/* <div>
-                        <div>
-                           <TruckIcon />
-                        </div>
-                        <div>
-                           <span>{t(address.concat('min order value'))}</span>
-                           <div>
-                              <span>
-                                 {state.min_order_value.value +
-                                    state.min_order_value.unit}
-                              </span>
-                              <span>
-                                 $
-                                 {+state.unit_price.value *
-                                    +state.min_order_value.value}
-                              </span>
-                           </div>
-                        </div>
-                     </div> */}
                   <div>
                      <div>
                         <ClockIcon />
