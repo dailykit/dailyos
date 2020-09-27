@@ -1,10 +1,9 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, TunnelHeader } from '@dailykit/ui'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../../../context'
-
 import {
    UNITS_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
