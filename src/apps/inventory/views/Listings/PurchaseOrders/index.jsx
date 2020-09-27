@@ -1,42 +1,34 @@
+import { useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    IconButton,
    Loader,
-   TextButton,
-   Text,
    Tag,
-   Tunnels,
+   Text,
+   TextButton,
    Tunnel,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { v4 as uuid } from 'uuid'
-
 import { AddIcon } from '../../../assets/icons'
-import { Context } from '../../../context/tabs'
-import { StyledHeader, StyledWrapper } from '../styled'
+import { useTabs } from '../../../context'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
-import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
+import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
 import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 
 const address = 'apps.inventory.views.listings.purchaseorders.'
 
 export default function PurchaseOrders() {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
 
    const { loading, data: { purchaseOrderItems = [] } = {} } = useSubscription(
       PURCHASE_ORDERS_SUBSCRIPTION,
@@ -54,11 +46,11 @@ export default function PurchaseOrders() {
       const { id, type } = row._row.data
       const tabTitle = `Purchase Order-${uuid().substring(30)}`
       if (type === 'PACKAGING') {
-         addTab(tabTitle, 'packagingPurchaseOrder', id)
+         addTab(tabTitle, `/inventory/purchase-orders/packaging/${id}`)
       }
 
       if (type === 'SUPPLIER_ITEM') {
-         addTab(tabTitle, 'purchaseOrder', id)
+         addTab(tabTitle, `/inventory/purchase-orders/item/${id}`)
       }
    }
 
