@@ -6,13 +6,13 @@ import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
 
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
-import { Context } from '../../../context/tabs'
 import { SolidTile } from '../styled'
 
 import {
    CREATE_BULK_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,
 } from '../../../graphql'
+import { useTabs } from '../../../context'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
@@ -23,14 +23,7 @@ function onError(error) {
 
 export default function WorkOrderTypeTunnel({ close }) {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
+   const { addTab } = useTabs()
 
    const [createBulkWorkOrder] = useMutation(CREATE_BULK_WORK_ORDER, {
       variables: {
@@ -41,7 +34,7 @@ export default function WorkOrderTypeTunnel({ close }) {
       onError,
       onCompleted: data => {
          const { id, name } = data.createBulkWorkOrder.returning[0]
-         addTab(name, 'bulkOrder', id)
+         addTab(name, `/inventory/work-orders/bulk/${id}`)
       },
    })
 
@@ -53,8 +46,8 @@ export default function WorkOrderTypeTunnel({ close }) {
       },
       onError,
       onCompleted: data => {
-         const { id } = data.createSachetWorkOrder.returning[0]
-         addTab(`Work Order-${new Date().getMilliseconds()}`, 'sachetOrder', id)
+         const { id, name } = data.createSachetWorkOrder.returning[0]
+         addTab(name, `/inventory/work-orders/sachet/${id}`)
       },
    })
 
