@@ -23,11 +23,6 @@ import PackagingHub from '../../packagingHub'
 import PackagingHubProducts from '../../packagingHub/views/Products'
 import PackagingHubProductDetails from '../../packagingHub/views/ProductDetails'
 
-//    if (type === 'forms' && view === 'packagingHub') return <PackagingHub />
-//       return <PackagingHubProducts />
-//    if (type === 'forms' && view === 'packagingHubProductDetailsView')
-//       return <PackagingHubProductDetails />
-
 const MainWrapper = styled.main`
    overflow-x: auto;
    position: relative;
@@ -75,6 +70,15 @@ const Main = () => {
             </Route>
             <Route path="/inventory/packagings/:id" exact>
                <SachetPackaging />
+            </Route>
+            <Route path="/inventory/packaging-hub" exact>
+               <PackagingHub />
+            </Route>
+            <Route path="/inventory/packaging-hub/products/:id" exact>
+               <PackagingHubProducts />
+            </Route>
+            <Route path="/inventory/packaging-hub/product/:id" exact>
+               <PackagingHubProductDetails />
             </Route>
          </Switch>
       </MainWrapper>
