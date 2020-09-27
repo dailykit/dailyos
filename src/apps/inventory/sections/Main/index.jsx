@@ -24,10 +24,8 @@ import PackagingHubProducts from '../../packagingHub/views/Products'
 import PackagingHubProductDetails from '../../packagingHub/views/ProductDetails'
 
 //    // Forms
-//    if (type === 'forms' && view === 'bulkOrder') return <BulkOrderForm />
 //    if (type === 'forms' && view === 'purchaseOrder')
 //       return <PurchaseOrderForm />
-//    if (type === 'forms' && view === 'sachetOrder') return <SachetOrderForm />
 //    if (type === 'forms' && view === 'sachetPackaging')
 //       return <SachetPackaging />
 //    if (type === 'forms' && view === 'assemblyPackaging')
@@ -75,6 +73,12 @@ const Main = () => {
             </Route>
             <Route path="/inventory/purchase-orders" exact>
                <PurchaseOrdersListing />
+            </Route>
+            <Route path="/inventory/purchase-orders/item/:id" exact>
+               <PurchaseOrderForm />
+            </Route>
+            <Route path="/inventory/purchase-orders/packaging/:id" exact>
+               <PackagingPurchaseOrderForm />
             </Route>
             <Route path="/inventory/packagings" exact>
                <Packagings />
