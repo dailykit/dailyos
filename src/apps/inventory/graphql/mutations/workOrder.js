@@ -36,6 +36,7 @@ export const CREATE_SACHET_WORK_ORDER = gql`
          returning {
             id
             status
+            name
          }
       }
    }

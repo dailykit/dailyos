@@ -1,22 +1,24 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-
 import {
    ButtonTile,
    Input,
+   Loader,
    Text,
    TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
 } from '@dailykit/ui/'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
-import { Context as TabContext } from '../../../context/tabs'
+import {
+   BULK_WORK_ORDER_SUBSCRIPTION,
+   UPDATE_BULK_WORK_ORDER,
+} from '../../../graphql'
 import {
    FlexContainer,
    FormActions,
@@ -29,11 +31,6 @@ import SelectStationTunnel from './Tunnels/SelectStationTunnel'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
-import {
-   BULK_WORK_ORDER_SUBSCRIPTION,
-   UPDATE_BULK_WORK_ORDER,
-} from '../../../graphql'
-
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
 function onError(error) {
@@ -43,12 +40,7 @@ function onError(error) {
 
 export default function BulkWorkOrderForm() {
    const { t } = useTranslation()
-
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(TabContext)
+   const { id } = useParams()
 
    const {
       data: { bulkWorkOrder: state = {} } = {},
@@ -339,7 +331,6 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    const [assignedDate, setAssignedDate] = useState(
       bulkWorkOrder.scheduledOn || ''
    )
-   
 
    const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
       onError,
@@ -418,7 +409,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                               id: bulkWorkOrder.id,
                               object: {
                                  outputQuantity: +e.target.value,
-                                 inputQuantity
+                                 inputQuantity,
                               },
                            },
                         })
@@ -433,9 +424,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                      <Text as="subtitle">
                         {t(address.concat('suggested committed quantity'))}
                      </Text>
-                     <Text as="title">
-                        {inputQuantity}
-                     </Text>
+                     <Text as="title">{inputQuantity}</Text>
                   </>
                ) : null}
             </div>
