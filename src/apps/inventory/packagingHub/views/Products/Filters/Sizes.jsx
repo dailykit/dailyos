@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 
-import { Context } from '../../../../context/tabs'
 import { useFilters } from '../../../context/filters'
 import { FlexContainer } from '../../../../views/Forms/styled'
 
@@ -14,6 +13,7 @@ import {
 } from '../../../graphql'
 
 import { Section, SectionHeader } from './styled'
+import { useParams } from 'react-router-dom'
 
 const style = {
    marginTop: '1rem',
@@ -79,11 +79,7 @@ export default function Sizes() {
 }
 
 function LengthOptions({ handleLengthSelect }) {
-   const {
-      state: {
-         current: { id: categoryId },
-      },
-   } = useContext(Context)
+   const { id: categoryId } = useParams()
 
    const {
       loading: heightsLoading,
@@ -116,12 +112,7 @@ function LengthOptions({ handleLengthSelect }) {
 }
 
 function WidthOptions({ handleWidthSelect }) {
-   const {
-      state: {
-         current: { id: categoryId },
-      },
-   } = useContext(Context)
-
+   const { id: categoryId } = useParams()
    const {
       loading: widthOptionsLoading,
       data: {

@@ -3,18 +3,14 @@ import { Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
-import { Context } from '../../context/tabs'
 import { useFilters } from '../context/filters'
 import { PACKAGINGS } from '../graphql'
 
 import ProductCard from './ProductCard'
+import { useParams } from 'react-router-dom'
 
 export default function Packagings() {
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
+   const { id } = useParams()
    const { filters } = useFilters()
 
    const { data, loading, error } = useQuery(PACKAGINGS, {

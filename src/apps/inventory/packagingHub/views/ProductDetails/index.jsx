@@ -11,16 +11,12 @@ import {
    ProductSpecs,
    CartButton,
 } from '../../components'
-import { Context } from '../../../context/tabs'
 
 import { PACKAGING } from '../../graphql'
+import { useParams } from 'react-router-dom'
 
 export default function ProductDetailsPage() {
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
+   const { id } = useParams()
 
    const { data, loading, error } = useQuery(PACKAGING, { variables: { id } })
 
