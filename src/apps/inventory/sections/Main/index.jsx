@@ -23,20 +23,10 @@ import PackagingHub from '../../packagingHub'
 import PackagingHubProducts from '../../packagingHub/views/Products'
 import PackagingHubProductDetails from '../../packagingHub/views/ProductDetails'
 
-//    // Forms
-//    if (type === 'forms' && view === 'purchaseOrder')
-//       return <PurchaseOrderForm />
-//    if (type === 'forms' && view === 'sachetPackaging')
-//       return <SachetPackaging />
-//    if (type === 'forms' && view === 'assemblyPackaging')
-//       return <SachetPackaging />
 //    if (type === 'forms' && view === 'packagingHub') return <PackagingHub />
-//    if (type === 'forms' && view === 'packagingHubProducts')
 //       return <PackagingHubProducts />
 //    if (type === 'forms' && view === 'packagingHubProductDetailsView')
 //       return <PackagingHubProductDetails />
-//    if (type === 'forms' && view === 'packagingPurchaseOrder')
-//       return <PackagingPurchaseOrderForm />
 
 const MainWrapper = styled.main`
    overflow-x: auto;
@@ -82,6 +72,9 @@ const Main = () => {
             </Route>
             <Route path="/inventory/packagings" exact>
                <Packagings />
+            </Route>
+            <Route path="/inventory/packagings/:id" exact>
+               <SachetPackaging />
             </Route>
          </Switch>
       </MainWrapper>
