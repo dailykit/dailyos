@@ -3,8 +3,8 @@ import { Input, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { useTabs } from '../../../../../context'
 
-import { Context } from '../../../../../context/tabs'
 import {
    UNITS_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
@@ -23,7 +23,7 @@ const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
 export default function InfoTunnel({ close, formState }) {
    const { t } = useTranslation()
-   const { state, dispatch } = useContext(Context)
+   const { setTabTitle } = useTabs()
    const [units, setUnits] = useState([])
 
    const [itemName, setItemName] = useState(formState.name || '')
@@ -51,10 +51,7 @@ export default function InfoTunnel({ close, formState }) {
       onCompleted: input => {
          const newName = input.updateSupplierItem.returning[0].name
          close()
-         dispatch({
-            type: 'SET_TITLE',
-            payload: { title: newName, oldTitle: state.current.title },
-         })
+         setTabTitle(newName)
          toast.info('Item information updated')
       },
       onError: error => {
