@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader } from '@dailykit/ui'
+import { Toggle, Input, Loader, Checkbox, Text } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -15,15 +15,18 @@ const CouponForm = () => {
    const [codeTitle, setCodeTitle] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
+   const [checkbox, setCheckbox] = useState(false)
    // Subscription
    const { loading } = useSubscription(COUPON_DATA, {
       variables: {
          id: couponId,
       },
       onSubscriptionData: data => {
+         console.log(data)
          setState(data.subscriptionData.data.coupon)
          setCodeTitle(data.subscriptionData.data.coupon.code)
          setToggle(data.subscriptionData.data.coupon.isActive)
+         setCheckbox(data.subscriptionData.data.coupon.isRewardMulti)
          // collectionDispatch({
          //    type: 'SEED',
          //    payload: data.coupon,
@@ -67,6 +70,18 @@ const CouponForm = () => {
          })
       }
    }
+   const updateCheckbox = () => {
+      if (checkbox || !checkbox) {
+         updateCoupon({
+            variables: {
+               id: couponId,
+               set: {
+                  isRewardMulti: !checkbox,
+               },
+            },
+         })
+      }
+   }
 
    React.useEffect(() => {
       if (!tab) {
@@ -77,7 +92,7 @@ const CouponForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1.5fr">
+         <StyledHeader gridCol="10fr  3fr 2fr">
             <InputWrapper>
                <Input
                   type="text"
@@ -88,6 +103,9 @@ const CouponForm = () => {
                   onBlur={updateCodeTitle}
                />
             </InputWrapper>
+            <Checkbox id="label" checked={checkbox} onChange={updateCheckbox}>
+               Allow multiple rewards
+            </Checkbox>
             <Toggle
                checked={toggle}
                setChecked={updatetoggle}

@@ -75,6 +75,7 @@ export const COUPON_DATA = gql`
          id
          code
          isActive
+         isRewardMulti
          metaDetails
          visibleConditionId
       }

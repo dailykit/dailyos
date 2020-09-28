@@ -19,7 +19,7 @@ import {
    StyledRow,
    InputWrap,
    Wrap,
-} from '../styled'
+} from './styled'
 import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
