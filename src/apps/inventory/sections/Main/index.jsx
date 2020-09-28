@@ -1,4 +1,5 @@
 import React from 'react'
+import { Text } from '@dailykit/ui'
 import styled from 'styled-components'
 import { Switch, Route } from 'react-router-dom'
 
@@ -20,6 +21,8 @@ import {
 } from '../../views'
 
 import PackagingHub from '../../packagingHub'
+import { Flex } from '../../../../shared/components'
+import { useAccess } from '../../../../shared/providers'
 import PackagingHubProducts from '../../packagingHub/views/Products'
 import PackagingHubProductDetails from '../../packagingHub/views/ProductDetails'
 
@@ -33,52 +36,132 @@ const Main = () => {
       <MainWrapper>
          <Switch>
             <Route path="/inventory" exact>
-               <Home />
+               <AccessCheck
+                  title="home"
+                  message="You do not have sufficient permission to see Inventory app."
+               >
+                  <Home />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/suppliers" exact>
-               <SupplierListing />
+               <AccessCheck
+                  title="suppliers"
+                  message="You do not have sufficient permission to see suppliers listing."
+               >
+                  <SupplierListing />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/suppliers/:id" exact>
-               <SupplierForm />
+               <AccessCheck
+                  title="supplier"
+                  message="You do not have sufficient permission to see suppliers details."
+               >
+                  <SupplierForm />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/items" exact>
-               <ItemListing />
+               <AccessCheck
+                  title="items"
+                  message="You do not have sufficient permission to see items listing."
+               >
+                  <ItemListing />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/items/:id" exact>
-               <ItemForm />
+               <AccessCheck
+                  title="item"
+                  message="You do not have sufficient permission to see item details."
+               >
+                  <ItemForm />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/work-orders" exact>
-               <WorkOrdersListing />
+               <AccessCheck
+                  title="work-orders"
+                  message="You do not have sufficient permission to see work orders."
+               >
+                  <WorkOrdersListing />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/work-orders/sachet/:id" exact>
-               <SachetOrderForm />
+               <AccessCheck
+                  title="work-orders/sachet"
+                  message="You do not have sufficient permission to see work order sachet."
+               >
+                  <SachetOrderForm />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/work-orders/bulk/:id" exact>
-               <BulkOrderForm />
+               <AccessCheck
+                  title="work-orders/bulk"
+                  message="You do not have sufficient permission to see work order bulk."
+               >
+                  <BulkOrderForm />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/purchase-orders" exact>
-               <PurchaseOrdersListing />
+               <AccessCheck
+                  title="purchase-orders"
+                  message="You do not have sufficient permission to see purchase orders."
+               >
+                  <PurchaseOrdersListing />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/purchase-orders/item/:id" exact>
-               <PurchaseOrderForm />
+               <AccessCheck
+                  title="purchase-orders/item"
+                  message="You do not have sufficient permission to see purchase order item."
+               >
+                  <PurchaseOrderForm />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/purchase-orders/packaging/:id" exact>
-               <PackagingPurchaseOrderForm />
+               <AccessCheck
+                  title="purchase-orders/packaging"
+                  message="You do not have sufficient permission to see purchase order packaging."
+               >
+                  <PackagingPurchaseOrderForm />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/packagings" exact>
-               <Packagings />
+               <AccessCheck
+                  title="packagings"
+                  message="You do not have sufficient permission to see packagings."
+               >
+                  <Packagings />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/packagings/:id" exact>
-               <SachetPackaging />
+               <AccessCheck
+                  title="packaging"
+                  message="You do not have sufficient permission to see packagings details."
+               >
+                  <SachetPackaging />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/packaging-hub" exact>
-               <PackagingHub />
+               <AccessCheck
+                  title="packaging-hub"
+                  message="You do not have sufficient permission to see packaging hub."
+               >
+                  <PackagingHub />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/packaging-hub/products/:id" exact>
-               <PackagingHubProducts />
+               <AccessCheck
+                  title="packaging-hub/products"
+                  message="You do not have sufficient permission to see packaging hub products"
+               >
+                  <PackagingHubProducts />
+               </AccessCheck>
             </Route>
             <Route path="/inventory/packaging-hub/product/:id" exact>
-               <PackagingHubProductDetails />
+               <AccessCheck
+                  title="packaging-hub/product"
+                  message="You do not have sufficient permission to see packaging hub product."
+               >
+                  <PackagingHubProductDetails />
+               </AccessCheck>
             </Route>
          </Switch>
       </MainWrapper>
@@ -86,3 +169,16 @@ const Main = () => {
 }
 
 export default Main
+
+const AccessCheck = ({ title, children, message }) => {
+   const { canAccessRoute, accessPermission } = useAccess()
+   return canAccessRoute(title) ? (
+      children
+   ) : (
+      <Flex container height="100%" alignItems="center" justifyContent="center">
+         <Text as="title">
+            {accessPermission('ROUTE_READ', title)?.fallbackMessage || message}
+         </Text>
+      </Flex>
+   )
+}
