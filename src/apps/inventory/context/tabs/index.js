@@ -1,129 +1,142 @@
 import React from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 
 const Context = React.createContext()
 
-const state = {
-   listings: [],
-   forms: [],
-   current: {},
-   supplierId: '',
-   sachetWorkOrder: {},
-   bulkWorkOrder: {},
-   purchaseOrder: {},
-   itemId: '',
-   packagingId: '',
-   packagingType: '',
+const initialState = {
+   tabs: [],
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_TITLE': {
-         const newState = { ...state }
-         newState.current.title = payload.title
-         const index = newState.forms.findIndex(
-            tab => tab.title === payload.oldTitle
-         )
-         newState.forms[index].title = payload.title
-         return newState
-      }
-
-      case 'SET_FORM_DATA': {
-         const index = state[payload.type].findIndex(
-            tab => tab.type === payload.type && tab.view === payload.view
-         )
-         state[payload.type][index] = payload
-         return state
-      }
-      // Add Tab
-      case 'ADD_TAB': {
-         const alreadyExists = state[payload.type].find(
-            tab => tab.title === payload.title
-         )
-
-         if (alreadyExists) {
-            return { ...state, current: { ...payload } }
+         const { tabs } = state
+         const index = tabs.findIndex(tab => tab.path === payload.path)
+         tabs[index] = {
+            ...tabs[index],
+            title: payload.title,
          }
          return {
             ...state,
-            current: { ...payload },
-            [payload.type]: [...state[payload.type], { ...payload }],
+            tabs,
          }
+      }
+      case 'ADD_TAB': {
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex === -1) {
+            return {
+               ...state,
+               tabs: [
+                  {
+                     title: payload.title,
+                     path: payload.path,
+                  },
+                  ...state.tabs,
+               ],
+            }
+         }
+         return state
       }
       // Delete Tab
       case 'DELETE_TAB': {
-         const { type } = payload
-         const tabs = state[type].filter(
-            (tab, index) =>
-               tab.title !== payload.title && index !== payload.index
-         )
-
-         const listingsLength = state.listings.length
-         const formsLength = state.forms.length
-
-         // Listings
-
-         // Switch to right tab
-         if (type === 'listings' && listingsLength > 1 && payload.index === 0) {
-            state.current = state.listings[payload.index + 1]
+         return {
+            ...state,
+            tabs: state.tabs.filter((_, index) => index !== payload.index),
          }
-         // Switch to left tab
-         if (type === 'listings' && listingsLength > 1 && payload.index > 0) {
-            state.current = state.listings[payload.index - 1]
-         }
-         // Switch to first tab in forms
-         if (
-            type === 'listings' &&
-            listingsLength === 1 &&
-            formsLength >= 1 &&
-            payload.index === 0
-         ) {
-            state.current = state.forms[0]
-         }
-
-         // Forms
-
-         // Switch to right tab
-         if (type === 'forms' && formsLength > 1 && payload.index === 0) {
-            state.current = state.forms[payload.index + 1]
-         }
-         // Switch to left tab
-         if (type === 'forms' && formsLength > 1 && payload.index > 0) {
-            state.current = state.forms[payload.index - 1]
-         }
-         // Switch to last tab in listings
-         if (
-            type === 'forms' &&
-            formsLength === 1 &&
-            listingsLength >= 1 &&
-            payload.index === 0
-         ) {
-            state.current = state.listings[listingsLength - 1]
-         }
-
-         return { ...state, [type]: tabs }
       }
-      // Switch Tab
-      case 'SWITCH_TAB': {
-         return { ...state, current: { ...payload } }
-      }
-
-      case 'ADD_SUPPLIER_ID':
-         return { ...state, supplierId: payload }
-
-      case 'SET_PURCHASE_WORK_ORDER':
-         return { ...state, purchaseOrder: { ...payload } }
-
-      case 'SET_ITEM_ID':
-         return { ...state, itemId: payload }
-
-      case 'SET_PACKAGING_ID':
-         return { ...state, packagingId: payload }
-
-      case 'SET_PACKAGING_TYPE':
-         return { ...state, packagingType: payload }
+      case 'CLOSE_ALL_TABS':
+         return {
+            ...state,
+            tabs: [],
+         }
       default:
          return state
    }
 }
 
-export { Context, state, reducers }
+export const TabProvider = ({ children }) => {
+   const [state, dispatch] = React.useReducer(reducers, initialState)
+
+   return (
+      <Context.Provider value={{ state, dispatch }}>
+         {children}
+      </Context.Provider>
+   )
+}
+
+export const useTabs = () => {
+   const history = useHistory()
+   const location = useLocation()
+
+   const {
+      state: { tabs },
+      dispatch,
+   } = React.useContext(Context)
+
+   const tab = tabs.find(tab => tab.path === location.pathname)
+
+   const setTabTitle = React.useCallback(
+      title => {
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               title,
+               path: tab.path,
+            },
+         })
+      },
+      [dispatch, tab]
+   )
+
+   const addTab = React.useCallback(
+      (title, path) => {
+         dispatch({
+            type: 'ADD_TAB',
+            payload: { title, path },
+         })
+         history.push(path)
+      },
+      [dispatch, history]
+   )
+
+   const switchTab = React.useCallback(path => history.push(path), [history])
+
+   const removeTab = React.useCallback(
+      ({ tab, index }) => {
+         dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
+
+         const tabsCount = tabs.length
+         // closing last remaining tab
+         if (index === 0 && tabsCount === 1) {
+            history.push('/inventory')
+         }
+         // closing first tab when there's more than one tab
+         else if (index === 0 && tabsCount > 1) {
+            history.push(tabs[index + 1].path)
+         }
+         // closing any tab when there's more than one tab
+         else if (index > 0 && tabsCount > 1) {
+            history.push(tabs[index - 1].path)
+         }
+      },
+      [tabs, dispatch, history]
+   )
+
+   const closeAllTabs = React.useCallback(() => {
+      dispatch({ type: 'CLOSE_ALL_TABS' })
+      switchTab('/inventory')
+   }, [switchTab, dispatch])
+
+   const doesTabExists = path => tabs.find(tab => tab.path === path) || false
+
+   return {
+      tab,
+      tabs,
+      addTab,
+      switchTab,
+      removeTab,
+      setTabTitle,
+      closeAllTabs,
+      doesTabExists,
+   }
+}

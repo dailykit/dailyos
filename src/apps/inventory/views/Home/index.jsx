@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import { useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
-import { Context } from '../../context/tabs'
+// import { Context } from '../../context/tabs'
 import { StyledHome, StyledTileContainer } from './styled'
 import {
    ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION,
@@ -17,15 +17,13 @@ import {
    PURCHASE_ORDERS_COUNT_SUBSCRIPTION,
    PACKAGINGS_COUNT_SUBSCRIPTION,
 } from '../../graphql/subscriptions/index'
+import { useTabs } from '../../context'
 
 const address = 'apps.inventory.views.home.'
 
 const Home = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
-   }
+   const { addTab } = useTabs()
 
    const logError = error => {
       console.log(error)
@@ -77,7 +75,7 @@ const Home = () => {
                   availableSuppliers?.suppliersAggregate?.aggregate?.count ||
                   '...'
                } available`}
-               onClick={() => addTab('Suppliers', 'suppliers')}
+               onClick={() => addTab('Suppliers', '/inventory/suppliers')}
             />
             <DashboardTile
                title={t(address.concat('items'))}
@@ -86,7 +84,7 @@ const Home = () => {
                   '...'
                }
                conf="All available"
-               onClick={() => addTab('Supplier Items', 'items')}
+               onClick={() => addTab('Supplier Items', '/inventory/items')}
             />
             <DashboardTile
                title={t(address.concat('work orders'))}
@@ -101,7 +99,7 @@ const Home = () => {
                   sachetOrders?.sachetWorkOrdersAggregate?.aggregate?.count ||
                   '...'
                } Sachets`}
-               onClick={() => addTab('Work Orders', 'orders')}
+               onClick={() => addTab('Work Orders', '/inventory/work-orders')}
             />
             <DashboardTile
                title={t(address.concat('purchase orders'))}
@@ -109,12 +107,14 @@ const Home = () => {
                   purchaseOrders?.purchaseOrderItemsAggregate?.aggregate
                      ?.count || '...'
                }
-               onClick={() => addTab('Purchase Orders', 'purchaseOrders')}
+               onClick={() =>
+                  addTab('Purchase Orders', '/inventory/purchase-orders')
+               }
             />
             <DashboardTile
                title="Packagings"
                count={packagings?.packagingAggregate?.aggregate?.count || '...'}
-               onClick={() => addTab('Packagings', 'packagings')}
+               onClick={() => addTab('Packagings', '/inventory/packagings')}
             />
          </StyledTileContainer>
       </StyledHome>

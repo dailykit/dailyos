@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
-// State
-import { Context } from '../../context/tabs'
+import { Switch, Route } from 'react-router-dom'
 
 // Views
 import {
@@ -25,46 +23,64 @@ import PackagingHub from '../../packagingHub'
 import PackagingHubProducts from '../../packagingHub/views/Products'
 import PackagingHubProductDetails from '../../packagingHub/views/ProductDetails'
 
-const renderComponent = (type, view) => {
-   // Listings
-   if (type === 'listings' && view === 'suppliers') return <SupplierListing />
-   if (type === 'listings' && view === 'items') return <ItemListing />
-   if (type === 'listings' && view === 'orders') return <WorkOrdersListing />
-   if (type === 'listings' && view === 'purchaseOrders')
-      return <PurchaseOrdersListing />
-   if (type === 'listings' && view === 'packagings') return <Packagings />
-   if (type === 'listings' && view === 'home') return <Home />
-   // Forms
-   if (type === 'forms' && view === 'suppliers') return <SupplierForm />
-   if (type === 'forms' && view === 'items') return <ItemForm />
-   if (type === 'forms' && view === 'bulkOrder') return <BulkOrderForm />
-   if (type === 'forms' && view === 'purchaseOrder')
-      return <PurchaseOrderForm />
-   if (type === 'forms' && view === 'sachetOrder') return <SachetOrderForm />
-   if (type === 'forms' && view === 'sachetPackaging')
-      return <SachetPackaging />
-   if (type === 'forms' && view === 'assemblyPackaging')
-      return <SachetPackaging />
-   if (type === 'forms' && view === 'packagingHub') return <PackagingHub />
-   if (type === 'forms' && view === 'packagingHubProducts')
-      return <PackagingHubProducts />
-   if (type === 'forms' && view === 'packagingHubProductDetailsView')
-      return <PackagingHubProductDetails />
-   if (type === 'forms' && view === 'packagingPurchaseOrder')
-      return <PackagingPurchaseOrderForm />
-}
-
 const MainWrapper = styled.main`
    overflow-x: auto;
    position: relative;
 `
 
 const Main = () => {
-   const { state } = React.useContext(Context)
-   if (state.listings.length === 0 && state.forms.length === 0) return <Home />
    return (
       <MainWrapper>
-         {renderComponent(state.current.type, state.current.view)}
+         <Switch>
+            <Route path="/inventory" exact>
+               <Home />
+            </Route>
+            <Route path="/inventory/suppliers" exact>
+               <SupplierListing />
+            </Route>
+            <Route path="/inventory/suppliers/:id" exact>
+               <SupplierForm />
+            </Route>
+            <Route path="/inventory/items" exact>
+               <ItemListing />
+            </Route>
+            <Route path="/inventory/items/:id" exact>
+               <ItemForm />
+            </Route>
+            <Route path="/inventory/work-orders" exact>
+               <WorkOrdersListing />
+            </Route>
+            <Route path="/inventory/work-orders/sachet/:id" exact>
+               <SachetOrderForm />
+            </Route>
+            <Route path="/inventory/work-orders/bulk/:id" exact>
+               <BulkOrderForm />
+            </Route>
+            <Route path="/inventory/purchase-orders" exact>
+               <PurchaseOrdersListing />
+            </Route>
+            <Route path="/inventory/purchase-orders/item/:id" exact>
+               <PurchaseOrderForm />
+            </Route>
+            <Route path="/inventory/purchase-orders/packaging/:id" exact>
+               <PackagingPurchaseOrderForm />
+            </Route>
+            <Route path="/inventory/packagings" exact>
+               <Packagings />
+            </Route>
+            <Route path="/inventory/packagings/:id" exact>
+               <SachetPackaging />
+            </Route>
+            <Route path="/inventory/packaging-hub" exact>
+               <PackagingHub />
+            </Route>
+            <Route path="/inventory/packaging-hub/products/:id" exact>
+               <PackagingHubProducts />
+            </Route>
+            <Route path="/inventory/packaging-hub/product/:id" exact>
+               <PackagingHubProductDetails />
+            </Route>
+         </Switch>
       </MainWrapper>
    )
 }

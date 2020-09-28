@@ -1,18 +1,16 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Loader,
    TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
-import { Context } from '../../../context/tabs'
-
 import { TunnelContainer } from '../../../components'
 import {
    PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION,
@@ -27,11 +25,7 @@ function onError(error) {
 export default function AddressTunnel({ close }) {
    const [search, setSearch] = useState('')
    const [data, setData] = useState([])
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
+   const { id } = useParams()
 
    const [list, current, selectOption] = useSingleList(data)
 

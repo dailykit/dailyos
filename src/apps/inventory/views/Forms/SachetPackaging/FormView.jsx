@@ -26,9 +26,10 @@ import {
    SuppliersTunnel,
 } from './Tunnels'
 import { UPDATE_PACKAGING } from '../../../graphql'
+import { useTabs } from '../../../context'
 
-// Props<{state: Packaging}>
 export default function FormView({ state }) {
+   const { setTabTitle } = useTabs()
    const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
       2
    )
@@ -37,6 +38,7 @@ export default function FormView({ state }) {
    const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
          toast.info('Packaging name updated !')
+         setTabTitle(itemName)
       },
       onError: error => {
          console.log(error)

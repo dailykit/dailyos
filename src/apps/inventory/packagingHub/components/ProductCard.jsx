@@ -1,19 +1,17 @@
-import React, { useContext } from 'react'
-
+import React from 'react'
+import { TruckIcon } from '../../assets/icons'
+import { useTabs } from '../../context'
 import {
-   CardWrapper,
+   ActionButton,
    CardContent,
+   CardData,
    CardImage,
-   Lead,
+   CardPrice,
+   CardWrapper,
    Flexi,
    FlexiSpaced,
-   CardData,
-   CardPrice,
-   ActionButton,
+   Lead,
 } from './styled'
-import { TruckIcon } from '../../assets/icons'
-
-import { Context } from '../../context/tabs'
 
 export default function ProductCard({
    product: {
@@ -28,18 +26,9 @@ export default function ProductCard({
       assets = {},
    } = {},
 }) {
-   const { dispatch } = useContext(Context)
-
+   const { addTab } = useTabs()
    const openProductDetailsView = () => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: {
-            type: 'forms',
-            title: packagingName,
-            view: 'packagingHubProductDetailsView',
-            id,
-         },
-      })
+      addTab(packagingName, `/inventory/packaging-hub/product/${id}`)
    }
 
    return (

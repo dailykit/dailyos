@@ -5,19 +5,12 @@ import { toast } from 'react-toastify'
 
 import { randomSuffix } from '../../../../../shared/utils/index'
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
-import { Context } from '../../../context/tabs'
 import { SolidTile } from '../styled'
 import { CREATE_PACKAGING } from '../../../graphql'
+import { useTabs } from '../../../context'
 
 export default function WorkOrderTypeTunnel({ close }) {
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
+   const { addTab } = useTabs()
 
    const [createPackaging, { loading }] = useMutation(CREATE_PACKAGING, {
       onError: error => {
@@ -26,7 +19,7 @@ export default function WorkOrderTypeTunnel({ close }) {
       },
       onCompleted: input => {
          const { packagingName, id } = input.createPackaging.returning[0]
-         addTab(packagingName, 'sachetPackaging', id)
+         addTab(packagingName, `/inventory/packagings/${id}`)
       },
    })
 

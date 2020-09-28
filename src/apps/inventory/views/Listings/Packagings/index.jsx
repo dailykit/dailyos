@@ -1,28 +1,27 @@
+import { useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
+   ComboButton,
    IconButton,
+   Loader,
+   Text,
    Tunnel,
    Tunnels,
    useTunnel,
-   Text,
-   ComboButton,
-   Loader,
 } from '@dailykit/ui'
-import { toast } from 'react-toastify'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
-
-import { Context } from '../../../context/tabs'
-
+import { toast } from 'react-toastify'
 import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
-import { StyledHeader, StyledWrapper } from '../styled'
-import PackagingTypeTunnel from './PackagingTypeTunnel'
+import { useTabs } from '../../../context'
 import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
-import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
+import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
+import PackagingTypeTunnel from './PackagingTypeTunnel'
 
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const { addTab } = useTabs()
 
    const {
       loading: subLoading,
@@ -34,19 +33,11 @@ export default function Packagings() {
       },
    })
 
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
    const tableRef = React.useRef()
 
    const rowClick = (_, row) => {
       const { id, packagingName } = row._row.data
-      addTab(packagingName, 'sachetPackaging', id)
+      addTab(packagingName, `/inventory/packagings/${id}`)
    }
 
    const columns = [
@@ -104,7 +95,9 @@ export default function Packagings() {
                <FlexContainer>
                   <ComboButton
                      type="outline"
-                     onClick={() => addTab('Packaging Hub', 'packagingHub')}
+                     onClick={() =>
+                        addTab('Packaging Hub', '/inventory/packaging-hub')
+                     }
                   >
                      <PackagingHubIcon />
                      EXPLORE PACKAGING HUB
