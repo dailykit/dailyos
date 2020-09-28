@@ -1,17 +1,24 @@
 import React, { useState } from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   ButtonGroup,
    useTunnel,
+   Loader,
    Tunnels,
    Tunnel,
    Text,
    IconButton,
    PlusIcon,
 } from '@dailykit/ui'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
+import { toast } from 'react-toastify'
+import { EditIcon, DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { RewardsTunnel, RewardDetailsTunnel } from '../../tunnels'
-import { REWARD_DATA_BY_COUPON_ID } from '../../../../../graphql'
+import {
+   REWARD_DATA_BY_COUPON_ID,
+   DELETE_REWARD,
+   REWARD_DATA,
+} from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
 import { StyledContainer, StyledRow } from './styled'
 const Rewards = ({ state }) => {
@@ -40,15 +47,55 @@ const Rewards = ({ state }) => {
       }
    )
 
+   const [fetchReward, { listLoading, data }] = useLazyQuery(REWARD_DATA, {
+      onCompleted: data => {
+         console.log(data.crm_reward_by_pk)
+         setRewardTunnelInfo(data.crm_reward_by_pk)
+         setConditionId(data.crm_reward_by_pk.conditionId)
+         setRewardId(data.crm_reward_by_pk.id)
+         openRewardTunnel(1)
+      },
+   })
+
+   const [deleteReward] = useMutation(DELETE_REWARD, {
+      onCompleted: () => {
+         toast.success('Reward deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
    const addCondition = id => {
       setConditionId(id)
    }
 
-   const editRewardDetails = rewardInfo => {
-      console.log(rewardInfo)
-      setRewardTunnelInfo(rewardInfo)
-      openRewardTunnel(1)
+   const EditRewardDetails = id => {
+      fetchReward({
+         variables: {
+            id,
+         },
+      })
    }
+
+   // Handler
+   const deleteHandler = rewardInfo => {
+      console.log(rewardInfo)
+      if (
+         window.confirm(
+            `Are you sure you want to delete reward - ${rewardInfo.id}?`
+         )
+      ) {
+         deleteReward({
+            variables: {
+               id: rewardInfo.id,
+            },
+         })
+      }
+   }
+
+   if (loading || listLoading) return <Loader />
 
    return (
       <>
@@ -84,13 +131,21 @@ const Rewards = ({ state }) => {
                {rewardInfoArray.map(rewardInfo => {
                   return (
                      <StyledRow key={rewardInfo.id}>
-                        <Text as="subtitle">View/Edit Reward</Text>
-                        <IconButton
-                           type="outline"
-                           onClick={() => editRewardDetails(rewardInfo)}
-                        >
-                           <EditIcon />
-                        </IconButton>
+                        <Text as="subtitle">{rewardInfo.type} </Text>
+                        <ButtonGroup align="left">
+                           <IconButton
+                              type="outline"
+                              onClick={() => EditRewardDetails(rewardInfo.id)}
+                           >
+                              <EditIcon />
+                           </IconButton>
+                           <IconButton
+                              type="outline"
+                              onClick={() => deleteHandler(rewardInfo)}
+                           >
+                              <DeleteIcon />
+                           </IconButton>
+                        </ButtonGroup>
                      </StyledRow>
                   )
                })}

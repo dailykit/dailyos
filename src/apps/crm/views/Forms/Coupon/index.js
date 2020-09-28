@@ -7,6 +7,7 @@ import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
+import { InputWrapper } from './styled'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -76,16 +77,22 @@ const CouponForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
-            <Input
-               type="text"
-               label="Coupon Code"
-               name="code"
-               value={codeTitle}
-               onChange={e => setCodeTitle(e.target.value)}
-               onBlur={updateCodeTitle}
+         <StyledHeader gridCol="10fr  1.5fr">
+            <InputWrapper>
+               <Input
+                  type="text"
+                  label="Coupon Code"
+                  name="code"
+                  value={codeTitle}
+                  onChange={e => setCodeTitle(e.target.value)}
+                  onBlur={updateCodeTitle}
+               />
+            </InputWrapper>
+            <Toggle
+               checked={toggle}
+               setChecked={updatetoggle}
+               label="Coupon Active"
             />
-            <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
          <DetailsComp state={state} />
          <ConditionComp state={state} />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
@@ -35,15 +35,13 @@ export default function RewardDetailsunnel({
    rewardInfo,
    closeRewardTypeTunnel,
 }) {
-   console.log(rewardInfo)
+   console.log(rewardInfo?.priority)
    const { addTab } = useTabs()
-   const [priority, setPriority] = useState(rewardInfo?.priority || 1)
-   const [rewardValue, setRewardValue] = useState(
-      rewardInfo?.rewardValue || {
-         type: 'absolute',
-         value: '',
-      }
-   )
+   const [priority, setPriority] = useState(1)
+   const [rewardValue, setRewardValue] = useState({
+      type: 'absolute',
+      value: '',
+   })
    const [rewardValueType, setRewardValueType] = useState('absolute')
    const [options] = useState([
       { id: 1, title: 'absolute' },
@@ -77,6 +75,12 @@ export default function RewardDetailsunnel({
          },
       })
    }
+
+   useEffect(() => {
+      setPriority(rewardInfo?.priority)
+      setRewardValue(rewardInfo?.rewardValue)
+      setRewardValueType(rewardInfo?.rewardValue?.type)
+   }, [rewardInfo])
 
    return (
       <>
@@ -124,7 +128,7 @@ export default function RewardDetailsunnel({
                      <Wrap>
                         <RadioGroup
                            options={options}
-                           active={1}
+                           active={rewardValueType === 'absolute' ? 1 : 2}
                            onChange={option => setRewardValueType(option.title)}
                         />
                      </Wrap>
@@ -148,7 +152,7 @@ export default function RewardDetailsunnel({
                               <Input
                                  type="number"
                                  label="Maximum Reward Value"
-                                 value={rewardValue.value.max}
+                                 value={rewardValue?.value?.max}
                                  onChange={e =>
                                     setRewardValue({
                                        ...rewardValue,
@@ -165,7 +169,7 @@ export default function RewardDetailsunnel({
                               <Input
                                  type="number"
                                  label="Reward In Percentage"
-                                 value={rewardValue.value.percentage}
+                                 value={rewardValue?.value?.percentage}
                                  onChange={e =>
                                     setRewardValue({
                                        ...rewardValue,
