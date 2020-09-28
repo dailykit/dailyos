@@ -1,13 +1,12 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton, Text } from '@dailykit/ui'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { IconButton, Loader, Text, TextButton } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-
 import { randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import { CREATE_ITEM, SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
 import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
 
@@ -15,14 +14,7 @@ const address = 'apps.inventory.views.listings.item.'
 
 export default function ItemListing() {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
+   const { addTab } = useTabs()
 
    const { loading: itemsLoading, data, error: subError } = useSubscription(
       SUPPLIER_ITEMS_SUBSCRIPTION
@@ -31,7 +23,7 @@ export default function ItemListing() {
    const [createItem] = useMutation(CREATE_ITEM, {
       onCompleted: input => {
          const itemData = input.createSupplierItem.returning[0]
-         addTab(itemData.name, 'items', itemData.id)
+         addTab(itemData.name, `/inventory/items/${itemData.id}`)
          toast.success('Supplier Item Added!')
       },
       onError: error => {
@@ -123,7 +115,7 @@ export default function ItemListing() {
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
       const tabName = name || row._row.modules.dataTree.parent.data.name
-      addTab(tabName, 'items', id)
+      addTab(tabName, `/inventory/items/${id}`)
    }
 
    if (itemsLoading) return <Loader />

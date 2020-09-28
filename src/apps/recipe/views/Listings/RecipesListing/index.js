@@ -28,7 +28,7 @@ const address = 'apps.recipe.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
    const { t } = useTranslation()
-   const { addTab } = useTabs()
+   const { addTab, tab } = useTabs()
    const [recipes, setRecipes] = React.useState([])
 
    // Queries and Mutations
@@ -55,6 +55,12 @@ const RecipesListing = () => {
          toast.error('Failed to delete!')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Recipes', '/recipe/recipes')
+      }
+   }, [tab, addTab])
 
    // Effects
    React.useEffect(() => {

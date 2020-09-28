@@ -1,9 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
-import { v4 as uuid } from 'uuid'
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 import {
    ButtonGroup,
    IconButton,

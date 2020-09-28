@@ -141,7 +141,7 @@ export default function RewardDetailsunnel({
                               onChange={e =>
                                  setRewardValue({
                                     type: rewardValueType,
-                                    value: e.target.value,
+                                    value: +e.target.value,
                                  })
                               }
                            />
@@ -159,7 +159,7 @@ export default function RewardDetailsunnel({
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue.value,
-                                          max: e.target.value,
+                                          max: +e.target.value,
                                        },
                                     })
                                  }
@@ -176,7 +176,7 @@ export default function RewardDetailsunnel({
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue.value,
-                                          percentage: e.target.value,
+                                          percentage: +e.target.value,
                                        },
                                     })
                                  }

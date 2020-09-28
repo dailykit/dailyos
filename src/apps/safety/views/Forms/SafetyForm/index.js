@@ -1,40 +1,39 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   ButtonTile,
+   Checkbox,
+   Loader,
+   Table,
    TableBody,
    TableCell,
    TableHead,
-   Loader,
+   TableRow,
+   Text,
    Tunnel,
    Tunnels,
    useTunnel,
-   Text,
-   Table,
-   TableRow,
-   ButtonTile,
-   Checkbox,
 } from '@dailykit/ui'
 import * as moment from 'moment'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { DeleteIcon } from '../../../assets/icons'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+
+import { DeleteIcon } from '../../../assets/icons'
 import {
    reducer,
    SafetyCheckContext,
    state as initialState,
 } from '../../../context/check'
-
-import { SAFETY_CHECK, USERS, DELETE_CHECKUP } from '../../../graphql'
-import { StyledWrapper, Container } from '../styled'
-import { StyledBody, StyledHeader } from '../styled'
-import { UserTunnel, CheckTunnel } from './tunnels'
-import { Context } from '../../../context'
+import { DELETE_CHECKUP, SAFETY_CHECK, USERS } from '../../../graphql'
+import { Container, StyledBody, StyledHeader, StyledWrapper } from '../styled'
+import { CheckTunnel, UserTunnel } from './tunnels'
 
 const address = 'apps.safety.views.forms.safetyform.'
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()
+   const { id } = useParams()
 
-   const { state: tabs } = React.useContext(Context)
    const [checkState, checkDispatch] = React.useReducer(reducer, initialState)
 
    const [state, setState] = React.useState({})
@@ -46,10 +45,9 @@ export default function SimpleRecipeProduct() {
    // Subscription
    const { loading } = useSubscription(SAFETY_CHECK, {
       variables: {
-         id: tabs.current.id,
+         id,
       },
       onSubscriptionData: data => {
-         console.log(data)
          setState(data.subscriptionData.data.safety_safetyCheck[0])
       },
    })

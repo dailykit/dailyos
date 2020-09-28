@@ -1,42 +1,35 @@
 import React from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import { DashboardTile } from '@dailykit/ui'
 
-// State
-import { Context } from '../../context/tabs'
-
-import { StyledHome, StyledCardList } from './styled'
-
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
-import { SAFETY_CHECKS } from '../../graphql'
+import { SAFETY_CHECKS_COUNT } from '../../graphql'
+import { StyledCardList, StyledHome } from './styled'
+import { useTabs } from '../../context'
+
 const address = 'apps.safety.views.home.'
+
 const Home = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
 
-   const [safeyCheckCount, setSafetyCheckCount] = React.useState(0)
+   const { addTab } = useTabs()
 
-   // Queries
-   useSubscription(SAFETY_CHECKS, {
-      onSubscriptionData: data => {
-         setSafetyCheckCount(
-            data.subscriptionData.data.safety_safetyCheck.length
-         )
-      },
-   })
+   const {
+      data: {
+         safety_safetyCheck_aggregate: { aggregate: { count = 0 } = {} } = {},
+      } = {},
+      loading,
+   } = useSubscription(SAFETY_CHECKS_COUNT)
 
-   const addTab = (title, view) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
-   }
    return (
       <StyledHome>
          <h1>{t(address.concat('safety and precautions app'))}</h1>
          <StyledCardList>
             <DashboardTile
                title={t(address.concat('safety checks'))}
-               count={safeyCheckCount}
+               count={loading ? '...' : count}
                conf="All available"
-               onClick={() => addTab('Safety Checks', 'checks')}
+               onClick={() => addTab('Safety Checks', '/safety/checks')}
             />
          </StyledCardList>
       </StyledHome>

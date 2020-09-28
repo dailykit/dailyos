@@ -22,14 +22,20 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'ADD_TAB': {
-         const tabExists = state.tabs.find(tab => tab.path === payload.path)
-         if (tabExists) {
-            return state
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex === -1) {
+            return {
+               ...state,
+               tabs: [
+                  {
+                     title: payload.title,
+                     path: payload.path,
+                  },
+                  ...state.tabs,
+               ],
+            }
          }
-         return {
-            ...state,
-            tabs: [...state.tabs, { title: payload.title, path: payload.path }],
-         }
+         return state
       }
       // Delete Tab
       case 'DELETE_TAB': {
@@ -38,6 +44,11 @@ const reducers = (state, { type, payload }) => {
             tabs: state.tabs.filter((_, index) => index !== payload.index),
          }
       }
+      case 'CLOSE_ALL_TABS':
+         return {
+            ...state,
+            tabs: [],
+         }
       default:
          return state
    }
@@ -64,44 +75,57 @@ export const useTabs = () => {
 
    const tab = tabs.find(tab => tab.path === location.pathname)
 
-   const setTabTitle = title => {
-      dispatch({
-         type: 'SET_TITLE',
-         payload: {
-            title,
-            path: tab.path,
-         },
-      })
-   }
+   const setTabTitle = React.useCallback(
+      title => {
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               title,
+               path: tab.path,
+            },
+         })
+      },
+      [dispatch, tab]
+   )
 
-   const addTab = (title, path) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { title, path },
-      })
-      history.push(path)
-   }
+   const addTab = React.useCallback(
+      (title, path) => {
+         dispatch({
+            type: 'ADD_TAB',
+            payload: { title, path },
+         })
+         history.push(path)
+      },
+      [dispatch, history]
+   )
 
-   const switchTab = path => history.push(path)
+   const switchTab = React.useCallback(path => history.push(path), [history])
 
-   const removeTab = (e, { tab, index }) => {
-      e && e.stopPropagation()
-      dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
+   const removeTab = React.useCallback(
+      ({ tab, index }) => {
+         dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
 
-      const tabsCount = tabs.length
-      // closing last remaining tab
-      if (index === 0 && tabsCount === 1) {
-         history.push('/apps/order')
-      }
-      // closing first tab when there's more than one tab
-      else if (index === 0 && tabsCount > 1) {
-         history.push(tabs[index + 1].path)
-      }
-      // closing any tab when there's more than one tab
-      else if (index > 0 && tabsCount > 1) {
-         history.push(tabs[index - 1].path)
-      }
-   }
+         const tabsCount = tabs.length
+         // closing last remaining tab
+         if (index === 0 && tabsCount === 1) {
+            history.push('/apps/order')
+         }
+         // closing first tab when there's more than one tab
+         else if (index === 0 && tabsCount > 1) {
+            history.push(tabs[index + 1].path)
+         }
+         // closing any tab when there's more than one tab
+         else if (index > 0 && tabsCount > 1) {
+            history.push(tabs[index - 1].path)
+         }
+      },
+      [tabs, dispatch, history]
+   )
+
+   const closeAllTabs = React.useCallback(() => {
+      dispatch({ type: 'CLOSE_ALL_TABS' })
+      switchTab('/apps/order')
+   }, [switchTab, dispatch])
 
    const doesTabExists = path => tabs.find(tab => tab.path === path) || false
 
@@ -112,6 +136,7 @@ export const useTabs = () => {
       switchTab,
       removeTab,
       setTabTitle,
+      closeAllTabs,
       doesTabExists,
    }
 }

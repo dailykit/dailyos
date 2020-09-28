@@ -12,6 +12,9 @@ export const Header = styled.header`
    background: #fff;
    align-items: center;
    justify-content: space-between;
+   > div {
+      flex: 0;
+   }
    input[type='text'] {
       width: 340px;
    }

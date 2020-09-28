@@ -163,7 +163,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                         {mode.sachetItem &&
                            `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`}
                      </td>
-                     <td>${mode.cost}</td>
+                     <td>${mode.cost.toFixed(2)}</td>
                      <td>
                         {mode.accuracy
                            ? `Atleast ${mode.accuracy} %`

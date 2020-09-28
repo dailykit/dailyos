@@ -1,30 +1,27 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Input,
+   Loader,
    Text,
    TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
 } from '@dailykit/ui/'
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
-
-import { Context } from '../../../context/tabs'
-import { FormActions, StyledForm, StyledWrapper } from '../styled'
-import PackagingTunnel from './PackagingTunnel'
-
 import {
+   PACKAGING_PURCHASE_ORDER_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER,
    UPDATE_PURCHASE_ORDER_ITEM,
-   PACKAGING_PURCHASE_ORDER_SUBSCRIPTION,
 } from '../../../graphql'
+import { FormActions, StyledForm, StyledWrapper } from '../styled'
+import PackagingTunnel from './PackagingTunnel'
 
 const address = 'apps.inventory.views.forms.purchaseorders.'
 
@@ -36,12 +33,7 @@ function onError(error) {
 export default function PackagingPurchaseOrderForm() {
    const { t } = useTranslation()
    const [orderQuantity, setOrderQuantity] = useState(0)
-
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
+   const { id } = useParams()
 
    const {
       data: { purchaseOrderItem: item = {} } = {},

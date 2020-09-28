@@ -41,7 +41,7 @@ export const FilterTunnel = () => {
          )
          setActiveStation(index + 1)
       }
-   }, [config.stations, state.orders.where])
+   }, [config.stations, state, state.orders.where])
 
    const handleStationChange = option => {
       dispatch({
@@ -60,6 +60,24 @@ export const FilterTunnel = () => {
                      assemblyStationId: {
                         _eq: option.id,
                      },
+                  },
+               },
+               {
+                  orderMealKitProducts: {
+                     _or: [
+                        {
+                           assemblyStationId: {
+                              _eq: option.id,
+                           },
+                        },
+                        {
+                           orderSachets: {
+                              packingStationId: {
+                                 _eq: option.id,
+                              },
+                           },
+                        },
+                     ],
                   },
                },
             ],

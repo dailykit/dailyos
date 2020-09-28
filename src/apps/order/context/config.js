@@ -2,9 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { useAuth } from './auth'
 import { Loader } from '../components'
-import { Flex } from '../../../shared/components'
+import { useAuth } from '../../../shared/providers'
 import { SETTINGS, STATIONS_BY_USER } from '../graphql'
 
 const ConfigContext = React.createContext()
@@ -28,12 +27,41 @@ const initialState = {
          identifier: 'print simulation',
       },
    },
+   kot: {
+      group_by_station: {
+         app: 'order',
+         type: 'kot',
+         value: { isActive: false },
+         identifier: 'group by station',
+      },
+      group_by_product_type: {
+         app: 'order',
+         type: 'kot',
+         value: { isActive: false },
+         identifier: 'group by product type',
+      },
+      print_automatically: {
+         app: 'order',
+         type: 'kot',
+         value: { isActive: false },
+         identifier: 'print automatically',
+      },
+      default_kot_printer: {
+         app: 'order',
+         type: 'kot',
+         value: { printNodeId: '' },
+         identifier: 'default kot printer',
+      },
+   },
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_SETTING':
-         return { ...state, [payload.field]: payload.value }
+         return {
+            ...state,
+            [payload.field]: { ...state[payload.field], ...payload.value },
+         }
 
       case 'SET_STATIONS':
          return { ...state, stations: payload }
@@ -72,7 +100,6 @@ export const ConfigProvider = ({ children }) => {
                payload: {
                   field: 'scale',
                   value: {
-                     ...state.scale,
                      weight_simulation: rest,
                   },
                },
@@ -88,8 +115,67 @@ export const ConfigProvider = ({ children }) => {
                payload: {
                   field: 'print',
                   value: {
-                     ...state.print,
                      print_simulation: rest,
+                  },
+               },
+            })
+         }
+         const groupByStationIndex = settings.findIndex(
+            setting => setting.identifier === 'group by station'
+         )
+         if (groupByStationIndex !== -1) {
+            const { __typename, ...rest } = settings[groupByStationIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'kot',
+                  value: {
+                     group_by_station: rest,
+                  },
+               },
+            })
+         }
+         const groupByProductTypeIndex = settings.findIndex(
+            setting => setting.identifier === 'group by product type'
+         )
+         if (groupByProductTypeIndex !== -1) {
+            const { __typename, ...rest } = settings[groupByProductTypeIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'kot',
+                  value: {
+                     group_by_product_type: rest,
+                  },
+               },
+            })
+         }
+         const printAutoIndex = settings.findIndex(
+            setting => setting.identifier === 'print automatically'
+         )
+         if (printAutoIndex !== -1) {
+            const { __typename, ...rest } = settings[printAutoIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'kot',
+                  value: {
+                     print_automatically: rest,
+                  },
+               },
+            })
+         }
+         const defaultKOTPrinterIndex = settings.findIndex(
+            setting => setting.identifier === 'default kot printer'
+         )
+         if (defaultKOTPrinterIndex !== -1) {
+            const { __typename, ...rest } = settings[defaultKOTPrinterIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'kot',
+                  value: {
+                     default_kot_printer: rest,
                   },
                },
             })
@@ -104,17 +190,6 @@ export const ConfigProvider = ({ children }) => {
    }, [loading, stations])
 
    if (loading) return <Loader />
-   if (_.isEmpty(stations))
-      return (
-         <Flex
-            container
-            height="100vh"
-            alignItems="center"
-            justifyContent="center"
-         >
-            You're not authorized to access Order App.
-         </Flex>
-      )
    return (
       <ConfigContext.Provider value={{ state, dispatch, methods: {} }}>
          {children}

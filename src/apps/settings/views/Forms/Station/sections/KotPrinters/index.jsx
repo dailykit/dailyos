@@ -183,12 +183,13 @@ const AddPrinterTunnel = ({
       } else {
          closeTunnel(1)
       }
-   }, [isOpen, openTunnel, closeTunnel])
+   }, [isOpen])
 
    const insert = () => {
       create({
          variables: {
             objects: selected.map(printer => ({
+               active: true,
                stationId: station,
                printNodeId: printer.id,
             })),

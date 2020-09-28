@@ -1,5 +1,6 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
+import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
@@ -30,7 +31,14 @@ const StationsListing = () => {
          addTab(insertStation.name, `/settings/stations/${insertStation.id}`)
       },
    })
-   const [remove] = useMutation(DELETE_STATION)
+   const [remove] = useMutation(DELETE_STATION, {
+      onCompleted: () => {
+         toast.success('Successfully deleted the station!')
+      },
+      onError: () => {
+         toast.success('Failed to delete the station!')
+      },
+   })
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data

@@ -30,17 +30,14 @@ const address = 'apps.recipe.views.listings.ingredientslisting.'
 
 const IngredientsListing = () => {
    const { t } = useTranslation()
-   const { addTab } = useTabs()
+   const { addTab, tab } = useTabs()
 
-   const { loading, data: { ingredients = [] } = {} } = useSubscription(
-      S_INGREDIENTS,
-      {
-         onError: error => {
-            console.log(error)
-            toast.error(error.message)
-         },
-      }
+   const { loading, data: { ingredients = [] } = {}, error } = useSubscription(
+      S_INGREDIENTS
    )
+
+   if (error) console.log(error)
+
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
@@ -64,6 +61,12 @@ const IngredientsListing = () => {
          toast.error('Failed to delete!')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Ingredients', '/recipe/ingredients')
+      }
+   }, [tab, addTab])
 
    const createIngredientHandler = async () => {
       const name = `ingredient-${randomSuffix()}`

@@ -1,23 +1,16 @@
-import React, { useContext } from 'react'
-import { Loader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
+import { Loader } from '@dailykit/ui'
+import React from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
-
-import { Context } from '../../../context/tabs'
-import FiltersProvider from '../../context/filters'
-
-import { Category } from '../../graphql'
-import { Badge, Packagings, CartButton } from '../../components'
 import { FlexContainer } from '../../../views/Forms/styled'
-
+import { Badge, CartButton, Packagings } from '../../components'
+import FiltersProvider from '../../context/filters'
+import { Category } from '../../graphql'
 import Filters from './Filters'
 
 export default function PackagingHubProducts() {
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
+   const { id } = useParams()
 
    const { data, loading, error } = useQuery(Category, {
       variables: { id },

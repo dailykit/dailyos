@@ -10,20 +10,19 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui/'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
 import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard, ContactCard, FormHeading } from '../../../components'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
 import { FlexContainer, FormActions, StyledWrapper } from '../styled'
 import { Container, ImageContainer } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
-import PersonContactTunnel from './Tunnels/PersonContactTunnel'
 import LogoTunnel from './Tunnels/LogoTunnel'
-import PhotoTunnel from './Tunnels/PhotoTunnel'
+import PersonContactTunnel from './Tunnels/PersonContactTunnel'
 
 const address = 'apps.inventory.views.forms.supplier.'
 
@@ -33,8 +32,8 @@ export default function SupplierForm() {
    const [paymentTerms, setPaymentTerms] = useState('')
    const [shippingTerms, setShippingTerms] = useState('')
    const [formState, setFormState] = useState({})
-
-   const { state, dispatch } = useContext(Context)
+   const { id } = useParams()
+   const { setTabTitle } = useTabs()
 
    const [addressTunnel, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
    const [contactTunnel, openContactTunnel, closeContactTunnel] = useTunnel(1)
@@ -42,7 +41,7 @@ export default function SupplierForm() {
 
    const { loading: supplierLoading } = useSubscription(SUPPLIER_SUBSCRIPTION, {
       variables: {
-         id: state.current.id,
+         id,
       },
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.supplier
@@ -64,10 +63,7 @@ export default function SupplierForm() {
    })
 
    const handleUpdateSupplier = () => {
-      dispatch({
-         type: 'SET_TITLE',
-         payload: { title: name, oldTitle: state.current.title },
-      })
+      setTabTitle(name)
       updateSupplier({
          variables: {
             id: formState.id,

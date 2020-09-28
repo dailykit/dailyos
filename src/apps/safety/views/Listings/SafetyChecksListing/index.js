@@ -1,34 +1,31 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-// Components
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { IconButton, Loader } from '@dailykit/ui'
 import * as moment from 'moment'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-import tableOptions from '../tableOption'
 
-// Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-// State
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import {
    CREATE_SAFETY_CHECK,
-   SAFETY_CHECKS,
    DELETE_SAFETY_CHECK,
+   SAFETY_CHECKS,
 } from '../../../graphql'
-// Styled
 import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.safety.views.listings.safetycheckslisting.'
 const SafetyChecksListing = () => {
    const { t } = useTranslation()
-   const { dispatch } = React.useContext(Context)
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
+   const { addTab: createTab, tab } = useTabs()
+
+   const addTab = (title, id) => {
+      createTab(title, `/safety/checks/${id}`)
    }
 
-   // Queries
    const { data: { safety_safetyCheck = [] } = {}, loading } = useSubscription(
       SAFETY_CHECKS,
       {
@@ -38,14 +35,9 @@ const SafetyChecksListing = () => {
       }
    )
 
-   // Mutation
    const [createSafetyCheck] = useMutation(CREATE_SAFETY_CHECK, {
       onCompleted: input => {
-         addTab(
-            'Check',
-            'check',
-            input.insert_safety_safetyCheck.returning[0].id
-         )
+         addTab('Check', input.insert_safety_safetyCheck.returning[0].id)
          toast.success('Initiated!')
       },
       onError: error => {
@@ -62,6 +54,12 @@ const SafetyChecksListing = () => {
          toast.error('Error')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab) {
+         createTab('Safety Checks', '/safety/checks')
+      }
+   }, [tab, createTab])
 
    if (loading) return <Loader />
 
@@ -90,7 +88,7 @@ function DataTable({ data, addTab, deleteCheck }) {
 
    const rowClick = (e, row) => {
       const { id } = row._row.data
-      addTab('Check', 'check', id)
+      addTab('Check', id)
    }
 
    const columns = [
