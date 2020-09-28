@@ -15,7 +15,7 @@ const address = 'apps.safety.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
-   const { addTab, switchTab } = useTabs()
+   const { switchTab } = useTabs()
 
    return (
       <StyledSidebar visible={visible}>
@@ -23,6 +23,9 @@ const Sidebar = ({ visible, toggleSidebar }) => {
          <StyledList onClick={() => toggleSidebar(visible => !visible)}>
             <StyledListItem onClick={() => switchTab('/brands')}>
                Home
+            </StyledListItem>
+            <StyledListItem onClick={() => switchTab('/brands/brands')}>
+               Brands
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

@@ -81,7 +81,7 @@ export const useTabs = () => {
             type: 'SET_TITLE',
             payload: {
                title,
-               path: tab.path,
+               path: tab?.path,
             },
          })
       },

@@ -24,7 +24,10 @@ export const Brands = () => {
    }, [tab, addTab])
 
    const edit = brand => {
-      addTab(brand.title || brand.domain, `/brands/brands/${brand.id}`)
+      addTab(
+         brand?.title || brand?.domain || 'N/A',
+         `/brands/brands/${brand.id}`
+      )
    }
 
    const columns = React.useMemo(

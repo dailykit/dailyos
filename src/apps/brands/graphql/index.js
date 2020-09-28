@@ -25,4 +25,22 @@ export const BRANDS = {
          }
       }
    `,
+   BRAND: gql`
+      subscription brand($id: Int!) {
+         brand(id: $id) {
+            id
+            domain
+            title
+            isDefault
+            isPublished
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateBrand($id: Int!, $_set: brands_brand_set_input!) {
+         updateBrand(pk_columns: { id: $id }, _set: $_set) {
+            id
+         }
+      }
+   `,
 }
