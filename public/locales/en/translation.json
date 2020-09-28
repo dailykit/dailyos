@@ -390,7 +390,8 @@
             "sidebar": {
                "listings": "Listings",
                "recipes": "Recipes",
-               "ingredients": "Ingredients"
+               "ingredients": "Ingredients",
+               "products": "Products"
             }
          },
          "utils": {},
@@ -462,7 +463,8 @@
             "home": {
                "recipe app": "Recipe App",
                "recipes": "Recipes",
-               "ingredients": "Ingredients"
+               "ingredients": "Ingredients",
+               "products": "Products"
             },
             "listings": {
                "ingredientslisting": {

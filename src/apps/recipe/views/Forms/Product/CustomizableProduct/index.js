@@ -2,33 +2,37 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
 // context
 import {
-   ComboProductContext,
+   CustomizableProductContext,
    reducers,
    state as initialState,
-} from '../../../../context/product/comboProduct'
+} from '../../../../context/product/customizableProduct'
 import { useTabs } from '../../../../context'
 // graphql
-import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
+import {
+   S_CUSTOMIZABLE_PRODUCT,
+   UPDATE_CUSTOMIZABLE_PRODUCT,
+} from '../../../../graphql'
 // styles
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
 // components
-import { Description, Items, Assets } from './components'
+import { Description, Products, Assets } from './components'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.'
+const address = 'apps.online_store.views.forms.product.customizableproduct.'
 
-export default function ComboProduct() {
+export default function CustomizableProduct() {
    const { t } = useTranslation()
+
+   const { setTabTitle, tab, addTab } = useTabs()
 
    const { id: productId } = useParams()
 
-   const { setTabTitle, tab, addTab } = useTabs()
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -37,35 +41,36 @@ export default function ComboProduct() {
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
 
-   // Subscriptions
-   const { loading } = useSubscription(S_COMBO_PRODUCT, {
+   // Subscription
+   const { loading } = useSubscription(S_CUSTOMIZABLE_PRODUCT, {
       variables: {
          id: productId,
       },
       onSubscriptionData: data => {
-         console.log('ComboProduct -> data', data)
-         setState(data.subscriptionData.data.comboProduct)
-         setTitle(data.subscriptionData.data.comboProduct.name)
+         console.log(data)
+         setState(data.subscriptionData.data.customizableProduct)
+         setTitle(data.subscriptionData.data.customizableProduct.name)
       },
       onError: error => {
          console.log(error)
+         toast.error('Error')
       },
    })
 
-   // Mutations
-   const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
+   // Mutation
+   const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
       onCompleted: () => {
          toast.success(t(address.concat('updated!')))
       },
       onError: error => {
          console.log(error)
-         toast.error(t(address.concat('error!')))
+         toast.error(t(address.concat('error')))
       },
    })
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(title)) {
-         addTab(title, `/online-store/combo-products/${productId}`)
+         addTab(title, `/recipe/customizable-products/${productId}`)
       }
    }, [tab, addTab, loading, title])
 
@@ -113,7 +118,9 @@ export default function ComboProduct() {
    if (loading) return <Loader />
 
    return (
-      <ComboProductContext.Provider value={{ productState, productDispatch }}>
+      <CustomizableProductContext.Provider
+         value={{ productState, productDispatch }}
+      >
          <StyledWrapper>
             <StyledHeader>
                <div>
@@ -166,9 +173,9 @@ export default function ComboProduct() {
                   </div>
                </StyledMeta>
                <StyledRule />
-               <Items state={state} />
+               <Products state={state} />
             </StyledBody>
          </StyledWrapper>
-      </ComboProductContext.Provider>
+      </CustomizableProductContext.Provider>
    )
 }

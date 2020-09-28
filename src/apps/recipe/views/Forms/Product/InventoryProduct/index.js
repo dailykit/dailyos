@@ -1,16 +1,16 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
 import { TickIcon, CloseIcon } from '../../../../assets/icons'
 import {
+   InventoryProductContext,
    reducers,
-   SimpleProductContext,
-   state as initialState,
-} from '../../../../context/product/simpleProduct'
+   initialState,
+} from '../../../../context/product/inventoryProduct'
 import {
    reducers as modifiersReducers,
    ModifiersContext,
@@ -18,21 +18,20 @@ import {
 } from '../../../../context/product/modifiers'
 import { useTabs } from '../../../../context'
 import {
-   S_SIMPLE_RECIPE_PRODUCT,
-   UPDATE_SIMPLE_RECIPE_PRODUCT,
+   S_INVENTORY_PRODUCT,
+   UPDATE_INVENTORY_PRODUCT,
 } from '../../../../graphql'
 import { StyledWrapper, MasterSettings } from '../../styled'
 import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
-import { Description, Recipe, Assets } from './components'
+import { Description, Item, Assets } from './components'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
+const address = 'apps.online_store.views.forms.product.inventoryproduct.'
 
-export default function SimpleRecipeProduct() {
+export default function InventoryProduct() {
    const { t } = useTranslation()
-
    const { id: productId } = useParams()
 
-   const { setTabTitle, tab, addTab } = useTabs()
+   // Context
    const [productState, productDispatch] = React.useReducer(
       reducers,
       initialState
@@ -41,24 +40,34 @@ export default function SimpleRecipeProduct() {
       modifiersReducers,
       initialModifiersState
    )
+   const { setTabTitle, tab, addTab } = useTabs()
 
+   // State
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
 
    // Subscription
-   const { loading } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
+   const { loading } = useSubscription(S_INVENTORY_PRODUCT, {
       variables: {
          id: productId,
       },
       onSubscriptionData: data => {
-         console.log(data)
-         setState(data.subscriptionData.data.simpleRecipeProduct)
-         setTitle(data.subscriptionData.data.simpleRecipeProduct.name)
+         setState(data.subscriptionData.data.inventoryProduct)
+         setTitle(data.subscriptionData.data.inventoryProduct.name)
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/recipe/inventory-products/${productId}`)
+      }
+   }, [tab, addTab, loading, title])
+
    // Mutation
-   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
          toast.success('Updated!')
       },
@@ -67,12 +76,6 @@ export default function SimpleRecipeProduct() {
          toast.error('Error!')
       },
    })
-
-   React.useEffect(() => {
-      if (!tab && !loading && !isEmpty(title)) {
-         addTab(title, `/online-store/simple-recipe-products/${productId}`)
-      }
-   }, [tab, addTab, loading, title])
 
    // Handlers
    const updateName = async () => {
@@ -92,10 +95,9 @@ export default function SimpleRecipeProduct() {
    }
    const togglePublish = val => {
       if (val && !state.isValid.status) {
-         toast.error('Product should be valid!')
-         return
+         return toast.error('Product should be valid!')
       }
-      updateProduct({
+      return updateProduct({
          variables: {
             id: state.id,
             set: {
@@ -118,7 +120,9 @@ export default function SimpleRecipeProduct() {
    if (loading) return <Loader />
 
    return (
-      <SimpleProductContext.Provider value={{ productState, productDispatch }}>
+      <InventoryProductContext.Provider
+         value={{ productState, productDispatch }}
+      >
          <ModifiersContext.Provider
             value={{ modifiersState, modifiersDispatch }}
          >
@@ -148,7 +152,7 @@ export default function SimpleRecipeProduct() {
                            </>
                         )}
                      </div>
-                     <div>
+                     <div className="settings">
                         <Checkbox
                            id="label"
                            checked={state.isPopupAllowed}
@@ -174,10 +178,10 @@ export default function SimpleRecipeProduct() {
                      </div>
                   </StyledMeta>
                   <StyledRule />
-                  <Recipe state={state} />
+                  <Item state={state} />
                </StyledBody>
             </StyledWrapper>
          </ModifiersContext.Provider>
-      </SimpleProductContext.Provider>
+      </InventoryProductContext.Provider>
    )
 }

@@ -25,7 +25,7 @@ export default function ProductTypeTunnel({ close }) {
          toast.success('Product created!')
          addTab(
             data.createComboProduct.returning[0].name,
-            `/online-store/combo-products/${data.createComboProduct.returning[0].id}`
+            `/recipe/combo-products/${data.createComboProduct.returning[0].id}`
          )
       },
    })
@@ -34,7 +34,7 @@ export default function ProductTypeTunnel({ close }) {
          toast.success('Product created!')
          addTab(
             data.createInventoryProduct.returning[0].name,
-            `/online-store/inventory-products/${data.createInventoryProduct.returning[0].id}`
+            `/recipe/inventory-products/${data.createInventoryProduct.returning[0].id}`
          )
       },
    })
@@ -43,7 +43,7 @@ export default function ProductTypeTunnel({ close }) {
          toast.success('Product created!')
          addTab(
             data.createSimpleRecipeProduct.returning[0].name,
-            `/online-store/simple-recipe-products/${data.createSimpleRecipeProduct.returning[0].id}`
+            `/recipe/simple-recipe-products/${data.createSimpleRecipeProduct.returning[0].id}`
          )
       },
    })
@@ -54,7 +54,7 @@ export default function ProductTypeTunnel({ close }) {
             toast.success('Product created!')
             addTab(
                data.createCustomizableProduct.returning[0].name,
-               `/online-store/customizable-products/${data.createCustomizableProduct.returning[0].id}`
+               `/recipe/customizable-products/${data.createCustomizableProduct.returning[0].id}`
             )
          },
       }

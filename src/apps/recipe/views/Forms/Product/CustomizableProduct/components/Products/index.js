@@ -167,7 +167,7 @@ const Products = ({ state }) => {
                                       state.customizableProductOptions[
                                          productState.productIndex
                                       ].inventoryProduct.name,
-                                      `/online-store/inventory-products/${
+                                      `/recipe/inventory-products/${
                                          state.customizableProductOptions[
                                             productState.productIndex
                                          ].inventoryProduct.id
@@ -177,7 +177,7 @@ const Products = ({ state }) => {
                                       state.customizableProductOptions[
                                          productState.productIndex
                                       ].simpleRecipeProduct.name,
-                                      `/online-store/simple-recipe-products/${
+                                      `/recipe/simple-recipe-products/${
                                          state.customizableProductOptions[
                                             productState.productIndex
                                          ].simpleRecipeProduct.id

@@ -8,13 +8,7 @@ import { useTabs } from '../../context'
 
 import { StyledHome, StyledCardList } from './styled'
 
-import {
-   COLLECTIONS_COUNT,
-   SRP_COUNT,
-   IP_COUNT,
-   COP_COUNT,
-   CUP_COUNT,
-} from '../../graphql'
+import { COLLECTIONS_COUNT } from '../../graphql'
 
 const address = 'apps.online_store.views.home.'
 
@@ -23,10 +17,6 @@ const Home = () => {
    const { addTab } = useTabs()
 
    const { data: collectionsData } = useSubscription(COLLECTIONS_COUNT)
-   const { data: simpleRecipeProductData } = useSubscription(SRP_COUNT)
-   const { data: inventoryProductData } = useSubscription(IP_COUNT)
-   const { data: comboProductData } = useSubscription(COP_COUNT)
-   const { data: customizableProductData } = useSubscription(CUP_COUNT)
 
    return (
       <StyledHome>
@@ -42,21 +32,6 @@ const Home = () => {
                onClick={() =>
                   addTab('Collections', '/online-store/collections')
                }
-            />
-            <DashboardTile
-               title={t(address.concat('products'))}
-               count={
-                  simpleRecipeProductData?.simpleRecipeProductsAggregate
-                     .aggregate.count +
-                     inventoryProductData?.inventoryProductsAggregate.aggregate
-                        .count +
-                     customizableProductData?.customizableProductsAggregate
-                        .aggregate.count +
-                     comboProductData?.comboProductsAggregate.aggregate.count ||
-                  '...'
-               }
-               conf="All available"
-               onClick={() => addTab('Products', '/online-store/products')}
             />
          </StyledCardList>
       </StyledHome>

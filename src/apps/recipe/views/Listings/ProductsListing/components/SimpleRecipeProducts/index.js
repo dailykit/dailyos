@@ -3,13 +3,13 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { Loader, Text, TextButton } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-
 import { useTranslation } from 'react-i18next'
+
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { useTabs } from '../../../../../context'
 import {
-   S_INVENTORY_PRODUCTS,
-   DELETE_INVENTORY_PRODUCTS,
+   S_SIMPLE_RECIPE_PRODUCTS,
+   DELETE_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../../graphql'
 import tableOptions from '../../../tableOption'
 
@@ -22,12 +22,12 @@ const InventoryProducts = () => {
    const tableRef = React.useRef()
 
    const {
-      data: { inventoryProducts = [] } = {},
+      data: { simpleRecipeProducts = [] } = {},
       loading,
       error,
-   } = useSubscription(S_INVENTORY_PRODUCTS)
+   } = useSubscription(S_SIMPLE_RECIPE_PRODUCTS)
 
-   const [deleteProducts] = useMutation(DELETE_INVENTORY_PRODUCTS, {
+   const [deleteProducts] = useMutation(DELETE_SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: () => {
          toast.success('Product deleted!')
       },
@@ -58,9 +58,13 @@ const InventoryProducts = () => {
          title: t(address.concat('product name')),
          field: 'name',
          headerFilter: true,
-         widthGrow: 2,
       },
-
+      {
+         title: t(address.concat('recipe')),
+         field: 'simpleRecipe',
+         headerFilter: false,
+         formatter: reactFormatter(<RcipeName />),
+      },
       {
          title: 'Actions',
          headerFilter: false,
@@ -76,15 +80,14 @@ const InventoryProducts = () => {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, `/online-store/inventory-products/${id}`)
+      addTab(name, `/recipe/simple-recipe-products/${id}`)
    }
 
    if (loading) return <Loader />
    if (error) {
       console.log(error)
-      return <Text as="p">Error: Could not fetch products!</Text>
+      return <Text as="p">Error: Could`&apos;`nt fetch products!</Text>
    }
-
    return (
       <div style={{ width: '80%', margin: '0 auto' }}>
          <TextButton
@@ -97,7 +100,7 @@ const InventoryProducts = () => {
          <ReactTabulator
             ref={tableRef}
             columns={columns}
-            data={inventoryProducts}
+            data={simpleRecipeProducts}
             rowClick={rowClick}
             options={tableOptions}
          />
@@ -107,6 +110,15 @@ const InventoryProducts = () => {
 
 function DeleteIngredient() {
    return <DeleteIcon color="#FF5A52" />
+}
+
+function RcipeName({
+   cell: {
+      _cell: { value },
+   },
+}) {
+   if (value && value.name) return <>{value.name}</>
+   return null
 }
 
 export default InventoryProducts

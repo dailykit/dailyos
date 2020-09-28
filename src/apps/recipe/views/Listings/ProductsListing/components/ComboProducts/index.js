@@ -77,7 +77,7 @@ const ComboProducts = () => {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, `/online-store/combo-products/${id}`)
+      addTab(name, `/recipe/combo-products/${id}`)
    }
 
    if (loading) return <Loader />

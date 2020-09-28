@@ -38,7 +38,7 @@ const ProductsListing = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Products', `/online-store/products`)
+         addTab('Products', `/recipe/products`)
       }
    }, [tab, addTab])
 

@@ -76,7 +76,7 @@ const CustomizableProducts = () => {
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
-      addTab(name, `/online-store/customizable-products/${id}`)
+      addTab(name, `/recipe/customizable-products/${id}`)
    }
 
    if (loading) return <Loader />

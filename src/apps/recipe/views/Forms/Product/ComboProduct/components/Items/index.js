@@ -300,16 +300,16 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
                            active.inventoryProduct
                               ? addTab(
                                    active.inventoryProduct.name,
-                                   `/online-store/inventory-products/${active.inventoryProduct.id}`
+                                   `/recipe/inventory-products/${active.inventoryProduct.id}`
                                 )
                               : active.simpleRecipeProduct
                               ? addTab(
                                    active.simpleRecipeProduct.name,
-                                   `/online-store/simple-recipe-products/${active.simpleRecipeProduct.id}`
+                                   `/recipe/simple-recipe-products/${active.simpleRecipeProduct.id}`
                                 )
                               : addTab(
                                    active.customizableProduct.name,
-                                   `/online-store/customizable-products/${active.customizableProduct.id}`
+                                   `/recipe/customizable-products/${active.customizableProduct.id}`
                                 )
                         }
                      >
