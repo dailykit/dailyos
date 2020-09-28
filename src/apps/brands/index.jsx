@@ -2,6 +2,7 @@ import React from 'react'
 import Keycloak from 'keycloak-js'
 
 import App from './App'
+import './tableStyle.css'
 import { TabProvider } from './context'
 import { AuthProvider, AccessProvider } from '../../shared/providers'
 

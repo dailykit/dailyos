@@ -1196,10 +1196,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-"@dailykit/ui@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.7.5.tgz#c4aa4791f8753919ba66d8b94221c94f32ee6ae2"
-  integrity sha512-rsDeUSG+SAfcR7YENQCgjbrnrX6l8wKI+C7i5pDK5r6dpScZ+/eLu4QD8HyBNFu5Ty0KN/Nbrx2bjaY7gZwGJQ==
+"@dailykit/ui@0.7.6":
+  version "0.7.6"
+  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.7.6.tgz#0f7fc73d650b54c8ac95903b5a3661f0b1976813"
+  integrity sha512-LVXNY+ypLUZXCSFbexnPNeWTD1hJh+5E4wZKErxL0XbyktIAzQEWQcjncjplaSPpSuh2u9qu01V2PsLSNKHNhA==
 
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
@@ -9687,10 +9687,10 @@ react-router@5.1.2:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-rrule@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/react-rrule/-/react-rrule-0.1.0.tgz#cd72b96b6073cbadd88b51ee96c1dfbbf00abfee"
-  integrity sha512-MfCgc0KQ/oy9Qoo8DtzMPUgXugeeisgXDEfsSuwqKT577s55YWX8Plk5S6DIIPAwu02dqTCOawCOHs19ScduGA==
+react-rrule@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/react-rrule/-/react-rrule-0.1.1.tgz#7830d4122f03e79e94a36eae40ede40e2a5a68b5"
+  integrity sha512-wngNB7W/EBAJ8L1Vnc1w5sQ4rU3X5JH4vwyrwfdjmiwiy67T6uI7/vBIJYNKA/A0oywn9FQq3cA5b2VgnOp7tQ==
   dependencies:
     rrule "2.6.4"
     styled-components "^5.2.0"

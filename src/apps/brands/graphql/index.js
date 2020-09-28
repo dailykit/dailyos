@@ -10,4 +10,19 @@ export const BRANDS = {
          }
       }
    `,
+   LIST: gql`
+      subscription brands {
+         brands: brandsAggregate {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               domain
+               title
+               isPublished
+            }
+         }
+      }
+   `,
 }
