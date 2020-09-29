@@ -1,7 +1,13 @@
 import React from 'react'
-import { Text, ButtonTile } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { Text, ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT } from '../../../../../graphql'
 
-import { AddIcon, DeleteIcon } from '../../../../../assets/icons'
+import { CollectionContext } from '../../../../../context'
+import { ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
+
+import { DeleteIcon } from '../../../../../assets/icons'
 import {
    StyledCategoryWrapper,
    StyledHeader,
@@ -11,13 +17,35 @@ import {
    ProductImage,
    ActionButton,
 } from './styled'
-import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
-import { DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT } from '../../../../../graphql'
 
 const Products = ({ state }) => {
+   const { collectionDispatch } = React.useContext(CollectionContext)
+
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+
+   const addProduct = categoryId => {
+      collectionDispatch({
+         type: 'CATEGORY_ID',
+         payload: {
+            categoryId,
+         },
+      })
+      openTunnel(1)
+   }
+
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <ProductTypeTunnel
+                  closeTunnel={closeTunnel}
+                  openTunnel={openTunnel}
+               />
+            </Tunnel>
+            <Tunnel>
+               <ProductsTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
          {state.productCategories.map(category => (
             <StyledCategoryWrapper key={category.id}>
                <StyledHeader>
@@ -33,7 +61,7 @@ const Products = ({ state }) => {
                   <ButtonTile
                      type="secondary"
                      text="Add Product"
-                     onClick={e => console.log('Tile clicked')}
+                     onClick={() => addProduct(category.id)}
                   />
                </Grid>
             </StyledCategoryWrapper>

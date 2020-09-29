@@ -25,8 +25,7 @@ const Home = () => {
             <DashboardTile
                title={t(address.concat('collections'))}
                count={
-                  collectionsData?.menuCollectionsAggregate.aggregate.count ||
-                  '...'
+                  collectionsData?.collectionsAggregate.aggregate.count || '...'
                }
                conf="All available"
                onClick={() =>

@@ -10,7 +10,7 @@ import {
    TunnelHeader,
    Loader,
 } from '@dailykit/ui'
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 import { CollectionContext } from '../../../../../context/collection'
 import { TunnelBody } from '../styled'
@@ -19,16 +19,17 @@ import {
    INVENTORY_PRODUCTS,
    CUSTOMIZABLE_PRODUCTS,
    COMBO_PRODUCTS,
+   CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
 } from '../../../../../graphql'
+import { toast } from 'react-toastify'
 
 const address = 'apps.online_store.views.forms.collection.tunnels.products.'
 
-const ProductsTunnel = ({ close }) => {
+const ProductsTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()
+   const { collectionState } = React.useContext(CollectionContext)
+
    const [search, setSearch] = React.useState('')
-   const { collectionState, collectionDispatch } = React.useContext(
-      CollectionContext
-   )
    const [products, setProducts] = React.useState([])
    const [list, selected, selectOption] = useMultiList(products)
 
@@ -114,26 +115,69 @@ const ProductsTunnel = ({ close }) => {
       }
    )
 
-   const save = () => {
-      collectionDispatch({
-         type: 'ADD_PRODUCTS',
-         payload: {
-            products: selected,
+   const [createRecord] = useMutation(
+      CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
+      {
+         onCompleted: data => {
+            toast.success(
+               `Product${
+                  data.createCollectionProductCategoryProducts.returning
+                     .length > 1
+                     ? 's'
+                     : ''
+               } added!`
+            )
+            closeTunnel(2)
+            closeTunnel(1)
          },
-      })
-      close(2)
-      close(1)
+         onError: error => {
+            console.log(error)
+            toast.error('Error')
+         },
+      }
+   )
+
+   const save = () => {
+      try {
+         const objects = selected.map(product => {
+            const obj = {
+               collection_productCategoryId: collectionState.categoryId,
+            }
+            if (collectionState.productType === 'inventory') {
+               obj.inventoryProductId = product.id
+            } else if (collectionState.productType === 'simple') {
+               obj.simpleRecipeProductId = product.id
+            } else if (collectionState.productType === 'combo') {
+               obj.comboProductId = product.id
+            } else if (collectionState.productType === 'customizable') {
+               obj.customizableProductId = product.id
+            } else {
+               throw Error('Could not resolve product type!')
+            }
+            return obj
+         })
+         createRecord({
+            variables: {
+               objects,
+            },
+         })
+      } catch (err) {
+         console.log(err)
+         toast.error(err.message)
+      }
    }
 
    React.useEffect(() => {
-      if (collectionState.meta.productType === 'inventory') {
+      if (collectionState.productType === 'inventory') {
          fetchInventoryProducts()
-      } else if (collectionState.meta.productType === 'simple') {
+      } else if (collectionState.productType === 'simple') {
          fetchSimpleRecipeProducts()
-      } else if (collectionState.meta.productType === 'combo') {
+      } else if (collectionState.productType === 'combo') {
          fetchComboProducts()
-      } else {
+      } else if (collectionState.productType === 'customizable') {
          fetchCustomizableProducts()
+      } else {
+         toast.error('Could not resolve product type!')
       }
    }, [])
 
@@ -144,7 +188,7 @@ const ProductsTunnel = ({ close }) => {
                address.concat('select and add products to the collection')
             )}
             right={{ action: save, title: t(address.concat('save')) }}
-            close={() => close(2)}
+            close={() => closeTunnel(2)}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading ||
