@@ -1,2 +1,6 @@
 export * from './BrandName'
 export * from './BrandLogo'
+export * from './AppTitle'
+export * from './Favicon'
+export * from './Slides'
+export * from './PrimaryColor'

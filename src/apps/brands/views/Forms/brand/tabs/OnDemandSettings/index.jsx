@@ -1,13 +1,20 @@
 import React from 'react'
+import { Spacer } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { useParams } from 'react-router-dom'
 import { isEmpty, groupBy } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { BRANDS } from '../../../../../graphql'
 import { ScrollSection } from '../../../../../../../shared/components'
-import { BrandName, BrandLogo } from './sections'
-import { Spacer } from '@dailykit/ui'
+import {
+   BrandName,
+   BrandLogo,
+   AppTitle,
+   Favicon,
+   Slides,
+   PrimaryColor,
+} from './sections'
 
 export const OnDemandSettings = () => {
    const params = useParams()
@@ -63,6 +70,17 @@ export const OnDemandSettings = () => {
                <Spacer size="24px" />
                <BrandLogo update={update} />
             </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="visual" title="Visual">
+               <AppTitle update={update} />
+               <Spacer size="24px" />
+               <Favicon update={update} />
+               <Spacer size="24px" />
+               <Slides update={update} />
+               <Spacer size="24px" />
+               <PrimaryColor update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
          </ScrollSection.Main>
       </ScrollSection>
    )

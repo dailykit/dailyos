@@ -13,15 +13,15 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 
-import { ImageContainer } from './styled'
+import { ImageContainer } from '../styled'
 import { BRANDS } from '../../../../../../../graphql'
 import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
-   AssetUploader,
    Flex,
+   AssetUploader,
 } from '../../../../../../../../../shared/components'
 
-export const BrandLogo = ({ update }) => {
+export const Favicon = ({ update }) => {
    const params = useParams()
    const [url, setUrl] = React.useState('')
    const [settingId, setSettingId] = React.useState(null)
@@ -30,8 +30,8 @@ export const BrandLogo = ({ update }) => {
    useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          brandId: { _eq: params.id },
-         identifier: { _eq: 'Brand Logo' },
-         type: { _eq: 'brand' },
+         identifier: { _eq: 'Favicon' },
+         type: { _eq: 'visual' },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { onDemandSetting = [] } = {} } = {},
@@ -52,8 +52,8 @@ export const BrandLogo = ({ update }) => {
    }
 
    return (
-      <div id="Brand Logo">
-         <Text as="h3">Logo</Text>
+      <div id="Favicon">
+         <Text as="h3">Fav Icon</Text>
          <Spacer size="16px" />
          {url ? (
             <ImageContainer width="120px" height="120px">
@@ -66,7 +66,7 @@ export const BrandLogo = ({ update }) => {
                      <EditIcon />
                   </IconButton>
                </div>
-               <img src={url} alt="Brand Logo" />
+               <img src={url} alt="Favicon" />
             </ImageContainer>
          ) : (
             <ImageContainer width="120px" height="120px" noThumb>
@@ -83,10 +83,7 @@ export const BrandLogo = ({ update }) => {
          )}
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
-               <TunnelHeader
-                  title="Add Brand Logo"
-                  close={() => closeTunnel(1)}
-               />
+               <TunnelHeader title="Add Favicon" close={() => closeTunnel(1)} />
                <Flex padding="16px">
                   <AssetUploader
                      onAssetUpload={data => updateSetting(data)}
