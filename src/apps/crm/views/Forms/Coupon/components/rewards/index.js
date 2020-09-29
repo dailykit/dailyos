@@ -9,6 +9,7 @@ import {
    Tunnel,
    Text,
    IconButton,
+   ComboButton,
    PlusIcon,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
@@ -134,26 +135,26 @@ const Rewards = ({ state }) => {
                         <Text as="subtitle">{rewardInfo.type} </Text>
                         <ButtonGroup align="left">
                            <IconButton
-                              type="outline"
+                              type="ghost"
                               onClick={() => EditRewardDetails(rewardInfo.id)}
                            >
-                              <EditIcon />
+                              <EditIcon color="#28c1f7" />
                            </IconButton>
                            <IconButton
-                              type="outline"
+                              type="ghost"
                               onClick={() => deleteHandler(rewardInfo)}
                            >
-                              <DeleteIcon />
+                              <DeleteIcon color="#28c1f7" />
                            </IconButton>
                         </ButtonGroup>
                      </StyledRow>
                   )
                })}
                <StyledRow>
-                  <Text as="p">Add More Reward</Text>
-                  <IconButton type="solid" onClick={() => openTypeTunnel(1)}>
+                  <ComboButton type="ghost" onClick={() => openTypeTunnel(1)}>
+                     Add More Reward
                      <PlusIcon />
-                  </IconButton>
+                  </ComboButton>
                </StyledRow>
             </StyledContainer>
          ) : (

@@ -55,8 +55,18 @@ export const CREATE_COUPON = gql`
    }
 `
 export const CREATE_REWARD = gql`
-   mutation CREATE_REWARD($rewardType: String!, $couponId: Int!) {
-      insert_crm_reward(objects: { type: $rewardType, couponId: $couponId }) {
+   mutation CREATE_REWARD(
+      $rewardType: String!
+      $couponId: Int
+      $campaignId: Int
+   ) {
+      insert_crm_reward(
+         objects: {
+            type: $rewardType
+            couponId: $couponId
+            campaignId: $campaignId
+         }
+      ) {
          returning {
             id
          }
