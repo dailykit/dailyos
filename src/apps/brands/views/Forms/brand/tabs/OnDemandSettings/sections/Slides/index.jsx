@@ -61,40 +61,33 @@ export const Slides = ({ update }) => {
 
    return (
       <div id="Slides">
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Text as="h3">Slides</Text>
-            <IconButton type="outline" size="sm" onClick={() => openTunnel(1)}>
-               <PlusIcon />
-            </IconButton>
-         </Flex>
+         <Text as="h3">Slides</Text>
          <Spacer size="16px" />
-         {slides.length > 0 ? (
-            <ImageGrid>
-               {slides.map((slide, index) => (
-                  <li key={index}>
-                     <ImageContainer>
-                        <div>
-                           <IconButton
-                              size="sm"
-                              type="solid"
-                              onClick={() => removeSlide(index)}
-                           >
-                              <DeleteIcon />
-                           </IconButton>
-                        </div>
-                        <img src={slide?.url} alt={slide?.title} />
-                     </ImageContainer>
-                  </li>
-               ))}
-            </ImageGrid>
-         ) : (
-            <ButtonTile
-               type="primary"
-               size="sm"
-               text="Add a slide"
-               onClick={() => openTunnel(1)}
-            />
-         )}
+         <ButtonTile
+            type="primary"
+            size="sm"
+            text="Add a slide"
+            onClick={() => openTunnel(1)}
+         />
+         <Spacer size="16px" />
+         <ImageGrid>
+            {slides.map((slide, index) => (
+               <li key={index}>
+                  <ImageContainer>
+                     <div>
+                        <IconButton
+                           size="sm"
+                           type="solid"
+                           onClick={() => removeSlide(index)}
+                        >
+                           <DeleteIcon />
+                        </IconButton>
+                     </div>
+                     <img src={slide?.url} alt={slide?.title} />
+                  </ImageContainer>
+               </li>
+            ))}
+         </ImageGrid>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <TunnelHeader title="Add Slide" close={() => closeTunnel(1)} />

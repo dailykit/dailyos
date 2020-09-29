@@ -9,6 +9,14 @@ export const Wrapper = styled.div(
       > main {
          overflow-y: auto;
          height: ${height || '100vh'};
+         > div {
+            > section {
+               > h2 {
+                  padding-bottom: 4px;
+                  border-bottom: 1px solid #e3e3e3;
+               }
+            }
+         }
       }
    `
 )
