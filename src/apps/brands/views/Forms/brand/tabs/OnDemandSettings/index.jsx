@@ -14,6 +14,7 @@ import {
    Favicon,
    Slides,
    PrimaryColor,
+   Payments,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -79,6 +80,10 @@ export const OnDemandSettings = () => {
                <Slides update={update} />
                <Spacer size="24px" />
                <PrimaryColor update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="availability" title="Availability">
+               <Payments update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>
