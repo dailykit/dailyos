@@ -12,6 +12,8 @@ import {
    ActionButton,
 } from './styled'
 import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT } from '../../../../../graphql'
 
 const Products = ({ state }) => {
    return (
@@ -48,13 +50,29 @@ const Products = ({ state }) => {
 export default Products
 
 const Product = ({ product }) => {
-   const deleteProduct = () => {
+   const [deleteRecord] = useMutation(
+      DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT,
+      {
+         onCompleted: () => {
+            toast.success('Product removed!')
+         },
+         onError: error => {
+            throw Error(error)
+         },
+      }
+   )
+
+   const removeProduct = () => {
       try {
          const isConfirmed = window.confirm(
-            `Are you sure you want to delete ${product.data.name}?`
+            `Are you sure you want to remove ${product.data.name}?`
          )
          if (isConfirmed) {
-            console.log('Delete')
+            deleteRecord({
+               variables: {
+                  id: product.id,
+               },
+            })
          }
       } catch (err) {
          console.log(err)
@@ -68,7 +86,7 @@ const Product = ({ product }) => {
             <ProductImage src={product.data.image} />
             <Text as="p"> {product.data.name} </Text>
          </ProductContent>
-         <ActionButton onClick={deleteProduct}>
+         <ActionButton onClick={removeProduct}>
             <DeleteIcon color="#FF6B5E" />
          </ActionButton>
       </StyledProductWrapper>

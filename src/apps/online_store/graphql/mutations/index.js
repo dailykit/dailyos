@@ -36,6 +36,14 @@ export const UPDATE_COLLECTION = gql`
    }
 `
 
+export const DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT = gql`
+   mutation DeleteCollectionProductCategoryProduct($id: Int!) {
+      deleteCollectionProductCategoryProduct(id: $id) {
+         id
+      }
+   }
+`
+
 export const UPDATE_STORE_SETTING = gql`
    mutation UpdateStoreSetting(
       $type: String!
