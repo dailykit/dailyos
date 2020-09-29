@@ -5,7 +5,11 @@ import { Text, ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT } from '../../../../../graphql'
 
 import { CollectionContext } from '../../../../../context'
-import { ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
+import {
+   ProductsTunnel,
+   ProductTypeTunnel,
+   CategoriesTunnel,
+} from '../../tunnels'
 
 import { DeleteIcon } from '../../../../../assets/icons'
 import {
@@ -22,6 +26,9 @@ const Products = ({ state }) => {
    const { collectionDispatch } = React.useContext(CollectionContext)
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [categoryTunnels, openCategoryTunnel, closeCategoryTunnel] = useTunnel(
+      1
+   )
 
    const addProduct = categoryId => {
       collectionDispatch({
@@ -44,6 +51,11 @@ const Products = ({ state }) => {
             </Tunnel>
             <Tunnel>
                <ProductsTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={categoryTunnels}>
+            <Tunnel layer={1}>
+               <CategoriesTunnel closeTunnel={closeCategoryTunnel} />
             </Tunnel>
          </Tunnels>
          {state.productCategories.map(category => (
@@ -69,7 +81,7 @@ const Products = ({ state }) => {
          <ButtonTile
             type="secondary"
             text="Add Category"
-            onClick={e => console.log('Tile clicked')}
+            onClick={() => openCategoryTunnel(1)}
          />
       </>
    )

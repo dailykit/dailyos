@@ -42,6 +42,15 @@ export const S_COLLECTION = gql`
    }
 `
 
+export const S_PRODUCT_CATEGORIES = gql`
+   subscription ProductCategories {
+      productCategories {
+         id: name
+         title: name
+      }
+   }
+`
+
 export const STORE_SETTINGS = gql`
    subscription StoreSettings($type: String!) {
       storeSettings(where: { type: { _eq: $type } }) {
