@@ -29,6 +29,7 @@ const ProductsTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()
    const { collectionState } = React.useContext(CollectionContext)
 
+   const [isSaving, setIsSaving] = React.useState(false)
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
    const [list, selected, selectOption] = useMultiList(products)
@@ -139,6 +140,8 @@ const ProductsTunnel = ({ closeTunnel }) => {
 
    const save = () => {
       try {
+         if (isSaving || !selected.length) return
+         setIsSaving(true)
          const objects = selected.map(product => {
             const obj = {
                collection_productCategoryId: collectionState.categoryId,
@@ -164,6 +167,8 @@ const ProductsTunnel = ({ closeTunnel }) => {
       } catch (err) {
          console.log(err)
          toast.error(err.message)
+      } finally {
+         setIsSaving(false)
       }
    }
 
