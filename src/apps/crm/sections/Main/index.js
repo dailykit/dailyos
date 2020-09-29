@@ -22,7 +22,7 @@ const Main = () => {
                component={CustomerRelation}
                exact
             />
-            <Route path="/crm/customers" component={CustomerListing} />
+            <Route path="/crm/customers" component={CustomerListing} exact />
             <Route
                path="/crm/referral-plans"
                exact

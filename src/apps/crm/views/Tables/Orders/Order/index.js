@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Text, Avatar, useTunnel } from '@dailykit/ui'
+import { Text, Avatar, useTunnel, Loader } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
@@ -33,7 +33,7 @@ const OrderInfo = () => {
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const [products, setProducts] = useState(undefined)
    const tableRef = useRef()
-   const { data: orderData, error } = useQuery(ORDER, {
+   const { data: orderData, loading, error } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
       },
@@ -120,7 +120,7 @@ const OrderInfo = () => {
             {deliveryAgent}
          </SideCard>
       )
-
+   if (loading) return <Loader />
    return (
       <StyledWrapper>
          <Heading>

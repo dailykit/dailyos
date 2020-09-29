@@ -216,3 +216,16 @@ export const OCCURENCES = gql`
       }
    }
 `
+export const REWARD_DATA = gql`
+   query REWARD_DATA($id: Int!) {
+      crm_reward_by_pk(id: $id) {
+         campaignId
+         conditionId
+         couponId
+         id
+         rewardValue
+         type
+         priority
+      }
+   }
+`

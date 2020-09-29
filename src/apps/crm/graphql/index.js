@@ -11,6 +11,7 @@ import {
    CAMPAIGN_TYPE,
    REWARD_TYPE,
    REWARD_DATA_BY_COUPON_ID,
+   REWARD_DATA_BY_CAMPAIGN_ID,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -22,6 +23,7 @@ import {
    SUBSCRIPTION,
    SUBSCRIPTION_PLAN,
    OCCURENCES,
+   REWARD_DATA,
 } from './queries'
 
 import {
@@ -34,6 +36,7 @@ import {
    UPDATE_CAMPAIGN,
    DELETE_COUPON,
    DELETE_CAMPAIGN,
+   DELETE_REWARD,
    CREATE_REWARD,
    UPDATE_REWARD,
 } from './mutations'
@@ -71,4 +74,7 @@ export {
    CREATE_REWARD,
    UPDATE_REWARD,
    REWARD_DATA_BY_COUPON_ID,
+   REWARD_DATA_BY_CAMPAIGN_ID,
+   DELETE_REWARD,
+   REWARD_DATA,
 }

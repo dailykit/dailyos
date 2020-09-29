@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader, Text } from '@dailykit/ui'
+import { Toggle, Input, Loader, Text, Checkbox } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper, CenterDiv } from './styled'
+import { StyledHeader, StyledWrapper, CenterDiv, InputWrapper } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
 
@@ -15,6 +15,7 @@ const CampaignForm = () => {
    const [type, setType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
+   const [checkbox, setCheckbox] = useState(false)
    // Subscription
    const { loading } = useSubscription(CAMPAIGN_DATA, {
       variables: {
@@ -26,6 +27,7 @@ const CampaignForm = () => {
          setType(data.subscriptionData.data.campaign.type)
          setToggle(data.subscriptionData.data.campaign.isActive)
          setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
+         setCheckbox(data.subscriptionData.data.campaign.isRewardMulti)
       },
    })
 
@@ -66,9 +68,22 @@ const CampaignForm = () => {
       }
    }
 
+   const updateCheckbox = () => {
+      if (checkbox || !checkbox) {
+         updateCoupon({
+            variables: {
+               id: campaignId,
+               set: {
+                  isRewardMulti: !checkbox,
+               },
+            },
+         })
+      }
+   }
+
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Campaign', '/crm/campaign')
       }
    }, [addTab, tab])
 
@@ -78,15 +93,20 @@ const CampaignForm = () => {
          <CenterDiv>
             <Text as="title">Campaign Type: {type}</Text>
          </CenterDiv>
-         <StyledHeader gridCol="10fr 1fr">
-            <Input
-               type="text"
-               label="Campaign Name"
-               name="code"
-               value={campaignTitle}
-               onChange={e => setCampaignTitle(e.target.value)}
-               onBlur={updateCampaignTitle}
-            />
+         <StyledHeader gridCol="10fr 3fr 2fr">
+            <InputWrapper>
+               <Input
+                  type="text"
+                  label="Campaign Name"
+                  name="code"
+                  value={campaignTitle}
+                  onChange={e => setCampaignTitle(e.target.value)}
+                  onBlur={updateCampaignTitle}
+               />
+            </InputWrapper>
+            <Checkbox id="label" checked={checkbox} onChange={updateCheckbox}>
+               Allow multiple rewards
+            </Checkbox>
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
          <DetailsComp state={state} />
