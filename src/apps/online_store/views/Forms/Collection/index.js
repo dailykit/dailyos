@@ -29,7 +29,7 @@ const address = 'apps.online_store.views.forms.collection.'
 const CollectionForm = () => {
    const { t } = useTranslation()
 
-   const { setTitle: setTabTitle, tab, addTab } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
    const { id: collectionId } = useParams()
 
    const [collectionState, collectionDispatch] = React.useReducer(
@@ -39,7 +39,6 @@ const CollectionForm = () => {
 
    const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState(undefined)
-   const [busy, setBusy] = React.useState(false)
 
    // Subscription
    const { loading } = useSubscription(S_COLLECTION, {
@@ -47,7 +46,6 @@ const CollectionForm = () => {
          id: collectionId,
       },
       onSubscriptionData: data => {
-         console.log(data)
          setState(data.subscriptionData.data.collection)
          setTitle(data.subscriptionData.data.collection.name)
       },
@@ -56,14 +54,12 @@ const CollectionForm = () => {
    // Mutations
    const [updateCollection] = useMutation(UPDATE_COLLECTION, {
       onCompleted: () => {
-         setBusy(false)
          toast.success('Updated!')
          setTabTitle(title)
       },
       onError: error => {
          console.log(error)
          toast.error('Error')
-         setBusy(false)
       },
    })
 
@@ -72,51 +68,6 @@ const CollectionForm = () => {
          addTab(title, `/online-store/collections/${collectionId}`)
       }
    }, [tab, addTab, loading, title])
-
-   // Handlers
-   const save = () => {
-      if (busy) return
-      setBusy(true)
-      const updateCategories = collectionState.categories.map(category => {
-         const cat = {
-            name: category.title,
-            comboProducts: [],
-            customizableProducts: [],
-            simpleRecipeProducts: [],
-            inventoryProducts: [],
-         }
-         category.products.forEach(product => {
-            if (product.__typename === 'onlineStore_simpleRecipeProduct')
-               cat.simpleRecipeProducts.push(product.id)
-            else if (product.__typename === 'onlineStore_comboProduct')
-               cat.comboProducts.push(product.id)
-            else if (product.__typename === 'onlineStore_inventoryProduct')
-               cat.inventoryProducts.push(product.id)
-            else cat.customizableProducts.push(product.id)
-         })
-         return cat
-      })
-      const object = {
-         availability: {
-            rule: collectionState.rule,
-            time: {
-               end: '23:59',
-               start: '00:00',
-            },
-         },
-         categories: updateCategories,
-         name: state.title,
-         store: collectionState.categories,
-      }
-      updateCollection({
-         variables: {
-            id: state.id,
-            set: {
-               ...object,
-            },
-         },
-      })
-   }
 
    const updateName = () => {
       if (title) {
