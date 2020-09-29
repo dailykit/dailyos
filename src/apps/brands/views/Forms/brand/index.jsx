@@ -1,20 +1,32 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, Input, Spacer, Toggle } from '@dailykit/ui'
+import {
+   Text,
+   Input,
+   Spacer,
+   Toggle,
+   TextButton,
+   HorizontalTab,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+} from '@dailykit/ui'
 
-import { Label } from './styled'
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { InlineLoader, Flex } from '../../../../../shared/components'
-import { toast } from 'react-toastify'
+import { Wrapper, Label } from './styled'
+import { OnDemandSettings } from './tabs'
+import { Flex, InlineLoader } from '../../../../../shared/components'
 
 export const Brand = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
    const [title, setTitle] = React.useState('')
-   const [update] = useMutation(BRANDS.UPDATE, {
+   const [update] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => toast.success('Successfully updated brand!'),
       onError: () => toast.error('Failed to update brand!'),
    })
@@ -57,8 +69,13 @@ export const Brand = () => {
    if (loading) return <InlineLoader />
    if (error) return <span>Something went wrong, please refresh the page!</span>
    return (
-      <Flex padding="16px">
-         <Flex container alignItems="center" justifyContent="space-between">
+      <Wrapper>
+         <Flex
+            container
+            padding="0 16px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Flex container alignItems="center">
                <section>
                   <Input
@@ -88,6 +105,16 @@ export const Brand = () => {
             />
          </Flex>
          <Spacer size="24px" />
-      </Flex>
+         <HorizontalTabs>
+            <HorizontalTabList>
+               <HorizontalTab>On Demand Settings</HorizontalTab>
+            </HorizontalTabList>
+            <HorizontalTabPanels>
+               <HorizontalTabPanel>
+                  <OnDemandSettings />
+               </HorizontalTabPanel>
+            </HorizontalTabPanels>
+         </HorizontalTabs>
+      </Wrapper>
    )
 }
