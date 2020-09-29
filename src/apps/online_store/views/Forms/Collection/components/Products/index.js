@@ -55,7 +55,10 @@ const Products = ({ state }) => {
          </Tunnels>
          <Tunnels tunnels={categoryTunnels}>
             <Tunnel layer={1}>
-               <CategoriesTunnel closeTunnel={closeCategoryTunnel} />
+               <CategoriesTunnel
+                  closeTunnel={closeCategoryTunnel}
+                  state={state}
+               />
             </Tunnel>
          </Tunnels>
          {state.productCategories.map(category => (

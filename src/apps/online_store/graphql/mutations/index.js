@@ -36,6 +36,18 @@ export const UPDATE_COLLECTION = gql`
    }
 `
 
+export const CREATE_COLLECTION_PRODUCT_CATEGORIES = gql`
+   mutation CreateCollectionProductCategories(
+      $objects: [onDemand_collection_productCategory_insert_input!]!
+   ) {
+      createCollectionProductCategories(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS = gql`
    mutation createCollectionProductCategoryProducts(
       $objects: [onDemand_collection_productCategory_product_insert_input!]!

@@ -12,11 +12,16 @@ import {
 } from '@dailykit/ui'
 
 import { TunnelBody } from '../styled'
-import { useSubscription } from '@apollo/react-hooks'
-import { S_PRODUCT_CATEGORIES } from '../../../../../graphql'
-import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import {
+   CREATE_COLLECTION_PRODUCT_CATEGORIES,
+   S_PRODUCT_CATEGORIES,
+} from '../../../../../graphql'
+import { toast, ToastContainer } from 'react-toastify'
 
-const CategoriesTunnel = ({ closeTunnel }) => {
+const CategoriesTunnel = ({ closeTunnel, state }) => {
+   const [isSaving, setIsSaving] = React.useState(false)
+
    const [search, setSearch] = React.useState('')
    const [categories, setCategories] = React.useState([])
    const [list, selected, selectOption] = useMultiList(categories)
@@ -32,8 +37,44 @@ const CategoriesTunnel = ({ closeTunnel }) => {
       console.log(error)
    }
 
+   const [createCategoriesInCollection] = useMutation(
+      CREATE_COLLECTION_PRODUCT_CATEGORIES,
+      {
+         onCompleted: data => {
+            toast.success(
+               `Categor${
+                  data.createCollectionProductCategories.returning.length > 1
+                     ? 'ies'
+                     : 'y'
+               } added.`
+            )
+            closeTunnel(1)
+         },
+         onError: error => {
+            toast.error('Error')
+            console.log(error)
+         },
+      }
+   )
+
    const save = () => {
-      console.log(selected)
+      try {
+         if (isSaving || !selected.length) return
+         setIsSaving(true)
+         const objects = selected.map(category => ({
+            collectionId: state.id,
+            productCategoryName: category.title,
+         }))
+         createCategoriesInCollection({
+            variables: {
+               objects,
+            },
+         })
+      } catch (err) {
+         toast.error(err.message)
+      } finally {
+         setIsSaving(false)
+      }
    }
 
    return (
