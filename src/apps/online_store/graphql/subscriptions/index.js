@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const COLLECTIONS_COUNT = gql`
    subscription CollectionsCount {
-      menuCollectionsAggregate {
+      collectionsAggregate {
          aggregate {
             count
          }
@@ -12,26 +12,32 @@ export const COLLECTIONS_COUNT = gql`
 
 export const S_COLLECTIONS = gql`
    subscription Collections {
-      menuCollections {
+      collections {
          id
          name
-         categories
-         availability
+         startTime
+         endTime
+         rrule
       }
    }
 `
 
 export const S_COLLECTION = gql`
    subscription Collection($id: Int!) {
-      menuCollection(id: $id) {
+      collection(id: $id) {
          id
          name
-         isValid
-         isPublished
-         active
-         availability
-         categories
-         store
+         startTime
+         endTime
+         rrule
+         productCategories {
+            id
+            productCategoryName
+            products {
+               id
+               data
+            }
+         }
       }
    }
 `

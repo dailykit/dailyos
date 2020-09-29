@@ -3,10 +3,17 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Input, Loader, TextButton } from '@dailykit/ui'
+import {
+   Input,
+   Loader,
+   HorizontalTab,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+} from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
-import { ChevronRight } from '../../../assets/icons'
 import {
    CollectionContext,
    reducer,
@@ -14,14 +21,8 @@ import {
 } from '../../../context/collection'
 import { useTabs } from '../../../context/tabs'
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
-import { Categories, Configuration } from './components'
-import {
-   Breadcrumbs,
-   FormBody,
-   FormHeader,
-   FormHeaderActions,
-   FormHeaderInputs,
-} from './styled'
+import { Products, Availability } from './components'
+import { FormBody, FormHeader } from './styled'
 
 const address = 'apps.online_store.views.forms.collection.'
 
@@ -37,7 +38,7 @@ const CollectionForm = () => {
    )
 
    const [title, setTitle] = React.useState('')
-   const [state, setState] = React.useState({})
+   const [state, setState] = React.useState(undefined)
    const [busy, setBusy] = React.useState(false)
 
    // Subscription
@@ -47,12 +48,8 @@ const CollectionForm = () => {
       },
       onSubscriptionData: data => {
          console.log(data)
-         setState(data.subscriptionData.data.menuCollection)
-         setTitle(data.subscriptionData.data.menuCollection.name)
-         collectionDispatch({
-            type: 'SEED',
-            payload: data.subscriptionData.data.menuCollection,
-         })
+         setState(data.subscriptionData.data.collection)
+         setTitle(data.subscriptionData.data.collection.name)
       },
    })
 
@@ -137,74 +134,47 @@ const CollectionForm = () => {
    if (loading) return <Loader />
 
    return (
-      <CollectionContext.Provider
-         value={{ collectionState, collectionDispatch }}
-      >
-         <FormHeader>
-            <FormHeaderInputs>
-               <Input
-                  label={t(address.concat('collection name'))}
-                  type="text"
-                  name="title"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  onBlur={updateName}
-               />
-               <Breadcrumbs>
-                  <span
-                     className={collectionState.stage >= 1 ? 'active' : ''}
-                     role="button"
-                     tabIndex="0"
-                     onKeyDown={e =>
-                        e.charCode === 13 &&
-                        collectionDispatch({ type: 'STAGE', payload: 1 })
-                     }
-                     onClick={() =>
-                        collectionDispatch({ type: 'STAGE', payload: 1 })
-                     }
-                  >
-                     {t(address.concat('add products'))}
-                  </span>
-                  <span>
-                     <ChevronRight />
-                  </span>
-                  <span
-                     role="button"
-                     tabIndex="0"
-                     onKeyDown={e =>
-                        e.charCode === 13 &&
-                        collectionDispatch({ type: 'STAGE', payload: 2 })
-                     }
-                     className={collectionState.stage >= 2 ? 'active' : ''}
-                     onClick={() =>
-                        collectionDispatch({ type: 'STAGE', payload: 2 })
-                     }
-                  >
-                     {t(address.concat('configure shop'))}
-                  </span>
-               </Breadcrumbs>
-            </FormHeaderInputs>
-            <FormHeaderActions>
-               <TextButton type="outline" onClick={save}>
-                  {busy
-                     ? t(address.concat('saving'))
-                     : t(address.concat('save'))}
-               </TextButton>
-               <TextButton
-                  type="solid"
-                  onClick={() =>
-                     collectionDispatch({ type: 'STAGE', payload: 2 })
-                  }
-                  hidden={collectionState.stage === 2}
-               >
-                  {t(address.concat('proceed'))}
-               </TextButton>
-            </FormHeaderActions>
-         </FormHeader>
-         <FormBody>
-            {collectionState.stage === 1 ? <Categories /> : <Configuration />}
-         </FormBody>
-      </CollectionContext.Provider>
+      <>
+         {state ? (
+            <CollectionContext.Provider
+               value={{ collectionState, collectionDispatch }}
+            >
+               <FormHeader>
+                  <Input
+                     label={t(address.concat('collection name'))}
+                     type="text"
+                     name="title"
+                     value={title}
+                     onChange={e => setTitle(e.target.value)}
+                     onBlur={updateName}
+                     style={{ maxWidth: 400 }}
+                  />
+               </FormHeader>
+               <FormBody>
+                  <HorizontalTabs>
+                     <HorizontalTabList>
+                        <HorizontalTab>Products</HorizontalTab>
+                        <HorizontalTab>Availability</HorizontalTab>
+                        <HorizontalTab>Insights</HorizontalTab>
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        <HorizontalTabPanel>
+                           <Products state={state} />
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           <Availability />
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           Insights coming soon!
+                        </HorizontalTabPanel>
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
+               </FormBody>
+            </CollectionContext.Provider>
+         ) : (
+            <p>Could not fetch collection!</p>
+         )}
+      </>
    )
 }
 

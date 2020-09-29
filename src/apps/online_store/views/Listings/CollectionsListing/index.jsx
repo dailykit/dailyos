@@ -30,7 +30,7 @@ const CollectionsListing = () => {
    const tableRef = React.useRef()
 
    // Queries
-   const { data: { menuCollections = [] } = {}, loading } = useSubscription(
+   const { data: { collections = [] } = {}, loading } = useSubscription(
       S_COLLECTIONS,
       {
          onError: error => {
@@ -150,7 +150,7 @@ const CollectionsListing = () => {
             <ReactTabulator
                ref={tableRef}
                columns={columns}
-               data={menuCollections}
+               data={collections}
                rowClick={rowClick}
                options={tableOptions}
             />

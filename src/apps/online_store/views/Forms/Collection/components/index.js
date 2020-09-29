@@ -1,4 +1,4 @@
-import Categories from './Categories'
-import Configuration from './Configuration'
+import Products from './Products'
+import Availability from './Availability'
 
-export { Categories, Configuration }
+export { Products, Availability }
