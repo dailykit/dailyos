@@ -42,20 +42,14 @@ const CollectionsListing = () => {
    // Mutation
    const [createCollection] = useMutation(CREATE_COLLECTION, {
       variables: {
-         name: `collection-${randomSuffix()}`,
-         availability: {
-            rule:
-               'RRULE:FREQ=WEEKLY;INTERVAL=1;WKST=MO;BYDAY=TH,WE,TU,SU,SA,MO,FR',
-            time: {
-               end: '23:59',
-               start: '00:00',
-            },
+         object: {
+            name: `collection-${randomSuffix()}`,
          },
       },
       onCompleted: data => {
          addTab(
-            data.createMenuCollection.returning[0].name,
-            `/online-store/collections/${data.createMenuCollection.returning[0].id}`
+            data.createCollection.name,
+            `/online-store/collections/${data.createCollection.id}`
          )
          toast.success('Collection created!')
       },

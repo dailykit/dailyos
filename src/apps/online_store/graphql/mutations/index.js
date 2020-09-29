@@ -1,12 +1,10 @@
 import gql from 'graphql-tag'
 
 export const CREATE_COLLECTION = gql`
-   mutation CreateCollection($name: String!) {
-      createCollection(objects: { name: $name }) {
-         returning {
-            id
-            name
-         }
+   mutation CreateCollection($object: onDemand_collection_insert_input!) {
+      createCollection(object: $object) {
+         id
+         name
       }
    }
 `
