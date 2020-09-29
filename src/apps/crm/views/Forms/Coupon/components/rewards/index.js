@@ -48,15 +48,18 @@ const Rewards = ({ state }) => {
       }
    )
 
-   const [fetchReward, { listLoading, data }] = useLazyQuery(REWARD_DATA, {
-      onCompleted: data => {
-         console.log(data.crm_reward_by_pk)
-         setRewardTunnelInfo(data.crm_reward_by_pk)
-         setConditionId(data.crm_reward_by_pk.conditionId)
-         setRewardId(data.crm_reward_by_pk.id)
-         openRewardTunnel(1)
-      },
-   })
+   const [fetchReward, { loading: listLoading, data }] = useLazyQuery(
+      REWARD_DATA,
+      {
+         onCompleted: data => {
+            console.log(data.crm_reward_by_pk)
+            setRewardTunnelInfo(data.crm_reward_by_pk)
+            setConditionId(data.crm_reward_by_pk.conditionId)
+            setRewardId(data.crm_reward_by_pk.id)
+            openRewardTunnel(1)
+         },
+      }
+   )
 
    const [deleteReward] = useMutation(DELETE_REWARD, {
       onCompleted: () => {
