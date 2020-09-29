@@ -4,9 +4,6 @@ import { useState } from 'react'
 
 import { GET_INSIGHT } from '../graphql'
 import { transformer, buildOptions } from '../utils/transformer'
-import { generateBarChartData } from '../utils/generateBarChartData'
-import { generatePieChartData } from '../utils/generatePieChartData'
-import { generateCalendarChartData } from '../utils/generateCalendarChartData'
 
 function onError(error) {
    console.log(error)
@@ -45,13 +42,13 @@ let gqlQuery = {
 
 /**
  *
- * @param {string} insightId
- * @param {{chartType: {index: number, multiple: boolean, type: string}, includeTableData: boolean, includeChart: boolean, xColumn?: string, yColumns?: any[], slice: string, metrices: any[]}} [options]
+ * @param {string} title
+ * @param {{includeTableData: boolean, includeChartData: boolean}} [options]
  *
- * @returns {{loading: boolean, tableData: any[] | null, chartData: any | null, switches: any, optionVariables: any, options: any, allowedCharts: any[], updateSwitches: () => {}, updateOptions: () => {}, aggregates: {}} insight
+ * @returns {{loading: boolean, tableData: any[] | null, switches: any, optionVariables: any, options: any, updateSwitches: () => {}, updateOptions: () => {}, aggregates: {}} insight
  */
 export const useInsights = (
-   insightId,
+   title,
    options = {
       includeTableData: true,
    }
@@ -66,13 +63,12 @@ export const useInsights = (
             availableOptions: null,
             switches: null,
             id: null,
-            allowedCharts: [],
          },
       } = {},
    } = useQuery(GET_INSIGHT, {
       onError,
       variables: {
-         id: insightId,
+         title,
       },
       onCompleted: data => {
          setVariableOptions(data.insight.defaultOptions)
@@ -94,7 +90,7 @@ export const useInsights = (
 
    const nodeKey = Object.keys(data)[0]
 
-   if (options.includeTableData || options.chart)
+   if (options.includeTableData || options.includeChartData)
       transformedData = transformer(data, nodeKey)
 
    const whereObject = buildOptions(insight.availableOptions || {})
@@ -107,71 +103,9 @@ export const useInsights = (
       options: whereObject,
       updateSwitches: setVariableSwitches,
       updateOptions: setVariableOptions,
-      allowedCharts: insight.allowedCharts,
       aggregates: data[nodeKey]?.aggregate,
-   }
-
-   if (options.includeChart && insight.allowedCharts) {
-      const chartData = genChartData(insight.allowedCharts, transformedData, {
-         xColumn: options.xColumn,
-         yColumns: options.yColumns,
-         chartType: options.chartType,
-         slice: options.slice,
-         metrices: options.metrices,
-      })
-      result.chartData = chartData
-   } else {
-      result.chartData = null
+      allowedCharts: insight.charts,
    }
 
    return result
-}
-
-/**
- *
- * @param {Array<{type: string, columns: any[]}>} allowedCharts
- * @param {any[]} transformedData
- * @param {{chartTypeIndex: number, xColumn: string, yColumns: any[], chartType: {multiple: boolean, type: string, index: number}, slice: string, metrices: Array<{key: string, label: string}>, dateKeys: string[]}} option
- */
-function genChartData(
-   allowedCharts,
-   transformedData,
-   { xColumn, yColumns, chartType, slice, metrices }
-) {
-   let chartData = []
-
-   switch (chartType.type) {
-      case 'Bar':
-         chartData = generateBarChartData(allowedCharts, transformedData, {
-            xColumn,
-            yColumns,
-            chartTypeIndex: chartType.index,
-         })
-         return chartData
-
-      case 'PieChart':
-         chartData = generatePieChartData(allowedCharts, transformedData, {
-            chartTypeIndex: chartType.index,
-            slice,
-            metrices,
-         })
-
-         return chartData
-
-      case 'Calendar':
-         chartData = generateCalendarChartData(allowedCharts, transformedData, {
-            chartTypeIndex: chartType.index,
-            metrices,
-            slice,
-         })
-         return chartData
-
-      default:
-         chartData = generateBarChartData(allowedCharts, transformedData, {
-            chartTypeIndex: chartType.index,
-            xColumn,
-            yColumns,
-         })
-         return chartData
-   }
 }
