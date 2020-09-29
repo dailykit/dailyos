@@ -33,3 +33,6 @@ export const CenterDiv = styled.div`
       margin: 0;
    }
 `
+export const InputWrapper = styled.div`
+   width: 250px;
+`

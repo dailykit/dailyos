@@ -149,8 +149,7 @@ const CouponListing = () => {
          formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
       },
    ]
-   if (loading) return <Loader />
-   if (listLoading) return <Loader />
+   if (loading || listLoading) return <Loader />
    return (
       <StyledWrapper>
          <StyledHeader gridCol="10fr  1fr">

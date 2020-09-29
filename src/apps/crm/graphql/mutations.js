@@ -55,8 +55,18 @@ export const CREATE_COUPON = gql`
    }
 `
 export const CREATE_REWARD = gql`
-   mutation CREATE_REWARD($rewardType: String!, $couponId: Int!) {
-      insert_crm_reward(objects: { type: $rewardType, couponId: $couponId }) {
+   mutation CREATE_REWARD(
+      $rewardType: String!
+      $couponId: Int
+      $campaignId: Int
+   ) {
+      insert_crm_reward(
+         objects: {
+            type: $rewardType
+            couponId: $couponId
+            campaignId: $campaignId
+         }
+      ) {
          returning {
             id
          }
@@ -82,6 +92,14 @@ export const UPDATE_CAMPAIGN = gql`
       }
    }
 `
+export const UPDATE_REWARD = gql`
+   mutation UPDATE_REWARD($id: Int!, $set: crm_reward_set_input!) {
+      update_crm_reward_by_pk(pk_columns: { id: $id }, _set: $set) {
+         id
+         type
+      }
+   }
+`
 
 export const DELETE_COUPON = gql`
    mutation DELETE_COUPON($id: Int!) {
@@ -100,10 +118,11 @@ export const DELETE_CAMPAIGN = gql`
    }
 `
 
-export const UPDATE_REWARD = gql`
-   mutation UPDATE_REWARD($id: Int!, $set: crm_reward_set_input!) {
-      update_crm_reward_by_pk(pk_columns: { id: $id }, _set: $set) {
+export const DELETE_REWARD = gql`
+   mutation DELETE_REWARD($id: Int!) {
+      delete_crm_reward_by_pk(id: $id) {
          id
+         campaignId
          type
       }
    }

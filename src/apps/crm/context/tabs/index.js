@@ -154,5 +154,6 @@ export const useTabs = () => {
       removeTab,
       closeAllTabs,
       doesTabExists,
+      dispatch,
    }
 }

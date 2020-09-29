@@ -24,3 +24,7 @@ export const StyledWrapper = styled.div`
       line-height: 23px;
    }
 `
+
+export const InputWrapper = styled.div`
+   width: 250px;
+`
