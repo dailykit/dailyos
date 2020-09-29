@@ -48,6 +48,14 @@ export const CREATE_COLLECTION_PRODUCT_CATEGORIES = gql`
    }
 `
 
+export const DELETE_COLLECTION_PRODUCT_CATEGORY = gql`
+   mutation DeleteCollectionProductCategory($id: Int!) {
+      deleteCollectionProductCategory(id: $id) {
+         id
+      }
+   }
+`
+
 export const CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS = gql`
    mutation createCollectionProductCategoryProducts(
       $objects: [onDemand_collection_productCategory_product_insert_input!]!

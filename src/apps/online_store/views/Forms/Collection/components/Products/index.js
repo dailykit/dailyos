@@ -2,7 +2,10 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { Text, ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
-import { DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT } from '../../../../../graphql'
+import {
+   DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT,
+   DELETE_COLLECTION_PRODUCT_CATEGORY,
+} from '../../../../../graphql'
 
 import { CollectionContext } from '../../../../../context'
 import {
@@ -30,6 +33,19 @@ const Products = ({ state }) => {
       1
    )
 
+   const [deleteCollectionProductCategory] = useMutation(
+      DELETE_COLLECTION_PRODUCT_CATEGORY,
+      {
+         onCompleted: data => {
+            toast.success('Category removed!')
+         },
+         onError: error => {
+            console.log(error)
+            toast.error(error.message)
+         },
+      }
+   )
+
    const addProduct = categoryId => {
       collectionDispatch({
          type: 'CATEGORY_ID',
@@ -38,6 +54,24 @@ const Products = ({ state }) => {
          },
       })
       openTunnel(1)
+   }
+
+   const deleteCategory = category => {
+      try {
+         const isConfirmed = window.confirm(
+            `Are you sure you want to remove ${category.productCategoryName}?`
+         )
+         if (isConfirmed) {
+            deleteCollectionProductCategory({
+               variables: {
+                  id: category.id,
+               },
+            })
+         }
+      } catch (err) {
+         console.log(err)
+         toast.error(err.message)
+      }
    }
 
    return (
@@ -65,7 +99,7 @@ const Products = ({ state }) => {
             <StyledCategoryWrapper key={category.id}>
                <StyledHeader>
                   <Text as="h2">{category.productCategoryName}</Text>
-                  <ActionButton>
+                  <ActionButton onClick={() => deleteCategory(category)}>
                      <DeleteIcon color="#FF6B5E" />
                   </ActionButton>
                </StyledHeader>
