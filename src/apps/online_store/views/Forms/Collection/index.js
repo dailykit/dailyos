@@ -162,7 +162,7 @@ const CollectionForm = () => {
                            <Products state={state} />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           <Availability />
+                           <Availability state={state} />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            Insights coming soon!

@@ -1,10 +1,8 @@
 import gql from 'graphql-tag'
 
 export const CREATE_COLLECTION = gql`
-   mutation CreateCollection($name: String!, $availability: jsonb) {
-      createMenuCollection(
-         objects: { name: $name, availability: $availability }
-      ) {
+   mutation CreateCollection($name: String!) {
+      createCollection(objects: { name: $name }) {
          returning {
             id
             name
@@ -13,25 +11,18 @@ export const CREATE_COLLECTION = gql`
    }
 `
 
-export const DELETE_COLLECTIONS = gql`
-   mutation DeleteCollections($ids: [Int!]!) {
-      deleteMenuCollection(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
+export const DELETE_COLLECTION = gql`
+   mutation DeleteCollection($ids: Int!) {
+      deleteCollection(where: { id: { _eq: $id } }) {
+         id
       }
    }
 `
 
 export const UPDATE_COLLECTION = gql`
-   mutation UpdateCollection(
-      $id: Int!
-      $set: onlineStore_menuCollection_set_input
-   ) {
-      updateMenuCollection(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
+   mutation UpdateCollection($id: Int!, $set: onDemand_collection_set_input) {
+      updateCollection(pk_columns: { id: $id }, _set: $set) {
+         id
       }
    }
 `

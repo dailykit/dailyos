@@ -15,7 +15,7 @@ import { useTabs } from '../../../context'
 import {
    S_COLLECTIONS,
    CREATE_COLLECTION,
-   DELETE_COLLECTIONS,
+   DELETE_COLLECTION,
 } from '../../../graphql'
 // Styled
 import { StyledHeader, StyledWrapper, Flexible } from '../styled'
@@ -65,7 +65,7 @@ const CollectionsListing = () => {
       },
    })
 
-   const [deleteCollections] = useMutation(DELETE_COLLECTIONS, {
+   const [deleteCollection] = useMutation(DELETE_COLLECTION, {
       onCompleted: () => {
          toast.success('Collection deleted!')
       },
@@ -83,9 +83,9 @@ const CollectionsListing = () => {
             `Are you sure you want to delete collection - ${collection.name}?`
          )
       ) {
-         deleteCollections({
+         deleteCollection({
             variables: {
-               ids: [collection.id],
+               id: collection.id,
             },
          })
       }
