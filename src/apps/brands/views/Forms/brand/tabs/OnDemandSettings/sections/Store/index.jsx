@@ -1,6 +1,5 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Toggle, Input } from '@dailykit/ui'
 
@@ -8,7 +7,6 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const Store = ({ update }) => {
-   const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isOpen, setIsOpen] = React.useState(false)
    const [from, setFrom] = React.useState('')
@@ -16,20 +14,27 @@ export const Store = ({ update }) => {
    const [message, setMessage] = React.useState('')
    useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         brandId: { _eq: params.id },
          identifier: { _eq: 'Store Availability' },
          type: { _eq: 'availability' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { onDemandSetting = [] } = {} } = {},
+         subscriptionData: { data: { storeSettings = [] } = {} } = {},
       }) => {
-         if (!isEmpty(onDemandSetting)) {
-            const { value, storeSettingId } = onDemandSetting[0]
-            setIsOpen(value.isOpen)
-            setMessage(value.shutMessage)
-            setFrom(value.from)
-            setTo(value.to)
-            setSettingId(storeSettingId)
+         if (!isEmpty(storeSettings)) {
+            const { brand, id } = storeSettings[0]
+            setSettingId(id)
+            if ('isOpen' in brand.value) {
+               setIsOpen(brand.value.isOpen)
+            }
+            if ('shutMessage' in brand.value) {
+               setMessage(brand.value.shutMessage)
+            }
+            if ('from' in brand.value) {
+               setFrom(brand.value.from)
+            }
+            if ('to' in brand.value) {
+               setTo(brand.value.to)
+            }
          }
       },
    })

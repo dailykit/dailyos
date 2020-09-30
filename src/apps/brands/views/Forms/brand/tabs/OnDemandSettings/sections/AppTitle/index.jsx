@@ -1,7 +1,6 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
-import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
 
@@ -9,22 +8,22 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const AppTitle = ({ update }) => {
-   const params = useParams()
    const [title, setTitle] = React.useState('')
    const [settingId, setSettingId] = React.useState(null)
    useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         brandId: { _eq: params.id },
          identifier: { _eq: 'App Title' },
          type: { _eq: 'visual' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { onDemandSetting = [] } = {} } = {},
+         subscriptionData: { data: { storeSettings = [] } = {} } = {},
       }) => {
-         if (!isEmpty(onDemandSetting)) {
-            const { value, storeSettingId } = onDemandSetting[0]
-            setTitle(value.title)
-            setSettingId(storeSettingId)
+         if (!isEmpty(storeSettings)) {
+            const { brand, id } = storeSettings[0]
+            setSettingId(id)
+            if ('title' in brand.value) {
+               setTitle(brand.value.title)
+            }
          }
       },
    })

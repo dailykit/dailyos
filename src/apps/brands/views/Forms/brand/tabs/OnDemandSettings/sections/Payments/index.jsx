@@ -1,6 +1,5 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
 
@@ -8,24 +7,26 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const Payments = ({ update }) => {
-   const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isStoreLive, setIsStoreLive] = React.useState(false)
    const [isStripeConfigured, setIsStripeConfigured] = React.useState(false)
    useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         brandId: { _eq: params.id },
          identifier: { _eq: 'Store Live' },
          type: { _eq: 'availability' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { onDemandSetting = [] } = {} } = {},
+         subscriptionData: { data: { storeSettings = [] } = {} } = {},
       }) => {
-         if (!isEmpty(onDemandSetting)) {
-            const { value, storeSettingId } = onDemandSetting[0]
-            setIsStoreLive(value.isStoreLive)
-            setIsStripeConfigured(value.isStripeConfigured)
-            setSettingId(storeSettingId)
+         if (!isEmpty(storeSettings)) {
+            const { brand, id } = storeSettings[0]
+            setSettingId(id)
+            if ('isStoreLive' in brand.value) {
+               setIsStoreLive(brand.value.isStoreLive)
+            }
+            if ('isStripeConfigured' in brand.value) {
+               setIsStripeConfigured(brand.value.isStripeConfigured)
+            }
          }
       },
    })

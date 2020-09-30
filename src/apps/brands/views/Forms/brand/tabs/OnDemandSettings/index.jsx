@@ -32,36 +32,29 @@ export const OnDemandSettings = () => {
          toast.error(error.message)
       },
    })
-   const {
-      loading,
-      data: { brandOnDemandSettings = [] } = {},
-   } = useSubscription(BRANDS.ON_DEMAND_SETTINGS_TYPES)
-
-   const transform = React.useCallback(
-      node => ({
-         id: node.onDemandSetting.id,
-         type: node.onDemandSetting.type,
-         identifier: node.onDemandSetting.identifier,
-      }),
-      []
+   const { loading, data: { storeSettings = [] } = {} } = useSubscription(
+      BRANDS.ON_DEMAND_SETTINGS_TYPES
    )
 
    React.useEffect(() => {
-      if (!loading && !isEmpty(brandOnDemandSettings)) {
-         const grouped = groupBy(brandOnDemandSettings.map(transform), 'type')
+      if (!loading && !isEmpty(storeSettings)) {
+         const grouped = groupBy(storeSettings, 'type')
 
          Object.keys(grouped).forEach(key => {
             grouped[key] = grouped[key].map(node => node.identifier)
          })
          setSettings(grouped)
       }
-   }, [loading, brandOnDemandSettings])
+   }, [loading, storeSettings])
 
    const update = ({ id, value }) => {
       updateSetting({
          variables: {
-            pk_columns: { brandId: params.id, storeSettingId: id },
-            _set: { value: value },
+            object: {
+               value,
+               brandId: params.id,
+               storeSettingId: id,
+            },
          },
       })
    }

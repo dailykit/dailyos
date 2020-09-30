@@ -1,7 +1,6 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'
-import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import {
@@ -20,24 +19,24 @@ import { Flex } from '../../../../../../../../../shared/components'
 import { useScript } from '../../../../../../../../../shared/utils/useScript'
 
 export const Address = ({ update }) => {
-   const params = useParams()
    const [address, setAddress] = React.useState({})
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         brandId: { _eq: params.id },
          identifier: { _eq: 'Location' },
          type: { _eq: 'availability' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { onDemandSetting = [] } = {} } = {},
+         subscriptionData: { data: { storeSettings = [] } = {} } = {},
       }) => {
-         if (!isEmpty(onDemandSetting)) {
-            const { value, storeSettingId } = onDemandSetting[0]
-            setAddress(value.address)
-            setSettingId(storeSettingId)
+         if (!isEmpty(storeSettings)) {
+            const { brand, id } = storeSettings[0]
+            setSettingId(id)
+            if ('address' in brand.value) {
+               setAddress(brand.value.address)
+            }
          }
       },
    })
