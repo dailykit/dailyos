@@ -13,15 +13,12 @@ import { tableConfig } from './tableConfig'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', statsPosition: 'table' | 'chart', title: string, nodeKey: string}} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, title: string, nodeKey: string}} props
  */
 export default function Insight({
    includeTable = true,
    includeChart = false,
-   alignment = 'column',
-   tablePosition = 'bottom',
    title = '',
-   statsPosition,
 }) {
    const {
       tableData,
@@ -37,76 +34,120 @@ export default function Insight({
 
    return (
       <>
-         <StyledContainer alignment={alignment} position={tablePosition}>
+         <StyledContainer>
             {includeChart ? (
-               <Box
-                  style={{
-                     width: '100%',
-                     overflowX: 'auto',
-                     margin: '0 auto',
-                     display: 'flex',
-                     flexDirection: 'column',
-                     alignItems: 'center',
-                     height: '100%',
-                     flex: 1,
-                  }}
-               >
-                  {statsPosition === 'chart' || statsPosition !== 'table' ? (
-                     <CounterBar aggregates={aggregates} />
-                  ) : null}
-                  {allowedCharts?.map(chart => (
-                     <Chart
-                        key={chart.id}
-                        aggregates={aggregates}
-                        statsPosition={statsPosition}
-                        rawData={tableData}
-                        options={options}
-                        includeTableData={includeTable}
-                        updateOptions={updateOptions}
-                        optionVariables={optionVariables}
-                        chart={chart}
-                     />
-                  ))}
-               </Box>
+               <HeroCharts
+                  allowedCharts={allowedCharts}
+                  aggregates={aggregates}
+                  includeTable={includeTable}
+                  optionVariables={optionVariables}
+                  options={options}
+                  tableData={tableData}
+                  updateOptions={updateOptions}
+               />
             ) : null}
+            <br />
 
-            {includeTable ? (
-               <>
-                  {alignment === 'column' ? (
-                     <>
-                        <br />
-                        <br />
-                     </>
-                  ) : (
-                     <span style={{ width: '20px' }} />
-                  )}
-                  {statsPosition === 'table' ? (
-                     <CounterBar aggregates={aggregates} />
-                  ) : null}
-                  <Box
-                     style={{
-                        flex: 1,
-                        width: alignment === 'column' ? '100%' : null,
-                     }}
-                  >
-                     {includeTable ? (
-                        <Option
-                           options={options}
-                           state={optionVariables}
-                           updateOptions={updateOptions}
+            <FlexViewWrapper>
+               {allowedCharts
+                  ?.filter(chart => chart.layoutType === 'FLEX')
+                  .map(chart => {
+                     return (
+                        <Box
+                           style={{
+                              width: '100%',
+                              overflowX: 'auto',
+                              margin: '0 auto',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              height: '100%',
+                           }}
+                        >
+                           <Chart
+                              key={chart.id}
+                              aggregates={aggregates}
+                              rawData={tableData}
+                              options={options}
+                              includeTableData={includeTable}
+                              updateOptions={updateOptions}
+                              optionVariables={optionVariables}
+                              chart={chart}
+                           />
+                        </Box>
+                     )
+                  })}
+
+               {includeTable ? (
+                  <>
+                     <Box
+                        style={{
+                           width: '100%',
+                        }}
+                     >
+                        {!includeChart ? (
+                           <CounterBar aggregates={aggregates} />
+                        ) : null}
+                        {includeTable ? (
+                           <Option
+                              options={options}
+                              state={optionVariables}
+                              updateOptions={updateOptions}
+                           />
+                        ) : null}
+                        <ReactTabulator
+                           columns={[]}
+                           options={tableConfig}
+                           data={tableData}
                         />
-                     ) : null}
-                     <ReactTabulator
-                        columns={[]}
-                        options={tableConfig}
-                        data={tableData}
-                     />
-                  </Box>
-               </>
-            ) : null}
+                     </Box>
+                  </>
+               ) : null}
+            </FlexViewWrapper>
          </StyledContainer>
       </>
    )
+}
+
+function HeroCharts({
+   allowedCharts,
+   aggregates,
+   tableData,
+   options,
+   includeTable,
+   optionVariables,
+   updateOptions,
+}) {
+   if (!allowedCharts?.length) return null
+
+   return allowedCharts
+      ?.filter(chart => chart.layoutType === 'HERO')
+      .map(chart => (
+         <Box
+            key={chart.id}
+            style={{
+               width: '100%',
+               overflowX: 'auto',
+               margin: '0 auto',
+               display: 'flex',
+               flexDirection: 'column',
+               alignItems: 'center',
+               height: '100%',
+               flex: 1,
+            }}
+         >
+            <CounterBar aggregates={aggregates} />
+            <Chart
+               aggregates={aggregates}
+               rawData={tableData}
+               options={options}
+               includeTableData={includeTable}
+               updateOptions={updateOptions}
+               optionVariables={optionVariables}
+               chart={chart}
+            />
+         </Box>
+      ))
 }
 
 function CounterBar({ aggregates }) {
@@ -121,18 +162,10 @@ const StyledContainer = styled.div`
    width: 100%;
    height: 100%;
    padding: 1rem 2rem;
-   display: flex;
-   flex-direction: ${({ alignment, position }) => {
-      if (alignment === 'column' && position === 'top')
-         return `${alignment}-reverse`
-      if (alignment === 'column' && position === 'bottom') return alignment
-      if (alignment === 'row' && position === 'right') return alignment
-      if (alignment === 'row' && position === 'left')
-         return `${alignment}-reverse`
-
-      return alignment
-   }};
-   align-items: center;
-   justify-content: space-between;
+`
+const FlexViewWrapper = styled.div`
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 1rem;
 `
 export { CounterBar }

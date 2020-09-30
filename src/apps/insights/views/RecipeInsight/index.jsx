@@ -24,10 +24,8 @@ const ReferralPlansListing = () => {
                <Insight
                   key={insight.title}
                   title={insight.title}
-                  alignment="column"
                   includeChart
                   statsPosition="chart"
-                  tablePosition="left"
                />
             )
          })}

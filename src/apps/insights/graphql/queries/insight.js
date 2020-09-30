@@ -11,6 +11,7 @@ export const GET_INSIGHT = gql`
          charts {
             id
             config
+            layoutType
          }
       }
    }
