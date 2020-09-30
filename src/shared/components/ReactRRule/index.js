@@ -59,7 +59,8 @@ const Component = ({ value, onChange }) => {
       if (state.dtstart) {
          rule.dtstart = getUTCDate(state.dtstart)
       } else {
-         delete rule.dtstart
+         const d = new Date().toISOString().split('T')[0]
+         rule.dtstart = getUTCDate(d)
       }
       if (state.until) {
          rule.until = getUTCDate(state.until)
