@@ -1,5 +1,7 @@
 import React from 'react'
 import { RRule } from 'rrule'
+import { Checkbox, Text, Input } from '@dailykit/ui'
+
 import { Wrapper, Label, FlexItems, FlexItem, InputGroup } from './styled'
 
 import { getUTCDate, getPSQLRule, reversePSQLObject } from './utils'
@@ -17,8 +19,7 @@ const Component = ({ value, onChange }) => {
    })
 
    // Handlers
-   const toggleByDay = e => {
-      const { value } = e.target
+   const toggleByDay = value => {
       const index = state.byweekday.findIndex(
          wk => RRule[wk].weekday === RRule[value].weekday
       )
@@ -33,8 +34,7 @@ const Component = ({ value, onChange }) => {
       }
    }
 
-   const toggleByMonth = e => {
-      const { value } = e.target
+   const toggleByMonth = value => {
       const index = state.bymonth.findIndex(mon => mon === +value)
       if (index === -1) {
          const copy = state.bymonth
@@ -90,7 +90,7 @@ const Component = ({ value, onChange }) => {
    return (
       <Wrapper>
          <InputGroup>
-            <Label>Repeat</Label>
+            <Text as="subtitle">Repeat</Text>
             <FlexItems>
                <FlexItem>
                   <input
@@ -155,7 +155,7 @@ const Component = ({ value, onChange }) => {
             </FlexItems>
          </InputGroup>
          <InputGroup>
-            <Label>Start date</Label>
+            <Text as="subtitle">Start date</Text>
             <input
                type="date"
                name="dtstart"
@@ -164,7 +164,7 @@ const Component = ({ value, onChange }) => {
             />
          </InputGroup>
          <InputGroup>
-            <Label>End date</Label>
+            <Text as="subtitle">End date</Text>
             <input
                type="date"
                name="until"
@@ -173,28 +173,30 @@ const Component = ({ value, onChange }) => {
             />
          </InputGroup>
          <InputGroup>
-            <Label>Count</Label>
-            <input
+            <Input
                type="number"
+               label="Count"
                name="count"
                max="1000"
                min="1"
                value={state.count}
                onChange={e => setState({ ...state, count: +e.target.value })}
+               style={{ maxWidth: 300 }}
             />
          </InputGroup>
          <InputGroup>
-            <Label>Interval</Label>
-            <input
+            <Input
                type="number"
+               label="Interval"
                name="interval"
                min="1"
                value={state.interval}
                onChange={e => setState({ ...state, interval: +e.target.value })}
+               style={{ maxWidth: 300 }}
             />
          </InputGroup>
          <InputGroup>
-            <Label>Week starts on</Label>
+            <Text as="subtitle">Week starts on</Text>
             <FlexItems>
                <FlexItem>
                   <input
@@ -283,203 +285,146 @@ const Component = ({ value, onChange }) => {
             </FlexItems>
          </InputGroup>
          <InputGroup>
-            <Label>On every</Label>
+            <Text as="subtitle">On every</Text>
             <FlexItems>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="byMonday"
-                     value="MO"
-                     checked={state.byweekday.includes('MO')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Monday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="byTuesday"
-                     value="TU"
-                     checked={state.byweekday.includes('TU')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Tuesday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="byWednesday"
-                     value="WE"
-                     checked={state.byweekday.includes('WE')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Wednesday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="byThursday"
-                     value="TH"
-                     checked={state.byweekday.includes('TH')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Thursday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="byFriday"
-                     value="FR"
-                     checked={state.byweekday.includes('FR')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Friday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="bySaturday"
-                     value="SA"
-                     checked={state.byweekday.includes('SA')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Saturday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="bySunday"
-                     value="SU"
-                     checked={state.byweekday.includes('SU')}
-                     onChange={toggleByDay}
-                  />
-                  <span>Sunday</span>
-               </FlexItem>
+               <Checkbox
+                  id="byMonday"
+                  checked={state.byweekday.includes('MO')}
+                  onChange={() => toggleByDay('MO')}
+               >
+                  Monday
+               </Checkbox>
+               <Checkbox
+                  id="byTuesday"
+                  checked={state.byweekday.includes('TU')}
+                  onChange={() => toggleByDay('TU')}
+               >
+                  Tuesday
+               </Checkbox>
+               <Checkbox
+                  id="byWednesday"
+                  checked={state.byweekday.includes('WE')}
+                  onChange={() => toggleByDay('WE')}
+               >
+                  Wednesday
+               </Checkbox>
+               <Checkbox
+                  id="byThursday"
+                  checked={state.byweekday.includes('TH')}
+                  onChange={() => toggleByDay('TH')}
+               >
+                  Thursday
+               </Checkbox>
+               <Checkbox
+                  id="byFriday"
+                  checked={state.byweekday.includes('FR')}
+                  onChange={() => toggleByDay('FR')}
+               >
+                  Friday
+               </Checkbox>
+               <Checkbox
+                  id="bySaturday"
+                  checked={state.byweekday.includes('SA')}
+                  onChange={() => toggleByDay('SA')}
+               >
+                  Saturday
+               </Checkbox>
+               <Checkbox
+                  id="bySunday"
+                  checked={state.byweekday.includes('SU')}
+                  onChange={() => toggleByDay('SU')}
+               >
+                  Sunday
+               </Checkbox>
             </FlexItems>
          </InputGroup>
          <InputGroup>
-            <Label>In</Label>
+            <Text as="subtitle">In</Text>
             <FlexItems>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={1}
-                     checked={state.bymonth.includes(1)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>January</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={2}
-                     checked={state.bymonth.includes(2)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>February</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={3}
-                     checked={state.bymonth.includes(3)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>March</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={4}
-                     checked={state.bymonth.includes(4)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>April</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={5}
-                     checked={state.bymonth.includes(5)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>May</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={6}
-                     checked={state.bymonth.includes(6)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>June</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={7}
-                     checked={state.bymonth.includes(7)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>July</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={8}
-                     checked={state.bymonth.includes(8)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>August</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={9}
-                     checked={state.bymonth.includes(9)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>September</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={10}
-                     checked={state.bymonth.includes(10)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>October</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={11}
-                     checked={state.bymonth.includes(11)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>November</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="checkbox"
-                     name="month"
-                     value={12}
-                     checked={state.bymonth.includes(12)}
-                     onChange={toggleByMonth}
-                  />
-                  <span>December</span>
-               </FlexItem>
+               <Checkbox
+                  id="Jan"
+                  checked={state.bymonth.includes(1)}
+                  onChange={() => toggleByMonth(1)}
+               >
+                  January
+               </Checkbox>
+               <Checkbox
+                  id="Feb"
+                  checked={state.bymonth.includes(2)}
+                  onChange={() => toggleByMonth(2)}
+               >
+                  February
+               </Checkbox>
+               <Checkbox
+                  id="Mar"
+                  checked={state.bymonth.includes(3)}
+                  onChange={() => toggleByMonth(3)}
+               >
+                  March
+               </Checkbox>
+               <Checkbox
+                  id="Apr"
+                  checked={state.bymonth.includes(4)}
+                  onChange={() => toggleByMonth(4)}
+               >
+                  April
+               </Checkbox>
+               <Checkbox
+                  id="May"
+                  checked={state.bymonth.includes(5)}
+                  onChange={() => toggleByMonth(5)}
+               >
+                  May
+               </Checkbox>
+               <Checkbox
+                  id="Jun"
+                  checked={state.bymonth.includes(6)}
+                  onChange={() => toggleByMonth(6)}
+               >
+                  June
+               </Checkbox>
+               <Checkbox
+                  id="Jun"
+                  checked={state.bymonth.includes(7)}
+                  onChange={() => toggleByMonth(7)}
+               >
+                  July
+               </Checkbox>
+               <Checkbox
+                  id="Aug"
+                  checked={state.bymonth.includes(8)}
+                  onChange={() => toggleByMonth(8)}
+               >
+                  August
+               </Checkbox>
+               <Checkbox
+                  id="Sep"
+                  checked={state.bymonth.includes(9)}
+                  onChange={() => toggleByMonth(9)}
+               >
+                  September
+               </Checkbox>
+               <Checkbox
+                  id="Sep"
+                  checked={state.bymonth.includes(10)}
+                  onChange={() => toggleByMonth(10)}
+               >
+                  October
+               </Checkbox>
+               <Checkbox
+                  id="Nov"
+                  checked={state.bymonth.includes(11)}
+                  onChange={() => toggleByMonth(11)}
+               >
+                  November
+               </Checkbox>
+               <Checkbox
+                  id="Dec"
+                  checked={state.bymonth.includes(12)}
+                  onChange={() => toggleByMonth(12)}
+               >
+                  December
+               </Checkbox>
             </FlexItems>
          </InputGroup>
       </Wrapper>
