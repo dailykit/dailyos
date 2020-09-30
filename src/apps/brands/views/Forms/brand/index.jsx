@@ -19,7 +19,7 @@ import {
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
-import { OnDemandSettings } from './tabs'
+import { OnDemandSettings, OnDemandCollections } from './tabs'
 import { Flex, InlineLoader } from '../../../../../shared/components'
 
 export const Brand = () => {
@@ -108,10 +108,14 @@ export const Brand = () => {
          <HorizontalTabs>
             <HorizontalTabList>
                <HorizontalTab>On Demand Settings</HorizontalTab>
+               <HorizontalTab>On Demand Collections</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <OnDemandSettings />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <OnDemandCollections />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>

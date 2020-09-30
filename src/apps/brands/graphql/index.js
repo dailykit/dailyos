@@ -85,4 +85,47 @@ export const BRANDS = {
          }
       }
    `,
+   UPSERT_BRAND_COLLECTION: gql`
+      mutation upsertBrandCollection(
+         $object: onDemand_brand_collection_insert_input!
+      ) {
+         upsertBrandCollection: insert_onDemand_brand_collection_one(
+            object: $object
+            on_conflict: {
+               constraint: shop_collection_pkey
+               update_columns: isActive
+            }
+         ) {
+            isActive
+         }
+      }
+   `,
+}
+
+export const COLLECTIONS = {
+   LIST: gql`
+      subscription collections($brandId: Int_comparison_exp = {}) {
+         collections: collectionsAggregate {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
+               id
+               name
+               details {
+                  productsCount
+                  categoriesCount
+               }
+               totalBrands: brands_aggregate {
+                  aggregate {
+                     count(columns: brandId)
+                  }
+               }
+               brands(where: { brandId: $brandId }) {
+                  isActive
+               }
+            }
+         }
+      }
+   `,
 }
