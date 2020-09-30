@@ -11,9 +11,9 @@ export const useChart = (chart, rawData, options) => {
       metrices: options.metrices,
    })
 
-   // TODO: add chart options here
    return {
       data: chartData,
+      options: chart.config[options.chartType.index].options || {},
    }
 }
 

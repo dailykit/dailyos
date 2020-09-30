@@ -13,7 +13,7 @@ import { tableConfig } from './tableConfig'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', statsPosition: 'table' | 'chart', title: string, nodeKey: string, chartOptions: {height: string, width: string}  }} props
+ * @param {{ includeChart?: boolean, includeTable?: boolean, alignment?: 'column' | 'row', tablePosition?: 'bottom' | 'top' | 'right' | 'left', statsPosition: 'table' | 'chart', title: string, nodeKey: string}} props
  */
 export default function Insight({
    includeTable = true,
@@ -21,7 +21,6 @@ export default function Insight({
    alignment = 'column',
    tablePosition = 'bottom',
    title = '',
-   chartOptions = {},
    statsPosition,
 }) {
    const {
@@ -59,7 +58,6 @@ export default function Insight({
                      <Chart
                         key={chart.id}
                         aggregates={aggregates}
-                        chartOptions={chartOptions}
                         statsPosition={statsPosition}
                         rawData={tableData}
                         options={options}

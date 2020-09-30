@@ -10,7 +10,6 @@ import Option from './Option'
 import { Flex } from '../../../../shared/components/Flex'
 
 export default function Chart({
-   chartOptions,
    chart,
    rawData,
    options,
@@ -27,7 +26,7 @@ export default function Chart({
    // prettier-ignore
    const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
 
-   const { data } = useChart(chart, rawData, {
+   const { data, options: googleChartOptions } = useChart(chart, rawData, {
       chartType,
       xColumn,
       yColumns,
@@ -57,14 +56,14 @@ export default function Chart({
             loader={<div>loading...</div>}
             style={{ flex: '1' }}
             options={{
+               ...googleChartOptions,
                legend:
                   chartType.type === 'PieChart'
                      ? 'none'
                      : { position: 'right' },
-               height: chartOptions.height || '454px',
-               width: chartOptions.width || '100%',
-               ...chartOptions,
-               title: chartTitle,
+               height: googleChartOptions.height || '454px',
+               width: googleChartOptions.width || '100%',
+               title: googleChartOptions.title || chartTitle,
             }}
          />
       </Container>
