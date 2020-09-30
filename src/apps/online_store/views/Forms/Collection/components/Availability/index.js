@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import ReactRRule from 'react-rrule'
+import ReactRRule from '../../../../../../../shared/components/ReactRRule'
 import { toast } from 'react-toastify'
 import { TextButton } from '@dailykit/ui'
 
