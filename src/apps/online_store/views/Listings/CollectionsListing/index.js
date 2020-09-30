@@ -6,7 +6,6 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { RRule } from 'rrule'
 import { randomSuffix } from '../../../../../shared/utils'
 // Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
