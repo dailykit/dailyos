@@ -40,6 +40,7 @@ export const Payments = ({ update }) => {
          <Spacer size="4px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Toggle
+               isDisabled
                setChecked={() => {}}
                label="Stripe Configured"
                checked={isStripeConfigured}
