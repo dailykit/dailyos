@@ -56,7 +56,7 @@ const Navbar = ({ links = {} }) => {
                {!isEmpty(links[key]) && (
                   <ul>
                      {links[key].map((node, index) => (
-                        <li key={node + index}>
+                        <li key={node + index} title={node}>
                            <a
                               href={`#${node}`}
                               className={active === `#${node}` ? 'active' : ''}

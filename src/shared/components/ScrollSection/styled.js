@@ -41,13 +41,19 @@ export const Sidebar = styled.aside`
    }
    a {
       height: 32px;
+      width: 195px;
       display: flex;
       color: #1f495e;
       padding: 0 8px;
+      line-height: 32px;
       align-items: center;
       border-radius: 2px;
       text-decoration: none;
       transition: 0.1s linear;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
       :hover,
       &.active {
          color: #fff;
