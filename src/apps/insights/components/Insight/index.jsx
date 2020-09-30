@@ -36,11 +36,6 @@ export default function Insight({
       includeChartData: includeChart,
    })
 
-   // React.useEffect(() => {
-   //    if (allowedCharts.length && !chartType.type)
-   //       setChartType({ ...allowedCharts[0], index: 0 })
-   // }, [allowedCharts.length])
-
    // const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
 
    return (
@@ -64,11 +59,11 @@ export default function Insight({
                   ) : null}
                   {allowedCharts?.map(chart => (
                      <Chart
+                        key={chart.id}
                         aggregates={aggregates}
                         chartOptions={chartOptions}
                         statsPosition={statsPosition}
                         rawData={tableData}
-                        allowedCharts={chart.config}
                         options={options}
                         includeTableData={includeTable}
                         updateOptions={updateOptions}

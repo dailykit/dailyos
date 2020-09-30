@@ -12,7 +12,6 @@ import { useChart } from '../../hooks/useChart'
 export default function Chart({
    chartOptions,
    chart,
-   allowedCharts = [],
    rawData,
    options,
    includeTableData,
@@ -20,7 +19,7 @@ export default function Chart({
    optionVariables,
 }) {
    const [showModal, setShowModal] = useState(false)
-   const [chartType, setChartType] = useState({ index: 0, type: 'Bar' })
+   const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
    const [yColumns, setYColumns] = useState([])
    const [slice, setSlice] = useState('')
@@ -34,9 +33,7 @@ export default function Chart({
       metrices,
    })
 
-   console.log(data)
-
-   console.log(allowedCharts)
+   console.log('type', chartType)
 
    return (
       <>
@@ -44,7 +41,7 @@ export default function Chart({
             showModal={showModal}
             setShowModal={setShowModal}
             setXColumn={setXColumn}
-            allowedCharts={allowedCharts}
+            allowedCharts={chart.config}
             yColumns={yColumns}
             setYColumns={setYColumns}
             chartType={chartType}
@@ -58,19 +55,18 @@ export default function Chart({
          />
          <GoogleChart
             data={data}
-            chartType="Bar"
+            chartType={chartType.type}
             loader={<div>loading...</div>}
             style={{ flex: '1' }}
             options={{
-               // legend:
-               //    chartType.type === 'PieChart'
-               //       ? 'none'
-               //       : { position: 'right' },
+               legend:
+                  chartType.type === 'PieChart'
+                     ? 'none'
+                     : { position: 'right' },
                hAxis: { slantedText: false },
                height: chartOptions.height || '454px',
                width: chartOptions.width || '100%',
                ...chartOptions,
-               // title: chartTitle,
             }}
          />
 
