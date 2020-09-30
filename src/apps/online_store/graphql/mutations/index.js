@@ -10,8 +10,8 @@ export const CREATE_COLLECTION = gql`
 `
 
 export const DELETE_COLLECTION = gql`
-   mutation DeleteCollection($ids: Int!) {
-      deleteCollection(where: { id: { _eq: $id } }) {
+   mutation DeleteCollection($id: Int!) {
+      deleteCollection(id: $id) {
          id
       }
    }
