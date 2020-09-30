@@ -1,7 +1,6 @@
 import { Checkbox, TextButton } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { Chart as GoogleChart } from 'react-google-charts'
-import styled from 'styled-components'
 import '../../../../shared/styled/tableStyles.css'
 import { useChart } from '../../hooks/useChart'
 import { Container } from '../Container'
@@ -336,11 +335,3 @@ function ChartColumn({
       </DropdownItem>
    )
 }
-
-const ChartConfigContainer = styled.div`
-   display: flex;
-   margin-top: 16px;
-   width: 100%;
-   border-top: 1px solid #eef0f7;
-   padding-top: 8px;
-`
