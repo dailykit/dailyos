@@ -71,18 +71,19 @@ const Component = ({ value, onChange }) => {
          rule.byweekday = state.byweekday.map(day => RRule[day])
       }
       const rruleObj = new RRule(rule)
-      onChange({
+      const output = {
          object: rruleObj,
          psqlObject: getPSQLRule(rule),
          string: rruleObj.toString(),
          text: rruleObj.toText(),
-      })
+      }
+      output.psqlObject.text = output.text
+      onChange(output)
    }, [state])
 
    React.useEffect(() => {
       if (value) {
          const rruleObject = reversePSQLObject(value)
-         console.log(rruleObject)
          setState({ ...state, ...rruleObject })
       }
    }, [])

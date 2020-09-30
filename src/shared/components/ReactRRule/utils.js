@@ -155,5 +155,6 @@ export const reversePSQLObject = value => {
    }
    obj.wkst = getWkstNumber(obj.wkst)
    obj.freq = getFreqNumber(obj.freq)
+   delete obj.text
    return obj
 }
