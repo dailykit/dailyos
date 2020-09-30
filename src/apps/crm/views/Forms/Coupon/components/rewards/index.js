@@ -5,6 +5,7 @@ import {
    ButtonGroup,
    useTunnel,
    Loader,
+   Checkbox,
    Tunnels,
    Tunnel,
    Text,
@@ -21,8 +22,8 @@ import {
    REWARD_DATA,
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
-import { StyledContainer, StyledRow } from './styled'
-const Rewards = ({ state }) => {
+import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
+const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [typeTunnels, openTypeTunnel, closeTypeTunnel] = useTunnel(1)
    const [rewardTunnels, openRewardTunnel, closeRewardTunnel] = useTunnel(1)
    const [
@@ -34,7 +35,6 @@ const Rewards = ({ state }) => {
    const [rewardId, setRewardId] = useState(null)
    const [rewardInfoArray, setRewardInfoArray] = useState([])
    const [rewardTunnelInfo, setRewardTunnelInfo] = useState({})
-
    // Subscription
    const { data: rewardData, loading } = useSubscription(
       REWARD_DATA_BY_COUPON_ID,
@@ -131,28 +131,43 @@ const Rewards = ({ state }) => {
          />
          {rewardInfoArray.length > 0 ? (
             <StyledContainer>
-               <Text as="title">Reward Information</Text>
-               {rewardInfoArray.map(rewardInfo => {
-                  return (
-                     <StyledRow key={rewardInfo.id}>
-                        <Text as="subtitle">{rewardInfo.type} </Text>
-                        <ButtonGroup align="left">
-                           <IconButton
-                              type="ghost"
-                              onClick={() => EditRewardDetails(rewardInfo.id)}
-                           >
-                              <EditIcon color="#28c1f7" />
-                           </IconButton>
-                           <IconButton
-                              type="ghost"
-                              onClick={() => deleteHandler(rewardInfo)}
-                           >
-                              <DeleteIcon color="#28c1f7" />
-                           </IconButton>
-                        </ButtonGroup>
-                     </StyledRow>
-                  )
-               })}
+               <StyledRow>
+                  <Text as="title">Reward Information</Text>
+                  {rewardInfoArray.length > 1 && (
+                     <Checkbox
+                        id="label"
+                        checked={checkbox}
+                        onChange={updateCheckbox}
+                     >
+                        Allow multiple rewards
+                     </Checkbox>
+                  )}
+               </StyledRow>
+               <StyledDiv>
+                  {rewardInfoArray.map(rewardInfo => {
+                     return (
+                        <RewardDiv key={rewardInfo.id}>
+                           <Text as="subtitle">{rewardInfo.type} </Text>
+                           <StyledRow>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() =>
+                                    EditRewardDetails(rewardInfo.id)
+                                 }
+                              >
+                                 <EditIcon color="#555B6E" />
+                              </IconButton>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => deleteHandler(rewardInfo)}
+                              >
+                                 <DeleteIcon color="#555B6E" />
+                              </IconButton>
+                           </StyledRow>
+                        </RewardDiv>
+                     )
+                  })}
+               </StyledDiv>
                <StyledRow>
                   <ComboButton type="ghost" onClick={() => openTypeTunnel(1)}>
                      Add More Reward
