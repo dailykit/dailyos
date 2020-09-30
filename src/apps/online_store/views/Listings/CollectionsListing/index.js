@@ -93,15 +93,17 @@ const CollectionsListing = () => {
       },
       {
          title: t(address.concat('categories')),
-         field: 'categories',
-         headerFilter: false,
-         formatter: reactFormatter(<CatCount />),
+         field: 'categoriesCount',
+         headerFilter: true,
+      },
+      {
+         title: t(address.concat('products')),
+         field: 'productsCount',
+         headerFilter: true,
       },
       {
          title: t(address.concat('availability')),
-         field: 'availability',
-         headerFilter: false,
-         formatter: reactFormatter(<ShowAvailability />),
+         field: 'rrule',
       },
       {
          title: 'Actions',
@@ -155,24 +157,6 @@ const CollectionsListing = () => {
 
 function DeleteIngredient() {
    return <DeleteIcon color="#FF5A52" />
-}
-
-function CatCount({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   if (value && value.length) return <>{value.length}</>
-   return 0
-}
-
-function ShowAvailability({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   if (value && value.rule) return <>{RRule.fromString(value.rule).toText()}</>
-   return null
 }
 
 export default CollectionsListing

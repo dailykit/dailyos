@@ -12,12 +12,12 @@ export const COLLECTIONS_COUNT = gql`
 
 export const S_COLLECTIONS = gql`
    subscription Collections {
-      collections {
+      collections: onDemand_collectionDetails {
          id
          name
-         startTime
-         endTime
-         rrule
+         rrule(path: "text")
+         categoriesCount
+         productsCount
       }
    }
 `
