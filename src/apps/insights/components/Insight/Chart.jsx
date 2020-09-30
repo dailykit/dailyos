@@ -60,7 +60,7 @@ export default function Chart({
                   chartType.type === 'PieChart'
                      ? 'none'
                      : { position: 'right' },
-               height: googleChartOptions.height || '454px',
+               height: googleChartOptions.height || '483px',
                width: googleChartOptions.width || '100%',
                title: googleChartOptions.title || chartTitle,
             }}
