@@ -17,6 +17,7 @@ import {
    Payments,
    Pickup,
    Delivery,
+   Store,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -86,6 +87,8 @@ export const OnDemandSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="availability" title="Availability">
                <Payments update={update} />
+               <Spacer size="24px" />
+               <Store update={update} />
                <Spacer size="24px" />
                <Pickup update={update} />
                <Spacer size="24px" />
