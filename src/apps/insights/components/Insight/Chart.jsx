@@ -1,13 +1,13 @@
+import { Checkbox, TextButton } from '@dailykit/ui'
 import React, { useState } from 'react'
-import styled from 'styled-components'
 import { Chart as GoogleChart } from 'react-google-charts'
+import styled from 'styled-components'
 import '../../../../shared/styled/tableStyles.css'
-import Modal from '../Modal'
-import { TextButton, Text, Checkbox, RadioGroup } from '@dailykit/ui'
-import { DropdownItem, Dropdown } from '../DropdownMenu'
-
-import Option from './Option'
 import { useChart } from '../../hooks/useChart'
+import { Container } from '../Container'
+import { Dropdown, DropdownItem } from '../DropdownMenu'
+import Option from './Option'
+import { Flex } from '../../../../shared/components/Flex'
 
 export default function Chart({
    chartOptions,
@@ -18,12 +18,14 @@ export default function Chart({
    updateOptions,
    optionVariables,
 }) {
-   const [showModal, setShowModal] = useState(false)
    const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
    const [yColumns, setYColumns] = useState([])
    const [slice, setSlice] = useState('')
    const [metrices, setMetrices] = useState([])
+
+   // prettier-ignore
+   const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
 
    const { data } = useChart(chart, rawData, {
       chartType,
@@ -33,13 +35,9 @@ export default function Chart({
       metrices,
    })
 
-   console.log('type', chartType)
-
    return (
-      <>
+      <Container>
          <ChartConfig
-            showModal={showModal}
-            setShowModal={setShowModal}
             setXColumn={setXColumn}
             allowedCharts={chart.config}
             yColumns={yColumns}
@@ -63,24 +61,16 @@ export default function Chart({
                   chartType.type === 'PieChart'
                      ? 'none'
                      : { position: 'right' },
-               hAxis: { slantedText: false },
                height: chartOptions.height || '454px',
                width: chartOptions.width || '100%',
                ...chartOptions,
+               title: chartTitle,
             }}
          />
-
-         <ChartConfigContainer>
-            <TextButton onClick={() => setShowModal(true)} type="solid">
-               Config
-            </TextButton>
-         </ChartConfigContainer>
-      </>
+      </Container>
    )
 }
 function ChartConfig({
-   showModal,
-   setShowModal,
    setXColumn,
    allowedCharts,
    yColumns,
@@ -95,38 +85,30 @@ function ChartConfig({
    setChartType,
 }) {
    return (
-      <Modal show={showModal} close={setShowModal} width="40%">
-         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <Text as="h1">Chart Types</Text>
-            <RadioGroup
-               options={allowedCharts.map((chart, index) => ({
-                  ...chart,
-                  index,
-                  id: index,
-                  title: chart.type,
-                  chartTitle: chart.title,
-               }))}
-               active={chartType.index}
-               onChange={option =>
-                  setChartType({ ...option, title: option.chartTitle })
-               }
-            />
-         </div>
-
-         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <ChartOptions
-               setXColumn={setXColumn}
-               allowedCharts={allowedCharts}
-               yColumns={yColumns}
-               setYColumns={setYColumns}
-               chartType={chartType}
-               setSlice={setSlice}
-               setMetrices={setMetrices}
-            />
+      <Container>
+         <Flex container justifyContent="space-between">
+            <Flex container>
+               <ChartTypesMenu
+                  allowedCharts={allowedCharts}
+                  chartType={chartType}
+                  setChartType={setChartType}
+               />
+               <span style={{ width: '1rem' }} />
+               {allowedCharts.length ? (
+                  <ChartOptions
+                     setXColumn={setXColumn}
+                     allowedCharts={allowedCharts}
+                     yColumns={yColumns}
+                     setYColumns={setYColumns}
+                     chartType={chartType}
+                     setSlice={setSlice}
+                     setMetrices={setMetrices}
+                  />
+               ) : null}
+            </Flex>
 
             {!includeTable ? (
                <>
-                  <span style={{ width: '20px' }} />
                   <Option
                      options={options}
                      state={optionVariables}
@@ -134,10 +116,39 @@ function ChartConfig({
                   />
                </>
             ) : null}
-         </div>
-      </Modal>
+         </Flex>
+      </Container>
    )
-   // return null
+}
+
+function ChartTypesMenu({ chartType, allowedCharts, setChartType }) {
+   const [show, setShow] = useState(false)
+
+   if (allowedCharts.length > 1)
+      return (
+         <Dropdown
+            withIcon
+            title={chartType.type}
+            show={show}
+            setShow={setShow}
+         >
+            {allowedCharts.map((chart, index) => {
+               return (
+                  <DropdownItem
+                     onClick={() => {
+                        setChartType({ ...chart, index })
+                        setShow(false)
+                     }}
+                     key={chartType.index}
+                  >
+                     {chart.type}
+                  </DropdownItem>
+               )
+            })}
+         </Dropdown>
+      )
+
+   return null
 }
 
 function ChartOptions({
@@ -221,23 +232,27 @@ function ChartOptions({
 
    return (
       <>
-         <Dropdown title="Label" withIcon show={showX} setShow={setShowX}>
-            {allowedCharts.length &&
-               xOrSlice.map(column => {
-                  const label = typeof column === 'string' ? column : column.key
-                  return (
-                     <DropdownItem
-                        key={label}
-                        onClick={() => handleXOrMetrices(label)}
-                     >
-                        {label}
-                     </DropdownItem>
-                  )
-               })}
-         </Dropdown>
-
-         <Dropdown title="sources" withIcon show={showY} setShow={setShowY}>
-            {allowedCharts.length && (
+         {xOrSlice.length > 1 ? (
+            <>
+               <Dropdown title="Label" withIcon show={showX} setShow={setShowX}>
+                  {xOrSlice.map(column => {
+                     const label =
+                        typeof column === 'string' ? column : column.key
+                     return (
+                        <DropdownItem
+                           key={label}
+                           onClick={() => handleXOrMetrices(label)}
+                        >
+                           {label}
+                        </DropdownItem>
+                     )
+                  })}
+               </Dropdown>
+               <span style={{ width: '1rem' }} />
+            </>
+         ) : null}
+         {yOrMetrices.length > 1 ? (
+            <Dropdown title="sources" withIcon show={showY} setShow={setShowY}>
                <>
                   {yOrMetrices.map(column => {
                      return (
@@ -272,8 +287,8 @@ function ChartOptions({
                      </DropdownItem>
                   )}
                </>
-            )}
-         </Dropdown>
+            </Dropdown>
+         ) : null}
       </>
    )
 }

@@ -36,8 +36,6 @@ export default function Insight({
       includeChartData: includeChart,
    })
 
-   // const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
-
    return (
       <>
          <StyledContainer alignment={alignment} position={tablePosition}>
