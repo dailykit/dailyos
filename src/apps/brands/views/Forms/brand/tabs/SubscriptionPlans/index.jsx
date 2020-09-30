@@ -7,36 +7,33 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../../tableOption'
-import { BRANDS, COLLECTIONS } from '../../../../../graphql'
+import { BRANDS, PLANS } from '../../../../../graphql'
 import { Flex, InlineLoader } from '../../../../../../../shared/components'
 
-export const OnDemandCollections = () => {
+export const SubscriptionPlans = () => {
    const params = useParams()
    const tableRef = React.useRef()
-   const [collections, setCollections] = React.useState({})
-   const [updateBrandCollection] = useMutation(BRANDS.UPSERT_BRAND_COLLECTION, {
+   const [plans, setPlans] = React.useState({})
+   const [updateBrandCollection] = useMutation(BRANDS.UPSERT_BRAND_TITLE, {
       onCompleted: () => toast.success('Successfully updated!'),
       onError: () => toast.error('Failed to update, please try again!'),
    })
-   const { loading } = useSubscription(COLLECTIONS.LIST, {
+   const { loading } = useSubscription(PLANS.LIST, {
       variables: {
          brandId: {
             _eq: params.id,
          },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { collections: list = {} } = {} } = {},
+         subscriptionData: { data: { titles = {} } = {} } = {},
       }) => {
          const transform = node => ({
             ...node,
-            endTime: node.endTime || 'N/A',
-            rrule: node.rrule?.text || 'N/A',
-            startTime: node.startTime || 'N/A',
             totalBrands: node.totalBrands.aggregate.count,
             isActive: isEmpty(node.brands) ? false : node.brands[0].isActive,
          })
 
-         setCollections({ ...list, nodes: list.nodes.map(transform) })
+         setPlans({ ...titles, nodes: titles.nodes.map(transform) })
       },
    })
 
@@ -45,8 +42,8 @@ export const OnDemandCollections = () => {
          variables: {
             object: {
                isActive,
-               collectionId: id,
                brandId: params.id,
+               subscriptionTitleId: id,
             },
          },
       })
@@ -55,31 +52,9 @@ export const OnDemandCollections = () => {
    const columns = React.useMemo(
       () => [
          {
-            title: 'Name',
-            field: 'name',
+            title: 'Title',
+            field: 'title',
             headerFilter: true,
-         },
-         {
-            title: 'Start Time',
-            field: 'startTime',
-         },
-         {
-            title: 'End Time',
-            field: 'endTime',
-         },
-         {
-            title: 'Availability',
-            field: 'rrule',
-         },
-         {
-            headerFilter: true,
-            title: 'Total Categories',
-            field: 'details.categoriesCount',
-         },
-         {
-            headerFilter: true,
-            title: 'Total Products',
-            field: 'details.productsCount',
          },
          {
             headerFilter: true,
@@ -99,21 +74,23 @@ export const OnDemandCollections = () => {
 
    return (
       <Flex padding="16px">
-         <Text as="h2">Collections ({collections?.aggregate?.count || 0})</Text>
+         <Text as="h2">
+            Subscription Plans ({plans?.aggregate?.count || 0})
+         </Text>
          <Spacer size="24px" />
          {loading ? (
             <InlineLoader />
          ) : (
             <>
-               {collections?.aggregate?.count > 0 ? (
+               {plans?.aggregate?.count > 0 ? (
                   <ReactTabulator
                      ref={tableRef}
                      columns={columns}
                      options={tableOptions}
-                     data={collections?.nodes || []}
+                     data={plans?.nodes || []}
                   />
                ) : (
-                  <span>No Collections yet!</span>
+                  <span>No Plans yet!</span>
                )}
             </>
          )}

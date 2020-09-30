@@ -100,11 +100,26 @@ export const BRANDS = {
          }
       }
    `,
+   UPSERT_BRAND_TITLE: gql`
+      mutation upsertBrandTitle(
+         $object: subscription_brand_subscriptionTitle_insert_input!
+      ) {
+         upsertBrandTitle: insert_subscription_brand_subscriptionTitle_one(
+            object: $object
+            on_conflict: {
+               constraint: shop_subscriptionTitle_pkey
+               update_columns: isActive
+            }
+         ) {
+            isActive
+         }
+      }
+   `,
 }
 
 export const COLLECTIONS = {
    LIST: gql`
-      subscription collections($brandId: Int_comparison_exp = {}) {
+      subscription collections($brandId: Int_comparison_exp!) {
          collections: collectionsAggregate {
             aggregate {
                count(columns: id)
@@ -116,6 +131,30 @@ export const COLLECTIONS = {
                   productsCount
                   categoriesCount
                }
+               totalBrands: brands_aggregate {
+                  aggregate {
+                     count(columns: brandId)
+                  }
+               }
+               brands(where: { brandId: $brandId }) {
+                  isActive
+               }
+            }
+         }
+      }
+   `,
+}
+
+export const PLANS = {
+   LIST: gql`
+      subscription titles($brandId: Int_comparison_exp!) {
+         titles: subscription_subscriptionTitle_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               title
                totalBrands: brands_aggregate {
                   aggregate {
                      count(columns: brandId)

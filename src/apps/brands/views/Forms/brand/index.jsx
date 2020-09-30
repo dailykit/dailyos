@@ -19,8 +19,12 @@ import {
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
-import { OnDemandSettings, OnDemandCollections } from './tabs'
 import { Flex, InlineLoader } from '../../../../../shared/components'
+import {
+   OnDemandSettings,
+   OnDemandCollections,
+   SubscriptionPlans,
+} from './tabs'
 
 export const Brand = () => {
    const params = useParams()
@@ -109,6 +113,7 @@ export const Brand = () => {
             <HorizontalTabList>
                <HorizontalTab>On Demand Settings</HorizontalTab>
                <HorizontalTab>On Demand Collections</HorizontalTab>
+               <HorizontalTab>Subscription Plans</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
@@ -116,6 +121,9 @@ export const Brand = () => {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <OnDemandCollections />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <SubscriptionPlans />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
