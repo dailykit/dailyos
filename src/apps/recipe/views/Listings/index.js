@@ -1,7 +1,5 @@
-import RecipesListing from './RecipesListing';
-import IngredientsListing from './IngredientsListing';
+import RecipesListing from './RecipesListing'
+import IngredientsListing from './IngredientsListing'
+import ProductsListing from './ProductsListing'
 
-export {
-    RecipesListing,
-    IngredientsListing
-}
+export { RecipesListing, IngredientsListing, ProductsListing }
