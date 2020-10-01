@@ -95,7 +95,7 @@ export const useAccess = (route = '') => {
          const index = routes.findIndex(node => node.title === title)
          return index === -1 ? false : routes[index].value
       },
-      [state.routes]
+      [state.routes, route]
    )
 
    return {

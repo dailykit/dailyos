@@ -42,6 +42,7 @@ const StyledTabs = styled(Tabs)(css`
 `)
 
 const StyledTabList = styled(TabList)(css`
+   padding: 0 !important;
    border-bottom: 1px solid #d7d7d7;
    [data-selected] {
       color: #093880;
@@ -65,8 +66,7 @@ const StyledTabPanels = styled(TabPanels)(css`
 `)
 
 const StyledTabPanel = styled(TabPanel)(css`
-   overflow-y: auto;
-   height: calc(100% - 1px);
+   overflow: hidden;
    :focus {
       outline: none;
    }

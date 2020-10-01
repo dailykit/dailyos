@@ -48,6 +48,11 @@ const Insights = Loadable({
    loading: Loader,
 })
 
+const Brands = Loadable({
+   loader: () => import('./apps/brands'),
+   loading: Loader,
+})
+
 const App = () => {
    return (
       <>
@@ -100,6 +105,11 @@ const App = () => {
                            <div>Insights</div>
                         </Link>
                      </AppItem>
+                     <AppItem>
+                        <Link to="/brands">
+                           <div>Brands</div>
+                        </Link>
+                     </AppItem>
                   </AppList>
                </Route>
                <Route path="/inventory" component={Inventory} />
@@ -111,6 +121,7 @@ const App = () => {
                <Route path="/crm" component={CRM} />
                <Route path="/subscription" component={Subscription} />
                <Route path="/insights" component={Insights} />
+               <Route path="/brands" component={Brands} />
             </Switch>
          </Router>
          <Lang />

@@ -1196,10 +1196,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-"@dailykit/ui@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.7.5.tgz#c4aa4791f8753919ba66d8b94221c94f32ee6ae2"
-  integrity sha512-rsDeUSG+SAfcR7YENQCgjbrnrX6l8wKI+C7i5pDK5r6dpScZ+/eLu4QD8HyBNFu5Ty0KN/Nbrx2bjaY7gZwGJQ==
+"@dailykit/ui@^0.7.75":
+  version "0.7.75"
+  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.7.75.tgz#72c46807fb841b3580d7bc578b81c2b7b14747ef"
+  integrity sha512-JbLhmn4IsYZLjWZpVA9VaICxm3iZp5V3JHgtEvcU/iouvqq5YyFG1Qd6GbmuYdl7xKxEr2VQ0h2NDg5SWBQZ5w==
 
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
