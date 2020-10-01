@@ -64,60 +64,44 @@ export const StepsLabel = ({ update }) => {
    }
 
    return (
-      <div id="steps-label">
+      <div id="steps-labels">
          <Flex>
-            <Flex>
-               <Text as="h3">Checkout Label</Text>
-               <Spacer size="4px" />
+            <Flex container alignItems="center">
                <Input
-                  label=""
                   type="text"
                   name="checkout"
+                  label="Checkout Label"
                   value={form.checkout}
                   style={{ width: '240px' }}
-                  placeholder="Enter checkout label"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
-            </Flex>
-            <Spacer size="24px" />
-            <Flex>
-               <Text as="h3">Register Label</Text>
-               <Spacer size="4px" />
+               <Spacer size="16px" xAxis />
                <Input
-                  label=""
                   type="text"
                   name="register"
+                  label="Register Label"
                   value={form.register}
                   style={{ width: '240px' }}
-                  placeholder="Enter register label"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
             </Flex>
             <Spacer size="24px" />
-            <Flex>
-               <Text as="h3">Select Menu Label</Text>
-               <Spacer size="4px" />
+            <Flex container alignItems="center">
                <Input
-                  label=""
                   type="text"
                   name="selectMenu"
                   value={form.selectMenu}
+                  label="Select Menu Label"
                   style={{ width: '240px' }}
-                  placeholder="Enter select menu label"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
-            </Flex>
-            <Spacer size="24px" />
-            <Flex>
-               <Text as="h3">Select Delivery Label</Text>
-               <Spacer size="4px" />
+               <Spacer size="16px" xAxis />
                <Input
-                  label=""
                   type="text"
                   name="selectDelivery"
                   value={form.selectDelivery}
                   style={{ width: '240px' }}
-                  placeholder="Enter select delivery label"
+                  label="Select Delivery Label"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
             </Flex>
