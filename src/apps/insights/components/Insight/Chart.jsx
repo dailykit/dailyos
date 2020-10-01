@@ -12,9 +12,9 @@ export default function Chart({
    chart,
    rawData,
    options,
-   includeTableData,
-   updateOptions,
    optionVariables,
+   updateOptions,
+   showOptions,
 }) {
    const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
@@ -43,11 +43,11 @@ export default function Chart({
             chartType={chartType}
             setSlice={setSlice}
             setMetrices={setMetrices}
-            options={options}
-            includeTable={includeTableData}
-            updateOptions={updateOptions}
             setChartType={setChartType}
+            options={options}
             optionVariables={optionVariables}
+            updateOptions={updateOptions}
+            showOptions={showOptions}
          />
          <GoogleChart
             data={data}
@@ -76,11 +76,11 @@ function ChartConfig({
    chartType,
    setSlice,
    setMetrices,
-   options,
-   includeTable,
-   updateOptions,
-   optionVariables,
    setChartType,
+   options,
+   optionVariables,
+   updateOptions,
+   showOptions,
 }) {
    return (
       <Container>
@@ -104,16 +104,13 @@ function ChartConfig({
                   />
                ) : null}
             </Flex>
-
-            {!includeTable ? (
-               <>
-                  <Option
-                     options={options}
-                     state={optionVariables}
-                     updateOptions={updateOptions}
-                  />
-               </>
-            ) : null}
+            {showOptions && (
+               <Option
+                  options={options}
+                  state={optionVariables}
+                  updateOptions={updateOptions}
+               />
+            )}
          </Flex>
       </Container>
    )
