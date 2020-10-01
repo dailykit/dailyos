@@ -1,5 +1,6 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
 
@@ -7,12 +8,14 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const Delivery = ({ update }) => {
+   const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isAvailable, setIsAvailable] = React.useState(false)
    useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Delivery Availability' },
          type: { _eq: 'availability' },
+         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { storeSettings = [] } = {} } = {},

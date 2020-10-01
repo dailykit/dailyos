@@ -36,6 +36,13 @@ export const BRANDS = {
          }
       }
    `,
+   CREATE_BRAND: gql`
+      mutation createBrand($object: brands_brand_insert_input!) {
+         createBrand(object: $object) {
+            id
+         }
+      }
+   `,
    UPDATE_BRAND: gql`
       mutation updateBrand($id: Int!, $_set: brands_brand_set_input!) {
          updateBrand(pk_columns: { id: $id }, _set: $_set) {
@@ -95,10 +102,18 @@ export const BRANDS = {
       subscription storeSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
+         $brandId: Int_comparison_exp!
       ) {
-         storeSettings(where: { identifier: $identifier, type: $type }) {
+         storeSettings(
+            where: {
+               identifier: $identifier
+               type: $type
+               brand: { brandId: $brandId }
+            }
+         ) {
             id
             brand {
+               brandId
                value
             }
          }
@@ -108,9 +123,14 @@ export const BRANDS = {
       subscription subscriptionSetting(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
+         $brandId: Int_comparison_exp!
       ) {
          subscriptionSetting: brands_subscriptionStoreSetting(
-            where: { identifier: $identifier, type: $type }
+            where: {
+               identifier: $identifier
+               type: $type
+               brand: { brandId: $brandId }
+            }
          ) {
             id
             brand {

@@ -1,5 +1,6 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import {
    Text,
@@ -22,6 +23,7 @@ import {
 } from '../../../../../../../../../shared/components'
 
 export const Slides = ({ update }) => {
+   const params = useParams()
    const [slides, setSlides] = React.useState([])
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [settingId, setSettingId] = React.useState(null)
@@ -30,6 +32,7 @@ export const Slides = ({ update }) => {
       variables: {
          identifier: { _eq: 'Slides' },
          type: { _eq: 'visual' },
+         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { storeSettings = [] } = {} } = {},

@@ -1,5 +1,6 @@
 import React from 'react'
 import { isEmpty, isNull } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
 
@@ -7,6 +8,7 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const Contact = ({ update }) => {
+   const params = useParams()
    const [form, setForm] = React.useState({
       email: '',
       phoneNo: '',
@@ -16,6 +18,7 @@ export const Contact = ({ update }) => {
       variables: {
          identifier: { _eq: 'Contact' },
          type: { _eq: 'brand' },
+         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { subscriptionSetting = [] } = {} } = {},

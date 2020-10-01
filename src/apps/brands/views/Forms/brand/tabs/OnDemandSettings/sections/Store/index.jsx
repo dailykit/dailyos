@@ -1,5 +1,6 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Toggle, Input } from '@dailykit/ui'
 
@@ -7,6 +8,7 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const Store = ({ update }) => {
+   const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isOpen, setIsOpen] = React.useState(false)
    const [from, setFrom] = React.useState('')
@@ -16,6 +18,7 @@ export const Store = ({ update }) => {
       variables: {
          identifier: { _eq: 'Store Availability' },
          type: { _eq: 'availability' },
+         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { storeSettings = [] } = {} } = {},

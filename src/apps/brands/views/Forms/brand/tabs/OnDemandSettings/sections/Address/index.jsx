@@ -1,5 +1,6 @@
 import React from 'react'
 import { isEmpty, isNull } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import {
    Text,
@@ -15,6 +16,7 @@ import { BRANDS } from '../../../../../../../graphql'
 import { Flex } from '../../../../../../../../../shared/components'
 
 export const Address = ({ update }) => {
+   const params = useParams()
    const [address, setAddress] = React.useState({})
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -23,6 +25,7 @@ export const Address = ({ update }) => {
       variables: {
          identifier: { _eq: 'Location' },
          type: { _eq: 'availability' },
+         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { storeSettings = [] } = {} } = {},
@@ -62,6 +65,7 @@ export const Address = ({ update }) => {
 }
 
 const normalizeAddress = (address = {}) => {
+   if (isEmpty(address)) return 'No address added yet!'
    let result = ''
    if ('line1' in address) {
       result += address.line1

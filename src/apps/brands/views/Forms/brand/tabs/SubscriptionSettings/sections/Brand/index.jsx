@@ -1,5 +1,6 @@
 import React from 'react'
 import { isEmpty, isNull } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import {
    Input,
@@ -23,6 +24,7 @@ import {
 } from '../../../../../../../../../shared/components'
 
 export const Brand = ({ update }) => {
+   const params = useParams()
    const [form, setForm] = React.useState({
       url: '',
       name: '',
@@ -38,6 +40,7 @@ export const Brand = ({ update }) => {
       variables: {
          identifier: { _eq: 'theme-brand' },
          type: { _eq: 'brand' },
+         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { subscriptionSetting = [] } = {} } = {},
