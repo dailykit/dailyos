@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import { isEmpty, isNull } from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 import {
@@ -19,16 +20,16 @@ export const Address = ({ update }) => {
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'Location' },
          type: { _eq: 'availability' },
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { storeSettings = [] } = {} } = {},
+         subscriptionData: { data: { subscriptionSetting = [] } = {} } = {},
       }) => {
-         if (!isEmpty(storeSettings)) {
-            const { brand, id } = storeSettings[0]
+         if (!isEmpty(subscriptionSetting)) {
+            const { brand, id } = subscriptionSetting[0]
             setSettingId(id)
             if (!isNull(brand) && !isEmpty(brand)) {
                setAddress(brand.value)
@@ -62,23 +63,24 @@ export const Address = ({ update }) => {
 }
 
 const normalizeAddress = (address = {}) => {
+   if (isEmpty(address)) return 'No Address added yet!'
    let result = ''
-   if ('line1' in address) {
+   if (address?.line1) {
       result += address.line1
    }
-   if ('line2' in address) {
+   if (address?.line2) {
       result += ', ' + address.line2
    }
-   if ('city' in address) {
+   if (address?.city) {
       result += ', ' + address.city
    }
-   if ('state' in address) {
+   if (address?.state) {
       result += ', ' + address.state
    }
-   if ('country' in address) {
+   if (address?.country) {
       result += ', ' + address.country
    }
-   if ('zipcode' in address) {
+   if (address?.zipcode) {
       result += ', ' + address.zipcode
    }
    return result
