@@ -5,12 +5,14 @@ export const GET_INSIGHT = gql`
       insight(title: $title) {
          title
          availableOptions
+         filters
          defaultOptions
          query
          switches
          charts {
             id
             config
+            layoutType
          }
       }
    }

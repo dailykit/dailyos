@@ -1,9 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useState } from 'react'
-
 import { GET_INSIGHT } from '../graphql'
-import { transformer, buildOptions } from '../utils/transformer'
+import { buildOptions, transformer } from '../utils/transformer'
 
 function onError(error) {
    console.log(error)
@@ -63,6 +62,7 @@ export const useInsights = (
             availableOptions: null,
             switches: null,
             id: null,
+            filters: null,
          },
       } = {},
    } = useQuery(GET_INSIGHT, {
@@ -94,6 +94,7 @@ export const useInsights = (
       transformedData = transformer(data, nodeKey)
 
    const whereObject = buildOptions(insight.availableOptions || {})
+   const filters = buildOptions(insight.filters || {})
 
    const result = {
       loading,
@@ -105,6 +106,7 @@ export const useInsights = (
       updateOptions: setVariableOptions,
       aggregates: data[nodeKey]?.aggregate,
       allowedCharts: insight.charts,
+      filters,
    }
 
    return result
