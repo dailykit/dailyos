@@ -24,6 +24,7 @@ import {
    OnDemandSettings,
    OnDemandCollections,
    SubscriptionPlans,
+   SubscriptionSettings,
 } from './tabs'
 
 export const Brand = () => {
@@ -113,6 +114,7 @@ export const Brand = () => {
             <HorizontalTabList>
                <HorizontalTab>On Demand Settings</HorizontalTab>
                <HorizontalTab>On Demand Collections</HorizontalTab>
+               <HorizontalTab>Subscription Settings</HorizontalTab>
                <HorizontalTab>Subscription Plans</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
@@ -121,6 +123,9 @@ export const Brand = () => {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <OnDemandCollections />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <SubscriptionSettings />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <SubscriptionPlans />

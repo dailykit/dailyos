@@ -44,44 +44,78 @@ export const BRANDS = {
       }
    `,
    ON_DEMAND_SETTINGS_TYPES: gql`
-      subscription brandOnDemandSettings {
-         brandOnDemandSettings: brands_brand_storeSetting {
-            onDemandSetting {
-               id
-               type
-               identifier
-            }
+      subscription storeSettings {
+         storeSettings {
+            id
+            type
+            identifier
+         }
+      }
+   `,
+   SUBSCRIPTION_SETTINGS_TYPES: gql`
+      subscription subscriptionSettings {
+         subscriptionSettings: brands_subscriptionStoreSetting {
+            id
+            type
+            identifier
          }
       }
    `,
    UPDATE_ONDEMAND_SETTING: gql`
-      mutation updateOnDemandSetting(
-         $pk_columns: brands_brand_storeSetting_pk_columns_input!
-         $_set: brands_brand_storeSetting_set_input = {}
+      mutation upsertBrandOnDemandSetting(
+         $object: brands_brand_storeSetting_insert_input!
       ) {
-         updateOnDemandSetting: update_brands_brand_storeSetting_by_pk(
-            pk_columns: $pk_columns
-            _set: $_set
+         upsertBrandOnDemandSetting: insert_brands_brand_storeSetting_one(
+            object: $object
+            on_conflict: {
+               constraint: shop_storeSetting_pkey
+               update_columns: value
+            }
          ) {
-            brandId
-            storeSettingId
+            value
+         }
+      }
+   `,
+   UPDATE_SUBSCRIPTION_SETTING: gql`
+      mutation upsertBrandSubscriptionSetting(
+         $object: brands_brand_subscriptionStoreSetting_insert_input!
+      ) {
+         upsertBrandSubscriptionSetting: insert_brands_brand_subscriptionStoreSetting_one(
+            object: $object
+            on_conflict: {
+               constraint: brand_subscriptionStoreSetting_pkey
+               update_columns: value
+            }
+         ) {
+            value
          }
       }
    `,
    ONDEMAND_SETTING: gql`
-      subscription onDemandSetting(
+      subscription storeSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
-         $brandId: Int_comparison_exp!
       ) {
-         onDemandSetting: brands_brand_storeSetting(
-            where: {
-               onDemandSetting: { identifier: $identifier, type: $type }
-               brandId: $brandId
+         storeSettings(where: { identifier: $identifier, type: $type }) {
+            id
+            brand {
+               value
             }
+         }
+      }
+   `,
+   SUBSCRIPTION_SETTING: gql`
+      subscription subscriptionSetting(
+         $identifier: String_comparison_exp!
+         $type: String_comparison_exp!
+      ) {
+         subscriptionSetting: brands_subscriptionStoreSetting(
+            where: { identifier: $identifier, type: $type }
          ) {
-            value
-            storeSettingId
+            id
+            brand {
+               value
+            }
          }
       }
    `,
