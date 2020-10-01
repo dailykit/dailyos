@@ -15,6 +15,7 @@ export default function Chart({
    optionVariables,
    updateOptions,
    showOptions,
+   filters,
 }) {
    const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
@@ -48,6 +49,7 @@ export default function Chart({
             optionVariables={optionVariables}
             updateOptions={updateOptions}
             showOptions={showOptions}
+            filters={filters}
          />
          <GoogleChart
             data={data}
@@ -81,6 +83,7 @@ function ChartConfig({
    optionVariables,
    updateOptions,
    showOptions,
+   filters,
 }) {
    return (
       <Container>
@@ -110,6 +113,7 @@ function ChartConfig({
                   state={optionVariables}
                   updateOptions={updateOptions}
                   shiftLeft
+                  filters={filters}
                />
             )}
          </Flex>

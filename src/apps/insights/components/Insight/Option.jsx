@@ -13,12 +13,20 @@ import { isObject } from '../../../../shared/utils/isObject'
 
 import '../../../../shared/styled/datepicker.css'
 import { fromMixed } from '../../utils/textTransform'
+import Filters from '../Filters/Filters'
+import { Flex } from '../../../../shared/components/Flex'
 
 /**
  *
  * @param {{options: {}, state: {}, updateOptions: () => {}}} props
  */
-export default function Option({ options, state, updateOptions, shiftLeft }) {
+export default function Option({
+   options,
+   state,
+   updateOptions,
+   shiftLeft,
+   filters,
+}) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
    const [filterable, setFilterable] = useState(false)
@@ -32,19 +40,19 @@ export default function Option({ options, state, updateOptions, shiftLeft }) {
       if (!optionName.startsWith('_')) setSubmenu(optionName)
    }
 
+   const handleClick = () => {
+      const newOptions = buildOptionVariables(optionsState)
+      updateOptions(newOptions)
+      setShow(false)
+   }
+
+   const handleReset = () => {
+      updateOptions({})
+      setOptionsState({})
+      setShow(false)
+   }
+
    const renderApplyButton = () => {
-      const handleClick = () => {
-         const newOptions = buildOptionVariables(optionsState)
-         updateOptions(newOptions)
-         setShow(false)
-      }
-
-      const handleReset = () => {
-         updateOptions({})
-         setOptionsState({})
-         setShow(false)
-      }
-
       return (
          <div
             style={{ marginLeft: '12px', marginTop: '12px', display: 'flex' }}
@@ -118,54 +126,74 @@ export default function Option({ options, state, updateOptions, shiftLeft }) {
 
    if (submenu === 'main')
       return (
-         <Dropdown
-            title="Filters"
-            withIcon
-            show={show}
-            setShow={setShow}
-            shiftLeft={shiftLeft}
-         >
-            {Object.keys(options).map(option => {
-               return (
-                  <DropdownItem
-                     onClick={() => setDropdownView(option)}
-                     key={option}
-                  >
-                     {fromMixed(option)}
-                  </DropdownItem>
-               )
-            })}
+         <Flex container>
+            <Filters
+               filters={filters}
+               optionsState={optionsState}
+               setOptionsState={setOptionsState}
+               handleApply={handleClick}
+               handleReset={handleReset}
+            />
+            <span style={{ width: '1rem' }} />
+            <Dropdown
+               title="Filters"
+               withIcon
+               show={show}
+               setShow={setShow}
+               shiftLeft={shiftLeft}
+            >
+               {Object.keys(options).map(option => {
+                  return (
+                     <DropdownItem
+                        onClick={() => setDropdownView(option)}
+                        key={option}
+                     >
+                        {fromMixed(option)}
+                     </DropdownItem>
+                  )
+               })}
 
-            {filterable && renderApplyButton()}
-         </Dropdown>
+               {filterable && renderApplyButton()}
+            </Dropdown>
+         </Flex>
       )
 
    return (
-      <Dropdown
-         title="Filters"
-         withIcon
-         setShow={setShow}
-         show={show}
-         shiftLeft={shiftLeft}
-      >
-         <DropdownItem
-            onClick={() => setDropdownView('main')}
-            leftIcon={<LeftIcon color="#888d9d" />}
+      <Flex container>
+         <Filters
+            filters={filters}
+            optionsState={optionsState}
+            setOptionsState={setOptionsState}
+            handleApply={handleClick}
+            handleReset={handleReset}
          />
+         <span style={{ width: '1rem' }} />
+         <Dropdown
+            title="Filters"
+            withIcon
+            setShow={setShow}
+            show={show}
+            shiftLeft={shiftLeft}
+         >
+            <DropdownItem
+               onClick={() => setDropdownView('main')}
+               leftIcon={<LeftIcon color="#888d9d" />}
+            />
 
-         {isObject(options[submenu]) &&
-            Object.keys(options[submenu]).map(option => {
-               return (
-                  <DropdownItem
-                     onClick={() => setDropdownView(option)}
-                     key={option}
-                  >
-                     {renderOption(option)}
-                  </DropdownItem>
-               )
-            })}
+            {isObject(options[submenu]) &&
+               Object.keys(options[submenu]).map(option => {
+                  return (
+                     <DropdownItem
+                        onClick={() => setDropdownView(option)}
+                        key={option}
+                     >
+                        {renderOption(option)}
+                     </DropdownItem>
+                  )
+               })}
 
-         {filterable && renderApplyButton()}
-      </Dropdown>
+            {filterable && renderApplyButton()}
+         </Dropdown>
+      </Flex>
    )
 }

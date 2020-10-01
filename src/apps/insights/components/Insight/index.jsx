@@ -27,6 +27,7 @@ export default function Insight({
       updateOptions,
       aggregates,
       allowedCharts,
+      filters,
    } = useInsights(title, {
       includeTableData: includeTable,
       includeChartData: includeChart,
@@ -44,6 +45,7 @@ export default function Insight({
                   options={options}
                   tableData={tableData}
                   updateOptions={updateOptions}
+                  filters={filters}
                />
             ) : null}
             <br />
@@ -71,6 +73,7 @@ export default function Insight({
                               options={options}
                               state={optionVariables}
                               updateOptions={updateOptions}
+                              filters={filters}
                            />
                         ) : null}
                         <ReactTabulator
@@ -94,6 +97,7 @@ function HeroCharts({
    options,
    optionVariables,
    updateOptions,
+   filters,
 }) {
    if (!allowedCharts?.length) return null
 
@@ -121,6 +125,7 @@ function HeroCharts({
                options={options}
                updateOptions={updateOptions}
                showOptions
+               filters={filters}
             />
          </Box>
       ))
