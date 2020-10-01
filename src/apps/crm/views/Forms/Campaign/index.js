@@ -4,7 +4,14 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper, CenterDiv } from './styled'
+import {
+   StyledHeader,
+   StyledWrapper,
+   CenterDiv,
+   InputWrapper,
+   StyledRow,
+   StyledComp,
+} from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
 
@@ -15,6 +22,7 @@ const CampaignForm = () => {
    const [type, setType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
+   const [checkbox, setCheckbox] = useState(false)
    // Subscription
    const { loading } = useSubscription(CAMPAIGN_DATA, {
       variables: {
@@ -26,6 +34,7 @@ const CampaignForm = () => {
          setType(data.subscriptionData.data.campaign.type)
          setToggle(data.subscriptionData.data.campaign.isActive)
          setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
+         setCheckbox(data.subscriptionData.data.campaign.isRewardMulti)
       },
    })
 
@@ -66,32 +75,50 @@ const CampaignForm = () => {
       }
    }
 
+   const updateCheckbox = () => {
+      if (checkbox || !checkbox) {
+         updateCoupon({
+            variables: {
+               id: campaignId,
+               set: {
+                  isRewardMulti: !checkbox,
+               },
+            },
+         })
+      }
+   }
+
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Campaign', '/crm/campaign')
       }
    }, [addTab, tab])
 
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <CenterDiv>
-            <Text as="title">Campaign Type: {type}</Text>
-         </CenterDiv>
-         <StyledHeader gridCol="10fr 1fr">
-            <Input
-               type="text"
-               label="Campaign Name"
-               name="code"
-               value={campaignTitle}
-               onChange={e => setCampaignTitle(e.target.value)}
-               onBlur={updateCampaignTitle}
-            />
+         <StyledHeader gridCol="10fr 1.5fr">
+            <InputWrapper>
+               <Input
+                  type="text"
+                  label="Campaign Name"
+                  name="code"
+                  value={campaignTitle}
+                  onChange={e => setCampaignTitle(e.target.value)}
+                  onBlur={updateCampaignTitle}
+               />
+            </InputWrapper>
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
-         <DetailsComp state={state} />
-         <ConditionComp state={state} />
-         <RewardComp state={state} />
+         <StyledComp>
+            <DetailsComp state={state} campaignType={type} />
+            <ConditionComp state={state} />
+            <RewardComp
+               state={state}
+               checkbox={checkbox}
+               updateCheckbox={updateCheckbox}
+            />
+         </StyledComp>
       </StyledWrapper>
    )
 }

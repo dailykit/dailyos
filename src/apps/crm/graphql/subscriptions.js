@@ -75,6 +75,7 @@ export const COUPON_DATA = gql`
          id
          code
          isActive
+         isRewardMulti
          metaDetails
          visibleConditionId
       }
@@ -93,6 +94,7 @@ export const CAMPAIGN_DATA = gql`
          campaignType {
             rewardTypes {
                rewardType {
+                  id
                   value
                }
             }
@@ -120,6 +122,19 @@ export const REWARD_TYPE = gql`
 export const REWARD_DATA_BY_COUPON_ID = gql`
    subscription REWARD_DATA_BY_COUPON_ID($couponId: Int!) {
       crm_reward(where: { couponId: { _eq: $couponId } }) {
+         conditionId
+         id
+         couponId
+         campaignId
+         priority
+         rewardValue
+         type
+      }
+   }
+`
+export const REWARD_DATA_BY_CAMPAIGN_ID = gql`
+   subscription REWARD_DATA_BY_CAMPAIGN_ID($campaignId: Int!) {
+      crm_reward(where: { campaignId: { _eq: $campaignId } }) {
          conditionId
          id
          couponId

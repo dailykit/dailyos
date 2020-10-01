@@ -9689,7 +9689,7 @@ react-router@5.1.2:
 
 react-rrule@0.1.1:
   version "0.1.1"
-  resolved "https://registry.npmjs.org/react-rrule/-/react-rrule-0.1.1.tgz#7830d4122f03e79e94a36eae40ede40e2a5a68b5"
+  resolved "https://registry.yarnpkg.com/react-rrule/-/react-rrule-0.1.1.tgz#7830d4122f03e79e94a36eae40ede40e2a5a68b5"
   integrity sha512-wngNB7W/EBAJ8L1Vnc1w5sQ4rU3X5JH4vwyrwfdjmiwiy67T6uI7/vBIJYNKA/A0oywn9FQq3cA5b2VgnOp7tQ==
   dependencies:
     rrule "2.6.4"

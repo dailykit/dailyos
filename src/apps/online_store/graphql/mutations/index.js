@@ -1,310 +1,66 @@
 import gql from 'graphql-tag'
 
-export const CREATE_INVENTORY_PRODUCT = gql`
-   mutation CreateInventoryProduct(
-      $objects: [onlineStore_inventoryProduct_insert_input!]!
-   ) {
-      createInventoryProduct(objects: $objects) {
-         returning {
-            id
-            name
-         }
-      }
-   }
-`
-
-export const DELETE_INVENTORY_PRODUCTS = gql`
-   mutation DeleteInventoryProducts($ids: [Int!]!) {
-      deleteInventoryProduct(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const UPDATE_INVENTORY_PRODUCT = gql`
-   mutation UpdateInventoryProduct(
-      $id: Int!
-      $set: onlineStore_inventoryProduct_set_input
-   ) {
-      updateInventoryProduct(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const CREATE_INVENTORY_PRODUCT_OPTIONS = gql`
-   mutation CreateInventoryProductOptions(
-      $objects: [onlineStore_inventoryProductOption_insert_input!]!
-   ) {
-      createInventoryProductOption(objects: $objects) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const UPDATE_INVENTORY_PRODUCT_OPTION = gql`
-   mutation UpdateInventoryProductOption(
-      $id: Int
-      $set: onlineStore_inventoryProductOption_set_input
-   ) {
-      updateInventoryProductOption(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const DELETE_INVENTORY_PRODUCT_OPTION = gql`
-   mutation DeleteInventoryProductOption($id: Int_comparison_exp) {
-      deleteInventoryProductOption(where: { id: $id }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
-   mutation CreateSimpleRecipeProduct(
-      $objects: [onlineStore_simpleRecipeProduct_insert_input!]!
-   ) {
-      createSimpleRecipeProduct(objects: $objects) {
-         returning {
-            id
-            name
-         }
-      }
-   }
-`
-
-export const DELETE_SIMPLE_RECIPE_PRODUCTS = gql`
-   mutation DeleteSimpleRecipeProducts($ids: [Int!]!) {
-      deleteSimpleRecipeProduct(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const UPDATE_SIMPLE_RECIPE_PRODUCT = gql`
-   mutation UpdateSimpleRecipeProduct(
-      $id: Int!
-      $set: onlineStore_simpleRecipeProduct_set_input
-   ) {
-      updateSimpleRecipeProduct(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
-   mutation CreateSimpleRecipeProductOption(
-      $objects: [onlineStore_simpleRecipeProductOption_insert_input!]!
-   ) {
-      createSimpleRecipeProductOption(objects: $objects) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION = gql`
-   mutation UpdateSimpleRecipeProductOption(
-      $id: Int
-      $set: onlineStore_simpleRecipeProductOption_set_input
-   ) {
-      updateSimpleRecipeProductOption(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
-   mutation DeleteSimpleRecipeProductOptions($ids: [Int!]!) {
-      deleteSimpleRecipeProductOption(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
-   mutation CreateCustomizableProduct(
-      $objects: [onlineStore_customizableProduct_insert_input!]!
-   ) {
-      createCustomizableProduct(objects: $objects) {
-         returning {
-            id
-            name
-         }
-      }
-   }
-`
-
-export const DELETE_CUSTOMIZABLE_PRODUCTS = gql`
-   mutation DeleteCustomizableProducts($ids: [Int!]!) {
-      deleteCustomizableProduct(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const UPDATE_CUSTOMIZABLE_PRODUCT = gql`
-   mutation UpdateCustomizableProduct(
-      $id: Int
-      $set: onlineStore_customizableProduct_set_input
-   ) {
-      updateCustomizableProduct(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
-   mutation CreateCustomizableProductOption(
-      $objects: [onlineStore_customizableProductOption_insert_input!]!
-   ) {
-      createCustomizableProductOption(objects: $objects) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const DELETE_CUSTOMIZABLE_PRODUCT_OPTION = gql`
-   mutation DeleteCustomizableProductOption($id: Int) {
-      deleteCustomizableProductOption(where: { id: { _eq: $id } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const CREATE_COMBO_PRODUCT = gql`
-   mutation CreateComboProduct(
-      $objects: [onlineStore_comboProduct_insert_input!]!
-   ) {
-      createComboProduct(objects: $objects) {
-         returning {
-            id
-            name
-         }
-      }
-   }
-`
-
-export const DELETE_COMBO_PRODUCTS = gql`
-   mutation DeleteComboProducts($ids: [Int!]!) {
-      deleteComboProduct(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const UPDATE_COMBO_PRODUCT = gql`
-   mutation UpdateComboProduct(
-      $id: Int!
-      $set: onlineStore_comboProduct_set_input
-   ) {
-      updateComboProduct(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-// {comboProductId: 10, label: ""}
-export const CREATE_COMBO_PRODUCT_COMPONENT = gql`
-   mutation CreateComboProductComponent(
-      $objects: [onlineStore_comboProductComponent_insert_input!]!
-   ) {
-      createComboProductComponent(objects: $objects) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-// {id: {_eq: 10}}, _set: {customizableProductId: 10, inventoryProductId: 10, simpleRecipeProductId: 10}
-export const UPDATE_COMBO_PRODUCT_COMPONENT = gql`
-   mutation UpdateComboProductComponent(
-      $id: Int!
-      $set: onlineStore_comboProductComponent_set_input
-   ) {
-      updateComboProductComponent(where: { id: { _eq: $id } }, _set: $set) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
-export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
-   mutation DeleteComboProductComponent($id: Int!) {
-      deleteComboProductComponent(where: { id: { _eq: $id } }) {
-         returning {
-            id
-         }
-      }
-   }
-`
-
 export const CREATE_COLLECTION = gql`
-   mutation CreateCollection($name: String!, $availability: jsonb) {
-      createMenuCollection(
-         objects: { name: $name, availability: $availability }
-      ) {
-         returning {
-            id
-            name
-         }
+   mutation CreateCollection($object: onDemand_collection_insert_input!) {
+      createCollection(object: $object) {
+         id
+         name
       }
    }
 `
 
-export const DELETE_COLLECTIONS = gql`
-   mutation DeleteCollections($ids: [Int!]!) {
-      deleteMenuCollection(where: { id: { _in: $ids } }) {
-         returning {
-            id
-         }
+export const DELETE_COLLECTION = gql`
+   mutation DeleteCollection($id: Int!) {
+      deleteCollection(id: $id) {
+         id
       }
    }
 `
 
 export const UPDATE_COLLECTION = gql`
-   mutation UpdateCollection(
-      $id: Int!
-      $set: onlineStore_menuCollection_set_input
+   mutation UpdateCollection($id: Int!, $set: onDemand_collection_set_input) {
+      updateCollection(pk_columns: { id: $id }, _set: $set) {
+         id
+      }
+   }
+`
+
+export const CREATE_COLLECTION_PRODUCT_CATEGORIES = gql`
+   mutation CreateCollectionProductCategories(
+      $objects: [onDemand_collection_productCategory_insert_input!]!
    ) {
-      updateMenuCollection(where: { id: { _eq: $id } }, _set: $set) {
+      createCollectionProductCategories(objects: $objects) {
          returning {
             id
          }
+      }
+   }
+`
+
+export const DELETE_COLLECTION_PRODUCT_CATEGORY = gql`
+   mutation DeleteCollectionProductCategory($id: Int!) {
+      deleteCollectionProductCategory(id: $id) {
+         id
+      }
+   }
+`
+
+export const CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS = gql`
+   mutation createCollectionProductCategoryProducts(
+      $objects: [onDemand_collection_productCategory_product_insert_input!]!
+   ) {
+      createCollectionProductCategoryProducts(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT = gql`
+   mutation DeleteCollectionProductCategoryProduct($id: Int!) {
+      deleteCollectionProductCategoryProduct(id: $id) {
+         id
       }
    }
 `
@@ -436,18 +192,20 @@ export const DELETE_CHARGE = gql`
    }
 `
 
-export const CREATE_MODIFIER = gql`
-   mutation CreateModifier($object: onlineStore_modifier_insert_input!) {
-      createModifier(object: $object) {
-         id
-      }
-   }
-`
-
-export const UPDATE_MODIFIER = gql`
-   mutation UpdateModifier($id: Int!, $set: onlineStore_modifier_set_input) {
-      updateModifier(pk_columns: { id: $id }, _set: $set) {
-         id
+export const UPSERT_BRAND_COLLECTION = gql`
+   mutation UpsertBrandCollection(
+      $object: onDemand_brand_collection_insert_input!
+   ) {
+      createBrandCollection(
+         object: $object
+         on_conflict: {
+            constraint: shop_collection_pkey
+            update_columns: isActive
+         }
+      ) {
+         brandId
+         collectionId
+         isActive
       }
    }
 `

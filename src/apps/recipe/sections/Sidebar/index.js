@@ -26,6 +26,11 @@ const Sidebar = ({ visible, toggleSidebar }) => {
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
             <StyledListItem
+               onClick={() => addTabHandler('Products', '/recipe/products')}
+            >
+               {t(address.concat('products'))}
+            </StyledListItem>
+            <StyledListItem
                onClick={() => addTabHandler('Recipes', '/recipe/recipes')}
             >
                {t(address.concat('recipes'))}

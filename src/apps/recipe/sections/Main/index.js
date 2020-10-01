@@ -9,6 +9,11 @@ import {
    RecipeForm,
    IngredientsListing,
    IngredientForm,
+   InventoryProductForm,
+   SimpleRecipeProductForm,
+   CustomizableProductForm,
+   ComboProductForm,
+   ProductsListing,
 } from '../../views'
 import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
@@ -104,6 +109,96 @@ const Main = () => {
                         {accessPermission('ROUTE_READ', 'ingredient')
                            ?.fallbackMessage ||
                            'You do not have sufficient permission to see ingredient details.'}
+                     </Text>
+                  </Flex>
+               )}
+            </Route>
+            <Route path="/recipe/products" exact>
+               {canAccessRoute('products') ? (
+                  <ProductsListing />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'products')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access products listing.'}
+                     </Text>
+                  </Flex>
+               )}
+            </Route>
+            <Route path="/recipe/inventory-products/:id" exact>
+               {canAccessRoute('inventory-product') ? (
+                  <InventoryProductForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'inventory-product')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to see inventory product details.'}
+                     </Text>
+                  </Flex>
+               )}
+            </Route>
+            <Route path="/recipe/simple-recipe-products/:id" exact>
+               {canAccessRoute('simple-recipe-product') ? (
+                  <SimpleRecipeProductForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'simple-recipe-product')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to see simple recipe product details.'}
+                     </Text>
+                  </Flex>
+               )}
+            </Route>
+            <Route path="/recipe/customizable-products/:id" exact>
+               {canAccessRoute('customizable-product') ? (
+                  <CustomizableProductForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'customizable-product')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to see customizable product details.'}
+                     </Text>
+                  </Flex>
+               )}
+            </Route>
+            <Route path="/recipe/combo-products/:id" exact>
+               {canAccessRoute('combo-product') ? (
+                  <ComboProductForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'combo-product')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to see combo product details.'}
                      </Text>
                   </Flex>
                )}

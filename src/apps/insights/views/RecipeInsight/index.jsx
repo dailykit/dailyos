@@ -9,7 +9,11 @@ const ReferralPlansListing = () => {
    const {
       data: { insights_insights: insights = [] } = {},
       loading,
-   } = useQuery(INSIGHTS)
+   } = useQuery(INSIGHTS, {
+      onError: error => {
+         console.log(error)
+      },
+   })
 
    if (loading) return <p>Loading...</p>
 
@@ -18,12 +22,10 @@ const ReferralPlansListing = () => {
          {insights.map(insight => {
             return (
                <Insight
-                  key={insight.id}
-                  id={insight.id}
-                  alignment="column"
+                  key={insight.title}
+                  title={insight.title}
                   includeChart
                   statsPosition="chart"
-                  tablePosition="left"
                />
             )
          })}

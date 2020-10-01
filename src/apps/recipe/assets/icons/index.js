@@ -13,6 +13,8 @@ import TickIcon from './Tick'
 import FileIcon from './File'
 import DollarIcon from './Dollar'
 import InfoIcon from './Info'
+import LinkIcon from './Link'
+import MinusIcon from './Minus'
 
 export {
    MenuIcon,
@@ -30,4 +32,6 @@ export {
    FileIcon,
    DollarIcon,
    InfoIcon,
+   LinkIcon,
+   MinusIcon,
 }
