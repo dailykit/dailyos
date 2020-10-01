@@ -136,7 +136,7 @@ export default function Option({
             />
             <span style={{ width: '1rem' }} />
             <Dropdown
-               title="Filters"
+               title="More Filters"
                withIcon
                show={show}
                setShow={setShow}
@@ -169,7 +169,7 @@ export default function Option({
          />
          <span style={{ width: '1rem' }} />
          <Dropdown
-            title="Filters"
+            title="More Filters"
             withIcon
             setShow={setShow}
             show={show}
