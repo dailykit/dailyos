@@ -91,7 +91,7 @@ export const SUPPLIER_ITEMS = gql`
 `
 
 export const INVENTORY_PRODUCTS = gql`
-   query InventoryProducts($where: onlineStore_inventoryProduct_bool_exp) {
+   query InventoryProducts($where: products_inventoryProduct_bool_exp) {
       inventoryProducts(where: $where) {
          id
          name
@@ -104,9 +104,7 @@ export const INVENTORY_PRODUCTS = gql`
 `
 
 export const SIMPLE_RECIPE_PRODUCTS = gql`
-   query SimpleRecipeProducts(
-      $where: onlineStore_simpleRecipeProduct_bool_exp
-   ) {
+   query SimpleRecipeProducts($where: products_simpleRecipeProduct_bool_exp) {
       simpleRecipeProducts(where: $where) {
          id
          name
@@ -138,9 +136,7 @@ export const SIMPLE_RECIPES = gql`
 `
 
 export const CUSTOMIZABLE_PRODUCTS = gql`
-   query CustomizableProducts(
-      $where: onlineStore_customizableProduct_bool_exp
-   ) {
+   query CustomizableProducts($where: products_customizableProduct_bool_exp) {
       customizableProducts(where: $where) {
          id
          name
@@ -151,7 +147,7 @@ export const CUSTOMIZABLE_PRODUCTS = gql`
 `
 
 export const COMBO_PRODUCTS = gql`
-   query ComboProducts($where: onlineStore_comboProduct_bool_exp) {
+   query ComboProducts($where: products_comboProduct_bool_exp) {
       comboProducts(where: $where) {
          id
          name
@@ -163,7 +159,7 @@ export const COMBO_PRODUCTS = gql`
 
 export const INVENTORY_PRODUCT_OPTIONS = gql`
    query InventoryProductOptions(
-      $where: onlineStore_inventoryProductOption_bool_exp
+      $where: products_inventoryProductOption_bool_exp
    ) {
       inventoryProductOptions(where: $where) {
          id
@@ -180,7 +176,7 @@ export const INVENTORY_PRODUCT_OPTIONS = gql`
 
 export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
    query SimpleRecipeProductOptions(
-      $where: onlineStore_simpleRecipeProductOption_bool_exp
+      $where: products_simpleRecipeProductOption_bool_exp
    ) {
       simpleRecipeProductOptions(where: $where) {
          id
