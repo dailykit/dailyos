@@ -136,7 +136,7 @@ function Filter({
          >
             {isObject(filters[filter]) &&
                Object.keys(filters[filter]).map(filterName => (
-                  <DropdownItem key={filterName} onClick={() => {}}>
+                  <DropdownItem key={filterName}>
                      {renderOption(filterName, filter)}
                   </DropdownItem>
                ))}
