@@ -102,15 +102,8 @@ export const BRANDS = {
       subscription storeSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
-         $brandId: Int_comparison_exp!
       ) {
-         storeSettings(
-            where: {
-               identifier: $identifier
-               type: $type
-               brand: { brandId: $brandId }
-            }
-         ) {
+         storeSettings(where: { identifier: $identifier, type: $type }) {
             id
             brand {
                brandId
@@ -123,17 +116,13 @@ export const BRANDS = {
       subscription subscriptionSetting(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
-         $brandId: Int_comparison_exp!
       ) {
          subscriptionSetting: brands_subscriptionStoreSetting(
-            where: {
-               identifier: $identifier
-               type: $type
-               brand: { brandId: $brandId }
-            }
+            where: { type: $type, identifier: $identifier }
          ) {
             id
             brand {
+               brandId
                value
             }
          }

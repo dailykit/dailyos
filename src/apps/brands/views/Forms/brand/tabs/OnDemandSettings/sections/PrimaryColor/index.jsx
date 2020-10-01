@@ -15,13 +15,21 @@ export const PrimaryColor = ({ update }) => {
       variables: {
          identifier: { _eq: 'Primary Color' },
          type: { _eq: 'visual' },
-         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { storeSettings = [] } = {} } = {},
       }) => {
          if (!isEmpty(storeSettings)) {
-            const { brand, id } = storeSettings[0]
+            const index = storeSettings.findIndex(
+               node => node?.brand?.brandId === Number(params.id)
+            )
+
+            if (index === -1) {
+               const { id } = storeSettings[0]
+               setSettingId(id)
+               return
+            }
+            const { brand, id } = storeSettings[index]
             setSettingId(id)
             if ('color' in brand.value) {
                setColor(brand.value.color)
@@ -41,7 +49,6 @@ export const PrimaryColor = ({ update }) => {
          <Flex container alignItems="center" justifyContent="space-between">
             <input
                type="color"
-               label=""
                name="color"
                value={color}
                onChange={e => setColor(e.target.value)}

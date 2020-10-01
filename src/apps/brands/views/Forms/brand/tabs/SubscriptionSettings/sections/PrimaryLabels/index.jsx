@@ -23,13 +23,21 @@ export const PrimaryLabels = ({ update }) => {
       variables: {
          identifier: { _eq: 'primary-labels' },
          type: { _eq: 'conventions' },
-         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { subscriptionSetting = [] } = {} } = {},
       }) => {
          if (!isEmpty(subscriptionSetting)) {
-            const { id, brand } = subscriptionSetting[0]
+            const index = subscriptionSetting.findIndex(
+               node => node?.brand?.brandId === Number(params.id)
+            )
+
+            if (index === -1) {
+               const { id } = subscriptionSetting[0]
+               setSettingId(id)
+               return
+            }
+            const { brand, id } = subscriptionSetting[index]
             setSettingId(id)
             if (!isNull(brand) && !isEmpty(brand)) {
                setForm(form => ({

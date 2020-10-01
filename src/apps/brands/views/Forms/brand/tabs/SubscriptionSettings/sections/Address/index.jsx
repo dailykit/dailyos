@@ -25,13 +25,21 @@ export const Address = ({ update }) => {
       variables: {
          identifier: { _eq: 'Location' },
          type: { _eq: 'availability' },
-         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { subscriptionSetting = [] } = {} } = {},
       }) => {
          if (!isEmpty(subscriptionSetting)) {
-            const { brand, id } = subscriptionSetting[0]
+            const index = subscriptionSetting.findIndex(
+               node => node?.brand?.brandId === Number(params.id)
+            )
+
+            if (index === -1) {
+               const { id } = subscriptionSetting[0]
+               setSettingId(id)
+               return
+            }
+            const { brand, id } = subscriptionSetting[index]
             setSettingId(id)
             if (!isNull(brand) && !isEmpty(brand)) {
                setAddress(brand.value)

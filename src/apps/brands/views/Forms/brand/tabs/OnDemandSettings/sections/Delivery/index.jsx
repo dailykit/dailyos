@@ -15,13 +15,21 @@ export const Delivery = ({ update }) => {
       variables: {
          identifier: { _eq: 'Delivery Availability' },
          type: { _eq: 'availability' },
-         brandId: { _eq: params.id },
       },
       onSubscriptionData: ({
          subscriptionData: { data: { storeSettings = [] } = {} } = {},
       }) => {
          if (!isEmpty(storeSettings)) {
-            const { brand, id } = storeSettings[0]
+            const index = storeSettings.findIndex(
+               node => node?.brand?.brandId === Number(params.id)
+            )
+
+            if (index === -1) {
+               const { id } = storeSettings[0]
+               setSettingId(id)
+               return
+            }
+            const { brand, id } = storeSettings[index]
             setSettingId(id)
             if ('isAvailable' in brand.value) {
                setIsAvailable(brand.value.isAvailable)
