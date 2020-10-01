@@ -451,3 +451,12 @@ export const APPS = gql`
       }
    }
 `
+
+export const ONLINE_PRINTERS = gql`
+   query printers {
+      printers(where: { state: { _eq: "online" } }) {
+         printNodeId
+         name
+      }
+   }
+`

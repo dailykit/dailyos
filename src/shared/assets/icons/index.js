@@ -39,3 +39,4 @@ export {
 export * from './Tick'
 export * from './ChevronUp'
 export * from './ChevronDown'
+export * from './Printer'
