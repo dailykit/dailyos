@@ -93,3 +93,17 @@ export const RECURRENCES = gql`
       }
    }
 `
+
+export const BRAND_COLLECTIONS = gql`
+   {
+      brandCollections: brands {
+         id
+         title
+         domain
+         collections {
+            collectionId
+            isActive
+         }
+      }
+   }
+`

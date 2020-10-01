@@ -4,6 +4,8 @@ import ReactRRule from '../../../../../../../shared/components/ReactRRule'
 import { toast } from 'react-toastify'
 import { TextButton } from '@dailykit/ui'
 
+import { CollectionBrands } from '../'
+
 import { UPDATE_COLLECTION } from '../../../../../graphql'
 
 import { StyledWrapper } from './styled'
@@ -46,12 +48,18 @@ const Availability = ({ state }) => {
    })
 
    return (
-      <StyledWrapper>
-         <ReactRRule value={rrule} onChange={val => setRrule(val.psqlObject)} />
-         <TextButton type="solid" onClick={save}>
-            Save
-         </TextButton>
-      </StyledWrapper>
+      <>
+         <StyledWrapper>
+            <ReactRRule
+               value={rrule}
+               onChange={val => setRrule(val.psqlObject)}
+            />
+            <TextButton type="solid" onClick={save}>
+               Save
+            </TextButton>
+         </StyledWrapper>
+         <CollectionBrands state={state} />
+      </>
    )
 }
 

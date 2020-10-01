@@ -191,3 +191,21 @@ export const DELETE_CHARGE = gql`
       }
    }
 `
+
+export const UPSERT_BRAND_COLLECTION = gql`
+   mutation UpsertBrandCollection(
+      $object: onDemand_brand_collection_insert_input!
+   ) {
+      createBrandCollection(
+         object: $object
+         on_conflict: {
+            constraint: shop_collection_pkey
+            update_columns: isActive
+         }
+      ) {
+         brandId
+         collectionId
+         isActive
+      }
+   }
+`
