@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { UPDATE_COUPON } from '../../../../../graphql'
 import BasicInfoTunnel from '../../../../../../../shared/components/BasicInfo'
 import HorizontalCard from '../../../../../../../shared/components/HorizontalCard'
+import { StyledCard } from './styled'
 
 const Details = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
@@ -44,10 +45,12 @@ const Details = ({ state }) => {
          {state?.metaDetails?.title ||
          state?.metaDetails?.description ||
          state?.metaDetails?.image ? (
-            <HorizontalCard
-               data={state?.metaDetails}
-               open={() => openTunnel(1)}
-            />
+            <StyledCard>
+               <HorizontalCard
+                  data={state?.metaDetails}
+                  open={() => openTunnel(1)}
+               />
+            </StyledCard>
          ) : (
             <ButtonTile
                type="primary"

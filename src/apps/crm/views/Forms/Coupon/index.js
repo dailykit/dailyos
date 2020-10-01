@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader, Checkbox, Text } from '@dailykit/ui'
+import { Toggle, Input, Loader } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledHeader, StyledWrapper, StyledComp, InputWrapper } from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import { ConditionComp, DetailsComp, RewardComp } from './components'
-import { InputWrapper } from './styled'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -92,7 +91,7 @@ const CouponForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  3fr 2fr">
+         <StyledHeader gridCol="10fr  1.5fr">
             <InputWrapper>
                <Input
                   type="text"
@@ -103,18 +102,21 @@ const CouponForm = () => {
                   onBlur={updateCodeTitle}
                />
             </InputWrapper>
-            <Checkbox id="label" checked={checkbox} onChange={updateCheckbox}>
-               Allow multiple rewards
-            </Checkbox>
             <Toggle
                checked={toggle}
                setChecked={updatetoggle}
                label="Coupon Active"
             />
          </StyledHeader>
-         <DetailsComp state={state} />
-         <ConditionComp state={state} />
-         <RewardComp state={state} />
+         <StyledComp>
+            <DetailsComp state={state} />
+            <ConditionComp state={state} />
+            <RewardComp
+               state={state}
+               updateCheckbox={updateCheckbox}
+               checkbox={checkbox}
+            />
+         </StyledComp>
       </StyledWrapper>
    )
 }
