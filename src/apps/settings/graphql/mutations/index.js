@@ -370,3 +370,24 @@ export const DELETE_USERS_APPS_ROLES = gql`
       }
    }
 `
+
+export const PRINT_JOB = gql`
+   mutation createPrintJob(
+      $contentType: String!
+      $printerId: Int!
+      $source: String!
+      $title: String!
+      $url: String!
+   ) {
+      createPrintJob(
+         contentType: $contentType
+         printerId: $printerId
+         source: $source
+         title: $title
+         url: $url
+      ) {
+         message
+         success
+      }
+   }
+`
