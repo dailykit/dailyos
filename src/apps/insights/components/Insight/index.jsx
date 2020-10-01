@@ -49,34 +49,12 @@ export default function Insight({
             <br />
 
             <FlexViewWrapper>
-               {allowedCharts
-                  ?.filter(chart => chart.layoutType === 'FLEX')
-                  .map(chart => {
-                     return (
-                        <Box
-                           style={{
-                              width: '100%',
-                              overflowX: 'auto',
-                              margin: '0 auto',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              height: '100%',
-                           }}
-                        >
-                           <Chart
-                              key={chart.id}
-                              aggregates={aggregates}
-                              rawData={tableData}
-                              options={options}
-                              includeTableData={includeTable}
-                              updateOptions={updateOptions}
-                              optionVariables={optionVariables}
-                              chart={chart}
-                           />
-                        </Box>
-                     )
-                  })}
+               {includeChart ? (
+                  <FlexCharts
+                     allowedCharts={allowedCharts}
+                     tableData={tableData}
+                  />
+               ) : null}
 
                {includeTable ? (
                   <>
@@ -88,7 +66,7 @@ export default function Insight({
                         {!includeChart ? (
                            <CounterBar aggregates={aggregates} />
                         ) : null}
-                        {includeTable ? (
+                        {!includeChart ? (
                            <Option
                               options={options}
                               state={optionVariables}
@@ -114,7 +92,6 @@ function HeroCharts({
    aggregates,
    tableData,
    options,
-   includeTable,
    optionVariables,
    updateOptions,
 }) {
@@ -138,16 +115,40 @@ function HeroCharts({
          >
             <CounterBar aggregates={aggregates} />
             <Chart
-               aggregates={aggregates}
                rawData={tableData}
-               options={options}
-               includeTableData={includeTable}
-               updateOptions={updateOptions}
-               optionVariables={optionVariables}
                chart={chart}
+               optionVariables={optionVariables}
+               options={options}
+               updateOptions={updateOptions}
+               showOptions
             />
          </Box>
       ))
+}
+
+function FlexCharts({ allowedCharts, tableData }) {
+   if (!allowedCharts?.length) return null
+
+   return allowedCharts
+      ?.filter(chart => chart.layoutType === 'FLEX')
+      .map(chart => {
+         return (
+            <Box
+               key={chart.id}
+               style={{
+                  width: '100%',
+                  overflowX: 'auto',
+                  margin: '0 auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  height: '100%',
+               }}
+            >
+               <Chart rawData={tableData} chart={chart} showOptions={false} />
+            </Box>
+         )
+      })
 }
 
 function CounterBar({ aggregates }) {
