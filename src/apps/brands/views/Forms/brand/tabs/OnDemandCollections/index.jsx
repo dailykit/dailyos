@@ -94,7 +94,7 @@ export const OnDemandCollections = () => {
             formatter: reactFormatter(<ToggleStatus update={toggleStatus} />),
          },
       ],
-      []
+      [toggleStatus]
    )
 
    return (
@@ -125,7 +125,7 @@ const ToggleStatus = ({ update, cell }) => {
    const [checked, setChecked] = React.useState(cell.getData().isActive)
 
    React.useEffect(() => {
-      if (checked != cell.getData().isActive) {
+      if (checked !== cell.getData().isActive) {
          update({
             id: cell.getData().id,
             isActive: checked,

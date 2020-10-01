@@ -6,7 +6,6 @@ import {
    Spacer,
    Tunnel,
    Tunnels,
-   PlusIcon,
    useTunnel,
    IconButton,
    ButtonTile,
@@ -80,7 +79,7 @@ export const Slides = ({ update }) => {
                            <DeleteIcon />
                         </IconButton>
                      </div>
-                     <img src={slide?.url} alt={slide?.title} />
+                     <img src={slide?.url} alt="" />
                   </ImageContainer>
                </li>
             ))}
