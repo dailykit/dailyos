@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { fromMixed } from '../../utils/textTransform'
 
 import { flattenObject } from '../../utils/transformer'
+import { Container } from '../Container'
 
 /**
  *
@@ -16,14 +17,10 @@ export const Counter = ({
    const regex = new RegExp(/amount|price/i)
 
    return (
-      <div
+      <Container
          style={{
             display: 'flex',
-            width: '100%',
             alignItems: 'center',
-            padding: '12px 0',
-            borderBottom: '1px solid #EEF0F7',
-            marginBottom: '8px',
          }}
       >
          {Object.keys(flattenedAggregates).map((counter, i) => {
@@ -43,7 +40,7 @@ export const Counter = ({
                )
             }
          })}
-      </div>
+      </Container>
    )
 }
 
