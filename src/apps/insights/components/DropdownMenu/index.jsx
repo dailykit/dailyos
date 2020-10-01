@@ -5,9 +5,16 @@ import { ChevronDown } from '../../../../shared/assets/icons'
 
 /**
  *
- * @param {{title: string, withIcon: boolean}} param0
+ * @param {{title: string, withIcon: boolean, show: boolean, shiftLeft: boolean}} param0
  */
-export const Dropdown = ({ title, children, withIcon, show, setShow }) => {
+export const Dropdown = ({
+   title,
+   children,
+   withIcon,
+   show,
+   setShow,
+   shiftLeft,
+}) => {
    return (
       <div style={{ position: 'relative' }}>
          <DropdownButton onClick={() => setShow(!show)}>
@@ -16,7 +23,7 @@ export const Dropdown = ({ title, children, withIcon, show, setShow }) => {
             {withIcon && <ChevronDown color="#888d9d" />}
          </DropdownButton>
 
-         {show && <Box>{children}</Box>}
+         {show && <Box shiftLeft={shiftLeft}>{children}</Box>}
       </div>
    )
 }
@@ -53,13 +60,13 @@ const Box = styled.div`
    background-color: #fff;
    padding: 8px;
    border-radius: 2px;
-
    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
    border: 1px solid #f3f3f3;
 
    position: absolute;
    top: 90%;
-
+   right: ${({ shiftLeft }) => (shiftLeft ? '0%' : null)};
+   left: ${({ shiftLeft }) => (shiftLeft ? '-90%' : null)};
    z-index: 12;
 `
 

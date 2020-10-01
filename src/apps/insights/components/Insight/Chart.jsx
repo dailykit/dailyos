@@ -109,6 +109,7 @@ function ChartConfig({
                   options={options}
                   state={optionVariables}
                   updateOptions={updateOptions}
+                  shiftLeft
                />
             )}
          </Flex>

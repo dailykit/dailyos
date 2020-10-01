@@ -18,7 +18,7 @@ import { fromMixed } from '../../utils/textTransform'
  *
  * @param {{options: {}, state: {}, updateOptions: () => {}}} props
  */
-export default function Option({ options, state, updateOptions }) {
+export default function Option({ options, state, updateOptions, shiftLeft }) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
    const [filterable, setFilterable] = useState(false)
@@ -118,7 +118,13 @@ export default function Option({ options, state, updateOptions }) {
 
    if (submenu === 'main')
       return (
-         <Dropdown title="Filters" withIcon show={show} setShow={setShow}>
+         <Dropdown
+            title="Filters"
+            withIcon
+            show={show}
+            setShow={setShow}
+            shiftLeft={shiftLeft}
+         >
             {Object.keys(options).map(option => {
                return (
                   <DropdownItem
@@ -135,7 +141,13 @@ export default function Option({ options, state, updateOptions }) {
       )
 
    return (
-      <Dropdown title="Filters" withIcon setShow={setShow} show={show}>
+      <Dropdown
+         title="Filters"
+         withIcon
+         setShow={setShow}
+         show={show}
+         shiftLeft={shiftLeft}
+      >
          <DropdownItem
             onClick={() => setDropdownView('main')}
             leftIcon={<LeftIcon color="#888d9d" />}
