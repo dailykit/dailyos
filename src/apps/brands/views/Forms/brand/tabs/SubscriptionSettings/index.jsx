@@ -7,7 +7,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { BRANDS } from '../../../../../graphql'
 import { ScrollSection } from '../../../../../../../shared/components'
-import { Brand } from './sections'
+import { Brand, Contact } from './sections'
 
 export const SubscriptionSettings = () => {
    const params = useParams()
@@ -54,6 +54,10 @@ export const SubscriptionSettings = () => {
          <ScrollSection.Main>
             <ScrollSection.Section hash="brand" title="Brand">
                <Brand update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="brand" title="Contact">
+               <Contact update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>
