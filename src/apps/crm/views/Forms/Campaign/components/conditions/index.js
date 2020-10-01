@@ -52,8 +52,8 @@ const ConditionComp = ({ state }) => {
             <StyledContainer>
                <StyledRow>
                   <Text as="p">View/Edit Conditions</Text>
-                  <IconButton type="outline" onClick={() => openTunnel(1)}>
-                     <EditIcon />
+                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                     <EditIcon color="#00a7e1" />
                   </IconButton>
                </StyledRow>
             </StyledContainer>

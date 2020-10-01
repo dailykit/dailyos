@@ -15,8 +15,9 @@ export const HorizontalCard = styled.div`
 export const StyledCard = styled.div`
    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
    transition: 0.3s;
-   width: 45%;
-   margin: 0 20em;
+   background-color: #ffffff;
+   width: 100%;
+   margin: 0;
    img {
       width: 160px;
       height: auto;
