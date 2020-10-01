@@ -15,6 +15,10 @@ import {
    PrimaryLabels,
    ThemeColor,
    PriceLabels,
+   FirstDelivery,
+   DeliveryDay,
+   DeliveryAddress,
+   DeliveryPage,
 } from './sections'
 
 export const SubscriptionSettings = () => {
@@ -86,6 +90,19 @@ export const SubscriptionSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="Visual" title="Price Label">
                <PriceLabels update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section
+               hash="Select-Delivery"
+               title="Delivery Details"
+            >
+               <FirstDelivery update={update} />
+               <Spacer size="24px" />
+               <DeliveryDay update={update} />
+               <Spacer size="24px" />
+               <DeliveryAddress update={update} />
+               <Spacer size="24px" />
+               <DeliveryPage update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>
