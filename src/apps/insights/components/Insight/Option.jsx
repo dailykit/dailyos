@@ -1,5 +1,5 @@
-import { Input, TextButton, Toggle } from '@dailykit/ui'
-import React, { useEffect, useState } from 'react'
+import { Checkbox, Input, TextButton } from '@dailykit/ui'
+import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -207,13 +207,14 @@ function Switches({ switches, updateSwitches }) {
    const renderOption = key => {
       const checked = switches[key]
       return (
-         <Toggle
+         <Checkbox
             checked={checked}
-            label={fromMixed(key)}
-            setChecked={() => {
+            onChange={() => {
                updateSwitches(values => ({ ...values, [key]: !switches[key] }))
             }}
-         />
+         >
+            {fromMixed(key)}
+         </Checkbox>
       )
    }
 
