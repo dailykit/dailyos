@@ -390,7 +390,8 @@
             "sidebar": {
                "listings": "Annonces",
                "recipes": "Recette",
-               "ingredients": "Ingrédients"
+               "ingredients": "Ingrédients",
+               "products": "Products"
             }
          },
          "utils": {},
@@ -462,7 +463,8 @@
             "home": {
                "recipe app": "Niveau de recette",
                "recipes": "Recette",
-               "ingredients": "Ingrédients"
+               "ingredients": "Ingrédients",
+               "products": "Products"
             },
             "listings": {
                "ingredientslisting": {
@@ -761,7 +763,7 @@
                            "to add": "To Add",
                            "save": "Enregistrer",
                            "type what you're looking for": "tapez ce que vous cherchez...",
-                           "product added!": "Product Added!",
+                           "products added!": "Products Added!",
                            "error": "Error",
                            "inventory products": "Inventroy Product",
                            "simple recipe products": "Simple Recipe Product",
