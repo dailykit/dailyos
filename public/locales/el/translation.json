@@ -390,7 +390,8 @@
             "sidebar": {
                "listings": "Κατάλογος",
                "recipes": "Συνταγές",
-               "ingredients": "Συστατικά"
+               "ingredients": "Συστατικά",
+               "products": "Products"
             }
          },
          "utils": {},
@@ -462,7 +463,8 @@
             "home": {
                "recipe app": "Εφαρμογή συνταγής",
                "recipes": "Συνταγές",
-               "ingredients": "Συστατικά"
+               "ingredients": "Συστατικά",
+               "products": "Products"
             },
             "listings": {
                "ingredientslisting": {
@@ -761,7 +763,7 @@
                            "to add": "To Add",
                            "save": "Αποθήκευση",
                            "type what you're looking for": "πληκτρολογήστε αυτό που ψάχνετε...",
-                           "product added!": "Product Added!",
+                           "products added!": "Products Added!",
                            "error": "Error",
                            "inventory products": "Inventroy Product",
                            "simple recipe products": "Simple Recipe Product",
