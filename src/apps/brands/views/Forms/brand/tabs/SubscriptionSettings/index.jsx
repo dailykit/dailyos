@@ -19,6 +19,8 @@ import {
    DeliveryDay,
    DeliveryAddress,
    DeliveryPage,
+   PlanMetaDetails,
+   RegisterPage,
 } from './sections'
 
 export const SubscriptionSettings = () => {
@@ -103,6 +105,14 @@ export const SubscriptionSettings = () => {
                <DeliveryAddress update={update} />
                <Spacer size="24px" />
                <DeliveryPage update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="Select-Plan" title="Plan Details">
+               <PlanMetaDetails update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="Register" title="Register Page">
+               <RegisterPage update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>
