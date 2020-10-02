@@ -23,9 +23,6 @@ export default function Chart({
    const [slice, setSlice] = useState('')
    const [metrices, setMetrices] = useState([])
 
-   // prettier-ignore
-   const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
-
    const { data, options: googleChartOptions } = useChart(chart, rawData, {
       chartType,
       xColumn,
@@ -58,13 +55,8 @@ export default function Chart({
             style={{ flex: '1' }}
             options={{
                ...googleChartOptions,
-               legend:
-                  chartType.type === 'PieChart'
-                     ? 'none'
-                     : { position: 'right' },
                height: googleChartOptions.height || '483px',
                width: googleChartOptions.width || '100%',
-               title: googleChartOptions.title || chartTitle,
             }}
          />
       </Container>
@@ -112,7 +104,6 @@ function ChartConfig({
                   options={options}
                   state={optionVariables}
                   updateOptions={updateOptions}
-                  shiftLeft
                   filters={filters}
                />
             )}
