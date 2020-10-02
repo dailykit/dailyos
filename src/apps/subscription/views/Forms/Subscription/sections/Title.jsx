@@ -26,7 +26,8 @@ import { usePlan } from '../state'
 import { Spacer } from '../../../../styled'
 import { useTabs } from '../../../../context'
 import { Header, Section, Wrapper } from '../styled'
-import { InlineLoader } from '../../../../../../shared/components'
+import { Flex, InlineLoader } from '../../../../../../shared/components'
+import { TickIcon, CloseIcon } from '../../../../../../shared/assets/icons'
 import {
    TITLE,
    UPSERT_SUBSCRIPTION_TITLE,
@@ -67,7 +68,7 @@ const Title = () => {
       if (!loading && !tab && title?.id) {
          addTab(title.title, `/subscription/subscriptions/${title.id}`)
       }
-   }, [loading, tab, title])
+   }, [loading, tab, title, addTab])
 
    const handleChange = e => {
       dispatch({
@@ -101,13 +102,10 @@ const Title = () => {
             },
          })
       }
-   }, [loading, title])
+   }, [loading, title, upsertTitle])
 
    const toggleIsActive = value => {
-      if (
-         title.servings.length > 0 &&
-         title.servings.some(node => node.isActive)
-      ) {
+      if (title.isValid) {
          return upsertTitle({
             variables: {
                object: {
@@ -140,15 +138,31 @@ const Title = () => {
                type="text"
                name="title"
                label="Subscription Title"
+               value={state.title.title}
                onBlur={e => saveTitle(e)}
                onChange={e => handleChange(e)}
-               value={state.title.title || title.title}
             />
-            <Toggle
-               label="Publish"
-               checked={state.title.isActive}
-               setChecked={value => toggleIsActive(value)}
-            />
+            <Flex container alignItems="center">
+               {title.isValid ? (
+                  <Flex container flex="1" alignItems="center">
+                     <TickIcon size={22} color="green" />
+                     <Spacer size="8px" xAxis />
+                     <span>All good!</span>
+                  </Flex>
+               ) : (
+                  <Flex container flex="1" alignItems="center">
+                     <CloseIcon size={22} color="red" />
+                     <Spacer size="8px" xAxis />
+                     <span>Must have atleast one active servings!</span>
+                  </Flex>
+               )}
+               <Spacer size="16px" xAxis />
+               <Toggle
+                  label="Publish"
+                  checked={state.title.isActive}
+                  setChecked={value => toggleIsActive(value)}
+               />
+            </Flex>
          </Header>
          <Section>
             <SectionTabs onChange={index => setTabIndex(index)}>

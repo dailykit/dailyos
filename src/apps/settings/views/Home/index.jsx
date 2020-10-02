@@ -9,7 +9,7 @@ import { useTabs } from '../../context'
 
 import { StyledHome, StyledCardList } from './styled'
 
-import { STATIONS_AGGREGATE, USERS_AGGREGATE } from '../../graphql'
+import { STATIONS_AGGREGATE, USERS_AGGREGATE, ROLES } from '../../graphql'
 
 const address = 'apps.settings.views.home.'
 
@@ -22,14 +22,20 @@ const Home = () => {
       data: { stationsAggregate = {} } = {},
    } = useSubscription(STATIONS_AGGREGATE)
    const {
+      loading: rolesLoading,
+      error: rolesError,
+      data: { rolesAggregate = {} } = {},
+   } = useSubscription(ROLES.AGGREGATE)
+   const {
       loading: usersLoading,
       error: usersError,
       data: { settings_user_aggregate = {} } = {},
    } = useSubscription(USERS_AGGREGATE)
 
-   if (stationsLoading || usersLoading) return <Loader />
-   if (stationsError) return <div>{stationsError}</div>
-   if (usersError) return <div>{usersError}</div>
+   if (stationsLoading || usersLoading || rolesLoading) return <Loader />
+   if (stationsError) return <div>{stationsError.message}</div>
+   if (usersError) return <div>{usersError.message}</div>
+   if (rolesError) return <div>{rolesError.message}</div>
    return (
       <StyledHome>
          <Text as="h1">{t(address.concat('settings app'))}</Text>
@@ -39,6 +45,12 @@ const Home = () => {
                count={settings_user_aggregate.aggregate.count}
                conf="All available"
                onClick={() => addTab('Users', '/settings/users')}
+            />
+            <DashboardTile
+               conf="All available"
+               count={rolesAggregate.aggregate.count}
+               title={t(address.concat('roles'))}
+               onClick={() => addTab('Roles', '/settings/roles')}
             />
             <DashboardTile
                title={t(address.concat('devices'))}

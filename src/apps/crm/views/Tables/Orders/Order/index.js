@@ -1,10 +1,10 @@
-import React from 'react'
-import { Text, Avatar, useTunnel } from '@dailykit/ui'
-import { ReactTabulator } from 'react-tabulator'
+import React, { useState, useEffect, useRef } from 'react'
+import { Text, Avatar, useTunnel, Loader } from '@dailykit/ui'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
 import { useTabs } from '../../../../context'
-import { Capitalize } from '../../../../Utils'
+import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import {
@@ -31,12 +31,27 @@ const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { data: orderData } = useQuery(ORDER, {
+   const [products, setProducts] = useState(undefined)
+   const tableRef = useRef()
+   const { data: orderData, loading, error } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
       },
+      onCompleted: ({ order = {} }) => {
+         const result = order.orderCart.cartInfo.products.map(product => {
+            return {
+               products: product?.name || 'N/A',
+               servings: product?.quantity || 'N/A',
+               discount: product.discount || 'N/A',
+               discountedPrice: product?.totalPrice || 'N/A',
+            }
+         })
+         setProducts(result)
+      },
    })
-
+   if (error) {
+      console.log(error)
+   }
    const setOrder = (orderId, order) => {
       dispatch({
          type: 'STORE_TAB_DATA',
@@ -53,18 +68,6 @@ const OrderInfo = () => {
       { title: 'Discount', field: 'discount' },
       { title: 'Discounted Price', field: 'discountedPrice' },
    ]
-
-   const data = []
-   if (orderData && orderData.order.orderCart !== null) {
-      orderData.order.orderCart.cartInfo.products.map(product => {
-         return data.push({
-            products: product?.name || 'N/A',
-            servings: product?.quantity || 'N/A',
-            discount: product.discount || 'N/A',
-            discountedPrice: product?.totalPrice || 'N/A',
-         })
-      })
-   }
 
    let deliveryPartner = null
    let deliveryAgent = null
@@ -117,7 +120,7 @@ const OrderInfo = () => {
             {deliveryAgent}
          </SideCard>
       )
-
+   if (loading) return <Loader />
    return (
       <StyledWrapper>
          <Heading>
@@ -147,13 +150,19 @@ const OrderInfo = () => {
                   <StyledSpan>Deliverd on: N/A</StyledSpan>
                   <StyledSpan>
                      Channel:
-                     {Capitalize(
+                     {capitalizeString(
                         orderData?.order?.channel?.cartSource || 'N/A'
                      )}
                   </StyledSpan>
                </StyledDiv>
                <StyledTable>
-                  <ReactTabulator columns={columns} data={data} />
+                  {Boolean(products) && (
+                     <ReactTabulator
+                        columns={columns}
+                        data={products}
+                        ref={tableRef}
+                     />
+                  )}
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">

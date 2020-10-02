@@ -1,8 +1,8 @@
 import React from 'react'
+import _ from 'lodash'
 import moment from 'moment'
 import DateTime from 'react-datetime'
 import styled from 'styled-components'
-import { useSubscription } from '@apollo/react-hooks'
 import {
    Dropdown,
    TunnelHeader,
@@ -11,13 +11,13 @@ import {
    RadioGroup,
 } from '@dailykit/ui'
 
-import { useOrder } from '../../context'
-import { STATIONS } from '../../graphql'
 import { Spacer } from '../../styled'
 import 'react-datetime/css/react-datetime.css'
-import { Flex, InlineLoader } from '../../../../shared/components'
+import { useOrder, useConfig } from '../../context'
+import { Flex } from '../../../../shared/components'
 
 export const FilterTunnel = () => {
+   const { state: config } = useConfig()
    const { state, dispatch } = useOrder()
    const [activeStation, setActiveStation] = React.useState(null)
    const [fulfillmentTypes] = React.useState([
@@ -26,21 +26,22 @@ export const FilterTunnel = () => {
       { id: 3, title: 'PREORDER_PICKUP' },
       { id: 4, title: 'ONDEMAND_PICKUP' },
    ])
-   const { loading, data: { stations = [] } = {} } = useSubscription(STATIONS, {
-      onSubscriptionData: ({
-         subscriptionData: { data: { stations = [] } = {} } = {},
-      }) => {
-         if (state.orders.where?._or?.length > 0 && stations.length > 0) {
-            const index = stations.findIndex(
-               station =>
-                  station.id ===
-                  state.orders.where?._or[0]?.orderInventoryProducts
-                     ?.assemblyStationId?._eq
-            )
-            setActiveStation(index + 1)
-         }
-      },
-   })
+
+   React.useEffect(() => {
+      if (
+         _.has(state, 'orders.where._or') &&
+         _.isArray(state.orders.where._or) &&
+         !_.isEmpty(state.orders.where._or)
+      ) {
+         const [condition] = state.orders.where._or
+         const index = config.stations.findIndex(
+            station =>
+               station.id ===
+               condition.orderInventoryProducts.assemblyStationId._eq
+         )
+         setActiveStation(index + 1)
+      }
+   }, [config.stations, state, state.orders.where])
 
    const handleStationChange = option => {
       dispatch({
@@ -59,6 +60,24 @@ export const FilterTunnel = () => {
                      assemblyStationId: {
                         _eq: option.id,
                      },
+                  },
+               },
+               {
+                  orderMealKitProducts: {
+                     _or: [
+                        {
+                           assemblyStationId: {
+                              _eq: option.id,
+                           },
+                        },
+                        {
+                           orderSachets: {
+                              packingStationId: {
+                                 _eq: option.id,
+                              },
+                           },
+                        },
+                     ],
                   },
                },
             ],
@@ -282,17 +301,18 @@ export const FilterTunnel = () => {
                      <ClearIcon />
                   </button>
                </legend>
-               {loading ? (
-                  <InlineLoader />
-               ) : (
+               {!_.isEmpty(config.stations) && (
                   <div className="station">
                      <Dropdown
                         type="single"
-                        options={stations}
                         searchedOption={() => {}}
                         defaultValue={activeStation}
                         placeholder="search for stations..."
                         selectedOption={option => handleStationChange(option)}
+                        options={config.stations.map(station => ({
+                           id: station.id,
+                           title: station.name,
+                        }))}
                      />
                   </div>
                )}

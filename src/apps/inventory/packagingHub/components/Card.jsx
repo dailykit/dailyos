@@ -1,21 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-
-import { Context } from '../../context/tabs'
+import { useTabs } from '../../context'
 
 export default function Card({ category }) {
-   const { dispatch } = useContext(Context)
+   const { addTab } = useTabs()
 
    const openProductsView = () => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: {
-            type: 'forms',
-            title: category.name,
-            view: 'packagingHubProducts',
-            id: category.id,
-         },
-      })
+      addTab(category.name, `/inventory/packaging-hub/products/${category.id}`)
    }
 
    return (

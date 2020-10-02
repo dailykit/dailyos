@@ -9,7 +9,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import { toast } from 'react-toastify'
@@ -18,13 +18,13 @@ import { v4 as uuid } from 'uuid'
 import { AddIcon } from '../../../assets/icons'
 import { StyledHeader, StyledWrapper } from '../styled'
 import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
-import { Context } from '../../../context/tabs'
 import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
 import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
+import { useTabs } from '../../../context'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
@@ -37,7 +37,7 @@ export default function WorkOrders() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const tableRef = React.useRef()
-   const { dispatch } = React.useContext(Context)
+   const { addTab } = useTabs()
 
    const {
       data: bulkWorkOrdersData,
@@ -49,18 +49,14 @@ export default function WorkOrders() {
       loading: sachetWorkOrderLoading,
    } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION, { onError })
 
-   const addTab = (title, view, id) => {
-      dispatch({ type: 'ADD_TAB', payload: { type: 'forms', title, view, id } })
-   }
-
    const rowClick = (e, row) => {
       const { id, type, name } = row._row.data
       const altName = `Work Order-${uuid().substring(30)}`
 
       if (type === 'bulk') {
-         addTab(name || altName, 'bulkOrder', id)
+         addTab(name || altName, `/inventory/work-orders/bulk/${id}`)
       } else {
-         addTab(name || altName, 'sachetOrder', id)
+         addTab(name || altName, `/inventory/work-orders/sachet/${id}`)
       }
    }
 

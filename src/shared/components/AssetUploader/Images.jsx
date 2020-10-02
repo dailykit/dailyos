@@ -3,10 +3,12 @@ import styled, { css } from 'styled-components'
 
 import { Loader } from '@dailykit/ui'
 import useAssets from './useAssets'
+import { InlineLoader } from '../InlineLoader'
 
 const Images = ({ onImageSelect }) => {
    const { images, status, error, remove } = useAssets('images')
-   if (status === 'LOADING') return <Loader />
+
+   if (status === 'LOADING') return <InlineLoader />
    if (status === 'ERROR') return <div>{error}</div>
    return (
       <>
@@ -38,6 +40,8 @@ const StyledList = styled.ul(css`
    display: grid;
    padding: 8px;
    grid-gap: 8px;
+   overflow-y: auto;
+   height: calc(100% - 121px);
    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
    li {
       height: 120px;

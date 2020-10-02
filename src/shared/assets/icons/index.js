@@ -11,7 +11,10 @@ import SlidersIcon from './Slider'
 import MailIcon from './Mail'
 import PhoneIcon from './phone'
 import MaestroIcon from './Maestro'
-import ChevronRight from './ChevronRight';
+import ChevronRight from './ChevronRight'
+import UserIcon from './User'
+import CalendarIcon from './Calendar'
+import NewInfoIcon from './NewInfoIcon'
 
 export {
    AddIcon,
@@ -28,4 +31,12 @@ export {
    MailIcon,
    PhoneIcon,
    MaestroIcon,
+   UserIcon,
+   CalendarIcon,
+   NewInfoIcon,
 }
+
+export * from './Tick'
+export * from './ChevronUp'
+export * from './ChevronDown'
+export * from './Printer'

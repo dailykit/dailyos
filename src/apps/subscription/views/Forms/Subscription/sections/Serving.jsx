@@ -22,11 +22,14 @@ import {
 
 import { usePlan } from '../state'
 import ItemCount from './ItemCount'
-import { Flex } from '../../../../components'
+import { ItemCountsSection } from '../styled'
 import { Spacer, Stack } from '../../../../styled'
-import { ItemCountsSection, ServingHeader } from '../styled'
-import { EditIcon } from '../../../../../../shared/assets/icons'
-import { InlineLoader } from '../../../../../../shared/components'
+import { Flex, InlineLoader } from '../../../../../../shared/components'
+import {
+   EditIcon,
+   TickIcon,
+   CloseIcon,
+} from '../../../../../../shared/assets/icons'
 import {
    SERVING,
    UPSERT_ITEM_COUNT,
@@ -66,7 +69,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             },
          })
       }
-   }, [])
+   }, [dispatch])
 
    const editServing = () => {
       openServingTunnel(1)
@@ -101,13 +104,10 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             },
          })
       }
-   }, [loading, serving])
+   }, [loading, serving, state.title.id, upsertServing])
 
    const toggleIsActive = value => {
-      if (
-         serving.counts.length > 0 &&
-         serving.counts.some(node => node.isActive)
-      ) {
+      if (serving.isValid) {
          return upsertServing({
             variables: {
                object: {
@@ -142,6 +142,20 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                )}
             </Stack>
             <Stack>
+               {serving.isValid ? (
+                  <Flex container flex="1" alignItems="center">
+                     <TickIcon size={22} color="green" />
+                     <Spacer size="8px" xAxis />
+                     <span>All good!</span>
+                  </Flex>
+               ) : (
+                  <Flex container flex="1" alignItems="center">
+                     <CloseIcon size={22} color="red" />
+                     <Spacer size="8px" xAxis />
+                     <span>Must have atleast one active item count!</span>
+                  </Flex>
+               )}
+               <Spacer size="24px" xAxis />
                <Toggle
                   label="Publish"
                   checked={state.serving.isActive}

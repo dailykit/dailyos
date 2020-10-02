@@ -4,13 +4,10 @@ import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 
 // Components
-import { TunnelHeader, TextButton, Text, Input, ButtonTile } from '@dailykit/ui'
+import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
 
 // Styles
 import { TunnelBody } from '../styled'
-
-// Icons
-import { CloseIcon } from '../../../../../../../../shared/assets/icons'
 
 import { CREATE_ACCOMPANIMENT_TYPES } from '../../../../../../graphql'
 

@@ -1,9 +1,17 @@
 import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import _ from 'lodash'
+import axios from 'axios'
+import { TextButton, IconButton, CloseIcon } from '@dailykit/ui'
+import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
-import Loader from '../Loader'
-import { useOrder } from '../../context/order'
-import { FETCH_ORDER_SACHET, UPDATE_ORDER_SACHET } from '../../graphql'
+import { ScaleIcon } from '../../assets/icons'
+import { useOrder, useConfig } from '../../context'
+import { InlineLoader } from '../../../../shared/components'
+import {
+   FETCH_ORDER_SACHET,
+   UPDATE_ORDER_SACHET,
+   LABEL_TEMPLATE,
+} from '../../graphql'
 import {
    Wrapper,
    StyledHeader,
@@ -14,17 +22,27 @@ import {
    StyledPackaging,
    StyledSOP,
    StyledButton,
+   ManualWeight,
+   StyledLabelPreview,
 } from './styled'
-
-import { WeighIcon } from '../../assets/icons'
 
 export const ProcessOrder = () => {
    const {
       state: { current_view, mealkit },
       switchView,
    } = useOrder()
+   const { state } = useConfig()
+   const [weight, setWeight] = React.useState(0)
    const [sachet, setSachet] = React.useState(null)
+   const [scaleState, setScaleState] = React.useState('low')
+   const [labelPreview, setLabelPreview] = React.useState('')
+
    const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
+   const [
+      fetchLabaleTemplate,
+      { data: { labelTemplate = {} } = {} },
+   ] = useLazyQuery(LABEL_TEMPLATE)
+
    const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
       variables: {
          id: mealkit.sachet_id,
@@ -32,15 +50,111 @@ export const ProcessOrder = () => {
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
-         setSachet(orderSachet)
+         if (!_.isEmpty(orderSachet)) {
+            setWeight(0)
+            setSachet(orderSachet)
+            fetchLabaleTemplate({
+               variables: {
+                  id: Number(orderSachet?.labelTemplateId),
+               },
+            })
+         }
       },
    })
+
+   React.useEffect(() => {
+      setWeight(0)
+      setScaleState('low')
+      setLabelPreview('')
+   }, [mealkit.sachet_id])
 
    const changeView = view => {
       switchView(view)
    }
 
-   if (!mealkit.sachet_id) {
+   React.useEffect(() => {
+      if (sachet) {
+         if (weight < sachet.quantity) {
+            setScaleState('low')
+         } else if (weight > sachet.quantity) {
+            setScaleState('above')
+         } else if (weight === sachet.quantity) {
+            setScaleState('match')
+         }
+      }
+   }, [weight, sachet])
+
+   const print = React.useCallback(() => {
+      updateSachet({
+         variables: {
+            id: sachet.id,
+            _set: {
+               isPortioned: true,
+            },
+         },
+      })
+      if (_.isNull(sachet.labelTemplateId)) return
+
+      if (state.print.print_simulation.value.isActive) {
+         const template = encodeURIComponent(
+            JSON.stringify({
+               name: labelTemplate?.name,
+               type: 'label',
+               format: 'html',
+            })
+         )
+
+         const data = encodeURIComponent(
+            JSON.stringify({
+               id: sachet.id,
+            })
+         )
+         const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
+         setLabelPreview(url)
+      } else {
+         const url = `${
+            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+
+         const data = {
+            id: sachet.id,
+            isPortioned: true,
+            ingredientName: sachet.ingredientName,
+            processingName: sachet.processingName,
+            labelTemplateId: sachet.labelTemplateId,
+            packingStationId: sachet.packingStationId,
+         }
+         axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printOrderSachet',
+                  payload: { new: data },
+               },
+            },
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'x-hasura-admin-secret':
+                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+               },
+            }
+         )
+      }
+   }, [sachet, labelTemplate])
+
+   React.useEffect(() => {
+      let timer
+      if (weight === sachet?.quantity) {
+         timer = setTimeout(() => {
+            print()
+         }, 3000)
+      }
+      return () => clearTimeout(timer)
+   }, [weight, sachet, print])
+
+   if (_.isNull(mealkit.sachet_id)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -64,7 +178,7 @@ export const ProcessOrder = () => {
    if (loading || !sachet)
       return (
          <Wrapper>
-            <Loader />
+            <InlineLoader />
          </Wrapper>
       )
    if (error)
@@ -133,14 +247,68 @@ export const ProcessOrder = () => {
                   <span>{sachet.quantity}gm</span>
                </section>
             </section>
-            <StyledWeigh>
-               <span>
-                  <WeighIcon />
-               </span>
-               <h2>Weighing scale is not active!</h2>
+            <StyledWeigh state={scaleState}>
+               <header>
+                  <span>
+                     <ScaleIcon size={24} color="#fff" />
+                  </span>
+                  {!_.isNull(sachet.labelTemplateId) && (
+                     <button onClick={() => print()}>Print Label</button>
+                  )}
+               </header>
+               <h2>
+                  {weight}
+                  {sachet.unit}
+               </h2>
+               {weight > 0 && weight > sachet.quantity && (
+                  <h3>
+                     Reduce weight by {Math.abs(sachet.quantity - weight)}
+                     {sachet.unit}
+                  </h3>
+               )}
+               {weight > 0 && weight < sachet.quantity && (
+                  <h3>
+                     Add {Math.abs(sachet.quantity - weight)}
+                     {sachet.unit} more
+                  </h3>
+               )}
                <span />
             </StyledWeigh>
+            {sachet.status !== 'PACKED' &&
+               state.scale.weight_simulation.value.isActive && (
+                  <ManualWeight>
+                     <input
+                        type="number"
+                        value={weight}
+                        placeholder="Enter weight"
+                        onChange={e => setWeight(Number(e.target.value))}
+                     />
+                     <TextButton
+                        type="outline"
+                        onClick={() => setWeight(sachet.quantity)}
+                     >
+                        Match Amount
+                     </TextButton>
+                  </ManualWeight>
+               )}
          </StyledMain>
+         {labelPreview && (
+            <StyledLabelPreview>
+               <header>
+                  <h3>Label Preview</h3>
+                  <IconButton type="ghost" onClick={() => setLabelPreview('')}>
+                     <CloseIcon />
+                  </IconButton>
+               </header>
+               <div>
+                  <iframe
+                     src={labelPreview}
+                     title="label preview"
+                     frameborder="0"
+                  />
+               </div>
+            </StyledLabelPreview>
+         )}
          <StyledPackaging>
             <h3>Packaging</h3>
             <span>{sachet?.packging?.name || 'N/A'}</span>
@@ -174,42 +342,42 @@ export const ProcessOrder = () => {
                   )}
             </div>
          </StyledSOP>
-         {sachet.status === 'PENDING' && (
-            <StyledButton
-               type="button"
-               onClick={() =>
-                  updateSachet({
-                     variables: {
-                        id: sachet.id,
-                        _set: {
-                           status: 'PACKED',
-                           isLabelled: true,
-                           isPortioned: true,
-                        },
+         <StyledButton
+            type="button"
+            disabled={
+               sachet.status === 'PACKED' || Number(weight) !== sachet.quantity
+            }
+            onClick={() =>
+               updateSachet({
+                  variables: {
+                     id: sachet.id,
+                     _set: {
+                        status: 'PACKED',
+                        isLabelled: true,
+                        isPortioned: true,
                      },
-                  })
-               }
-            >
-               Mark Packed
-            </StyledButton>
-         )}
-         {!sachet.isAssembled && (
-            <StyledButton
-               type="button"
-               onClick={() =>
-                  updateSachet({
-                     variables: {
-                        id: sachet.id,
-                        _set: {
-                           isAssembled: true,
-                        },
+                  },
+               })
+            }
+         >
+            {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
+         </StyledButton>
+         <StyledButton
+            type="button"
+            disabled={sachet.isAssembled || sachet.status === 'PENDING'}
+            onClick={() =>
+               updateSachet({
+                  variables: {
+                     id: sachet.id,
+                     _set: {
+                        isAssembled: true,
                      },
-                  })
-               }
-            >
-               Mark Assembled
-            </StyledButton>
-         )}
+                  },
+               })
+            }
+         >
+            {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
+         </StyledButton>
       </Wrapper>
    )
 }

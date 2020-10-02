@@ -1,9 +1,11 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 // Components
-import { TextButton, Input, Loader } from '@dailykit/ui'
+import { Input, Loader } from '@dailykit/ui'
 
 import { STATION, UPSERT_STATION } from '../../../graphql'
 
@@ -29,38 +31,33 @@ import { LabelPrinters } from './sections/LabelPrinters'
 
 const StationForm = () => {
    const params = useParams()
+   const [title, setTitle] = React.useState('')
    const { tab, addTab, setTabTitle } = useTabs()
-   const [update] = useMutation(UPSERT_STATION)
+   const [update] = useMutation(UPSERT_STATION, {
+      onCompleted: () => toast.success('Successfully updated station name!'),
+      onError: () => toast.success('Failed to update the station name!'),
+   })
    const { loading, data: { station = {} } = {} } = useSubscription(STATION, {
       variables: { id: params.id },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
          const { station } = data
-         setForm({ ...form, name: station.name })
+         setTitle(station.name)
          setTabTitle(station.name)
       },
    })
 
-   const [form, setForm] = React.useState({
-      name: '',
-   })
-
    React.useEffect(() => {
-      if (!tab) {
+      if (!tab && !loading && !isEmpty(station)) {
          addTab(station?.name, `/settings/stations/${params.id}`)
       }
-   }, [tab, params.id])
+   }, [tab, loading, params.id, addTab, station])
 
-   const handleChange = e => {
-      const { name, value } = e.target
-      setForm({ ...form, [name]: value })
-   }
-
-   const handleSubmit = () => {
+   const handleSubmit = value => {
       update({
          variables: {
             object: {
+               name: value,
                id: params.id,
-               name: form.name,
             },
          },
       })
@@ -73,14 +70,12 @@ const StationForm = () => {
             <Input
                type="text"
                name="name"
-               value={form.name}
+               value={title}
                style={{ width: '320px' }}
-               onChange={e => handleChange(e)}
                placeholder="Enter the station name"
+               onChange={e => setTitle(e.target.value)}
+               onBlur={e => handleSubmit(e.target.value)}
             />
-            <TextButton type="solid" onClick={() => handleSubmit()}>
-               Publish
-            </TextButton>
          </StyledHeader>
          {station?.name && (
             <StyledMain>

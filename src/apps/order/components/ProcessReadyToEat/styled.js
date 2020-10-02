@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.aside`
    height: 100%;
    padding: 0 12px 12px 12px;
    border-right: 1px solid #e7e7e7;
@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
 `
 
 export const StyledMode = styled.div`
-   height: 32px;
+   height: 40px;
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -28,14 +28,24 @@ export const StyledHeader = styled.header`
    }
 `
 
-export const StyledButton = styled.button`
-   color: #fff;
-   height: 32px;
-   border: none;
-   padding: 0 12px;
-   border-radius: 6px;
-   background: #53c22b;
-`
+export const StyledButton = styled.button(
+   ({ disabled }) => css`
+      color: #fff;
+      height: 32px;
+      border: none;
+      padding: 0 12px;
+      cursor: pointer;
+      margin-right: 16px;
+      border-radius: 6px;
+      background: #53c22b;
+      ${disabled &&
+      css`
+         color: #7b6a6a;
+         background: #e7e8e7;
+         cursor: not-allowed;
+      `}
+   `
+)
 
 export const StyledStat = styled.div(
    ({ status }) => css`

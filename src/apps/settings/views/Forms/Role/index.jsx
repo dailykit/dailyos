@@ -1,300 +1,154 @@
 import React from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { useParams } from 'react-router-dom'
+import { isEmpty, differenceBy } from 'lodash'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
    TextButton,
-   IconButton,
-   Input,
    ButtonTile,
    Tunnels,
    Tunnel,
    useTunnel,
-   ClearIcon,
-   useMultiList,
-   ListItem,
-   List,
-   ListOptions,
-   ListSearch,
-   Avatar,
-   TickIcon,
-   ArrowUpIcon,
-   ArrowDownIcon,
-   Toggle,
    Text,
 } from '@dailykit/ui'
 
-// State
+import { ROLES } from '../../../graphql'
 import { useTabs } from '../../../context'
-
-// Styled
-import {
-   StyledWrapper,
-   StyledHeader,
-   StyledSection,
-   StyledTunnelHeader,
-   StyledTunnelMain,
-} from '../styled'
-import { StyledAppItem, StyledPermissions } from './styled'
-
-import { useTranslation } from 'react-i18next'
-
-const address = 'apps.settings.views.forms.role.'
+import { InlineLoader } from '../../../../../shared/components'
+import { Apps, AppsTunnel, Users, UsersTunnel } from './sections'
+import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
 
 const RoleForm = () => {
-   const { t } = useTranslation()
    const params = useParams()
-   const history = useHistory()
-   const { doesTabExists } = useTabs()
-   const [isOpen, setIsOpen] = React.useState('')
-   const [selectedApp, setSelectedApp] = React.useState({})
-   const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
-   const [
-      permissionTunnels,
-      openPermissionsTunnel,
-      closePermissionsTunnel,
-   ] = useTunnel(1)
-   const [form, setForm] = React.useState({
-      roleName: '',
-      apps: [],
+   const { tab, addTab } = useTabs()
+   const [apps, setApps] = React.useState([])
+   const [users, setUsers] = React.useState([])
+   const [insertApps] = useMutation(ROLES.INSERT_ROLES_APPS, {
+      onCompleted: () => {
+         toast.success('Apps added successfully to the role.')
+      },
+      onError: () => {
+         toast.error('Failed to add apps to the role.')
+      },
    })
-   const [search, setSearch] = React.useState('')
+   const [insertUsers] = useMutation(ROLES.INSERT_ROLES_USERS, {
+      onCompleted: () => {
+         toast.success('Users added successfully to the role.')
+      },
+      onError: () => {
+         toast.error('Failed to add users to the role.')
+      },
+   })
+   const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
+   const [usersTunnels, openUsersTunnel, closeUsersTunnel] = useTunnel(1)
+   const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
+      variables: {
+         id: params.id,
+      },
+   })
 
    React.useEffect(() => {
-      const tab = doesTabExists(`/settings/roles/${params.name}`)
-      if (Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         setForm(form => ({ ...form, ...tab }))
-      } else {
-         history.push('/settings/roles')
+      if (!loading && !tab && role?.id) {
+         addTab(role.title, `/settings/roles/${role.id}`)
       }
-   }, [params.name, history])
+   }, [loading, role, params.id, tab, addTab])
 
-   const [list, selected, selectOption] = useMultiList([
-      {
-         id: 1,
-         title: 'Ingredient App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: true },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: false },
-         ],
-      },
-      {
-         id: 2,
-         title: 'Recipe App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: false },
-            { title: 'Read', allowed: true },
-            { title: 'Update', allowed: false },
-            { title: 'Delete', allowed: true },
-         ],
-      },
-      {
-         id: 3,
-         title: 'Inventory App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: true },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: true },
-         ],
-      },
-      {
-         id: 4,
-         title: 'Settings App',
-         icon: '',
-         permissions: [
-            { title: 'Create', allowed: false },
-            { title: 'Read', allowed: false },
-            { title: 'Update', allowed: true },
-            { title: 'Delete', allowed: false },
-         ],
-      },
-   ])
+   React.useEffect(() => {
+      if (!loading && role?.id) {
+         setApps(role.apps)
+         setUsers(
+            role.users.map(({ user }) => ({
+               user: {
+                  id: user.keycloakId,
+                  title: user.firstName
+                     ? user.firstName + ' ' + user.lastName
+                     : 'Not Available',
+                  description: user.email,
+               },
+            }))
+         )
+      }
+   }, [loading, role])
 
-   const handleChange = e => {
-      const { name, value } = e.target
-      setForm({ ...form, [name]: value })
+   const publish = () => {
+      const _apps = differenceBy(apps, role.apps, 'app.id')
+      if (!isEmpty(_apps)) {
+         insertApps({
+            variables: {
+               objects: _apps.map(({ app }) => ({
+                  appId: app.id,
+                  roleId: role.id,
+               })),
+            },
+         })
+      }
+
+      const _users = differenceBy(
+         users,
+         role.users.map(node => ({
+            user: { ...node.user, id: node.user.keycloakId },
+         })),
+         'user.id'
+      )
+      if (!isEmpty(_users)) {
+         insertUsers({
+            variables: {
+               objects: _users.map(({ user }) => ({
+                  userId: user.id,
+                  roleId: role.id,
+               })),
+            },
+         })
+      }
    }
+
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Input
-               type="text"
-               name="roleName"
-               style={{ width: '320px' }}
-               value={form.roleName || ''}
-               onChange={e => handleChange(e)}
-               placeholder={t(address.concat("enter the role name"))}
-            />
-            <TextButton type="solid">{t(address.concat('publish'))}</TextButton>
+            <Text as="title">{role.title}</Text>
+            <TextButton type="solid" onClick={publish}>
+               Publish
+            </TextButton>
          </StyledHeader>
          <StyledSection>
-            <Text as="h2">{t(address.concat('apps'))} ({form.apps.length})</Text>
-            {form.apps.length > 0 &&
-               form.apps.map(option => (
-                  <StyledAppItem key={option.id}>
-                     <div>
-                        <div>
-                           <Avatar
-                              withName
-                              type="round"
-                              url={option.icon}
-                              title={option.title}
-                           />
-                           <span
-                              tabIndex="0"
-                              role="button"
-                              onClick={() =>
-                                 setIsOpen(value =>
-                                    value === option.title ? '' : option.title
-                                 )
-                              }
-                              onKeyPress={e =>
-                                 e.charCode === 32 &&
-                                 setIsOpen(value =>
-                                    value === option.title ? '' : option.title
-                                 )
-                              }
-                           >
-                              {isOpen === option.title ? (
-                                 <ArrowUpIcon color="#555B6E" size={24} />
-                              ) : (
-                                    <ArrowDownIcon color="#555B6E" size={24} />
-                                 )}
-                           </span>
-                        </div>
-                        <TextButton
-                           type="ghost"
-                           onClick={() => {
-                              setSelectedApp(option)
-                              openPermissionsTunnel(1)
-                           }}
-                        >
-                           {t(address.concat('configure'))}
-                        </TextButton>
-                     </div>
-                     {isOpen === option.title && (
-                        <ul>
-                           {option.permissions.map(permission => (
-                              <li key={permission.title}>
-                                 <span>
-                                    {permission.allowed ? (
-                                       <TickIcon color="#28C1F7" size={20} />
-                                    ) : (
-                                          <ClearIcon color="#FF5A52" size={20} />
-                                       )}
-                                 </span>
-                                 <span>{permission.title}</span>
-                              </li>
-                           ))}
-                        </ul>
-                     )}
-                  </StyledAppItem>
-               ))}
+            <Text as="h2">Apps ({apps.length})</Text>
+            {apps.length > 0 && <Apps apps={apps} />}
             <ButtonTile
                noIcon
                size="sm"
                type="secondary"
-               text={t(address.concat("select and configure apps"))}
+               text="Select and Configure Apps"
                onClick={() => openAppsTunnel(1)}
             />
          </StyledSection>
+         <StyledSection>
+            <Text as="h2">Users ({users.length})</Text>
+            {users.length > 0 && <Users users={users} />}
+            <ButtonTile
+               noIcon
+               size="sm"
+               type="secondary"
+               text="Select and Configure Users"
+               onClick={() => openUsersTunnel(1)}
+            />
+         </StyledSection>
          <Tunnels tunnels={appsTunnels}>
-            <Tunnel layer={1}>
-               <StyledTunnelHeader>
-                  <div>
-                     <IconButton
-                        type="ghost"
-                        onClick={() => closeAppsTunnel(1)}
-                     >
-                        <ClearIcon size={20} />
-                     </IconButton>
-                     <Text as="h2">{t(address.concat('configure apps'))}</Text>
-                  </div>
-                  <TextButton
-                     type="solid"
-                     onClick={() => {
-                        closeAppsTunnel(1)
-                        setForm({ ...form, apps: [...selected] })
-                     }}
-                  >
-                     {t(address.concat('add'))}
-                  </TextButton>
-               </StyledTunnelHeader>
-               <StyledTunnelMain>
-                  <List>
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(address.concat("type what you're looking for")).concat('...')}
-                     />
-                     <ListOptions>
-                        {list
-                           .filter(option =>
-                              option.title.toLowerCase().includes(search)
-                           )
-                           .map(option => (
-                              <ListItem
-                                 type="MSL1101"
-                                 key={option.id}
-                                 content={{
-                                    icon: option.icon,
-                                    title: option.title,
-                                 }}
-                                 onClick={() => selectOption('id', option.id)}
-                                 isActive={selected.find(
-                                    item => item.id === option.id
-                                 )}
-                              />
-                           ))}
-                     </ListOptions>
-                  </List>
-               </StyledTunnelMain>
+            <Tunnel layer={1} size="sm">
+               <AppsTunnel
+                  selectedApps={setApps}
+                  closeTunnel={closeAppsTunnel}
+               />
             </Tunnel>
          </Tunnels>
-         <Tunnels tunnels={permissionTunnels}>
-            <Tunnel layer={1}>
-               <StyledTunnelHeader>
-                  <div>
-                     <IconButton
-                        type="ghost"
-                        onClick={() => closePermissionsTunnel(1)}
-                     >
-                        <ClearIcon size={20} />
-                     </IconButton>
-                     <Text as="h2">{selectedApp.title}</Text>
-                  </div>
-                  <TextButton
-                     type="solid"
-                     onClick={() => {
-                        closePermissionsTunnel(1)
-                     }}
-                  >
-                     {t(address.concat('save'))}
-                  </TextButton>
-               </StyledTunnelHeader>
-               <StyledTunnelMain>
-                  <Text as="title">
-                     {t(address.concat('permissions for role'))}: {form.roleName || 'Untitled'}
-                  </Text>
-                  <StyledPermissions>
-                     {Object.keys(selectedApp).length > 0 &&
-                        selectedApp.permissions.map(permission => (
-                           <Toggle
-                              key={permission.title}
-                              label={permission.title}
-                              checked={permission.allowed}
-                              setChecked={() =>
-                                 console.log('toggle permission')
-                              }
-                           />
-                        ))}
-                  </StyledPermissions>
-               </StyledTunnelMain>
+         <Tunnels tunnels={usersTunnels}>
+            <Tunnel layer={1} size="sm">
+               <UsersTunnel
+                  selectedUsers={setUsers}
+                  closeTunnel={closeUsersTunnel}
+               />
             </Tunnel>
          </Tunnels>
       </StyledWrapper>

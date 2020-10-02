@@ -3,12 +3,11 @@ import { Loader, Text } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
-
 import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
-import { Context } from '../../../context/tabs'
+import { useTabs } from '../../../context'
 import {
-   CREATE_PURCHASE_ORDER,
    CREATE_ITEM_PURCHASE_ORDER,
+   CREATE_PURCHASE_ORDER,
 } from '../../../graphql'
 import { SolidTile } from '../styled'
 
@@ -18,14 +17,7 @@ function onError(error) {
 }
 
 export default function SelectPurchaseOrderTypeTunnel({ close }) {
-   const { dispatch } = React.useContext(Context)
-
-   const addTab = (title, view, id) => {
-      dispatch({
-         type: 'ADD_TAB',
-         payload: { type: 'forms', title, view, id },
-      })
-   }
+   const { addTab } = useTabs()
 
    const [createPackagingOrder, { loading }] = useMutation(
       CREATE_PURCHASE_ORDER,
@@ -33,7 +25,7 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
          onCompleted: data => {
             const { id } = data.item
             const tabTitle = `Purchase Order-${uuid().substring(30)}`
-            addTab(tabTitle, 'packagingPurchaseOrder', id)
+            addTab(tabTitle, `/inventory/purchase-orders/packaging/${id}`)
          },
          onError,
       }
@@ -45,7 +37,7 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
          onCompleted: data => {
             const { id } = data.item
             const tabTitle = `Purchase Order-${uuid().substring(30)}`
-            addTab(tabTitle, 'purchaseOrder', id)
+            addTab(tabTitle, `/inventory/purchase-orders/item/${id}`)
          },
          onError,
       }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
@@ -10,59 +11,112 @@ import {
    DevicesListing,
    UserForm,
    RoleForm,
-   DeviceForm,
    MasterListForm,
    StationsListing,
    StationForm,
    MasterList,
 } from '../../views'
+import { Flex } from '../../../../shared/components'
+import { useAccess } from '../../../../shared/providers'
 
 const Main = () => {
    return (
       <main>
          <Switch>
             <Route path="/settings" exact>
-               <Home />
+               <AccessCheck
+                  title="home"
+                  message="You do not have sufficient permission to see settings app."
+               >
+                  <Home />
+               </AccessCheck>
             </Route>
             <Route path="/settings/apps" exact>
-               <AppsListing />
+               <AccessCheck
+                  title="apps"
+                  message="You do not have sufficient permission to see apps listing."
+               >
+                  <AppsListing />
+               </AccessCheck>
             </Route>
             <Route path="/settings/users" exact>
-               <UsersListing />
+               <AccessCheck
+                  title="users"
+                  message="You do not have sufficient permission to see users listing."
+               >
+                  <UsersListing />
+               </AccessCheck>
             </Route>
-            <Route path="/settings/users/:name">
-               <UserForm />
+            <Route path="/settings/users/:id">
+               <AccessCheck
+                  title="user"
+                  message="You do not have sufficient permission to see user details."
+               >
+                  <UserForm />
+               </AccessCheck>
             </Route>
             <Route path="/settings/roles" exact>
                <RolesListing />
             </Route>
-            <Route path="/settings/roles/:name">
+            <Route path="/settings/roles/:id">
                <RoleForm />
             </Route>
             <Route path="/settings/devices" exact>
-               <DevicesListing />
-            </Route>
-            <Route path="/settings/devices/:name">
-               <DeviceForm />
+               <AccessCheck
+                  title="devices"
+                  message="You do not have sufficient permission to see devices listing."
+               >
+                  <DevicesListing />
+               </AccessCheck>
             </Route>
             <Route path="/settings/stations" exact>
-               <StationsListing />
+               <AccessCheck
+                  title="stations"
+                  message="You do not have sufficient permission to see stations listing."
+               >
+                  <StationsListing />
+               </AccessCheck>
             </Route>
             <Route path="/settings/stations/:id">
-               <StationForm />
+               <AccessCheck
+                  title="station"
+                  message="You do not have sufficient permission to see station details."
+               >
+                  <StationForm />
+               </AccessCheck>
             </Route>
             <Route path="/settings/master-lists" exact>
-               <MasterList />
+               <AccessCheck
+                  title="master-lists"
+                  message="You do not have sufficient permission to see master listing."
+               >
+                  <MasterList />
+               </AccessCheck>
             </Route>
             <Route path="/settings/master-lists/:list">
-               <MasterListForm />
+               <AccessCheck
+                  title="master-list"
+                  message="You do not have sufficient permission to see master list details"
+               >
+                  <MasterListForm />
+               </AccessCheck>
             </Route>
-            {/* <Route path="/settings/store-settings">
-               <StoreSettingsForm />
-            </Route> */}
          </Switch>
       </main>
    )
 }
 
 export default Main
+
+const AccessCheck = ({ title, children, message }) => {
+   const { canAccessRoute, accessPermission } = useAccess()
+   return canAccessRoute(title) ? (
+      children
+   ) : (
+      <Flex container height="100%" alignItems="center" justifyContent="center">
+         <Text as="title">
+            {accessPermission('ROUTE_READ', title)?.fallbackMessage || message}
+         </Text>
+      </Flex>
+   )
+}

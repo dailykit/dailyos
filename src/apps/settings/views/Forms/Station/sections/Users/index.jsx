@@ -3,7 +3,6 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
    TextButton,
-   IconButton,
    TagGroup,
    Tag,
    List,
@@ -37,8 +36,6 @@ import {
 import { TunnelMain, StyledInfo } from '../../styled'
 
 import { Header } from './styled'
-
-import { CloseIcon } from '../../../../../../../shared/assets/icons'
 
 export const Users = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)

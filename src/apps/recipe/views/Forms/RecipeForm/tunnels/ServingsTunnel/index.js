@@ -10,8 +10,6 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    const [busy, setBusy] = React.useState(false)
    const [servings, setServings] = React.useState([''])
 
-   // {simpleRecipeId: 10, yield: ""}
-
    // Mutation
    const [createYields] = useMutation(CREATE_SIMPLE_RECIPE_YIELDS, {
       onCompleted: () => {
@@ -28,10 +26,10 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
       if (busy) return
       setBusy(true)
       const objects = servings
-         .filter(serving => serving.length)
+         .filter(serving => serving.trim().length)
          .map(serving => ({
             simpleRecipeId: state.id,
-            yield: { serving },
+            yield: { serving: +serving.trim() },
          }))
       if (!objects.length) {
          toast.error('No serving to add!')
@@ -50,6 +48,12 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
       setServings([...newServings])
    }
 
+   const addField = () => {
+      if (servings.every(serving => serving.trim().length)) {
+         setServings([...servings, ''])
+      }
+   }
+
    return (
       <>
          <TunnelHeader
@@ -65,9 +69,9 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                />
             </Container>
             {servings.map((serving, i) => (
-               <Container bottom="16" key={serving}>
+               <Container bottom="16" key={i}>
                   <Input
-                     type="text"
+                     type="number"
                      label="Serving"
                      name={`serving-${i}`}
                      value={serving}
@@ -75,11 +79,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                   />
                </Container>
             ))}
-            <ButtonTile
-               type="secondary"
-               text="Add More"
-               onClick={() => setServings([...servings, ''])}
-            />
+            <ButtonTile type="secondary" text="Add More" onClick={addField} />
          </TunnelBody>
       </>
    )

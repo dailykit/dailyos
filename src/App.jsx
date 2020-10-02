@@ -43,6 +43,16 @@ const Subscription = Loadable({
    loading: Loader,
 })
 
+const Insights = Loadable({
+   loader: () => import('./apps/insights'),
+   loading: Loader,
+})
+
+const Brands = Loadable({
+   loader: () => import('./apps/brands'),
+   loading: Loader,
+})
+
 const App = () => {
    return (
       <>
@@ -90,6 +100,16 @@ const App = () => {
                            <Trans i18nKey="subscription">Subscription</Trans>
                         </Link>
                      </AppItem>
+                     <AppItem>
+                        <Link to="/insights">
+                           <div>Insights</div>
+                        </Link>
+                     </AppItem>
+                     <AppItem>
+                        <Link to="/brands">
+                           <div>Brands</div>
+                        </Link>
+                     </AppItem>
                   </AppList>
                </Route>
                <Route path="/inventory" component={Inventory} />
@@ -100,6 +120,8 @@ const App = () => {
                <Route path="/order" component={Order} />
                <Route path="/crm" component={CRM} />
                <Route path="/subscription" component={Subscription} />
+               <Route path="/insights" component={Insights} />
+               <Route path="/brands" component={Brands} />
             </Switch>
          </Router>
          <Lang />

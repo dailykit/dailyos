@@ -17,6 +17,9 @@ import LeftPanelIcon from './LeftPanel'
 import RightPanelIcon from './RightPanel'
 import BellIcon from './Bell'
 import PrintIcon from './Print'
+import LabelPrinterIcon from './LabelPrinter'
+import KotPrinterIcon from './KotPrinter'
+import ScaleIcon from './Scale'
 
 export {
    PhoneIcon,
@@ -38,4 +41,7 @@ export {
    RightPanelIcon,
    BellIcon,
    PrintIcon,
+   ScaleIcon,
+   LabelPrinterIcon,
+   KotPrinterIcon,
 }

@@ -1,10 +1,22 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { Loader, useTunnel } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { CUSTOMER_DATA } from '../../../graphql'
-import { OrdersTable, ReferralTable, WalletTable } from '../../index'
+import {
+   CUSTOMER_DATA,
+   SUBSCRIPTION,
+   SUBSCRIPTION_PLAN,
+   ISTEST,
+   CUSTOMER_ISTEST,
+} from '../../../graphql'
+import {
+   OrdersTable,
+   ReferralTable,
+   WalletTable,
+   SubscriptionTable,
+} from '../../Tables'
 import {
    StyledWrapper,
    StyledContainer,
@@ -16,16 +28,25 @@ import {
    CustomerCard,
    ContactInfoCard,
    PaymentCard,
-   StyledCard,
+   OrderCard,
+   ReferralCard,
+   SubscriptionCard,
+   WalletCard,
+   SubscriptionInfoCard,
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
 
 const CustomerRelation = ({ match }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { addTab, dispatch, tab } = useTabs()
+   const { dispatch, tab } = useTabs()
    const history = useHistory()
-   // const [activeCard, setActiveCard] = useState('Orders')
+   const { data: customerIsTest, loading: customerloading } = useSubscription(
+      CUSTOMER_ISTEST,
+      {
+         variables: { keycloakId: match.params.id },
+      }
+   )
    const { loading: listLoading, data: customerData } = useQuery(
       CUSTOMER_DATA,
       {
@@ -34,6 +55,40 @@ const CustomerRelation = ({ match }) => {
          },
       }
    )
+   const { loading: list_Loading, data: subscriptionData } = useQuery(
+      SUBSCRIPTION,
+      {
+         variables: {
+            keycloakId: match.params.id,
+         },
+      }
+   )
+   const { loading: list__Loading, data: subscriptionPlan } = useQuery(
+      SUBSCRIPTION_PLAN,
+      {
+         variables: {
+            keycloakId: match.params.id,
+         },
+      }
+   )
+   const [updateIsTest] = useMutation(ISTEST, {
+      onCompleted: () => {
+         toast.info('Information updated!')
+      },
+      onError: error => {
+         toast.error(`Error : ${error.message}`)
+      },
+   })
+
+   const toggleHandler = toggle => {
+      updateIsTest({
+         variables: {
+            keycloakId: match.params.id,
+            isTest: toggle,
+         },
+      })
+   }
+
    useEffect(() => {
       if (!tab) {
          history.push('/crm/customers')
@@ -61,17 +116,31 @@ const CustomerRelation = ({ match }) => {
       table = <ReferralTable />
    } else if (tab?.data?.activeCard === 'Wallet') {
       table = <WalletTable />
+   } else if (tab?.data?.activeCard === 'Subscriber') {
+      table = (
+         <SubscriptionTable
+            id={match.params.id}
+            sid={subscriptionData?.customer?.subscriptionId || ''}
+         />
+      )
    }
    if (listLoading) return <Loader />
+   if (list_Loading) return <Loader />
+   if (list__Loading) return <Loader />
+   if (customerloading) return <Loader />
    return (
       <StyledWrapper>
          <StyledContainer>
             <StyledSideBar>
-               {/* <StyledDiv> */}
                <CustomerCard
                   customer={customerData?.customer}
                   walletAmount="N/A"
+                  toggle={customerIsTest?.customer?.isTest}
+                  toggleHandler={() =>
+                     toggleHandler(!customerIsTest?.customer?.isTest)
+                  }
                />
+               <SubscriptionInfoCard planData={subscriptionPlan?.customer} />
                <ContactInfoCard
                   defaultTag2="(Default)"
                   customerData={customerData?.customer?.platform_customer}
@@ -87,32 +156,30 @@ const CustomerRelation = ({ match }) => {
                   }
                   billingAddDisplay="none"
                />
-               {/* </StyledDiv> */}
             </StyledSideBar>
             <StyledMainBar>
                <StyledContainer>
-                  <StyledCard
-                     heading="Orders"
-                     subheading1="Total Amount"
+                  <OrderCard
                      data={customerData?.customer?.orders_aggregate?.aggregate}
-                     subheading2="Total Orders"
                      click={() => setActiveCard('Orders')}
                      active={tab.data.activeCard}
+                     heading="Orders"
                   />
-
-                  <StyledCard
-                     heading="Referrals"
-                     subheading1="Total Referrals Sent"
-                     subheading2="Total Signed up"
+                  <ReferralCard
                      click={() => setActiveCard('Referrals')}
                      active={tab.data.activeCard}
+                     heading="Referrals"
                   />
-                  <StyledCard
-                     heading="Wallet"
-                     subheading1="Total Wallet Amount"
-                     value1="N/A"
+                  <SubscriptionCard
+                     data={subscriptionData?.customer}
+                     click={() => setActiveCard('Subscriber')}
+                     active={tab.data.activeCard}
+                     heading="Subscriber"
+                  />
+                  <WalletCard
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
+                     heading="Wallet"
                   />
                </StyledContainer>
                <StyledTable>{table}</StyledTable>

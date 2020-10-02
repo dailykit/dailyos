@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -46,7 +47,7 @@ import {
 import StationTunnel from './tunnels/StationTunnel'
 
 const IngredientForm = () => {
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
    const { id: ingredientId } = useParams()
    const [ingredientState, ingredientDispatch] = React.useReducer(
       reducers,
@@ -71,19 +72,19 @@ const IngredientForm = () => {
    const [state, setState] = React.useState({})
 
    // Subscriptions
-   const { loading } = useSubscription(S_INGREDIENT, {
+   const { loading, error } = useSubscription(S_INGREDIENT, {
       variables: {
          id: ingredientId,
       },
       onSubscriptionData: data => {
+         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.ingredient)
          setTitle(data.subscriptionData.data.ingredient.name)
          setCategory(data.subscriptionData.data.ingredient.category || '')
       },
-      onError: error => {
-         console.log(error)
-      },
    })
+
+   if (error) console.log('Ingredient error: ', error)
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -94,6 +95,12 @@ const IngredientForm = () => {
          toast.error('Error')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/recipe/ingredients/${ingredientId}`)
+      }
+   }, [tab, loading, title, addTab])
 
    // Handlers
    const updateName = async () => {

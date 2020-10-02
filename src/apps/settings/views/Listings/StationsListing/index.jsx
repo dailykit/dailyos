@@ -1,9 +1,10 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
+import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 // Components
 import { IconButton, Text, Loader } from '@dailykit/ui'
@@ -22,7 +23,7 @@ import tableOptions from '../tableOption'
 
 const StationsListing = () => {
    const history = useHistory()
-   const { tabs, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
    const tableRef = React.useRef()
    const { error, loading, data: { stations } = {} } = useSubscription(STATIONS)
    const [create] = useMutation(UPSERT_STATION, {
@@ -30,7 +31,14 @@ const StationsListing = () => {
          addTab(insertStation.name, `/settings/stations/${insertStation.id}`)
       },
    })
-   const [remove] = useMutation(DELETE_STATION)
+   const [remove] = useMutation(DELETE_STATION, {
+      onCompleted: () => {
+         toast.success('Successfully deleted the station!')
+      },
+      onError: () => {
+         toast.success('Failed to delete the station!')
+      },
+   })
 
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
@@ -55,11 +63,10 @@ const StationsListing = () => {
    ]
 
    React.useEffect(() => {
-      const tab = tabs.find(item => item.path === `/settings/stations`) || {}
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          addTab('Stations', `/settings/stations`)
       }
-   }, [history, tabs])
+   }, [history, tab, addTab])
 
    return (
       <StyledWrapper>

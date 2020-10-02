@@ -184,6 +184,7 @@ export const USER = gql`
          email
          phoneNo
          tempPassword
+         keycloakId
       }
    }
 `
@@ -214,7 +215,7 @@ export const CUISINES = gql`
 
 export const ACCOMPANIMENT_TYPES = gql`
    subscription AccompanimentTypes {
-      master_accompanimentType {
+      accompaniments {
          id
          name
       }
@@ -286,6 +287,176 @@ export const DEVICES = gql`
                name
             }
          }
+      }
+   }
+`
+
+export const ROLES = {
+   AGGREGATE: gql`
+      subscription rolesAggregate {
+         rolesAggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   ROLE: gql`
+      subscription role($id: Int!) {
+         role(id: $id) {
+            id
+            title
+            apps {
+               id
+               app {
+                  id
+                  title
+               }
+            }
+            users {
+               user {
+                  id
+                  email
+                  lastName
+                  firstName
+                  keycloakId
+               }
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription roles {
+         roles {
+            id
+            title
+            apps {
+               id
+               app {
+                  id
+                  title
+               }
+            }
+         }
+      }
+   `,
+   APPS: gql`
+      query apps($roleId: Int_comparison_exp!) {
+         apps(where: { _not: { roles: { roleId: $roleId } } }) {
+            id
+            title
+         }
+      }
+   `,
+   INSERT_ROLES_APPS: gql`
+      mutation insert_settings_role_app(
+         $objects: [settings_role_app_insert_input!]!
+      ) {
+         insert_settings_role_app(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+   INSERT_ROLES_USERS: gql`
+      mutation insert_settings_user_role(
+         $objects: [settings_user_role_insert_input!]!
+      ) {
+         insert_settings_user_role(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+   USERS: gql`
+      query users($roleId: Int_comparison_exp!) {
+         users: settings_user(where: { _not: { roles: { roleId: $roleId } } }) {
+            id
+            email
+            lastName
+            firstName
+            keycloakId
+         }
+      }
+   `,
+   ROLE_APP: gql`
+      query role_app($appId: Int!, $roleId: Int!) {
+         role_app: settings_role_app_by_pk(appId: $appId, roleId: $roleId) {
+            id
+         }
+      }
+   `,
+   PERMISSIONS: gql`
+      subscription permissions(
+         $appId: Int_comparison_exp!
+         $roleId: Int_comparison_exp!
+      ) {
+         permissions: settings_appPermission(where: { appId: $appId }) {
+            id
+            route
+            title
+            roleAppPermissions: role_appPermissions(
+               where: { role_app: { appId: $appId, roleId: $roleId } }
+            ) {
+               value
+            }
+         }
+      }
+   `,
+   UPDATE_PERMISSION: gql`
+      mutation updateRole_AppPermission(
+         $value: Boolean!
+         $where: settings_role_appPermission_bool_exp!
+      ) {
+         updateRole_AppPermission: update_settings_role_appPermission(
+            where: $where
+            _set: { value: $value }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   INSERT_PERMISSION: gql`
+      mutation insertRole_AppPermission(
+         $object: settings_role_appPermission_insert_input!
+      ) {
+         insertRole_AppPermission: insert_settings_role_appPermission_one(
+            object: $object
+         ) {
+            role_appId
+         }
+      }
+   `,
+}
+
+export const PRINTNODE_CREDS = gql`
+   query admins {
+      admins: organizationAdmins {
+         email
+         password: printNodePassword
+      }
+   }
+`
+
+export const APPS = gql`
+   subscription apps {
+      apps {
+         id
+         title
+         roles {
+            id
+            role {
+               id
+               title
+            }
+         }
+      }
+   }
+`
+
+export const ONLINE_PRINTERS = gql`
+   query printers {
+      printers(where: { state: { _eq: "online" } }) {
+         printNodeId
+         name
       }
    }
 `

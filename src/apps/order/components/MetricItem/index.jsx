@@ -5,11 +5,11 @@ import { useOrder } from '../../context'
 
 export const MetricItem = ({
    title,
-   count,
+   count = 0,
    variant,
-   amount,
+   amount = 0,
    currency,
-   average,
+   average = 0,
 }) => {
    const { state, dispatch } = useOrder()
 
@@ -18,7 +18,9 @@ export const MetricItem = ({
       dispatch({
          type: 'SET_FILTER',
          payload: {
-            orderStatus: { _eq: title.split(' ').join('_') },
+            orderStatus: {
+               ...(title !== 'ALL' && { _eq: title.split(' ').join('_') }),
+            },
          },
       })
       dispatch({
@@ -40,6 +42,8 @@ export const MetricItem = ({
          variant={variant}
          onClick={() => changeStatus()}
          className={
+            (Object.keys(state.orders.where?.orderStatus).length === 0 &&
+               title === 'ALL') ||
             title.split(' ').join('_') === state.orders.where?.orderStatus?._eq
                ? 'active'
                : ''
@@ -49,14 +53,14 @@ export const MetricItem = ({
             <h2>{title}</h2>
             <span title="Average">
                {currency === 'usd' && '$'}
-               {average.toFixed(2)}
+               {average?.toFixed(2) || 0}
             </span>
          </header>
          <main>
             <span>{count}</span>
             <span title="Total">
                {currency === 'usd' && '$'}
-               {amount.toFixed(2)}
+               {amount?.toFixed(2) || 0}
             </span>
          </main>
       </ListItem>

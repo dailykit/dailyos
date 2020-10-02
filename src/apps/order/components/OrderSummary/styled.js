@@ -1,13 +1,13 @@
 import styled, { css } from 'styled-components'
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.aside`
    height: 100%;
    padding: 0 12px 12px 12px;
    border-right: 1px solid #e7e7e7;
    border-left: 1px solid #e7e7e7;
    > h2,
    > div > h2 {
-      margin: 8px 0;
+      height: 40px;
       text-transform: uppercase;
       font-size: 14px;
       font-weight: 500;

@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import 'react-tabulator/lib/styles.css'
+import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
+import '@dailykit/react-tabulator/lib/styles.css'
 import './views/Listings/tableStyle.css'
 
 // Sections
@@ -12,20 +12,15 @@ import Main from './sections/Main'
 
 // Styled
 import { StyledWrapper } from '../../styled'
-import { HeaderWrapper, MainWrapper } from '../../shared/styled'
 
 const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
    return (
       <StyledWrapper>
          <Router basename={process.env.PUBLIC_URL}>
-            <HeaderWrapper>
-               <Header toggleSidebar={toggleSidebar} />
-            </HeaderWrapper>
+            <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <MainWrapper>
-               <Main />
-            </MainWrapper>
+            <Main />
          </Router>
       </StyledWrapper>
    )

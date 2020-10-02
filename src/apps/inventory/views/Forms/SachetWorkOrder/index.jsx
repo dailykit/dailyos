@@ -8,12 +8,12 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui/'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
-import { Context } from '../../../context/tabs'
 import {
    SACHET_WORK_ORDER_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
@@ -37,11 +37,7 @@ const onError = error => {
 
 export default function SachetWorkOrder() {
    const { t } = useTranslation()
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
+   const { id } = useParams()
 
    const [
       supplierItemTunnel,

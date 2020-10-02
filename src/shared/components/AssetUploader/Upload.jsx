@@ -124,7 +124,7 @@ const StyledSection = styled.section(css`
 
 const StyledForm = styled.div(css`
    display: flex;
-   margin-top: 12px;
+   padding: 14px;
    flex-direction: column;
    fieldset {
       border: none;

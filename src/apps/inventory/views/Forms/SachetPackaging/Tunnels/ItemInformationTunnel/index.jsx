@@ -7,10 +7,12 @@ import { toast } from 'react-toastify'
 import { TunnelContainer } from '../../../../../components'
 import { FlexContainer } from '../../../styled'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
+import { useTabs } from '../../../../../context'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
 export default function ItemInformationTunnel({ close, state, next }) {
+   const { setTabTitle } = useTabs()
    const { t } = useTranslation()
 
    const [itemName, setItemName] = useState(state.packagingName || '')
@@ -29,6 +31,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
       },
       onCompleted: () => {
          toast.success('Information Added')
+         setTabTitle(itemName)
          close(1)
          next(2)
       },

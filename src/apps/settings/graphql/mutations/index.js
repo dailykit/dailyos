@@ -231,6 +231,18 @@ export const CREATE_USER = gql`
    mutation insert_settings_user_one($object: settings_user_insert_input!) {
       insert_settings_user_one(object: $object) {
          id
+         firstName
+      }
+   }
+`
+
+export const UPDATE_USER = gql`
+   mutation update_settings_user_by_pk(
+      $id: Int!
+      $_set: settings_user_set_input!
+   ) {
+      update_settings_user_by_pk(pk_columns: { id: $id }, _set: $_set) {
+         id
       }
    }
 `
@@ -244,10 +256,8 @@ export const DELETE_USER = gql`
 `
 
 export const CREATE_ACCOMPANIMENT_TYPES = gql`
-   mutation CreateAccompanimentTypes(
-      $objects: [master_accompanimentType_insert_input!]!
-   ) {
-      insert_master_accompanimentType(objects: $objects) {
+   mutation MyMutation($objects: [master_accompanimentType_insert_input!]!) {
+      createAccompaniments(objects: $objects) {
          returning {
             id
             name
@@ -257,10 +267,11 @@ export const CREATE_ACCOMPANIMENT_TYPES = gql`
 `
 
 export const DELETE_ACCOMPANIMENT_TYPES = gql`
-   mutation DeleteAccompanimentTypes($ids: [Int!]!) {
-      delete_master_accompanimentType(where: { id: { _in: $ids } }) {
+   mutation deleteAccompaniments($ids: [Int!]!) {
+      deleteAccompaniments(where: { id: { _in: $ids } }) {
          returning {
             id
+            name
          }
       }
    }
@@ -348,6 +359,35 @@ export const DELETE_UNITS = gql`
          returning {
             id
          }
+      }
+   }
+`
+
+export const DELETE_USERS_APPS_ROLES = gql`
+   mutation delete_users_apps_roles($where: settings_user_role_app_bool_exp!) {
+      delete_users_apps_roles(where: $where) {
+         affected_rows
+      }
+   }
+`
+
+export const PRINT_JOB = gql`
+   mutation createPrintJob(
+      $contentType: String!
+      $printerId: Int!
+      $source: String!
+      $title: String!
+      $url: String!
+   ) {
+      createPrintJob(
+         contentType: $contentType
+         printerId: $printerId
+         source: $source
+         title: $title
+         url: $url
+      ) {
+         message
+         success
       }
    }
 `

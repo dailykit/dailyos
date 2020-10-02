@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.aside`
    height: 100%;
    padding: 0 12px 12px 12px;
    border-right: 1px solid #e7e7e7;
@@ -20,7 +20,7 @@ export const StyledStat = styled.span(
 )
 
 export const StyledMode = styled.div`
-   height: 32px;
+   height: 40px;
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -58,36 +58,64 @@ export const StyledMain = styled.main`
    }
 `
 
-export const StyledButton = styled.button`
-   color: #fff;
-   height: 32px;
-   border: none;
-   padding: 0 12px;
-   cursor: pointer;
-   margin-top: 16px;
-   margin-right: 16px;
-   border-radius: 6px;
-   background: #53c22b;
-`
-
-export const StyledWeigh = styled.section`
-   color: #fff;
-   height: 180px;
-   display: grid;
-   padding: 0 16px;
-   background: #0ead69;
-   border-radius: 4px;
-   grid-template-rows: 48px 1fr 48px;
-   * {
-      display: flex;
-      align-items: center;
-   }
-   h2 {
+export const StyledButton = styled.button(
+   ({ disabled }) => css`
       color: #fff;
-      font-size: 32px;
-      font-weight: 300;
-   }
-`
+      height: 32px;
+      border: none;
+      padding: 0 12px;
+      cursor: pointer;
+      margin-top: 16px;
+      margin-right: 16px;
+      border-radius: 6px;
+      background: #53c22b;
+      ${disabled &&
+      css`
+         color: #9e9292;
+         background: #e2e2e2;
+         cursor: not-allowed;
+      `}
+   `
+)
+
+export const StyledWeigh = styled.section(
+   ({ state }) => css`
+      color: #fff;
+      height: 180px;
+      display: grid;
+      padding: 0 16px;
+      border-radius: 4px;
+      grid-template-rows: 48px 1fr 48px;
+      ${state === 'low' && `background: #e7c439`};
+      ${state === 'match' && `background: #0ead69`};
+      ${state === 'above' && `background: #ea3838`};
+      * {
+         display: flex;
+         align-items: center;
+      }
+      header {
+         justify-content: space-between;
+         button {
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+         }
+      }
+      h2 {
+         color: #fff;
+         font-size: 32px;
+         font-weight: 300;
+      }
+      h3 {
+         color: #fff;
+         font-size: 18px;
+         font-weight: 400;
+      }
+   `
+)
 
 export const StyledPackaging = styled.section`
    display: grid;
@@ -154,5 +182,46 @@ export const StyledSOP = styled.section`
          object-fit: cover;
          position: absolute;
       }
+   }
+`
+
+export const StyledLabelPreview = styled.section`
+   margin-top: 16px;
+   header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+   }
+   h3 {
+      font-size: 18px;
+      font-weight: 400;
+      color: #555b6e;
+   }
+   div {
+      width: 100%;
+      margin-top: 8px;
+      background: #fff;
+      overflow: hidden;
+      border-radius: 6px;
+   }
+`
+
+export const ManualWeight = styled.section`
+   display: flex;
+   margin-top: 16px;
+   align-items: center;
+   justify-content: space-between;
+   input {
+      width: 180px;
+      height: 32px;
+      padding: 0 8px;
+      margin-right: 8px;
+      border-radius: 2px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+   }
+   button {
+      height: 32px;
+      padding: 0 8px;
+      font-size: 14px;
    }
 `

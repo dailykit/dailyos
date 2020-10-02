@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Input, Text, Checkbox, TextButton } from '@dailykit/ui'
+import { TunnelHeader, Input, Checkbox } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 

@@ -32,11 +32,11 @@ export const UPDATE_ORDER_STATUS = gql`
 `
 
 export const UPDATE_INVENTORY_PRODUCT = gql`
-   mutation updateOrderInventoryProduct($id: Int!, $assemblyStatus: String!) {
-      updateOrderInventoryProduct(
-         pk_columns: { id: $id }
-         _set: { assemblyStatus: $assemblyStatus }
-      ) {
+   mutation updateOrderInventoryProduct(
+      $id: Int!
+      $_set: order_orderInventoryProduct_set_input!
+   ) {
+      updateOrderInventoryProduct(pk_columns: { id: $id }, _set: $_set) {
          id
          assemblyStatus
       }
@@ -44,13 +44,33 @@ export const UPDATE_INVENTORY_PRODUCT = gql`
 `
 
 export const UPDATE_READYTOEAT = gql`
-   mutation updateOrderReadyToEatProduct($id: Int!, $assemblyStatus: String!) {
-      updateOrderReadyToEatProduct(
-         pk_columns: { id: $id }
-         _set: { assemblyStatus: $assemblyStatus }
-      ) {
+   mutation updateOrderReadyToEatProduct(
+      $id: Int!
+      $_set: order_orderReadyToEatProduct_set_input!
+   ) {
+      updateOrderReadyToEatProduct(pk_columns: { id: $id }, _set: $_set) {
          id
+         isAssembled
          assemblyStatus
+      }
+   }
+`
+
+export const UPDATE_SETTING = gql`
+   mutation update_settings_appSettings(
+      $app: String_comparison_exp!
+      $identifier: String_comparison_exp!
+      $type: String_comparison_exp!
+      $_set: settings_appSettings_set_input!
+   ) {
+      update_settings_appSettings(
+         where: { app: $app, identifier: $identifier, type: $type }
+         _set: $_set
+      ) {
+         affected_rows
+         returning {
+            value
+         }
       }
    }
 `

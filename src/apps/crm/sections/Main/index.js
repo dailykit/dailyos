@@ -6,20 +6,32 @@ import {
    Home,
    CustomerListing,
    ReferralPlansListing,
-   customerRelation,
+   CustomerRelation,
+   CouponListing,
+   CouponForm,
+   CampaignListing,
+   CampaignForm,
 } from '../../views'
 
 const Main = () => {
    return (
       <main>
          <Switch>
-            <Route path="/crm/customers/:id" component={customerRelation} />
-            <Route path="/crm/customers" component={CustomerListing} />
+            <Route
+               path="/crm/customers/:id"
+               component={CustomerRelation}
+               exact
+            />
+            <Route path="/crm/customers" component={CustomerListing} exact />
             <Route
                path="/crm/referral-plans"
                exact
                component={ReferralPlansListing}
             />
+            <Route path="/crm/coupons/:id" exact component={CouponForm} />
+            <Route path="/crm/campaign/:id" exact component={CampaignForm} />
+            <Route path="/crm/coupons" component={CouponListing} exact />
+            <Route path="/crm/campaign" component={CampaignListing} exact />
             <Route path="/crm" component={Home} exact />
          </Switch>
       </main>

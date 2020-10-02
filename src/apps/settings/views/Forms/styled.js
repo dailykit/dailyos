@@ -1,8 +1,11 @@
 import styled, { css } from 'styled-components'
 
 export const StyledWrapper = styled.div`
+   width: 100vw;
    margin: 0 auto;
-   width: calc(100vw - 40px);
+   padding: 0 20px;
+   overflow-y: auto;
+   height: calc(100vh - 40px);
    h1 {
       color: #555b6e;
       font-size: 20px;

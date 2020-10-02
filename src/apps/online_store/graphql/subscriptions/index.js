@@ -1,279 +1,8 @@
 import gql from 'graphql-tag'
 
-export const S_ACCOMPANIMENT_TYPES = gql`
-   subscription {
-      accompaniments {
-         id
-         title: name
-      }
-   }
-`
-
-export const SRP_COUNT = gql`
-   subscription {
-      simpleRecipeProductsAggregate {
-         aggregate {
-            count
-         }
-      }
-   }
-`
-
-export const S_SIMPLE_RECIPE_PRODUCTS = gql`
-   subscription {
-      simpleRecipeProducts {
-         id
-         name
-         isValid
-         isPublished
-         simpleRecipe {
-            id
-            name
-         }
-      }
-   }
-`
-
-export const S_SIMPLE_RECIPE_PRODUCT = gql`
-   subscription SimpleRecipeProduct($id: Int!) {
-      simpleRecipeProduct(id: $id) {
-         id
-         name
-         assets
-         isValid
-         isPublished
-         accompaniments
-         tags
-         description
-         default
-         isPopupAllowed
-         simpleRecipe {
-            id
-            name
-         }
-         simpleRecipeProductOptions {
-            id
-            isActive
-            price
-            type
-            simpleRecipeYield {
-               id
-               yield
-               cost
-            }
-            modifier {
-               id
-               name
-               data
-            }
-         }
-      }
-   }
-`
-
-export const IP_COUNT = gql`
-   subscription {
-      inventoryProductsAggregate {
-         aggregate {
-            count
-         }
-      }
-   }
-`
-
-export const S_INVENTORY_PRODUCTS = gql`
-   subscription {
-      inventoryProducts {
-         id
-         name
-         isValid
-         isPublished
-      }
-   }
-`
-
-export const S_INVENTORY_PRODUCT = gql`
-   subscription($id: Int!) {
-      inventoryProduct(id: $id) {
-         id
-         name
-         assets
-         accompaniments
-         isValid
-         isPublished
-         tags
-         description
-         default
-         isPopupAllowed
-         supplierItem {
-            id
-            name
-            unitSize
-            unit
-         }
-         sachetItem {
-            id
-            unitSize
-            unit
-            bulkItem {
-               processingName
-               supplierItem {
-                  name
-               }
-            }
-         }
-         inventoryProductOptions {
-            id
-            label
-            price
-            quantity
-            modifier {
-               id
-               name
-               data
-            }
-         }
-      }
-   }
-`
-
-export const CUP_COUNT = gql`
-   subscription {
-      customizableProductsAggregate {
-         aggregate {
-            count
-         }
-      }
-   }
-`
-
-export const S_CUSTOMIZABLE_PRODUCTS = gql`
-   subscription {
-      customizableProducts {
-         id
-         name
-         isValid
-         isPublished
-      }
-   }
-`
-
-export const S_CUSTOMIZABLE_PRODUCT = gql`
-   subscription CustomizableProduct($id: Int!) {
-      customizableProduct(id: $id) {
-         id
-         name
-         default
-         isValid
-         isPublished
-         description
-         tags
-         assets
-         isPopupAllowed
-         customizableProductOptions {
-            id
-            inventoryProduct {
-               id
-               name
-               inventoryProductOptions {
-                  id
-                  label
-                  price
-                  quantity
-               }
-            }
-            simpleRecipeProduct {
-               id
-               name
-               simpleRecipeProductOptions {
-                  id
-                  isActive
-                  price
-                  simpleRecipeYield {
-                     yield
-                  }
-                  type
-               }
-            }
-         }
-      }
-   }
-`
-
-export const COP_COUNT = gql`
-   subscription {
-      comboProductsAggregate {
-         aggregate {
-            count
-         }
-      }
-   }
-`
-
-export const S_COMBO_PRODUCTS = gql`
-   subscription {
-      comboProducts {
-         id
-         name
-         isValid
-         isPublished
-         comboProductComponents {
-            id
-            label
-         }
-      }
-   }
-`
-
-export const S_COMBO_PRODUCT = gql`
-   subscription ComboProduct($id: Int!) {
-      comboProduct(id: $id) {
-         id
-         name
-         description
-         tags
-         isValid
-         isPublished
-         assets
-         isPopupAllowed
-         comboProductComponents {
-            id
-            label
-            customizableProduct {
-               id
-               name
-            }
-            inventoryProduct {
-               id
-               name
-               inventoryProductOptions {
-                  id
-                  label
-                  price
-                  quantity
-               }
-            }
-            simpleRecipeProduct {
-               id
-               name
-               simpleRecipeProductOptions {
-                  id
-                  isActive
-                  price
-                  type
-                  simpleRecipeYield {
-                     yield
-                  }
-               }
-            }
-         }
-      }
-   }
-`
-
 export const COLLECTIONS_COUNT = gql`
    subscription CollectionsCount {
-      menuCollectionsAggregate {
+      collectionsAggregate {
          aggregate {
             count
          }
@@ -283,26 +12,41 @@ export const COLLECTIONS_COUNT = gql`
 
 export const S_COLLECTIONS = gql`
    subscription Collections {
-      menuCollections {
+      collections: onDemand_collectionDetails {
          id
          name
-         categories
-         availability
+         rrule(path: "text")
+         categoriesCount
+         productsCount
       }
    }
 `
 
 export const S_COLLECTION = gql`
    subscription Collection($id: Int!) {
-      menuCollection(id: $id) {
+      collection(id: $id) {
          id
          name
-         isValid
-         isPublished
-         active
-         availability
-         categories
-         store
+         startTime
+         endTime
+         rrule
+         productCategories {
+            id
+            productCategoryName
+            products {
+               id
+               data
+            }
+         }
+      }
+   }
+`
+
+export const S_PRODUCT_CATEGORIES = gql`
+   subscription ProductCategories {
+      productCategories {
+         id: name
+         title: name
       }
    }
 `
@@ -350,12 +94,16 @@ export const RECURRENCES = gql`
    }
 `
 
-export const MODIFIERS = gql`
-   subscription Modifiers {
-      modifiers {
+export const BRAND_COLLECTIONS = gql`
+   {
+      brandCollections: brands {
          id
-         title: name
-         data
+         title
+         domain
+         collections {
+            collectionId
+            isActive
+         }
       }
    }
 `

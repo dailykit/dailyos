@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
@@ -31,7 +32,7 @@ import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
 
 const RecipeForm = () => {
    // Context
-   const { setTitle: setTabTitle } = useTabs()
+   const { setTabTitle, tab, addTab } = useTabs()
    const { id: recipeId } = useParams()
    const [recipeState, recipeDispatch] = React.useReducer(
       reducers,
@@ -62,6 +63,12 @@ const RecipeForm = () => {
          toast.error('Error!')
       },
    })
+
+   React.useEffect(() => {
+      if (!tab && !loading && !isEmpty(title)) {
+         addTab(title, `/recipe/recipes/${recipeId}`)
+      }
+   }, [tab, loading, title, addTab])
 
    // Handlers
    const updateName = async () => {

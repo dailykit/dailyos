@@ -1,53 +1,113 @@
 import React from 'react'
+import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
+
+import { Flex } from '../../../../shared/components'
+import { useAccess } from '../../../../shared/providers'
 
 // Views
 import {
    Home,
-   ProductsListing,
    CollectionForm,
-   InventoryProductForm,
    CollectionsListing,
-   SimpleRecipeProductForm,
-   CustomizableProductForm,
-   ComboProductForm,
    StoreSettingsForm,
    RecurrencesForm,
 } from '../../views'
 
 const Main = () => {
+   const { canAccessRoute, accessPermission } = useAccess()
    return (
       <main>
          <Switch>
             <Route path="/online-store" exact>
-               <Home />
-            </Route>
-            <Route path="/online-store/products" exact>
-               <ProductsListing />
-            </Route>
-            <Route path="/online-store/inventory-products/:id" exact>
-               <InventoryProductForm />
-            </Route>
-            <Route path="/online-store/simple-recipe-products/:id" exact>
-               <SimpleRecipeProductForm />
-            </Route>
-            <Route path="/online-store/customizable-products/:id" exact>
-               <CustomizableProductForm />
-            </Route>
-            <Route path="/online-store/combo-products/:id" exact>
-               <ComboProductForm />
+               {canAccessRoute('home') ? (
+                  <Home />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'home')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access online store.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/online-store/collections" exact>
-               <CollectionsListing />
+               {canAccessRoute('collections') ? (
+                  <CollectionsListing />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'collections')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access collections listing.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/online-store/collections/:id" exact>
-               <CollectionForm />
+               {canAccessRoute('collection') ? (
+                  <CollectionForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'collection')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to access collection details.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/online-store/settings" exact>
-               <StoreSettingsForm />
+               {canAccessRoute('settings') ? (
+                  <StoreSettingsForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'settings')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to see store settings.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
             <Route path="/online-store/settings/recurrences/:type" exact>
-               <RecurrencesForm />
+               {canAccessRoute('recurrence') ? (
+                  <RecurrencesForm />
+               ) : (
+                  <Flex
+                     container
+                     height="100%"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     <Text as="title">
+                        {accessPermission('ROUTE_READ', 'recurrence')
+                           ?.fallbackMessage ||
+                           'You do not have sufficient permission to see recurrence details.'}
+                     </Text>
+                  </Flex>
+               )}
             </Route>
          </Switch>
       </main>

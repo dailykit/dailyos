@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useTabs } from '../../context'
 
-import { Context } from '../../context/tabs'
 import {
    StyledHeading,
    StyledList,
@@ -13,33 +13,45 @@ const address = 'apps.inventory.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(Context)
-   const addTab = (title, view) => {
+   const { addTab } = useTabs()
+
+   const openTab = (title, route) => {
       toggleSidebar(visible => !visible)
-      dispatch({ type: 'ADD_TAB', payload: { type: 'listings', title, view } })
+      addTab(title, route)
    }
    return (
       <StyledSidebar visible={visible}>
          <StyledHeading>{t(address.concat('listings'))}</StyledHeading>
          <StyledList>
-            {state.current.view && (
-               <StyledListItem onClick={() => addTab('Home', 'home')}>
-                  Home
-               </StyledListItem>
-            )}
-            <StyledListItem onClick={() => addTab('Suppliers', 'suppliers')}>
+            <StyledListItem onClick={() => openTab('Home', '/inventory')}>
+               Home
+            </StyledListItem>
+            <StyledListItem
+               onClick={() => openTab('Suppliers', '/inventory/suppliers')}
+            >
                {t(address.concat('suppliers'))}
             </StyledListItem>
-            <StyledListItem onClick={() => addTab('Supplier Items', 'items')}>
+            <StyledListItem
+               onClick={() => openTab('Supplier Items', '/inventory/items')}
+            >
                {t(address.concat('supplier items'))}
             </StyledListItem>
-            <StyledListItem onClick={() => addTab('Work Orders', 'orders')}>
+            <StyledListItem
+               onClick={() => openTab('Work Orders', '/inventory/work-orders')}
+            >
                Work Orders
             </StyledListItem>
             <StyledListItem
-               onClick={() => addTab('Purchase Orders', 'purchaseOrders')}
+               onClick={() =>
+                  openTab('Purchase Orders', '/inventory/purchase-orders')
+               }
             >
                Purchase Orders
+            </StyledListItem>
+            <StyledListItem
+               onClick={() => openTab('Packagings', '/inventory/packagings')}
+            >
+               Packagings
             </StyledListItem>
          </StyledList>
       </StyledSidebar>

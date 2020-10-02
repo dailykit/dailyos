@@ -1,3 +1,5 @@
-import customerRelation from './CustomerRelation'
+import CustomerRelation from './CustomerRelation'
+import CouponForm from './Coupon'
+import CampaignForm from './Campaign'
 
-export { customerRelation }
+export { CustomerRelation, CouponForm, CampaignForm }

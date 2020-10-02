@@ -15,7 +15,7 @@ const address = 'apps.order.views.orders.'
 const Orders = () => {
    const { t } = useTranslation()
    const history = useHistory()
-   const { tabs, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
    const { state, dispatch } = useOrder()
    const [active, setActive] = React.useState(1)
    const [orders, setOrders] = React.useState([])
@@ -38,15 +38,6 @@ const Orders = () => {
       onSubscriptionData: ({
          subscriptionData: { data: { orders = [] } = {} } = {},
       }) => {
-         console.log(
-            'Orders -> orders',
-            {
-               where: state.orders.where,
-               ...(state.orders.limit && { limit: state.orders.limit }),
-               ...(state.orders.offset && { offset: state.orders.offset }),
-            },
-            orders
-         )
          setOrders(orders)
          if (state.orders.limit) {
             if (!loadingAggregate && ordersAggregate?.aggregate?.count > 10) {
@@ -61,11 +52,10 @@ const Orders = () => {
    })
 
    React.useEffect(() => {
-      const tab = tabs.find(item => item.path === `/apps/order/orders`) || {}
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
+      if (!tab) {
          addTab('Orders', '/apps/order/orders')
       }
-   }, [history, tabs])
+   }, [history, tab, addTab])
 
    React.useEffect(() => {
       window.addEventListener('hashchange', () => {
@@ -114,7 +104,13 @@ const Orders = () => {
          {state.orders.loading ? (
             <InlineLoader />
          ) : (
-            <section style={{ overflowY: 'auto', height: 'calc(100vh - 88px' }}>
+            <section
+               style={{
+                  overflowY: 'auto',
+                  scrollBehavior: 'smooth',
+                  height: 'calc(100vh - 128px',
+               }}
+            >
                {orders.length > 0 ? (
                   orders.map((order, index) => (
                      <OrderListItem

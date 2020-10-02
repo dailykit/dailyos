@@ -1,11 +1,11 @@
-/* eslint-disable react/jsx-fragments */
-import React from 'react'
+import React, { useRef } from 'react'
 import { Text } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from 'react-tabulator'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-
-const WalletTable = props => {
+import tableOption from '../../Listings/tableOptions'
+const WalletTable = () => {
    const { addTab } = useTabs()
+   const tableRef = useRef()
    const columns = [
       { title: 'Txn Date', field: 'date', headerFilter: true },
       { title: 'Reference number', field: 'reference' },
@@ -64,7 +64,8 @@ const WalletTable = props => {
                columns={columns}
                data={data}
                rowClick={rowClick}
-               // options={tableOptions}
+               ref={tableRef}
+               options={tableOption}
             />
          </div>
       </React.Fragment>

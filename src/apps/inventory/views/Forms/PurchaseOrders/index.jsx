@@ -1,28 +1,25 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Input,
+   Loader,
    Text,
    Tunnel,
    Tunnels,
    useTunnel,
-   Loader,
 } from '@dailykit/ui/'
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import FormHeading from '../../../components/FormHeading'
-
-import { Context } from '../../../context/tabs'
+import {
+   PURCHASE_ORDER_SUBSCRIPTION,
+   UPDATE_PURCHASE_ORDER_ITEM,
+} from '../../../graphql'
 import { FormActions, StyledForm, StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
-
-import {
-   UPDATE_PURCHASE_ORDER_ITEM,
-   PURCHASE_ORDER_SUBSCRIPTION,
-} from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.purchaseorders.'
 
@@ -34,14 +31,9 @@ function onError(error) {
 export default function PurchaseOrderForm() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const { id } = useParams()
 
    const [orderQuantity, setOrderQuantity] = useState(0)
-
-   const {
-      state: {
-         current: { id },
-      },
-   } = useContext(Context)
 
    const {
       data: { purchaseOrderItem: state = {} } = {},
