@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
+import { Input, TextButton, Toggle } from '@dailykit/ui'
+import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
-
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { LeftIcon } from '../../../../shared/assets/icons'
-import { buildOptionVariables } from '../../utils/transformer'
+import { Flex } from '../../../../shared/components/Flex'
+import '../../../../shared/styled/datepicker.css'
+import { isObject } from '../../../../shared/utils/isObject'
 import { checkDateField } from '../../utils/checkDateField'
 import { optionsMap } from '../../utils/optionsMap'
-import { Input, TextButton } from '@dailykit/ui'
-import { Dropdown, DropdownItem } from '../DropdownMenu'
-import { isObject } from '../../../../shared/utils/isObject'
-
-import '../../../../shared/styled/datepicker.css'
 import { fromMixed } from '../../utils/textTransform'
+import { buildOptionVariables } from '../../utils/transformer'
+import { Dropdown, DropdownItem } from '../DropdownMenu'
 import Filters from '../Filters/Filters'
-import { Flex } from '../../../../shared/components/Flex'
 
 /**
  *
@@ -26,6 +24,8 @@ export default function Option({
    updateOptions,
    shiftLeft,
    filters,
+   switches,
+   updateSwitches,
 }) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
@@ -155,6 +155,8 @@ export default function Option({
 
                {filterable && renderApplyButton()}
             </Dropdown>
+            <span style={{ width: '1rem' }} />
+            <Switches switches={switches} updateSwitches={updateSwitches} />
          </Flex>
       )
 
@@ -179,7 +181,6 @@ export default function Option({
                onClick={() => setDropdownView('main')}
                leftIcon={<LeftIcon color="#888d9d" />}
             />
-
             {isObject(options[submenu]) &&
                Object.keys(options[submenu]).map(option => {
                   return (
@@ -194,6 +195,39 @@ export default function Option({
 
             {filterable && renderApplyButton()}
          </Dropdown>
+         <span style={{ width: '1rem' }} />
+         <Switches switches={switches} updateSwitches={updateSwitches} />
       </Flex>
+   )
+}
+
+function Switches({ switches, updateSwitches }) {
+   const [show, setShow] = useState(false)
+
+   const renderOption = key => {
+      const checked = switches[key]
+      return (
+         <Toggle
+            checked={checked}
+            label={fromMixed(key)}
+            setChecked={() => {
+               updateSwitches(values => ({ ...values, [key]: !switches[key] }))
+            }}
+         />
+      )
+   }
+
+   return (
+      <Dropdown
+         show={show}
+         setShow={setShow}
+         title="show/hide columns"
+         withIcon
+         fromRight
+      >
+         {Object.keys(switches).map(key => (
+            <DropdownItem key={key}>{renderOption(key)}</DropdownItem>
+         ))}
+      </Dropdown>
    )
 }
