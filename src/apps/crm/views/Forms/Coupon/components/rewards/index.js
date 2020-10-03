@@ -143,31 +143,29 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
                      </Checkbox>
                   )}
                </StyledRow>
-               <StyledDiv>
-                  {rewardInfoArray.map(rewardInfo => {
-                     return (
-                        <RewardDiv key={rewardInfo.id}>
-                           <Text as="subtitle">{rewardInfo.type} </Text>
-                           <StyledRow>
-                              <IconButton
-                                 type="ghost"
-                                 onClick={() =>
-                                    EditRewardDetails(rewardInfo.id)
-                                 }
-                              >
-                                 <EditIcon color="#555B6E" />
-                              </IconButton>
-                              <IconButton
-                                 type="ghost"
-                                 onClick={() => deleteHandler(rewardInfo)}
-                              >
-                                 <DeleteIcon color="#555B6E" />
-                              </IconButton>
-                           </StyledRow>
-                        </RewardDiv>
-                     )
-                  })}
-               </StyledDiv>
+
+               {rewardInfoArray.map(rewardInfo => {
+                  return (
+                     <RewardDiv key={rewardInfo.id}>
+                        <Text as="subtitle">{rewardInfo.type} </Text>
+                        <StyledRow>
+                           <IconButton
+                              type="ghost"
+                              onClick={() => EditRewardDetails(rewardInfo.id)}
+                           >
+                              <EditIcon color="#555B6E" />
+                           </IconButton>
+                           <IconButton
+                              type="ghost"
+                              onClick={() => deleteHandler(rewardInfo)}
+                           >
+                              <DeleteIcon color="#555B6E" />
+                           </IconButton>
+                        </StyledRow>
+                     </RewardDiv>
+                  )
+               })}
+
                <StyledRow>
                   <ComboButton type="ghost" onClick={() => openTypeTunnel(1)}>
                      Add More Reward
