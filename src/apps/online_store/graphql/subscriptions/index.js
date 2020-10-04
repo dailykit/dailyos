@@ -95,13 +95,27 @@ export const RECURRENCES = gql`
 `
 
 export const BRAND_COLLECTIONS = gql`
-   {
+   subscription BrandCollections {
       brandCollections: brands {
          id
          title
          domain
          collections {
             collectionId
+            isActive
+         }
+      }
+   }
+`
+
+export const BRAND_RECURRENCES = gql`
+   subscription BrandRecurrences {
+      brandRecurrences: brands {
+         id
+         title
+         domain
+         recurrences {
+            recurrenceId
             isActive
          }
       }
