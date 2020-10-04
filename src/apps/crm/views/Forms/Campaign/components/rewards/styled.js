@@ -34,7 +34,7 @@ export const RewardDiv = styled.div`
    margin: 16px 8px;
 
    padding: 10px;
-   width: 45%;
+   width: 80%;
    background-color: #e5e5e5;
    display: grid;
    grid-template-columns: 4fr 1fr;
