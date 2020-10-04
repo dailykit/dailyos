@@ -1,5 +1,15 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader, Text } from '@dailykit/ui'
+import {
+   Toggle,
+   Input,
+   Loader,
+   Text,
+   HorizontalTab,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+} from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -13,7 +23,12 @@ import {
    StyledComp,
 } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
-import { ConditionComp, DetailsComp, RewardComp } from './components'
+import {
+   ConditionComp,
+   DetailsComp,
+   RewardComp,
+   BrandCampaign,
+} from './components'
 
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -110,15 +125,35 @@ const CampaignForm = () => {
             </InputWrapper>
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
-         <StyledComp>
-            <DetailsComp state={state} campaignType={type} />
-            <ConditionComp state={state} />
-            <RewardComp
-               state={state}
-               checkbox={checkbox}
-               updateCheckbox={updateCheckbox}
-            />
-         </StyledComp>
+
+         <div style={{ padding: '0 32px', backgroundColor: '#ffffff' }}>
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>Details</HorizontalTab>
+                  <HorizontalTab>Brand</HorizontalTab>
+                  <HorizontalTab>Insights</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <StyledComp>
+                        <DetailsComp state={state} campaignType={type} />
+                        <ConditionComp state={state} />
+                        <RewardComp
+                           state={state}
+                           checkbox={checkbox}
+                           updateCheckbox={updateCheckbox}
+                        />
+                     </StyledComp>
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <BrandCampaign state={state} />
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     Insights Content coming soon!!
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </div>
       </StyledWrapper>
    )
 }

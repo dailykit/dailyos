@@ -10,10 +10,10 @@ import {
    Toggle,
    Loader,
 } from '@dailykit/ui'
-import { BRAND_COUPONS, UPSERT_BRAND_COUPON } from '../../../../../graphql'
+import { BRAND_CAMPAIGNS, UPSERT_BRAND_CAMPAIGN } from '../../../../../graphql'
 import { StyledHeader, StyledWrapper } from './styled'
 
-const BrandCoupon = ({ state }) => {
+const BrandCampaign = ({ state }) => {
    const tableRef = useRef()
 
    // Subscription
@@ -21,9 +21,9 @@ const BrandCoupon = ({ state }) => {
       loading: listloading,
       error,
       data: { brands = [] } = {},
-   } = useSubscription(BRAND_COUPONS)
+   } = useSubscription(BRAND_CAMPAIGNS)
 
-   const [upsertBrandCoupon] = useMutation(UPSERT_BRAND_COUPON, {
+   const [upsertBrandCampaign] = useMutation(UPSERT_BRAND_CAMPAIGN, {
       onCompleted: data => {
          console.log(data)
          toast.success('Updated!')
@@ -47,11 +47,13 @@ const BrandCoupon = ({ state }) => {
          headerFilter: true,
       },
       {
-         title: 'Coupon Available',
+         title: 'Campaign Available',
          formatter: reactFormatter(
-            <ToggleCoupon
-               couponId={state.id}
-               onChange={object => upsertBrandCoupon({ variables: { object } })}
+            <ToggleCampaign
+               campaignId={state.id}
+               onChange={object =>
+                  upsertBrandCampaign({ variables: { object } })
+               }
             />
          ),
       },
@@ -89,16 +91,16 @@ const BrandCoupon = ({ state }) => {
    )
 }
 
-export default BrandCoupon
+export default BrandCampaign
 
-const ToggleCoupon = ({ cell, couponId, onChange }) => {
+const ToggleCampaign = ({ cell, campaignId, onChange }) => {
    const brand = useRef(cell.getData())
    const [active, setActive] = useState(false)
 
    const toggleHandler = value => {
       console.log(value)
       onChange({
-         couponId,
+         campaignId,
          brandId: brand.current.id,
          isActive: value,
       })
@@ -106,8 +108,8 @@ const ToggleCoupon = ({ cell, couponId, onChange }) => {
 
    React.useEffect(() => {
       console.log(brand)
-      const isActive = brand.current.brand_coupons.some(
-         coupon => coupon.couponId === couponId && coupon.isActive
+      const isActive = brand.current.brand_campaigns.some(
+         campaign => campaign.campaignId === campaignId && campaign.isActive
       )
       console.log(isActive)
       setActive(isActive)

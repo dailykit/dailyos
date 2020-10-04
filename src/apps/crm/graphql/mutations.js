@@ -142,3 +142,19 @@ export const UPSERT_BRAND_COUPON = gql`
       }
    }
 `
+
+export const UPSERT_BRAND_CAMPAIGN = gql`
+   mutation UPSERT_BRAND_CAMPAIGN($object: crm_brand_campaign_insert_input!) {
+      createBrandCampaign(
+         object: $object
+         on_conflict: {
+            constraint: brand_campaign_pkey
+            update_columns: isActive
+         }
+      ) {
+         brandId
+         campaignId
+         isActive
+      }
+   }
+`

@@ -13,6 +13,7 @@ import {
    REWARD_DATA_BY_COUPON_ID,
    REWARD_DATA_BY_CAMPAIGN_ID,
    BRAND_COUPONS,
+   BRAND_CAMPAIGNS,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -41,6 +42,7 @@ import {
    CREATE_REWARD,
    UPDATE_REWARD,
    UPSERT_BRAND_COUPON,
+   UPSERT_BRAND_CAMPAIGN,
 } from './mutations'
 
 export {
@@ -80,5 +82,7 @@ export {
    DELETE_REWARD,
    REWARD_DATA,
    BRAND_COUPONS,
+   BRAND_CAMPAIGNS,
    UPSERT_BRAND_COUPON,
+   UPSERT_BRAND_CAMPAIGN,
 }

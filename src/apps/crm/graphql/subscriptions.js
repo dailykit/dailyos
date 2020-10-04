@@ -159,3 +159,16 @@ export const BRAND_COUPONS = gql`
       }
    }
 `
+export const BRAND_CAMPAIGNS = gql`
+   subscription BRAND_CAMPAIGN {
+      brands {
+         id
+         domain
+         title
+         brand_campaigns {
+            campaignId
+            isActive
+         }
+      }
+   }
+`
