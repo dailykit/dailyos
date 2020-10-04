@@ -1,6 +1,5 @@
 import React from 'react'
-import { TunnelHeader } from '@dailykit/ui'
-import { TunnelBody } from '../styled'
+import { TunnelHeader, Flex } from '@dailykit/ui'
 import { AssetUploader } from '../../../../../../../../shared/components'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
@@ -26,12 +25,12 @@ const ModifierPhotoTunnel = ({ close }) => {
    return (
       <>
          <TunnelHeader title="Select Photo" close={() => close(5)} />
-         <TunnelBody>
+         <Flex padding="0 14px">
             <AssetUploader
-               onImageSelect={image => addImage(image)}
                onAssetUpload={url => addImage(url)}
+               onImageSelect={image => addImage(image)}
             />
-         </TunnelBody>
+         </Flex>
       </>
    )
 }

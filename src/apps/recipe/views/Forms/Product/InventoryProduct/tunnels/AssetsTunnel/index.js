@@ -1,11 +1,10 @@
 import React from 'react'
-import { TunnelHeader } from '@dailykit/ui'
+import { TunnelHeader, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
 import { AssetUploader } from '../../../../../../../../shared/components'
-import { TunnelBody } from '../styled'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
 
 const address =
@@ -42,12 +41,12 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
             title={t(address.concat('select photo'))}
             close={() => closeTunnel(1)}
          />
-         <TunnelBody>
+         <Flex padding="0 14px">
             <AssetUploader
-               onImageSelect={image => addImage(image)}
                onAssetUpload={url => addImage(url)}
+               onImageSelect={image => addImage(image)}
             />
-         </TunnelBody>
+         </Flex>
       </>
    )
 }

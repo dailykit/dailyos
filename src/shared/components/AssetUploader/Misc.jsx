@@ -1,11 +1,12 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
-import { Loader } from '@dailykit/ui'
+import styled from 'styled-components'
+import { Loader, IconButton, Text, Spacer } from '@dailykit/ui'
 
 import useAssets from './useAssets'
 
 const Misc = ({ onMiscSelect }) => {
    const { misc, status, error, remove } = useAssets('misc')
+
    if (status === 'LOADING') return <Loader />
    if (status === 'ERROR') return <div>{error}</div>
    return (
@@ -17,78 +18,68 @@ const Misc = ({ onMiscSelect }) => {
                   title={node.metadata.title}
                   onClick={() => onMiscSelect(node)}
                >
-                  <section>
-                     <span>
-                        {node.name.slice(node.name.lastIndexOf('.') + 1)}
-                     </span>
-                  </section>
-                  <p>{node.name}</p>
-                  <button
-                     type="button"
-                     onClick={e => e.stopPropagation() || remove(node.key)}
-                  >
-                     <Trash />
-                  </button>
+                  <StyledTag>
+                     <p>{node.name.slice(node.name.lastIndexOf('.') + 1)}</p>
+                  </StyledTag>
+                  <Text as="p">{node.name}</Text>
+                  <span>
+                     <IconButton
+                        size="sm"
+                        type="solid"
+                        onClick={e => e.stopPropagation() || remove(node.key)}
+                     >
+                        <Trash />
+                     </IconButton>
+                  </span>
                </StyledListItem>
             ))}
          </StyledList>
+         <Spacer size="14px" />
       </>
    )
 }
 export default Misc
 
-const StyledList = styled.ul(css`
+const StyledList = styled.ul`
    height: 100%;
    display: grid;
-   padding: 8px;
    grid-gap: 8px;
    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
    li {
       height: 120px;
       list-style: none;
       text-align: center;
-      section {
-         height: inherit;
-         overflow: hidden;
-         border-radius: 3px;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         border: 1px solid #e3e3e3;
-         span {
-            color: #fff;
-            padding: 1px 4px;
-            border-radius: 2px;
-            background: #39d560;
-         }
-      }
-      p {
-         margin: 4px 0;
-         font-size: 14px;
-      }
    }
-`)
-const StyledListItem = styled.li(css`
+`
+
+const StyledTag = styled.section`
+   display: flex;
+   height: inherit;
+   overflow: hidden;
+   border-radius: 3px;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid #e3e3e3;
+   p {
+      color: #fff;
+      padding: 1px 4px;
+      border-radius: 2px;
+      background: #39d560;
+   }
+`
+
+const StyledListItem = styled.li`
    position: relative;
-   :hover {
-      button {
-         display: flex;
-      }
-   }
-   button {
-      border: none;
-      cursor: pointer;
+   span {
+      top: 6px;
+      right: 6px;
       display: none;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      background: rgba(0, 0, 0, 0.4);
       position: absolute;
-      top: 4px;
-      right: 4px;
-      padding: 6px;
    }
-`)
+   :hover span {
+      display: block;
+   }
+`
 
 const Trash = ({ size = 16, color = '#ffffff' }) => (
    <svg

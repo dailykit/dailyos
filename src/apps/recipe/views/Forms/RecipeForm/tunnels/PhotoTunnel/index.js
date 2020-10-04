@@ -1,9 +1,8 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader } from '@dailykit/ui'
+import { TunnelHeader, Flex } from '@dailykit/ui'
 import { AssetUploader } from '../../../../../../../shared/components'
-import { TunnelBody } from '../styled'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 
 const PhotoTunnel = ({ state, closeTunnel }) => {
@@ -31,12 +30,12 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
    return (
       <>
          <TunnelHeader title="Select Photo" close={() => closeTunnel(1)} />
-         <TunnelBody>
+         <Flex padding="0 14px">
             <AssetUploader
-               onImageSelect={image => addImage(image)}
                onAssetUpload={url => addImage(url)}
+               onImageSelect={image => addImage(image)}
             />
-         </TunnelBody>
+         </Flex>
       </>
    )
 }

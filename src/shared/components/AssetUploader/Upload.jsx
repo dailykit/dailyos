@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { Input } from '@dailykit/ui'
+import { Input, TextButton, IconButton, Spacer, Text } from '@dailykit/ui'
 
 import useAssets from './useAssets'
 
@@ -48,112 +48,87 @@ const Upload = ({ onAssetUpload }) => {
 
    return (
       <div>
-         <StyledForm>
-            <fieldset>
-               <Input
-                  type="text"
-                  name="title"
-                  label="title"
-                  value={file.title}
-                  onChange={e => handleMetaChange(e)}
-               />
-            </fieldset>
-            <fieldset>
-               <Input
-                  row={5}
-                  type="textarea"
-                  name="description"
-                  label="description"
-                  value={file.description}
-                  onChange={e => handleMetaChange(e)}
-               />
-            </fieldset>
-            <fieldset>
-               <input
-                  type="file"
-                  ref={inputRef}
-                  name="file"
-                  onChange={handleChange}
-               />
-            </fieldset>
-            <button type="button" onClick={() => handleSubmit()}>
-               Upload
-            </button>
-         </StyledForm>
-         {file.preview && (
+         <Text as="title">Title</Text>
+         <Input
+            label=""
+            type="text"
+            name="title"
+            value={file.title}
+            placeholder="Enter the image title"
+            onChange={e => handleMetaChange(e)}
+         />
+         <Spacer size="24px" />
+         <Text as="title">Description</Text>
+         <Input
+            row={5}
+            label=""
+            type="textarea"
+            name="description"
+            value={file.description}
+            onChange={e => handleMetaChange(e)}
+            placeholder="Enter the image description"
+         />
+         <Spacer size="24px" />
+         <FileInput
+            type="file"
+            ref={inputRef}
+            name="file"
+            onChange={handleChange}
+         />
+         <Spacer size="16px" />
+         <TextButton type="solid" onClick={() => handleSubmit()}>
+            Upload
+         </TextButton>
+         <Spacer size="24px" />
+         <Text as="title">Selected Images</Text>
+         <Spacer size="8px" />
+         {file.preview ? (
             <StyledSection>
                {file.raw.type && (
                   <StyledImage src={file.preview} alt={file.raw.name} />
                )}
-               <button type="button" onClick={() => clearSelected()}>
-                  <Trash />
-               </button>
-               <p>{file.raw.name}</p>
+               <span>
+                  <IconButton
+                     size="sm"
+                     type="solid"
+                     onClick={() => clearSelected()}
+                  >
+                     <Trash />
+                  </IconButton>
+               </span>
+               <Spacer size="4px" />
+               <Text as="p">{file.raw.name}</Text>
             </StyledSection>
+         ) : (
+            <span>No images selected!</span>
          )}
       </div>
    )
 }
 
-const StyledSection = styled.section(css`
-   width: 180px;
-   margin: 16px;
+const StyledSection = styled.section`
+   width: 120px;
    position: relative;
-   :hover {
-      button {
-         display: flex;
-      }
-   }
-   p {
-      margin: 0;
-   }
-   button {
-      border: none;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      border-radius: 3px;
-      background: rgba(0, 0, 0, 0.4);
+   span {
       position: absolute;
-      padding: 6px;
-      top: 4px;
-      right: 4px;
+      top: 6px;
+      right: 6px;
    }
-`)
+`
 
-const StyledForm = styled.div(css`
-   display: flex;
-   padding: 14px;
-   flex-direction: column;
-   fieldset {
-      border: none;
-      margin-bottom: 16px;
-      [type='file'] {
-         width: inherit;
-         padding: 8px;
-         border: 1px solid #e3e3e3;
-      }
-   }
-   button {
-      height: 36px;
-      border: none;
-      color: #fff;
-      font-size: 16px;
-      padding: 0 14px;
-      margin-left: 16px;
-      border-radius: 3px;
-      background: #37d0b3;
-      align-self: flex-start;
-   }
-`)
+const FileInput = styled.input`
+   width: 100%;
+   padding: 12px;
+   border-radius: 2px;
+   border: 1px solid #e3e3e3;
+`
 
-const StyledImage = styled.img(css`
-   height: 64px;
+const StyledImage = styled.img`
+   height: 120px;
    object-fit: cover;
    border-radius: 8px;
    border: 1px solid #e3e3e3;
-`)
+`
 
 const Trash = ({ size = 18, color = '#ffffff' }) => (
    <svg

@@ -6,6 +6,7 @@ import {
    useSingleList,
    Loader,
    TunnelHeader,
+   Flex,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -13,7 +14,6 @@ import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { TunnelContainer } from '../../../../../components'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
@@ -69,7 +69,7 @@ export default function AddressTunnel({ close, state }) {
             close={() => close(1)}
             right={{ title: 'Save', action: handleSave }}
          />
-         <TunnelContainer>
+         <Flex padding="0 16px">
             <List>
                {Object.keys(current).length > 0 ? (
                   <ListItem type="SSL1" title={current.name} />
@@ -97,7 +97,7 @@ export default function AddressTunnel({ close, state }) {
             </List>
             <br />
             <br />
-         </TunnelContainer>
+         </Flex>
       </>
    )
 }
