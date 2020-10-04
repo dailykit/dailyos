@@ -35,18 +35,19 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    // Handlers
    const handleChange = (e, i) => {
       const updatedTypes = types
-      updatedTypes[i] = e.target.value
-      setTypes([...updatedTypes])
+      const value = e.target.value.trim()
+      if (Boolean(value)) {
+         updatedTypes[i] = value
+         setTypes([...updatedTypes])
+      }
    }
    const add = () => {
       try {
          if (busy) return
          setBusy(true)
-         const objects = types
-            .filter(type => type.length)
-            .map(type => ({
-               name: type,
-            }))
+         const objects = types.map(type => ({
+            name: type,
+         }))
          if (!objects.length) {
             throw Error('Nothing to add!')
          }
