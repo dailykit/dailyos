@@ -344,7 +344,7 @@ export const DELETE_ALLERGENS = gql`
 `
 
 export const CREATE_UNITS = gql`
-   mutation CreateUnits($objects: [unit_unit_insert_input!]!) {
+   mutation CreateUnits($objects: [master_unit_insert_input!]!) {
       createUnit(objects: $objects) {
          returning {
             id
