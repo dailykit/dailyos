@@ -127,3 +127,18 @@ export const DELETE_REWARD = gql`
       }
    }
 `
+export const UPSERT_BRAND_COUPON = gql`
+   mutation UPSERT_BRAND_COUPON($object: crm_brand_coupon_insert_input!) {
+      createBrandCoupon(
+         object: $object
+         on_conflict: {
+            constraint: brand_coupon_pkey
+            update_columns: isActive
+         }
+      ) {
+         brandId
+         couponId
+         isActive
+      }
+   }
+`

@@ -145,3 +145,17 @@ export const REWARD_DATA_BY_CAMPAIGN_ID = gql`
       }
    }
 `
+
+export const BRAND_COUPONS = gql`
+   subscription BRAND_COUPONS {
+      brands {
+         id
+         domain
+         title
+         brand_coupons {
+            couponId
+            isActive
+         }
+      }
+   }
+`
