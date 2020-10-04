@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { ChevronDown } from '../../../../shared/assets/icons'
@@ -13,7 +13,7 @@ export const Dropdown = ({
    withIcon,
    show,
    setShow,
-   shiftLeft,
+   fromRight,
 }) => {
    return (
       <div style={{ position: 'relative' }}>
@@ -23,7 +23,7 @@ export const Dropdown = ({
             {withIcon && <ChevronDown color="#888d9d" />}
          </DropdownButton>
 
-         {show && <Box shiftLeft={shiftLeft}>{children}</Box>}
+         {show && <Box fromRight={fromRight}>{children}</Box>}
       </div>
    )
 }
@@ -44,8 +44,6 @@ const DropdownButton = styled.button`
    background-color: #fff;
    border: 1px solid #f3f3f3;
    border-radius: 2px;
-   width: 10vw;
-
    font-size: 18px;
    font-weight: 500;
 
@@ -53,8 +51,11 @@ const DropdownButton = styled.button`
    justify-content: space-between;
    align-items: center;
    cursor: pointer;
-
    margin-bottom: 12px;
+
+   svg {
+      margin-left: 4px;
+   }
 `
 const Box = styled.div`
    background-color: #fff;
@@ -62,11 +63,11 @@ const Box = styled.div`
    border-radius: 2px;
    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
    border: 1px solid #f3f3f3;
+   min-width: 18vw;
 
    position: absolute;
    top: 90%;
-   right: ${({ shiftLeft }) => (shiftLeft ? '0%' : null)};
-   left: ${({ shiftLeft }) => (shiftLeft ? '-90%' : null)};
+   right: ${({ fromRight }) => (fromRight ? '0%' : null)};
    z-index: 12;
 `
 

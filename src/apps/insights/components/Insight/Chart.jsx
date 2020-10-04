@@ -16,15 +16,14 @@ export default function Chart({
    updateOptions,
    showOptions,
    filters,
+   switches,
+   updateSwitches,
 }) {
    const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
    const [yColumns, setYColumns] = useState([])
    const [slice, setSlice] = useState('')
    const [metrices, setMetrices] = useState([])
-
-   // prettier-ignore
-   const chartTitle = metrices.length ? metrices.reduce((acc, curr, i) => i !== 0 ? acc + ' & ' + curr.title : acc + curr.title,'') : chartType.title
 
    const { data, options: googleChartOptions } = useChart(chart, rawData, {
       chartType,
@@ -50,6 +49,8 @@ export default function Chart({
             updateOptions={updateOptions}
             showOptions={showOptions}
             filters={filters}
+            switches={switches}
+            updateSwitches={updateSwitches}
          />
          <GoogleChart
             data={data}
@@ -58,13 +59,8 @@ export default function Chart({
             style={{ flex: '1' }}
             options={{
                ...googleChartOptions,
-               legend:
-                  chartType.type === 'PieChart'
-                     ? 'none'
-                     : { position: 'right' },
                height: googleChartOptions.height || '483px',
                width: googleChartOptions.width || '100%',
-               title: googleChartOptions.title || chartTitle,
             }}
          />
       </Container>
@@ -84,6 +80,8 @@ function ChartConfig({
    updateOptions,
    showOptions,
    filters,
+   switches,
+   updateSwitches,
 }) {
    return (
       <Container>
@@ -112,8 +110,9 @@ function ChartConfig({
                   options={options}
                   state={optionVariables}
                   updateOptions={updateOptions}
-                  shiftLeft
                   filters={filters}
+                  switches={switches}
+                  updateSwitches={updateSwitches}
                />
             )}
          </Flex>

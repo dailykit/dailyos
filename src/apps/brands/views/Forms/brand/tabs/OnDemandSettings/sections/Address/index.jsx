@@ -42,7 +42,7 @@ export const Address = ({ update }) => {
             const { brand, id } = storeSettings[index]
             setSettingId(id)
             if (!isNull(brand) && !isEmpty(brand)) {
-               setAddress(brand.value)
+               setAddress(brand.value?.address || {})
             }
          }
       },

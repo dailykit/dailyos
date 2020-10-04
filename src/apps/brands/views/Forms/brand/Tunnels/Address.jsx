@@ -14,7 +14,7 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
    )
 
    const updateSetting = () => {
-      update({ id: settingId, value: populated })
+      update({ id: settingId, value: { address: populated } })
       closeTunnel(1)
    }
 

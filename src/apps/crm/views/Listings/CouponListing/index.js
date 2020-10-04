@@ -73,7 +73,7 @@ const CouponListing = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Coupons', '/crm/coupons')
       }
    }, [addTab, tab])
 

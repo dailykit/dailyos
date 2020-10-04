@@ -1,12 +1,26 @@
 import React, { useState } from 'react'
-import { Toggle, Input, Loader } from '@dailykit/ui'
+import {
+   Toggle,
+   Input,
+   Loader,
+   HorizontalTab,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+} from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper, StyledComp, InputWrapper } from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
-import { ConditionComp, DetailsComp, RewardComp } from './components'
+import {
+   ConditionComp,
+   DetailsComp,
+   RewardComp,
+   BrandCoupons,
+} from './components'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -108,15 +122,34 @@ const CouponForm = () => {
                label="Coupon Active"
             />
          </StyledHeader>
-         <StyledComp>
-            <DetailsComp state={state} />
-            <ConditionComp state={state} />
-            <RewardComp
-               state={state}
-               updateCheckbox={updateCheckbox}
-               checkbox={checkbox}
-            />
-         </StyledComp>
+         <div style={{ padding: '0 32px', backgroundColor: '#ffffff' }}>
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>Details</HorizontalTab>
+                  <HorizontalTab>Brand</HorizontalTab>
+                  <HorizontalTab>Insights</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <StyledComp>
+                        <DetailsComp state={state} />
+                        <ConditionComp state={state} />
+                        <RewardComp
+                           state={state}
+                           updateCheckbox={updateCheckbox}
+                           checkbox={checkbox}
+                        />
+                     </StyledComp>
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <BrandCoupons state={state} />
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     Insights Content coming soon!!
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </div>
       </StyledWrapper>
    )
 }
