@@ -30,6 +30,8 @@ export default function Insight({
       filters,
       switches,
       updateSwitches,
+      oldData,
+      newData,
    } = useInsights(title, {
       includeTableData: includeTable,
       includeChartData: includeChart,
@@ -42,14 +44,14 @@ export default function Insight({
                <HeroCharts
                   allowedCharts={allowedCharts}
                   aggregates={aggregates}
-                  includeTable={includeTable}
                   optionVariables={optionVariables}
                   options={options}
-                  tableData={tableData}
                   updateOptions={updateOptions}
                   filters={filters}
                   switches={switches}
                   updateSwitches={updateSwitches}
+                  oldData={oldData}
+                  newData={newData}
                />
             ) : null}
             <br />
@@ -58,7 +60,8 @@ export default function Insight({
                {includeChart ? (
                   <FlexCharts
                      allowedCharts={allowedCharts}
-                     tableData={tableData}
+                     oldData={oldData}
+                     newData={newData}
                   />
                ) : null}
 
@@ -102,7 +105,8 @@ export default function Insight({
 function HeroCharts({
    allowedCharts,
    aggregates,
-   tableData,
+   oldData,
+   newData,
    options,
    optionVariables,
    updateOptions,
@@ -130,7 +134,8 @@ function HeroCharts({
          >
             <CounterBar aggregates={aggregates} />
             <Chart
-               rawData={tableData}
+               oldData={oldData}
+               newData={newData}
                chart={chart}
                optionVariables={optionVariables}
                options={options}
@@ -144,7 +149,7 @@ function HeroCharts({
       ))
 }
 
-function FlexCharts({ allowedCharts, tableData }) {
+function FlexCharts({ allowedCharts, oldData, newData }) {
    if (!allowedCharts?.length) return null
 
    return allowedCharts
@@ -163,7 +168,12 @@ function FlexCharts({ allowedCharts, tableData }) {
                   height: '100%',
                }}
             >
-               <Chart rawData={tableData} chart={chart} showOptions={false} />
+               <Chart
+                  oldData={oldData}
+                  newData={newData}
+                  chart={chart}
+                  showOptions={false}
+               />
             </Box>
          )
       })

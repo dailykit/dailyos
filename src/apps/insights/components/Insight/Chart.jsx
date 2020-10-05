@@ -1,4 +1,4 @@
-import { Checkbox, TextButton } from '@dailykit/ui'
+import { Checkbox, TextButton, Toggle } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { Chart as GoogleChart } from 'react-google-charts'
 import '../../../../shared/styled/tableStyles.css'
@@ -10,7 +10,8 @@ import { Flex } from '../../../../shared/components/Flex'
 
 export default function Chart({
    chart,
-   rawData,
+   oldData,
+   newData,
    options,
    optionVariables,
    updateOptions,
@@ -24,14 +25,75 @@ export default function Chart({
    const [yColumns, setYColumns] = useState([])
    const [slice, setSlice] = useState('')
    const [metrices, setMetrices] = useState([])
+   const [isDiff, setIsDiff] = useState(false)
 
-   const { data, options: googleChartOptions } = useChart(chart, rawData, {
+   const { data: oldChartData, options: oldGoogleChartOptions } = useChart(
+      chart,
+      oldData,
+      {
+         chartType,
+         xColumn,
+         yColumns,
+         slice,
+         metrices,
+      }
+   )
+
+   const { data: newChartData } = useChart(chart, newData, {
       chartType,
       xColumn,
       yColumns,
       slice,
       metrices,
    })
+
+   const renderCharts = () => {
+      if (isDiff) {
+         return (
+            <Flex container justifyContent="space-between" width="100%">
+               <GoogleChart
+                  data={newChartData.length > 1 ? newChartData : oldChartData}
+                  chartType={chartType.type}
+                  loader={<div>loading...</div>}
+                  style={{ flex: '1' }}
+                  options={{
+                     ...oldGoogleChartOptions,
+                     height: oldGoogleChartOptions.height || '483px',
+                     width: oldGoogleChartOptions.width || '850px',
+                  }}
+               />
+
+               <GoogleChart
+                  data={oldChartData}
+                  chartType={chartType.type}
+                  loader={<div>loading...</div>}
+                  style={{ flex: '1' }}
+                  options={{
+                     ...oldGoogleChartOptions,
+                     height: oldGoogleChartOptions.height || '483px',
+                     width: oldGoogleChartOptions.width || '850px',
+                  }}
+               />
+            </Flex>
+         )
+      } else {
+         return (
+            <GoogleChart
+               data={oldChartData}
+               chartType={chartType.type}
+               loader={<div>loading...</div>}
+               style={{ flex: '1' }}
+               options={{
+                  ...oldGoogleChartOptions,
+                  height: oldGoogleChartOptions.height || '483px',
+                  width: oldGoogleChartOptions.width || '100%',
+               }}
+            />
+         )
+      }
+   }
+
+   console.log(oldChartData, newChartData)
 
    return (
       <Container>
@@ -51,18 +113,10 @@ export default function Chart({
             filters={filters}
             switches={switches}
             updateSwitches={updateSwitches}
+            isDiff={isDiff}
+            setIsDiff={setIsDiff}
          />
-         <GoogleChart
-            data={data}
-            chartType={chartType.type}
-            loader={<div>loading...</div>}
-            style={{ flex: '1' }}
-            options={{
-               ...googleChartOptions,
-               height: googleChartOptions.height || '483px',
-               width: googleChartOptions.width || '100%',
-            }}
-         />
+         {renderCharts()}
       </Container>
    )
 }
@@ -82,6 +136,8 @@ function ChartConfig({
    filters,
    switches,
    updateSwitches,
+   isDiff,
+   setIsDiff,
 }) {
    return (
       <Container>
@@ -106,14 +162,35 @@ function ChartConfig({
                ) : null}
             </Flex>
             {showOptions && (
-               <Option
-                  options={options}
-                  state={optionVariables}
-                  updateOptions={updateOptions}
-                  filters={filters}
-                  switches={switches}
-                  updateSwitches={updateSwitches}
-               />
+               <>
+                  <Toggle
+                     checked={isDiff}
+                     setChecked={setIsDiff}
+                     label="Compare"
+                  />
+                  {isDiff ? (
+                     <Option
+                        options={options}
+                        state={optionVariables}
+                        updateOptions={updateOptions}
+                        filters={filters}
+                        switches={switches}
+                        updateSwitches={updateSwitches}
+                        isNewOption
+                     />
+                  ) : null}
+
+                  <Option
+                     options={options}
+                     state={optionVariables}
+                     updateOptions={updateOptions}
+                     filters={filters}
+                     switches={switches}
+                     updateSwitches={updateSwitches}
+                     showColumnToggle
+                     isNewOption={false}
+                  />
+               </>
             )}
          </Flex>
       </Container>

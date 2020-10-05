@@ -26,6 +26,8 @@ export default function Option({
    filters,
    switches,
    updateSwitches,
+   showColumnToggle,
+   isNewOption,
 }) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
@@ -42,7 +44,7 @@ export default function Option({
 
    const handleClick = () => {
       const newOptions = buildOptionVariables(optionsState)
-      updateOptions(newOptions)
+      updateOptions(isNewOption)(newOptions)
       setShow(false)
    }
 
@@ -155,8 +157,15 @@ export default function Option({
 
                {filterable && renderApplyButton()}
             </Dropdown>
-            <span style={{ width: '1rem' }} />
-            <Switches switches={switches} updateSwitches={updateSwitches} />
+            {showColumnToggle ? (
+               <>
+                  <span style={{ width: '1rem' }} />
+                  <Switches
+                     switches={switches}
+                     updateSwitches={updateSwitches}
+                  />
+               </>
+            ) : null}
          </Flex>
       )
 
@@ -195,8 +204,12 @@ export default function Option({
 
             {filterable && renderApplyButton()}
          </Dropdown>
-         <span style={{ width: '1rem' }} />
-         <Switches switches={switches} updateSwitches={updateSwitches} />
+         {showColumnToggle ? (
+            <>
+               <span style={{ width: '1rem' }} />
+               <Switches switches={switches} updateSwitches={updateSwitches} />
+            </>
+         ) : null}
       </Flex>
    )
 }

@@ -54,6 +54,9 @@ export const useInsights = (
 ) => {
    const [variableSwitches, setVariableSwitches] = useState({})
    const [variableOptions, setVariableOptions] = useState({})
+   const [isNewOption, setIsNewOption] = useState(false)
+   const [newData, setNewData] = useState([])
+   const [oldData, setOldData] = useState([])
 
    const {
       data: {
@@ -86,15 +89,26 @@ export const useInsights = (
          ...variableSwitches,
          options: variableOptions,
       },
+      onCompleted: data => {
+         if (isNewOption) {
+            setNewData(transformer(data, nodeKey))
+         } else {
+            setOldData(transformer(data, nodeKey))
+         }
+      },
    })
 
    const nodeKey = Object.keys(data)[0]
-
    if (options.includeTableData || options.includeChartData)
       transformedData = transformer(data, nodeKey)
 
    const whereObject = buildOptions(insight.availableOptions || {})
    const filters = buildOptions(insight.filters || {})
+
+   const updateOptions = isNewOption => {
+      setIsNewOption(isNewOption)
+      return setVariableOptions
+   }
 
    const result = {
       loading,
@@ -103,10 +117,12 @@ export const useInsights = (
       optionVariables: variableOptions,
       options: whereObject,
       updateSwitches: setVariableSwitches,
-      updateOptions: setVariableOptions,
+      updateOptions,
       aggregates: data[nodeKey]?.aggregate,
       allowedCharts: insight.charts,
       filters,
+      newData,
+      oldData,
    }
 
    return result
