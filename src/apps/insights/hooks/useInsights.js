@@ -71,8 +71,8 @@ export const useInsights = (
          title,
       },
       onCompleted: data => {
-         setVariableOptions(data.insight.defaultOptions)
-         setVariableSwitches(data.insight.switches)
+         setVariableOptions(data.insight.defaultOptions || {})
+         setVariableSwitches(data.insight.switches || {})
       },
    })
 
