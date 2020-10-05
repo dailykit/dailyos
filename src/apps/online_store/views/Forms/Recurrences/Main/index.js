@@ -14,6 +14,7 @@ import {
    PlusIcon,
    IconButton,
    Tag,
+   TextButton,
 } from '@dailykit/ui'
 import { Container, Flex, Grid } from '../styled'
 import { TableHeader, TableRecord } from './styled'
@@ -24,6 +25,7 @@ import {
    TimeSlotTunnel,
    MileRangeTunnel,
    ChargesTunnel,
+   BrandsTunnel,
 } from './tunnels'
 import {
    RECURRENCES,
@@ -88,6 +90,14 @@ const Main = () => {
       }
    }
 
+   const linkWithBrands = recurrenceId => {
+      recurrenceDispatch({
+         type: 'RECURRENCE',
+         payload: recurrenceId,
+      })
+      openTunnel(5)
+   }
+
    if (loading) return <Loader />
 
    if (error) return <Text as="p">Some error occured!</Text>
@@ -108,6 +118,9 @@ const Main = () => {
             </Tunnel>
             <Tunnel layer={4}>
                <ChargesTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={5} size="lg">
+               <BrandsTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Container
@@ -165,7 +178,15 @@ const Main = () => {
                      {recurrences.map(recurrence => (
                         <TableRecord key={recurrence.id}>
                            <div style={{ padding: '16px' }}>
-                              {rrulestr(recurrence.rrule).toText()}
+                              {rrulestr(recurrence.rrule)
+                                 .toText()
+                                 .replace(/^\w/, char => char.toUpperCase())}
+                              <TextButton
+                                 type="ghost"
+                                 onClick={() => linkWithBrands(recurrence.id)}
+                              >
+                                 Link with Brands
+                              </TextButton>
                            </div>
                            <Flex direction="row" style={{ padding: '16px' }}>
                               <Toggle
