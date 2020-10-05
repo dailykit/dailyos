@@ -297,7 +297,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
          assets
          isValid
          isPublished
-         accompaniments
+         recommendations
          tags
          description
          default
@@ -305,6 +305,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
          simpleRecipe {
             id
             name
+            image
          }
          simpleRecipeProductOptions {
             id
@@ -343,7 +344,7 @@ export const S_INVENTORY_PRODUCT = gql`
          id
          name
          assets
-         accompaniments
+         recommendations
          isValid
          isPublished
          tags
@@ -355,12 +356,16 @@ export const S_INVENTORY_PRODUCT = gql`
             name
             unitSize
             unit
+            bulkItemAsShipped {
+               image
+            }
          }
          sachetItem {
             id
             unitSize
             unit
             bulkItem {
+               image
                processingName
                supplierItem {
                   name

@@ -4,11 +4,10 @@ export const SimpleProductContext = React.createContext()
 
 export const state = {
    meta: {
-      accompanimentTabIndex: 0,
-      accompanimentType: '',
-      productTypes: 'inventory',
       modifierProductType: 'inventoryProduct',
    },
+   recommendationProductType: 'inventory',
+   recommendationType: '',
    edit: undefined,
 }
 
@@ -18,6 +17,18 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             edit: payload,
+         }
+      }
+      case 'RECOMMENDATION_TYPE': {
+         return {
+            ...state,
+            recommendationType: payload.recommendationType,
+         }
+      }
+      case 'RECOMMENDATION_PRODUCT_TYPE': {
+         return {
+            ...state,
+            recommendationProductType: payload.recommendationProductType,
          }
       }
       case 'META': {
