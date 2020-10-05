@@ -53,7 +53,7 @@ const RecommendationTypeTunnel = ({ state, close }) => {
    const save = () => {
       if (busy) return
       setBusy(true)
-      const accompaniments = selected.map(type => ({
+      const recommendations = selected.map(type => ({
          type: type.title,
          products: [],
       }))
@@ -61,7 +61,7 @@ const RecommendationTypeTunnel = ({ state, close }) => {
          variables: {
             id: state.id,
             set: {
-               accompaniments,
+               recommendations,
             },
          },
       })

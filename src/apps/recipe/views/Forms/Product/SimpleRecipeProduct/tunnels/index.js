@@ -2,7 +2,7 @@ import DescriptionTunnel from './DescriptionTunnel'
 import RecipeTunnel from './RecipeTunnel'
 import ProductsTypeTunnel from './ProductsTypeTunnel'
 import ProductsTunnel from './ProductsTunnel'
-import AccompanimentTypeTunnel from './AccompanimentTypeTunnel'
+import RecommendationTypeTunnel from './RecommendationTypeTunnel'
 import PriceConfigurationTunnel from './PriceConfigurationTunnel'
 import AssetsTunnel from './AssetsTunnel'
 import ModifierModeTunnel from './ModifierModeTunnel'
@@ -17,7 +17,7 @@ export {
    DescriptionTunnel,
    ProductsTypeTunnel,
    ProductsTunnel,
-   AccompanimentTypeTunnel,
+   RecommendationTypeTunnel,
    PriceConfigurationTunnel,
    AssetsTunnel,
    ModifierModeTunnel,
