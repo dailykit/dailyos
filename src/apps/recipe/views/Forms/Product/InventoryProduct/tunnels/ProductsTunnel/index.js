@@ -91,33 +91,34 @@ const ProductsTunnel = ({ state, close }) => {
    const save = () => {
       if (busy) return
       setBusy(true)
-      const { accompaniments } = state
+      const { recommendations } = state
       const updatedProducts = selected.map(el => {
          return {
             id: el.id,
-            name: el.name,
-            discount: {
-               value: '0',
-            },
+            title: el.name,
+            image: el.assets?.images[0],
             type: el.__typename.split('_')[1],
          }
       })
-      accompaniments[productState.meta.accompanimentTabIndex].products = [
-         ...accompaniments[productState.meta.accompanimentTabIndex].products,
+      const index = recommendations.findIndex(
+         ({ type }) => type === productState.recommendationType
+      )
+      recommendations[index].products = [
+         ...recommendations[index].products,
          ...updatedProducts,
       ]
       updateProduct({
          variables: {
             id: state.id,
             set: {
-               accompaniments,
+               recommendations,
             },
          },
       })
    }
 
    React.useEffect(() => {
-      if (productState.meta.productsType === 'inventory') {
+      if (productState.recommendationProductType === 'inventory') {
          fetchInventoryProducts()
       } else {
          fetchSimpleRecipeProducts()

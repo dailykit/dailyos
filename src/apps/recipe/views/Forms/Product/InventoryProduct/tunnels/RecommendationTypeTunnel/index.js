@@ -22,7 +22,7 @@ import { TunnelBody } from '../styled'
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
 
-const AccompanimentTypeTunnel = ({ state, close }) => {
+const RecommendationTypeTunnel = ({ state, close }) => {
    const { t } = useTranslation()
 
    const [busy, setBusy] = React.useState(false)
@@ -70,7 +70,7 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
    return (
       <>
          <TunnelHeader
-            title={t(address.concat('select accompaniment type'))}
+            title="Select Recommendation Types"
             right={{
                action: save,
                title: busy
@@ -127,4 +127,4 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
    )
 }
 
-export default AccompanimentTypeTunnel
+export default RecommendationTypeTunnel

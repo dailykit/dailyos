@@ -343,7 +343,7 @@ export const S_INVENTORY_PRODUCT = gql`
          id
          name
          assets
-         accompaniments
+         recommendations
          isValid
          isPublished
          tags
@@ -355,12 +355,16 @@ export const S_INVENTORY_PRODUCT = gql`
             name
             unitSize
             unit
+            bulkItemAsShipped {
+               image
+            }
          }
          sachetItem {
             id
             unitSize
             unit
             bulkItem {
+               image
                processingName
                supplierItem {
                   name
