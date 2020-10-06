@@ -43,7 +43,7 @@ export default function Insight({
    return (
       <>
          <StyledContainer>
-            <Flex container alignItems="center">
+            <Flex container alignItems="center" margin="0 0 1rem 0">
                <Toggle
                   checked={isDiff}
                   setChecked={setIsDiff}
