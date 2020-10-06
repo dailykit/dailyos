@@ -2,16 +2,27 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
-   ComboButton,
    IconButton,
    useTunnel,
    Tunnels,
    Tunnel,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTab,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+   SectionTabs,
+   SectionTabList,
+   SectionTab,
+   SectionTabPanels,
+   SectionTabPanel,
+   Text,
+   Flex,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 // eslint-disable-next-line import/no-cycle
-import { Accompaniments } from '..'
+import { Recommendations } from '..'
 import {
    DeleteIcon,
    EditIcon,
@@ -24,19 +35,7 @@ import {
    UPDATE_INVENTORY_PRODUCT_OPTION,
 } from '../../../../../../graphql'
 // styles
-import {
-   Grid,
-   StyledLayout,
-   StyledListing,
-   StyledListingTile,
-   StyledPanel,
-   StyledTab,
-   StyledTable,
-   StyledTabs,
-   StyledTabView,
-   StyledWrapper,
-   Modifier,
-} from './styled'
+import { Grid, StyledTable, StyledWrapper, Modifier, ItemInfo } from './styled'
 import {
    ItemTypeTunnel,
    ItemTunnel,
@@ -223,207 +222,224 @@ export default function Item({ state }) {
          </Tunnels>
          <StyledWrapper>
             {state.sachetItem || state.supplierItem ? (
-               <StyledLayout>
-                  <StyledListing>
-                     <StyledListingTile active>
-                        <h3>
+               <SectionTabs>
+                  <SectionTabList>
+                     <SectionTab>
+                        <ItemInfo>
+                           {Boolean(
+                              state.supplierItem?.bulkItemAsShipped?.image ||
+                                 state.sachetItem?.bulkItem?.image
+                           ) && (
+                              <img
+                                 src={
+                                    state.supplierItem.bulkItemAsShipped
+                                       .image || state.sachetItem.bulkItem.image
+                                 }
+                              />
+                           )}
+                           <h3>
+                              {state.supplierItem.name ||
+                                 `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
+                           </h3>
+                           <button onClick={deleteItem}>
+                              <DeleteIcon color="#fff" />
+                           </button>
+                        </ItemInfo>
+                     </SectionTab>
+                  </SectionTabList>
+                  <SectionTabPanels>
+                     <SectionTabPanel>
+                        <Text as="h1">
                            {state.supplierItem?.name ||
                               `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
-                        </h3>
-                        <span
-                           role="button"
-                           tabIndex="0"
-                           onKeyDown={e => e.charCode === 13 && deleteItem()}
-                           onClick={deleteItem}
-                        >
-                           <DeleteIcon color="#fff" />
-                        </span>
-                     </StyledListingTile>
-                  </StyledListing>
-                  <StyledPanel>
-                     <h2>
-                        {state.supplierItem?.name ||
-                           `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
-                     </h2>
-                     <h5>
-                        {t(address.concat('unit size'))}:{' '}
-                        {state.supplierItem?.unitSize +
-                           state.supplierItem?.unit ||
-                           state.sachetItem.unitSize + state.sachetItem.unit}
-                     </h5>
-                     <StyledTabs>
-                        <StyledTab
-                           onClick={() =>
-                              _setState({ ..._state, view: 'pricing' })
-                           }
-                           active={_state.view === 'pricing'}
-                        >
-                           {t(address.concat('pricing'))}
-                        </StyledTab>
-                        <StyledTab
-                           onClick={() =>
-                              _setState({ ..._state, view: 'accompaniments' })
-                           }
-                           active={_state.view === 'accompaniments'}
-                        >
-                           {t(address.concat('accompaniments'))}
-                        </StyledTab>
-                     </StyledTabs>
-                     <StyledTabView>
-                        {_state.view === 'pricing' ? (
-                           <>
-                              <StyledTable>
-                                 <thead>
-                                    <tr>
-                                       <th>{t(address.concat('default'))}</th>
-                                       <th>{t(address.concat('options'))}</th>
-                                       <th>{t(address.concat('quantity'))}</th>
-                                       <th>{t(address.concat('price'))}</th>
-                                       <th>{t(address.concat('discount'))}</th>
-                                       <th>
-                                          {t(
-                                             address.concat('discounted price')
-                                          )}
-                                       </th>
-                                       <th>{t(address.concat('modifiers'))}</th>
-                                       <th> </th>
-                                    </tr>
-                                 </thead>
-                                 <tbody>
-                                    {state.inventoryProductOptions?.map(
-                                       option => (
-                                          <tr key={option.id}>
-                                             <td>
-                                                <input
-                                                   type="radio"
-                                                   checked={
-                                                      option.id ===
-                                                      state.default
-                                                   }
-                                                   onClick={() =>
-                                                      changeDefault(option)
-                                                   }
-                                                />
-                                             </td>
-                                             <td>{option.label}</td>
-                                             <td>{option.quantity}</td>
-                                             <td>${option.price[0].value}</td>
-                                             <td>
-                                                {option.price[0].discount}%
-                                             </td>
-                                             <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         option.price[0]
-                                                            .discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
-                                             </td>
-                                             <td>
-                                                {option.modifier?.name ? (
-                                                   <Modifier>
-                                                      <span>
-                                                         <span
-                                                            tabIndex="0"
-                                                            role="button"
-                                                            onKeyPress={() =>
-                                                               editModifier(
-                                                                  option.modifier
-                                                               )
-                                                            }
-                                                            onClick={() =>
-                                                               editModifier(
-                                                                  option.modifier
-                                                               )
-                                                            }
-                                                         >
-                                                            <EditIcon
-                                                               color="#00A7E1"
-                                                               size={14}
-                                                            />
-                                                         </span>
-                                                         <span
-                                                            tabIndex="0"
-                                                            role="button"
-                                                            onKeyPress={() =>
-                                                               removeModifier(
-                                                                  option.id
-                                                               )
-                                                            }
-                                                            onClick={() =>
-                                                               removeModifier(
-                                                                  option.id
-                                                               )
-                                                            }
-                                                         >
-                                                            <DeleteIcon
-                                                               color="#FF5A52"
-                                                               size={14}
-                                                            />
-                                                         </span>
-                                                      </span>
-                                                      {option.modifier.name}
-                                                   </Modifier>
-                                                ) : (
-                                                   <IconButton
-                                                      type="ghost"
-                                                      onClick={() => {
-                                                         modifiersDispatch({
-                                                            type: 'META',
-                                                            payload: {
-                                                               name: 'optionId',
-                                                               value: option.id,
-                                                            },
-                                                         })
-                                                         openModifiersTunnel(1)
-                                                      }}
-                                                   >
-                                                      <AddIcon color="#36B6E2" />
-                                                   </IconButton>
-                                                )}
-                                             </td>
-                                             <td>
-                                                <Grid>
-                                                   <IconButton
-                                                      onClick={() =>
-                                                         editOption(option)
+                        </Text>
+                        <Text as="p">
+                           {t(address.concat('unit size'))}:{' '}
+                           {state.supplierItem?.unitSize +
+                              state.supplierItem?.unit ||
+                              state.sachetItem.unitSize + state.sachetItem.unit}
+                        </Text>
+                        <HorizontalTabs>
+                           <HorizontalTabList>
+                              <HorizontalTab>Pricing</HorizontalTab>
+                              <HorizontalTab>Recommendations</HorizontalTab>
+                           </HorizontalTabList>
+                           <HorizontalTabPanels>
+                              <HorizontalTabPanel>
+                                 <StyledTable>
+                                    <thead>
+                                       <tr>
+                                          <th>
+                                             {t(address.concat('default'))}
+                                          </th>
+                                          <th>
+                                             {t(address.concat('options'))}
+                                          </th>
+                                          <th>
+                                             {t(address.concat('quantity'))}
+                                          </th>
+                                          <th>{t(address.concat('price'))}</th>
+                                          <th>
+                                             {t(address.concat('discount'))}
+                                          </th>
+                                          <th>
+                                             {t(
+                                                address.concat(
+                                                   'discounted price'
+                                                )
+                                             )}
+                                          </th>
+                                          <th>
+                                             {t(address.concat('modifiers'))}
+                                          </th>
+                                          <th> </th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                       {state.inventoryProductOptions?.map(
+                                          option => (
+                                             <tr key={option.id}>
+                                                <td>
+                                                   <input
+                                                      type="radio"
+                                                      checked={
+                                                         option.id ===
+                                                         state.default
                                                       }
-                                                   >
-                                                      <EditIcon color="#00A7E1" />
-                                                   </IconButton>
-                                                   <IconButton
                                                       onClick={() =>
-                                                         remove(option)
+                                                         changeDefault(option)
                                                       }
-                                                   >
-                                                      <DeleteIcon color="#FF5A52" />
-                                                   </IconButton>
-                                                </Grid>
-                                             </td>
-                                          </tr>
-                                       )
-                                    )}
-                                 </tbody>
-                              </StyledTable>
-                              <ComboButton type="ghost" onClick={addOption}>
-                                 <AddIcon />
-                                 {t(address.concat('add option'))}
-                              </ComboButton>
-                           </>
-                        ) : (
-                           <Accompaniments state={state} />
-                        )}
-                     </StyledTabView>
-                  </StyledPanel>
-               </StyledLayout>
+                                                   />
+                                                </td>
+                                                <td>{option.label}</td>
+                                                <td>{option.quantity}</td>
+                                                <td>
+                                                   ${option.price[0].value}
+                                                </td>
+                                                <td>
+                                                   {option.price[0].discount}%
+                                                </td>
+                                                <td>
+                                                   $
+                                                   {(
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) -
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) *
+                                                         (parseFloat(
+                                                            option.price[0]
+                                                               .discount
+                                                         ) /
+                                                            100)
+                                                   ).toFixed(2) || ''}
+                                                </td>
+                                                <td>
+                                                   {option.modifier?.name ? (
+                                                      <Modifier>
+                                                         <span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                            >
+                                                               <EditIcon
+                                                                  color="#00A7E1"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                            >
+                                                               <DeleteIcon
+                                                                  color="#FF5A52"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                         </span>
+                                                         {option.modifier.name}
+                                                      </Modifier>
+                                                   ) : (
+                                                      <IconButton
+                                                         type="ghost"
+                                                         onClick={() => {
+                                                            modifiersDispatch({
+                                                               type: 'META',
+                                                               payload: {
+                                                                  name:
+                                                                     'optionId',
+                                                                  value:
+                                                                     option.id,
+                                                               },
+                                                            })
+                                                            openModifiersTunnel(
+                                                               1
+                                                            )
+                                                         }}
+                                                      >
+                                                         <AddIcon color="#36B6E2" />
+                                                      </IconButton>
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   <Grid>
+                                                      <IconButton
+                                                         onClick={() =>
+                                                            editOption(option)
+                                                         }
+                                                      >
+                                                         <EditIcon color="#00A7E1" />
+                                                      </IconButton>
+                                                      <IconButton
+                                                         onClick={() =>
+                                                            remove(option)
+                                                         }
+                                                      >
+                                                         <DeleteIcon color="#FF5A52" />
+                                                      </IconButton>
+                                                   </Grid>
+                                                </td>
+                                             </tr>
+                                          )
+                                       )}
+                                    </tbody>
+                                 </StyledTable>
+                                 <ButtonTile
+                                    type="secondary"
+                                    text="Add Option"
+                                    onClick={addOption}
+                                    style={{ margin: '20px 0' }}
+                                 />
+                              </HorizontalTabPanel>
+                              <HorizontalTabPanel>
+                                 <Recommendations state={state} />
+                              </HorizontalTabPanel>
+                           </HorizontalTabPanels>
+                        </HorizontalTabs>
+                     </SectionTabPanel>
+                  </SectionTabPanels>
+               </SectionTabs>
             ) : (
                <ButtonTile
                   type="primary"

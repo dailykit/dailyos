@@ -1,7 +1,6 @@
 import Description from './Description'
 import Item from './Item'
-import Accompaniments from './Accompaniments'
-import Products from './Products'
+import Recommendations from './Recommendations'
 import Assets from './Assets'
 
-export { Item, Description, Accompaniments, Products, Assets }
+export { Item, Description, Recommendations, Assets }

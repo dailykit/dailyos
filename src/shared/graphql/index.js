@@ -29,3 +29,65 @@ export const APPS = {
       }
    `,
 }
+
+export const OPERATION_CONFIG = gql`
+   query MyQuery {
+      settings_operationConfig {
+         id
+         stationId
+         station {
+            id
+            name
+         }
+         labelTemplateId
+         labelTemplate {
+            id
+            name
+         }
+      }
+   }
+`
+
+export const STATIONS = gql`
+   query MyQuery {
+      stations {
+         id
+         name
+      }
+   }
+`
+
+export const LABELS = gql`
+   query MyQuery {
+      labelTemplates {
+         id
+         name
+      }
+   }
+`
+
+export const STATION = gql`
+   query MyQuery($stationId: Int!) {
+      station(id: $stationId) {
+         name
+      }
+   }
+`
+
+export const LABEL_TEMPLATE = gql`
+   query MyQuery($labelId: Int!) {
+      labelTemplate(id: $labelId) {
+         name
+      }
+   }
+`
+
+export const CREATE_OPERATION_CONFIG = gql`
+   mutation MyMutation($object: settings_operationConfig_insert_input!) {
+      insertOperationConfig: insert_settings_operationConfig_one(
+         object: $object
+      ) {
+         id
+      }
+   }
+`

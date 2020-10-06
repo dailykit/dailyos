@@ -209,3 +209,21 @@ export const UPSERT_BRAND_COLLECTION = gql`
       }
    }
 `
+
+export const UPSERT_BRAND_RECURRENCE = gql`
+   mutation UpsertBrandRecurrence(
+      $object: fulfilment_brand_recurrence_insert_input!
+   ) {
+      createBrandRecurrence(
+         object: $object
+         on_conflict: {
+            constraint: brand_recurrence_pkey
+            update_columns: isActive
+         }
+      ) {
+         brandId
+         recurrenceId
+         isActive
+      }
+   }
+`

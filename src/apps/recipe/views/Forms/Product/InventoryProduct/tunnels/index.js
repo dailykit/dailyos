@@ -3,7 +3,7 @@ import ItemTypeTunnel from './ItemTypeTunnel'
 import ItemTunnel from './ItemTunnel'
 import ProductsTypeTunnel from './ProductsTypeTunnel'
 import ProductsTunnel from './ProductsTunnel'
-import AccompanimentTypeTunnel from './AccompanimentTypeTunnel'
+import RecommendationTypeTunnel from './RecommendationTypeTunnel'
 import PricingTunnel from './PricingTunnel'
 import AssetsTunnel from './AssetsTunnel'
 import ModifierFormTunnel from './ModifierFormTunnel'
@@ -19,7 +19,7 @@ export {
    DescriptionTunnel,
    ProductsTypeTunnel,
    ProductsTunnel,
-   AccompanimentTypeTunnel,
+   RecommendationTypeTunnel,
    PricingTunnel,
    AssetsTunnel,
    ModifierFormTunnel,

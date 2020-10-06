@@ -11,10 +11,10 @@ const ProductsTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()
    const { productDispatch } = React.useContext(InventoryProductContext)
 
-   const select = value => {
+   const select = recommendationProductType => {
       productDispatch({
-         type: 'META',
-         payload: { name: 'productsType', value },
+         type: 'RECOMMENDATION_PRODUCT_TYPE',
+         payload: { recommendationProductType },
       })
       open(2)
    }
