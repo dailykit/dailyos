@@ -1,9 +1,10 @@
+import React, { useState } from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
-import React from 'react'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import styled from 'styled-components'
-import { Box } from '../'
+import { Flex, Toggle } from '@dailykit/ui'
+
 import '../../../../shared/styled/tableStyles.css'
 import { useInsights } from '../../hooks/useInsights'
 import { Counter } from '../Counter'
@@ -37,144 +38,107 @@ export default function Insight({
       includeChartData: includeChart,
    })
 
+   const [isDiff, setIsDiff] = useState(false)
+
    return (
       <>
          <StyledContainer>
-            {includeChart ? (
-               <HeroCharts
-                  allowedCharts={allowedCharts}
-                  aggregates={aggregates}
-                  optionVariables={optionVariables}
+            <Flex container alignItems="center">
+               <Toggle
+                  checked={isDiff}
+                  setChecked={setIsDiff}
+                  label="Compare"
+               />
+
+               <Option
                   options={options}
+                  state={optionVariables}
                   updateOptions={updateOptions}
                   filters={filters}
                   switches={switches}
                   updateSwitches={updateSwitches}
+                  showColumnToggle
+                  isNewOption={false}
+               />
+            </Flex>
+            <CounterBar aggregates={aggregates} />
+            {includeChart ? (
+               <HeroCharts
+                  allowedCharts={allowedCharts}
                   oldData={oldData}
                   newData={newData}
+                  isDiff={isDiff}
                />
             ) : null}
-            <br />
 
-            <FlexViewWrapper>
+            <StyledGrid isDiff={isDiff}>
                {includeChart ? (
                   <FlexCharts
                      allowedCharts={allowedCharts}
                      oldData={oldData}
                      newData={newData}
+                     isDiff={isDiff}
                   />
                ) : null}
 
                {includeTable ? (
                   <>
-                     <Box
-                        style={{
-                           width: '100%',
-                        }}
-                     >
-                        {!includeChart ? (
-                           <CounterBar aggregates={aggregates} />
-                        ) : null}
-                        {!includeChart ||
-                        !allowedCharts?.filter(
-                           chart => chart.layoutType === 'HERO'
-                        ).length ? (
-                           <Option
-                              options={options}
-                              state={optionVariables}
-                              updateOptions={updateOptions}
-                              filters={filters}
-                              switches={switches}
-                              updateSwitches={updateSwitches}
-                           />
-                        ) : null}
-                        <ReactTabulator
-                           columns={[]}
-                           options={tableConfig}
-                           data={tableData}
+                     {!includeChart ||
+                     !allowedCharts?.filter(
+                        chart => chart.layoutType === 'HERO'
+                     ).length ? (
+                        <Option
+                           options={options}
+                           state={optionVariables}
+                           updateOptions={updateOptions}
+                           filters={filters}
+                           switches={switches}
+                           updateSwitches={updateSwitches}
                         />
-                     </Box>
+                     ) : null}
                   </>
                ) : null}
-            </FlexViewWrapper>
+            </StyledGrid>
+            <ReactTabulator
+               columns={[]}
+               options={tableConfig}
+               data={tableData}
+            />
          </StyledContainer>
       </>
    )
 }
 
-function HeroCharts({
-   allowedCharts,
-   aggregates,
-   oldData,
-   newData,
-   options,
-   optionVariables,
-   updateOptions,
-   filters,
-   switches,
-   updateSwitches,
-}) {
+function HeroCharts({ allowedCharts, oldData, newData, isDiff }) {
    if (!allowedCharts?.length) return null
 
    return allowedCharts
       ?.filter(chart => chart.layoutType === 'HERO')
       .map(chart => (
-         <Box
-            key={chart.id}
-            style={{
-               width: '100%',
-               overflowX: 'auto',
-               margin: '0 auto',
-               display: 'flex',
-               flexDirection: 'column',
-               alignItems: 'center',
-               height: '100%',
-               flex: 1,
-            }}
-         >
-            <CounterBar aggregates={aggregates} />
+         <>
             <Chart
                oldData={oldData}
                newData={newData}
                chart={chart}
-               optionVariables={optionVariables}
-               options={options}
-               updateOptions={updateOptions}
-               showOptions
-               filters={filters}
-               switches={switches}
-               updateSwitches={updateSwitches}
+               isDiff={isDiff}
             />
-         </Box>
+         </>
       ))
 }
 
-function FlexCharts({ allowedCharts, oldData, newData }) {
+function FlexCharts({ allowedCharts, oldData, newData, isDiff }) {
    if (!allowedCharts?.length) return null
 
    return allowedCharts
       ?.filter(chart => chart.layoutType === 'FLEX')
       .map(chart => {
          return (
-            <Box
-               key={chart.id}
-               style={{
-                  width: '100%',
-                  overflowX: 'auto',
-                  margin: '0 auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  height: '100%',
-               }}
-            >
-               <Chart
-                  oldData={oldData}
-                  newData={newData}
-                  chart={chart}
-                  showOptions={false}
-               />
-            </Box>
+            <Chart
+               oldData={oldData}
+               newData={newData}
+               chart={chart}
+               isDiff={isDiff}
+            />
          )
       })
 }
@@ -188,13 +152,16 @@ function CounterBar({ aggregates }) {
 
 const StyledContainer = styled.div`
    position: relative;
-   width: 100%;
-   height: 100%;
+   width: 95vw;
+   margin: 1rem auto;
    padding: 1rem 2rem;
+   background: #ffffff;
+   border-radius: 10px;
+   overflow-x: auto;
 `
-const FlexViewWrapper = styled.div`
+const StyledGrid = styled.div`
    display: grid;
-   grid-template-columns: 1fr 1fr;
+   grid-template-columns: ${({ isDiff }) => (isDiff ? '1fr' : '1fr 1fr')};
    gap: 1rem;
 `
 export { CounterBar }
