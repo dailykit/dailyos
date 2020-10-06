@@ -1,4 +1,5 @@
-import React from 'react'
+import { useOnClickOutside } from '@dailykit/ui'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 
 import { ChevronDown } from '../../../../shared/assets/icons'
@@ -15,8 +16,11 @@ export const Dropdown = ({
    setShow,
    fromRight,
 }) => {
+   const ref = useRef()
+   useOnClickOutside(ref, () => setShow(false))
+
    return (
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }} ref={ref}>
          <DropdownButton onClick={() => setShow(!show)}>
             <p>{title}</p>
 
@@ -28,9 +32,15 @@ export const Dropdown = ({
    )
 }
 
-export const DropdownItem = ({ leftIcon, rightIcon, onClick, children }) => {
+export const DropdownItem = ({
+   leftIcon,
+   rightIcon,
+   onClick,
+   children,
+   width,
+}) => {
    return (
-      <StyledItem onClick={onClick}>
+      <StyledItem onClick={onClick} style={{ width }}>
          {leftIcon}
          <div style={{ margin: '0 8px' }}>{children}</div>
          {rightIcon}
