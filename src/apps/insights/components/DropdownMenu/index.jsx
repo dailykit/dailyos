@@ -51,7 +51,6 @@ const DropdownButton = styled.button`
    justify-content: space-between;
    align-items: center;
    cursor: pointer;
-   margin-bottom: 12px;
 
    svg {
       margin-left: 4px;

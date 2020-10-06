@@ -1,31 +1,18 @@
-import { Checkbox, TextButton, Toggle } from '@dailykit/ui'
+import { Checkbox, TextButton } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { Chart as GoogleChart } from 'react-google-charts'
 import '../../../../shared/styled/tableStyles.css'
 import { useChart } from '../../hooks/useChart'
 import { Container } from '../Container'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
-import Option from './Option'
 import { Flex } from '../../../../shared/components/Flex'
 
-export default function Chart({
-   chart,
-   oldData,
-   newData,
-   options,
-   optionVariables,
-   updateOptions,
-   showOptions,
-   filters,
-   switches,
-   updateSwitches,
-}) {
+export default function Chart({ chart, oldData, newData, isDiff }) {
    const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
    const [yColumns, setYColumns] = useState([])
    const [slice, setSlice] = useState('')
    const [metrices, setMetrices] = useState([])
-   const [isDiff, setIsDiff] = useState(false)
 
    const { data: oldChartData, options: oldGoogleChartOptions } = useChart(
       chart,
@@ -93,8 +80,6 @@ export default function Chart({
       }
    }
 
-   console.log(oldChartData, newChartData)
-
    return (
       <Container>
          <ChartConfig
@@ -106,15 +91,6 @@ export default function Chart({
             setSlice={setSlice}
             setMetrices={setMetrices}
             setChartType={setChartType}
-            options={options}
-            optionVariables={optionVariables}
-            updateOptions={updateOptions}
-            showOptions={showOptions}
-            filters={filters}
-            switches={switches}
-            updateSwitches={updateSwitches}
-            isDiff={isDiff}
-            setIsDiff={setIsDiff}
          />
          {renderCharts()}
       </Container>
@@ -129,15 +105,6 @@ function ChartConfig({
    setSlice,
    setMetrices,
    setChartType,
-   options,
-   optionVariables,
-   updateOptions,
-   showOptions,
-   filters,
-   switches,
-   updateSwitches,
-   isDiff,
-   setIsDiff,
 }) {
    return (
       <Container>
@@ -161,37 +128,6 @@ function ChartConfig({
                   />
                ) : null}
             </Flex>
-            {showOptions && (
-               <>
-                  <Toggle
-                     checked={isDiff}
-                     setChecked={setIsDiff}
-                     label="Compare"
-                  />
-                  {isDiff ? (
-                     <Option
-                        options={options}
-                        state={optionVariables}
-                        updateOptions={updateOptions}
-                        filters={filters}
-                        switches={switches}
-                        updateSwitches={updateSwitches}
-                        isNewOption
-                     />
-                  ) : null}
-
-                  <Option
-                     options={options}
-                     state={optionVariables}
-                     updateOptions={updateOptions}
-                     filters={filters}
-                     switches={switches}
-                     updateSwitches={updateSwitches}
-                     showColumnToggle
-                     isNewOption={false}
-                  />
-               </>
-            )}
          </Flex>
       </Container>
    )
