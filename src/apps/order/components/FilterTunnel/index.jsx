@@ -301,21 +301,19 @@ export const FilterTunnel = () => {
                      <ClearIcon />
                   </button>
                </legend>
-               {!_.isEmpty(config.stations) && (
-                  <div className="station">
-                     <Dropdown
-                        type="single"
-                        searchedOption={() => {}}
-                        defaultValue={activeStation}
-                        placeholder="search for stations..."
-                        selectedOption={option => handleStationChange(option)}
-                        options={config.stations.map(station => ({
-                           id: station.id,
-                           title: station.name,
-                        }))}
-                     />
-                  </div>
-               )}
+               <div className="station">
+                  <Dropdown
+                     type="single"
+                     searchedOption={() => {}}
+                     defaultValue={activeStation}
+                     placeholder="search for stations..."
+                     selectedOption={option => handleStationChange(option)}
+                     options={config.stations.map(station => ({
+                        id: station.id,
+                        title: station.name,
+                     }))}
+                  />
+               </div>
             </Fieldset>
             <Spacer size="16px" />
             <Fieldset>
