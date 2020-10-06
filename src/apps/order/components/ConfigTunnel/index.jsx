@@ -245,7 +245,7 @@ const DefaultKOTPrinter = () => {
    const [update] = useMutation(UPDATE_SETTING)
    const [printers, setPrinters] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(true)
-   const [defaultIndex, setDefaultIndex] = React.useState(1)
+   const [defaultIndex, setDefaultIndex] = React.useState(null)
    useQuery(DEVICES.PRINTERS, {
       variables: {
          type: {
