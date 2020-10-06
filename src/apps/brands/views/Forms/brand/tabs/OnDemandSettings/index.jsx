@@ -20,6 +20,7 @@ import {
    Store,
    Address,
    Coupons,
+   Wallet,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -94,6 +95,8 @@ export const OnDemandSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="rewards" title="Rewards">
                <Coupons update={update} />
+               <Spacer size="24px" />
+               <Wallet update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>
