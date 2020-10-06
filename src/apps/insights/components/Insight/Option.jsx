@@ -49,7 +49,7 @@ export default function Option({
    }
 
    const handleReset = () => {
-      updateOptions({})
+      updateOptions(isNewOption)({})
       setOptionsState({})
       setShow(false)
    }
