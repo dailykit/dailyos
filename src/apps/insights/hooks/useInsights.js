@@ -57,6 +57,8 @@ export const useInsights = (
    const [isNewOption, setIsNewOption] = useState(false)
    const [newData, setNewData] = useState([])
    const [oldData, setOldData] = useState([])
+   const [oldAggregates, setOldAggregates] = useState({})
+   const [newAggregates, setNewAggregates] = useState({})
 
    const {
       data: {
@@ -92,8 +94,10 @@ export const useInsights = (
       onCompleted: data => {
          if (isNewOption) {
             setNewData(transformer(data, nodeKey))
+            setNewAggregates(data[nodeKey].aggregate)
          } else {
             setOldData(transformer(data, nodeKey))
+            setOldAggregates(data[nodeKey].aggregate)
          }
       },
    })
@@ -118,7 +122,8 @@ export const useInsights = (
       options: whereObject,
       updateSwitches: setVariableSwitches,
       updateOptions,
-      aggregates: data[nodeKey]?.aggregate,
+      oldAggregates,
+      newAggregates,
       allowedCharts: insight.charts,
       filters,
       newData,

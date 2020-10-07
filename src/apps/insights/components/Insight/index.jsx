@@ -26,13 +26,14 @@ export default function Insight({
       options,
       optionVariables,
       updateOptions,
-      aggregates,
       allowedCharts,
       filters,
       switches,
       updateSwitches,
       oldData,
       newData,
+      oldAggregates,
+      newAggregates,
    } = useInsights(title, {
       includeTableData: includeTable,
       includeChartData: includeChart,
@@ -58,10 +59,13 @@ export default function Insight({
                   switches={switches}
                   updateSwitches={updateSwitches}
                   showColumnToggle
-                  isNewOption={false}
+                  isDiff={isDiff}
                />
             </Flex>
-            <CounterBar aggregates={aggregates} />
+            <Flex container justifyContent="space-between">
+               {isDiff ? <CounterBar aggregates={newAggregates} /> : null}
+               <CounterBar aggregates={oldAggregates} />
+            </Flex>
             {includeChart ? (
                <HeroCharts
                   allowedCharts={allowedCharts}
@@ -80,24 +84,6 @@ export default function Insight({
                      isDiff={isDiff}
                   />
                ) : null}
-
-               {includeTable ? (
-                  <>
-                     {!includeChart ||
-                     !allowedCharts?.filter(
-                        chart => chart.layoutType === 'HERO'
-                     ).length ? (
-                        <Option
-                           options={options}
-                           state={optionVariables}
-                           updateOptions={updateOptions}
-                           filters={filters}
-                           switches={switches}
-                           updateSwitches={updateSwitches}
-                        />
-                     ) : null}
-                  </>
-               ) : null}
             </StyledGrid>
             <ReactTabulator
                columns={[]}
@@ -115,14 +101,13 @@ function HeroCharts({ allowedCharts, oldData, newData, isDiff }) {
    return allowedCharts
       ?.filter(chart => chart.layoutType === 'HERO')
       .map(chart => (
-         <>
-            <Chart
-               oldData={oldData}
-               newData={newData}
-               chart={chart}
-               isDiff={isDiff}
-            />
-         </>
+         <Chart
+            key={chart.id}
+            oldData={oldData}
+            newData={newData}
+            chart={chart}
+            isDiff={isDiff}
+         />
       ))
 }
 
@@ -138,6 +123,7 @@ function FlexCharts({ allowedCharts, oldData, newData, isDiff }) {
                newData={newData}
                chart={chart}
                isDiff={isDiff}
+               key={chart.id}
             />
          )
       })

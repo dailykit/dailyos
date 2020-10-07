@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 import { checkDateField } from '../../utils/checkDateField'
 import { optionsMap } from '../../utils/optionsMap'
-import { Input, TextButton } from '@dailykit/ui'
+import { Flex, Input, TextButton } from '@dailykit/ui'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
 import { isObject } from '../../../../shared/utils/isObject'
 
@@ -16,8 +16,11 @@ export default function Filters({
    filters,
    optionsState,
    setOptionsState,
+   newOptionsState,
+   setNewOptionsState,
    handleApply,
    handleReset,
+   isDiff,
 }) {
    return Object.keys(filters).map(filter => (
       <Filter
@@ -26,8 +29,11 @@ export default function Filters({
          filters={filters}
          optionsState={optionsState}
          setOptionsState={setOptionsState}
+         newOptionsState={newOptionsState}
+         setNewOptionsState={setNewOptionsState}
          handleApply={handleApply}
          handleReset={handleReset}
+         isDiff={isDiff}
       />
    ))
 }
@@ -37,37 +43,57 @@ function Filter({
    filters,
    optionsState,
    setOptionsState,
+   newOptionsState,
+   setNewOptionsState,
    handleApply,
    handleReset,
+   isDiff,
 }) {
    const [show, setShow] = useState(false)
    const [filterable, setFilterable] = useState(false)
 
-   const handleFilterApply = () => {
+   const handleFilterApply = isNewOption => {
       setShow(false)
-      handleApply()
+      handleApply(isNewOption)
    }
 
-   const handleFilterReset = () => {
+   const handleFilterReset = isNewOption => {
       setShow(false)
       setFilterable(false)
-      handleReset()
+      handleReset(isNewOption)
    }
 
    const renderApplyButton = () => {
       return (
-         <div
-            style={{ marginLeft: '12px', marginTop: '12px', display: 'flex' }}
-         >
-            <TextButton type="solid" onClick={handleFilterApply}>
+         <Flex container margin="12px 0 0 12px">
+            {isDiff ? (
+               <>
+                  <TextButton
+                     type="solid"
+                     onClick={() => handleFilterApply(true)}
+                  >
+                     Apply New
+                  </TextButton>
+                  <span style={{ width: '12px' }} />
+
+                  <TextButton
+                     type="solid"
+                     onClick={() => handleFilterReset(true)}
+                  >
+                     Reset New
+                  </TextButton>
+                  <span style={{ width: '12px' }} />
+               </>
+            ) : null}
+            <TextButton type="solid" onClick={() => handleFilterApply(false)}>
                Apply
             </TextButton>
             <span style={{ width: '12px' }} />
 
-            <TextButton type="solid" onClick={handleFilterReset}>
+            <TextButton type="solid" onClick={() => handleFilterReset(false)}>
                Reset
             </TextButton>
-         </div>
+         </Flex>
       )
    }
 
@@ -85,43 +111,85 @@ function Filter({
          return optionsMap[option] || option
       }
 
-      const handleChange = (value, field) => {
-         setOptionsState({
-            ...optionsState,
-            [parent]: {
-               ...optionsState[parent],
-               [field]: value || null,
-            },
-         })
+      const handleChange = (value, field, isNewOption) => {
+         if (isNewOption) {
+            setNewOptionsState({
+               ...optionsState,
+               [parent]: {
+                  ...newOptionsState[parent],
+                  [field]: value || null,
+               },
+            })
+         } else {
+            setOptionsState({
+               ...optionsState,
+               [parent]: {
+                  ...optionsState[parent],
+                  [field]: value || null,
+               },
+            })
+         }
       }
 
       if (option.startsWith('_')) {
          return (
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-               {renderOptionName(option, parent)}
-
-               <span style={{ width: '10px' }} />
-
+            <Flex
+               container
+               alignItems="flex-end"
+               justifyContent="space-between"
+            >
                {checkDateField(parent) ? (
-                  <DatePicker
-                     selected={optionsState[parent]?.[option] || ''}
-                     onSelect={date => {
-                        setFilterable(true)
-                        handleChange(date, option)
-                     }}
-                  />
+                  <>
+                     {isDiff ? (
+                        <>
+                           <DatePicker
+                              selected={newOptionsState[parent]?.[option] || ''}
+                              onSelect={date => {
+                                 setFilterable(true)
+                                 handleChange(date, option, true)
+                              }}
+                           />
+                           <span style={{ width: '10px' }} />
+                        </>
+                     ) : null}
+                     <DatePicker
+                        selected={optionsState[parent]?.[option] || ''}
+                        onSelect={date => {
+                           setFilterable(true)
+                           handleChange(date, option, false)
+                        }}
+                     />
+                  </>
                ) : (
-                  <Input
-                     type="text"
-                     value={optionsState[parent]?.[option] || ''}
-                     onChange={e => {
-                        setFilterable(true)
-                        handleChange(e.target.value, option)
-                     }}
-                     name={option}
-                  />
+                  <>
+                     {isDiff ? (
+                        <>
+                           <Input
+                              label={renderOptionName(option, parent)}
+                              type="text"
+                              value={newOptionsState[parent]?.[option] || ''}
+                              onChange={e => {
+                                 setFilterable(true)
+                                 handleChange(e.target.value, option, true)
+                              }}
+                              name={option}
+                           />
+                           <span style={{ width: '10px' }} />
+                        </>
+                     ) : null}
+                     <Input
+                        label={renderOptionName(option, parent)}
+                        type="text"
+                        value={optionsState[parent]?.[option] || ''}
+                        onChange={e => {
+                           setFilterable(true)
+                           handleChange(e.target.value, option, false)
+                        }}
+                        name={option}
+                     />
+                  </>
                )}
-            </div>
+            </Flex>
          )
       }
    }
@@ -136,7 +204,10 @@ function Filter({
          >
             {isObject(filters[filter]) &&
                Object.keys(filters[filter]).map(filterName => (
-                  <DropdownItem key={filterName}>
+                  <DropdownItem
+                     key={filterName}
+                     width={isDiff ? '400px' : null}
+                  >
                      {renderOption(filterName, filter)}
                   </DropdownItem>
                ))}

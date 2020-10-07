@@ -1,10 +1,9 @@
-import { Checkbox, Input, TextButton } from '@dailykit/ui'
+import { Checkbox, Input, TextButton, Flex } from '@dailykit/ui'
 import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 import { LeftIcon } from '../../../../shared/assets/icons'
-import { Flex } from '../../../../shared/components/Flex'
 import '../../../../shared/styled/datepicker.css'
 import { isObject } from '../../../../shared/utils/isObject'
 import { checkDateField } from '../../utils/checkDateField'
@@ -27,10 +26,11 @@ export default function Option({
    switches,
    updateSwitches,
    showColumnToggle,
-   isNewOption,
+   isDiff,
 }) {
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
+   const [newOptionsState, setNewOptionsState] = useState({})
    const [filterable, setFilterable] = useState(false)
    const [show, setShow] = useState(false)
 
@@ -42,32 +42,49 @@ export default function Option({
       if (!optionName.startsWith('_')) setSubmenu(optionName)
    }
 
-   const handleClick = () => {
-      const newOptions = buildOptionVariables(optionsState)
+   const handleClick = isNewOption => {
+      const newOptions = isNewOption
+         ? buildOptionVariables(newOptionsState)
+         : buildOptionVariables(optionsState)
       updateOptions(isNewOption)(newOptions)
       setShow(false)
    }
 
-   const handleReset = () => {
+   const handleReset = isNewOption => {
       updateOptions(isNewOption)({})
-      setOptionsState({})
+      if (isNewOption) {
+         setNewOptionsState({})
+      } else {
+         setOptionsState({})
+      }
       setShow(false)
    }
 
    const renderApplyButton = () => {
       return (
-         <div
-            style={{ marginLeft: '12px', marginTop: '12px', display: 'flex' }}
-         >
-            <TextButton type="solid" onClick={handleClick}>
+         <Flex container margin="12px 0 0 12px">
+            {isDiff ? (
+               <>
+                  <TextButton type="solid" onClick={() => handleClick(true)}>
+                     Apply New
+                  </TextButton>
+                  <span style={{ width: '12px' }} />
+
+                  <TextButton type="solid" onClick={() => handleReset(true)}>
+                     Reset New
+                  </TextButton>
+                  <span style={{ width: '12px' }} />
+               </>
+            ) : null}
+            <TextButton type="solid" onClick={() => handleClick(false)}>
                Apply
             </TextButton>
             <span style={{ width: '12px' }} />
 
-            <TextButton type="solid" onClick={handleReset}>
+            <TextButton type="solid" onClick={() => handleReset(false)}>
                Reset
             </TextButton>
-         </div>
+         </Flex>
       )
    }
 
@@ -85,43 +102,87 @@ export default function Option({
          return optionsMap[option] || option
       }
 
-      const handleChange = (value, field) => {
-         setOptionsState({
-            ...optionsState,
-            [submenu]: {
-               ...optionsState[submenu],
-               [field]: value || null,
-            },
-         })
+      const handleChange = (value, field, isNewOption) => {
+         if (isNewOption) {
+            setNewOptionsState({
+               ...optionsState,
+               [submenu]: {
+                  ...newOptionsState[submenu],
+                  [field]: value || null,
+               },
+            })
+         } else {
+            setOptionsState({
+               ...optionsState,
+               [submenu]: {
+                  ...optionsState[submenu],
+                  [field]: value || null,
+               },
+            })
+         }
       }
 
       if (option.startsWith('_')) {
          return (
-            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-               {renderOptionName(option, submenu)}
-
-               <span style={{ width: '10px' }} />
-
+            <Flex
+               container
+               alignItems="flex-end"
+               justifyContent="space-between"
+            >
                {checkDateField(submenu) ? (
-                  <DatePicker
-                     selected={optionsState[submenu]?.[option] || ''}
-                     onSelect={date => {
-                        setFilterable(true)
-                        handleChange(date, option)
-                     }}
-                  />
+                  <>
+                     {isDiff ? (
+                        <>
+                           <DatePicker
+                              selected={
+                                 newOptionsState[submenu]?.[option] || ''
+                              }
+                              onSelect={date => {
+                                 setFilterable(true)
+                                 handleChange(date, option, true)
+                              }}
+                           />
+                           <span style={{ width: '10px' }} />
+                        </>
+                     ) : null}
+                     <DatePicker
+                        selected={optionsState[submenu]?.[option] || ''}
+                        onSelect={date => {
+                           setFilterable(true)
+                           handleChange(date, option, false)
+                        }}
+                     />
+                  </>
                ) : (
-                  <Input
-                     type="text"
-                     value={optionsState[submenu]?.[option] || ''}
-                     onChange={e => {
-                        setFilterable(true)
-                        handleChange(e.target.value, option)
-                     }}
-                     name={option}
-                  />
+                  <>
+                     {isDiff ? (
+                        <>
+                           <Input
+                              label={renderOptionName(option, submenu)}
+                              type="text"
+                              value={newOptionsState[submenu]?.[option] || ''}
+                              onChange={e => {
+                                 setFilterable(true)
+                                 handleChange(e.target.value, option, true)
+                              }}
+                              name={option}
+                           />
+                           <span style={{ width: '10px' }} />
+                        </>
+                     ) : null}
+                     <Input
+                        label={renderOptionName(option, submenu)}
+                        type="text"
+                        value={optionsState[submenu]?.[option] || ''}
+                        onChange={e => {
+                           setFilterable(true)
+                           handleChange(e.target.value, option, false)
+                        }}
+                        name={option}
+                     />
+                  </>
                )}
-            </div>
+            </Flex>
          )
       }
    }
@@ -133,8 +194,11 @@ export default function Option({
                filters={filters}
                optionsState={optionsState}
                setOptionsState={setOptionsState}
+               newOptionsState={newOptionsState}
+               setNewOptionsState={setNewOptionsState}
                handleApply={handleClick}
                handleReset={handleReset}
+               isDiff={isDiff}
             />
             <span style={{ width: '1rem' }} />
             <Dropdown
@@ -147,6 +211,7 @@ export default function Option({
                {Object.keys(options).map(option => {
                   return (
                      <DropdownItem
+                        width={isDiff ? '400px' : null}
                         onClick={() => setDropdownView(option)}
                         key={option}
                      >
@@ -175,8 +240,11 @@ export default function Option({
             filters={filters}
             optionsState={optionsState}
             setOptionsState={setOptionsState}
+            newOptionsState={newOptionsState}
+            setNewOptionsState={setNewOptionsState}
             handleApply={handleClick}
             handleReset={handleReset}
+            isDiff={isDiff}
          />
          <span style={{ width: '1rem' }} />
          <Dropdown
@@ -189,14 +257,12 @@ export default function Option({
             <DropdownItem
                onClick={() => setDropdownView('main')}
                leftIcon={<LeftIcon color="#888d9d" />}
+               width={isDiff ? '400px' : null}
             />
             {isObject(options[submenu]) &&
                Object.keys(options[submenu]).map(option => {
                   return (
-                     <DropdownItem
-                        onClick={() => setDropdownView(option)}
-                        key={option}
-                     >
+                     <DropdownItem key={option} width={isDiff ? '400px' : null}>
                         {renderOption(option)}
                      </DropdownItem>
                   )
