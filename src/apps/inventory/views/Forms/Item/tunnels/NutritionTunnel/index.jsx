@@ -31,16 +31,16 @@ export default function NutritionTunnel({ close, bulkItemId }) {
       },
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.bulkItem.nutritionInfo
-         setState(data)
+         if (data) setState(data)
       },
    })
-   const [per, setPer] = useState(nutritionInfo.per || 100)
+   const [per, setPer] = useState(nutritionInfo?.per || 100)
 
    // change below function to calculate daily % value acc. to provided total nutrients
    const calcDailyValue = value => (value / 100) * 100
 
-   const checkInput = value => {
-      if (!value.length) return setValid(true)
+   const checkInput = (value = '') => {
+      if (!value && !value.length) return setValid(true)
 
       if (!+value) {
          if (value === '0') return setValid(true)
@@ -255,7 +255,7 @@ export default function NutritionTunnel({ close, bulkItemId }) {
                         name="cholestrol"
                         value={state.cholesterol || ''}
                         onChange={e =>
-                           handleChange(e.target.value, 'cholestrol')
+                           handleChange(e.target.value, 'cholesterol')
                         }
                         onBlur={() => checkInput(state.cholesterol)}
                      />

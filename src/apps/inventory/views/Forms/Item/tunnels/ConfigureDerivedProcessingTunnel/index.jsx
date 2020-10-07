@@ -129,7 +129,10 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                   yield: { value: yieldPercentage },
                   shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                   parLevel: +par,
-                  nutritionInfo: state.processing.nutrients || {},
+                  nutritionInfo:
+                     configurable.nutrients ||
+                     state.activeProcessing.nutritionInfo ||
+                     {},
                   maxLevel: +maxInventoryLevel,
                   labor: { value: laborTime, unit: laborUnit },
                   bulkDensity: +bulkDensity,
@@ -161,11 +164,16 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                   yield: { value: yieldPercentage },
                   shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                   parLevel: +par,
-                  nutritionInfo: state.configurable.nutrients || {},
+                  nutritionInfo:
+                     configurable.nutrients ||
+                     state.activeProcessing.nutritionInfo ||
+                     {},
                   maxLevel: +maxInventoryLevel,
                   labor: { value: laborTime, unit: laborUnit },
                   bulkDensity: +bulkDensity,
-                  allergens: state.processing.allergens,
+                  allergens: configurable.allergens?.length
+                     ? configurable.allergens
+                     : state.activeProcessing.allergens,
                },
             },
          })
@@ -178,11 +186,16 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                yield: { value: yieldPercentage },
                shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                parLevel: +par,
-               nutritionInfo: state.configurable.nutrients,
+               nutritionInfo:
+                  configurable.nutrients ||
+                  state.activeProcessing.nutritionInfo ||
+                  {},
                maxLevel: +maxInventoryLevel,
                labor: { unit: laborUnit, value: laborTime },
                bulkDensity: +bulkDensity,
-               allergens: state.configurable.allergens,
+               allergens: configurable.allergens?.length
+                  ? configurable.allergens
+                  : state.activeProcessing.allergens,
             },
          })
       }
@@ -403,63 +416,89 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
                      <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
-               {state.configurable.nutrients?.totalFat ||
-               state.configurable.nutrients?.calories ? (
-                  <Nutrition
-                     data={{
-                        calories: state.configurable.nutrients.calories,
-                        totalFat: state.configurable.nutrients.totalFat,
-                        transFat: state.configurable.nutrients.transFat,
-                        saturatedFat: state.configurable.nutrients.saturatedFat,
-                        cholesterol: state.configurable.nutrients.cholesterol,
-                        sodium: state.configurable.nutrients.sodium,
-                        totalCarbohydrates:
-                           state.configurable.nutrients.totalCarbohydrates,
-                        dietaryFibre: state.configurable.nutrients.dietaryFibre,
-                        sugars: state.configurable.nutrients.sugars,
-                        protein: state.configurable.nutrients.protein,
-                        vitaminA: state.configurable.nutrients.vitaminA,
-                        vitaminC: state.configurable.nutrients.vitaminC,
-                        iron: state.configurable.nutrients.iron,
-                        calcium: state.configurable.nutrients.calcium,
-                     }}
-                  />
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add nutritions'))}
-                     onClick={() => {
-                        dispatch({
-                           type: 'SET_NUTRI_TARGET',
-                           payload: 'deriveProcessing',
-                        })
-                        openNutritionTunnel(1)
-                     }}
-                  />
-               )}
-            </StyledRow>
-            <StyledRow>
-               <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
-               {configurable.allergens?.length ? (
-                  <Highlight
-                     pointer
-                     onClick={() => openDerivedAllergensTunnel(1)}
-                  >
-                     <TagGroup>
-                        {configurable.allergens.map(el => (
-                           <Tag key={el.id}> {el.title} </Tag>
-                        ))}
-                     </TagGroup>
-                  </Highlight>
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add allergens'))}
-                     onClick={() => openDerivedAllergensTunnel(1)}
-                  />
-               )}
+               <NutritionView openNutritionTunnel={openNutritionTunnel} />
+               <AllergensView
+                  openDerivedAllergensTunnel={openDerivedAllergensTunnel}
+               />
             </StyledRow>
          </TunnelContainer>
       </>
+   )
+}
+function NutritionView({ openNutritionTunnel }) {
+   const { t } = useTranslation()
+   const {
+      state: {
+         configurable: { nutrients } = {},
+         activeProcessing: { nutritionInfo } = {},
+      },
+      dispatch,
+   } = useContext(ItemContext)
+
+   if (nutrients && Object.keys(nutrients).length)
+      return <Nutrition data={nutrients} />
+   else if (nutritionInfo && Object.keys(nutritionInfo).length)
+      return <Nutrition data={nutritionInfo} />
+
+   return (
+      <ButtonTile
+         type="secondary"
+         text={t(address.concat('add nutritions'))}
+         onClick={() => {
+            dispatch({
+               type: 'SET_NUTRI_TARGET',
+               payload: 'deriveProcessing',
+            })
+            openNutritionTunnel(1)
+         }}
+      />
+   )
+}
+
+function AllergensView({ openDerivedAllergensTunnel }) {
+   const { t } = useTranslation()
+   const {
+      state: {
+         configurable: { allergens = [] } = {},
+         activeProcessing: { allergens: otherAllergens } = {},
+      },
+   } = useContext(ItemContext)
+
+   const renderContent = () => {
+      if (allergens.length)
+         return (
+            <Highlight pointer onClick={() => openDerivedAllergensTunnel(1)}>
+               <TagGroup>
+                  {allergens.map(el => (
+                     <Tag key={el.id}> {el.title} </Tag>
+                  ))}
+               </TagGroup>
+            </Highlight>
+         )
+      else if (otherAllergens.length)
+         return (
+            <Highlight pointer onClick={() => openDerivedAllergensTunnel(1)}>
+               <TagGroup>
+                  {otherAllergens.map(el => (
+                     <Tag key={el.id}> {el.title} </Tag>
+                  ))}
+               </TagGroup>
+            </Highlight>
+         )
+
+      return (
+         <ButtonTile
+            type="secondary"
+            text={t(address.concat('add allergens'))}
+            onClick={() => openDerivedAllergensTunnel(1)}
+         />
+      )
+   }
+
+   return (
+      <StyledRow>
+         <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
+         {renderContent()}
+      </StyledRow>
    )
 }

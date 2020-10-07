@@ -130,7 +130,7 @@ export default function ConfigTunnel({ close, formState }) {
                   yield: { value: yieldPercentage },
                   shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                   parLevel: +parLevel,
-                  nutritionInfo: state.processing.nutrients || {},
+                  nutritionInfo: state.processing.nutrients,
                   maxLevel: +maxValue,
                   labor: { value: laborTime, unit: laborUnit },
                   bulkDensity: +bulkDensity,
@@ -155,6 +155,10 @@ export default function ConfigTunnel({ close, formState }) {
          errors.forEach(err => toast.error(err.message))
          toast.error(`Cannot update item information !`)
       } else if (formState.bulkItemAsShippedId) {
+         const allergens = state.processing.allergens.length
+            ? state.processing.allergens
+            : bulkItem.allergens
+
          udpateBulkItem({
             variables: {
                id: formState.bulkItemAsShippedId,
@@ -163,15 +167,19 @@ export default function ConfigTunnel({ close, formState }) {
                   yield: { value: yieldPercentage },
                   shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                   parLevel: +parLevel,
-                  nutritionInfo: state.processing.nutrients || {},
+                  nutritionInfo:
+                     state.processing.nutrients || bulkItem.nutritionInfo || {},
                   maxLevel: +maxValue,
                   labor: { value: laborTime, unit: laborUnit },
                   bulkDensity: +bulkDensity,
-                  allergens: state.processing.allergens,
+                  allergens: allergens.length ? allergens : [],
                },
             },
          })
       } else {
+         const allergens = state.processing.allergens.length
+            ? state.processing.allergens
+            : bulkItem.allergens
          createBulkItem({
             variables: {
                processingName: state.processing.title,
@@ -180,11 +188,12 @@ export default function ConfigTunnel({ close, formState }) {
                yield: { value: yieldPercentage },
                shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                parLevel: +parLevel,
-               nutritionInfo: state.processing.nutrients || {},
+               nutritionInfo:
+                  state.processing.nutrients || bulkItem.nutritionInfo || {},
                maxLevel: +maxValue,
                labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
-               allergens: state.processing.allergens,
+               allergens: allergens.length ? allergens : [],
             },
          })
       }
@@ -403,60 +412,92 @@ export default function ConfigTunnel({ close, formState }) {
                      <EditIcon color="#555b6e" />
                   </IconButton>
                </StyledLabel>
-               {state.processing.nutrients?.totalFat ||
-               state.processing.nutrients?.calories ? (
-                  <Nutrition
-                     data={{
-                        calories: state.processing.nutrients.calories,
-                        totalFat: state.processing.nutrients.totalFat,
-                        transFat: state.processing.nutrients.transFat,
-                        saturatedFat: state.processing.nutrients.saturatedFat,
-                        cholesterol: state.processing.nutrients.cholesterol,
-                        sodium: state.processing.nutrients.sodium,
-                        totalCarbohydrates:
-                           state.processing.nutrients.totalCarbohydrates,
-                        dietaryFibre: state.processing.nutrients.dietaryFibre,
-                        sugars: state.processing.nutrients.sugars,
-                        protein: state.processing.nutrients.protein,
-                        vitaminA: state.processing.nutrients.vitaminA,
-                        vitaminC: state.processing.nutrients.vitaminC,
-                        iron: state.processing.nutrients.iron,
-                        calcium: state.processing.nutrients.calcium,
-                     }}
-                  />
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add nutritions'))}
-                     onClick={e => {
-                        dispatch({
-                           type: 'SET_NUTRI_TARGET',
-                           payload: 'processing',
-                        })
-                        openNutritionTunnel(1)
-                     }}
-                  />
-               )}
             </StyledRow>
-            <StyledRow>
-               <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
-               {state.processing.allergens.length ? (
-                  <Highlight pointer onClick={() => openAllergensTunnel(1)}>
-                     <TagGroup>
-                        {state.processing.allergens.map(el => (
-                           <Tag key={el.id}> {el.title} </Tag>
-                        ))}
-                     </TagGroup>
-                  </Highlight>
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add allergens'))}
-                     onClick={() => openAllergensTunnel(1)}
-                  />
-               )}
-            </StyledRow>
+            <NutrientView
+               bulkItem={bulkItem}
+               dispatch={dispatch}
+               openNutritionTunnel={openNutritionTunnel}
+            />
+            <AllergensView
+               openAllergensTunnel={openAllergensTunnel}
+               bulkItem={bulkItem}
+            />
          </TunnelBody>
+      </>
+   )
+}
+
+function NutrientView({ bulkItem, openNutritionTunnel }) {
+   const { t } = useTranslation()
+   const {
+      state: { processing: { nutrients } = {} },
+      dispatch,
+   } = React.useContext(ItemContext)
+
+   if (nutrients) return <Nutrition data={nutrients} />
+   else if (
+      bulkItem.nutritionInfo &&
+      Object.keys(bulkItem.nutritionInfo).length
+   )
+      return <Nutrition data={bulkItem.nutritionInfo} />
+
+   return (
+      <ButtonTile
+         type="secondary"
+         text={t(address.concat('add nutritions'))}
+         onClick={() => {
+            dispatch({
+               type: 'SET_NUTRI_TARGET',
+               payload: 'processing',
+            })
+            openNutritionTunnel(1)
+         }}
+      />
+   )
+}
+
+function AllergensView({ openAllergensTunnel, bulkItem }) {
+   const { t } = useTranslation()
+   const { state } = React.useContext(ItemContext)
+
+   const renderContent = () => {
+      if (state.processing.allergens.length)
+         return (
+            <Highlight pointer onClick={() => openAllergensTunnel(1)}>
+               <TagGroup>
+                  {state.processing.allergens.map(el => (
+                     <Tag key={el.id}> {el.title} </Tag>
+                  ))}
+               </TagGroup>
+            </Highlight>
+         )
+      else if (bulkItem.allergens?.length)
+         return (
+            <Highlight pointer onClick={() => openAllergensTunnel(1)}>
+               <TagGroup>
+                  {bulkItem.allergens.map(el => (
+                     <Tag key={el.id}> {el.title} </Tag>
+                  ))}
+               </TagGroup>
+            </Highlight>
+         )
+
+      return (
+         <ButtonTile
+            type="secondary"
+            text={t(address.concat('add allergens'))}
+            onClick={() => openAllergensTunnel(1)}
+         />
+      )
+   }
+
+   return (
+      <>
+         <br />
+         <StyledRow>
+            <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
+            {renderContent()}
+         </StyledRow>
       </>
    )
 }

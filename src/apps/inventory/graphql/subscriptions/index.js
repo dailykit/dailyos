@@ -62,6 +62,8 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             unit
             yield
             consumed
+            nutritionInfo
+            allergens
             image
             labor
             bulkDensity
@@ -96,6 +98,8 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             committed
             parLevel
             maxLevel
+            nutritionInfo
+            allergens
             isAvailable
             shelfLife
             unit
@@ -606,7 +610,6 @@ export const NUTRITION_INFO = gql`
    subscription NutriInfo($id: Int!) {
       bulkItem(id: $id) {
          nutritionInfo
-         allergens
       }
    }
 `
