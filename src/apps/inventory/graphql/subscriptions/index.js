@@ -602,3 +602,11 @@ export const GET_BULK_ITEMS_SUBSCRIPTION = gql`
       }
    }
 `
+export const NUTRITION_INFO = gql`
+   subscription NutriInfo($id: Int!) {
+      bulkItem(id: $id) {
+         nutritionInfo
+         allergens
+      }
+   }
+`

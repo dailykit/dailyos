@@ -202,7 +202,10 @@ export default function ConfigTunnel({ close, formState }) {
          </Tunnels>
          <Tunnels tunnels={nutritionTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <NutritionTunnel close={closeNutritionTunnel} />
+               <NutritionTunnel
+                  close={closeNutritionTunnel}
+                  bulkItemId={bulkItem.id}
+               />
             </Tunnel>
          </Tunnels>
 

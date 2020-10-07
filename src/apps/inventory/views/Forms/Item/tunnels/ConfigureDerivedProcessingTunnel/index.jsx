@@ -201,7 +201,10 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
          </Tunnels>
          <Tunnels tunnels={nutritionTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <NutritionTunnel close={closeNutritionTunnel} />
+               <NutritionTunnel
+                  close={closeNutritionTunnel}
+                  bulkItemId={state.activeProcessing.id}
+               />
             </Tunnel>
          </Tunnels>
 
