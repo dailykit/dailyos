@@ -142,27 +142,51 @@ const ModifierOptionsTunnel = ({ close }) => {
    }, [])
 
    const select = option => {
+      console.log(option)
       selectOption('id', option.id)
+      const object = {
+         productId: option.id,
+         productType: modifiersState.meta.modifierProductType,
+         name: option.title,
+         originalName: option.title,
+         image:
+            option.inventoryProduct?.assets?.images[0] ||
+            option.simpleRecipeProduct?.assets?.images[0] ||
+            '',
+         isActive: true,
+         isVisible: true,
+         productQuantity: 1,
+         discount: 0,
+         isAlwaysCharged: false,
+         unit: option.unit || null,
+      }
+      switch (modifiersState.meta.modifierProductType) {
+         case 'inventoryProductOption':
+            object.price = option.price[0]?.value
+            break
+         case 'simpleRecipeProductOption':
+            object.price = option.price[0]?.value
+            break
+         case 'sachetItem':
+            object.price =
+               option.bulkItem?.supplierItem?.prices[0]?.unitPrice?.value
+            break
+         case 'bulkItem':
+            object.price = option?.supplierItem?.prices[0]?.unitPrice?.value
+            break
+         case 'supplierItem':
+            object.price = option?.prices[0]?.unitPrice?.value
+            break
+         default:
+            object.price = 1
+      }
+      if (!object.price) {
+         object.price = 1
+      }
       modifiersDispatch({
          type: 'ADD_CATEGORY_OPTION',
          payload: {
-            option: {
-               productId: option.id,
-               productType: modifiersState.meta.modifierProductType,
-               name: option.title,
-               originalName: option.title,
-               image:
-                  option.inventoryProduct?.assets?.images[0] ||
-                  option.simpleRecipeProduct?.assets?.images[0] ||
-                  '',
-               isActive: true,
-               isVisible: true,
-               productQuantity: 1,
-               price: option.price[0]?.value || 1,
-               discount: 0,
-               isAlwaysCharged: false,
-               unit: option.unit || null,
-            },
+            option: object,
          },
       })
       close(4)

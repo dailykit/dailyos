@@ -35,6 +35,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [rewardId, setRewardId] = useState(null)
    const [rewardInfoArray, setRewardInfoArray] = useState([])
    const [rewardTunnelInfo, setRewardTunnelInfo] = useState({})
+   const [editMode, setEditMode] = useState(false)
    // Subscription
    const { data: rewardData, loading } = useSubscription(
       REWARD_DATA_BY_COUPON_ID,
@@ -56,7 +57,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             setRewardTunnelInfo(data.crm_reward_by_pk)
             setConditionId(data.crm_reward_by_pk.conditionId)
             setRewardId(data.crm_reward_by_pk.id)
-            openRewardTunnel(1)
+            setEditMode(true)
          },
       }
    )
@@ -81,6 +82,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             id,
          },
       })
+      openRewardTunnel(1)
    }
 
    // Handler
@@ -120,6 +122,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             conditionId={conditionId}
             rewardId={rewardId}
             rewardInfo={rewardTunnelInfo}
+            updateConditionId={val => setConditionId(val)}
             closeRewardTypeTunnel={layer => closeTypeTunnel(layer)}
          />
          <Conditions
