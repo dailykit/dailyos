@@ -56,7 +56,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
    const [errors, setErrors] = useState([])
 
    const [unit, setUnit] = useState(
-      state.activeProcessing?.unit || formState?.unit || units[0]?.name
+      state.activeProcessing?.unit || formState?.unit
    )
    const [par, setPar] = useState(state.activeProcessing?.parLevel || '')
 
@@ -100,6 +100,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.units
          setUnits(data)
+         if (!unit) setUnit(data[0].name)
       },
    })
 
@@ -111,7 +112,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
       onError: error => {
          console.log(error)
          close(2)
-         toast.error('Error! make sure you have filled the form properly')
+         toast.error(error.message)
       },
    })
 
@@ -139,7 +140,7 @@ export default function ConfigureDerivedProcessingTunnel({ close, formState }) {
          },
          onError: error => {
             console.log(error)
-            toast.error('Error updating bulk item. Please try again')
+            toast.error(error.message)
             close(2)
          },
       }
