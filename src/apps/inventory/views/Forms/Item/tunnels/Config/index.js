@@ -51,9 +51,7 @@ export default function ConfigTunnel({ close, formState }) {
 
    const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(
-      bulkItem?.unit || formState?.unit || units[0]?.name
-   )
+   const [unit, setUnit] = useState(bulkItem?.unit || formState?.unit)
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
    const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -69,6 +67,7 @@ export default function ConfigTunnel({ close, formState }) {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.units
          setUnits(data)
+         if (!unit) setUnit(data[0].name)
       },
    })
 
@@ -93,7 +92,7 @@ export default function ConfigTunnel({ close, formState }) {
       },
       onError: error => {
          console.log(error)
-         toast.error('Error adding bulk item as shipped. Please try again')
+         toast.error(error.message)
          close(2)
       },
    })
@@ -112,7 +111,7 @@ export default function ConfigTunnel({ close, formState }) {
          },
          onError: error => {
             console.log(error)
-            toast.error('Error creating bulk item. Please try again')
+            toast.error(error.message)
             close(2)
          },
       }
