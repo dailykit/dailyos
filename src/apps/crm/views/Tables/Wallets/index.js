@@ -2,7 +2,6 @@ import React, { useRef } from 'react'
 import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-import tableOption from '../../Listings/tableOptions'
 const WalletTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
@@ -65,7 +64,7 @@ const WalletTable = () => {
                data={data}
                rowClick={rowClick}
                ref={tableRef}
-               options={tableOption}
+               options={options}
             />
          </div>
       </React.Fragment>
@@ -73,3 +72,16 @@ const WalletTable = () => {
 }
 
 export default WalletTable
+const options = {
+   cellVertAlign: 'middle',
+   height: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: true,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

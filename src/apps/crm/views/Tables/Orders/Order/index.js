@@ -63,10 +63,34 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products' },
-      { title: 'Servings', field: 'servings' },
-      { title: 'Discount', field: 'discount' },
-      { title: 'Discounted Price', field: 'discountedPrice' },
+      { title: 'Products', field: 'products', hozAlign: 'left' },
+      {
+         title: 'Servings',
+         field: 'servings',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Discount',
+         field: 'discount',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Discounted Price',
+         field: 'discountedPrice',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
    ]
 
    let deliveryPartner = null
@@ -161,6 +185,7 @@ const OrderInfo = () => {
                         columns={columns}
                         data={products}
                         ref={tableRef}
+                        options={options}
                      />
                   )}
                   <CardInfo>
@@ -215,3 +240,16 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
+const options = {
+   cellVertAlign: 'middle',
+   height: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: true,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

@@ -6,7 +6,6 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderComp from './order'
 import { OCCURENCES } from '../../../graphql'
-import tableOptions from '../../Listings/tableOptions'
 import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
 import './style.css'
@@ -169,7 +168,7 @@ const SubscriptionTable = ({ id, sid }) => {
                      columns={columns}
                      data={occurences}
                      rowClick={rowClick}
-                     options={tableOptions}
+                     options={options}
                      ref={tableRef}
                   />
                </>
@@ -180,3 +179,16 @@ const SubscriptionTable = ({ id, sid }) => {
 }
 
 export default SubscriptionTable
+const options = {
+   cellVertAlign: 'middle',
+   height: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: true,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

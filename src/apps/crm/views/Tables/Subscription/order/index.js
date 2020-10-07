@@ -158,6 +158,7 @@ const OrderInfo = () => {
                      columns={columns}
                      data={data}
                      ref={tableRef}
+                     options={options}
                   />
                   <CardInfo>
                      <Text as="title">Total</Text>
@@ -211,3 +212,16 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
+const options = {
+   cellVertAlign: 'middle',
+   height: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: true,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}
