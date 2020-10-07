@@ -6,11 +6,22 @@ import {
    useTunnel,
    Tunnel,
    Tunnels,
+   SectionTabs,
+   SectionTabList,
+   SectionTab,
+   SectionTabPanel,
+   SectionTabPanels,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTab,
+   HorizontalTabPanels,
+   HorizontalTabPanel,
+   Text,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 // eslint-disable-next-line import/no-cycle
-import { Accompaniments } from '..'
+import { Recommendations } from '..'
 import {
    DeleteIcon,
    EditIcon,
@@ -24,19 +35,6 @@ import {
    UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
    STORE_SETTINGS,
 } from '../../../../../../graphql'
-// styles
-import {
-   StyledLayout,
-   StyledListing,
-   StyledListingTile,
-   StyledPanel,
-   StyledTab,
-   StyledTable,
-   StyledTabs,
-   StyledTabView,
-   StyledWrapper,
-   Modifier,
-} from './styled'
 import {
    RecipeTunnel,
    PriceConfigurationTunnel,
@@ -48,6 +46,8 @@ import {
    ModifierPhotoTunnel,
 } from '../../tunnels'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
+
+import { ItemInfo, StyledTable, StyledWrapper, Modifier } from './styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -234,367 +234,412 @@ export default function Recipe({ state }) {
          </Tunnels>
          <StyledWrapper>
             {state.simpleRecipe ? (
-               <StyledLayout>
-                  <StyledListing>
-                     <StyledListingTile active>
-                        <h3>{state.simpleRecipe.name}</h3>
-                        <span
-                           tabIndex="0"
-                           role="button"
-                           onKeyDown={e => e.charCode === 13 && remove()}
-                           onClick={remove}
-                        >
-                           <DeleteIcon color="#fff" />
-                        </span>
-                     </StyledListingTile>
-                  </StyledListing>
-                  <StyledPanel>
-                     <h2>{state.simpleRecipe.name}</h2>
-                     <StyledTabs>
-                        <StyledTab
-                           onClick={() =>
-                              _setState({ ..._state, view: 'pricing' })
-                           }
-                           active={_state.view === 'pricing'}
-                        >
-                           {t(address.concat('pricing'))}
-                        </StyledTab>
-                        <StyledTab
-                           onClick={() =>
-                              _setState({ ..._state, view: 'accompaniments' })
-                           }
-                           active={_state.view === 'accompaniments'}
-                        >
-                           {t(address.concat('accompaniments'))}
-                        </StyledTab>
-                     </StyledTabs>
-                     <StyledTabView>
-                        {_state.view === 'pricing' ? (
-                           <StyledTable>
-                              <thead>
-                                 <tr>
-                                    <th> </th>
-                                    <th style={{ textAlign: 'center' }}>
-                                       {t(address.concat('visibility'))}
-                                    </th>
-                                    <th style={{ textAlign: 'center' }}>
-                                       {t(address.concat('default'))}
-                                    </th>
-                                    <th>{t(address.concat('servings'))}</th>
-                                    <th>
-                                       {t(address.concat('recommended price'))}
-                                    </th>
-                                    <th>{t(address.concat('price'))}</th>
-                                    <th>{t(address.concat('discount'))}</th>
-                                    <th>
-                                       {t(address.concat('discounted price'))}
-                                    </th>
-                                    <th> Modifiers </th>
-                                    <th> </th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 {state.simpleRecipeProductOptions
-                                    .filter(option => option.type === 'mealKit')
-                                    .map((option, i) => (
-                                       <tr key={option.id}>
-                                          <td>
-                                             {i === 0 ? (
-                                                <span>
-                                                   {t(
-                                                      address.concat('meal kit')
-                                                   )}
-                                                </span>
-                                             ) : (
-                                                ''
+               <SectionTabs>
+                  <SectionTabList>
+                     <SectionTab>
+                        <ItemInfo>
+                           {Boolean(state.simpleRecipe.image) && (
+                              <img src={state.simpleRecipe.image} />
+                           )}
+                           <h3>{state.simpleRecipe.name}</h3>
+                           <button onClick={remove}>
+                              <DeleteIcon color="#fff" />
+                           </button>
+                        </ItemInfo>
+                     </SectionTab>
+                  </SectionTabList>
+                  <SectionTabPanels>
+                     <SectionTabPanel>
+                        <Text as="h1">{state.simpleRecipe.name}</Text>
+                        <HorizontalTabs>
+                           <HorizontalTabList>
+                              <HorizontalTab>Pricing</HorizontalTab>
+                              <HorizontalTab>Recommendations</HorizontalTab>
+                           </HorizontalTabList>
+                           <HorizontalTabPanels>
+                              <HorizontalTabPanel>
+                                 <StyledTable>
+                                    <thead>
+                                       <tr>
+                                          <th> </th>
+                                          <th style={{ textAlign: 'center' }}>
+                                             {t(address.concat('visibility'))}
+                                          </th>
+                                          <th style={{ textAlign: 'center' }}>
+                                             {t(address.concat('default'))}
+                                          </th>
+                                          <th>
+                                             {t(address.concat('servings'))}
+                                          </th>
+                                          <th>
+                                             {t(
+                                                address.concat(
+                                                   'recommended price'
+                                                )
                                              )}
-                                          </td>
-                                          <td style={{ textAlign: 'center' }}>
-                                             <span hidden={!option.isActive}>
-                                                <EyeIcon color="#00A7E1" />
-                                             </span>
-                                          </td>
-                                          <td style={{ textAlign: 'center' }}>
-                                             <input
-                                                type="radio"
-                                                checked={
-                                                   state.default === option.id
-                                                }
-                                                onClick={() =>
-                                                   changeDefault(option)
-                                                }
-                                             />
-                                          </td>
-                                          <td>
-                                             {
-                                                option.simpleRecipeYield.yield
-                                                   .serving
-                                             }
-                                          </td>
-                                          <td>
-                                             {option.cost
-                                                ? `$${
-                                                     option.cost +
-                                                     (option.cost *
-                                                        foodCostPercent.lowerLimit) /
-                                                        100
-                                                  } - $${
-                                                     option.cost +
-                                                     (option.cost *
-                                                        foodCostPercent.upperLimit) /
-                                                        100
-                                                  }`
-                                                : '-'}
-                                          </td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
-                                             {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                          <td>
-                                             {option.modifier?.name ? (
-                                                <Modifier>
-                                                   <span>
-                                                      <span
-                                                         tabIndex="0"
-                                                         role="button"
-                                                         onKeyPress={() =>
-                                                            editModifier(
-                                                               option.modifier
+                                          </th>
+                                          <th>{t(address.concat('price'))}</th>
+                                          <th>
+                                             {t(address.concat('discount'))}
+                                          </th>
+                                          <th>
+                                             {t(
+                                                address.concat(
+                                                   'discounted price'
+                                                )
+                                             )}
+                                          </th>
+                                          <th> Modifiers </th>
+                                          <th> </th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                       {state.simpleRecipeProductOptions
+                                          .filter(
+                                             option => option.type === 'mealKit'
+                                          )
+                                          .map((option, i) => (
+                                             <tr key={option.id}>
+                                                <td>
+                                                   {i === 0 ? (
+                                                      <span>
+                                                         {t(
+                                                            address.concat(
+                                                               'meal kit'
                                                             )
-                                                         }
-                                                         onClick={() =>
-                                                            editModifier(
-                                                               option.modifier
-                                                            )
-                                                         }
-                                                      >
-                                                         <EditIcon
-                                                            color="#00A7E1"
-                                                            size={14}
-                                                         />
+                                                         )}
                                                       </span>
-                                                      <span
-                                                         tabIndex="0"
-                                                         role="button"
-                                                         onKeyPress={() =>
-                                                            removeModifier(
-                                                               option.id
-                                                            )
-                                                         }
-                                                         onClick={() =>
-                                                            removeModifier(
-                                                               option.id
-                                                            )
-                                                         }
-                                                      >
-                                                         <DeleteIcon
-                                                            color="#FF5A52"
-                                                            size={14}
-                                                         />
-                                                      </span>
-                                                   </span>
-                                                   {option.modifier.name}
-                                                </Modifier>
-                                             ) : (
-                                                <IconButton
-                                                   type="ghost"
-                                                   onClick={() => {
-                                                      modifiersDispatch({
-                                                         type: 'META',
-                                                         payload: {
-                                                            name: 'optionId',
-                                                            value: option.id,
-                                                         },
-                                                      })
-                                                      openModifiersTunnel(1)
+                                                   ) : (
+                                                      ''
+                                                   )}
+                                                </td>
+                                                <td
+                                                   style={{
+                                                      textAlign: 'center',
                                                    }}
                                                 >
-                                                   <AddIcon color="#36B6E2" />
-                                                </IconButton>
-                                             )}
-                                          </td>
-                                          <td>
-                                             <IconButton
-                                                onClick={() =>
-                                                   editOption(option)
-                                                }
-                                             >
-                                                <EditIcon color="#00A7E1" />
-                                             </IconButton>
-                                          </td>
-                                       </tr>
-                                    ))}
-                                 {state.simpleRecipeProductOptions
-                                    .filter(
-                                       option => option.type === 'readyToEat'
-                                    )
-                                    .map((option, i) => (
-                                       <tr key={option.id}>
-                                          <td>
-                                             {i === 0 ? (
-                                                <span>
-                                                   {t(
-                                                      address.concat(
-                                                         'ready to eat'
-                                                      )
-                                                   )}
-                                                </span>
-                                             ) : (
-                                                ''
-                                             )}
-                                          </td>
-                                          <td style={{ textAlign: 'center' }}>
-                                             <span hidden={!option.isActive}>
-                                                <EyeIcon color="#00A7E1" />
-                                             </span>
-                                          </td>
-                                          <td style={{ textAlign: 'center' }}>
-                                             <input
-                                                type="radio"
-                                                checked={
-                                                   state.default === option.id
-                                                }
-                                                onClick={() =>
-                                                   changeDefault(option)
-                                                }
-                                             />
-                                          </td>
-                                          <td>
-                                             {
-                                                option.simpleRecipeYield.yield
-                                                   .serving
-                                             }
-                                          </td>
-                                          <td>
-                                             {option.cost
-                                                ? `$${
-                                                     option.cost +
-                                                     (option.cost *
-                                                        foodCostPercent.lowerLimit) /
-                                                        100
-                                                  } - $${
-                                                     option.cost +
-                                                     (option.cost *
-                                                        foodCostPercent.upperLimit) /
-                                                        100
-                                                  }`
-                                                : '-'}
-                                          </td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
-                                             {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                          <td>
-                                             {option.modifier?.name ? (
-                                                <Modifier>
-                                                   <span>
-                                                      <span
-                                                         tabIndex="0"
-                                                         role="button"
-                                                         onKeyPress={() =>
-                                                            editModifier(
-                                                               option.modifier
-                                                            )
-                                                         }
-                                                         onClick={() =>
-                                                            editModifier(
-                                                               option.modifier
-                                                            )
-                                                         }
-                                                      >
-                                                         <EditIcon
-                                                            color="#00A7E1"
-                                                            size={14}
-                                                         />
-                                                      </span>
-                                                      <span
-                                                         tabIndex="0"
-                                                         role="button"
-                                                         onKeyPress={() =>
-                                                            removeModifier(
-                                                               option.id
-                                                            )
-                                                         }
-                                                         onClick={() =>
-                                                            removeModifier(
-                                                               option.id
-                                                            )
-                                                         }
-                                                      >
-                                                         <DeleteIcon
-                                                            color="#FF5A52"
-                                                            size={14}
-                                                         />
-                                                      </span>
+                                                   <span
+                                                      hidden={!option.isActive}
+                                                   >
+                                                      <EyeIcon color="#00A7E1" />
                                                    </span>
-                                                   {option.modifier.name}
-                                                </Modifier>
-                                             ) : (
-                                                <IconButton
-                                                   type="ghost"
-                                                   onClick={() => {
-                                                      modifiersDispatch({
-                                                         type: 'META',
-                                                         payload: {
-                                                            name: 'optionId',
-                                                            value: option.id,
-                                                         },
-                                                      })
-                                                      openModifiersTunnel(1)
+                                                </td>
+                                                <td
+                                                   style={{
+                                                      textAlign: 'center',
                                                    }}
                                                 >
-                                                   <AddIcon color="#36B6E2" />
-                                                </IconButton>
-                                             )}
-                                          </td>
-                                          <td>
-                                             <IconButton
-                                                onClick={() =>
-                                                   editOption(option)
-                                                }
-                                             >
-                                                <EditIcon color="#00A7E1" />
-                                             </IconButton>
-                                          </td>
-                                       </tr>
-                                    ))}
-                              </tbody>
-                           </StyledTable>
-                        ) : (
-                           <Accompaniments
-                              state={state}
-                              openTunnel={openTunnel}
-                           />
-                        )}
-                     </StyledTabView>
-                  </StyledPanel>
-               </StyledLayout>
+                                                   <input
+                                                      type="radio"
+                                                      checked={
+                                                         state.default ===
+                                                         option.id
+                                                      }
+                                                      onClick={() =>
+                                                         changeDefault(option)
+                                                      }
+                                                   />
+                                                </td>
+                                                <td>
+                                                   {
+                                                      option.simpleRecipeYield
+                                                         .yield.serving
+                                                   }
+                                                </td>
+                                                <td>
+                                                   {option.cost
+                                                      ? `$${
+                                                           option.cost +
+                                                           (option.cost *
+                                                              foodCostPercent.lowerLimit) /
+                                                              100
+                                                        } - $${
+                                                           option.cost +
+                                                           (option.cost *
+                                                              foodCostPercent.upperLimit) /
+                                                              100
+                                                        }`
+                                                      : '-'}
+                                                </td>
+                                                <td>
+                                                   ${option.price[0].value}{' '}
+                                                </td>
+                                                <td>
+                                                   {option.price[0].discount} %
+                                                </td>
+                                                <td>
+                                                   $
+                                                   {(
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) -
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) *
+                                                         (parseFloat(
+                                                            option.price[0]
+                                                               .discount
+                                                         ) /
+                                                            100)
+                                                   ).toFixed(2) || ''}
+                                                </td>
+                                                <td>
+                                                   {option.modifier?.name ? (
+                                                      <Modifier>
+                                                         <span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                            >
+                                                               <EditIcon
+                                                                  color="#00A7E1"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                            >
+                                                               <DeleteIcon
+                                                                  color="#FF5A52"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                         </span>
+                                                         {option.modifier.name}
+                                                      </Modifier>
+                                                   ) : (
+                                                      <IconButton
+                                                         type="ghost"
+                                                         onClick={() => {
+                                                            modifiersDispatch({
+                                                               type: 'META',
+                                                               payload: {
+                                                                  name:
+                                                                     'optionId',
+                                                                  value:
+                                                                     option.id,
+                                                               },
+                                                            })
+                                                            openModifiersTunnel(
+                                                               1
+                                                            )
+                                                         }}
+                                                      >
+                                                         <AddIcon color="#36B6E2" />
+                                                      </IconButton>
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   <IconButton
+                                                      onClick={() =>
+                                                         editOption(option)
+                                                      }
+                                                   >
+                                                      <EditIcon color="#00A7E1" />
+                                                   </IconButton>
+                                                </td>
+                                             </tr>
+                                          ))}
+                                       {state.simpleRecipeProductOptions
+                                          .filter(
+                                             option =>
+                                                option.type === 'readyToEat'
+                                          )
+                                          .map((option, i) => (
+                                             <tr key={option.id}>
+                                                <td>
+                                                   {i === 0 ? (
+                                                      <span>
+                                                         {t(
+                                                            address.concat(
+                                                               'ready to eat'
+                                                            )
+                                                         )}
+                                                      </span>
+                                                   ) : (
+                                                      ''
+                                                   )}
+                                                </td>
+                                                <td
+                                                   style={{
+                                                      textAlign: 'center',
+                                                   }}
+                                                >
+                                                   <span
+                                                      hidden={!option.isActive}
+                                                   >
+                                                      <EyeIcon color="#00A7E1" />
+                                                   </span>
+                                                </td>
+                                                <td
+                                                   style={{
+                                                      textAlign: 'center',
+                                                   }}
+                                                >
+                                                   <input
+                                                      type="radio"
+                                                      checked={
+                                                         state.default ===
+                                                         option.id
+                                                      }
+                                                      onClick={() =>
+                                                         changeDefault(option)
+                                                      }
+                                                   />
+                                                </td>
+                                                <td>
+                                                   {
+                                                      option.simpleRecipeYield
+                                                         .yield.serving
+                                                   }
+                                                </td>
+                                                <td>
+                                                   {option.cost
+                                                      ? `$${
+                                                           option.cost +
+                                                           (option.cost *
+                                                              foodCostPercent.lowerLimit) /
+                                                              100
+                                                        } - $${
+                                                           option.cost +
+                                                           (option.cost *
+                                                              foodCostPercent.upperLimit) /
+                                                              100
+                                                        }`
+                                                      : '-'}
+                                                </td>
+                                                <td>
+                                                   ${option.price[0].value}{' '}
+                                                </td>
+                                                <td>
+                                                   {option.price[0].discount} %
+                                                </td>
+                                                <td>
+                                                   $
+                                                   {(
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) -
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) *
+                                                         (parseFloat(
+                                                            option.price[0]
+                                                               .discount
+                                                         ) /
+                                                            100)
+                                                   ).toFixed(2) || ''}
+                                                </td>
+                                                <td>
+                                                   {option.modifier?.name ? (
+                                                      <Modifier>
+                                                         <span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                            >
+                                                               <EditIcon
+                                                                  color="#00A7E1"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                            >
+                                                               <DeleteIcon
+                                                                  color="#FF5A52"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                         </span>
+                                                         {option.modifier.name}
+                                                      </Modifier>
+                                                   ) : (
+                                                      <IconButton
+                                                         type="ghost"
+                                                         onClick={() => {
+                                                            modifiersDispatch({
+                                                               type: 'META',
+                                                               payload: {
+                                                                  name:
+                                                                     'optionId',
+                                                                  value:
+                                                                     option.id,
+                                                               },
+                                                            })
+                                                            openModifiersTunnel(
+                                                               1
+                                                            )
+                                                         }}
+                                                      >
+                                                         <AddIcon color="#36B6E2" />
+                                                      </IconButton>
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   <IconButton
+                                                      onClick={() =>
+                                                         editOption(option)
+                                                      }
+                                                   >
+                                                      <EditIcon color="#00A7E1" />
+                                                   </IconButton>
+                                                </td>
+                                             </tr>
+                                          ))}
+                                    </tbody>
+                                 </StyledTable>
+                              </HorizontalTabPanel>
+                              <HorizontalTabPanel>
+                                 <Recommendations state={state} />
+                              </HorizontalTabPanel>
+                           </HorizontalTabPanels>
+                        </HorizontalTabs>
+                     </SectionTabPanel>
+                  </SectionTabPanels>
+               </SectionTabs>
             ) : (
                <ButtonTile
                   type="primary"

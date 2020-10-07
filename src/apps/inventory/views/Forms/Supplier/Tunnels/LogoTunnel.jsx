@@ -1,11 +1,10 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Loader } from '@dailykit/ui'
+import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
 
-import { TunnelContainer } from '../../../../components'
-import { AssetUploader } from '../../../../../../shared/components/AssetUploader/index'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
+import { AssetUploader } from '../../../../../../shared/components'
 
 export default function LogoTunnel({ close, formState }) {
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
@@ -29,12 +28,12 @@ export default function LogoTunnel({ close, formState }) {
    return (
       <>
          <TunnelHeader title="Select Photo" close={() => close(1)} />
-         <TunnelContainer>
+         <Flex padding="0 14px">
             <AssetUploader
-               onImageSelect={image => addImage(image)}
                onAssetUpload={url => addImage(url)}
+               onImageSelect={image => addImage(image)}
             />
-         </TunnelContainer>
+         </Flex>
       </>
    )
 }

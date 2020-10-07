@@ -1,6 +1,13 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { Tunnel, Tunnels, useTunnel, TunnelHeader } from '@dailykit/ui'
+import {
+   Text,
+   Flex,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   TunnelHeader,
+} from '@dailykit/ui'
 
 import { useTabs } from '../../context'
 import { NOTIFICATIONS } from '../../graphql'
@@ -35,31 +42,42 @@ export const Notifications = ({ isOpen, closePortal }) => {
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1} size="sm">
             <TunnelHeader title="Notifications" close={closePortal} />
-            <Main>
-               {loading && <InlineLoader />}
-               {error && <div>{error.message}</div>}
-               {notifications.length > 0 && (
-                  <Notifs>
-                     {notifications.map(notif => (
-                        <Notif
-                           key={notif.id}
-                           onClick={e => createTab(e, notif)}
-                        >
-                           <h3>{notif?.content?.title}</h3>
-                           <time>
-                              {new Intl.DateTimeFormat('en-US', {
-                                 minute: 'numeric',
-                                 hour: 'numeric',
-                                 month: 'short',
-                                 day: 'numeric',
-                              }).format(new Date(notif?.created_at))}
-                           </time>
-                           <p>{notif?.content?.description}</p>
-                        </Notif>
-                     ))}
-                  </Notifs>
-               )}
-            </Main>
+            {loading ? (
+               <InlineLoader />
+            ) : (
+               <Main>
+                  {notifications.length > 0 ? (
+                     <Notifs>
+                        {notifications.map(notif => (
+                           <Notif
+                              key={notif.id}
+                              onClick={e => createTab(e, notif)}
+                           >
+                              <h3>{notif?.content?.title}</h3>
+                              <time>
+                                 {new Intl.DateTimeFormat('en-US', {
+                                    minute: 'numeric',
+                                    hour: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                 }).format(new Date(notif?.created_at))}
+                              </time>
+                              <p>{notif?.content?.description}</p>
+                           </Notif>
+                        ))}
+                     </Notifs>
+                  ) : (
+                     <Flex
+                        container
+                        height="80px"
+                        alignItems="center"
+                        justifyContent="center"
+                     >
+                        <Text as="h3">No notifications yet!</Text>
+                     </Flex>
+                  )}
+               </Main>
+            )}
          </Tunnel>
       </Tunnels>
    )

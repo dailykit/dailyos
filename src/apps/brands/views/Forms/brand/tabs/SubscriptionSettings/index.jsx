@@ -21,6 +21,10 @@ import {
    DeliveryPage,
    PlanMetaDetails,
    RegisterPage,
+   Wallet,
+   LoyaltyPoints,
+   Coupons,
+   Referral,
 } from './sections'
 
 export const SubscriptionSettings = () => {
@@ -113,6 +117,17 @@ export const SubscriptionSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="Register" title="Register Page">
                <RegisterPage update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="rewards" title="Rewards">
+               <Wallet update={update} />
+               <Spacer size="24px" />
+               <LoyaltyPoints update={update} />
+               <Spacer size="24px" />
+               <Coupons update={update} />
+               <Spacer size="24px" />
+               <Referral update={update} />
+               <Spacer size="24px" />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>

@@ -14,15 +14,15 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
-   UPDATE_SIMPLE_RECIPE_PRODUCT,
+   UPDATE_INVENTORY_PRODUCT,
    S_ACCOMPANIMENT_TYPES,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.accompanimenttypetunnel.'
+   'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
 
-const AccompanimentTypeTunnel = ({ state, close }) => {
+const RecommendationTypeTunnel = ({ state, close }) => {
    const { t } = useTranslation()
 
    const [busy, setBusy] = React.useState(false)
@@ -38,13 +38,13 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
       },
    })
 
-   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       onCompleted: () => {
-         toast.success('Accompaniment types added!')
+         toast.success(t(address.concat('accompaniment types added!')))
          close(1)
       },
       onError: () => {
-         toast.error('Error')
+         toast.error(t(address.concat('error')))
          setBusy(false)
       },
    })
@@ -53,7 +53,7 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
    const save = () => {
       if (busy) return
       setBusy(true)
-      const accompaniments = selected.map(type => ({
+      const recommendations = selected.map(type => ({
          type: type.title,
          products: [],
       }))
@@ -61,7 +61,7 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
          variables: {
             id: state.id,
             set: {
-               accompaniments,
+               recommendations,
             },
          },
       })
@@ -70,7 +70,7 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
    return (
       <>
          <TunnelHeader
-            title={t(address.concat('select accompaniment type'))}
+            title="Select Recommendation Types"
             right={{
                action: save,
                title: busy
@@ -127,4 +127,4 @@ const AccompanimentTypeTunnel = ({ state, close }) => {
    )
 }
 
-export default AccompanimentTypeTunnel
+export default RecommendationTypeTunnel

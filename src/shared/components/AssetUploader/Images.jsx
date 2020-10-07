@@ -1,14 +1,13 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
+import { Loader, Spacer, IconButton } from '@dailykit/ui'
 
-import { Loader } from '@dailykit/ui'
 import useAssets from './useAssets'
-import { InlineLoader } from '../InlineLoader'
 
 const Images = ({ onImageSelect }) => {
    const { images, status, error, remove } = useAssets('images')
 
-   if (status === 'LOADING') return <InlineLoader />
+   if (status === 'LOADING') return <Loader />
    if (status === 'ERROR') return <div>{error}</div>
    return (
       <>
@@ -20,28 +19,28 @@ const Images = ({ onImageSelect }) => {
                   onClick={() => onImageSelect(image)}
                >
                   <StyledImage src={image.url} alt={image.metadata.title} />
-                  <button
-                     type="button"
-                     onClick={e => e.stopPropagation() || remove(image.key)}
-                  >
-                     <Trash />
-                  </button>
+                  <span>
+                     <IconButton
+                        size="sm"
+                        type="solid"
+                        onClick={e => e.stopPropagation() || remove(image.key)}
+                     >
+                        <Trash />
+                     </IconButton>
+                  </span>
                </StyledListItem>
             ))}
          </StyledList>
+         <Spacer size="14px" />
       </>
    )
 }
 
 export default Images
 
-const StyledList = styled.ul(css`
-   height: 100%;
+const StyledList = styled.ul`
    display: grid;
-   padding: 8px;
    grid-gap: 8px;
-   overflow-y: auto;
-   height: calc(100% - 121px);
    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
    li {
       height: 120px;
@@ -50,35 +49,26 @@ const StyledList = styled.ul(css`
       border-radius: 3px;
       border: 1px solid #e3e3e3;
    }
-`)
+`
 
-const StyledListItem = styled.li(css`
+const StyledListItem = styled.li`
    position: relative;
-   :hover {
-      button {
-         display: flex;
-      }
-   }
-   button {
-      border: none;
-      cursor: pointer;
+   span {
+      top: 6px;
+      right: 6px;
       display: none;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      background: rgba(0, 0, 0, 0.4);
       position: absolute;
-      top: 4px;
-      right: 4px;
-      padding: 6px;
    }
-`)
+   :hover span {
+      display: block;
+   }
+`
 
-const StyledImage = styled.img(css`
+const StyledImage = styled.img`
    width: 100%;
    height: 100%;
    object-fit: contain;
-`)
+`
 
 const Trash = ({ size = 16, color = '#ffffff' }) => (
    <svg
