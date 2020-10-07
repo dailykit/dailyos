@@ -59,6 +59,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             setRewardId(data.crm_reward_by_pk.id)
             setEditMode(true)
          },
+         fetchPolicy: 'cache-and-network',
       }
    )
 
