@@ -232,14 +232,15 @@ export default function Item({ state }) {
                            ) && (
                               <img
                                  src={
-                                    state.supplierItem.bulkItemAsShipped
-                                       .image || state.sachetItem.bulkItem.image
+                                    state.supplierItem?.bulkItemAsShipped
+                                       .image ||
+                                    state.sachetItem?.bulkItem?.image
                                  }
                               />
                            )}
                            <h3>
-                              {state.supplierItem.name ||
-                                 `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
+                              {state.supplierItem?.name ||
+                                 `${state.sachetItem?.bulkItem?.supplierItem?.name} ${state.sachetItem?.bulkItem?.processingName}`}
                            </h3>
                            <button onClick={deleteItem}>
                               <DeleteIcon color="#fff" />
@@ -251,13 +252,14 @@ export default function Item({ state }) {
                      <SectionTabPanel>
                         <Text as="h1">
                            {state.supplierItem?.name ||
-                              `${state.sachetItem.bulkItem.supplierItem.name} ${state.sachetItem.bulkItem.processingName}`}
+                              `${state.sachetItem?.bulkItem?.supplierItem?.name} ${state.sachetItem?.bulkItem?.processingName}`}
                         </Text>
                         <Text as="p">
                            {t(address.concat('unit size'))}:{' '}
                            {state.supplierItem?.unitSize +
                               state.supplierItem?.unit ||
-                              state.sachetItem.unitSize + state.sachetItem.unit}
+                              state.sachetItem?.unitSize +
+                                 state.sachetItem?.unit}
                         </Text>
                         <HorizontalTabs>
                            <HorizontalTabList>

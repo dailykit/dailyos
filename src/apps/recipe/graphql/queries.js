@@ -58,6 +58,7 @@ export const SACHET_ITEMS = gql`
             supplierItem {
                id
                name
+               prices
             }
          }
       }
@@ -73,6 +74,7 @@ export const BULK_ITEMS = gql`
          supplierItem {
             id
             name
+            prices
          }
       }
    }
@@ -86,6 +88,7 @@ export const SUPPLIER_ITEMS = gql`
          title: name
          unitSize
          unit
+         prices
       }
    }
 `
