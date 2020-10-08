@@ -67,7 +67,6 @@ const CustomerListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
-         width: 200,
       },
       {
          title: 'Phone',
@@ -78,16 +77,15 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
       {
          title: 'Email',
          field: 'email',
          headerFilter: true,
          hozAlign: 'left',
-         width: 350,
       },
-      { title: 'Source', field: 'source', hozAlign: 'left', width: 200 },
+      { title: 'Source', field: 'source', hozAlign: 'left', width: '150' },
       {
          title: 'Referrals Sent',
          field: 'refSent',
@@ -96,7 +94,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Total Paid',
@@ -106,7 +104,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Total Orders',
@@ -116,7 +114,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Discounts availed',
@@ -126,7 +124,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
    ]
 
@@ -150,15 +148,10 @@ const CustomerListing = () => {
                )}
             />
          </StyledHeader>
-         <StyledHeader gridCol="10fr 1fr 0fr">
+         <StyledHeader gridCol="10fr 1fr">
             <Text as="title">
                Customers(
                {customersCount?.customers_aggregate?.aggregate?.count || '...'})
-            </Text>
-            <Text as="subtitle">
-               {`10 of ${
-                  customersCount?.customers_aggregate?.aggregate?.count || '...'
-               }`}
             </Text>
             <ButtonGroup>
                <IconButton type="solid">
@@ -183,7 +176,7 @@ export default CustomerListing
 
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    maxHeight: '420px',
    resizableColumns: false,

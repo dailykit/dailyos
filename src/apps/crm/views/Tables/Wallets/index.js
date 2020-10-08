@@ -15,7 +15,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Reference number',
@@ -35,7 +35,6 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
       },
       {
          title: 'Debit',
@@ -45,7 +44,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
       {
          title: 'Credit',
@@ -55,7 +54,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
       {
          title: 'Balance',
@@ -65,7 +64,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
    ]
    const data = [
@@ -130,7 +129,7 @@ export default WalletTable
 const options = {
    cellVertAlign: 'middle',
    maxHeight: '420px',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    resizableColumns: false,
    virtualDomBuffer: 80,

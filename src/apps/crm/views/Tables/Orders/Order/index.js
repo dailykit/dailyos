@@ -63,7 +63,7 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products', hozAlign: 'left', width: 200 },
+      { title: 'Products', field: 'products', hozAlign: 'left', width: 300 },
       {
          title: 'Servings',
          field: 'servings',
@@ -72,7 +72,7 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         widht: 100,
       },
       {
          title: 'Discount',
@@ -82,7 +82,7 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         widht: 100,
       },
       {
          title: 'Discounted Price',
@@ -92,7 +92,7 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         widht: 100,
       },
    ]
 
@@ -246,7 +246,7 @@ export default OrderInfo
 const options = {
    cellVertAlign: 'middle',
    maxHeight: '420px',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    resizableColumns: false,
    virtualDomBuffer: 80,

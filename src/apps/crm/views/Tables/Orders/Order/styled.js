@@ -14,7 +14,6 @@ export const StyledDiv = styled.div`
 `
 export const StyledTable = styled.div`
    background: #ffffff;
-   width: 97%;
    border-top: 1px solid #ececec;
 `
 export const StyledSideBar = styled.div`

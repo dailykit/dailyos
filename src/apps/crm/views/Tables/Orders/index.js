@@ -54,7 +54,6 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
       },
       {
          title: 'Products',
@@ -64,7 +63,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Wallet Used',
@@ -74,7 +73,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Discount',
@@ -84,7 +83,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Total Paid',
@@ -94,7 +93,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       { title: 'Channel', field: 'channel', hozAlign: 'left' },
       {
@@ -105,7 +104,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Delivered On',
@@ -115,7 +114,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
    ]
 
@@ -169,7 +168,7 @@ export default OrdersTable
 const options = {
    cellVertAlign: 'middle',
    maxHeight: '420px',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    resizableColumns: false,
    virtualDomBuffer: 80,

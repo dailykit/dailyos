@@ -134,7 +134,6 @@ const CouponListing = () => {
          field: 'code',
          headerFilter: true,
          hozAlign: 'left',
-         width: 200,
       },
       {
          title: 'Used',
@@ -144,7 +143,7 @@ const CouponListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
       {
          title: 'Conversion Rate',
@@ -164,7 +163,7 @@ const CouponListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Active',
@@ -175,7 +174,7 @@ const CouponListing = () => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
       {
          title: 'Action',
@@ -190,7 +189,7 @@ const CouponListing = () => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 100,
       },
    ]
    if (loading || listLoading) return <Loader />
@@ -224,7 +223,7 @@ export default CouponListing
 
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    maxHeight: '420px',
    resizableColumns: false,

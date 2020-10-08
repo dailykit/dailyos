@@ -41,14 +41,12 @@ const BrandCampaign = ({ state }) => {
          hozAlign: 'left',
          headerFilter: true,
          headerSort: false,
-         width: 200,
       },
       {
          title: 'Domain',
          field: 'domain',
          hozAlign: 'left',
          headerFilter: true,
-         width: 350,
       },
       {
          title: 'Campaign Available',
@@ -71,7 +69,7 @@ const BrandCampaign = ({ state }) => {
 
    const options = {
       cellVertAlign: 'middle',
-      layout: 'fitData',
+      layout: 'fitColumns',
       autoResize: true,
       maxHeight: '420px',
       resizableColumns: false,

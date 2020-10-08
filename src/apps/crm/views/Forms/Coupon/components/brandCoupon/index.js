@@ -41,14 +41,12 @@ const BrandCoupon = ({ state }) => {
          headerFilter: true,
          headerSort: false,
          hozAlign: 'left',
-         width: 200,
       },
       {
          title: 'Domain',
          field: 'domain',
          headerFilter: true,
          hozAlign: 'left',
-         width: 350,
       },
       {
          title: 'Coupon Available',
@@ -69,7 +67,7 @@ const BrandCoupon = ({ state }) => {
 
    const options = {
       cellVertAlign: 'middle',
-      layout: 'fitData',
+      layout: 'fitColumns',
       autoResize: true,
       maxHeight: '420px',
       resizableColumns: false,

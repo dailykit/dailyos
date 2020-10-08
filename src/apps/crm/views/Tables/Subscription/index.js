@@ -48,7 +48,7 @@ const SubscriptionTable = ({ id, sid }) => {
                cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
                date: occurence?.fulfillmentDate || 'N/A',
                action,
-               oid: occurence?.customers?.[0]?.orderCart?.orderId || '',
+               oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
                amountPaid: `$ ${
                   occurence?.customers?.[0]?.orderCart?.amount || 'N/A'
                }`,
@@ -118,9 +118,9 @@ const SubscriptionTable = ({ id, sid }) => {
          headerFilter: true,
          cssClass: 'fulfillmentDate',
          formatter: reactFormatter(<InfoButton />),
-         hozAlign: 'center',
+         hozAlign: 'right',
          titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'center'
+            cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
          width: 200,
@@ -144,7 +144,6 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
       },
       {
          title: 'Amount Paid',
@@ -154,7 +153,7 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
    ]
 
@@ -212,7 +211,7 @@ export default SubscriptionTable
 const options = {
    cellVertAlign: 'middle',
    maxHeight: '420px',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    resizableColumns: false,
    virtualDomBuffer: 80,

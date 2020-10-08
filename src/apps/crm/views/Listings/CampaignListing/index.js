@@ -59,7 +59,7 @@ const CampaignListing = () => {
    })
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Campaign', '/crm/campaign')
       }
    }, [addTab, tab])
 
@@ -121,14 +121,13 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
-         width: 200,
       },
       {
          title: 'Campaign Type',
          field: 'type',
          headerFilter: true,
          hozAlign: 'left',
-         width: 200,
+         width: 150,
       },
       {
          title: 'Active',
@@ -139,7 +138,7 @@ const CampaignListing = () => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
       {
          title: 'Action',
@@ -154,7 +153,7 @@ const CampaignListing = () => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
-         width: 200,
+         width: 150,
       },
    ]
    if (listLoading || loading) return <Loader />
@@ -192,13 +191,13 @@ const CampaignListing = () => {
 export default CampaignListing
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitData',
+   layout: 'fitColumns',
    autoResize: true,
    maxHeight: '420px',
    resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
    pagination: 'local',
    paginationSize: 10,
