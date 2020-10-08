@@ -21,8 +21,11 @@ export default function Insight({
    includeChart = false,
    title = '',
 }) {
+   const [isDiff, setIsDiff] = useState(false)
+
    const {
-      tableData,
+      newTableData,
+      oldTableData,
       options,
       optionVariables,
       updateOptions,
@@ -38,8 +41,6 @@ export default function Insight({
       includeTableData: includeTable,
       includeChartData: includeChart,
    })
-
-   const [isDiff, setIsDiff] = useState(false)
 
    return (
       <>
@@ -85,11 +86,20 @@ export default function Insight({
                   />
                ) : null}
             </StyledGrid>
-            <ReactTabulator
-               columns={[]}
-               options={tableConfig}
-               data={tableData}
-            />
+            <Flex container>
+               {isDiff ? (
+                  <ReactTabulator
+                     columns={[]}
+                     options={tableConfig}
+                     data={newTableData.length ? newTableData : oldTableData}
+                  />
+               ) : null}
+               <ReactTabulator
+                  columns={[]}
+                  options={tableConfig}
+                  data={oldTableData}
+               />
+            </Flex>
          </StyledContainer>
       </>
    )

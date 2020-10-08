@@ -11,8 +11,6 @@ function onError(error) {
 // prettier-ignore
 const buildQuery = query => gql`${query}`
 
-let transformedData = null
-
 let gqlQuery = {
    kind: 'Document',
    definitions: [
@@ -59,6 +57,8 @@ export const useInsights = (
    const [oldData, setOldData] = useState([])
    const [oldAggregates, setOldAggregates] = useState({})
    const [newAggregates, setNewAggregates] = useState({})
+   const [oldTableData, setOldTableData] = useState([])
+   const [newTableData, setNewTableData] = useState([])
 
    const {
       data: {
@@ -85,13 +85,14 @@ export const useInsights = (
       gqlQuery = buildQuery(insight.query)
    }
 
-   const { data = {}, loading } = useQuery(gqlQuery, {
+   const { loading } = useQuery(gqlQuery, {
       onError,
       variables: {
          ...variableSwitches,
          options: variableOptions,
       },
       onCompleted: data => {
+         const nodeKey = Object.keys(data)[0]
          if (isNewOption) {
             setNewData(transformer(data, nodeKey))
             setNewAggregates(data[nodeKey].aggregate)
@@ -99,12 +100,17 @@ export const useInsights = (
             setOldData(transformer(data, nodeKey))
             setOldAggregates(data[nodeKey].aggregate)
          }
+         if (options.includeTableData || options.includeChartData) {
+            const tableData = transformer(data, nodeKey)
+
+            if (isNewOption) {
+               setNewTableData(tableData)
+            } else {
+               setOldTableData(tableData)
+            }
+         }
       },
    })
-
-   const nodeKey = Object.keys(data)[0]
-   if (options.includeTableData || options.includeChartData)
-      transformedData = transformer(data, nodeKey)
 
    const whereObject = buildOptions(insight.availableOptions || {})
    const filters = buildOptions(insight.filters || {})
@@ -116,7 +122,8 @@ export const useInsights = (
 
    const result = {
       loading,
-      tableData: transformedData,
+      newTableData,
+      oldTableData,
       switches: variableSwitches,
       optionVariables: variableOptions,
       options: whereObject,
