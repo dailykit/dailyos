@@ -33,9 +33,9 @@ export default function RewardDetailsunnel({
    conditionId,
    rewardId,
    rewardInfo,
+   updateConditionId,
    closeRewardTypeTunnel,
 }) {
-   console.log(rewardInfo?.priority)
    const { addTab } = useTabs()
    const [priority, setPriority] = useState(1)
    const [rewardValue, setRewardValue] = useState({
@@ -74,12 +74,30 @@ export default function RewardDetailsunnel({
             },
          },
       })
+      setPriority()
+      setRewardValue({
+         type: 'absolute',
+         value: '',
+      })
+      setRewardValueType('absolute')
+      updateConditionId(null)
+   }
+
+   const closeFunc = () => {
+      setPriority()
+      setRewardValue({
+         type: 'absolute',
+         value: '',
+      })
+      setRewardValueType('absolute')
+      updateConditionId(null)
+      closeTunnel(1)
    }
 
    useEffect(() => {
       setPriority(rewardInfo?.priority)
       setRewardValue(rewardInfo?.rewardValue)
-      setRewardValueType(rewardInfo?.rewardValue?.type)
+      setRewardValueType(rewardInfo?.rewardValue?.type || 'absolute')
    }, [rewardInfo])
 
    return (
@@ -89,7 +107,7 @@ export default function RewardDetailsunnel({
                <TunnelHeader
                   title="Add Reward Details"
                   right={{ action: () => saveInfo(), title: 'Save' }}
-                  close={() => closeTunnel(1)}
+                  close={() => closeFunc()}
                />
                <TunnelBody>
                   {conditionId ? (
@@ -155,7 +173,7 @@ export default function RewardDetailsunnel({
                                  value={rewardValue?.value?.max}
                                  onChange={e =>
                                     setRewardValue({
-                                       ...rewardValue,
+                                       // ...rewardValue,
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue?.value,
@@ -172,7 +190,7 @@ export default function RewardDetailsunnel({
                                  value={rewardValue?.value?.percentage}
                                  onChange={e =>
                                     setRewardValue({
-                                       ...rewardValue,
+                                       // ...rewardValue,
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue.value,
