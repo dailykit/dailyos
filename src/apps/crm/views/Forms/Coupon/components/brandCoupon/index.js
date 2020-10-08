@@ -41,12 +41,14 @@ const BrandCoupon = ({ state }) => {
          headerFilter: true,
          headerSort: false,
          hozAlign: 'left',
+         width: 200,
       },
       {
          title: 'Domain',
          field: 'domain',
          headerFilter: true,
          hozAlign: 'left',
+         width: 350,
       },
       {
          title: 'Coupon Available',
@@ -61,15 +63,16 @@ const BrandCoupon = ({ state }) => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
 
    const options = {
       cellVertAlign: 'middle',
-      layout: 'fitColumns',
+      layout: 'fitData',
       autoResize: true,
       maxHeight: '420px',
-      resizableColumns: true,
+      resizableColumns: false,
       virtualDomBuffer: 80,
       placeholder: 'No Data Available',
       persistence: true,

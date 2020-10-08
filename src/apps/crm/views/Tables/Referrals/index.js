@@ -12,8 +12,9 @@ const ReferralTable = () => {
          field: 'invitation',
          headerFilter: true,
          hozAlign: 'left',
+         width: 200,
       },
-      { title: 'Email Address', field: 'email', hozAlign: 'left' },
+      { title: 'Email Address', field: 'email', hozAlign: 'left', width: 350 },
       {
          title: 'Phone Number',
          field: 'phone',
@@ -22,8 +23,9 @@ const ReferralTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
-      { title: 'Status', field: 'status', hozAlign: 'left' },
+      { title: 'Status', field: 'status', hozAlign: 'left', width: 200 },
    ]
    const data = [
       {
@@ -72,10 +74,10 @@ const ReferralTable = () => {
 export default ReferralTable
 const options = {
    cellVertAlign: 'middle',
-   height: '400px',
-   layout: 'fitColumns',
+   maxHeight: '420px',
+   layout: 'fitData',
    autoResize: true,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,

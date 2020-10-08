@@ -123,6 +123,7 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Action',
@@ -133,6 +134,7 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Order Id',
@@ -142,6 +144,7 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Amount Paid',
@@ -151,6 +154,7 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
 
@@ -177,7 +181,7 @@ const SubscriptionTable = ({ id, sid }) => {
    if (listLoading) return <Loader />
    return (
       <>
-         <div style={{ overflowX: 'scroll' }}>
+         <div>
             {tab.data.isOccurencesClicked ? (
                <OrderComp />
             ) : (
@@ -207,10 +211,10 @@ const SubscriptionTable = ({ id, sid }) => {
 export default SubscriptionTable
 const options = {
    cellVertAlign: 'middle',
-   height: '420px',
-   layout: 'fitColumns',
+   maxHeight: '420px',
+   layout: 'fitData',
    autoResize: true,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,

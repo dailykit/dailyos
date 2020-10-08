@@ -67,6 +67,7 @@ const CustomerListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         width: 200,
       },
       {
          title: 'Phone',
@@ -77,9 +78,16 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
-      { title: 'Email', field: 'email', headerFilter: true, hozAlign: 'left' },
-      { title: 'Source', field: 'source', hozAlign: 'left' },
+      {
+         title: 'Email',
+         field: 'email',
+         headerFilter: true,
+         hozAlign: 'left',
+         width: 350,
+      },
+      { title: 'Source', field: 'source', hozAlign: 'left', width: 200 },
       {
          title: 'Referrals Sent',
          field: 'refSent',
@@ -88,6 +96,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Total Paid',
@@ -97,6 +106,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Total Orders',
@@ -106,6 +116,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Discounts availed',
@@ -115,6 +126,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
 
@@ -171,10 +183,10 @@ export default CustomerListing
 
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   layout: 'fitData',
    autoResize: true,
    maxHeight: '420px',
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,

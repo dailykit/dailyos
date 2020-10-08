@@ -15,6 +15,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Reference number',
@@ -24,6 +25,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Order Id',
@@ -33,6 +35,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Debit',
@@ -42,6 +45,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Credit',
@@ -51,6 +55,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Balance',
@@ -60,6 +65,7 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
    const data = [
@@ -123,10 +129,10 @@ const WalletTable = () => {
 export default WalletTable
 const options = {
    cellVertAlign: 'middle',
-   height: '420px',
-   layout: 'fitColumns',
+   maxHeight: '420px',
+   layout: 'fitData',
    autoResize: true,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,

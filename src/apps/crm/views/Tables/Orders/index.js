@@ -54,6 +54,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Products',
@@ -63,6 +64,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Wallet Used',
@@ -72,6 +74,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Discount',
@@ -81,6 +84,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Total Paid',
@@ -90,6 +94,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       { title: 'Channel', field: 'channel', hozAlign: 'left' },
       {
@@ -100,6 +105,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Delivered On',
@@ -109,6 +115,7 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
 
@@ -132,7 +139,7 @@ const OrdersTable = ({ id }) => {
 
    if (listLoading) return <Loader />
    return (
-      <div style={{ overflowX: 'scroll' }}>
+      <div>
          {tab.data.isOrderClicked ? (
             <OrderPage />
          ) : (
@@ -161,10 +168,10 @@ const OrdersTable = ({ id }) => {
 export default OrdersTable
 const options = {
    cellVertAlign: 'middle',
-   height: '420px',
-   layout: 'fitColumns',
+   maxHeight: '420px',
+   layout: 'fitData',
    autoResize: true,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,

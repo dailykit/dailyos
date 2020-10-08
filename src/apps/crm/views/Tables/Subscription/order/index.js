@@ -58,6 +58,7 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Discount',
@@ -67,6 +68,7 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Discounted Price',
@@ -76,6 +78,7 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
 
@@ -238,10 +241,10 @@ const OrderInfo = () => {
 export default OrderInfo
 const options = {
    cellVertAlign: 'middle',
-   height: '420px',
-   layout: 'fitColumns',
+   maxHeight: '420px',
+   layout: 'fitData',
    autoResize: true,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,

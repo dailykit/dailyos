@@ -121,12 +121,14 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         width: 200,
       },
       {
          title: 'Campaign Type',
          field: 'type',
          headerFilter: true,
          hozAlign: 'left',
+         width: 200,
       },
       {
          title: 'Active',
@@ -137,6 +139,7 @@ const CampaignListing = () => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
+         width: 200,
       },
       {
          title: 'Action',
@@ -151,6 +154,7 @@ const CampaignListing = () => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
+         width: 200,
       },
    ]
    if (listLoading || loading) return <Loader />
@@ -188,10 +192,10 @@ const CampaignListing = () => {
 export default CampaignListing
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   layout: 'fitData',
    autoResize: true,
    maxHeight: '420px',
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,
