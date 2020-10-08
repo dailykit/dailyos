@@ -67,6 +67,8 @@ const BrandCoupon = ({ state }) => {
       placeholder: 'No Data Available',
       persistence: true,
       persistenceMode: 'cookie',
+      pagination: 'local',
+      paginationSize: 10,
    }
 
    if (listloading) return <Loader />
