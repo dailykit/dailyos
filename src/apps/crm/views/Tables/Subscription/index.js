@@ -118,14 +118,40 @@ const SubscriptionTable = ({ id, sid }) => {
          headerFilter: true,
          cssClass: 'fulfillmentDate',
          formatter: reactFormatter(<InfoButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
       },
       {
          title: 'Action',
          field: 'action',
          formatter: reactFormatter(<ActionText />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
       },
-      { title: 'Order Id', field: 'oid' },
-      { title: 'Amount Paid', field: 'amountPaid' },
+      {
+         title: 'Order Id',
+         field: 'oid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Amount Paid',
+         field: 'amountPaid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
    ]
 
    const setOrder = (orderId, order) => {

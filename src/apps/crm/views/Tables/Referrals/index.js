@@ -7,10 +7,23 @@ const ReferralTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const columns = [
-      { title: 'Invitation Sent To', field: 'invitation', headerFilter: true },
-      { title: 'Email Address', field: 'email' },
-      { title: 'Phone Number', field: 'phone' },
-      { title: 'Status', field: 'status' },
+      {
+         title: 'Invitation Sent To',
+         field: 'invitation',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      { title: 'Email Address', field: 'email', hozAlign: 'left' },
+      {
+         title: 'Phone Number',
+         field: 'phone',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      { title: 'Status', field: 'status', hozAlign: 'left' },
    ]
    const data = [
       {

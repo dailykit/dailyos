@@ -6,12 +6,61 @@ const WalletTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const columns = [
-      { title: 'Txn Date', field: 'date', headerFilter: true },
-      { title: 'Reference number', field: 'reference' },
-      { title: 'Order Id', field: 'id' },
-      { title: 'Debit', field: 'debit' },
-      { title: 'Credit', field: 'credit' },
-      { title: 'Balance', field: 'balance' },
+      {
+         title: 'Txn Date',
+         field: 'date',
+         headerFilter: true,
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Reference number',
+         field: 'reference',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Order Id',
+         field: 'id',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Debit',
+         field: 'debit',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Credit',
+         field: 'credit',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Balance',
+         field: 'balance',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
    ]
    const data = [
       {

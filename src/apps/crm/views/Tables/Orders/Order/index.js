@@ -38,7 +38,7 @@ const OrderInfo = () => {
          orderId: tab.data.oid,
       },
       onCompleted: ({ order = {} }) => {
-         const result = order.orderCart.cartInfo.products.map(product => {
+         const result = order?.orderCart?.cartInfo?.products.map(product => {
             return {
                products: product?.name || 'N/A',
                servings: product?.quantity || 'N/A',
@@ -242,7 +242,7 @@ const OrderInfo = () => {
 export default OrderInfo
 const options = {
    cellVertAlign: 'middle',
-   height: '420px',
+   // height: '420px',
    layout: 'fitColumns',
    autoResize: true,
    resizableColumns: true,

@@ -49,10 +49,34 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products' },
-      { title: 'Servings', field: 'servings' },
-      { title: 'Discount', field: 'discount' },
-      { title: 'Discounted Price', field: 'discountedPrice' },
+      { title: 'Products', field: 'products', hozAlign: 'left' },
+      {
+         title: 'Servings',
+         field: 'servings',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Discount',
+         field: 'discount',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Discounted Price',
+         field: 'discountedPrice',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
    ]
 
    const data = []
