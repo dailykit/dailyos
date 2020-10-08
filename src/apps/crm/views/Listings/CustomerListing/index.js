@@ -5,7 +5,6 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
-import tableOptions from '../tableOptions'
 import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
@@ -63,14 +62,70 @@ const CustomerListing = () => {
       addTab(name, param)
    }
    const columns = [
-      { title: 'Customer Name', field: 'name', headerFilter: true },
-      { title: 'Phone', field: 'phone', headerFilter: true },
-      { title: 'Email', field: 'email', headerFilter: true },
-      { title: 'Source', field: 'source' },
-      { title: 'Referrals Sent', field: 'refSent' },
-      { title: 'Total Paid', field: 'paid' },
-      { title: 'Total Orders', field: 'orders' },
-      { title: 'Discounts availed', field: 'discounts' },
+      {
+         title: 'Customer Name',
+         field: 'name',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      {
+         title: 'Phone',
+         field: 'phone',
+         headerFilter: true,
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
+      {
+         title: 'Email',
+         field: 'email',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      { title: 'Source', field: 'source', hozAlign: 'left', width: '150' },
+      {
+         title: 'Referrals Sent',
+         field: 'refSent',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Total Paid',
+         field: 'paid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Total Orders',
+         field: 'orders',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Discounts availed',
+         field: 'discounts',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
    ]
 
    if (loading) return <Loader />
@@ -93,15 +148,10 @@ const CustomerListing = () => {
                )}
             />
          </StyledHeader>
-         <StyledHeader gridCol="10fr 1fr 0fr">
+         <StyledHeader gridCol="10fr 1fr">
             <Text as="title">
                Customers(
                {customersCount?.customers_aggregate?.aggregate?.count || '...'})
-            </Text>
-            <Text as="subtitle">
-               {`10 of ${
-                  customersCount?.customers_aggregate?.aggregate?.count || '...'
-               }`}
             </Text>
             <ButtonGroup>
                <IconButton type="solid">
@@ -114,7 +164,7 @@ const CustomerListing = () => {
                columns={columns}
                data={customersList}
                rowClick={rowClick}
-               options={tableOptions}
+               options={options}
                ref={tableRef}
             />
          )}
@@ -123,3 +173,17 @@ const CustomerListing = () => {
 }
 
 export default CustomerListing
+
+const options = {
+   cellVertAlign: 'middle',
+   layout: 'fitColumns',
+   autoResize: true,
+   maxHeight: '420px',
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

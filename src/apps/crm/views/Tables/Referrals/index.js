@@ -7,10 +7,24 @@ const ReferralTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const columns = [
-      { title: 'Invitation Sent To', field: 'invitation', headerFilter: true },
-      { title: 'Email Address', field: 'email' },
-      { title: 'Phone Number', field: 'phone' },
-      { title: 'Status', field: 'status' },
+      {
+         title: 'Invitation Sent To',
+         field: 'invitation',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      { title: 'Email Address', field: 'email', hozAlign: 'left' },
+      {
+         title: 'Phone Number',
+         field: 'phone',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      { title: 'Status', field: 'status', hozAlign: 'left', width: 100 },
    ]
    const data = [
       {
@@ -49,6 +63,7 @@ const ReferralTable = () => {
                data={data}
                rowClick={rowClick}
                ref={tableRef}
+               options={options}
             />
          </div>
       </React.Fragment>
@@ -56,3 +71,16 @@ const ReferralTable = () => {
 }
 
 export default ReferralTable
+const options = {
+   cellVertAlign: 'middle',
+   maxHeight: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

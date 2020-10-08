@@ -6,7 +6,6 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderComp from './order'
 import { OCCURENCES } from '../../../graphql'
-import tableOptions from '../../Listings/tableOptions'
 import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
 import './style.css'
@@ -49,7 +48,7 @@ const SubscriptionTable = ({ id, sid }) => {
                cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
                date: occurence?.fulfillmentDate || 'N/A',
                action,
-               oid: occurence?.customers?.[0]?.orderCart?.orderId || '',
+               oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
                amountPaid: `$ ${
                   occurence?.customers?.[0]?.orderCart?.amount || 'N/A'
                }`,
@@ -119,14 +118,43 @@ const SubscriptionTable = ({ id, sid }) => {
          headerFilter: true,
          cssClass: 'fulfillmentDate',
          formatter: reactFormatter(<InfoButton />),
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 200,
       },
       {
          title: 'Action',
          field: 'action',
          formatter: reactFormatter(<ActionText />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 200,
       },
-      { title: 'Order Id', field: 'oid' },
-      { title: 'Amount Paid', field: 'amountPaid' },
+      {
+         title: 'Order Id',
+         field: 'oid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Amount Paid',
+         field: 'amountPaid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
    ]
 
    const setOrder = (orderId, order) => {
@@ -152,7 +180,7 @@ const SubscriptionTable = ({ id, sid }) => {
    if (listLoading) return <Loader />
    return (
       <>
-         <div style={{ overflowX: 'scroll' }}>
+         <div>
             {tab.data.isOccurencesClicked ? (
                <OrderComp />
             ) : (
@@ -169,7 +197,7 @@ const SubscriptionTable = ({ id, sid }) => {
                      columns={columns}
                      data={occurences}
                      rowClick={rowClick}
-                     options={tableOptions}
+                     options={options}
                      ref={tableRef}
                   />
                </>
@@ -180,3 +208,16 @@ const SubscriptionTable = ({ id, sid }) => {
 }
 
 export default SubscriptionTable
+const options = {
+   cellVertAlign: 'middle',
+   maxHeight: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

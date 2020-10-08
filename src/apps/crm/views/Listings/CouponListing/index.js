@@ -19,7 +19,6 @@ import {
 } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
-import tableOptions from '../tableOptions'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 
@@ -130,14 +129,52 @@ const CouponListing = () => {
    }
 
    const columns = [
-      { title: 'Coupon Code', field: 'code', headerFilter: true },
-      { title: 'Used', field: 'used', headerFilter: true },
-      { title: 'Conversion Rate', field: 'rate', headerFilter: true },
-      { title: 'Amount Spent', field: 'amount' },
+      {
+         title: 'Coupon Code',
+         field: 'code',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      {
+         title: 'Used',
+         field: 'used',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
+      {
+         title: 'Conversion Rate',
+         field: 'rate',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 200,
+      },
+      {
+         title: 'Amount Spent',
+         field: 'amount',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
       {
          title: 'Active',
          field: 'active',
          formatter: reactFormatter(<ToggleButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 100,
       },
       {
          title: 'Action',
@@ -147,6 +184,12 @@ const CouponListing = () => {
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 100,
       },
    ]
    if (loading || listLoading) return <Loader />
@@ -168,7 +211,7 @@ const CouponListing = () => {
                columns={columns}
                data={coupons}
                rowClick={rowClick}
-               options={tableOptions}
+               options={options}
                ref={tableRef}
             />
          )}
@@ -177,3 +220,17 @@ const CouponListing = () => {
 }
 
 export default CouponListing
+
+const options = {
+   cellVertAlign: 'middle',
+   layout: 'fitColumns',
+   autoResize: true,
+   maxHeight: '420px',
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

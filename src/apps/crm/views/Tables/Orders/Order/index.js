@@ -38,7 +38,7 @@ const OrderInfo = () => {
          orderId: tab.data.oid,
       },
       onCompleted: ({ order = {} }) => {
-         const result = order.orderCart.cartInfo.products.map(product => {
+         const result = order?.orderCart?.cartInfo?.products.map(product => {
             return {
                products: product?.name || 'N/A',
                servings: product?.quantity || 'N/A',
@@ -63,10 +63,37 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products' },
-      { title: 'Servings', field: 'servings' },
-      { title: 'Discount', field: 'discount' },
-      { title: 'Discounted Price', field: 'discountedPrice' },
+      { title: 'Products', field: 'products', hozAlign: 'left', width: 300 },
+      {
+         title: 'Servings',
+         field: 'servings',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         widht: 100,
+      },
+      {
+         title: 'Discount',
+         field: 'discount',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         widht: 100,
+      },
+      {
+         title: 'Discounted Price',
+         field: 'discountedPrice',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         widht: 100,
+      },
    ]
 
    let deliveryPartner = null
@@ -161,6 +188,7 @@ const OrderInfo = () => {
                         columns={columns}
                         data={products}
                         ref={tableRef}
+                        options={options}
                      />
                   )}
                   <CardInfo>
@@ -215,3 +243,16 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
+const options = {
+   cellVertAlign: 'middle',
+   maxHeight: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

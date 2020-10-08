@@ -6,7 +6,6 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
-import tableOptions from '../../Listings/tableOptions'
 
 const OrdersTable = ({ id }) => {
    const { dispatch, tab } = useTabs()
@@ -46,14 +45,77 @@ const OrdersTable = ({ id }) => {
    }, [history, tab])
 
    const columns = [
-      { title: 'Order Id', field: 'id', headerFilter: true },
-      { title: 'Products', field: 'products' },
-      { title: 'Wallet Used', field: 'walletUsed' },
-      { title: 'Discount', field: 'discount' },
-      { title: 'Total Paid', field: 'amountPaid' },
-      { title: 'Channel', field: 'channel' },
-      { title: 'Ordered On', field: 'orderedOn', align: 'left' },
-      { title: 'Delivered On', field: 'deliveredOn', align: 'center' },
+      {
+         title: 'Order Id',
+         field: 'id',
+         headerFilter: true,
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Products',
+         field: 'products',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Wallet Used',
+         field: 'walletUsed',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Discount',
+         field: 'discount',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Total Paid',
+         field: 'amountPaid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      { title: 'Channel', field: 'channel', hozAlign: 'left' },
+      {
+         title: 'Ordered On',
+         field: 'orderedOn',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Delivered On',
+         field: 'deliveredOn',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
    ]
 
    const setOrder = React.useCallback(
@@ -76,7 +138,7 @@ const OrdersTable = ({ id }) => {
 
    if (listLoading) return <Loader />
    return (
-      <div style={{ overflowX: 'scroll' }}>
+      <div>
          {tab.data.isOrderClicked ? (
             <OrderPage />
          ) : (
@@ -92,7 +154,7 @@ const OrdersTable = ({ id }) => {
                      columns={columns}
                      data={orders}
                      rowClick={rowClick}
-                     options={tableOptions}
+                     options={options}
                      ref={tableRef}
                   />
                )}
@@ -103,3 +165,16 @@ const OrdersTable = ({ id }) => {
 }
 
 export default OrdersTable
+const options = {
+   cellVertAlign: 'middle',
+   maxHeight: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}
