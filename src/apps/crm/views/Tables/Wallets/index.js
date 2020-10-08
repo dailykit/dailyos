@@ -2,17 +2,70 @@ import React, { useRef } from 'react'
 import { Text } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-import tableOption from '../../Listings/tableOptions'
 const WalletTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const columns = [
-      { title: 'Txn Date', field: 'date', headerFilter: true },
-      { title: 'Reference number', field: 'reference' },
-      { title: 'Order Id', field: 'id' },
-      { title: 'Debit', field: 'debit' },
-      { title: 'Credit', field: 'credit' },
-      { title: 'Balance', field: 'balance' },
+      {
+         title: 'Txn Date',
+         field: 'date',
+         headerFilter: true,
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Reference number',
+         field: 'reference',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 200,
+      },
+      {
+         title: 'Order Id',
+         field: 'id',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Debit',
+         field: 'debit',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
+      {
+         title: 'Credit',
+         field: 'credit',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
+      {
+         title: 'Balance',
+         field: 'balance',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
    ]
    const data = [
       {
@@ -65,7 +118,7 @@ const WalletTable = () => {
                data={data}
                rowClick={rowClick}
                ref={tableRef}
-               options={tableOption}
+               options={options}
             />
          </div>
       </React.Fragment>
@@ -73,3 +126,16 @@ const WalletTable = () => {
 }
 
 export default WalletTable
+const options = {
+   cellVertAlign: 'middle',
+   maxHeight: '420px',
+   layout: 'fitColumns',
+   autoResize: true,
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: true,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

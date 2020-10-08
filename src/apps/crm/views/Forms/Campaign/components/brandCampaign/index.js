@@ -38,12 +38,14 @@ const BrandCampaign = ({ state }) => {
       {
          title: 'Title',
          field: 'title',
+         hozAlign: 'left',
          headerFilter: true,
          headerSort: false,
       },
       {
          title: 'Domain',
          field: 'domain',
+         hozAlign: 'left',
          headerFilter: true,
       },
       {
@@ -56,6 +58,12 @@ const BrandCampaign = ({ state }) => {
                }
             />
          ),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 200,
       },
    ]
 
@@ -63,12 +71,14 @@ const BrandCampaign = ({ state }) => {
       cellVertAlign: 'middle',
       layout: 'fitColumns',
       autoResize: true,
-      maxHeight: 420,
-      resizableColumns: true,
+      maxHeight: '420px',
+      resizableColumns: false,
       virtualDomBuffer: 80,
       placeholder: 'No Data Available',
       persistence: true,
       persistenceMode: 'cookie',
+      pagination: 'local',
+      paginationSize: 10,
    }
 
    if (listloading) return <Loader />

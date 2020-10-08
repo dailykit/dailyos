@@ -21,7 +21,6 @@ import {
 } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
-import tableOptions from '../tableOptions'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import CampaignTypeTunnel from './Tunnel'
 
@@ -60,7 +59,7 @@ const CampaignListing = () => {
    })
    React.useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Campaign', '/crm/campaign')
       }
    }, [addTab, tab])
 
@@ -117,12 +116,29 @@ const CampaignListing = () => {
    }
 
    const columns = [
-      { title: 'Campaign Name', field: 'name', headerFilter: true },
-      { title: 'Campaign Type', field: 'type', headerFilter: true },
+      {
+         title: 'Campaign Name',
+         field: 'name',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      {
+         title: 'Campaign Type',
+         field: 'type',
+         headerFilter: true,
+         hozAlign: 'left',
+         width: 150,
+      },
       {
          title: 'Active',
          field: 'active',
          formatter: reactFormatter(<ToggleButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 150,
       },
       {
          title: 'Action',
@@ -132,6 +148,12 @@ const CampaignListing = () => {
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 150,
       },
    ]
    if (listLoading || loading) return <Loader />
@@ -153,7 +175,7 @@ const CampaignListing = () => {
                columns={columns}
                data={campaign}
                rowClick={rowClick}
-               options={tableOptions}
+               options={options}
                ref={tableRef}
             />
          )}
@@ -167,3 +189,16 @@ const CampaignListing = () => {
 }
 
 export default CampaignListing
+const options = {
+   cellVertAlign: 'middle',
+   layout: 'fitColumns',
+   autoResize: true,
+   maxHeight: '420px',
+   resizableColumns: false,
+   virtualDomBuffer: 80,
+   placeholder: 'No Data Available',
+   persistence: false,
+   persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+}

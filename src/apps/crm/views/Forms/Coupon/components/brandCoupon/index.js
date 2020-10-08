@@ -40,11 +40,13 @@ const BrandCoupon = ({ state }) => {
          field: 'title',
          headerFilter: true,
          headerSort: false,
+         hozAlign: 'left',
       },
       {
          title: 'Domain',
          field: 'domain',
          headerFilter: true,
+         hozAlign: 'left',
       },
       {
          title: 'Coupon Available',
@@ -54,6 +56,12 @@ const BrandCoupon = ({ state }) => {
                onChange={object => upsertBrandCoupon({ variables: { object } })}
             />
          ),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 200,
       },
    ]
 
@@ -61,12 +69,14 @@ const BrandCoupon = ({ state }) => {
       cellVertAlign: 'middle',
       layout: 'fitColumns',
       autoResize: true,
-      maxHeight: 420,
-      resizableColumns: true,
+      maxHeight: '420px',
+      resizableColumns: false,
       virtualDomBuffer: 80,
       placeholder: 'No Data Available',
       persistence: true,
       persistenceMode: 'cookie',
+      pagination: 'local',
+      paginationSize: 10,
    }
 
    if (listloading) return <Loader />
