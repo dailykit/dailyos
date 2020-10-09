@@ -45,7 +45,13 @@ export default function Insight({
    return (
       <>
          <StyledContainer>
-            <Flex container alignItems="center" margin="0 0 1rem 0">
+            <div
+               style={{
+                  display: 'grid',
+                  gridTemplateColumns: '8rem 1fr',
+                  marginBottom: '1rem',
+               }}
+            >
                <Toggle
                   checked={isDiff}
                   setChecked={setIsDiff}
@@ -62,11 +68,17 @@ export default function Insight({
                   showColumnToggle
                   isDiff={isDiff}
                />
-            </Flex>
-            <Flex container justifyContent="space-between">
+            </div>
+            <div
+               style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  columnGap: '2rem',
+               }}
+            >
                {isDiff ? <CounterBar aggregates={newAggregates} /> : null}
                <CounterBar aggregates={oldAggregates} />
-            </Flex>
+            </div>
             {includeChart ? (
                <HeroCharts
                   allowedCharts={allowedCharts}
