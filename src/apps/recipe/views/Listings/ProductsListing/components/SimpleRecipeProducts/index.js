@@ -75,6 +75,7 @@ const InventoryProducts = () => {
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIngredient />),
+         width: 150,
       },
    ]
 
@@ -89,7 +90,7 @@ const InventoryProducts = () => {
       return <Text as="p">Error: Could`&apos;`nt fetch products!</Text>
    }
    return (
-      <div style={{ width: '80%', margin: '0 auto' }}>
+      <div>
          <TextButton
             type="outline"
             onClick={() => tableRef.current.table.clearHeaderFilter()}

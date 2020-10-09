@@ -6,8 +6,10 @@ const options = {
    resizableColumns: true,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
+   pagination: 'local',
+   pagination: 10,
 }
 
 export default options

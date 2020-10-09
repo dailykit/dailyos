@@ -122,6 +122,7 @@ function DataTable({
          headerFilter: false,
          hozAlign: 'right',
          formatter: reactFormatter(<ProcessingCount />),
+         width: 150,
       },
       {
          title: 'Created At',
@@ -129,6 +130,7 @@ function DataTable({
          headerFilter: false,
          hozAlign: 'right',
          formatter: reactFormatter(<FormatDate />),
+         width: 250,
       },
       {
          title: 'Actions',
@@ -140,6 +142,7 @@ function DataTable({
             deleteIngredientHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIngredient />),
+         width: 150,
       },
    ]
 

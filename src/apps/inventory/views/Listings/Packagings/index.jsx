@@ -47,11 +47,17 @@ export default function Packagings() {
          field: 'supplier',
          headerFilter: false,
          formatter: reactFormatter(<SupplierName />),
+         hozAlign: 'left',
+         headerHozAlign: 'left',
+         width: 180,
       },
       {
          title: 'Type',
          field: 'type',
          headerFilter: false,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
+         width: 200,
       },
       {
          title: 'Par Level',
@@ -59,24 +65,32 @@ export default function Packagings() {
          headerFilter: false,
          headerSort: false,
          hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 120,
       },
       {
          title: 'On Hand',
          field: 'onHand',
          headerFilter: true,
          hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 120,
       },
       {
          title: 'Max Level',
          field: 'maxLevel',
          headerFilter: true,
          hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 120,
       },
       {
          title: 'Awaiting',
          field: 'awaiting',
          headerFilter: true,
          hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 120,
       },
    ]
 
@@ -110,7 +124,7 @@ export default function Packagings() {
             </StyledHeader>
             <br />
 
-            <div style={{ width: '90%', margin: '0 auto' }}>
+            <div>
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}

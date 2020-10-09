@@ -59,6 +59,7 @@ const StationsListing = () => {
             remove({ variables: { id } })
          },
          formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         width: 150,
       },
    ]
 
