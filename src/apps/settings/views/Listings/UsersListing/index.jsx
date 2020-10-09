@@ -47,17 +47,24 @@ const UsersListing = () => {
          title: 'User',
          headerFilter: false,
          headerSort: false,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
          formatter: reactFormatter(<UserAvatar />),
       },
       {
          title: 'Email',
          field: 'email',
          headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
       {
          title: 'Phone No.',
          field: 'phoneNo',
          headerFilter: true,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
    ]
 
