@@ -61,30 +61,39 @@ export default function WorkOrders() {
    }
 
    const columns = [
-      { title: 'Status', field: 'status', headerFilter: true },
+      { title: 'Status', field: 'status', headerFilter: true, width: 150 },
       {
          title: 'Scheduled On',
          field: 'scheduledOn',
          headerFilter: false,
          formatter: reactFormatter(<ShowDate />),
+         hozAlign: 'left',
+         headerHozAlign: 'left',
+         width: 150,
       },
       {
          title: 'User Assigned',
          field: 'user',
          formatter: reactFormatter(<UserName />),
          headerFilter: false,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
       {
          title: 'Station Assigned',
          field: 'station',
          formatter: reactFormatter(<StationName />),
          headerFilter: false,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
       {
          title: 'Type',
          field: 'type',
          formatter: reactFormatter(<FormatType />),
          headerFilter: false,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
    ]
 
