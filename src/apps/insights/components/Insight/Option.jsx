@@ -1,4 +1,4 @@
-import { Checkbox, Input, TextButton, Flex } from '@dailykit/ui'
+import { Checkbox, Input, TextButton, Flex, Tag } from '@dailykit/ui'
 import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -9,7 +9,7 @@ import { isObject } from '../../../../shared/utils/isObject'
 import { checkDateField } from '../../utils/checkDateField'
 import { optionsMap } from '../../utils/optionsMap'
 import { fromMixed } from '../../utils/textTransform'
-import { buildOptionVariables } from '../../utils/transformer'
+import { buildOptionVariables, dateFmt } from '../../utils/transformer'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
 import Filters from '../Filters/Filters'
 
@@ -31,6 +31,8 @@ export default function Option({
    const [submenu, setSubmenu] = useState('main')
    const [optionsState, setOptionsState] = useState(state)
    const [newOptionsState, setNewOptionsState] = useState({})
+   const [currentOptions, setCurrentOptions] = useState({})
+   const [currentNewOptions, setCurrentNewOptions] = useState({})
    const [filterable, setFilterable] = useState(false)
    const [show, setShow] = useState(false)
 
@@ -48,14 +50,22 @@ export default function Option({
          : buildOptionVariables(optionsState)
       updateOptions(isNewOption)(newOptions)
       setShow(false)
+
+      if (isNewOption) {
+         setCurrentNewOptions(newOptionsState)
+      } else {
+         setCurrentOptions(optionsState)
+      }
    }
 
    const handleReset = isNewOption => {
       updateOptions(isNewOption)({})
       if (isNewOption) {
          setNewOptionsState({})
+         setCurrentNewOptions({})
       } else {
          setOptionsState({})
+         setCurrentOptions({})
       }
       setShow(false)
    }
@@ -189,6 +199,59 @@ export default function Option({
 
    if (submenu === 'main')
       return (
+         <>
+            <Flex container>
+               <Filters
+                  filters={filters}
+                  optionsState={optionsState}
+                  setOptionsState={setOptionsState}
+                  newOptionsState={newOptionsState}
+                  setNewOptionsState={setNewOptionsState}
+                  handleApply={handleClick}
+                  handleReset={handleReset}
+                  isDiff={isDiff}
+               />
+               <span style={{ width: '1rem' }} />
+               <Dropdown
+                  title="More Filters"
+                  withIcon
+                  show={show}
+                  setShow={setShow}
+                  shiftLeft={shiftLeft}
+               >
+                  {Object.keys(options).map(option => {
+                     return (
+                        <DropdownItem
+                           width={isDiff ? '400px' : null}
+                           onClick={() => setDropdownView(option)}
+                           key={option}
+                        >
+                           {fromMixed(option)}
+                        </DropdownItem>
+                     )
+                  })}
+
+                  {filterable && renderApplyButton()}
+               </Dropdown>
+               {showColumnToggle ? (
+                  <>
+                     <span style={{ width: '1rem' }} />
+                     <Switches
+                        switches={switches}
+                        updateSwitches={updateSwitches}
+                     />
+                  </>
+               ) : null}
+            </Flex>
+            <AppliedFilters
+               currentNewOptions={currentNewOptions}
+               currentOptions={currentOptions}
+            />
+         </>
+      )
+
+   return (
+      <>
          <Flex container>
             <Filters
                filters={filters}
@@ -204,21 +267,26 @@ export default function Option({
             <Dropdown
                title="More Filters"
                withIcon
-               show={show}
                setShow={setShow}
+               show={show}
                shiftLeft={shiftLeft}
             >
-               {Object.keys(options).map(option => {
-                  return (
-                     <DropdownItem
-                        width={isDiff ? '400px' : null}
-                        onClick={() => setDropdownView(option)}
-                        key={option}
-                     >
-                        {fromMixed(option)}
-                     </DropdownItem>
-                  )
-               })}
+               <DropdownItem
+                  onClick={() => setDropdownView('main')}
+                  leftIcon={<LeftIcon color="#888d9d" />}
+                  width={isDiff ? '400px' : null}
+               />
+               {isObject(options[submenu]) &&
+                  Object.keys(options[submenu]).map(option => {
+                     return (
+                        <DropdownItem
+                           key={option}
+                           width={isDiff ? '400px' : null}
+                        >
+                           {renderOption(option)}
+                        </DropdownItem>
+                     )
+                  })}
 
                {filterable && renderApplyButton()}
             </Dropdown>
@@ -232,51 +300,11 @@ export default function Option({
                </>
             ) : null}
          </Flex>
-      )
-
-   return (
-      <Flex container>
-         <Filters
-            filters={filters}
-            optionsState={optionsState}
-            setOptionsState={setOptionsState}
-            newOptionsState={newOptionsState}
-            setNewOptionsState={setNewOptionsState}
-            handleApply={handleClick}
-            handleReset={handleReset}
-            isDiff={isDiff}
+         <AppliedFilters
+            currentNewOptions={currentNewOptions}
+            currentOptions={currentOptions}
          />
-         <span style={{ width: '1rem' }} />
-         <Dropdown
-            title="More Filters"
-            withIcon
-            setShow={setShow}
-            show={show}
-            shiftLeft={shiftLeft}
-         >
-            <DropdownItem
-               onClick={() => setDropdownView('main')}
-               leftIcon={<LeftIcon color="#888d9d" />}
-               width={isDiff ? '400px' : null}
-            />
-            {isObject(options[submenu]) &&
-               Object.keys(options[submenu]).map(option => {
-                  return (
-                     <DropdownItem key={option} width={isDiff ? '400px' : null}>
-                        {renderOption(option)}
-                     </DropdownItem>
-                  )
-               })}
-
-            {filterable && renderApplyButton()}
-         </Dropdown>
-         {showColumnToggle ? (
-            <>
-               <span style={{ width: '1rem' }} />
-               <Switches switches={switches} updateSwitches={updateSwitches} />
-            </>
-         ) : null}
-      </Flex>
+      </>
    )
 }
 
@@ -311,3 +339,76 @@ function Switches({ switches, updateSwitches }) {
       </Dropdown>
    )
 }
+
+const AppliedFilters = React.memo(({ currentNewOptions, currentOptions }) => {
+   return (
+      <div
+         style={{
+            marginTop: '0.6rem',
+            gridColumn: '1 / 3',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            columnGap: '2rem',
+         }}
+      >
+         {Object.keys(currentNewOptions).length ? (
+            <Flex>
+               {Object.keys(currentNewOptions).map(option => {
+                  if (!checkDateField(option))
+                     return Object.keys(currentNewOptions[option]).map(
+                        (key, i) => {
+                           if (currentNewOptions[option][key])
+                              return (
+                                 <Tag color="primary" key={option + i}>
+                                    {fromMixed(option)}: {optionsMap[key]}{' '}
+                                    {currentNewOptions[option][key]}
+                                 </Tag>
+                              )
+                        }
+                     )
+
+                  return Object.keys(currentNewOptions[option]).map(
+                     (key, i) => {
+                        if (currentNewOptions[option][key])
+                           return (
+                              <Tag color="primary" key={option + i}>
+                                 {optionsMap[option][key]}{' '}
+                                 {dateFmt.format(
+                                    new Date(currentNewOptions[option][key])
+                                 )}
+                              </Tag>
+                           )
+                     }
+                  )
+               })}
+            </Flex>
+         ) : null}
+         <Flex>
+            {Object.keys(currentOptions).map(option => {
+               if (!checkDateField(option))
+                  return Object.keys(currentOptions[option]).map((key, i) => {
+                     if (currentOptions[option][key])
+                        return (
+                           <Tag color="primary" key={option + i}>
+                              {fromMixed(option)}: {optionsMap[key]}{' '}
+                              {currentOptions[option][key]}
+                           </Tag>
+                        )
+                  })
+
+               return Object.keys(currentOptions[option]).map((key, i) => {
+                  if (currentOptions[option][key])
+                     return (
+                        <Tag color="primary" key={option + i}>
+                           {optionsMap[option][key]}{' '}
+                           {dateFmt.format(
+                              new Date(currentOptions[option][key])
+                           )}
+                        </Tag>
+                     )
+               })
+            })}
+         </Flex>
+      </div>
+   )
+})
