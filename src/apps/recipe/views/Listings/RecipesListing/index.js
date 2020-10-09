@@ -118,13 +118,17 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          field: 'cookingTime',
          headerFilter: true,
          hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: '# of Servings',
          field: 'simpleRecipeYields',
          headerFilter: false,
          hozAlign: 'right',
+         headerHozAlign: 'right',
          formatter: reactFormatter(<ServingsCount />),
+         width: 150,
       },
 
       {
@@ -133,17 +137,21 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          formatter: 'tickCross',
          headerFilter: true,
          hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Actions',
          headerSort: false,
          headerFilter: false,
          hozAlign: 'center',
+         headerHozAlign: 'center',
          cellClick: (e, cell) => {
             e.stopPropagation()
             deleteRecipeHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteRecipe />),
+         width: 150,
       },
    ]
 

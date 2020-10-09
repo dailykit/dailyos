@@ -60,6 +60,7 @@ const ComboProducts = () => {
          title: t(address.concat('labels')),
          field: 'comboProductComponents',
          headerFilter: false,
+         headerSort: false,
          formatter: reactFormatter(<ShowLabels />),
       },
       {
@@ -72,6 +73,7 @@ const ComboProducts = () => {
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIngredient />),
+         width: 150,
       },
    ]
 
@@ -87,7 +89,7 @@ const ComboProducts = () => {
    }
 
    return (
-      <div style={{ width: '80%', margin: '0 auto' }}>
+      <div>
          <TextButton
             type="outline"
             onClick={() => tableRef.current.table.clearHeaderFilter()}
