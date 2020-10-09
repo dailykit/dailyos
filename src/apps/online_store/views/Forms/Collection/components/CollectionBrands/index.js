@@ -50,6 +50,7 @@ const CollectionBrands = ({ state }) => {
                }
             />
          ),
+         width: 200,
       },
    ]
 
@@ -58,11 +59,13 @@ const CollectionBrands = ({ state }) => {
       layout: 'fitColumns',
       autoResize: true,
       maxHeight: 420,
-      resizableColumns: true,
+      resizableColumns: false,
       virtualDomBuffer: 80,
       placeholder: 'No Data Available',
       persistence: true,
       persistenceMode: 'cookie',
+      pagination: 'local',
+      paginationSize: 10,
    }
 
    if (loading) return <Loader />

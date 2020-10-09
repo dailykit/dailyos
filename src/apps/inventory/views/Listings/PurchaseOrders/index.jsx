@@ -55,7 +55,7 @@ export default function PurchaseOrders() {
    }
 
    const columns = [
-      { title: 'Status', field: 'status', headerFilter: true },
+      { title: 'Status', field: 'status', headerFilter: true, width: 200 },
       {
          title: 'Item',
          field: 'supplierItem',
@@ -67,6 +67,7 @@ export default function PurchaseOrders() {
          field: 'packaging',
          headerFilter: false,
          formatter: reactFormatter(<LabelItem />),
+         width: 200,
       },
    ]
 

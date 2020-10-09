@@ -9,17 +9,13 @@ import { AddIcon } from '../../../assets/icons'
 import { useTabs } from '../../../context'
 import { CREATE_ITEM, SUPPLIER_ITEMS_SUBSCRIPTION } from '../../../graphql'
 import { StyledTableActions, StyledTableHeader, StyledWrapper } from '../styled'
-
 const address = 'apps.inventory.views.listings.item.'
-
 export default function ItemListing() {
    const { t } = useTranslation()
    const { addTab } = useTabs()
-
    const { loading: itemsLoading, data, error: subError } = useSubscription(
       SUPPLIER_ITEMS_SUBSCRIPTION
    )
-
    const [createItem] = useMutation(CREATE_ITEM, {
       onCompleted: input => {
          const itemData = input.createSupplierItem.returning[0]
@@ -31,7 +27,6 @@ export default function ItemListing() {
          toast.error('Something went wrong, try again')
       },
    })
-
    const createItemHandler = () => {
       // create item in DB
       const name = `item-${randomSuffix()}`
@@ -43,13 +38,12 @@ export default function ItemListing() {
          },
       })
    }
-
    const tableOptions = {
       cellVertAlign: 'middle',
       layout: 'fitColumns',
       autoResize: true,
-      maxHeight: 420,
-      resizableColumns: true,
+      maxHeight: '420px',
+      resizableColumns: false,
       virtualDomBuffer: 80,
       placeholder: 'No Data Available',
       persistence: true,
@@ -57,15 +51,18 @@ export default function ItemListing() {
       dataTree: true,
       dataTreeChildField: 'bulkItems',
       dataTreeStartExpanded: true,
+      pagination: 'local',
+      paginationSize: 10,
    }
 
    const tableRef = React.useRef()
-
    const columns = [
       {
          title: 'Supplier Item',
          field: 'name',
          headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
       {
          title: 'Supplier',
@@ -73,55 +70,64 @@ export default function ItemListing() {
          headerFilter: false,
          formatter: reactFormatter(<SupplierContact />),
          hozAlign: 'center',
+         headerHozAlign: 'center',
       },
       {
          title: 'Processing',
          field: 'processingName',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'left',
+         headerHozAlign: 'left',
+         width: 150,
       },
       {
          title: 'Par Level',
          field: 'parLevel',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: 'On Hand',
          field: 'onHand',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: 'Max Level',
          field: 'maxLevel',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: 'Awaiting',
          field: 'awaiting',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: 'Committed',
          field: 'committed',
          headerFilter: false,
-         hozAlign: 'center',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
    ]
-
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
       const tabName = name || row._row.modules.dataTree.parent.data.name
       addTab(tabName, `/inventory/items/${id}`)
    }
-
    if (itemsLoading) return <Loader />
-
    if (subError) return <p>{subError.message}</p>
-
    if (data)
       return (
          <StyledWrapper>
@@ -141,7 +147,7 @@ export default function ItemListing() {
             </StyledTableHeader>
             <br />
             <br />
-            <div style={{ width: '90%', margin: '0 auto' }}>
+            <div>
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
@@ -155,13 +161,11 @@ export default function ItemListing() {
          </StyledWrapper>
       )
 }
-
 function SupplierContact({
    cell: {
       _cell: { value },
    },
 }) {
    if (value && value.name) return <>{value.name}</>
-
    return '-'
 }
