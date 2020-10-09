@@ -103,7 +103,10 @@ function DataTable({ data, addTab, deleteCheck }) {
          field: 'SafetyCheckPerUsers',
          headerFilter: false,
          headerSort: false,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
          formatter: reactFormatter(<ShowCount />),
+         width: 150,
       },
 
       {
@@ -119,6 +122,7 @@ function DataTable({ data, addTab, deleteCheck }) {
             })
          },
          formatter: reactFormatter(<DeleteCheck />),
+         width: 150,
       },
    ]
 
