@@ -13,10 +13,10 @@
 
 ```js
    {
-      x: [{ key: 'id' }, { key: 'created_at' }], // key should match the graphql query fields
-      y: [{ key: 'amountPaid' }, { key: 'deliveryPrice' }], // key should match the graphql query fields
+      x: [{ key: 'id' }, { key: 'created_at' }],
+      y: [{ key: 'amountPaid' }, { key: 'deliveryPrice' }], 
       type: 'BarChart',
-      options: {}, // google chart options https://developers.google.com/chart/interactive/docs/gallery/barchart#configuration-options
+      options: {}, 
       multiple: false, // allows to show multiple sources in the y-axis
    },
 ```
