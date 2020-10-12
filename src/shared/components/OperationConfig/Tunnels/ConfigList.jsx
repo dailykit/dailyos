@@ -5,7 +5,7 @@ import { OPERATION_CONFIG } from '../../../graphql'
 import { InlineLoader } from '../../InlineLoader'
 export const ConfigListTunnel = ({ closeTunnel, onSelect }) => {
    const selectedOption = option => {
-      onSelect(option.id)
+      onSelect(option)
       closeTunnel(1)
    }
    const [opConfigData, setOpConfigData] = useState([])

@@ -67,21 +67,23 @@ export const S_INGREDIENT = gql`
                modeOfFulfillments {
                   id
                   accuracy
-                  station {
-                     id
-                     name
-                  }
                   isLive
                   priority
-                  labelTemplate {
+                  cost
+                  type
+                  operationConfig {
                      id
-                     name
+                     station {
+                        name
+                     }
+                     labelTemplate {
+                        name
+                     }
                   }
                   packaging {
                      id
                      name
                   }
-                  type
                   bulkItem {
                      id
                      processingName
@@ -102,7 +104,6 @@ export const S_INGREDIENT = gql`
                         }
                      }
                   }
-                  cost
                }
             }
          }
