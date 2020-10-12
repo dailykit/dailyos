@@ -53,12 +53,16 @@ export const Tooltip = ({
 
 const Styles = {
    Tooltip: styled.span`
+      width: 24px;
       height: 24px;
       margin-left: 4px;
       > a {
+         width: 24px;
          height: 24px;
-         display: block;
          cursor: pointer;
+         display: flex;
+         align-items: center;
+         justify-content: center;
       }
       > div {
          max-width: 250px;
