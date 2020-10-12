@@ -1,6 +1,6 @@
 # Basics
 
-![untitled.png](:/bf987e9b077f41dfb59fcbecfabf4d4a)
+![untitled](https://user-images.githubusercontent.com/36407043/95753943-f5611800-0cbf-11eb-8065-34fbf93ed1ff.png)
 
 DailyKIT Insights is a library used to render analytical data (charts and tables). It uses a graphql api as a data source.
 
