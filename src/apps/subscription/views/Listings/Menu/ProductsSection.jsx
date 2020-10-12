@@ -43,6 +43,9 @@ const ProductsSection = () => {
       {
          title: 'Serving',
          field: 'recipeYield.size',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 100,
       },
       {
          title: 'Author',

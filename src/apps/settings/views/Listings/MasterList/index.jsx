@@ -46,6 +46,9 @@ const MasterList = () => {
          title: t(address.concat('total inputs')),
          field: 'length',
          headerFilter: true,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
    ]
 

@@ -147,7 +147,7 @@ const CampaignListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
          hozAlign: 'center',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'
@@ -159,7 +159,7 @@ const CampaignListing = () => {
    if (listLoading || loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
+         <StyledHeader gridCol="10fr  0fr">
             <Text as="title">
                Campaign(
                {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})

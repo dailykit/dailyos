@@ -71,6 +71,7 @@ const InventoryProducts = () => {
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIngredient />),
+         width: 150,
       },
    ]
 
@@ -86,7 +87,7 @@ const InventoryProducts = () => {
    }
 
    return (
-      <div style={{ width: '80%', margin: '0 auto' }}>
+      <div>
          <TextButton
             type="outline"
             onClick={() => tableRef.current.table.clearHeaderFilter()}

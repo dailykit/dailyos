@@ -8,6 +8,7 @@ import {
    useTunnel,
    IconButton,
    Text,
+   ComboButton,
 } from '@dailykit/ui'
 import { UPDATE_CAMPAIGN } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
@@ -50,11 +51,12 @@ const ConditionComp = ({ state }) => {
          />
          {state.conditionId ? (
             <StyledContainer>
+               <Text as="title">Coupon Condition</Text>
                <StyledRow>
-                  <Text as="p">View/Edit Conditions</Text>
-                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                  <ComboButton type="ghost" onClick={() => openTunnel(1)}>
+                     View/Edit Conditions
                      <EditIcon color="#00a7e1" />
-                  </IconButton>
+                  </ComboButton>
                </StyledRow>
             </StyledContainer>
          ) : (

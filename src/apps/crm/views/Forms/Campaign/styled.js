@@ -6,7 +6,7 @@ export const StyledHeader = styled.div`
    display: grid;
    background-color: #ffffff;
    margin-bottom: 0rem;
-   padding: 24px;
+   padding: 24px 48px;
    grid-template-columns: ${props => props.gridCol || '1fr 1fr'};
    @media (max-width: 780px) {
       width: 100%;
@@ -30,10 +30,19 @@ export const InputWrapper = styled.div`
    background-color: #ffffff;
 `
 export const StyledComp = styled.div`
-   padding: 16px 32px;
+   padding: 32px;
    background-color: #e5e5e5;
+   margin-bottom: 32px;
 `
 export const StyledRow = styled.div`
    display: flex;
    flex-direction: row;
+`
+export const StyledDiv = styled.div`
+   padding: 0 32px;
+   background-color: #ffffff;
+   .glXFlP {
+      padding: 0 16px;
+      border-bottom: none;
+   }
 `

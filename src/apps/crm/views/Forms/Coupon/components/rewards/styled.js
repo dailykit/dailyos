@@ -5,7 +5,7 @@ export const StyledContainer = styled.div`
    transition: 0.3s;
    background-color: #ffffff;
    width: 45%;
-   margin: 16px 0;
+   margin: 16px 0 0 0;
    padding: 16px;
    p {
       color: #00a7e1;
@@ -23,6 +23,9 @@ export const StyledRow = styled.div`
    display: flex;
    flex-direction: row;
    justify-content: space-between;
+   button {
+      padding: 0;
+   }
 `
 
 export const StyledAction = styled.div`
@@ -31,22 +34,25 @@ export const StyledAction = styled.div`
    top: 16px;
 `
 export const RewardDiv = styled.div`
-   margin: 16px 8px;
-   padding: 10px;
-   width: 80%;
+   margin: 16px 0;
+   padding: 6px;
    background-color: #e5e5e5;
    display: grid;
-   grid-template-columns: 4fr 1fr;
+   grid-template-columns: 1fr 0fr;
    span {
       background-color: #ffffff;
-      margin: 0 5px 0 0;
+      padding: 2px;
+      border-radius: 4px;
    }
    div {
       background-color: #e5e5e5;
       margin: 0;
    }
    button {
-      height: 21px;
+      height: 25px;
+      padding: 2px;
+      margin-left: 2px;
+      border-radius: 4px;
    }
 `
 

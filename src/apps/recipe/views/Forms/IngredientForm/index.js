@@ -31,20 +31,16 @@ import {
 import { Processings, Stats } from './components'
 import {
    EditItemTunnel,
-   EditLabelTemplateTunnel,
    EditModeTunnel,
    EditPackagingTunnel,
    EditSachetTunnel,
-   EditStationTunnel,
    ItemTunnel,
-   LabelTemplateTunnel,
    NutritionTunnel,
    PackagingTunnel,
    ProcessingsTunnel,
    SachetTunnel,
    PhotoTunnel,
 } from './tunnels'
-import StationTunnel from './tunnels/StationTunnel'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -175,19 +171,10 @@ const IngredientForm = () => {
                   />
                </Tunnel>
                <Tunnel layer={2}>
-                  <StationTunnel
-                     openTunnel={openSachetTunnel}
-                     closeTunnel={closeSachetTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={3}>
                   <ItemTunnel closeTunnel={closeSachetTunnel} />
                </Tunnel>
-               <Tunnel layer={4}>
+               <Tunnel layer={3}>
                   <PackagingTunnel closeTunnel={closeSachetTunnel} />
-               </Tunnel>
-               <Tunnel layer={5}>
-                  <LabelTemplateTunnel closeTunnel={closeSachetTunnel} />
                </Tunnel>
             </Tunnels>
             <Tunnels tunnels={editSachetTunnels}>
@@ -205,20 +192,12 @@ const IngredientForm = () => {
                   />
                </Tunnel>
                <Tunnel layer={3}>
-                  <EditStationTunnel closeTunnel={closeEditSachetTunnel} />
-               </Tunnel>
-               <Tunnel layer={4}>
                   <EditItemTunnel closeTunnel={closeEditSachetTunnel} />
                </Tunnel>
-               <Tunnel layer={5}>
+               <Tunnel layer={4}>
                   <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />
                </Tunnel>
-               <Tunnel layer={6}>
-                  <EditLabelTemplateTunnel
-                     closeTunnel={closeEditSachetTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={7}>
+               <Tunnel layer={5}>
                   <NutritionTunnel
                      state={state}
                      closeTunnel={closeEditSachetTunnel}

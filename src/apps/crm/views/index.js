@@ -1,10 +1,5 @@
 import Home from './Home'
-import {
-   CustomerListing,
-   ReferralPlansListing,
-   CouponListing,
-   CampaignListing,
-} from './Listings'
+import { CustomerListing, CouponListing, CampaignListing } from './Listings'
 import { CustomerRelation, CouponForm, CampaignForm } from './Forms'
 import {
    OrdersTable,
@@ -16,7 +11,6 @@ import {
 export {
    Home,
    CustomerListing,
-   ReferralPlansListing,
    CustomerRelation,
    OrdersTable,
    ReferralTable,

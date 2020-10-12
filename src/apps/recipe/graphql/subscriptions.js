@@ -67,21 +67,23 @@ export const S_INGREDIENT = gql`
                modeOfFulfillments {
                   id
                   accuracy
-                  station {
-                     id
-                     name
-                  }
                   isLive
                   priority
-                  labelTemplate {
+                  cost
+                  type
+                  operationConfig {
                      id
-                     name
+                     station {
+                        name
+                     }
+                     labelTemplate {
+                        name
+                     }
                   }
                   packaging {
                      id
                      name
                   }
-                  type
                   bulkItem {
                      id
                      processingName
@@ -102,7 +104,6 @@ export const S_INGREDIENT = gql`
                         }
                      }
                   }
-                  cost
                }
             }
          }
@@ -312,6 +313,15 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             isActive
             price
             type
+            operationConfig {
+               id
+               station {
+                  name
+               }
+               labelTemplate {
+                  name
+               }
+            }
             simpleRecipeYield {
                id
                yield
@@ -377,6 +387,15 @@ export const S_INVENTORY_PRODUCT = gql`
             label
             price
             quantity
+            operationConfig {
+               id
+               station {
+                  name
+               }
+               labelTemplate {
+                  name
+               }
+            }
             modifier {
                id
                name

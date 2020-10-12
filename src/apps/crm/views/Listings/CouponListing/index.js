@@ -183,7 +183,7 @@ const CouponListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
          hozAlign: 'center',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'
@@ -195,7 +195,7 @@ const CouponListing = () => {
    if (loading || listLoading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
+         <StyledHeader gridCol="10fr  0fr">
             <Text as="title">
                Coupons(
                {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
@@ -229,7 +229,7 @@ const options = {
    resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
    pagination: 'local',
    paginationSize: 10,

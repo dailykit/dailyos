@@ -77,6 +77,8 @@ export const Brands = () => {
          {
             title: 'Published',
             headerSort: false,
+            hozAlign: 'center',
+            headerHozAlign: 'center',
             field: 'isPublished',
             formatter: 'tickCross',
          },
@@ -84,6 +86,7 @@ export const Brands = () => {
             title: 'Actions',
             hozAlign: 'center',
             headerSort: false,
+            headerHozAlign: 'center',
             formatter: reactFormatter(<EditBrand edit={edit} />),
          },
       ],

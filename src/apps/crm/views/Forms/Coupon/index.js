@@ -13,7 +13,13 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper, StyledComp, InputWrapper } from './styled'
+import {
+   StyledHeader,
+   StyledWrapper,
+   StyledComp,
+   InputWrapper,
+   StyledDiv,
+} from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import {
    ConditionComp,
@@ -105,7 +111,7 @@ const CouponForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1.5fr">
+         <StyledHeader gridCol="15fr  2fr">
             <InputWrapper>
                <Input
                   type="text"
@@ -122,7 +128,7 @@ const CouponForm = () => {
                label="Coupon Active"
             />
          </StyledHeader>
-         <div style={{ padding: '0 32px', backgroundColor: '#ffffff' }}>
+         <StyledDiv>
             <HorizontalTabs>
                <HorizontalTabList>
                   <HorizontalTab>Details</HorizontalTab>
@@ -149,7 +155,7 @@ const CouponForm = () => {
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
-         </div>
+         </StyledDiv>
       </StyledWrapper>
    )
 }

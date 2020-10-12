@@ -22,7 +22,9 @@ export const StyledRow = styled.div`
    margin-bottom: 16px;
    display: flex;
    flex-direction: row;
-   justify-content: space-between;
+   button {
+      padding: 0;
+   }
 `
 
 export const StyledAction = styled.div`

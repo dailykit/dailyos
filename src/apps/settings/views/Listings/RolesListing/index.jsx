@@ -13,13 +13,14 @@ import {
    AvatarGroup,
    Avatar,
    Text,
+   Flex,
 } from '@dailykit/ui'
 
 import { ROLES } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { StyledWrapper, StyledHeader } from '../styled'
-import { InlineLoader } from '../../../../../shared/components'
+import { StyledWrapper } from '../styled'
 import { EditIcon } from '../../../../../shared/assets/icons'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const address = 'apps.settings.views.listings.roleslisting.'
 
@@ -42,9 +43,10 @@ const RolesListing = () => {
    return (
       <StyledWrapper>
          <div>
-            <StyledHeader>
-               <Text as="h2">{t(address.concat('roles'))}</Text>
-            </StyledHeader>
+            <Flex container height="80px" alignItems="center">
+               <Text as="h2">{t(address.concat('roles'))} </Text>
+               <Tooltip identifier="roles_list_heading" />
+            </Flex>
             <Table>
                <TableHead>
                   <TableRow>
@@ -76,6 +78,7 @@ const RolesListing = () => {
                            <TableCell align="right">
                               <ButtonGroup align="right">
                                  <IconButton
+                                    size="sm"
                                     type="outline"
                                     onClick={() => editRole(row.id, row.title)}
                                  >

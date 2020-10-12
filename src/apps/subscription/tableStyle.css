@@ -1,12 +1,10 @@
 .tabulator-header {
-   color: #888d9d;
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
 }
 
 .tabulator-row {
    height: 36px;
-   color: #555b6e;
    font-size: 16px;
    display: flex;
    align-items: center;

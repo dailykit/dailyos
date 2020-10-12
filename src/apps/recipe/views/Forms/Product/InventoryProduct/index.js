@@ -53,6 +53,7 @@ export default function InventoryProduct() {
          id: productId,
       },
       onSubscriptionData: data => {
+         console.log(data)
          setState(data.subscriptionData.data.inventoryProduct)
          setTitle(data.subscriptionData.data.inventoryProduct.name)
       },

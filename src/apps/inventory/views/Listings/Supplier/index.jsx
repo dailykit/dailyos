@@ -79,6 +79,7 @@ export default function SupplierListing() {
          title: 'Person of Contact',
          field: 'contactPerson',
          headerFilter: false,
+         hozAlign: 'left',
          formatter: reactFormatter(<ContactPerson />),
       },
       {
@@ -88,6 +89,7 @@ export default function SupplierListing() {
          headerFilter: true,
          hozAlign: 'center',
          cssClass: 'center-text',
+         width: 120,
       },
       {
          title: 'Actions',
@@ -103,6 +105,7 @@ export default function SupplierListing() {
             })
          },
          formatter: reactFormatter(<DeleteSupplier />),
+         width: 100,
       },
    ]
 
