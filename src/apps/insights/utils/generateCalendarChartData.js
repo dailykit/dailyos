@@ -1,3 +1,19 @@
+/*
+
+   {
+      type: 'Calendar',
+      title: 'Revenue earned',
+      options: {}, // Google chart options https://developers.google.com/chart/interactive/docs/gallery/calendar#configuration-options
+      dateKeys: ['created_at'], // key should match the graphql query fields
+      metrices: [
+         { key: 'amountPaid', title: 'Revenue' },
+         { key: 'deliveryPrice', title: 'delivery price' },
+      ], // key should match the graphql query fields
+      multiple: false, // this must be false all the time.
+   }
+   
+*/
+
 /**
  *
  * @param {Array<{type: string, columns: any[]}>} allowedCharts

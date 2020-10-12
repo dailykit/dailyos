@@ -1,3 +1,24 @@
+/*
+
+   {
+      type: 'PieChart',
+      options: {}, // Google chart options https://developers.google.com/chart/interactive/docs/gallery/piechart#configuration-options
+      slices: [{ key: 'id' }, { key: 'created_at' }], // key should match the graphql query 
+      metrices: [
+         {
+            key: 'amountPaid',
+            title: 'Revenue',
+         },
+         {
+            key: 'deliveryPrice',
+            title: 'delivery price',
+         },
+      ], // key should match the graphql query 
+      multiple: false, // this must be false.
+   }
+
+*/
+
 export function generatePieChartData(
    allowedCharts,
    transformedData,
