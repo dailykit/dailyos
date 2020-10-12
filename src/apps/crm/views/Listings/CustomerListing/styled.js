@@ -4,7 +4,7 @@ export const StyledHeader = styled.div`
    align-items: center;
    width: 100%;
    display: grid;
-   margin: 42px 0;
+   margin: 0 0 24px 8px;
    grid-template-columns: ${props => props.gridCol || '1fr 1fr'};
    @media (max-width: 780px) {
       width: 100%;

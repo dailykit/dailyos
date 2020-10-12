@@ -2,7 +2,7 @@ import React from 'react'
 import Keycloak from 'keycloak-js'
 
 import { TabProvider } from './context'
-import { AuthProvider } from '../../shared/providers'
+import { AuthProvider, TooltipProvider } from '../../shared/providers'
 
 import App from './App'
 
@@ -20,9 +20,11 @@ const keycloak = new Keycloak({
 
 const CRM = () => (
    <AuthProvider keycloak={keycloak}>
-      <TabProvider>
-         <App />
-      </TabProvider>
+      <TooltipProvider app="CRM App">
+         <TabProvider>
+            <App />
+         </TabProvider>
+      </TooltipProvider>
    </AuthProvider>
 )
 

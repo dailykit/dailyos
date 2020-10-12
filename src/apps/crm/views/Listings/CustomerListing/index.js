@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Text, ButtonGroup, IconButton, PlusIcon, Loader } from '@dailykit/ui'
+import { Text, Loader } from '@dailykit/ui'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
@@ -153,11 +153,6 @@ const CustomerListing = () => {
                Customers(
                {customersCount?.customers_aggregate?.aggregate?.count || '...'})
             </Text>
-            <ButtonGroup>
-               <IconButton type="solid">
-                  <PlusIcon />
-               </IconButton>
-            </ButtonGroup>
          </StyledHeader>
          {Boolean(customersList) && (
             <ReactTabulator
@@ -182,7 +177,7 @@ const options = {
    resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
    pagination: 'local',
    paginationSize: 10,

@@ -5,7 +5,6 @@ import { Switch, Route } from 'react-router-dom'
 import {
    Home,
    CustomerListing,
-   ReferralPlansListing,
    CustomerRelation,
    CouponListing,
    CouponForm,
@@ -23,11 +22,6 @@ const Main = () => {
                exact
             />
             <Route path="/crm/customers" component={CustomerListing} exact />
-            <Route
-               path="/crm/referral-plans"
-               exact
-               component={ReferralPlansListing}
-            />
             <Route path="/crm/coupons/:id" exact component={CouponForm} />
             <Route path="/crm/campaign/:id" exact component={CampaignForm} />
             <Route path="/crm/coupons" component={CouponListing} exact />

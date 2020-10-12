@@ -83,14 +83,13 @@ const ItemTunnel = ({ closeTunnel }) => {
                value: current,
             },
          })
-         closeTunnel(3)
          closeTunnel(2)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Item" close={() => closeTunnel(3)} />
+         <TunnelHeader title="Select Item" close={() => closeTunnel(2)} />
          <TunnelBody>
             {bulkItemsLoading || supplierItemsLoading ? (
                <Loader />

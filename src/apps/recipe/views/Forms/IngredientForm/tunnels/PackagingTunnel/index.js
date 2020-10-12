@@ -42,13 +42,13 @@ const PackagingTunnel = ({ closeTunnel }) => {
                value: current,
             },
          })
-         closeTunnel(4)
+         closeTunnel(3)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Packaging" close={() => closeTunnel(4)} />
+         <TunnelHeader title="Select Packaging" close={() => closeTunnel(3)} />
          <TunnelBody>
             {loading ? (
                <Loader />
