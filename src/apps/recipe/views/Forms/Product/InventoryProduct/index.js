@@ -1,5 +1,4 @@
 import React from 'react'
-import * as Sentry from '@sentry/react'
 import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -122,70 +121,68 @@ export default function InventoryProduct() {
    if (loading) return <Loader />
 
    return (
-      <Sentry.ErrorBoundary fallback={'An error has occured'}>
-         <InventoryProductContext.Provider
-            value={{ productState, productDispatch }}
+      <InventoryProductContext.Provider
+         value={{ productState, productDispatch }}
+      >
+         <ModifiersContext.Provider
+            value={{ modifiersState, modifiersDispatch }}
          >
-            <ModifiersContext.Provider
-               value={{ modifiersState, modifiersDispatch }}
-            >
-               <StyledWrapper>
-                  <StyledHeader>
+            <StyledWrapper>
+               <StyledHeader>
+                  <div>
+                     <Input
+                        label={t(address.concat('product name'))}
+                        type="text"
+                        name="name"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        onBlur={updateName}
+                     />
+                  </div>
+                  <MasterSettings>
                      <div>
-                        <Input
-                           label={t(address.concat('product name'))}
-                           type="text"
-                           name="name"
-                           value={title}
-                           onChange={e => setTitle(e.target.value)}
-                           onBlur={updateName}
+                        {state.isValid?.status ? (
+                           <>
+                              <TickIcon color="#00ff00" stroke={2} />
+                              <Text as="p">All good!</Text>
+                           </>
+                        ) : (
+                           <>
+                              <CloseIcon color="#ff0000" />
+                              <Text as="p">{state.isValid?.error}</Text>
+                           </>
+                        )}
+                     </div>
+                     <div className="settings">
+                        <Checkbox
+                           id="label"
+                           checked={state.isPopupAllowed}
+                           onChange={togglePopup}
+                        >
+                           Popup Allowed
+                        </Checkbox>
+                        <Toggle
+                           checked={state.isPublished}
+                           setChecked={togglePublish}
+                           label="Published"
                         />
                      </div>
-                     <MasterSettings>
-                        <div>
-                           {state.isValid?.status ? (
-                              <>
-                                 <TickIcon color="#00ff00" stroke={2} />
-                                 <Text as="p">All good!</Text>
-                              </>
-                           ) : (
-                              <>
-                                 <CloseIcon color="#ff0000" />
-                                 <Text as="p">{state.isValid?.error}</Text>
-                              </>
-                           )}
-                        </div>
-                        <div className="settings">
-                           <Checkbox
-                              id="label"
-                              checked={state.isPopupAllowed}
-                              onChange={togglePopup}
-                           >
-                              Popup Allowed
-                           </Checkbox>
-                           <Toggle
-                              checked={state.isPublished}
-                              setChecked={togglePublish}
-                              label="Published"
-                           />
-                        </div>
-                     </MasterSettings>
-                  </StyledHeader>
-                  <StyledBody>
-                     <StyledMeta>
-                        <div>
-                           <Description state={state} />
-                        </div>
-                        <div>
-                           <Assets state={state} />
-                        </div>
-                     </StyledMeta>
-                     <StyledRule />
-                     <Item state={state} />
-                  </StyledBody>
-               </StyledWrapper>
-            </ModifiersContext.Provider>
-         </InventoryProductContext.Provider>
-      </Sentry.ErrorBoundary>
+                  </MasterSettings>
+               </StyledHeader>
+               <StyledBody>
+                  <StyledMeta>
+                     <div>
+                        <Description state={state} />
+                     </div>
+                     <div>
+                        <Assets state={state} />
+                     </div>
+                  </StyledMeta>
+                  <StyledRule />
+                  <Item state={state} />
+               </StyledBody>
+            </StyledWrapper>
+         </ModifiersContext.Provider>
+      </InventoryProductContext.Provider>
    )
 }
