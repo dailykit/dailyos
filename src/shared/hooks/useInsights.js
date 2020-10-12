@@ -1,8 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { useState } from 'react'
-import { GET_INSIGHT } from '../graphql'
-import { buildOptions, transformer } from '../utils/transformer'
+import { buildOptions, transformer } from '../utils/insight_utils'
 import { merge } from 'lodash'
 
 function onError(error) {
@@ -146,3 +145,21 @@ export const useInsights = (
 
    return result
 }
+
+export const GET_INSIGHT = gql`
+   query GetInsight($identifier: String!) {
+      insight(identifier: $identifier) {
+         identifier
+         availableOptions
+         filters
+         defaultOptions
+         query
+         switches
+         charts {
+            id
+            config
+            layoutType
+         }
+      }
+   }
+`

@@ -1,5 +1,5 @@
 import unflatten from 'unflatten'
-import { isObject } from '../../../shared/utils/isObject'
+import { isObject } from './isObject'
 
 const _dateMatcher = new RegExp(/created_at|date|month|year/i)
 export const dateFmt = new Intl.DateTimeFormat('en-US', {

@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { fromMixed } from '../../utils/textTransform'
+import { fromMixed } from '../../../utils/textTransform'
 
-import { flattenObject } from '../../utils/transformer'
+import { flattenObject } from '../../../utils/insight_utils'
 import { Container } from '../Container'
 
 /**

@@ -3,14 +3,14 @@ import DatePicker from 'react-datepicker'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { checkDateField } from '../../utils/checkDateField'
-import { optionsMap } from '../../utils/optionsMap'
+import { checkDateField } from '../../../utils/checkDateField'
+import { optionsMap } from '../../../utils/optionsMap'
 import { Flex, Input, TextButton } from '@dailykit/ui'
 import { Dropdown, DropdownItem } from '../DropdownMenu'
-import { isObject } from '../../../../shared/utils/isObject'
+import { isObject } from '../../../utils/isObject'
 
-import '../../../../shared/styled/datepicker.css'
-import { fromMixed } from '../../utils/textTransform'
+import '../../../styled/datepicker.css'
+import { fromMixed } from '../../../utils/textTransform'
 
 export default function Filters({
    filters,

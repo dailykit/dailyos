@@ -2,7 +2,7 @@ import { useOnClickOutside } from '@dailykit/ui'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
-import { ChevronDown } from '../../../../shared/assets/icons'
+import { ChevronDown } from '../../../assets/icons'
 
 /**
  *

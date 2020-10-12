@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyledWrapper } from '../styled'
-import Insight from '../../components/Insight'
+import Insight from '../../../../shared/components/Insight'
 import { useQuery } from '@apollo/react-hooks'
 
 import { INSIGHTS } from '../../graphql'

@@ -1,6 +1,6 @@
-import { generateBarChartData } from '../utils/generateBarChartData'
-import { generateCalendarChartData } from '../utils/generateCalendarChartData'
-import { generatePieChartData } from '../utils/generatePieChartData'
+import { generateBarChartData } from '../components/Insight/generators/generateBarChartData'
+import { generateCalendarChartData } from '../components/Insight/generators/generateCalendarChartData'
+import { generatePieChartData } from '../components/Insight/generators/generatePieChartData'
 
 export const useChart = (chart, rawData, options) => {
    const chartData = genChartData(chart.config, rawData, {

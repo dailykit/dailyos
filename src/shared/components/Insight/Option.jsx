@@ -3,15 +3,15 @@ import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { LeftIcon } from '../../../../shared/assets/icons'
-import '../../../../shared/styled/datepicker.css'
-import { isObject } from '../../../../shared/utils/isObject'
+import { LeftIcon } from '../../assets/icons'
+import '../../styled/datepicker.css'
+import { isObject } from '../../utils/isObject'
 import { checkDateField } from '../../utils/checkDateField'
 import { optionsMap } from '../../utils/optionsMap'
 import { fromMixed } from '../../utils/textTransform'
-import { buildOptionVariables, dateFmt } from '../../utils/transformer'
-import { Dropdown, DropdownItem } from '../DropdownMenu'
-import Filters from '../Filters/Filters'
+import { buildOptionVariables, dateFmt } from '../../utils/insight_utils'
+import { Dropdown, DropdownItem } from './DropdownMenu'
+import Filters from './Filters/Filters'
 
 /**
  *
