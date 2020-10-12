@@ -55,7 +55,7 @@ Example of `config` field
 ]
 ```
 
-The `config` field takes array of objects. Each object follows a certain schema. For the list of available schemas read the Schema.pdf
+The `config` field takes array of objects. Each object follows a certain schema. For the list of available schemas read the [Schema](Schema.md)
 
 ---
 
@@ -168,7 +168,7 @@ The above snippet will configure a HERO chart, link it with the newly created in
 
 > NOTE: the key in x and y used in above schema should be available in the query.
 
-> NOTE: the schema for BarChart and Line chart is same. Refer to Schema.pdf for more info.
+> NOTE: the schema for BarChart and Line chart is same. Refer to [Schema](Schema.md) for more info.
 
 #### React Code
 
