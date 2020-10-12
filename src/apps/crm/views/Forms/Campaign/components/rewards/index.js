@@ -170,7 +170,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
                <StyledRow>
                   <ComboButton type="ghost" onClick={() => openTypeTunnel(1)}>
                      Add More Reward
-                     <PlusIcon />
+                     <PlusIcon color="#00a7e1" />
                   </ComboButton>
                </StyledRow>
             </StyledContainer>

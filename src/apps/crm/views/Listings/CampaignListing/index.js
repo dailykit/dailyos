@@ -159,7 +159,7 @@ const CampaignListing = () => {
    if (listLoading || loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
+         <StyledHeader gridCol="10fr  0fr">
             <Text as="title">
                Campaign(
                {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})

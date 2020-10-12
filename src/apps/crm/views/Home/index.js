@@ -19,11 +19,6 @@ const Home = () => {
       <StyledHome>
          <StyledHeader>
             <Text as="h1">Customer Relation Manager</Text>
-            <SearchBox
-               placeholder="Search"
-               value={search}
-               onChange={e => setSearch(e.target.value)}
-            />
          </StyledHeader>
 
          <StyledCardList>
@@ -33,11 +28,6 @@ const Home = () => {
                   customersCount?.customers_aggregate.aggregate.count || '...'
                }
                onClick={() => addTab('Customers', '/crm/customers')}
-            />
-            <DashboardTile
-               title="Referral Plans"
-               count={22}
-               onClick={() => addTab('Referral Plans', '/crm/referral-plans')}
             />
             <DashboardTile
                title="Coupons"

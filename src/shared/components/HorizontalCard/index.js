@@ -8,8 +8,8 @@ const HorizontalStyledCard = ({ data, open }) => {
       <StyledCard>
          <StyledWrapper>
             <Text as="title">Basic Information</Text>
-            <IconButton type="outline" onClick={() => open(1)}>
-               <EditIcon />
+            <IconButton type="ghost" onClick={() => open(1)}>
+               <EditIcon color="#00a7e1" />
             </IconButton>
          </StyledWrapper>
          <HorizontalCard>

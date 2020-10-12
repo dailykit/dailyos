@@ -195,7 +195,7 @@ const CouponListing = () => {
    if (loading || listLoading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
+         <StyledHeader gridCol="10fr  0fr">
             <Text as="title">
                Coupons(
                {couponTotal?.couponsAggregate?.aggregate?.count || '...'})

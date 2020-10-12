@@ -14,7 +14,7 @@ export const StyledHeader = styled.div`
    }
 `
 export const StyledWrapper = styled.div`
-   margin: 0 auto;
+   margin: 0;
    max-width: 1280px;
    margin-bottom: 80px;
    h1 {

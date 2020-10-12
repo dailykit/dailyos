@@ -21,6 +21,7 @@ import {
    InputWrapper,
    StyledRow,
    StyledComp,
+   StyledDiv,
 } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import {
@@ -112,7 +113,7 @@ const CampaignForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr 1.5fr">
+         <StyledHeader gridCol="15fr 2fr">
             <InputWrapper>
                <Input
                   type="text"
@@ -126,7 +127,7 @@ const CampaignForm = () => {
             <Toggle checked={toggle} setChecked={updatetoggle} />
          </StyledHeader>
 
-         <div style={{ padding: '0 32px', backgroundColor: '#ffffff' }}>
+         <StyledDiv>
             <HorizontalTabs>
                <HorizontalTabList>
                   <HorizontalTab>Details</HorizontalTab>
@@ -153,7 +154,7 @@ const CampaignForm = () => {
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
-         </div>
+         </StyledDiv>
       </StyledWrapper>
    )
 }
