@@ -177,7 +177,7 @@ const options = {
    resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
    pagination: 'local',
    paginationSize: 10,
