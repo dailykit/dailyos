@@ -83,8 +83,9 @@ const BrandCoupon = ({ state }) => {
 
    return (
       <StyledWrapper>
-         <Text as="h2">Brands</Text>
-
+         <div style={{ padding: '6px' }}>
+            <Text as="h2">Brands</Text>
+         </div>
          {error ? (
             <Text as="p">Could not load brands</Text>
          ) : (
