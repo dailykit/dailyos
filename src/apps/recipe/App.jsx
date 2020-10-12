@@ -1,6 +1,5 @@
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-import * as Sentry from '@sentry/react'
 
 import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
@@ -10,6 +9,8 @@ import './views/Listings/tableStyle.css'
 import Header from './sections/Header'
 import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
+
+import ErrorBoundary from '../../shared/components/ErrorBoundary'
 
 // Styled
 import { StyledWrapper } from '../../styled'
@@ -21,9 +22,9 @@ const App = () => {
          <Router basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <Sentry.ErrorBoundary fallback={'Something went wrong!'}>
+            <ErrorBoundary rootRoute="/apps/recipe">
                <Main />
-            </Sentry.ErrorBoundary>
+            </ErrorBoundary>
          </Router>
       </StyledWrapper>
    )

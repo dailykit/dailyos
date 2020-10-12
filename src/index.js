@@ -34,7 +34,7 @@ const App = Loadable({
 
 Sentry.init({
    dsn:
-      'https://07f1115e041b4daf9a5c6db1c4df0f5e@o459154.ingest.sentry.io/5457846',
+      'https://55533db4419a47f1b4416c0512a608ad@o460444.ingest.sentry.io/5460641',
    integrations: [new Integrations.BrowserTracing()],
 
    // We recommend adjusting this value in production, or using tracesSampler
