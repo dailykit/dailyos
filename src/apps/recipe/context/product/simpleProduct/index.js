@@ -8,6 +8,7 @@ export const state = {
    },
    recommendationProductType: 'inventory',
    recommendationType: '',
+   optionId: undefined,
    edit: undefined,
 }
 
@@ -29,6 +30,12 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             recommendationProductType: payload.recommendationProductType,
+         }
+      }
+      case 'OPTION_ID': {
+         return {
+            ...state,
+            optionId: payload.optionId,
          }
       }
       case 'META': {

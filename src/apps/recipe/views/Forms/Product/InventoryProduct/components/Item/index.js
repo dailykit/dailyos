@@ -18,6 +18,8 @@ import {
    SectionTabPanel,
    Text,
    Flex,
+   TextButton,
+   PlusIcon,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -48,6 +50,7 @@ import {
    ModifierPhotoTunnel,
 } from '../../tunnels'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { OperationConfig } from '../../../../../../../../shared/components'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.item.'
@@ -55,12 +58,10 @@ const address =
 export default function Item({ state }) {
    const { t } = useTranslation()
 
-   const { productDispatch } = React.useContext(InventoryProductContext)
+   const { productState, productDispatch } = React.useContext(
+      InventoryProductContext
+   )
    const { modifiersDispatch } = React.useContext(ModifiersContext)
-
-   const [_state, _setState] = React.useState({
-      view: 'pricing',
-   })
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [pricingTunnels, openPricingTunnel, closePricingTunnel] = useTunnel(1)
@@ -69,6 +70,11 @@ export default function Item({ state }) {
       openModifiersTunnel,
       closeModifiersTunnel,
    ] = useTunnel(6)
+   const [
+      operationConfigTunnels,
+      openOperationConfigTunnel,
+      closeOperationConfigTunnel,
+   ] = useTunnel(4)
 
    // Mutations
    const [deleteOption] = useMutation(DELETE_INVENTORY_PRODUCT_OPTION, {
@@ -82,7 +88,7 @@ export default function Item({ state }) {
    })
    const [updateProductOption] = useMutation(UPDATE_INVENTORY_PRODUCT_OPTION, {
       onCompleted: () => {
-         toast.success('Modifier removed!')
+         toast.success('Updated!')
       },
       onError: error => {
          console.log(error)
@@ -175,9 +181,25 @@ export default function Item({ state }) {
       })
       openModifiersTunnel(2)
    }
+   const saveOperationConfig = config => {
+      updateProductOption({
+         variables: {
+            id: productState.optionId,
+            set: {
+               operationConfigId: config.id,
+            },
+         },
+      })
+   }
 
    return (
       <>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={saveOperationConfig}
+         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
@@ -294,6 +316,7 @@ export default function Item({ state }) {
                                           <th>
                                              {t(address.concat('modifiers'))}
                                           </th>
+                                          <th> Operational Configuration </th>
                                           <th> </th>
                                        </tr>
                                     </thead>
@@ -400,8 +423,57 @@ export default function Item({ state }) {
                                                             )
                                                          }}
                                                       >
-                                                         <AddIcon color="#36B6E2" />
+                                                         <PlusIcon color="#36B6E2" />
                                                       </IconButton>
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   {option.operationConfig ? (
+                                                      <Flex
+                                                         container
+                                                         alignItems="center"
+                                                         justifyContent="space-between"
+                                                      >
+                                                         <Text as="p">
+                                                            {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
+                                                         </Text>
+                                                         <span
+                                                            onClick={() => {
+                                                               productDispatch({
+                                                                  type:
+                                                                     'OPTION_ID',
+                                                                  payload: {
+                                                                     optionId:
+                                                                        option.id,
+                                                                  },
+                                                               })
+                                                               openOperationConfigTunnel(
+                                                                  1
+                                                               )
+                                                            }}
+                                                         >
+                                                            <EditIcon color="#36B6E2" />
+                                                         </span>
+                                                      </Flex>
+                                                   ) : (
+                                                      <TextButton
+                                                         type="ghost"
+                                                         onClick={() => {
+                                                            productDispatch({
+                                                               type:
+                                                                  'OPTION_ID',
+                                                               payload: {
+                                                                  optionId:
+                                                                     option.id,
+                                                               },
+                                                            })
+                                                            openOperationConfigTunnel(
+                                                               1
+                                                            )
+                                                         }}
+                                                      >
+                                                         <PlusIcon color="#36B6E2" />
+                                                      </TextButton>
                                                    )}
                                                 </td>
                                                 <td>
