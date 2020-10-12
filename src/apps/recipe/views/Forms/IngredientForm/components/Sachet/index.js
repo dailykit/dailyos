@@ -58,7 +58,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    // Handlers
    const setLive = (mode, val) => {
       if (val) {
-         if (!(mode.station && (mode.bulkItem || mode.sachetItem))) {
+         if (!(mode.operationConfig && (mode.bulkItem || mode.sachetItem))) {
             return toast.error('Mode not configured!')
          }
       }
@@ -178,7 +178,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                      <td>{mode.packaging?.name || '-'}</td>
                      <td>
                         {mode.operationConfig ? (
-                           <Text type="p">
+                           <Text as="p">
                               {`${mode.operationConfig.station.name} - ${mode.operationConfig.labelTemplate.name}`}
                            </Text>
                         ) : (

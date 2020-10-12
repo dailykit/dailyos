@@ -94,7 +94,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
          type: 'CURRENT_MODE',
          payload: type,
       })
-      openTunnel(4)
+      openTunnel(3)
    }
    const selectOperationConfiguration = type => {
       ingredientDispatch({
@@ -326,7 +326,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      </td>
                      <td>
                         {ingredientState.realTime.operationConfig ? (
-                           <Text type="p">
+                           <Text as="p">
                               {`${ingredientState.realTime.operationConfig.station.name} - ${ingredientState.realTime.operationConfig.labelTemplate.name}`}
                            </Text>
                         ) : (
@@ -414,7 +414,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      </td>
                      <td>
                         {ingredientState.plannedLot.operationConfig ? (
-                           <Text type="p">
+                           <Text as="p">
                               {`${ingredientState.plannedLot.operationConfig.station.name} - ${ingredientState.plannedLot.operationConfig.labelTemplate.name}`}
                            </Text>
                         ) : (
