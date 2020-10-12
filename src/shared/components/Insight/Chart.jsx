@@ -1,37 +1,84 @@
 import { Checkbox, TextButton } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { Chart as GoogleChart } from 'react-google-charts'
-import '../../../../shared/styled/tableStyles.css'
+import '../../styled/tableStyles.css'
 import { useChart } from '../../hooks/useChart'
-import { Container } from '../Container'
-import { Dropdown, DropdownItem } from '../DropdownMenu'
-import Option from './Option'
-import { Flex } from '../../../../shared/components/Flex'
+import { Container } from './Container'
+import { Dropdown, DropdownItem } from './DropdownMenu'
+import { Flex } from '../Flex'
 
-export default function Chart({
-   chart,
-   rawData,
-   options,
-   optionVariables,
-   updateOptions,
-   showOptions,
-   filters,
-   switches,
-   updateSwitches,
-}) {
+export default function Chart({ chart, oldData, newData, isDiff }) {
    const [chartType, setChartType] = useState({ ...chart.config[0], index: 0 })
    const [xColumn, setXColumn] = useState('')
    const [yColumns, setYColumns] = useState([])
    const [slice, setSlice] = useState('')
    const [metrices, setMetrices] = useState([])
 
-   const { data, options: googleChartOptions } = useChart(chart, rawData, {
+   const { data: oldChartData, options: oldGoogleChartOptions } = useChart(
+      chart,
+      oldData,
+      {
+         chartType,
+         xColumn,
+         yColumns,
+         slice,
+         metrices,
+      }
+   )
+
+   const { data: newChartData } = useChart(chart, newData, {
       chartType,
       xColumn,
       yColumns,
       slice,
       metrices,
    })
+
+   const renderCharts = () => {
+      if (isDiff) {
+         return (
+            <Flex container justifyContent="space-between" width="100%">
+               <GoogleChart
+                  data={newChartData.length > 1 ? newChartData : oldChartData}
+                  chartType={chartType.type}
+                  loader={<div>loading...</div>}
+                  style={{ flex: '1' }}
+                  options={{
+                     ...oldGoogleChartOptions,
+                     height: oldGoogleChartOptions.height || '483px',
+                     width: oldGoogleChartOptions.width || '850px',
+                  }}
+               />
+
+               <GoogleChart
+                  data={oldChartData}
+                  chartType={chartType.type}
+                  loader={<div>loading...</div>}
+                  style={{ flex: '1' }}
+                  options={{
+                     ...oldGoogleChartOptions,
+                     height: oldGoogleChartOptions.height || '483px',
+                     width: oldGoogleChartOptions.width || '850px',
+                  }}
+               />
+            </Flex>
+         )
+      } else {
+         return (
+            <GoogleChart
+               data={oldChartData}
+               chartType={chartType.type}
+               loader={<div>loading...</div>}
+               style={{ flex: '1' }}
+               options={{
+                  ...oldGoogleChartOptions,
+                  height: oldGoogleChartOptions.height || '483px',
+                  width: oldGoogleChartOptions.width || '100%',
+               }}
+            />
+         )
+      }
+   }
 
    return (
       <Container>
@@ -44,25 +91,8 @@ export default function Chart({
             setSlice={setSlice}
             setMetrices={setMetrices}
             setChartType={setChartType}
-            options={options}
-            optionVariables={optionVariables}
-            updateOptions={updateOptions}
-            showOptions={showOptions}
-            filters={filters}
-            switches={switches}
-            updateSwitches={updateSwitches}
          />
-         <GoogleChart
-            data={data}
-            chartType={chartType.type}
-            loader={<div>loading...</div>}
-            style={{ flex: '1' }}
-            options={{
-               ...googleChartOptions,
-               height: googleChartOptions.height || '483px',
-               width: googleChartOptions.width || '100%',
-            }}
-         />
+         {renderCharts()}
       </Container>
    )
 }
@@ -75,13 +105,6 @@ function ChartConfig({
    setSlice,
    setMetrices,
    setChartType,
-   options,
-   optionVariables,
-   updateOptions,
-   showOptions,
-   filters,
-   switches,
-   updateSwitches,
 }) {
    return (
       <Container>
@@ -105,16 +128,6 @@ function ChartConfig({
                   />
                ) : null}
             </Flex>
-            {showOptions && (
-               <Option
-                  options={options}
-                  state={optionVariables}
-                  updateOptions={updateOptions}
-                  filters={filters}
-                  switches={switches}
-                  updateSwitches={updateSwitches}
-               />
-            )}
          </Flex>
       </Container>
    )

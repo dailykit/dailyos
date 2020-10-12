@@ -1,3 +1,17 @@
+/*
+
+   compatible with Bar, BarChart, Line, Area.
+
+   {
+      x: [{ key: 'id' }, { key: 'created_at' }], // key should match the graphql query fields
+      y: [{ key: 'amountPaid' }, { key: 'deliveryPrice' }], // key should match the graphql query fields
+      type: 'BarChart',
+      options: {}, // google chart options https://developers.google.com/chart/interactive/docs/gallery/barchart#configuration-options
+      multiple: false, // allows to show multiple sources in the y-axis
+   },
+
+*/
+
 export function generateBarChartData(
    allowedCharts,
    transformedData,

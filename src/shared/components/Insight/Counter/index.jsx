@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { fromMixed } from '../../utils/textTransform'
+import { fromMixed } from '../../../utils/textTransform'
 
-import { flattenObject } from '../../utils/transformer'
+import { flattenObject } from '../../../utils/insight_utils'
 import { Container } from '../Container'
 
 /**
@@ -47,7 +47,7 @@ export const Counter = ({
 const StyledCounterElement = styled.div`
    border-left: 5px solid ${({ color }) => color};
    padding-left: 12px;
-   margin-right: 3rem;
+   margin-right: 2rem;
    span {
       font-weight: 500;
       font-size: 14px;

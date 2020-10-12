@@ -1,12 +1,8 @@
-/**
- * @todo support for multiple queries in a request.
- * @body Adding this would enable to use multiple queries in a single request which can be helpfull in some cases, [see](https://hasura.io/docs/1.0/graphql/core/queries/multiple-queries.html). It is not super important for now.
- */
 import unflatten from 'unflatten'
-import { isObject } from '../../../shared/utils/isObject'
+import { isObject } from './isObject'
 
 const _dateMatcher = new RegExp(/created_at|date|month|year/i)
-const _dateFmt = new Intl.DateTimeFormat('en-US', {
+export const dateFmt = new Intl.DateTimeFormat('en-US', {
    weekday: 'long',
    year: 'numeric',
    month: 'numeric',
@@ -45,7 +41,7 @@ export function flattenObject(object) {
       if (!isObject(object[key])) {
          if (key !== '__typename') {
             if (_dateMatcher.test(key)) {
-               result[key] = _dateFmt.format(new Date(object[key]))
+               result[key] = dateFmt.format(new Date(object[key]))
             } else result[key] = object[key]
          }
       } else {
