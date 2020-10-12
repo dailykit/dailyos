@@ -91,3 +91,16 @@ export const CREATE_OPERATION_CONFIG = gql`
       }
    }
 `
+
+export const TOOLTIPS_BY_APP = gql`
+   query app($title: String!) {
+      app: dailyos_ux_app_by_pk(title: $title) {
+         tooltips {
+            id
+            link
+            identifier
+            description
+         }
+      }
+   }
+`
