@@ -51,6 +51,7 @@ const ConditionComp = ({ state }) => {
          />
          {state.conditionId ? (
             <StyledContainer>
+               <Text as="title">Coupon Condition</Text>
                <StyledRow>
                   <ComboButton type="ghost" onClick={() => openTunnel(1)}>
                      View/Edit Conditions
