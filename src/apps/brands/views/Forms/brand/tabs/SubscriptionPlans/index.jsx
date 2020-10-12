@@ -60,13 +60,18 @@ export const SubscriptionPlans = () => {
             headerFilter: true,
             title: 'Total Brands',
             field: 'totalBrands',
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            width: 200,
          },
          {
             title: 'Published',
             field: 'isActive',
             hozAlign: 'center',
+            headerHozAlign: 'center',
             headerSort: false,
             formatter: reactFormatter(<ToggleStatus update={toggleStatus} />),
+            width: 150,
          },
       ],
       [toggleStatus]
