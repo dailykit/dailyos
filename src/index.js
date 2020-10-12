@@ -4,6 +4,8 @@ import Loadable from 'react-loadable'
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import { Loader } from '@dailykit/ui'
+import * as Sentry from '@sentry/react'
+import { Integrations } from '@sentry/tracing'
 
 // Toasts
 import { ToastContainer } from 'react-toastify'
@@ -28,6 +30,16 @@ const languages = ['en', 'fr', 'es', 'he', 'de', 'el', 'hi', 'it']
 const App = Loadable({
    loader: () => import('./App'),
    loading: Loader,
+})
+
+Sentry.init({
+   dsn:
+      'https://07f1115e041b4daf9a5c6db1c4df0f5e@o459154.ingest.sentry.io/5457846',
+   integrations: [new Integrations.BrowserTracing()],
+
+   // We recommend adjusting this value in production, or using tracesSampler
+   // for finer control
+   tracesSampleRate: 1.0,
 })
 
 const authLink = setContext((_, { headers }) => {
