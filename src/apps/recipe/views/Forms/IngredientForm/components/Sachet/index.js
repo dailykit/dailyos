@@ -1,6 +1,13 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Checkbox, IconButton, Text } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Checkbox,
+   IconButton,
+   Text,
+   TextButton,
+   useTunnel,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -8,6 +15,7 @@ import { UPDATE_MODE } from '../../../../../graphql'
 import { Container, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
 import { Nutrition } from '../../../../../../../shared/components'
+import { OperationConfig } from '../../../../../../../shared/components/OperationConfig'
 
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -136,12 +144,11 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                <tr>
                   <th>Mode of Fulfillment</th>
                   <th>Priority</th>
-                  <th>Station</th>
                   <th>Item</th>
                   <th>Cost</th>
                   <th>Accuracy</th>
                   <th>Packaging</th>
-                  <th>Label</th>
+                  <th>Operational Configuration</th>
                   <th> </th>
                </tr>
             </thead>
@@ -156,7 +163,6 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                         {mode.type === 'realTime' ? 'Real Time' : 'Planned Lot'}
                      </td>
                      <td>{mode.priority}</td>
-                     <td>{mode.station?.name || ''}</td>
                      <td>
                         {mode.bulkItem &&
                            `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`}
@@ -170,7 +176,15 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                            : "Don't Weigh"}
                      </td>
                      <td>{mode.packaging?.name || '-'}</td>
-                     <td>{mode.labelTemplate?.title || '-'}</td>
+                     <td>
+                        {mode.operationConfig ? (
+                           <Text type="p">
+                              {`${mode.operationConfig.station.name} - ${mode.operationConfig.labelTemplate.name}`}
+                           </Text>
+                        ) : (
+                           '-'
+                        )}
+                     </td>
                      <td>
                         <IconButton type="ghost" onClick={() => editMOF(mode)}>
                            <EditIcon color="#00A7E1" />

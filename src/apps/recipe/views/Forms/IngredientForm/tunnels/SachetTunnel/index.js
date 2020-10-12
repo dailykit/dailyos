@@ -8,6 +8,9 @@ import {
    Toggle,
    TunnelHeader,
    Loader,
+   Text,
+   TextButton,
+   useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -19,11 +22,18 @@ import {
    StyledSelect,
 } from '../styled'
 import { StyledTable } from './styled'
+import { OperationConfig } from '../../../../../../../shared/components'
 
 const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
+
+   const [
+      operationConfigTunnels,
+      openOperationConfigTunnel,
+      closeOperationConfigTunnel,
+   ] = useTunnel(4)
 
    // State
    const [busy, setBusy] = React.useState(false)
@@ -86,12 +96,12 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
       })
       openTunnel(4)
    }
-   const selectLabelTemplate = type => {
+   const selectOperationConfiguration = type => {
       ingredientDispatch({
          type: 'CURRENT_MODE',
          payload: type,
       })
-      openTunnel(5)
+      openOperationConfigTunnel(1)
    }
 
    // Mutations
@@ -139,7 +149,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                data: [
                   {
                      type: 'realTime',
-                     stationId: ingredientState.realTime.station?.id || null,
                      isPublished: ingredientState.realTime.isPublished,
                      isLive: ingredientState.realTime.isLive,
                      priority: parseInt(ingredientState.realTime.priority),
@@ -148,12 +157,11 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      accuracy: ingredientState.realTime.accuracy,
                      packagingId:
                         ingredientState.realTime.packaging?.id || null,
-                     labelTemplateId:
-                        ingredientState.realTime.labelTemplate?.id || null,
+                     operationConfigId:
+                        ingredientState.realTime.operationConfig?.id || null,
                   },
                   {
                      type: 'plannedLot',
-                     stationId: ingredientState.plannedLot.station?.id || null,
                      isPublished: ingredientState.plannedLot.isPublished,
                      isLive: ingredientState.plannedLot.isLive,
                      priority: parseInt(ingredientState.plannedLot.priority),
@@ -163,8 +171,8 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      accuracy: ingredientState.plannedLot.accuracy,
                      packagingId:
                         ingredientState.plannedLot.packaging?.id || null,
-                     labelTemplateId:
-                        ingredientState.plannedLot.labelTemplate?.id || null,
+                     operationConfigId:
+                        ingredientState.realTime.operationConfig?.id || null,
                   },
                ],
             },
@@ -190,6 +198,21 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
 
    return (
       <>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={config =>
+               ingredientDispatch({
+                  type: 'MODE',
+                  payload: {
+                     mode: ingredientState.currentMode,
+                     name: 'operationConfig',
+                     value: config,
+                  },
+               })
+            }
+         />
          <TunnelHeader
             title="Add Sachet"
             right={{ action: add, title: busy ? 'Adding...' : 'Add' }}
@@ -227,11 +250,10 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                   <tr>
                      <th>Mode of Fulfillment</th>
                      <th>Priority</th>
-                     <th>Station</th>
                      <th>Item</th>
                      <th>Accuracy</th>
                      <th>Packaging</th>
-                     <th>Label</th>
+                     <th>Operational Configuration</th>
                   </tr>
                </thead>
                <tbody>
@@ -261,7 +283,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                            />
                         </StyledInputWrapper>
                      </td>
-                     <td>{ingredientState.realTime.station?.title || '-'}</td>
                      <td>{ingredientState.realTime.bulkItem?.title || '-'}</td>
                      <td>
                         {ingredientState.realTime.bulkItem ? (
@@ -304,25 +325,19 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                         )}
                      </td>
                      <td>
-                        {ingredientState.realTime.bulkItem ? (
-                           <Select
-                              option={
-                                 ingredientState.realTime.labelTemplate || []
-                              }
-                              addOption={() => selectLabelTemplate('realTime')}
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'realTime',
-                                       name: 'labelTemplate',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
+                        {ingredientState.realTime.operationConfig ? (
+                           <Text type="p">
+                              {`${ingredientState.realTime.operationConfig.station.name} - ${ingredientState.realTime.operationConfig.labelTemplate.name}`}
+                           </Text>
                         ) : (
-                           '-'
+                           <TextButton
+                              type="ghost"
+                              onClick={() =>
+                                 selectOperationConfiguration('realTime')
+                              }
+                           >
+                              Select
+                           </TextButton>
                         )}
                      </td>
                   </tr>
@@ -352,7 +367,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                            />
                         </StyledInputWrapper>
                      </td>
-                     <td>{ingredientState.plannedLot.station?.title || '-'}</td>
                      <td>
                         {ingredientState.plannedLot.sachetItem?.title || '-'}
                      </td>
@@ -399,27 +413,19 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                         )}
                      </td>
                      <td>
-                        {ingredientState.plannedLot.sachetItem ? (
-                           <Select
-                              option={
-                                 ingredientState.plannedLot.labelTemplate || []
-                              }
-                              addOption={() =>
-                                 selectLabelTemplate('plannedLot')
-                              }
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'plannedLot',
-                                       name: 'labelTemplate',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
+                        {ingredientState.plannedLot.operationConfig ? (
+                           <Text type="p">
+                              {`${ingredientState.plannedLot.operationConfig.station.name} - ${ingredientState.plannedLot.operationConfig.labelTemplate.name}`}
+                           </Text>
                         ) : (
-                           '-'
+                           <TextButton
+                              type="ghost"
+                              onClick={() =>
+                                 selectOperationConfiguration('plannedLot')
+                              }
+                           >
+                              Select
+                           </TextButton>
                         )}
                      </td>
                   </tr>

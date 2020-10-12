@@ -8,7 +8,6 @@ export const state = {
    realTime: {
       isPublished: true,
       isLive: false,
-      station: undefined,
       labelTemplate: undefined,
       bulkItem: undefined,
       sachetItem: undefined,
@@ -16,11 +15,11 @@ export const state = {
       packaging: undefined,
       priority: 1,
       accuracy: 0,
+      operationConfig: undefined,
    },
    plannedLot: {
       isPublished: true,
       isLive: false,
-      station: undefined,
       labelTemplate: undefined,
       bulkItem: undefined,
       sachetItem: undefined,
@@ -28,6 +27,7 @@ export const state = {
       packaging: undefined,
       priority: 2,
       accuracy: 0,
+      operationConfig: undefined,
    },
    currentMode: undefined,
    editMode: undefined,

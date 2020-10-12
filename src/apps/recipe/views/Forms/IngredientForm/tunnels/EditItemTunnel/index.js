@@ -80,13 +80,13 @@ const EditItemTunnel = ({ closeTunnel }) => {
                      : null,
             },
          })
-         closeTunnel(4)
+         closeTunnel(3)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Item" close={() => closeTunnel(4)} />
+         <TunnelHeader title="Select Item" close={() => closeTunnel(3)} />
          <TunnelBody>
             {bulkItemsLoading || supplierItemsLoading ? (
                <Loader />
