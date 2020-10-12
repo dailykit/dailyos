@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 import { useState } from 'react'
 import { GET_INSIGHT } from '../graphql'
 import { buildOptions, transformer } from '../utils/transformer'
+import { merge } from 'lodash'
 
 function onError(error) {
    console.log(error)
@@ -45,7 +46,7 @@ let gqlQuery = {
  * @returns {{loading: boolean, tableData: any[] | null, switches: any, optionVariables: any, options: any, updateSwitches: () => {}, updateOptions: () => {}, aggregates: {}} insight
  */
 export const useInsights = (
-   title,
+   identifier,
    options = {
       includeTableData: true,
    }
@@ -68,12 +69,13 @@ export const useInsights = (
             switches: null,
             id: null,
             filters: null,
+            defaultOptions: {},
          },
       } = {},
    } = useQuery(GET_INSIGHT, {
       onError,
       variables: {
-         title,
+         identifier,
       },
       onCompleted: data => {
          setVariableOptions(data.insight.defaultOptions || {})
@@ -89,7 +91,12 @@ export const useInsights = (
       onError,
       variables: {
          ...variableSwitches,
-         options: variableOptions,
+         options: {
+            ...insight.defaultOptions,
+            ...merge(variableOptions, options.where),
+         },
+         limit: options.limit,
+         orderBy: options.order,
       },
       onCompleted: data => {
          const nodeKey = Object.keys(data)[0]

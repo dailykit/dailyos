@@ -14,12 +14,15 @@ import { tableConfig } from './tableConfig'
 
 /**
  *
- * @param {{ includeChart?: boolean, includeTable?: boolean, title: string, nodeKey: string}} props
+ * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}}} props
  */
 export default function Insight({
    includeTable = true,
    includeChart = false,
-   title = '',
+   identifier = '',
+   where = {},
+   limit,
+   order,
 }) {
    const [isDiff, setIsDiff] = useState(false)
 
@@ -37,9 +40,12 @@ export default function Insight({
       newData,
       oldAggregates,
       newAggregates,
-   } = useInsights(title, {
+   } = useInsights(identifier, {
       includeTableData: includeTable,
       includeChartData: includeChart,
+      where,
+      limit,
+      order,
    })
 
    return (
@@ -106,11 +112,14 @@ export default function Insight({
                      data={newTableData.length ? newTableData : oldTableData}
                   />
                ) : null}
-               <ReactTabulator
-                  columns={[]}
-                  options={tableConfig}
-                  data={oldTableData}
-               />
+
+               {includeTable && (
+                  <ReactTabulator
+                     columns={[]}
+                     options={tableConfig}
+                     data={oldTableData}
+                  />
+               )}
             </Flex>
          </StyledContainer>
       </>
@@ -165,11 +174,11 @@ const StyledContainer = styled.div`
    padding: 1rem 2rem;
    background: #ffffff;
    border-radius: 10px;
-   overflow-x: auto;
 `
 const StyledGrid = styled.div`
    display: grid;
    grid-template-columns: ${({ isDiff }) => (isDiff ? '1fr' : '1fr 1fr')};
    gap: 1rem;
 `
+
 export { CounterBar }

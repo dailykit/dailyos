@@ -1,9 +1,9 @@
 import gql from 'graphql-tag'
 
 export const GET_INSIGHT = gql`
-   query GetInsight($title: String!) {
-      insight(title: $title) {
-         title
+   query GetInsight($identifier: String!) {
+      insight(identifier: $identifier) {
+         identifier
          availableOptions
          filters
          defaultOptions
@@ -21,7 +21,7 @@ export const GET_INSIGHT = gql`
 export const INSIGHTS = gql`
    query insights {
       insights_insights(where: { isActive: { _eq: true } }) {
-         title
+         identifier
       }
    }
 `

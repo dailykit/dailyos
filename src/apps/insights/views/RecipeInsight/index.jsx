@@ -22,10 +22,12 @@ const ReferralPlansListing = () => {
          {insights.map(insight => {
             return (
                <Insight
-                  key={insight.title}
-                  title={insight.title}
+                  key={insight.identifier}
+                  identifier={insight.identifier}
                   includeChart
-                  statsPosition="chart"
+                  // where={{ amountPaid: { _lte: 2 } }}
+                  // limit={2}
+                  // order={{ amountPaid: 'desc' }}
                />
             )
          })}
