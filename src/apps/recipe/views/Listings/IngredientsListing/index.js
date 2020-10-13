@@ -200,13 +200,11 @@ function DataTable({
 function DeleteIngredient({ cell, onDelete }) {
    const ingredient = cell.getData()
 
-   const deleteHandler = e => {
-      e.stopPropagation()
-      onDelete(ingredient)
-   }
-
    return (
-      <IconButton type="ghost" onClick={deleteHandler}>
+      <IconButton
+         type="ghost"
+         onClick={e => e.stopPropagation() && onDelete(ingredient)}
+      >
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )

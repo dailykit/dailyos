@@ -1,38 +1,60 @@
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+
+// third party imports
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import tableOptions from '../tableOption'
+import {
+   ComboButton,
+   Flex,
+   IconButton,
+   Loader,
+   Spacer,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
 
-import ServingsCount from '../../../utils/countFormatter'
+// shared dir imports
+import { Tooltip } from '../../../../../shared/components'
+import { logger, randomSuffix } from '../../../../../shared/utils'
 
-import { randomSuffix } from '../../../../../shared/utils'
-import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
+// styled components imports
+import { StyledTableActions, StyledTableHeader } from '../styled'
+
+// graphql imports
 import {
    CREATE_SIMPLE_RECIPE,
    DELETE_SIMPLE_RECIPES,
    S_RECIPES,
 } from '../../../graphql'
-import {
-   StyledContent,
-   StyledHeader,
-   StyledTableActions,
-   StyledTableHeader,
-   StyledWrapper,
-} from '../styled'
+
+// context imports
+import { useTabs } from '../../../context'
+
+// local imports
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import ServingsCount from '../../../utils/countFormatter'
+import tableOptions from '../tableOption'
 
 const address = 'apps.recipe.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
    const { t } = useTranslation()
    const { addTab, tab } = useTabs()
-   const [recipes, setRecipes] = React.useState([])
 
    // Queries and Mutations
-   const { loading, data } = useSubscription(S_RECIPES)
+   const {
+      loading,
+      data: { simpleRecipes: recipes = [] } = {},
+      error,
+   } = useSubscription(S_RECIPES)
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: input => {
          addTab(
@@ -42,17 +64,18 @@ const RecipesListing = () => {
          toast.success('Recipe added!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Cannot create recipe!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
+
    const [deleteRecipes] = useMutation(DELETE_SIMPLE_RECIPES, {
       onCompleted: () => {
          toast.success('Recipe deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Failed to delete!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -62,23 +85,17 @@ const RecipesListing = () => {
       }
    }, [tab, addTab])
 
-   // Effects
-   React.useEffect(() => {
-      if (data) setRecipes(data.simpleRecipes)
-   }, [data])
-
    // Handlers
    const createRecipeHandler = () => {
       const name = `recipe-${randomSuffix()}`
       createRecipe({ variables: { name } })
    }
-   const deleteRecipeHandler = (e, recipe) => {
-      // e.stopPropagation()
-      const cnfirmed = window.confirm(
+
+   const deleteRecipeHandler = recipe => {
+      const confirmed = window.confirm(
          `Are you sure you want to delete recipe - ${recipe.name}?`
       )
-
-      if (cnfirmed) {
+      if (confirmed) {
          deleteRecipes({
             variables: {
                ids: [recipe.id],
@@ -90,20 +107,24 @@ const RecipesListing = () => {
    if (loading) return <Loader />
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <h1>{t(address.concat('recipes'))}</h1>
-            <p>
+      <Flex maxWidth="1280px" padding="32px" margin="0 auto">
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container alignItems="center">
+               <Text as="h2">{t(address.concat('recipes'))}</Text>
+               <Tooltip identifier="recipes_list_heading" />
+            </Flex>
+            <Text as="h3">
                {t(address.concat('total'))}: {recipes.length}
-            </p>
-         </StyledHeader>
+            </Text>
+         </Flex>
+         <Spacer size="32px" />
          <DataTable
             data={recipes}
             addTab={addTab}
             deleteRecipeHandler={deleteRecipeHandler}
             createRecipeHandler={createRecipeHandler}
          />
-      </StyledWrapper>
+      </Flex>
    )
 }
 
@@ -146,11 +167,9 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          headerFilter: false,
          hozAlign: 'center',
          headerHozAlign: 'center',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteRecipeHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteRecipe />),
+         formatter: reactFormatter(
+            <DeleteRecipe onDelete={deleteRecipeHandler} />
+         ),
          width: 150,
       },
    ]
@@ -169,30 +188,37 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
             >
                Clear Filters
             </TextButton>
-
             <StyledTableActions>
-               <IconButton type="solid" onClick={createRecipeHandler}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
+               <ComboButton type="solid" onClick={createRecipeHandler}>
+                  <AddIcon color="#fff" size={24} /> Create Recipe
+               </ComboButton>
             </StyledTableActions>
          </StyledTableHeader>
-         <StyledContent>
-            <ReactTabulator
-               ref={tableRef}
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               options={tableOptions}
-               data-custom-attr="test-custom-attribute"
-               className="custom-css-class"
-            />
-         </StyledContent>
+         <Spacer size="16px" />
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={tableOptions}
+            data-custom-attr="test-custom-attribute"
+            className="custom-css-class"
+         />
       </>
    )
 }
 
-function DeleteRecipe() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteRecipe({ cell, onDelete }) {
+   const recipe = cell.getData()
+
+   return (
+      <IconButton
+         type="ghost"
+         onClick={e => e.stopPropagation() && onDelete(recipe)}
+      >
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
 export default RecipesListing
