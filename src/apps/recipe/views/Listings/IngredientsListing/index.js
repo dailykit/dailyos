@@ -26,7 +26,7 @@ import { StyledTableActions, StyledTableHeader } from '../styled'
 // graphql imports
 import {
    CREATE_INGREDIENT,
-   DELETE_INGREDIENT,
+   DELETE_INGREDIENTS,
    S_INGREDIENTS,
 } from '../../../graphql'
 
@@ -58,8 +58,8 @@ const IngredientsListing = () => {
       onCompleted: data => {
          toast.success('Ingredient created!')
          addTab(
-            data.createIngredient.name,
-            `/recipe/ingredients/${data.createIngredient.id}`
+            data.createIngredient.returning[0].name,
+            `/recipe/ingredients/${data.createIngredient.returning[0].id}`
          )
       },
       onError: error => {
@@ -67,7 +67,7 @@ const IngredientsListing = () => {
          logger(error)
       },
    })
-   const [deleteIngredient] = useMutation(DELETE_INGREDIENT, {
+   const [deleteIngredients] = useMutation(DELETE_INGREDIENTS, {
       onCompleted: () => {
          toast.success('Ingredient deleted!')
       },
@@ -85,7 +85,7 @@ const IngredientsListing = () => {
 
    const createIngredientHandler = async () => {
       const name = `ingredient-${randomSuffix()}`
-      createIngredient({ variables: { object: { name } } })
+      createIngredient({ variables: { name } })
    }
 
    const deleteIngredientHandler = ingredient => {
@@ -94,9 +94,9 @@ const IngredientsListing = () => {
             `Are you sure you want to delete ingredient - ${ingredient.name}?`
          )
       ) {
-         deleteIngredient({
+         deleteIngredients({
             variables: {
-               id: ingredient.id,
+               ids: [ingredient.id],
             },
          })
       }

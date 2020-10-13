@@ -1,18 +1,22 @@
 import gql from 'graphql-tag'
 
 export const CREATE_INGREDIENT = gql`
-   mutation CreateIngredient($object: ingredient_ingredient_insert_input!) {
-      createIngredient(object: $object) {
-         id
-         name
+   mutation CreateIngredient($name: String) {
+      createIngredient(objects: { name: $name }) {
+         returning {
+            id
+            name
+         }
       }
    }
 `
 
-export const DELETE_INGREDIENT = gql`
-   mutation DeleteIngredient($id: Int!) {
-      deleteIngredient(id: $id) {
-         id
+export const DELETE_INGREDIENTS = gql`
+   mutation DeleteIngredients($ids: [Int!]!) {
+      deleteIngredient(where: { id: { _in: $ids } }) {
+         returning {
+            id
+         }
       }
    }
 `
