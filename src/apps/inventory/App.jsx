@@ -5,6 +5,8 @@ import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
 import './views/Listings/tableStyle.css'
 
+import ErrorBoundary from '../../shared/components/ErrorBoundary'
+
 // Sections
 import Header from './sections/Header'
 import Sidebar from './sections/Sidebar'
@@ -20,7 +22,9 @@ const App = () => {
          <BrowserRouter basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <Main />
+            <ErrorBoundary rootRoute="/apps/inventory">
+               <Main />
+            </ErrorBoundary>
          </BrowserRouter>
       </StyledWrapper>
    )
