@@ -19,9 +19,6 @@ import {
 import { Tooltip } from '../../../../../shared/components'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 
-// styled components imports
-import { StyledTableActions, StyledTableHeader } from '../styled'
-
 // graphql imports
 import {
    CREATE_SIMPLE_RECIPE,
@@ -181,19 +178,17 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
 
    return (
       <>
-         <StyledTableHeader>
+         <Flex container alignItems="center" justifyContent="space-between">
             <TextButton
                type="outline"
                onClick={() => tableRef.current.table.clearHeaderFilter()}
             >
                Clear Filters
             </TextButton>
-            <StyledTableActions>
-               <ComboButton type="solid" onClick={createRecipeHandler}>
-                  <AddIcon color="#fff" size={24} /> Create Recipe
-               </ComboButton>
-            </StyledTableActions>
-         </StyledTableHeader>
+            <ComboButton type="solid" onClick={createRecipeHandler}>
+               <AddIcon color="#fff" size={24} /> Create Recipe
+            </ComboButton>
+         </Flex>
          <Spacer size="16px" />
          <ReactTabulator
             ref={tableRef}

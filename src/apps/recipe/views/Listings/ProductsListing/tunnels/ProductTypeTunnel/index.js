@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Text, TunnelHeader } from '@dailykit/ui'
+import { Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { randomSuffix } from '../../../../../../../shared/utils'
@@ -117,7 +117,7 @@ export default function ProductTypeTunnel({ close }) {
                   </Trans>
                </Text>
             </SolidTile>
-            <br />
+            <Spacer size="16px" />
             <SolidTile onClick={() => createProduct('recipe')}>
                <Text as="h1">{t(address.concat('simple recipe product'))}</Text>
                <Text as="subtitle">
@@ -127,7 +127,7 @@ export default function ProductTypeTunnel({ close }) {
                   </Trans>
                </Text>
             </SolidTile>
-            <br />
+            <Spacer size="16px" />
             <SolidTile onClick={() => createProduct('customizable')}>
                <Text as="h1">{t(address.concat('customizable product'))}</Text>
                <Text as="subtitle">
@@ -137,7 +137,7 @@ export default function ProductTypeTunnel({ close }) {
                   </Trans>
                </Text>
             </SolidTile>
-            <br />
+            <Spacer size="16px" />
             <SolidTile onClick={() => createProduct('combo')}>
                <Text as="h1">{t(address.concat('combo product'))}</Text>
                <Text as="subtitle">
@@ -147,6 +147,7 @@ export default function ProductTypeTunnel({ close }) {
                   </Trans>
                </Text>
             </SolidTile>
+            <Spacer size="16px" />
          </TunnelBody>
       </>
    )
