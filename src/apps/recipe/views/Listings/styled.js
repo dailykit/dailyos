@@ -45,10 +45,7 @@ export const StyledTableActions = styled.div`
    grid-auto-flow: column;
    grid-gap: 16px;
 `
-export const StyledContent = styled.div`
-   margin-top: 32px;
-   padding: 0 30px;
-`
+export const StyledContent = styled.div``
 
 export const StyledPagination = styled.div`
    color: 555b6e;

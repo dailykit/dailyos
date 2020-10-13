@@ -1,30 +1,42 @@
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
-import * as moment from 'moment'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+
+// third party imports
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import tableOptions from '../tableOption'
+import {
+   ComboButton,
+   Flex,
+   IconButton,
+   Loader,
+   Spacer,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
+import * as moment from 'moment'
 
-import ProcessingCount from '../../../utils/countFormatter'
+// shared dir imports
+import { Tooltip } from '../../../../../shared/components'
+import { logger, randomSuffix } from '../../../../../shared/utils'
 
-import { randomSuffix } from '../../../../../shared/utils'
-import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
+// styled components imports
+import { StyledTableActions, StyledTableHeader } from '../styled'
+
+// graphql imports
 import {
    CREATE_INGREDIENT,
-   DELETE_INGREDIENTS,
+   DELETE_INGREDIENT,
    S_INGREDIENTS,
 } from '../../../graphql'
-import {
-   StyledContent,
-   StyledHeader,
-   StyledPagination,
-   StyledTableActions,
-   StyledTableHeader,
-   StyledWrapper,
-} from '../styled'
+
+// context imports
+import { useTabs } from '../../../context'
+
+// local imports
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import ProcessingCount from '../../../utils/countFormatter'
+import tableOptions from '../tableOption'
 
 const address = 'apps.recipe.views.listings.ingredientslisting.'
 
@@ -36,29 +48,32 @@ const IngredientsListing = () => {
       S_INGREDIENTS
    )
 
-   if (error) console.log(error)
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
       onCompleted: data => {
          toast.success('Ingredient created!')
          addTab(
-            data.createIngredient.returning[0].name,
-            `/recipe/ingredients/${data.createIngredient.returning[0].id}`
+            data.createIngredient.name,
+            `/recipe/ingredients/${data.createIngredient.id}`
          )
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
-   const [deleteIngredients] = useMutation(DELETE_INGREDIENTS, {
+   const [deleteIngredient] = useMutation(DELETE_INGREDIENT, {
       onCompleted: () => {
          toast.success('Ingredient deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Failed to delete!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -70,19 +85,18 @@ const IngredientsListing = () => {
 
    const createIngredientHandler = async () => {
       const name = `ingredient-${randomSuffix()}`
-      createIngredient({ variables: { name } })
+      createIngredient({ variables: { object: { name } } })
    }
 
-   const deleteIngredientHandler = (e, ingredient) => {
-      e.stopPropagation()
+   const deleteIngredientHandler = ingredient => {
       if (
          window.confirm(
             `Are you sure you want to delete ingredient - ${ingredient.name}?`
          )
       ) {
-         deleteIngredients({
+         deleteIngredient({
             variables: {
-               ids: [ingredient.id],
+               id: ingredient.id,
             },
          })
       }
@@ -91,18 +105,22 @@ const IngredientsListing = () => {
    if (loading) return <Loader />
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <h1>{t(address.concat('ingredients'))}</h1>
-            <StyledPagination>Total: {ingredients?.length}</StyledPagination>
-         </StyledHeader>
+      <Flex maxWidth="1280px" margin="0 auto" padding="32px">
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container>
+               <Text as="h2">Ingredients</Text>
+               <Tooltip identifier="ingredients_list_heading" />
+            </Flex>
+            <Text as="h3">Total: {ingredients.length}</Text>
+         </Flex>
+         <Spacer size="32px" />
          <DataTable
             data={ingredients}
             addTab={addTab}
             deleteIngredientHandler={deleteIngredientHandler}
             createIngredientHandler={createIngredientHandler}
          />
-      </StyledWrapper>
+      </Flex>
    )
 }
 
@@ -137,11 +155,9 @@ function DataTable({
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteIngredientHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteIngredient />),
+         formatter: reactFormatter(
+            <DeleteIngredient onDelete={deleteIngredientHandler} />
+         ),
          width: 150,
       },
    ]
@@ -162,28 +178,38 @@ function DataTable({
             </TextButton>
 
             <StyledTableActions>
-               <IconButton type="solid" onClick={createIngredientHandler}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
+               <ComboButton type="solid" onClick={createIngredientHandler}>
+                  <AddIcon color="#fff" size={24} /> Add Ingredient
+               </ComboButton>
             </StyledTableActions>
          </StyledTableHeader>
-         <StyledContent>
-            <ReactTabulator
-               ref={tableRef}
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               options={tableOptions}
-               data-custom-attr="test-custom-attribute"
-               className="custom-css-class"
-            />
-         </StyledContent>
+         <Spacer size="16px" />
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            options={tableOptions}
+            data-custom-attr="test-custom-attribute"
+            className="custom-css-class"
+         />
       </>
    )
 }
 
-function DeleteIngredient() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteIngredient({ cell, onDelete }) {
+   const ingredient = cell.getData()
+
+   const deleteHandler = e => {
+      e.stopPropagation()
+      onDelete(ingredient)
+   }
+
+   return (
+      <IconButton type="ghost" onClick={deleteHandler}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
 function FormatDate({
