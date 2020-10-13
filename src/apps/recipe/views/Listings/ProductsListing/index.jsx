@@ -1,17 +1,26 @@
 import React from 'react'
-// Components
+
+// third party imports
+import { useTranslation } from 'react-i18next'
 import {
-   IconButton,
+   ComboButton,
+   Flex,
    RadioGroup,
+   Spacer,
+   Text,
    Tunnel,
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-// Icons
+
+// shared dir imports
+import { Tooltip } from '../../../../../shared/components'
+
+// context imports
+import { useTabs } from '../../../context'
+
+// local imports
 import { AddIcon } from '../../../assets/icons'
-// Styled
-import { Spacer, StyledHeader, StyledWrapper } from '../styled'
 import {
    ComboProducts,
    CustomizableProducts,
@@ -19,7 +28,6 @@ import {
    SimpleRecipeProducts,
 } from './components'
 import { ProductTypeTunnel } from './tunnels'
-import { useTabs } from '../../../context'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
@@ -64,21 +72,25 @@ const ProductsListing = () => {
                <ProductTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <StyledWrapper>
-            <StyledHeader>
-               <h1>{t(address.concat('products'))}</h1>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
-            </StyledHeader>
+         <Flex maxWidth="1280px" padding="32px" margin="0 auto">
+            <Flex container alignItems="center" justifyContent="space-between">
+               <Flex container alignItems="center">
+                  <Text as="h2">{t(address.concat('products'))}</Text>
+                  <Tooltip identifier="products_list_heading" />
+               </Flex>
+               <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                  <AddIcon color="#fff" size={24} /> Add Product
+               </ComboButton>
+            </Flex>
+            <Spacer size="32px" />
             <RadioGroup
                options={options}
                active="inventory"
                onChange={option => setView(option.id)}
             />
-            <Spacer />
+            <Spacer size="16px" />
             {renderListing()}
-         </StyledWrapper>
+         </Flex>
       </>
    )
 }
