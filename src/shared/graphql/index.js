@@ -88,8 +88,14 @@ export const CREATE_OPERATION_CONFIG = gql`
          object: $object
       ) {
          id
-         station
-         labelTemplate
+         station {
+            id
+            name
+         }
+         labelTemplate {
+            id
+            name
+         }
       }
    }
 `
