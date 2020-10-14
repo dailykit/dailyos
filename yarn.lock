@@ -1203,9 +1203,9 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-"@dailykit/ui@^0.8.1":
+"@dailykit/ui@0.8.1":
   version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.1.tgz#cc984bf7bb7afcf04eed104d521f4a920d371e0e"
+  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.8.1.tgz#cc984bf7bb7afcf04eed104d521f4a920d371e0e"
   integrity sha512-btudWYcd7RLcNNhzGvbHUXvz3y4UYx3LKvdECdEHsa7r6X+eHPKWMgp8DdkQfhJa4LbRpvgD3MN5CXhauKKN3Q==
   dependencies:
     concurrently "^5.3.0"
@@ -3786,7 +3786,7 @@ concat-stream@^1.5.0:
 
 concurrently@^5.3.0:
   version "5.3.0"
-  resolved "https://registry.yarnpkg.com/concurrently/-/concurrently-5.3.0.tgz#7500de6410d043c912b2da27de3202cb489b1e7b"
+  resolved "https://registry.npmjs.org/concurrently/-/concurrently-5.3.0.tgz#7500de6410d043c912b2da27de3202cb489b1e7b"
   integrity sha512-8MhqOB6PWlBfA2vJ8a0bSFKATOdWlHiQlk11IfmQBPaHVP8oP2gsh2MObE6UR3hqDHqvaIvLTyceNW6obVuFHQ==
   dependencies:
     chalk "^2.4.2"
@@ -10255,7 +10255,7 @@ read-pkg@^3.0.0:
 
 read-pkg@^4.0.1:
   version "4.0.1"
-  resolved "https://registry.yarnpkg.com/read-pkg/-/read-pkg-4.0.1.tgz#963625378f3e1c4d48c85872b5a6ec7d5d093237"
+  resolved "https://registry.npmjs.org/read-pkg/-/read-pkg-4.0.1.tgz#963625378f3e1c4d48c85872b5a6ec7d5d093237"
   integrity sha1-ljYlN48+HE1IyFhytabsfV0JMjc=
   dependencies:
     normalize-package-data "^2.3.2"
@@ -11090,7 +11090,7 @@ source-map@^0.5.0, source-map@^0.5.6:
 
 spawn-command@^0.0.2-1:
   version "0.0.2-1"
-  resolved "https://registry.yarnpkg.com/spawn-command/-/spawn-command-0.0.2-1.tgz#62f5e9466981c1b796dc5929937e11c9c6921bd0"
+  resolved "https://registry.npmjs.org/spawn-command/-/spawn-command-0.0.2-1.tgz#62f5e9466981c1b796dc5929937e11c9c6921bd0"
   integrity sha1-YvXpRmmBwbeW3Fkpk34RycaSG9A=
 
 spdx-correct@^3.0.0:
@@ -11734,7 +11734,7 @@ tr46@^1.0.1:
 
 tree-kill@^1.2.2:
   version "1.2.2"
-  resolved "https://registry.yarnpkg.com/tree-kill/-/tree-kill-1.2.2.tgz#4ca09a9092c88b73a7cdc5e8a01b507b0790a0cc"
+  resolved "https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.2.tgz#4ca09a9092c88b73a7cdc5e8a01b507b0790a0cc"
   integrity sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==
 
 ts-invariant@^0.4.0, ts-invariant@^0.4.4:

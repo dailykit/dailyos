@@ -6,7 +6,11 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
+<<<<<<< HEAD
       "@dailykit/ui": "^0.8.1",
+=======
+      "@dailykit/ui": "0.8.1",
+>>>>>>> 33f57faa1b8c28cc19ca3645303b8fb21d1f6bc9
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
       "@sentry/react": "^5.25.0",

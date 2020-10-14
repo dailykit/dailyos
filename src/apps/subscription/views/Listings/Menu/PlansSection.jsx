@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
-import { Text, Toggle } from '@dailykit/ui'
+import { Text, Toggle, Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useMenu } from './state'
@@ -96,14 +96,19 @@ const PlansSection = () => {
    }
    return (
       <Wrapper>
-         <Header>
+         <Flex
+            container
+            height="48px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="h2">Plans</Text>
             <Toggle
                label="Add Permanently"
                checked={state.plans.isPermanent}
                setChecked={() => dispatch({ type: 'TOGGLE_PERMANENT' })}
             />
-         </Header>
+         </Flex>
          {!state.date && <span>Select a date to view plans.</span>}
          {!loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
@@ -140,11 +145,7 @@ const ProductsCount = ({ cell: { _cell } }) => {
       </div>
    )
 }
+
 const Wrapper = styled.main`
    padding: 0 16px;
-`
-const Header = styled.header`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
 `
