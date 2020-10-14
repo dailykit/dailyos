@@ -1,6 +1,7 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
    IconButton,
    Input,
    Loader,
@@ -15,11 +16,12 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import EditIcon from '../../../assets/icons/Edit'
-import { AddressCard, ContactCard, FormHeading } from '../../../components'
+import { AddressCard, ContactCard } from '../../../components'
 import { useTabs } from '../../../context'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
-import { FlexContainer, FormActions, StyledWrapper } from '../styled'
-import { Container, ImageContainer } from './styled'
+import { StyledHeader } from '../../Listings/styled'
+import { FlexContainer, StyledWrapper } from '../styled'
+import { ImageContainer } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import LogoTunnel from './Tunnels/LogoTunnel'
 import PersonContactTunnel from './Tunnels/PersonContactTunnel'
@@ -103,7 +105,7 @@ export default function SupplierForm() {
          </Tunnels>
 
          <StyledWrapper>
-            <FormHeading>
+            <StyledHeader>
                <div>
                   <Input
                      label="Supplier Name"
@@ -115,128 +117,104 @@ export default function SupplierForm() {
                   />
                </div>
 
-               <FormActions style={{ width: '25%' }}>
+               <div style={{ width: '110px' }}>
                   <FlexContainer>
                      <>
                         <ShowAvailability formState={formState} />
                         <span style={{ width: '20px' }} />
                      </>
                   </FlexContainer>
-               </FormActions>
-            </FormHeading>
-            <Container>
-               {formState.logo ? (
-                  <ImageContainer>
-                     <div>
-                        <span
-                           role="button"
-                           tabIndex="0"
-                           onClick={() => openAssetTunnel(1)}
-                           onKeyDown={e =>
-                              e.charCode === 13 && openAssetTunnel(1)
-                           }
-                        >
-                           <EditIcon />
-                        </span>
-                     </div>
-                     <img src={formState.logo} alt="supplier logo" />
-                  </ImageContainer>
-               ) : (
-                  <ButtonTile
-                     onClick={() => openAssetTunnel(1)}
-                     type="primary"
-                     size="lg"
-                     text={t(address.concat('add logo of the supplier'))}
-                     helper={t(
-                        address.concat(
-                           'upto 1MB - only JPGs, PNGs, and PDFs are allowed'
-                        )
-                     )}
-                  />
-               )}
-
-               <AddressView
-                  formState={formState}
-                  openTunnel={openAddressTunnel}
+               </div>
+            </StyledHeader>
+            {formState.logo ? (
+               <ImageContainer>
+                  <div>
+                     <span
+                        role="button"
+                        tabIndex="0"
+                        onClick={() => openAssetTunnel(1)}
+                        onKeyDown={e => e.charCode === 13 && openAssetTunnel(1)}
+                     >
+                        <EditIcon />
+                     </span>
+                  </div>
+                  <img src={formState.logo} alt="supplier logo" />
+               </ImageContainer>
+            ) : (
+               <ButtonTile
+                  onClick={() => openAssetTunnel(1)}
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat('add logo of the supplier'))}
+                  helper={t(
+                     address.concat(
+                        'upto 1MB - only JPGs, PNGs, and PDFs are allowed'
+                     )
+                  )}
                />
+            )}
 
-               <FlexContainer
-                  style={{ alignItems: 'center', marginTop: '24px' }}
-               >
-                  <Text as="title">
-                     {t(address.concat('person of contact'))}
-                  </Text>
-                  <hr
-                     style={{
-                        border: '1px solid #D8D8D8',
-                        width: '100%',
-                        marginLeft: '5px',
-                     }}
-                  />
+            <AddressView formState={formState} openTunnel={openAddressTunnel} />
 
-                  {formState.contactPerson?.email ||
-                  formState.contactPerson?.firstName ? (
+            <Flex container alignItems="center" margin="24px 0 0 0">
+               <Text as="title">{t(address.concat('person of contact'))}</Text>
+
+               {formState.contactPerson?.email ||
+               formState.contactPerson?.firstName ? (
+                  <>
+                     <span style={{ width: '8px' }} />
                      <IconButton
                         onClick={() => openContactTunnel(1)}
                         type="ghost"
                      >
                         <EditIcon color="#555b6e" />
                      </IconButton>
-                  ) : null}
-               </FlexContainer>
+                  </>
+               ) : null}
+            </Flex>
 
-               {formState.contactPerson?.firstName &&
-               formState.contactPerson?.email ? (
-                  <ContactCard
-                     name={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
-                  />
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text={t(address.concat('add person of contact'))}
-                     onClick={() => openContactTunnel(1)}
-                     style={{ margin: '20px 0' }}
-                  />
-               )}
-
-               <FlexContainer
-                  style={{ alignItems: 'center', marginTop: '24px' }}
-               >
-                  <Text as="title">
-                     {t(address.concat('terms and conditions'))}
-                  </Text>
-                  <hr
-                     style={{
-                        border: '1px solid #D8D8D8',
-                        width: '100%',
-                        marginLeft: '5px',
-                     }}
-                  />
-               </FlexContainer>
-
-               <br />
-
-               <Input
-                  type="textarea"
-                  label={t(address.concat('payment terms'))}
-                  name="paymentTerms"
-                  rows="4"
-                  value={paymentTerms}
-                  onChange={e => setPaymentTerms(e.target.value)}
-                  onBlur={handleUpdateSupplier}
+            {formState.contactPerson?.firstName &&
+            formState.contactPerson?.email ? (
+               <ContactCard
+                  name={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
                />
-               <br />
-
-               <Input
-                  type="textarea"
-                  label={t(address.concat('shipping terms'))}
-                  name="shippingTerms"
-                  rows="4"
-                  value={shippingTerms}
-                  onChange={e => setShippingTerms(e.target.value)}
-                  onBlur={handleUpdateSupplier}
+            ) : (
+               <ButtonTile
+                  type="secondary"
+                  text={t(address.concat('add person of contact'))}
+                  onClick={() => openContactTunnel(1)}
+                  style={{ margin: '20px 0' }}
                />
-            </Container>
+            )}
+
+            <Flex container alignItems="center" margin="24px 0 0 0">
+               <Text as="title">
+                  {t(address.concat('terms and conditions'))}
+               </Text>
+            </Flex>
+
+            <br />
+
+            <Input
+               type="textarea"
+               label={t(address.concat('payment terms'))}
+               name="paymentTerms"
+               rows="4"
+               value={paymentTerms}
+               onChange={e => setPaymentTerms(e.target.value)}
+               onBlur={handleUpdateSupplier}
+            />
+            <br />
+
+            <Input
+               type="textarea"
+               label={t(address.concat('shipping terms'))}
+               name="shippingTerms"
+               rows="4"
+               value={shippingTerms}
+               onChange={e => setShippingTerms(e.target.value)}
+               onBlur={handleUpdateSupplier}
+            />
          </StyledWrapper>
       </>
    )
@@ -280,21 +258,17 @@ function AddressView({ formState, openTunnel }) {
 
    return (
       <>
-         <FlexContainer style={{ alignItems: 'center', marginTop: '24px' }}>
+         <Flex container margin="24px 0 0 0" alignItems="center">
             <Text as="title">{t(address.concat('address'))}</Text>
-            <hr
-               style={{
-                  border: '1px solid #D8D8D8',
-                  width: '100%',
-                  marginLeft: '5px',
-               }}
-            />
             {check && (
-               <IconButton onClick={() => openTunnel(1)} type="ghost">
-                  <EditIcon color="#555b6e" />
-               </IconButton>
+               <>
+                  <span style={{ width: '8px' }} />
+                  <IconButton onClick={() => openTunnel(1)} type="ghost">
+                     <EditIcon color="#555b6e" />
+                  </IconButton>
+               </>
             )}
-         </FlexContainer>
+         </Flex>
 
          {check ? (
             <AddressCard

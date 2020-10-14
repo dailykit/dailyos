@@ -24,7 +24,6 @@ const StyledCard = styled.div`
    width: 80%;
    margin: 0 auto;
    margin-top: 20px;
-   border-radius: 8px;
    display: flex;
    justify-content: space-between;
    padding: 10px;

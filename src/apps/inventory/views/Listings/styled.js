@@ -13,11 +13,10 @@ export const StyledWrapper = styled.div`
 `
 
 export const StyledHeader = styled.div`
-   height: 80px;
+   height: 72px;
    display: flex;
    align-items: center;
    justify-content: space-between;
-   /* width: 90%; */
    margin: 0 auto;
 `
 
