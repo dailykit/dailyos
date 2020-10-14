@@ -145,7 +145,7 @@ const OrdersTable = ({ id }) => {
             <OrderPage />
          ) : (
             <>
-               <Flex container height="80px" padding="16px" alignItems="center">
+               <Flex container alignItems="center">
                   <Text as="title">
                      Orders(
                      {orders.length})

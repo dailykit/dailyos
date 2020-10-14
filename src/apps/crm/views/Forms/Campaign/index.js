@@ -1,28 +1,20 @@
 import React, { useState } from 'react'
 import {
    Toggle,
-   Input,
    Loader,
-   Text,
+   Flex,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   Form,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import {
-   StyledHeader,
-   StyledWrapper,
-   CenterDiv,
-   InputWrapper,
-   StyledRow,
-   StyledComp,
-   StyledDiv,
-} from './styled'
+import { StyledWrapper, InputWrapper, StyledComp, StyledDiv } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import {
    ConditionComp,
@@ -35,23 +27,48 @@ import { logger } from '../../../../../shared/utils'
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
    const { id: campaignId } = useParams()
-   const [campaignTitle, setCampaignTitle] = useState('')
+   const [campaignTitle, setCampaignTitle] = useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [type, setType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+
+   // form validation
+   const validateCampaignName = value => {
+      const text = value.trim()
+      console.log(`text ${text.length}`)
+      let isValid = true
+      let errors = []
+      if (text.length < 2) {
+         isValid = false
+         errors = [...errors, 'Must have atleast two letters.']
+      }
+      console.log(isValid)
+      return { isValid, errors }
+   }
+
    // Subscription
    const { loading, error } = useSubscription(CAMPAIGN_DATA, {
       variables: {
          id: campaignId,
       },
-      onSubscriptionData: data => {
-         setState(data.subscriptionData.data.campaign)
-         setCampaignTitle(data.subscriptionData.data.campaign.metaDetails.title)
-         setType(data.subscriptionData.data.campaign.type)
-         setToggle(data.subscriptionData.data.campaign.isActive)
-         setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
-         setCheckbox(data.subscriptionData.data.campaign.isRewardMulti)
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         setState(data?.campaign || {})
+         setCampaignTitle({
+            ...campaignTitle,
+            value: data?.campaign?.metaDetails?.title || '',
+         })
+         setType(data?.campaign?.type || '')
+         setToggle(data?.campaign?.isActive || false)
+         setTabTitle(data?.campaign?.metaDetails?.title || 'N/A')
+         setCheckbox(data?.campaign?.isRewardMulti || false)
       },
    })
 
@@ -64,7 +81,7 @@ const CampaignForm = () => {
    const [updateCoupon] = useMutation(UPDATE_CAMPAIGN, {
       onCompleted: () => {
          toast.success('Updated!')
-         setTabTitle(campaignTitle)
+         setTabTitle(campaignTitle.value)
       },
       onError: error => {
          toast.error('Something went wrong')
@@ -72,18 +89,6 @@ const CampaignForm = () => {
       },
    })
 
-   const updateCampaignTitle = () => {
-      if (campaignTitle) {
-         updateCoupon({
-            variables: {
-               id: campaignId,
-               set: {
-                  metaDetails: { ...state.metaDetails, title: campaignTitle },
-               },
-            },
-         })
-      }
-   }
    const updatetoggle = () => {
       if (toggle || !toggle) {
          updateCoupon({
@@ -110,6 +115,36 @@ const CampaignForm = () => {
       }
    }
 
+   //campaign name validation & update name handler
+   const onBlur = e => {
+      setCampaignTitle({
+         ...campaignTitle,
+         meta: {
+            ...campaignTitle.meta,
+            isTouched: true,
+            errors: validateCampaignName(campaignTitle.value).errors,
+            isValid: validateCampaignName(campaignTitle.value).isValid,
+         },
+      })
+      if (
+         campaignTitle.meta.isValid &&
+         campaignTitle.meta.errors.length === 0
+      ) {
+         console.log(`mutation should fire ${campaignTitle.meta.isValid}`)
+         updateCoupon({
+            variables: {
+               id: campaignId,
+               set: {
+                  metaDetails: {
+                     ...state.metaDetails,
+                     title: campaignTitle.value,
+                  },
+               },
+            },
+         })
+      }
+   }
+
    React.useEffect(() => {
       if (!tab) {
          addTab('Campaign', '/crm/campaign')
@@ -119,19 +154,40 @@ const CampaignForm = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="15fr 2fr">
-            <InputWrapper>
-               <Input
-                  type="text"
-                  label="Campaign Name"
-                  name="code"
-                  value={campaignTitle}
-                  onChange={e => setCampaignTitle(e.target.value)}
-                  onBlur={updateCampaignTitle}
-               />
-            </InputWrapper>
-            <Toggle checked={toggle} setChecked={updatetoggle} />
-         </StyledHeader>
+         <InputWrapper>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="0 0 16px 0"
+            >
+               <Form.Group>
+                  <Form.Label htmlFor="name" title="Campaign Name">
+                     Campaign Name*
+                  </Form.Label>
+                  <Form.Text
+                     id="campaignName"
+                     name="campaignName"
+                     value={campaignTitle.value}
+                     placeholder="Enter the campaign Name"
+                     onChange={e => {
+                        setCampaignTitle({
+                           ...campaignTitle,
+                           value: e.target.value,
+                        })
+                        console.log(campaignTitle)
+                     }}
+                     onBlur={onBlur}
+                  />
+                  {campaignTitle.meta.isTouched &&
+                     !campaignTitle.meta.isValid &&
+                     campaignTitle.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Toggle checked={toggle} setChecked={updatetoggle} />
+            </Flex>
+         </InputWrapper>
 
          <StyledDiv>
             <HorizontalTabs>

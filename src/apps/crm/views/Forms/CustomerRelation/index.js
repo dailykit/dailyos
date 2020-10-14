@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { Loader, useTunnel } from '@dailykit/ui'
+import { Loader, useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
 import {
@@ -143,7 +143,7 @@ const CustomerRelation = ({ match }) => {
    }
    return (
       <StyledWrapper>
-         <StyledContainer>
+         <Flex container>
             <StyledSideBar>
                <CustomerCard
                   customer={customerData?.customer}
@@ -170,8 +170,12 @@ const CustomerRelation = ({ match }) => {
                   billingAddDisplay="none"
                />
             </StyledSideBar>
-            <StyledMainBar>
-               <StyledContainer>
+            <Flex container width="80%" flexDirection="column">
+               <Flex
+                  container
+                  justifyContent="space-between"
+                  margin="0 16px 16px 0"
+               >
                   <OrderCard
                      data={customerData?.customer?.orders_aggregate?.aggregate}
                      click={() => setActiveCard('Orders')}
@@ -194,10 +198,10 @@ const CustomerRelation = ({ match }) => {
                      active={tab.data.activeCard}
                      heading="Wallet"
                   />
-               </StyledContainer>
+               </Flex>
                <StyledTable>{table}</StyledTable>
-            </StyledMainBar>
-         </StyledContainer>
+            </Flex>
+         </Flex>
 
          <PaymentTunnel
             tunnels={tunnels}
