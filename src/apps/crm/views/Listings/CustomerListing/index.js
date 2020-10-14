@@ -61,8 +61,8 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
-   const rowClick = (e, row) => {
-      const { keycloakId, name } = row._row.data
+   const rowClick = (e, cell) => {
+      const { keycloakId, name } = cell._cell.row.data
       const param = '/crm/customers/'.concat(keycloakId)
       addTab(name, param)
    }
@@ -72,6 +72,9 @@ const CustomerListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
       },
       {
          title: 'Phone',
@@ -170,7 +173,6 @@ const CustomerListing = () => {
             <ReactTabulator
                columns={columns}
                data={customersList}
-               rowClick={rowClick}
                options={{
                   ...options,
                   placeholder: 'No Customers Available Yet !',

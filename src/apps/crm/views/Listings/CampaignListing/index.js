@@ -126,8 +126,8 @@ const CampaignListing = () => {
       }
    }
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
+   const rowClick = (e, cell) => {
+      const { id, name } = cell._cell.row.data
       const param = `/crm/campaign/${id}`
       const tabTitle = name
       addTab(tabTitle, param)
@@ -139,6 +139,9 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
       },
       {
          title: 'Campaign Type',
@@ -197,7 +200,6 @@ const CampaignListing = () => {
             <ReactTabulator
                columns={columns}
                data={campaign}
-               rowClick={rowClick}
                options={{
                   ...options,
                   placeholder: 'No Campaigns Available Yet !',

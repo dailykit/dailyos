@@ -139,8 +139,8 @@ const CouponListing = () => {
       }
    }
 
-   const rowClick = (e, row) => {
-      const { id, code } = row._row.data
+   const rowClick = (e, cell) => {
+      const { id, code } = cell._cell.row.data
       const param = `/crm/coupons/${id}`
       const tabTitle = code
       addTab(tabTitle, param)
@@ -152,6 +152,9 @@ const CouponListing = () => {
          field: 'code',
          headerFilter: true,
          hozAlign: 'left',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
       },
       {
          title: 'Used',
@@ -232,7 +235,6 @@ const CouponListing = () => {
             <ReactTabulator
                columns={columns}
                data={coupons}
-               rowClick={rowClick}
                options={{
                   ...options,
                   placeholder: 'No Coupons Available Yet !',

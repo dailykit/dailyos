@@ -125,6 +125,9 @@ const SubscriptionTable = ({ id, sid }) => {
          field: 'date',
          headerFilter: true,
          cssClass: 'fulfillmentDate',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
          formatter: reactFormatter(<InfoButton />),
          hozAlign: 'right',
          titleFormatter: function (cell, formatterParams, onRendered) {
@@ -179,9 +182,8 @@ const SubscriptionTable = ({ id, sid }) => {
       setOrder('', false)
    }, [])
 
-   const rowClick = (e, row) => {
-      const orderId = row._row.data.oid.toString()
-
+   const rowClick = (e, cell) => {
+      const orderId = cell._cell.row.data.oid.toString()
       setOrder(orderId, true)
    }
 
@@ -210,7 +212,6 @@ const SubscriptionTable = ({ id, sid }) => {
                   <ReactTabulator
                      columns={columns}
                      data={occurences}
-                     rowClick={rowClick}
                      options={{
                         ...options,
                         placeholder: 'No Occurences Available Yet !',

@@ -56,6 +56,9 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
       },
       {
          title: 'Products',
@@ -133,8 +136,8 @@ const OrdersTable = ({ id }) => {
       [tab, dispatch]
    )
 
-   const rowClick = (e, row) => {
-      const orderId = row._row.data.id
+   const rowClick = (e, cell) => {
+      const orderId = cell._cell.row.data.id
       setOrder(orderId, true)
    }
 
@@ -156,7 +159,6 @@ const OrdersTable = ({ id }) => {
                   <ReactTabulator
                      columns={columns}
                      data={orders}
-                     rowClick={rowClick}
                      options={{
                         ...options,
                         placeholder: 'No Order Available Yet !',
