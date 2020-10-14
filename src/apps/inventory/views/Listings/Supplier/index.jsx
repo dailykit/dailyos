@@ -21,6 +21,7 @@ import {
    SUPPLIER_CANNOT_BE_DELETED,
 } from '../../../constants/errorMessages'
 import { SUPPLIER_DELETED } from '../../../constants/successMessages'
+import { Tooltip } from '../../../../../shared/components/Tooltip'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -122,7 +123,10 @@ export default function SupplierListing() {
       <>
          <StyledWrapper>
             <StyledHeader>
-               <h1>{t(address.concat('suppliers'))}</h1>
+               <Flex container>
+                  <h1>{t(address.concat('suppliers'))}</h1>
+                  <Tooltip identifier="suppliers_listings_heading" />
+               </Flex>
                <Flex
                   container
                   alignItems="center"
