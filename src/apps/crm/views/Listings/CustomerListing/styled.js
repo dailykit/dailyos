@@ -17,7 +17,7 @@ export const StyledHeader = styled.div`
 export const StyledWrapper = styled.div`
    margin: 0 auto;
    max-width: 1280px;
-   margin-bottom: 80px;
+   width: calc(100vw-64px);
    h1 {
       color: #555b6e;
       font-size: 20px;

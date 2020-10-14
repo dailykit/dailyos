@@ -100,6 +100,14 @@ const CouponListing = () => {
       )
    }
 
+   const DeleteButton = () => {
+      return (
+         <IconButton type="ghost">
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
+      )
+   }
+
    const [deleteCoupon] = useMutation(DELETE_COUPON, {
       onCompleted: () => {
          toast.success('Coupon deleted!')
@@ -188,7 +196,7 @@ const CouponListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         formatter: reactFormatter(<DeleteButton />),
          hozAlign: 'center',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'

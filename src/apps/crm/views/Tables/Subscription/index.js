@@ -182,7 +182,7 @@ const SubscriptionTable = ({ id, sid }) => {
    if (listLoading) return <Loader />
    return (
       <>
-         <div>
+         <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
             {tab.data.isOccurencesClicked ? (
                <OrderComp />
             ) : (
@@ -213,7 +213,7 @@ const SubscriptionTable = ({ id, sid }) => {
                   />
                </>
             )}
-         </div>
+         </Flex>
       </>
    )
 }

@@ -47,6 +47,7 @@ const CampaignListing = () => {
       },
    })
    if (error) {
+      toast.error('Something went wrong !')
       console.log(error)
    }
    const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
@@ -57,7 +58,7 @@ const CampaignListing = () => {
          toast.info('Coupon Updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
       },
    })
    React.useEffect(() => {

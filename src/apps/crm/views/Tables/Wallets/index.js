@@ -111,24 +111,22 @@ const WalletTable = () => {
       addTab(name, param)
    }
    return (
-      <React.Fragment>
+      <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
          <Flex container height="80px" padding="16px" alignItems="center">
             <Text as="title">Wallet Transactions</Text>
             <Tooltip identifier="wallet_list_heading" />
          </Flex>
-         <div style={{ overflowX: 'scroll' }}>
-            <ReactTabulator
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               ref={tableRef}
-               options={{
-                  ...options,
-                  placeholder: 'No Wallet Data Available Yet !',
-               }}
-            />
-         </div>
-      </React.Fragment>
+         <ReactTabulator
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            ref={tableRef}
+            options={{
+               ...options,
+               placeholder: 'No Wallet Data Available Yet !',
+            }}
+         />
+      </Flex>
    )
 }
 

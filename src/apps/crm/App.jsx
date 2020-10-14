@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 
 import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
-
+import './views/tableStyle.css'
 // Sections
 import Header from './sections/Header'
 import Sidebar from './sections/Sidebar'
