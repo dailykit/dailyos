@@ -6,6 +6,8 @@ import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 import { AssetUploader } from '../../../../../../shared/components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { logger } from '../../../../../../shared/utils'
+import { SUPPLIER_LOGO_ADDED } from '../../../../constants/successMessages'
 
 export default function LogoTunnel({ close, formState }) {
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
