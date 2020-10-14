@@ -29,6 +29,7 @@ import {
 } from './styled'
 import { NutritionTunnel, PriceTunnel, ProcessingsTunnel } from '../../tunnels'
 import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 
 const Processings = ({ state }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -57,8 +58,8 @@ const Processings = ({ state }) => {
          })
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 

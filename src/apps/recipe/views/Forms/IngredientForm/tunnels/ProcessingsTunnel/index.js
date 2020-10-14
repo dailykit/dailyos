@@ -22,7 +22,7 @@ import { logger } from '../../../../../../../shared/utils'
 const ProcessingsTunnel = ({ state, closeTunnel }) => {
    const [search, setSearch] = React.useState('')
    const [processings, setProcessings] = React.useState([])
-   const [list, selected, selectOption] = useMultiList([])
+   const [list, selected, selectOption] = useMultiList(processings)
 
    // Subscription
    const { loading, error } = useSubscription(FETCH_PROCESSING_NAMES, {
