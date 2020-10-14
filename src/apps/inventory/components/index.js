@@ -3,7 +3,7 @@ import TunnelHeader from './Form/TunnelHeader'
 import Spacer from './Form/Spacer'
 import { TunnelContainer } from './Form/styled'
 import ItemCard from './WorkOrder/ItemCard'
-import { ContactCard, AddressCard } from './Card'
+import { AddressCard } from './Card'
 import FormHeading from './FormHeading/index'
 import StatusSwitch from './WorkOrder/StatusSwitch/index'
 import DataCard from './DataCard'
@@ -13,7 +13,6 @@ export {
    TunnelHeader,
    Spacer,
    TunnelContainer,
-   ContactCard,
    FormHeading,
    AddressCard,
    ItemCard,
