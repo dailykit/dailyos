@@ -13,6 +13,7 @@ import {
    Tunnel,
    useTunnel,
    Flex,
+   ComboButton,
 } from '@dailykit/ui'
 import {
    CAMPAIGN_LISTING,
@@ -21,7 +22,7 @@ import {
    DELETE_CAMPAIGN,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
@@ -79,6 +80,14 @@ const CampaignListing = () => {
             isActive: toggle,
          },
       })
+   }
+
+   const DeleteButton = () => {
+      return (
+         <IconButton type="ghost">
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
+      )
    }
 
    const ToggleButton = ({ cell }) => {
@@ -156,7 +165,7 @@ const CampaignListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         formatter: reactFormatter(<DeleteButton />),
          hozAlign: 'center',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'
@@ -168,7 +177,7 @@ const CampaignListing = () => {
    if (listLoading || loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  0fr">
+         <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
                <Text as="title">
                   Campaign(
@@ -178,11 +187,12 @@ const CampaignListing = () => {
                <Tooltip identifier="campaign_list_heading" />
             </Flex>
             <ButtonGroup>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
+               <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
-               </IconButton>
+                  Create Campaign
+               </ComboButton>
             </ButtonGroup>
-         </StyledHeader>
+         </Flex>
          {Boolean(campaign) && (
             <ReactTabulator
                columns={columns}

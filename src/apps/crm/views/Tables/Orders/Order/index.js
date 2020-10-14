@@ -156,7 +156,7 @@ const OrderInfo = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <Heading>
+         <Flex container alignItems="center" justifyContent="space-between">
             <StyledContainer>
                <StyledInput
                   type="button"
@@ -169,7 +169,7 @@ const OrderInfo = () => {
             <SmallText onClick={() => openTunnel(1)}>
                Check Order Status
             </SmallText>
-         </Heading>
+         </Flex>
          <Flex container margin="0 0 0 6px" height="80px" alignItems="center">
             <Text as="h1">Order Id: #{tab.data.oid}</Text>
             <Tooltip identifier="product_list_heading" />

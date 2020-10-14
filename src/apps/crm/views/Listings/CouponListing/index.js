@@ -6,6 +6,7 @@ import {
    Text,
    ButtonGroup,
    IconButton,
+   ComboButton,
    PlusIcon,
    Toggle,
    Loader,
@@ -212,7 +213,7 @@ const CouponListing = () => {
    if (loading || listLoading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  0fr">
+         <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
                <Text as="h2">
                   Coupons(
@@ -221,11 +222,12 @@ const CouponListing = () => {
                <Tooltip identifier="coupon_list_heading" />
             </Flex>
             <ButtonGroup>
-               <IconButton type="solid" onClick={createCoupon}>
+               <ComboButton type="solid" onClick={createCoupon}>
                   <PlusIcon />
-               </IconButton>
+                  Create Coupon
+               </ComboButton>
             </ButtonGroup>
-         </StyledHeader>
+         </Flex>
          {Boolean(coupons) && (
             <ReactTabulator
                columns={columns}

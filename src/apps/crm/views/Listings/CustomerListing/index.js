@@ -138,7 +138,12 @@ const CustomerListing = () => {
    if (listloading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="1fr 1fr">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            padding="32px 0 0 0"
+         >
             <HeadingTile
                title="Total Customers"
                value={
@@ -151,9 +156,9 @@ const CustomerListing = () => {
                   totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid || 0
                )}
             />
-         </StyledHeader>
+         </Flex>
 
-         <Flex container height="80px" alignItems="center" margin="0 0 0 8px">
+         <Flex container height="80px" alignItems="center">
             <Text as="title">
                Customers(
                {customersCount?.customers_aggregate?.aggregate?.count || 0})
