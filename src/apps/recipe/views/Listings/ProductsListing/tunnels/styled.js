@@ -6,16 +6,12 @@ export const TunnelBody = styled.div`
    overflow: auto;
 `
 
-export const StyledRow = styled.div`
-   margin-bottom: 32px;
-`
-
 export const SolidTile = styled.button`
-   width: 70%;
+   width: 100%;
    display: block;
    margin: 0 auto;
    border: 1px solid #cecece;
-   padding: 10px 20px;
+   padding: 20px;
    border-radius: 2px;
    background-color: #fff;
 
@@ -23,10 +19,4 @@ export const SolidTile = styled.button`
       background-color: #f3f3f3;
       cursor: pointer;
    }
-`
-
-export const StyledInputWrapper = styled.div`
-   width: ${props => props.width}px;
-   display: flex;
-   align-items: center;
 `
