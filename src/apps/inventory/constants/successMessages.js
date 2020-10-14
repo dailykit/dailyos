@@ -1,1 +1,6 @@
 export const SUPPLIER_DELETED = 'Supplier Deleted!'
+export const GENERAL_SUCCESS_MESSAGE = 'Information updated!'
+export const SUPPLIER_ADDRESS_UPDATED = 'Address information added!'
+export const SUPPLIER_LOGO_ADDED = 'Supplier Logo Added!'
+export const SUPPLIER_CONTACT_INFO_ADDED = 'Contact information added!'
+export const SUPPLIER_IMAGE_ADDED = 'Image Added!'

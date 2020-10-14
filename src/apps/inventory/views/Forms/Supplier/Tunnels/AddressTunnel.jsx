@@ -3,7 +3,10 @@ import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { SUPPLIER_ADDRESS_UPDATED } from '../../../../constants/successMessages'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.supplier.tunnels.'
@@ -21,12 +24,12 @@ export default function AddressTunnel({ close, formState }) {
 
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Address information added!')
+         toast.info(SUPPLIER_ADDRESS_UPDATED)
          close(1)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(1)
       },
    })

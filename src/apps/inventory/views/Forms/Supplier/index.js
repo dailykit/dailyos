@@ -15,8 +15,11 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
 import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { GENERAL_SUCCESS_MESSAGE } from '../../../constants/successMessages'
 import { useTabs } from '../../../context'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
 import { StyledHeader } from '../../Listings/styled'
@@ -41,26 +44,35 @@ export default function SupplierForm() {
    const [contactTunnel, openContactTunnel, closeContactTunnel] = useTunnel(1)
    const [assetTunnel, openAssetTunnel, closeAssetTunnel] = useTunnel(1)
 
-   const { loading: supplierLoading } = useSubscription(SUPPLIER_SUBSCRIPTION, {
-      variables: {
-         id,
-      },
-      onSubscriptionData: input => {
-         const data = input.subscriptionData.data.supplier
-         setName(data.name)
-         setFormState(data)
+   const { loading: supplierLoading, error } = useSubscription(
+      SUPPLIER_SUBSCRIPTION,
+      {
+         variables: {
+            id,
+         },
+         onSubscriptionData: input => {
+            const data = input.subscriptionData.data.supplier
+            setName(data.name)
+            setFormState(data)
 
-         setShippingTerms(data.shippingTerms || '')
-         setPaymentTerms(data.paymentTerms || '')
-      },
-   })
+            setShippingTerms(data.shippingTerms || '')
+            setPaymentTerms(data.paymentTerms || '')
+         },
+      }
+   )
+
+   if (error) {
+      logger(error)
+      throw error // the page will have nothing to show if this fails, so rendering the error boundary.
+   }
+
    const [updateSupplier] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Information updated!')
+         toast.info(GENERAL_SUCCESS_MESSAGE)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error! Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
@@ -241,8 +253,8 @@ function ShowAvailability({ formState }) {
          toast.success('Updated availability!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error! Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 

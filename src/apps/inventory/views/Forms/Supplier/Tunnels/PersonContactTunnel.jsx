@@ -14,8 +14,10 @@ import { useTranslation } from 'react-i18next'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../../shared/utils'
 import { Camera } from '../../../../assets/icons'
 import { TunnelContainer } from '../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 import { CircleButton } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
@@ -40,12 +42,12 @@ export default function PersonContactTunnel({ close, formState }) {
 
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Contact information added!')
+         toast.info(SUPPLIER_CONTACT_INFO_ADDED)
          close(1)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(1)
       },
    })
