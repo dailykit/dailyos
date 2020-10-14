@@ -35,12 +35,11 @@ export const StyledIcon = styled.div`
 `
 
 export const StyledTableHeader = styled.div`
-   height: 40px;
    display: flex;
    align-items: center;
    justify-content: space-between;
-   width: 90%;
    margin: 0 auto;
+   padding: 16px 0;
 `
 
 export const StyledTableActions = styled.div`
