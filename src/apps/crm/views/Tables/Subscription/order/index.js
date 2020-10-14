@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Text, Avatar, useTunnel } from '@dailykit/ui'
+import { Text, Avatar, useTunnel, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
@@ -26,6 +26,8 @@ import {
    CardInfo,
    Heading,
 } from './styled'
+import { Tooltip } from '../../../../../../shared/components'
+import options from '../../../tableOptions'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
@@ -164,7 +166,10 @@ const OrderInfo = () => {
                Check Order Status
             </SmallText>
          </Heading>
-         <Text as="h1">Order Id: #{tab.data.oid}</Text>
+         <Flex container margin="0 0 0 6px" height="80px" alignItems="center">
+            <Text as="h1">Order Id: #{tab.data.oid}</Text>
+            <Tooltip identifier="product_list_heading" />
+         </Flex>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
@@ -185,7 +190,10 @@ const OrderInfo = () => {
                      columns={columns}
                      data={data}
                      ref={tableRef}
-                     options={options}
+                     options={{
+                        ...options,
+                        placeholder: 'No Products Available Yet !',
+                     }}
                   />
                   <CardInfo>
                      <Text as="title">Total</Text>
@@ -239,16 +247,3 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

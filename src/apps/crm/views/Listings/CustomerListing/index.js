@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Text, Loader } from '@dailykit/ui'
+import { Text, Loader, Flex } from '@dailykit/ui'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
@@ -10,6 +10,8 @@ import {
    TOTAL_REVENUE,
    CUSTOMERS_LISTING,
 } from '../../../graphql'
+import { Tooltip } from '../../../../../shared/components'
+import options from '../../tableOptions'
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
@@ -137,29 +139,34 @@ const CustomerListing = () => {
             <HeadingTile
                title="Total Customers"
                value={
-                  customersCount?.customers_aggregate?.aggregate?.count || '...'
+                  customersCount?.customers_aggregate?.aggregate?.count || 0
                }
             />
             <HeadingTile
                title="Total Revenue generated"
                value={'$'.concat(
-                  totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid ||
-                     '...'
+                  totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid || 0
                )}
             />
          </StyledHeader>
-         <StyledHeader gridCol="10fr 1fr">
+
+         <Flex container height="80px" alignItems="center" margin="0 0 0 8px">
             <Text as="title">
                Customers(
-               {customersCount?.customers_aggregate?.aggregate?.count || '...'})
+               {customersCount?.customers_aggregate?.aggregate?.count || 0})
             </Text>
-         </StyledHeader>
+            <Tooltip identifier="customer_list_heading" />
+         </Flex>
+
          {Boolean(customersList) && (
             <ReactTabulator
                columns={columns}
                data={customersList}
                rowClick={rowClick}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Customers Available Yet !',
+               }}
                ref={tableRef}
             />
          )}
@@ -168,17 +175,3 @@ const CustomerListing = () => {
 }
 
 export default CustomerListing
-
-const options = {
-   cellVertAlign: 'middle',
-   layout: 'fitColumns',
-   autoResize: true,
-   maxHeight: '420px',
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Text, Loader } from '@dailykit/ui'
+import { Text, Loader, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
@@ -9,6 +9,8 @@ import { OCCURENCES } from '../../../graphql'
 import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
 import './style.css'
+import options from '../../tableOptions'
+import { Tooltip } from '../../../../../shared/components'
 
 const SubscriptionTable = ({ id, sid }) => {
    const { dispatch, tab } = useTabs()
@@ -185,19 +187,28 @@ const SubscriptionTable = ({ id, sid }) => {
                <OrderComp />
             ) : (
                <>
-                  <div style={{ padding: '16px' }}>
+                  <Flex
+                     container
+                     height="80px"
+                     padding="16px"
+                     alignItems="center"
+                  >
                      <Text as="title">
                         Occurences(
                         {occurencesData?.subscriptionOccurencesAggregate
                            ?.occurenceCount?.count || 'N/A'}
                         )
                      </Text>
-                  </div>
+                     <Tooltip identifier="order_list_heading" />
+                  </Flex>
                   <ReactTabulator
                      columns={columns}
                      data={occurences}
                      rowClick={rowClick}
-                     options={options}
+                     options={{
+                        ...options,
+                        placeholder: 'No Occurences Available Yet !',
+                     }}
                      ref={tableRef}
                   />
                </>
@@ -208,16 +219,3 @@ const SubscriptionTable = ({ id, sid }) => {
 }
 
 export default SubscriptionTable
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

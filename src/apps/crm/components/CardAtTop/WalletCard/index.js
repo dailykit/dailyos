@@ -6,13 +6,13 @@ const StyleCard = ({ active, heading, click }) => {
    return (
       <StyledCard active={active === heading}>
          <CardHeading>
-            <Text as="subtitle">Wallet</Text>
+            <Text as="p">Wallet</Text>
             <ViewTab onClick={click}>view</ViewTab>
          </CardHeading>
          <CardContent>
             <span>
-               <Text as="subtitle">Total Wallet Amount</Text>
-               <Text as="title">N/A</Text>
+               <Text as="p">Total Wallet Amount</Text>
+               <Text as="p">N/A</Text>
             </span>
          </CardContent>
       </StyledCard>

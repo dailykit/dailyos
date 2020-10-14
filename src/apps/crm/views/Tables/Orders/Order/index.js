@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Text, Avatar, useTunnel, Loader } from '@dailykit/ui'
+import { Text, Avatar, useTunnel, Loader, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
@@ -7,6 +7,7 @@ import { useTabs } from '../../../../context'
 import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../../shared/components'
 import {
    OrderStatusTunnel,
    PaymentStatusTunnel,
@@ -26,6 +27,7 @@ import {
    CardInfo,
    Heading,
 } from './styled'
+import options from '../../../tableOptions'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
@@ -151,9 +153,7 @@ const OrderInfo = () => {
    return (
       <StyledWrapper>
          <Heading>
-            <StyledContainer
-               style={{ margin: '16px', boxSizing: 'border-box' }}
-            >
+            <StyledContainer>
                <StyledInput
                   type="button"
                   onClick={() => setOrder('', false)}
@@ -166,12 +166,15 @@ const OrderInfo = () => {
                Check Order Status
             </SmallText>
          </Heading>
-         <Text as="h1">Order Id: #{tab.data.oid}</Text>
+         <Flex container margin="0 0 0 6px" height="80px" alignItems="center">
+            <Text as="h1">Order Id: #{tab.data.oid}</Text>
+            <Tooltip identifier="product_list_heading" />
+         </Flex>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
                   <StyledSpan>
-                     Ordered on:{' '}
+                     Ordered on:
                      {orderData?.order?.created_at.substr(0, 16) || 'N/A'}
                   </StyledSpan>
                   <StyledSpan>Deliverd on: N/A</StyledSpan>
@@ -188,7 +191,10 @@ const OrderInfo = () => {
                         columns={columns}
                         data={products}
                         ref={tableRef}
-                        options={options}
+                        options={{
+                           ...options,
+                           placeholder: 'No Order Available Yet !',
+                        }}
                      />
                   )}
                   <CardInfo>
@@ -243,16 +249,3 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

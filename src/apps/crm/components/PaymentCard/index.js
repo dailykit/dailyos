@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import {
    PaymentCard,
    BillingAddress,
@@ -9,6 +9,7 @@ import {
 } from './styled'
 import { MaestroIcon } from '../../../../shared/assets/icons'
 import { capitalizeString } from '../../Utils'
+import { Tooltip } from '../../../../shared/components'
 
 const ContactInfoCard = ({
    bgColor,
@@ -22,12 +23,14 @@ const ContactInfoCard = ({
 }) => (
    <PaymentCard bgColor={bgColor} margin={margin}>
       <CardInfo2>
-         <Text as="subtitle">Payment Card{defaultTag}</Text>
-         <SmallText onClick={onClick}>{linkedTo}</SmallText>
+         <Flex container alignItems="center">
+            <Text as="p">Payment Card{defaultTag}</Text>
+            <Tooltip identifier="payment_card_info" />
+         </Flex>
       </CardInfo2>
       <CardInfo>
          <MaestroIcon size="25" />
-         <Text as="subtitle">
+         <Text as="p">
             &nbsp;&nbsp;{capitalizeString(cardData?.brand || 'N/A')}
          </Text>
       </CardInfo>
@@ -39,11 +42,11 @@ const ContactInfoCard = ({
          <Text as="p" className="date">
             {`${cardData?.expMonth || 'N'}/${cardData?.expYear || 'A'}`}
          </Text>
-         <SmallText onClick={onClick}>{smallText}</SmallText>
+         <SmallText onClick={onClick}>{linkedTo}</SmallText>
       </CardInfo2>
       <BillingAddress display={billingAddDisplay}>
-         <Text as="subtitle">Billing Address</Text>
-         <Text as="title">N/A</Text>
+         <Text as="p">Billing Address</Text>
+         <Text as="p">N/A</Text>
       </BillingAddress>
    </PaymentCard>
 )

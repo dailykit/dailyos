@@ -12,6 +12,7 @@ import {
    Tunnels,
    Tunnel,
    useTunnel,
+   Flex,
 } from '@dailykit/ui'
 import {
    CAMPAIGN_LISTING,
@@ -22,7 +23,9 @@ import {
 import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../shared/components'
 import CampaignTypeTunnel from './Tunnel'
+import options from '../../tableOptions'
 
 const CampaignListing = () => {
    const { addTab, tab } = useTabs()
@@ -160,10 +163,14 @@ const CampaignListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader gridCol="10fr  0fr">
-            <Text as="title">
-               Campaign(
-               {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})
-            </Text>
+            <Flex container height="80px" alignItems="center">
+               <Text as="title">
+                  Campaign(
+                  {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
+                  )
+               </Text>
+               <Tooltip identifier="campaign_list_heading" />
+            </Flex>
             <ButtonGroup>
                <IconButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
@@ -175,7 +182,10 @@ const CampaignListing = () => {
                columns={columns}
                data={campaign}
                rowClick={rowClick}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Campaigns Available Yet !',
+               }}
                ref={tableRef}
             />
          )}
@@ -189,16 +199,3 @@ const CampaignListing = () => {
 }
 
 export default CampaignListing
-const options = {
-   cellVertAlign: 'middle',
-   layout: 'fitColumns',
-   autoResize: true,
-   maxHeight: '420px',
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

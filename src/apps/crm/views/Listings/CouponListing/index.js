@@ -9,6 +9,7 @@ import {
    PlusIcon,
    Toggle,
    Loader,
+   Flex,
 } from '@dailykit/ui'
 import {
    COUPON_LISTING,
@@ -21,6 +22,8 @@ import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../shared/components'
+import options from '../../tableOptions'
 
 const CouponListing = () => {
    const { addTab, tab } = useTabs()
@@ -54,7 +57,8 @@ const CouponListing = () => {
          toast.info('Coupon Updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         console.log(error)
+         toast.error('Something went wrong!! Please try again')
       },
    })
    const [createCoupon] = useMutation(CREATE_COUPON, {
@@ -66,7 +70,8 @@ const CouponListing = () => {
          toast.success('Coupon created!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         console.log(error)
+         toast.error('Something went wrong!! Please try again')
       },
    })
 
@@ -196,10 +201,13 @@ const CouponListing = () => {
    return (
       <StyledWrapper>
          <StyledHeader gridCol="10fr  0fr">
-            <Text as="title">
-               Coupons(
-               {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
-            </Text>
+            <Flex container height="80px" alignItems="center">
+               <Text as="h2">
+                  Coupons(
+                  {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
+               </Text>
+               <Tooltip identifier="coupon_list_heading" />
+            </Flex>
             <ButtonGroup>
                <IconButton type="solid" onClick={createCoupon}>
                   <PlusIcon />
@@ -211,7 +219,10 @@ const CouponListing = () => {
                columns={columns}
                data={coupons}
                rowClick={rowClick}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Coupons Available Yet !',
+               }}
                ref={tableRef}
             />
          )}
@@ -220,17 +231,3 @@ const CouponListing = () => {
 }
 
 export default CouponListing
-
-const options = {
-   cellVertAlign: 'middle',
-   layout: 'fitColumns',
-   autoResize: true,
-   maxHeight: '420px',
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

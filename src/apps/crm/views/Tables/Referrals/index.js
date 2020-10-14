@@ -1,7 +1,9 @@
 import React, { useRef } from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
+import options from '../../tableOptions'
+import { Tooltip } from '../../../../../shared/components'
 
 const ReferralTable = () => {
    const { addTab } = useTabs()
@@ -54,16 +56,21 @@ const ReferralTable = () => {
    }
    return (
       <React.Fragment>
-         <div style={{ padding: '16px' }}>
-            <Text as="title">Refferals(3)</Text>
-         </div>
+         <Flex container height="80px" padding="16px" alignItems="center">
+            <Text as="title">Referrals(3)</Text>
+            <Tooltip identifier="referral_list_heading" />
+         </Flex>
+
          <div style={{ overflowX: 'scroll' }}>
             <ReactTabulator
                columns={columns}
                data={data}
                rowClick={rowClick}
                ref={tableRef}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Referrals Available Yet !',
+               }}
             />
          </div>
       </React.Fragment>
@@ -71,16 +78,3 @@ const ReferralTable = () => {
 }
 
 export default ReferralTable
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

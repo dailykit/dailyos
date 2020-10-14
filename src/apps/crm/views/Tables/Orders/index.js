@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Text, Loader } from '@dailykit/ui'
+import { Text, Loader, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
+import { Tooltip } from '../../../../../shared/components'
+import options from '../../tableOptions'
 
 const OrdersTable = ({ id }) => {
    const { dispatch, tab } = useTabs()
@@ -143,18 +145,22 @@ const OrdersTable = ({ id }) => {
             <OrderPage />
          ) : (
             <>
-               <div style={{ padding: '16px' }}>
+               <Flex container height="80px" padding="16px" alignItems="center">
                   <Text as="title">
                      Orders(
                      {orders.length})
                   </Text>
-               </div>
+                  <Tooltip identifier="order_list_heading" />
+               </Flex>
                {Boolean(orders) && (
                   <ReactTabulator
                      columns={columns}
                      data={orders}
                      rowClick={rowClick}
-                     options={options}
+                     options={{
+                        ...options,
+                        placeholder: 'No Order Available Yet !',
+                     }}
                      ref={tableRef}
                   />
                )}
@@ -165,16 +171,3 @@ const OrdersTable = ({ id }) => {
 }
 
 export default OrdersTable
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

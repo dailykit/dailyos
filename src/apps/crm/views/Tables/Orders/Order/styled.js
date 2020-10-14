@@ -7,6 +7,7 @@ export const StyledWrapper = styled.div`
 export const StyledContainer = styled.div`
    display: flex;
    flex-direction: row;
+   align-items: center;
 `
 export const StyledDiv = styled.div`
    display: grid;
@@ -51,7 +52,7 @@ export const StyledInput = styled.input`
    font-size: inherit;
 `
 export const StyledSpan = styled.span`
-   padding: 0 30px 16px 30px;
+   padding: 0 30px 16px 6px;
    border-right: 1px solid #ececec;
 `
 export const SmallText = styled.small`
@@ -65,4 +66,6 @@ export const SmallText = styled.small`
 
 export const Heading = styled(StyledContainer)`
    justify-content: space-between;
+   margin: 0 0 0 6px;
+   align-items: center;
 `
