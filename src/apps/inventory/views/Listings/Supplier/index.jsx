@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
+import { ComboButton, Loader, TextButton, Flex } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
@@ -8,7 +8,6 @@ import { toast } from 'react-toastify'
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import { randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
-// import { Context } from '../../../context/tabs'
 import {
    CREATE_SUPPLIER,
    DELETE_SUPPLIER,
@@ -16,7 +15,6 @@ import {
 } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
-import { FlexContainer } from '../../Forms/styled'
 import { useTabs } from '../../../context'
 
 const address = 'apps.inventory.views.listings.supplier.'
@@ -79,14 +77,14 @@ export default function SupplierListing() {
          title: 'Person of Contact',
          field: 'contactPerson',
          headerFilter: false,
+         headerSort: false,
          hozAlign: 'left',
          formatter: reactFormatter(<ContactPerson />),
       },
       {
          title: 'Available',
          field: 'available',
-         formatter: 'tickCross',
-         headerFilter: true,
+         headerFilter: false,
          hozAlign: 'center',
          cssClass: 'center-text',
          width: 120,
@@ -121,7 +119,11 @@ export default function SupplierListing() {
          <StyledWrapper>
             <StyledHeader>
                <h1>{t(address.concat('suppliers'))}</h1>
-               <FlexContainer>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
                   <TextButton
                      type="outline"
                      onClick={() => tableRef.current.table.clearHeaderFilter()}
@@ -129,22 +131,20 @@ export default function SupplierListing() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton type="solid" onClick={createSupplierHandler}>
-                     <AddIcon color="#fff" size={24} />
-                  </IconButton>
-               </FlexContainer>
+                  <ComboButton type="solid" onClick={createSupplierHandler}>
+                     <AddIcon color="#fff" size={24} /> Add Supplier
+                  </ComboButton>
+               </Flex>
             </StyledHeader>
             <br />
 
-            <div style={{ margin: '0 auto', width: '90%' }}>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={suppliers}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={suppliers}
+               rowClick={rowClick}
+               options={tableOptions}
+            />
          </StyledWrapper>
       </>
    )
