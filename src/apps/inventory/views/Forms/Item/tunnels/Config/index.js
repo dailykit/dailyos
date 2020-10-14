@@ -172,14 +172,14 @@ export default function ConfigTunnel({ close, formState }) {
                   maxLevel: +maxValue,
                   labor: { value: laborTime, unit: laborUnit },
                   bulkDensity: +bulkDensity,
-                  allergens: allergens.length ? allergens : [],
+                  allergens: allergens?.length ? allergens : [],
                },
             },
          })
       } else {
          const allergens = state.processing.allergens.length
             ? state.processing.allergens
-            : bulkItem.allergens
+            : bulkItem?.allergens
          createBulkItem({
             variables: {
                processingName: state.processing.title,
@@ -193,7 +193,7 @@ export default function ConfigTunnel({ close, formState }) {
                maxLevel: +maxValue,
                labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
-               allergens: allergens.length ? allergens : [],
+               allergens: allergens?.length ? allergens : [],
             },
          })
       }
@@ -213,7 +213,7 @@ export default function ConfigTunnel({ close, formState }) {
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
                <NutritionTunnel
                   close={closeNutritionTunnel}
-                  bulkItemId={bulkItem.id}
+                  bulkItemId={bulkItem?.id}
                />
             </Tunnel>
          </Tunnels>
@@ -436,8 +436,8 @@ function NutrientView({ bulkItem, openNutritionTunnel }) {
 
    if (nutrients) return <Nutrition data={nutrients} />
    else if (
-      bulkItem.nutritionInfo &&
-      Object.keys(bulkItem.nutritionInfo).length
+      bulkItem?.nutritionInfo &&
+      Object.keys(bulkItem?.nutritionInfo).length
    )
       return <Nutrition data={bulkItem.nutritionInfo} />
 
@@ -471,7 +471,7 @@ function AllergensView({ openAllergensTunnel, bulkItem }) {
                </TagGroup>
             </Highlight>
          )
-      else if (bulkItem.allergens?.length)
+      else if (bulkItem?.allergens?.length)
          return (
             <Highlight pointer onClick={() => openAllergensTunnel(1)}>
                <TagGroup>

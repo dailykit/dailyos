@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import {
    Text,
+   Flex,
    Input,
    Tunnel,
    Toggle,
@@ -27,9 +28,10 @@ import {
    INSERT_OCCURENCE_PRODUCTS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
 } from '../../../graphql'
+import { isEmpty } from 'lodash'
 
 const ProductsSection = () => {
-   const { dispatch } = useMenu()
+   const { state, dispatch } = useMenu()
    const mealKitTableRef = React.useRef()
    const readyToEatTableRef = React.useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -82,12 +84,24 @@ const ProductsSection = () => {
 
    return (
       <Wrapper>
-         <Header>
+         <Flex
+            container
+            height="48px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="h2">Products</Text>
-            <TextButton type="solid" onClick={() => openTunnel(1)}>
-               Continue
-            </TextButton>
-         </Header>
+            {!isEmpty(state.plans.selected) &&
+               !isEmpty(state.products.selected) && (
+                  <TextButton
+                     type="outline"
+                     size="sm"
+                     onClick={() => openTunnel(1)}
+                  >
+                     Continue
+                  </TextButton>
+               )}
+         </Flex>
          <HorizontalTabs>
             <HorizontalTabList>
                <HorizontalTab>Ready To Eats</HorizontalTab>
@@ -270,7 +284,7 @@ const SaveTunnel = ({
 
    return (
       <Tunnels tunnels={tunnels}>
-         <Tunnel layer={1}>
+         <Tunnel layer={1} size="sm">
             <TunnelHeader
                title="Occurence Products"
                close={() => closeTunnel(1)}
@@ -315,12 +329,6 @@ const SaveTunnel = ({
 
 const Wrapper = styled.main`
    padding: 0 16px;
-`
-
-const Header = styled.header`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
 `
 
 const Main = styled.main`

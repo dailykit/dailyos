@@ -613,3 +613,27 @@ export const NUTRITION_INFO = gql`
       }
    }
 `
+
+export const SUPPLIER_ITEMS_LISTINGS = gql`
+   subscription SupplierItems {
+      bulkItems {
+         id
+         processingName
+         awaiting
+         onHand
+         committed
+         parLevel
+         maxLevel
+
+         supplierItem {
+            id
+            name
+
+            supplier {
+               id
+               name
+            }
+         }
+      }
+   }
+`
