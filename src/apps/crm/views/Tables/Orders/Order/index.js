@@ -8,6 +8,7 @@ import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../../shared/components'
+import { toast } from 'react-toastify'
 import {
    OrderStatusTunnel,
    PaymentStatusTunnel,
@@ -28,6 +29,7 @@ import {
    Heading,
 } from './styled'
 import options from '../../../tableOptions'
+import { logger } from '../../../../../../shared/utils'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
@@ -35,7 +37,7 @@ const OrderInfo = () => {
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const [products, setProducts] = useState(undefined)
    const tableRef = useRef()
-   const { data: orderData, loading, error } = useQuery(ORDER, {
+   const { data: orderData, loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
       },
@@ -50,10 +52,12 @@ const OrderInfo = () => {
          })
          setProducts(result)
       },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
+      },
    })
-   if (error) {
-      console.log(error)
-   }
+
    const setOrder = (orderId, order) => {
       dispatch({
          type: 'STORE_TAB_DATA',

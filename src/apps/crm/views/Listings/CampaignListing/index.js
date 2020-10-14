@@ -24,6 +24,7 @@ import { useTabs } from '../../../context'
 import { StyledHeader, StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
 import options from '../../tableOptions'
 
@@ -46,10 +47,7 @@ const CampaignListing = () => {
          setCampaign(result)
       },
    })
-   if (error) {
-      toast.error('Something went wrong !')
-      console.log(error)
-   }
+
    const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
 
    // Mutation
@@ -59,8 +57,15 @@ const CampaignListing = () => {
       },
       onError: error => {
          toast.error('Something went wrong')
+         logger(error)
       },
    })
+
+   if (error) {
+      toast.error('Something went wrong !')
+      logger(error)
+   }
+
    React.useEffect(() => {
       if (!tab) {
          addTab('Campaign', '/crm/campaign')

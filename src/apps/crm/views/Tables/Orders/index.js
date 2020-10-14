@@ -8,38 +8,38 @@ import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
 import { Tooltip } from '../../../../../shared/components'
 import options from '../../tableOptions'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
 
 const OrdersTable = ({ id }) => {
    const { dispatch, tab } = useTabs()
    const [orders, setOrders] = useState([])
    const tableRef = useRef(null)
    const history = useHistory()
-   const { loading: listLoading, data: ordersList, error } = useQuery(
-      ORDERS_LISTING,
-      {
-         variables: {
-            keycloakId: id,
-         },
-         onCompleted: ({ customer = {} }) => {
-            const result = customer.orders.map(order => {
-               return {
-                  id: order?.id,
-                  products: order?.products?.length || '0',
-                  walletUsed: 'N/A',
-                  discount: order?.discount,
-                  amountPaid: `$ ${order?.amountPaid || 'N/A'}`,
-                  channel: order?.channel?.cartSource || 'N/A',
-                  orderedOn: order?.created_at?.substr(0, 16) || 'N/A',
-                  deliveredOn: 'N/A',
-               }
-            })
-            setOrders(result)
-         },
-      }
-   )
-   if (error) {
-      console.log(error)
-   }
+   const { loading: listLoading, data: ordersList } = useQuery(ORDERS_LISTING, {
+      variables: {
+         keycloakId: id,
+      },
+      onCompleted: ({ customer = {} }) => {
+         const result = customer.orders.map(order => {
+            return {
+               id: order?.id,
+               products: order?.products?.length || '0',
+               walletUsed: 'N/A',
+               discount: order?.discount,
+               amountPaid: `$ ${order?.amountPaid || 'N/A'}`,
+               channel: order?.channel?.cartSource || 'N/A',
+               orderedOn: order?.created_at?.substr(0, 16) || 'N/A',
+               deliveredOn: 'N/A',
+            }
+         })
+         setOrders(result)
+      },
+      onError: error => {
+         toast.error('Something went wrong !')
+         logger(error)
+      },
+   })
    useEffect(() => {
       if (!tab) {
          history.push('/crm/customers')

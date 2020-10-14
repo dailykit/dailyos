@@ -4,12 +4,18 @@ import { useQuery } from '@apollo/react-hooks'
 import { useTabs } from '../../../../context'
 import { STATUS } from '../../../../graphql'
 import { TunnelHeaderContainer, StyledDiv } from './styled'
+import { logger } from '../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 const PaymentStatus = ({ tunnels, closeTunnel }) => {
    const { tab } = useTabs()
    const { loading: listLoading, data: statusData } = useQuery(STATUS, {
       variables: {
          oid: tab.data.oid,
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
    if (listLoading) return <Loader />

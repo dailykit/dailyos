@@ -7,6 +7,7 @@ import { BRAND_CAMPAIGNS, UPSERT_BRAND_CAMPAIGN } from '../../../../../graphql'
 import { StyledHeader, StyledWrapper } from './styled'
 import options from '../../../../tableOptions'
 import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 
 const BrandCampaign = ({ state }) => {
    const tableRef = useRef()
@@ -18,14 +19,19 @@ const BrandCampaign = ({ state }) => {
       data: { brands = [] } = {},
    } = useSubscription(BRAND_CAMPAIGNS)
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    const [upsertBrandCampaign] = useMutation(UPSERT_BRAND_CAMPAIGN, {
       onCompleted: data => {
          console.log(data)
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 

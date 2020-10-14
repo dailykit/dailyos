@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
-import RewardDetailsTunnel from '../RewardDetails'
+import { logger } from '../../../../../../../shared/utils'
 
 export default function RewardTypeTunnel({
    state,
@@ -18,7 +18,7 @@ export default function RewardTypeTunnel({
 
    const [types, setTypes] = useState([])
    // Subscription
-   const { data: rewardType, loading } = useSubscription(REWARD_TYPE, {
+   const { loading, error } = useSubscription(REWARD_TYPE, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.crm_rewardType.map(type => {
             return {
@@ -29,6 +29,10 @@ export default function RewardTypeTunnel({
          setTypes(result)
       },
    })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    //Mutation
    const [createReward] = useMutation(CREATE_REWARD, {
@@ -38,7 +42,8 @@ export default function RewardTypeTunnel({
          toast.success('Reward created!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 

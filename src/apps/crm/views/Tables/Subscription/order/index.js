@@ -26,7 +26,9 @@ import {
    CardInfo,
    Heading,
 } from './styled'
+import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 import options from '../../../tableOptions'
 
 const OrderInfo = () => {
@@ -37,6 +39,10 @@ const OrderInfo = () => {
    const { data: orderData } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 

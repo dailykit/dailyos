@@ -35,6 +35,7 @@ import {
    SubscriptionInfoCard,
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
+import { logger } from '../../../../../shared/utils'
 
 const CustomerRelation = ({ match }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -53,6 +54,10 @@ const CustomerRelation = ({ match }) => {
          variables: {
             keycloakId: match.params.id,
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
       }
    )
    const { loading: list_Loading, data: subscriptionData } = useQuery(
@@ -60,6 +65,10 @@ const CustomerRelation = ({ match }) => {
       {
          variables: {
             keycloakId: match.params.id,
+         },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
          },
       }
    )
@@ -69,6 +78,10 @@ const CustomerRelation = ({ match }) => {
          variables: {
             keycloakId: match.params.id,
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
       }
    )
    const [updateIsTest] = useMutation(ISTEST, {
@@ -76,7 +89,8 @@ const CustomerRelation = ({ match }) => {
          toast.info('Information updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -124,10 +138,9 @@ const CustomerRelation = ({ match }) => {
          />
       )
    }
-   if (listLoading) return <Loader />
-   if (list_Loading) return <Loader />
-   if (list__Loading) return <Loader />
-   if (customerloading) return <Loader />
+   if (listLoading || list_Loading || list__Loading || customerloading) {
+      return <Loader />
+   }
    return (
       <StyledWrapper>
          <StyledContainer>

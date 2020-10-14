@@ -11,6 +11,8 @@ import { StyledInfo, StyledActionText } from './styled'
 import './style.css'
 import options from '../../tableOptions'
 import { Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 const SubscriptionTable = ({ id, sid }) => {
    const { dispatch, tab } = useTabs()
@@ -57,6 +59,10 @@ const SubscriptionTable = ({ id, sid }) => {
             }
          })
          setOccurences(result)
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
    useEffect(() => {

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { UPDATE_COUPON } from '../../../../../graphql'
 import BasicInfoTunnel from '../../../../../../../shared/components/BasicInfo'
 import HorizontalCard from '../../../../../../../shared/components/HorizontalCard'
+import { logger } from '../../../../../../../shared/utils'
 import { StyledCard } from './styled'
 
 const Details = ({ state }) => {
@@ -15,9 +16,10 @@ const Details = ({ state }) => {
          toast.success('Updated!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error!')
+      onError: error => {
+         toast.error('Something went wrong')
          closeTunnel(1)
+         logger(error)
       },
    })
 

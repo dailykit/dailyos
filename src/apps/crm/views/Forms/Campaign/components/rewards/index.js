@@ -22,7 +22,9 @@ import {
    REWARD_DATA,
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
+import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
+
 const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [typeTunnels, openTypeTunnel, closeTypeTunnel] = useTunnel(1)
    const [rewardTunnels, openRewardTunnel, closeRewardTunnel] = useTunnel(1)
@@ -37,7 +39,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [rewardTunnelInfo, setRewardTunnelInfo] = useState({})
 
    // Subscription
-   const { data: rewardData, loading } = useSubscription(
+   const { data: rewardData, loading, error } = useSubscription(
       REWARD_DATA_BY_CAMPAIGN_ID,
       {
          variables: {
@@ -48,6 +50,10 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          },
       }
    )
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    const [fetchReward, { loading: listLoading, data }] = useLazyQuery(
       REWARD_DATA,
@@ -59,6 +65,10 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             setRewardId(data.crm_reward_by_pk.id)
             openRewardTunnel(1)
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
       }
    )
 
@@ -67,8 +77,8 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          toast.success('Reward deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Could not delete!')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 

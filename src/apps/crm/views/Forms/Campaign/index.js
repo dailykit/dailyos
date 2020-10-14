@@ -30,6 +30,7 @@ import {
    RewardComp,
    BrandCampaign,
 } from './components'
+import { logger } from '../../../../../shared/utils'
 
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -40,7 +41,7 @@ const CampaignForm = () => {
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
    // Subscription
-   const { loading } = useSubscription(CAMPAIGN_DATA, {
+   const { loading, error } = useSubscription(CAMPAIGN_DATA, {
       variables: {
          id: campaignId,
       },
@@ -54,6 +55,11 @@ const CampaignForm = () => {
       },
    })
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    // Mutation
    const [updateCoupon] = useMutation(UPDATE_CAMPAIGN, {
       onCompleted: () => {
@@ -61,8 +67,8 @@ const CampaignForm = () => {
          setTabTitle(campaignTitle)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 

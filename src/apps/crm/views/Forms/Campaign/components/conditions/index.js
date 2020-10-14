@@ -13,6 +13,7 @@ import {
 import { UPDATE_CAMPAIGN } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'
+import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow } from './styled'
 const ConditionComp = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -23,9 +24,10 @@ const ConditionComp = ({ state }) => {
          toast.success('Updated!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error!')
+      onError: error => {
+         toast.error('Something went wrong')
          closeTunnel(1)
+         logger(error)
       },
    })
 

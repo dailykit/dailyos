@@ -23,6 +23,7 @@ import { StyledHeader, StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 
 const CouponListing = () => {
@@ -46,9 +47,7 @@ const CouponListing = () => {
          setCoupons(result)
       },
    })
-   if (error) {
-      console.log(error)
-   }
+
    const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
 
    // Mutation
@@ -57,8 +56,8 @@ const CouponListing = () => {
          toast.info('Coupon Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Something went wrong!! Please try again')
+         toast.error('Something went wrong !')
+         logger(error)
       },
    })
    const [createCoupon] = useMutation(CREATE_COUPON, {
@@ -70,10 +69,15 @@ const CouponListing = () => {
          toast.success('Coupon created!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Something went wrong!! Please try again')
+         toast.error('Something went wrong !')
+         logger(error)
       },
    })
+
+   if (error) {
+      toast.error('Something went wrong !')
+      logger(error)
+   }
 
    React.useEffect(() => {
       if (!tab) {

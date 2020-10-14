@@ -11,7 +11,9 @@ import {
    CUSTOMERS_LISTING,
 } from '../../../graphql'
 import { Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
+import { toast } from 'react-toastify'
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
@@ -25,7 +27,7 @@ const CustomerListing = () => {
    )
 
    // Query
-   const { loading: listloading, error } = useQuery(CUSTOMERS_LISTING, {
+   const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
       onCompleted: ({ customers = {} }) => {
          const result = customers.map(customer => {
             return {
@@ -47,10 +49,11 @@ const CustomerListing = () => {
          })
          setCustomersList(result)
       },
+      onError: error => {
+         toast.error('Something went wrong !')
+         logger(error)
+      },
    })
-   if (error) {
-      console.log(error)
-   }
 
    useEffect(() => {
       if (!tab) {

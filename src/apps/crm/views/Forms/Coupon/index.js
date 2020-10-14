@@ -27,6 +27,7 @@ import {
    RewardComp,
    BrandCoupons,
 } from './components'
+import { logger } from '../../../../../shared/utils'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -36,7 +37,7 @@ const CouponForm = () => {
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
    // Subscription
-   const { loading } = useSubscription(COUPON_DATA, {
+   const { loading, error } = useSubscription(COUPON_DATA, {
       variables: {
          id: couponId,
       },
@@ -46,12 +47,12 @@ const CouponForm = () => {
          setCodeTitle(data.subscriptionData.data.coupon.code)
          setToggle(data.subscriptionData.data.coupon.isActive)
          setCheckbox(data.subscriptionData.data.coupon.isRewardMulti)
-         // collectionDispatch({
-         //    type: 'SEED',
-         //    payload: data.coupon,
-         // })
       },
    })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    // Mutation
    const [updateCoupon] = useMutation(UPDATE_COUPON, {
@@ -60,8 +61,8 @@ const CouponForm = () => {
          setTabTitle(codeTitle)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 

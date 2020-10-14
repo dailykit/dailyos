@@ -23,6 +23,7 @@ import {
 import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
+import { logger } from '../../../../../../../shared/utils'
 
 export default function RewardDetailsunnel({
    state,
@@ -55,9 +56,10 @@ export default function RewardDetailsunnel({
          closeTunnel(1)
          closeRewardTypeTunnel(1)
       },
-      onError: () => {
-         toast.error('Failed to update the reward, please try again!')
+      onError: error => {
+         toast.error('Something went wrong')
          closeTunnel(1)
+         logger(error)
       },
    })
 
