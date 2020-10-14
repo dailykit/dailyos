@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import DatePicker from 'react-datepicker'
 import { useSubscription } from '@apollo/react-hooks'
 
@@ -18,7 +18,9 @@ const DateSection = () => {
 
    return (
       <aside>
-         <Text as="h2">Date</Text>
+         <Flex container height="48px" alignItems="center">
+            <Text as="h2">Date</Text>
+         </Flex>
          <DatePicker
             inline
             selected={state.date}
