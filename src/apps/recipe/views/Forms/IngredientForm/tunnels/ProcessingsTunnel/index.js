@@ -17,45 +17,49 @@ import {
    FETCH_PROCESSING_NAMES,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
+import { logger } from '../../../../../../../shared/utils'
 
 const ProcessingsTunnel = ({ state, closeTunnel }) => {
-   const [busy, setBusy] = React.useState(false)
    const [search, setSearch] = React.useState('')
    const [processings, setProcessings] = React.useState([])
-   const [list, selected, selectOption] = useMultiList(processings)
+   const [list, selected, selectOption] = useMultiList([])
 
    // Subscription
-   const { loading } = useSubscription(FETCH_PROCESSING_NAMES, {
+   const { loading, error } = useSubscription(FETCH_PROCESSING_NAMES, {
       onSubscriptionData: data => {
          setProcessings([...data.subscriptionData.data.masterProcessings])
       },
-      onError: error => {
-         console.log(error)
-      },
    })
 
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
    // Mutation
-   const [createProcessings] = useMutation(CREATE_PROCESSINGS, {
-      variables: {
-         procs: selected.map(proc => ({
-            ingredientId: state.id,
-            processingName: proc.title,
-         })),
-      },
-      onCompleted: () => {
-         toast.success('Proccesings added!')
-         closeTunnel(1)
-      },
-      onError: error => {
-         console.log(error)
-         setBusy(false)
-      },
-   })
+   const [createProcessings, { loading: inFlight }] = useMutation(
+      CREATE_PROCESSINGS,
+      {
+         variables: {
+            procs: selected.map(proc => ({
+               ingredientId: state.id,
+               processingName: proc.title,
+            })),
+         },
+         onCompleted: () => {
+            toast.success('Proccesings added!')
+            closeTunnel(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    // Handlers
    const add = () => {
-      if (busy) return
-      setBusy(true)
+      if (inFlight) return
       createProcessings()
    }
 
@@ -63,49 +67,59 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
       <>
          <TunnelHeader
             title="Add Processings"
-            right={{ action: add, title: busy ? 'Adding...' : 'Add' }}
+            right={{ action: add, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(1)}
          />
          <TunnelBody>
             {loading ? (
                <Loader />
             ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
+               <>
+                  {list.length ? (
+                     <List>
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder="type what you’re looking for..."
+                        />
+                        {selected.length > 0 && (
+                           <TagGroup style={{ margin: '8px 0' }}>
+                              {selected.map(option => (
+                                 <Tag
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 >
+                                    {option.title}
+                                 </Tag>
+                              ))}
+                           </TagGroup>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="MSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                    isActive={selected.find(
+                                       item => item.id === option.id
+                                    )}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <h1>No Data</h1>
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1"
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>

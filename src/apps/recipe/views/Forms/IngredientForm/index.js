@@ -11,6 +11,9 @@ import {
    useTunnel,
    Text,
    Toggle,
+   Form,
+   Flex,
+   Spacer,
 } from '@dailykit/ui'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 
@@ -21,26 +24,11 @@ import {
 } from '../../../context/ingredient'
 import { useTabs } from '../../../context'
 import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
-import {
-   InputWrapper,
-   StyledHeader,
-   MasterSettings,
-   InputGroup,
-   StyledMain,
-} from '../styled'
+
 import { Processings, Stats } from './components'
-import {
-   EditItemTunnel,
-   EditModeTunnel,
-   EditPackagingTunnel,
-   EditSachetTunnel,
-   ItemTunnel,
-   NutritionTunnel,
-   PackagingTunnel,
-   ProcessingsTunnel,
-   SachetTunnel,
-   PhotoTunnel,
-} from './tunnels'
+
+import validator from './validators'
+import { logger } from '../../../../../shared/utils'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -50,21 +38,22 @@ const IngredientForm = () => {
       initialState
    )
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [
-      processingTunnels,
-      openProcessingTunnel,
-      closeProcessingTunnel,
-   ] = useTunnel(1)
-   const [sachetTunnels, openSachetTunnel, closeSachetTunnel] = useTunnel(5)
-   const [
-      editSachetTunnels,
-      openEditSachetTunnel,
-      closeEditSachetTunnel,
-   ] = useTunnel(7)
-
-   const [title, setTitle] = React.useState('')
-   const [category, setCategory] = React.useState('')
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [category, setCategory] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
    const [state, setState] = React.useState({})
 
    // Subscriptions
@@ -75,12 +64,21 @@ const IngredientForm = () => {
       onSubscriptionData: data => {
          console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.ingredient)
-         setTitle(data.subscriptionData.data.ingredient.name)
-         setCategory(data.subscriptionData.data.ingredient.category || '')
+         setTitle({
+            ...title,
+            value: data.subscriptionData.data.ingredient.name,
+         })
+         setCategory({
+            ...category,
+            value: data.subscriptionData.data.ingredient.category || '',
+         })
       },
    })
 
-   if (error) console.log('Ingredient error: ', error)
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -93,40 +91,59 @@ const IngredientForm = () => {
    })
 
    React.useEffect(() => {
-      if (!tab && !loading && !isEmpty(title)) {
-         addTab(title, `/recipe/ingredients/${ingredientId}`)
+      if (!tab && !loading && !isEmpty(title.value)) {
+         addTab(title.value, `/recipe/ingredients/${ingredientId}`)
       }
-   }, [tab, loading, title, addTab])
+   }, [tab, loading, title.value, addTab])
 
    // Handlers
    const updateName = async () => {
-      if (title) {
+      const { isValid, errors } = validator.name(title.value)
+      if (isValid) {
          const { data } = await updateIngredient({
             variables: {
                id: state.id,
                set: {
-                  name: title,
+                  name: title.value,
                },
             },
          })
          if (data) {
-            setTabTitle(title)
+            setTabTitle(title.value)
          }
       }
+      setTitle({
+         ...title,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
    }
    const updateCategory = () => {
-      if (category) {
+      const { isValid, errors } = validator.name(category.value)
+      if (isValid) {
          updateIngredient({
             variables: {
                id: state.id,
                set: {
-                  category,
+                  category: category.value,
                },
             },
          })
       }
+      setCategory({
+         ...category,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
    }
-   const togglePublish = val => {
+   const togglePublish = () => {
+      const val = !state.isPublished
       if (val && !state.isValid.status) {
          toast.error('Ingredient should be valid!')
       } else {
@@ -148,117 +165,86 @@ const IngredientForm = () => {
          value={{ ingredientState, ingredientDispatch }}
       >
          <>
-            {/* Tunnels */}
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1}>
-                  <PhotoTunnel state={state} closeTunnel={closeTunnel} />
-               </Tunnel>
-            </Tunnels>
-            <Tunnels tunnels={processingTunnels}>
-               <Tunnel layer={1}>
-                  <ProcessingsTunnel
-                     state={state}
-                     closeTunnel={closeProcessingTunnel}
-                  />
-               </Tunnel>
-            </Tunnels>
-            <Tunnels tunnels={sachetTunnels}>
-               <Tunnel layer={1} size="lg">
-                  <SachetTunnel
-                     state={state}
-                     openTunnel={openSachetTunnel}
-                     closeTunnel={closeSachetTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={2}>
-                  <ItemTunnel closeTunnel={closeSachetTunnel} />
-               </Tunnel>
-               <Tunnel layer={3}>
-                  <PackagingTunnel closeTunnel={closeSachetTunnel} />
-               </Tunnel>
-            </Tunnels>
-            <Tunnels tunnels={editSachetTunnels}>
-               <Tunnel layer={1}>
-                  <EditSachetTunnel
-                     state={state}
-                     closeTunnel={closeEditSachetTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={2} size="lg">
-                  <EditModeTunnel
-                     state={state}
-                     closeTunnel={closeEditSachetTunnel}
-                     openTunnel={openEditSachetTunnel}
-                  />
-               </Tunnel>
-               <Tunnel layer={3}>
-                  <EditItemTunnel closeTunnel={closeEditSachetTunnel} />
-               </Tunnel>
-               <Tunnel layer={4}>
-                  <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />
-               </Tunnel>
-               <Tunnel layer={5}>
-                  <NutritionTunnel
-                     state={state}
-                     closeTunnel={closeEditSachetTunnel}
-                  />
-               </Tunnel>
-            </Tunnels>
-            <StyledHeader>
-               <InputGroup>
-                  <InputWrapper>
-                     <Input
-                        type="text"
-                        label="Ingredient Name"
+            <Flex
+               container
+               padding="16px 32px"
+               alignItems="start"
+               justifyContent="space-between"
+            >
+               <Flex container alignItems="start">
+                  <Form.Group>
+                     <Form.Label htmlFor="title" title="title">
+                        Ingredient Name*
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
                         name="title"
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
+                        value={title.value}
+                        placeholder="Enter ingredient name"
+                        onChange={e =>
+                           setTitle({ ...title, value: e.target.value })
+                        }
                         onBlur={updateName}
+                        hasError={!title.meta.isValid && title.meta.isTouched}
                      />
-                  </InputWrapper>
-                  <InputWrapper>
-                     <Input
-                        type="text"
-                        label="Ingredient Category"
+                     {title.meta.isTouched &&
+                        !title.meta.isValid &&
+                        title.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Spacer xAxis size="16px" />
+                  <Form.Group>
+                     <Form.Label htmlFor="category" title="category">
+                        Category
+                     </Form.Label>
+                     <Form.Text
+                        id="category"
                         name="category"
-                        value={category}
-                        onChange={e => setCategory(e.target.value)}
+                        value={category.value}
+                        placeholder="Enter ingredient category"
+                        onChange={e =>
+                           setCategory({ ...category, value: e.target.value })
+                        }
                         onBlur={updateCategory}
+                        hasError={
+                           !category.meta.isValid && category.meta.isTouched
+                        }
                      />
-                  </InputWrapper>
-               </InputGroup>
-               <MasterSettings>
-                  <div>
-                     {state.isValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isValid?.error}</Text>
-                        </>
-                     )}
-                  </div>
-                  <div>
-                     <Toggle
-                        checked={state.isPublished}
-                        setChecked={togglePublish}
-                        label="Published"
-                     />
-                  </div>
-               </MasterSettings>
-            </StyledHeader>
-            <StyledMain>
-               <Stats state={state} openTunnel={openTunnel} />
-               <Processings
-                  state={state}
-                  openProcessingTunnel={openProcessingTunnel}
-                  openEditSachetTunnel={openEditSachetTunnel}
-                  openSachetTunnel={openSachetTunnel}
-               />
-            </StyledMain>
+                     {category.meta.isTouched &&
+                        !category.meta.isValid &&
+                        category.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+               </Flex>
+               <Flex container alignItems="center" height="100%">
+                  {state.isValid?.status ? (
+                     <>
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </>
+                  ) : (
+                     <>
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </>
+                  )}
+                  <Spacer xAxis size="16px" />
+                  <Form.Toggle
+                     name="published"
+                     value={state.isPublished}
+                     onChange={togglePublish}
+                  >
+                     Published
+                  </Form.Toggle>
+               </Flex>
+            </Flex>
+            <Flex padding="32px" style={{ background: '#f3f3f3' }}>
+               <Stats state={state} />
+               <Spacer size="32px" />
+               <Processings state={state} />
+            </Flex>
          </>
       </IngredientContext.Provider>
    )

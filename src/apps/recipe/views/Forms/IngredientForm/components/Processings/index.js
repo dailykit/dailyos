@@ -1,8 +1,14 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   Flex,
+   Text,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
-// eslint-disable-next-line import/no-cycle
 import { Sachets } from '..'
 import {
    AddIcon,
@@ -21,18 +27,19 @@ import {
    StyledListingTile,
    StyledSection,
 } from './styled'
-import { NutritionTunnel, PriceTunnel } from '../../tunnels'
+import { NutritionTunnel, PriceTunnel, ProcessingsTunnel } from '../../tunnels'
+import { Tooltip } from '../../../../../../../shared/components'
 
-const Processings = ({
-   state,
-   openProcessingTunnel,
-   openSachetTunnel,
-   openEditSachetTunnel,
-}) => {
+const Processings = ({ state }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
 
+   const [
+      processingTunnels,
+      openProcessingTunnel,
+      closeProcessingTunnel,
+   ] = useTunnel(1)
    const [
       nutritionTunnels,
       openNutritionTunnel,
@@ -72,6 +79,14 @@ const Processings = ({
 
    return (
       <>
+         <Tunnels tunnels={processingTunnels}>
+            <Tunnel layer={1}>
+               <ProcessingsTunnel
+                  state={state}
+                  closeTunnel={closeProcessingTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
          <Tunnels tunnels={nutritionTunnels}>
             <Tunnel layer={1}>
                <NutritionTunnel state={state} close={closeNutritionTunnel} />
@@ -82,14 +97,18 @@ const Processings = ({
                <PriceTunnel state={state} close={closePriceTunnel} />
             </Tunnel>
          </Tunnels>
-         <Container top="16" paddingX="32">
+         <Flex>
             {state.ingredientProcessings?.length ? (
                <StyledSection>
                   <StyledListing>
                      <StyledListingHeader>
-                        <h3>
-                           Processings ({state.ingredientProcessings?.length})
-                        </h3>
+                        <Flex container>
+                           <Text as="h3">
+                              Processings ({state.ingredientProcessings?.length}
+                              )
+                           </Text>
+                           <Tooltip identifier="ingredient_form_processings" />
+                        </Flex>
                         <span
                            role="button"
                            tabIndex="0"
@@ -162,8 +181,6 @@ const Processings = ({
                   <StyledDisplay>
                      <Sachets
                         state={state}
-                        openSachetTunnel={openSachetTunnel}
-                        openEditSachetTunnel={openEditSachetTunnel}
                         openNutritionTunnel={openNutritionTunnel}
                      />
                   </StyledDisplay>
@@ -176,7 +193,7 @@ const Processings = ({
                   onClick={() => openProcessingTunnel(1)}
                />
             )}
-         </Container>
+         </Flex>
       </>
    )
 }
