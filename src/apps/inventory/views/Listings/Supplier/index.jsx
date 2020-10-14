@@ -6,7 +6,7 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
-import { randomSuffix } from '../../../../../shared/utils/index'
+import { logger, randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
 import {
    CREATE_SUPPLIER,
@@ -16,6 +16,11 @@ import {
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import { useTabs } from '../../../context'
+import {
+   GENERAL_ERROR_MESSAGE,
+   SUPPLIER_CANNOT_BE_DELETED,
+} from '../../../constants/errorMessages'
+import { SUPPLIER_DELETED } from '../../../constants/successMessages'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -25,13 +30,14 @@ export default function SupplierListing() {
 
    const {
       loading: listLoading,
+      error,
       data: { suppliers = [] } = {},
-   } = useSubscription(ALL_SUPPLIERS_SUBSCRIPTION, {
-      onError: error => {
-         console.log(error)
-         toast.error('Error! Please try reloading the page')
-      },
-   })
+   } = useSubscription(ALL_SUPPLIERS_SUBSCRIPTION)
+
+   if (error) {
+      logger(error)
+      toast.error(GENERAL_ERROR_MESSAGE)
+   }
 
    const [createSupplier] = useMutation(CREATE_SUPPLIER, {
       onCompleted: input => {
@@ -40,20 +46,18 @@ export default function SupplierListing() {
          addTab(supplierData.name, `/inventory/suppliers/${supplierData.id}`)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Something went wrong, try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
    const [deleteSupplier] = useMutation(DELETE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Supplier deleted!')
+         toast.info(SUPPLIER_DELETED)
       },
       onError: error => {
-         console.log(error)
-         toast.error(
-            'Supplier is linked with items, hence can not be removed. To delete the supplier, remove those items first'
-         )
+         logger(error)
+         toast.error(SUPPLIER_CANNOT_BE_DELETED)
       },
    })
 
@@ -107,7 +111,7 @@ export default function SupplierListing() {
       },
    ]
 
-   const rowClick = (e, row) => {
+   const rowClick = (_, row) => {
       const { id, name } = row._row.data
       addTab(name, `/inventory/suppliers/${id}`)
    }
