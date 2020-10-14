@@ -9,12 +9,12 @@ import { useTabs } from '../../context'
 import { StyledHome, StyledCardList } from './styled'
 
 import {
-   INGREDIENTS_COUNT,
    RECIPES_COUNT,
    SRP_COUNT,
    IP_COUNT,
    COP_COUNT,
    CUP_COUNT,
+   INGREDIENTS_COUNT,
 } from '../../graphql'
 
 const address = 'apps.recipe.views.home.'
