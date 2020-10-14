@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { ComboButton, Loader, TextButton, Flex } from '@dailykit/ui'
+import { ComboButton, Loader, TextButton, Flex, IconButton } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
@@ -20,7 +20,10 @@ import {
    GENERAL_ERROR_MESSAGE,
    SUPPLIER_CANNOT_BE_DELETED,
 } from '../../../constants/errorMessages'
-import { SUPPLIER_DELETED } from '../../../constants/successMessages'
+import {
+   CONFIRM_DELETE_SUPPLIER,
+   SUPPLIER_DELETED,
+} from '../../../constants/successMessages'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
 
 const address = 'apps.inventory.views.listings.supplier.'
@@ -76,8 +79,13 @@ export default function SupplierListing() {
 
    const tableRef = React.useRef()
 
+   const openForm = (_, cell) => {
+      const { id, name } = cell.getData()
+      addTab(name, `/inventory/suppliers/${id}`)
+   }
+
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true },
+      { title: 'Name', field: 'name', headerFilter: true, cellClick: openForm },
       {
          title: 'Person of Contact',
          field: 'contactPerson',
@@ -100,22 +108,12 @@ export default function SupplierListing() {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            const { id } = cell._cell.row.data
-            deleteSupplier({
-               variables: { id },
-            })
-         },
-         formatter: reactFormatter(<DeleteSupplier />),
+         formatter: reactFormatter(
+            <DeleteSupplier deleteSupplier={deleteSupplier} />
+         ),
          width: 100,
       },
    ]
-
-   const rowClick = (_, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/inventory/suppliers/${id}`)
-   }
 
    if (listLoading) return <Loader />
 
@@ -150,7 +148,6 @@ export default function SupplierListing() {
                ref={tableRef}
                columns={columns}
                data={suppliers}
-               rowClick={rowClick}
                options={tableOptions}
             />
          </StyledWrapper>
@@ -158,8 +155,21 @@ export default function SupplierListing() {
    )
 }
 
-function DeleteSupplier() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteSupplier({ deleteSupplier, cell }) {
+   const handleDelete = () => {
+      if (window.confirm(CONFIRM_DELETE_SUPPLIER)) {
+         const { id } = cell.getData()
+         deleteSupplier({
+            variables: { id },
+         })
+      }
+   }
+
+   return (
+      <IconButton type="ghost" onClick={handleDelete}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
 function ContactPerson({

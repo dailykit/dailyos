@@ -193,9 +193,6 @@ export default function SupplierForm() {
 
             {formState.contactPerson?.firstName &&
             formState.contactPerson?.email ? (
-               // <ContactCard
-               // name={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
-               // />
                <Avatar
                   withName
                   title={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
