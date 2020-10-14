@@ -1,25 +1,23 @@
-import PhoneInput from 'react-phone-input-2'
+import { useMutation } from '@apollo/react-hooks'
 import {
-   Input,
-   Text,
+   Flex,
+   Form,
    Loader,
+   Text,
+   Tunnel,
    TunnelHeader,
    Tunnels,
-   Tunnel,
    useTunnel,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
+import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-
+import { toast } from 'react-toastify'
 import { Camera } from '../../../../assets/icons'
 import { TunnelContainer } from '../../../../components'
-import { FlexContainer } from '../../styled'
-import { CircleButton } from '../styled'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
-
+import { CircleButton } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
 
 const address = 'apps.inventory.views.forms.supplier.tunnels.'
@@ -86,37 +84,47 @@ export default function PersonContactTunnel({ close, formState }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <FlexContainer
-               style={{ width: '100%', justifyContent: 'space-between' }}
-            >
+            <Flex container justifyContent="space-between" width="100%">
                <div>
-                  <FlexContainer>
-                     <Input
-                        name="firstName"
-                        placeholder={t(address.concat('first name'))}
-                        type="text"
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                     />
-                     <div style={{ width: '15px' }} />
-                     <Input
-                        name="lastName"
-                        placeholder={t(address.concat('last name'))}
-                        type="text"
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}
-                     />
-                  </FlexContainer>
+                  <Flex container>
+                     <Form.Group>
+                        <Form.Label htmlFor="firstName" title="firstName">
+                           {t(address.concat('first name'))}
+                        </Form.Label>
+                        <Form.Text
+                           name="firstName"
+                           id="firstName"
+                           value={firstName}
+                           onChange={e => setFirstName(e.target.value)}
+                        />
+                     </Form.Group>
+                     <span style={{ width: '8px' }} />
+                     <Form.Group>
+                        <Form.Label htmlFor="lastName" title="lastName">
+                           {t(address.concat('last name'))}
+                        </Form.Label>
+                        <Form.Text
+                           id="lastName"
+                           name="lastName"
+                           value={lastName}
+                           onChange={e => setLastName(e.target.value)}
+                        />
+                     </Form.Group>
+                  </Flex>
 
                   <br />
 
-                  <Input
-                     name="email"
-                     label={t(address.concat('email'))}
-                     type="text"
-                     value={email}
-                     onChange={e => setEmail(e.target.value)}
-                  />
+                  <Form.Group>
+                     <Form.Label htmlFor="email" title="email">
+                        {t(address.concat('email'))}
+                     </Form.Label>
+                     <Form.Text
+                        id="email"
+                        name="email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                     />
+                  </Form.Group>
 
                   <br />
 
@@ -129,12 +137,11 @@ export default function PersonContactTunnel({ close, formState }) {
                   />
                </div>
 
-               <FlexContainer
-                  style={{
-                     marginLeft: '20px',
-                     width: '70%',
-                     justifyContent: 'center',
-                  }}
+               <Flex
+                  container
+                  margin="0 0 0 20px"
+                  width="70%"
+                  justifyContent="center"
                >
                   <CircleButton onClick={() => openPhotoTunnel(1)}>
                      {formState.contactPerson?.imageUrl ? (
@@ -146,8 +153,8 @@ export default function PersonContactTunnel({ close, formState }) {
                         <Camera color="#555B6E" size="44" />
                      )}
                   </CircleButton>
-               </FlexContainer>
-            </FlexContainer>
+               </Flex>
+            </Flex>
          </TunnelContainer>
       </>
    )

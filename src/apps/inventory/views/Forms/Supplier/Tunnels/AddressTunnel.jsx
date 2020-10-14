@@ -1,12 +1,9 @@
-import { Checkbox, Input, Loader, TunnelHeader } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-
-import MapView from '../../../../assets/images/mapView.png'
 import { TunnelContainer } from '../../../../components'
-import { FlexContainer } from '../../styled'
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 
 const address = 'apps.inventory.views.forms.supplier.tunnels.'
@@ -14,22 +11,12 @@ const address = 'apps.inventory.views.forms.supplier.tunnels.'
 export default function AddressTunnel({ close, formState }) {
    const { t } = useTranslation()
 
-   const [isManual, setIsManual] = useState(
-      Boolean(formState.address?.isManual)
-   )
-   const [location, setLocation] = useState(
-      (!isManual && formState.address?.location) || ''
-   )
-   const [address1, setAddress1] = useState(
-      (isManual && formState.address?.address1) || ''
-   )
-   const [address2, setAddress2] = useState(
-      (isManual && formState.address?.address2) || ''
-   )
-   const [city, setCity] = useState((isManual && formState.address?.city) || '')
-   const [zip, setZip] = useState((isManual && formState.address?.zip) || '')
+   const [address1, setAddress1] = useState(formState.address?.address1 || '')
+   const [address2, setAddress2] = useState(formState.address?.address2 || '')
+   const [city, setCity] = useState(formState.address?.city || '')
+   const [zip, setZip] = useState(formState.address?.zip || '')
    const [instructions, setInstructions] = useState(
-      (isManual && formState.address?.instructions) || ''
+      formState.address?.instructions || ''
    )
 
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
@@ -45,25 +32,14 @@ export default function AddressTunnel({ close, formState }) {
    })
 
    const handleNext = () => {
-      if (isManual && (!address1 || !city))
-         return toast.error('Fill the form properly')
+      if (!address1 || !city) return toast.error('Fill the form properly')
 
-      let pushableAddress = null
-
-      if (isManual) {
-         pushableAddress = {
-            isManual,
-            address1,
-            address2,
-            city,
-            zip,
-            instructions,
-         }
-      } else {
-         pushableAddress = {
-            isManual,
-            location,
-         }
+      const pushableAddress = {
+         address1: address1.trim(),
+         address2: address2.trim(),
+         city: city.trim(),
+         zip: zip.trim(),
+         instructions: instructions.trim(),
       }
 
       updateSupplier({
@@ -87,87 +63,78 @@ export default function AddressTunnel({ close, formState }) {
          />
 
          <TunnelContainer>
-            <FlexContainer
-               style={{ width: '100%', justifyContent: 'space-between' }}
-            >
-               <div>
-                  <Input
-                     disabled={isManual}
-                     placeholder={t(address.concat('shipping location'))}
-                     type="text"
-                     name="location"
-                     value={location}
-                     onChange={e => {
-                        setLocation(e.target.value)
-                     }}
-                  />
-                  <div style={{ height: '10px' }} />
-                  <Checkbox
-                     id="label"
-                     checked={isManual}
-                     onChange={() => setIsManual(!isManual)}
-                  >
-                     {t(address.concat('enter manually'))}
-                  </Checkbox>
+            <div>
+               <>
+                  <br />
+                  <Form.Group>
+                     <Form.Label htmlFor="address1" title="address1">
+                        {t(address.concat('address line 1'))}
+                     </Form.Label>
+                     <Form.Text
+                        id="address1"
+                        name="address1"
+                        value={address1}
+                        onChange={e => {
+                           setAddress1(e.target.value)
+                        }}
+                     />
+                  </Form.Group>
+                  <br />
+                  <Form.Group>
+                     <Form.Label htmlFor="address2" title="address2">
+                        {t(address.concat('address line 2'))}
+                     </Form.Label>
+                     <Form.Text
+                        id="address2"
+                        name="address2"
+                        value={address2}
+                        onChange={e => {
+                           setAddress2(e.target.value)
+                        }}
+                     />
+                  </Form.Group>
+                  <br />
+                  <Flex container>
+                     <Form.Group>
+                        <Form.Label htmlFor="city" title="city">
+                           {t(address.concat('city'))}
+                        </Form.Label>
 
-                  {isManual && (
-                     <>
-                        <br />
-                        <Input
-                           placeholder={t(address.concat('address line 1'))}
-                           type="text"
-                           name="address1"
-                           value={address1}
-                           onChange={e => {
-                              setAddress1(e.target.value)
-                           }}
-                        />{' '}
-                        <br />
-                        <Input
-                           placeholder={t(address.concat('address line 2'))}
-                           type="text"
-                           name="address2"
-                           value={address2}
-                           onChange={e => {
-                              setAddress2(e.target.value)
-                           }}
+                        <Form.Text
+                           id="city"
+                           name="city"
+                           value={city}
+                           onChange={e => setCity(e.target.value)}
                         />
-                        <br />
-                        <FlexContainer>
-                           <Input
-                              placeholder={t(address.concat('city'))}
-                              type="text"
-                              name="city"
-                              value={city}
-                              onChange={e => setCity(e.target.value)}
-                           />
-                           <div style={{ width: '10px' }} />
-                           <Input
-                              placeholder={t(address.concat('zip code'))}
-                              type="number"
-                              name="zip"
-                              value={zip}
-                              onChange={e => setZip(e.target.value)}
-                           />
-                        </FlexContainer>
-                        <br />
-                        <Input
-                           placeholder={t(
-                              address.concat('special instructions')
-                           )}
-                           type="text"
-                           name="instructions"
-                           value={instructions}
-                           onChange={e => setInstructions(e.target.value)}
-                        />{' '}
-                     </>
-                  )}
-               </div>
+                     </Form.Group>
+                     <span style={{ width: '8px' }} />
+                     <Form.Group>
+                        <Form.Label htmlFor="zip" title="zip">
+                           {t(address.concat('zip code'))}
+                        </Form.Label>
 
-               <div style={{ marginLeft: '20px' }}>
-                  <img src={MapView} alt="map" />
-               </div>
-            </FlexContainer>
+                        <Form.Number
+                           id="zip"
+                           name="zip"
+                           value={zip}
+                           onChange={e => setZip(e.target.value)}
+                        />
+                     </Form.Group>
+                  </Flex>
+                  <br />
+                  <Form.Group>
+                     <Form.Label htmlFor="instructions" title="instructions">
+                        {t(address.concat('special instructions'))}
+                     </Form.Label>
+                     <Form.TextArea
+                        id="instructions"
+                        name="instructions"
+                        value={instructions}
+                        onChange={e => setInstructions(e.target.value)}
+                     />
+                  </Form.Group>
+               </>
+            </div>
          </TunnelContainer>
       </>
    )

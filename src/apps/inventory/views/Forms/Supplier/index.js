@@ -1,22 +1,22 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Avatar,
    ButtonTile,
    Flex,
+   Form,
    IconButton,
-   Input,
    Loader,
    Text,
-   Toggle,
    Tunnel,
    Tunnels,
    useTunnel,
-} from '@dailykit/ui/'
+} from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import EditIcon from '../../../assets/icons/Edit'
-import { AddressCard, ContactCard } from '../../../components'
+import { AddressCard } from '../../../components'
 import { useTabs } from '../../../context'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
 import { StyledHeader } from '../../Listings/styled'
@@ -70,9 +70,9 @@ export default function SupplierForm() {
          variables: {
             id: formState.id,
             object: {
-               name,
-               paymentTerms,
-               shippingTerms,
+               name: name.trim(),
+               paymentTerms: paymentTerms.trim(),
+               shippingTerms: shippingTerms.trim(),
             },
          },
       })
@@ -83,7 +83,7 @@ export default function SupplierForm() {
    return (
       <>
          <Tunnels tunnels={addressTunnel}>
-            <Tunnel size="lg" layer={1}>
+            <Tunnel size="sm" layer={1}>
                <AddressTunnel
                   close={closeAddressTunnel}
                   formState={formState}
@@ -106,16 +106,18 @@ export default function SupplierForm() {
 
          <StyledWrapper>
             <StyledHeader>
-               <div>
-                  <Input
-                     label="Supplier Name"
-                     type="text"
+               <Form.Group>
+                  <Form.Label htmlFor="supplierName" title="Supplier Name">
+                     Supplier Name
+                  </Form.Label>
+                  <Form.Text
+                     id="supplierName"
                      name="supplierName"
                      value={name}
                      onChange={e => setName(e.target.value)}
                      onBlur={handleUpdateSupplier}
                   />
-               </div>
+               </Form.Group>
 
                <div style={{ width: '110px' }}>
                   <FlexContainer>
@@ -156,16 +158,20 @@ export default function SupplierForm() {
 
             <AddressView formState={formState} openTunnel={openAddressTunnel} />
 
-            <Flex container alignItems="center" margin="24px 0 0 0">
+            <Flex
+               container
+               alignItems="center"
+               margin="24px 0 0 0"
+               justifyContent="space-between"
+            >
                <Text as="title">{t(address.concat('person of contact'))}</Text>
 
                {formState.contactPerson?.email ||
                formState.contactPerson?.firstName ? (
                   <>
-                     <span style={{ width: '8px' }} />
                      <IconButton
                         onClick={() => openContactTunnel(1)}
-                        type="ghost"
+                        type="outline"
                      >
                         <EditIcon color="#555b6e" />
                      </IconButton>
@@ -175,8 +181,12 @@ export default function SupplierForm() {
 
             {formState.contactPerson?.firstName &&
             formState.contactPerson?.email ? (
-               <ContactCard
-                  name={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
+               // <ContactCard
+               // name={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
+               // />
+               <Avatar
+                  withName
+                  title={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
                />
             ) : (
                <ButtonTile
@@ -195,26 +205,31 @@ export default function SupplierForm() {
 
             <br />
 
-            <Input
-               type="textarea"
-               label={t(address.concat('payment terms'))}
-               name="paymentTerms"
-               rows="4"
-               value={paymentTerms}
-               onChange={e => setPaymentTerms(e.target.value)}
-               onBlur={handleUpdateSupplier}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="paymentTerms" title="Payment Terms">
+                  {t(address.concat('payment terms'))}
+               </Form.Label>
+               <Form.TextArea
+                  name="paymentTerms"
+                  value={paymentTerms}
+                  onChange={e => setPaymentTerms(e.target.value)}
+                  onBlur={handleUpdateSupplier}
+               />
+            </Form.Group>
             <br />
 
-            <Input
-               type="textarea"
-               label={t(address.concat('shipping terms'))}
-               name="shippingTerms"
-               rows="4"
-               value={shippingTerms}
-               onChange={e => setShippingTerms(e.target.value)}
-               onBlur={handleUpdateSupplier}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="shippingTerms" title="shippingTerms">
+                  {t(address.concat('shipping terms'))}
+               </Form.Label>
+               <Form.TextArea
+                  type="textarea"
+                  name="shippingTerms"
+                  value={shippingTerms}
+                  onChange={e => setShippingTerms(e.target.value)}
+                  onBlur={handleUpdateSupplier}
+               />
+            </Form.Group>
          </StyledWrapper>
       </>
    )
@@ -232,18 +247,21 @@ function ShowAvailability({ formState }) {
    })
 
    return (
-      <Toggle
-         checked={formState.available}
-         label={formState.available ? 'Available' : 'Unavailable'}
-         setChecked={() => {
-            updateSupplier({
-               variables: {
-                  id: formState.id,
-                  object: { available: !formState.available },
-               },
-            })
-         }}
-      />
+      <Form.Group>
+         <Form.Toggle
+            value={formState.available}
+            onChange={() => {
+               updateSupplier({
+                  variables: {
+                     id: formState.id,
+                     object: { available: !formState.available },
+                  },
+               })
+            }}
+         >
+            {formState.available ? 'Available' : 'Unavailable'}
+         </Form.Toggle>
+      </Form.Group>
    )
 }
 
@@ -258,12 +276,16 @@ function AddressView({ formState, openTunnel }) {
 
    return (
       <>
-         <Flex container margin="24px 0 0 0" alignItems="center">
+         <Flex
+            container
+            margin="24px 0 0 0"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="title">{t(address.concat('address'))}</Text>
             {check && (
                <>
-                  <span style={{ width: '8px' }} />
-                  <IconButton onClick={() => openTunnel(1)} type="ghost">
+                  <IconButton onClick={() => openTunnel(1)} type="outline">
                      <EditIcon color="#555b6e" />
                   </IconButton>
                </>
