@@ -104,8 +104,13 @@ const RecipesListing = () => {
    if (loading) return <Loader />
 
    return (
-      <Flex maxWidth="1280px" padding="32px" margin="0 auto">
-         <Flex container alignItems="center" justifyContent="space-between">
+      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            height="72px"
+         >
             <Flex container alignItems="center">
                <Text as="h2">{t(address.concat('recipes'))}</Text>
                <Tooltip identifier="recipes_list_heading" />
@@ -114,7 +119,6 @@ const RecipesListing = () => {
                {t(address.concat('total'))}: {recipes.length}
             </Text>
          </Flex>
-         <Spacer size="32px" />
          <DataTable
             data={recipes}
             addTab={addTab}

@@ -72,8 +72,13 @@ const ProductsListing = () => {
                <ProductTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex maxWidth="1280px" padding="32px" margin="0 auto">
-            <Flex container alignItems="center" justifyContent="space-between">
+         <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               height="72px"
+            >
                <Flex container alignItems="center">
                   <Text as="h2">{t(address.concat('products'))}</Text>
                   <Tooltip identifier="products_list_heading" />
@@ -82,7 +87,6 @@ const ProductsListing = () => {
                   <AddIcon color="#fff" size={24} /> Add Product
                </ComboButton>
             </Flex>
-            <Spacer size="32px" />
             <RadioGroup
                options={options}
                active="inventory"

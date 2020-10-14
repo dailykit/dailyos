@@ -102,15 +102,19 @@ const IngredientsListing = () => {
    if (loading) return <Loader />
 
    return (
-      <Flex maxWidth="1280px" margin="0 auto" padding="32px">
-         <Flex container alignItems="center" justifyContent="space-between">
+      <Flex maxWidth="1280px" margin="0 auto" width="calc(100vw - 64px)">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            height="72px"
+         >
             <Flex container>
                <Text as="h2">Ingredients</Text>
                <Tooltip identifier="ingredients_list_heading" />
             </Flex>
             <Text as="h3">Total: {ingredients.length}</Text>
          </Flex>
-         <Spacer size="32px" />
          <DataTable
             data={ingredients}
             addTab={addTab}
