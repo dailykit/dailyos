@@ -10,6 +10,7 @@ import {
    useMultiList,
    TunnelHeader,
    Loader,
+   Filler,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -20,21 +21,20 @@ import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../shared/utils'
 
 const ProcessingsTunnel = ({ state, closeTunnel }) => {
-   const [search, setSearch] = React.useState('')
-   const [processings, setProcessings] = React.useState([])
-   const [list, selected, selectOption] = useMultiList(processings)
-
    // Subscription
-   const { loading, error } = useSubscription(FETCH_PROCESSING_NAMES, {
-      onSubscriptionData: data => {
-         setProcessings([...data.subscriptionData.data.masterProcessings])
-      },
-   })
+   const {
+      data: { masterProcessings = [] } = {},
+      loading,
+      error,
+   } = useSubscription(FETCH_PROCESSING_NAMES)
 
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
    }
+
+   const [search, setSearch] = React.useState('')
+   const [list, selected, selectOption] = useMultiList(masterProcessings)
 
    // Mutation
    const [createProcessings, { loading: inFlight }] = useMutation(
@@ -117,7 +117,7 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
                         </ListOptions>
                      </List>
                   ) : (
-                     <h1>No Data</h1>
+                     <Filler height="500px" message="No Processings found!" />
                   )}
                </>
             )}

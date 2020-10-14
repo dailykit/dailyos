@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { TunnelHeader, Flex } from '@dailykit/ui'
 import { AssetUploader } from '../../../../../../../shared/components'
 import { UPDATE_INGREDIENT } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
 
 const PhotoTunnel = ({ state, closeTunnel }) => {
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -11,8 +12,9 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
          toast.success('Image added!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error')
+      onError: error => {
+         toast.error('something went wrong!')
+         logger(error)
       },
    })
 

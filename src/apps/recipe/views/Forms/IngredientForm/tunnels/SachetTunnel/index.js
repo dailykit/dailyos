@@ -11,6 +11,9 @@ import {
    Text,
    TextButton,
    useTunnel,
+   Flex,
+   Form,
+   Spacer,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -22,7 +25,12 @@ import {
    StyledSelect,
 } from '../styled'
 import { StyledTable } from './styled'
-import { OperationConfig } from '../../../../../../../shared/components'
+import {
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import validator from '../../validators'
 
 const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -36,11 +44,25 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    ] = useTunnel(4)
 
    // State
-   const [busy, setBusy] = React.useState(false)
-   const [quantity, setQuantity] = React.useState('')
-   const [units, setUnits] = React.useState([])
-   const [unit, setUnit] = React.useState(units[0]?.title || '')
-   const [tracking, setTracking] = React.useState(true)
+   const [quantity, setQuantity] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [unit, setUnit] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [tracking, setTracking] = React.useState({
+      value: true,
+   })
 
    const options = [
       { id: 1, title: 'Atleast 80%', value: '80' },
@@ -49,18 +71,14 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    ]
 
    // Subscription
-   const { loading } = useSubscription(FETCH_UNITS, {
-      onSubscriptionData: data => {
-         console.log(
-            'SachetTunnel -> data.subscriptionData.data.units',
-            data.subscriptionData.data.units
-         )
-         setUnits([...data.subscriptionData.data.units])
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
+   const { data: { units = [] } = {}, loading, error } = useSubscription(
+      FETCH_UNITS
+   )
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Handlers
    const close = () => {
@@ -105,22 +123,20 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    }
 
    // Mutations
-   const [createSachet] = useMutation(CREATE_SACHET, {
+   const [createSachet, { loading: inFlight }] = useMutation(CREATE_SACHET, {
       onCompleted: () => {
          toast.success('Sachet added!')
          close()
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
-         setBusy(false)
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    const add = () => {
       try {
-         if (busy) return
-         setBusy(true)
+         if (inFlight) return
          if (!quantity || Number.isNaN(quantity) || parseInt(quantity) === 0) {
             throw Error('Invalid Quantity!')
          }
@@ -184,15 +200,8 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
          })
       } catch (e) {
          toast.error(e.message)
-         setBusy(false)
       }
    }
-
-   React.useEffect(() => {
-      if (units.length) {
-         setUnit(units[0].title)
-      }
-   }, [units])
 
    if (loading) return <Loader />
 
@@ -215,73 +224,181 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
          />
          <TunnelHeader
             title="Add Sachet"
-            right={{ action: add, title: busy ? 'Adding...' : 'Add' }}
+            right={{ action: add, title: inFlight ? 'Adding...' : 'Add' }}
             close={close}
          />
          <TunnelBody>
-            <StyledRow>
-               <StyledInputWrapper width="300">
-                  <Input
-                     type="text"
-                     label="Quantity"
-                     value={quantity}
-                     onChange={e => setQuantity(e.target.value)}
-                  />
-                  <StyledSelect onChange={e => setUnit(e.target.value)}>
-                     {units.map(item => (
-                        <option key={item.id} value={item.title}>
-                           {item.title}
-                        </option>
+            <Flex maxWidth="300px">
+               <Form.Group>
+                  <Form.Label htmlFor="quantity" title="quantity">
+                     Quantity*
+                  </Form.Label>
+                  <Form.TextSelect>
+                     <Form.Number
+                        id="quantity"
+                        name="quantity"
+                        value={quantity.value}
+                        placeholder="Enter sachet quantity"
+                        onChange={e =>
+                           setQuantity({ ...quantity, value: e.target.value })
+                        }
+                        onBlur={() => {
+                           const { isValid, errors } = validator.quantity(
+                              quantity.value
+                           )
+                           setQuantity({
+                              ...quantity,
+                              meta: {
+                                 isTouched: true,
+                                 isValid,
+                                 errors,
+                              },
+                           })
+                        }}
+                     />
+                     <Form.Select
+                        id="unit"
+                        name="unit"
+                        options={units}
+                        value={unit.value}
+                        placeholder="Choose unit"
+                        defaultValue={unit.value}
+                        onChange={e =>
+                           setUnit({ ...unit, value: e.target.value })
+                        }
+                     />
+                  </Form.TextSelect>
+                  {quantity.meta.isTouched &&
+                     !quantity.meta.isValid &&
+                     quantity.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
                      ))}
-                  </StyledSelect>
-               </StyledInputWrapper>
-            </StyledRow>
-            <StyledRow>
-               <StyledInputWrapper width="300">
-                  <Toggle
-                     label="Track Inventory"
-                     checked={tracking}
-                     setChecked={val => setTracking(val)}
-                  />
-               </StyledInputWrapper>
-            </StyledRow>
+               </Form.Group>
+            </Flex>
+            <Spacer size="24px" />
+            <Flex maxWidth="300px">
+               <Form.Toggle
+                  id="tracking"
+                  name="tracking"
+                  value={tracking.value}
+                  onChange={() =>
+                     setTracking({ ...tracking, value: !tracking.value })
+                  }
+               >
+                  Track Inventory
+               </Form.Toggle>
+            </Flex>
+            <Spacer size="24px" />
             <StyledTable cellSpacing={0}>
                <thead>
                   <tr>
-                     <th>Mode of Fulfillment</th>
-                     <th>Priority</th>
-                     <th>Item</th>
-                     <th>Accuracy</th>
-                     <th>Packaging</th>
-                     <th>Operational Configuration</th>
+                     <th>
+                        <Flex container alignItems="center">
+                           Mode of Fulfillment
+                           <Tooltip identifier="sachet_tunnel_mof" />
+                        </Flex>
+                     </th>
+                     <th>
+                        <Flex container alignItems="center">
+                           Priority
+                           <Tooltip identifier="sachet_tunnel_mode_priority" />
+                        </Flex>
+                     </th>
+                     <th>
+                        <Flex container alignItems="center">
+                           Item
+                           <Tooltip identifier="sachet_tunnel_mode_item" />
+                        </Flex>
+                     </th>
+                     <th>
+                        <Flex container alignItems="center">
+                           Accuracy
+                           <Tooltip identifier="sachet_tunnel_mode_accuracy" />
+                        </Flex>
+                     </th>
+                     <th>
+                        <Flex container alignItems="center">
+                           Packaging
+                           <Tooltip identifier="sachet_tunnel_mode_packaging" />
+                        </Flex>
+                     </th>
+                     <th>
+                        <Flex container alignItems="center">
+                           Operational Configuration
+                           <Tooltip identifier="sachet_tunnel_mode_opconfig" />
+                        </Flex>
+                     </th>
                   </tr>
                </thead>
                <tbody>
                   <tr>
                      <td>
-                        <Checkbox
-                           checked={ingredientState.realTime.isLive}
-                           onChange={val => propagate('realTime', val)}
-                        />
-                        Real Time
+                        <Flex container>
+                           <Form.Checkbox
+                              id="realTimeIsLive"
+                              name="realTimeIsLive"
+                              value={ingredientState.realTime.isLive}
+                              onChange={() =>
+                                 propagate(
+                                    'realTime',
+                                    !ingredientState.realTime.isLive
+                                 )
+                              }
+                           >
+                              Real Time
+                           </Form.Checkbox>
+                           <Tooltip identifier="sachet_tunnel_real_time" />
+                        </Flex>
                      </td>
                      <td>
-                        <StyledInputWrapper width="50">
-                           <Input
-                              type="text"
-                              value={ingredientState.realTime.priority}
-                              onChange={e =>
+                        <Flex maxWidth="100px">
+                           <Form.Stepper
+                              id="realTimePriority"
+                              name="realTimePriority"
+                              value={ingredientState.realTime.priority.value}
+                              placeholder="Enter priority"
+                              onChange={value =>
                                  ingredientDispatch({
                                     type: 'MODE',
                                     payload: {
                                        mode: 'realTime',
                                        name: 'priority',
-                                       value: e.target.value,
+                                       value: {
+                                          ...ingredientState.realTime.priority,
+                                          value,
+                                       },
                                     },
                                  })
                               }
+                              onBlur={() => {
+                                 const { isValid, errors } = validator.priority(
+                                    ingredientState.realTime.priority.value
+                                 )
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'realTime',
+                                       name: 'priority',
+                                       value: {
+                                          ...ingredientState.realTime.priority,
+                                          meta: {
+                                             isTouched: true,
+                                             isValid,
+                                             errors,
+                                          },
+                                       },
+                                    },
+                                 })
+                              }}
                            />
-                        </StyledInputWrapper>
+                           {ingredientState.realTime.priority.meta.isTouched &&
+                              !ingredientState.realTime.priority.meta.isValid &&
+                              ingredientState.realTime.priority.meta.errors.map(
+                                 (error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 )
+                              )}
+                        </Flex>
                      </td>
                      <td>{ingredientState.realTime.bulkItem?.title || '-'}</td>
                      <td>
@@ -343,29 +460,76 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                   </tr>
                   <tr>
                      <td>
-                        <Checkbox
-                           checked={ingredientState.plannedLot.isLive}
-                           onChange={val => propagate('plannedLot', val)}
-                        />
-                        Planned Lot
+                        <Flex container>
+                           <Form.Checkbox
+                              id="plannedLotIsLive"
+                              name="plannedLotIsLive"
+                              value={ingredientState.plannedLot.isLive}
+                              onChange={() =>
+                                 propagate(
+                                    'plannedLot',
+                                    !ingredientState.plannedLot.isLive
+                                 )
+                              }
+                           >
+                              Planned Lot
+                           </Form.Checkbox>
+                           <Tooltip identifier="sachet_tunnel_planned_lot" />
+                        </Flex>
                      </td>
                      <td>
-                        <StyledInputWrapper width="50">
-                           <Input
-                              type="text"
-                              value={ingredientState.plannedLot.priority}
-                              onChange={e =>
+                        <Flex maxWidth="100px">
+                           <Form.Stepper
+                              id="plannedLotPriority"
+                              name="plannedLotPriority"
+                              value={ingredientState.plannedLot.priority.value}
+                              placeholder="Enter priority"
+                              onChange={value =>
                                  ingredientDispatch({
                                     type: 'MODE',
                                     payload: {
                                        mode: 'plannedLot',
                                        name: 'priority',
-                                       value: e.target.value,
+                                       value: {
+                                          ...ingredientState.plannedLot
+                                             .priority,
+                                          value,
+                                       },
                                     },
                                  })
                               }
+                              onBlur={() => {
+                                 const { isValid, errors } = validator.priority(
+                                    ingredientState.plannedLot.priority.value
+                                 )
+                                 ingredientDispatch({
+                                    type: 'MODE',
+                                    payload: {
+                                       mode: 'plannedLot',
+                                       name: 'priority',
+                                       value: {
+                                          ...ingredientState.plannedLot
+                                             .priority,
+                                          meta: {
+                                             isTouched: true,
+                                             isValid,
+                                             errors,
+                                          },
+                                       },
+                                    },
+                                 })
+                              }}
                            />
-                        </StyledInputWrapper>
+                           {ingredientState.plannedLot.priority.meta
+                              .isTouched &&
+                              !ingredientState.plannedLot.priority.meta
+                                 .isValid &&
+                              ingredientState.plannedLot.priority.meta.errors.map(
+                                 (error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 )
+                              )}
+                        </Flex>
                      </td>
                      <td>
                         {ingredientState.plannedLot.sachetItem?.title || '-'}

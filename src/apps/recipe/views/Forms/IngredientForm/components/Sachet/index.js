@@ -133,7 +133,10 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                            'Planned Lot'}
                      </Text>
                   </Flex>
-                  <IconButton onClick={() => openEditSachetTunnel(1)}>
+                  <IconButton
+                     type="ghost"
+                     onClick={() => openEditSachetTunnel(1)}
+                  >
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                </Flex>

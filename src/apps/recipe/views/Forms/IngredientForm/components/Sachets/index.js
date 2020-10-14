@@ -1,6 +1,13 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Flex,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { Sachet } from '..'
 import { AddIcon, DeleteIcon } from '../../../../../assets/icons'
@@ -24,6 +31,8 @@ import {
    PackagingTunnel,
    SachetTunnel,
 } from '../../tunnels'
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip, ErrorBoundary } from '../../../../../../../shared/components'
 
 const Sachets = ({ state, openNutritionTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -47,8 +56,8 @@ const Sachets = ({ state, openNutritionTunnel }) => {
          })
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -85,7 +94,7 @@ const Sachets = ({ state, openNutritionTunnel }) => {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={editSachetTunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <EditSachetTunnel
                   state={state}
                   closeTunnel={closeEditSachetTunnel}
@@ -111,21 +120,24 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                />
             </Tunnel>
          </Tunnels>
-         <>
+         <ErrorBoundary rootRoute="/apps/recipe">
             {state.ingredientProcessings[ingredientState.processingIndex]
                .ingredientSachets.length ? (
                <StyledSection>
                   <StyledListing>
                      <StyledListingHeader>
-                        <h3>
-                           Sachets (
-                           {
-                              state.ingredientProcessings[
-                                 ingredientState.processingIndex
-                              ].ingredientSachets.length
-                           }
-                           )
-                        </h3>
+                        <Flex container>
+                           <Text as="h3">
+                              Sachets (
+                              {
+                                 state.ingredientProcessings[
+                                    ingredientState.processingIndex
+                                 ].ingredientSachets.length
+                              }
+                              )
+                           </Text>
+                           <Tooltip identifier="ingredient_form_sachets" />
+                        </Flex>
                         <span
                            role="button"
                            tabIndex="0"
@@ -195,7 +207,7 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                   onClick={() => openSachetTunnel(1)}
                />
             )}
-         </>
+         </ErrorBoundary>
       </>
    )
 }

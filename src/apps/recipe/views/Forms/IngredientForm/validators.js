@@ -9,6 +9,28 @@ const validator = {
       }
       return { isValid, errors }
    },
+   quantity: value => {
+      let isValid = true
+      let errors = []
+      if (value <= 0) {
+         isValid = false
+         errors = [...errors, 'Invalid quantity!']
+      }
+      return { isValid, errors }
+   },
+   priority: value => {
+      let isValid = true
+      let errors = []
+      if (value < 0) {
+         isValid = false
+         errors = [...errors, 'Cannot be less then 0!']
+      }
+      if (!Number.isInteger(value)) {
+         isValid = false
+         errors = [...errors, 'Integers only!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator
