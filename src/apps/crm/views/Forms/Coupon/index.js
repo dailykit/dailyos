@@ -88,18 +88,6 @@ const CouponForm = () => {
       },
    })
 
-   const updateCodeTitle = () => {
-      if (codeTitle.value) {
-         updateCoupon({
-            variables: {
-               id: couponId,
-               set: {
-                  code: codeTitle.value,
-               },
-            },
-         })
-      }
-   }
    const updatetoggle = () => {
       if (toggle || !toggle) {
          updateCoupon({
@@ -138,20 +126,19 @@ const CouponForm = () => {
          meta: {
             ...codeTitle.meta,
             isTouched: true,
-            errors: validateCouponCode(codeTitle.value).errors,
-            isValid: validateCouponCode(codeTitle.value).isValid,
+            errors: validateCouponCode(e.target.value).errors,
+            isValid: validateCouponCode(e.target.value).isValid,
          },
       })
-      if (codeTitle.meta.isValid && codeTitle.meta.errors.length === 0) {
-         console.log(`mutation should fire ${codeTitle.meta.isValid}`)
+      if (
+         validateCouponCode(e.target.value).isValid &&
+         validateCouponCode(e.target.value).errors.length === 0
+      ) {
          updateCoupon({
             variables: {
                id: couponId,
                set: {
-                  metaDetails: {
-                     ...state.metaDetails,
-                     title: codeTitle.value,
-                  },
+                  code: e.target.value,
                },
             },
          })
@@ -177,14 +164,13 @@ const CouponForm = () => {
                      name="couponCode"
                      value={codeTitle.value}
                      placeholder="Enter the Coupon Code "
-                     onChange={e => {
+                     onBlur={onBlur}
+                     onChange={e =>
                         setCodeTitle({
                            ...codeTitle,
                            value: e.target.value,
                         })
-                        console.log(codeTitle)
-                     }}
-                     onBlur={onBlur}
+                     }
                   />
                   {codeTitle.meta.isTouched &&
                      !codeTitle.meta.isValid &&

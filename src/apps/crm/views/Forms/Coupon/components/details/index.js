@@ -51,6 +51,7 @@ const Details = ({ state }) => {
                <HorizontalCard
                   data={state?.metaDetails}
                   open={() => openTunnel(1)}
+                  altMessage="Coupon Image"
                />
             </StyledCard>
          ) : (

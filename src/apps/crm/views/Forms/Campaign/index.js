@@ -122,13 +122,13 @@ const CampaignForm = () => {
          meta: {
             ...campaignTitle.meta,
             isTouched: true,
-            errors: validateCampaignName(campaignTitle.value).errors,
-            isValid: validateCampaignName(campaignTitle.value).isValid,
+            errors: validateCampaignName(e.target.value).errors,
+            isValid: validateCampaignName(e.target.value).isValid,
          },
       })
       if (
-         campaignTitle.meta.isValid &&
-         campaignTitle.meta.errors.length === 0
+         validateCampaignName(e.target.value).isValid &&
+         validateCampaignName(e.target.value).errors.length === 0
       ) {
          console.log(`mutation should fire ${campaignTitle.meta.isValid}`)
          updateCoupon({
@@ -137,7 +137,7 @@ const CampaignForm = () => {
                set: {
                   metaDetails: {
                      ...state.metaDetails,
-                     title: campaignTitle.value,
+                     title: e.target.value,
                   },
                },
             },
@@ -170,14 +170,13 @@ const CampaignForm = () => {
                      name="campaignName"
                      value={campaignTitle.value}
                      placeholder="Enter the campaign Name"
-                     onChange={e => {
+                     onBlur={onBlur}
+                     onChange={e =>
                         setCampaignTitle({
                            ...campaignTitle,
                            value: e.target.value,
                         })
-                        console.log(campaignTitle)
-                     }}
-                     onBlur={onBlur}
+                     }
                   />
                   {campaignTitle.meta.isTouched &&
                      !campaignTitle.meta.isValid &&
