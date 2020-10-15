@@ -22,8 +22,6 @@ export const ActionsWrapper = styled.div`
 `
 
 export const StyledMain = styled.div`
-   margin-top: 32px;
-   height: 100%;
    background: #f3f3f3;
 `
 
@@ -150,30 +148,30 @@ export const StyledGrid = styled.div`
             display: flex;
             flex-direction: column;
 
-            > span {
-               font-weight: 500;
-               font-size: 14px;
-               line-height: 16px;
-               color: #555b6e;
-               margin-bottom: 8px;
-            }
             div {
                font-weight: 500;
-               font-size: 20px;
                line-height: 23px;
                color: #555b6e;
                display: flex;
                justify-content: space-between;
-
-               span:last-child {
-                  font-size: 16px;
-                  line-height: 19px;
-               }
             }
          }
       }
    }
 `
+
+export const StatHeader = styled.div`
+   font-weight: 500;
+   font-size: 14px;
+   line-height: 16px;
+   color: #555b6e;
+`
+
+export const StatValue = styled.div`
+   font-size: 16px;
+   line-height: 19px;
+`
+
 export const ProcessingButton = styled.div`
    margin-top: 14px;
    width: 90%;
