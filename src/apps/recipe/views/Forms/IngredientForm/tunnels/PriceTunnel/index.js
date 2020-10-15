@@ -58,8 +58,8 @@ const PriceTunnel = ({ state, close }) => {
                      .id,
                set: {
                   cost: {
-                     value: cost.value,
-                     per: per.value,
+                     value: +cost.value,
+                     per: +per.value,
                   },
                },
             },

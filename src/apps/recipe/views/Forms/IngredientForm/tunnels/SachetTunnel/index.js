@@ -284,9 +284,11 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      setTracking({ ...tracking, value: !tracking.value })
                   }
                >
-                  Track Inventory
+                  <Flex container>
+                     Track Inventory
+                     <Tooltip identifier="sachet_tracking_inventory" />
+                  </Flex>
                </Form.Toggle>
-               <Tooltip identifier="sachet_tracking_inventory" />
             </Flex>
             <Spacer size="24px" />
             <StyledTable cellSpacing={0}>
