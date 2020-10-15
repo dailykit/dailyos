@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, TunnelHeader } from '@dailykit/ui'
+import { Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -8,15 +8,8 @@ import {
    UNITS_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
-import { StyledSelect } from '../../../styled'
 import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
-import {
-   Highlight,
-   InputWrapper,
-   StyledInputGroup,
-   StyledRow,
-   TunnelBody,
-} from '../styled'
+import { Highlight, StyledInputGroup, StyledRow, TunnelBody } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
@@ -28,7 +21,7 @@ export default function InfoTunnel({ close, formState }) {
    const [itemName, setItemName] = useState(formState.name || '')
    const [sku, setSku] = useState(formState.sku || '')
    const [unitSize, setUnitSize] = useState(formState.unitSize || '')
-   const [unit, setUnit] = useState(formState.unit || units[0]?.name)
+   const [unit, setUnit] = useState(formState.unit)
    const [unitPrice, setUnitPrice] = useState(
       (formState.prices?.length && formState.prices[0].unitPrice.value) || ''
    )
@@ -72,7 +65,7 @@ export default function InfoTunnel({ close, formState }) {
                   name: itemName,
                   sku,
                   unitSize: +unitSize,
-                  unit,
+                  unit: unit || units[0]?.title,
                   prices: [{ unitPrice: { unit: '$', value: unitPrice } }],
                   leadTime: { unit: leadTimeUnit, value: leadTime },
                },
@@ -94,173 +87,110 @@ export default function InfoTunnel({ close, formState }) {
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>
-                  <Input
-                     type="text"
-                     label={t(address.concat('item name'))}
-                     name="title"
-                     value={itemName}
-                     onChange={e => setItemName(e.target.value)}
-                  />
-                  <Input
-                     type="text"
-                     label={t(address.concat('item sku'))}
-                     name="sku"
-                     value={sku}
-                     onChange={e => setSku(e.target.value)}
-                  />
+                  <Form.Group>
+                     <Form.Label title="title" htmlFor="title">
+                        {t(address.concat('item name'))}
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
+                        name="title"
+                        placeholder="Supplier Item Name..."
+                        value={itemName}
+                        onChange={e => setItemName(e.target.value)}
+                     />
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label title="itemSku" htmlFor="sku">
+                        {t(address.concat('item sku'))}
+                     </Form.Label>
+                     <Form.Text
+                        id="sku"
+                        name="sku"
+                        placeholder="item sku..."
+                        value={sku}
+                        onChange={e => setSku(e.target.value)}
+                     />
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
                <Highlight>
                   <StyledInputGroup>
-                     <InputWrapper>
-                        <Input
-                           type="number"
-                           label={t(address.concat('unit qty'))}
-                           name="unit quantity"
-                           value={unitSize}
-                           onChange={e => setUnitSize(e.target.value)}
+                     <Form.Group>
+                        <Form.Label title="unitQuantity" htmlFor="unitQuantity">
+                           {t(address.concat('unit qty'))}
+                        </Form.Label>
+                        <Form.TextSelect>
+                           <Form.Number
+                              id="unitQuantity"
+                              name="unitQuantity"
+                              placeholder="Unit Quantity..."
+                              value={unitSize}
+                              onChange={e => setUnitSize(e.target.value)}
+                              onBlur={e =>
+                                 handleNumberInputErrors(e, errors, setErrors)
+                              }
+                           />
+                           <Form.Select
+                              id="unit"
+                              name="unit"
+                              options={units}
+                              value={unit}
+                              onChange={e => setUnit(e.target.value)}
+                           />
+                        </Form.TextSelect>
+                     </Form.Group>
+                     <Form.Group>
+                        <Form.Label title="unit price" htmlFor="unitPrice">
+                           {t(address.concat('unit price')).concat(':')}
+                        </Form.Label>
+                        <Form.Number
+                           id="unitPrice"
+                           name="Unit Price"
+                           placeholder="Unit Price..."
+                           value={+unitPrice}
+                           onChange={e => setUnitPrice(e.target.value)}
                            onBlur={e =>
                               handleNumberInputErrors(e, errors, setErrors)
                            }
                         />
-                        <StyledSelect
-                           name="unit"
-                           value={unit}
-                           onChange={e => setUnit(e.target.value)}
-                        >
-                           {units.map(unit => (
-                              <option key={unit.id} value={unit.name}>
-                                 {unit.name}
-                              </option>
-                           ))}
-                        </StyledSelect>
-                     </InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('unit price')).concat(':')}
-                        name="Unit Price"
-                        value={unitPrice}
-                        onChange={e => setUnitPrice(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
-                     />
+                     </Form.Group>
                   </StyledInputGroup>
                </Highlight>
             </StyledRow>
-            {/* <StyledRow>
-               <StyledInputGroup>
-                  <Highlight>
-                     <InputWrapper>
-                        <Input
-                           type="text"
-                           label={t(address.concat("case qty")).concat(':')}
-                           name="case_quantity"
-                           value={state.case_quantity.value}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'CASE',
-                                 payload: {
-                                    name: 'value',
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
-                        />
-                        <StyledSelect
-                           name="unit"
-                           defaultValue={state.case_quantity.unit}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'CASE',
-                                 payload: {
-                                    name: e.target.name,
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
-                        >
-                           <option value="unit">{t(address.concat('unit'))}</option>
-                        </StyledSelect>
-                     </InputWrapper>
-                  </Highlight>
-                  <Highlight>
-                     <InputWrapper>
-                        <Input
-                           type="text"
-                           label={t(address.concat("minimum order value")).concat(':')}
-                           name="minimum_order_value"
-                           value={state.min_order_value.value}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'MIN_ORDER',
-                                 payload: {
-                                    name: 'value',
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
-                        />
-                        <StyledSelect
-                           name="unit"
-                           defaultValue={state.min_order_value.unit}
-                           onChange={e =>
-                              dispatch({
-                                 type: 'MIN_ORDER',
-                                 payload: {
-                                    name: e.target.name,
-                                    value: e.target.value,
-                                 },
-                              })
-                           }
-                        >
-                           <option value="cs">{t('units.cs')}</option>
-                        </StyledSelect>
-                     </InputWrapper>
-                  </Highlight>
-               </StyledInputGroup>
-            </StyledRow> */}
             <StyledRow>
                <StyledInputGroup>
                   <Highlight>
-                     <InputWrapper>
-                        <Input
-                           type="number"
-                           label={t(address.concat('lead time')).concat(':')}
-                           name="Lead Time"
-                           value={leadTime}
-                           onChange={e => setLeadTime(e.target.value)}
-                           onBlur={e =>
-                              handleNumberInputErrors(e, errors, setErrors)
-                           }
-                        />
-                        <StyledSelect
-                           name="unit"
-                           defaultValue={leadTimeUnit}
-                           onChange={e => setLeadTimeUnit(e.target.value)}
-                        >
-                           <option value="days">
-                              {t(address.concat('days'))}
-                           </option>
-                           <option value="weeks">
-                              {t(address.concat('weeks'))}
-                           </option>
-                        </StyledSelect>
-                     </InputWrapper>
+                     <Form.Group>
+                        <Form.Label title="Lead Time" htmlFor="leadTime">
+                           {t(address.concat('lead time')).concat(':')}
+                        </Form.Label>
+                        <Form.TextSelect>
+                           <Form.Number
+                              id="leadTime"
+                              name="Lead Time"
+                              placeholder="Lead Time..."
+                              value={+leadTime}
+                              onChange={e => setLeadTime(e.target.value)}
+                              onBlur={e =>
+                                 handleNumberInputErrors(e, errors, setErrors)
+                              }
+                           />
+                           <Form.Select
+                              id="leadTimeUnit"
+                              name="leadTimeUnit"
+                              value={leadTimeUnit}
+                              options={[
+                                 { id: 0, title: t(address.concat('days')) },
+                                 { id: 1, title: t(address.concat('weeks')) },
+                              ]}
+                              onChange={e => setLeadTimeUnit(e.target.value)}
+                           />
+                        </Form.TextSelect>
+                     </Form.Group>
                   </Highlight>
                </StyledInputGroup>
             </StyledRow>
-            {/* <StyledRow>
-               <StyledLabel>
-                  {t(
-                     address.concat(
-                        'upload cerificates for the item authentication (if any)'
-                     )
-                  )}
-               </StyledLabel>
-               <Highlight></Highlight>
-            </StyledRow> */}
          </TunnelBody>
       </>
    )

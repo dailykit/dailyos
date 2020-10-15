@@ -361,7 +361,7 @@ export const UNITS_SUBSCRIPTION = gql`
    subscription Units {
       units {
          id
-         name
+         title: name
       }
    }
 `
