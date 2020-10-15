@@ -74,9 +74,11 @@ export const S_INGREDIENT = gql`
                   operationConfig {
                      id
                      station {
+                        id
                         name
                      }
                      labelTemplate {
+                        id
                         name
                      }
                   }

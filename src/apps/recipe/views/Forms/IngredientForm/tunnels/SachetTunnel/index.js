@@ -14,6 +14,8 @@ import {
    Flex,
    Form,
    Spacer,
+   PlusIcon,
+   IconButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -72,7 +74,17 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
 
    // Subscription
    const { data: { units = [] } = {}, loading, error } = useSubscription(
-      FETCH_UNITS
+      FETCH_UNITS,
+      {
+         onSubscriptionData: data => {
+            if (data.subscriptionData.data.units.length) {
+               setUnit({
+                  ...unit,
+                  value: data.subscriptionData.data.units[0].title,
+               })
+            }
+         },
+      }
    )
 
    if (error) {
@@ -137,37 +149,23 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    const add = () => {
       try {
          if (inFlight) return
-         if (!quantity || Number.isNaN(quantity) || parseInt(quantity) === 0) {
-            throw Error('Invalid Quantity!')
-         }
-         if (
-            !ingredientState.realTime.priority ||
-            Number.isNaN(ingredientState.realTime.priority) ||
-            parseInt(ingredientState.realTime.priority) === 0
-         ) {
-            throw Error('Invalid Priority!')
-         }
-         if (
-            !ingredientState.plannedLot.priority ||
-            Number.isNaN(ingredientState.plannedLot.priority) ||
-            parseInt(ingredientState.plannedLot.priority) === 0
-         ) {
-            throw Error('Invalid Priority!')
+         if (!quantity.value) {
+            return toast.error('Quantity is required!')
          }
          const object = {
             ingredientId: state.id,
             ingredientProcessingId:
                state.ingredientProcessings[ingredientState.processingIndex].id,
-            quantity,
-            unit,
-            tracking,
+            quantity: quantity.value,
+            unit: unit.value,
+            tracking: tracking.value,
             modeOfFulfillments: {
                data: [
                   {
                      type: 'realTime',
                      isPublished: ingredientState.realTime.isPublished,
                      isLive: ingredientState.realTime.isLive,
-                     priority: parseInt(ingredientState.realTime.priority),
+                     priority: ingredientState.realTime.priority.value ?? 1,
                      bulkItemId: ingredientState.realTime.bulkItem?.id || null,
                      sachetItemId: null,
                      accuracy: ingredientState.realTime.accuracy,
@@ -180,7 +178,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      type: 'plannedLot',
                      isPublished: ingredientState.plannedLot.isPublished,
                      isLive: ingredientState.plannedLot.isLive,
-                     priority: parseInt(ingredientState.plannedLot.priority),
+                     priority: ingredientState.plannedLot.priority.value ?? 2,
                      bulkItemId: null,
                      sachetItemId:
                         ingredientState.plannedLot.sachetItem?.id || null,
@@ -198,8 +196,9 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                objects: [object],
             },
          })
-      } catch (e) {
-         toast.error(e.message)
+      } catch (error) {
+         toast.error('Something went wrong!')
+         logger(error)
       }
    }
 
@@ -276,7 +275,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                </Form.Group>
             </Flex>
             <Spacer size="24px" />
-            <Flex maxWidth="300px">
+            <Flex container maxWidth="300px">
                <Form.Toggle
                   id="tracking"
                   name="tracking"
@@ -287,6 +286,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                >
                   Track Inventory
                </Form.Toggle>
+               <Tooltip identifier="sachet_tracking_inventory" />
             </Flex>
             <Spacer size="24px" />
             <StyledTable cellSpacing={0}>
@@ -295,37 +295,37 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      <th>
                         <Flex container alignItems="center">
                            Mode of Fulfillment
-                           <Tooltip identifier="sachet_tunnel_mof" />
+                           <Tooltip identifier="sachet_mof" />
                         </Flex>
                      </th>
                      <th>
                         <Flex container alignItems="center">
                            Priority
-                           <Tooltip identifier="sachet_tunnel_mode_priority" />
+                           <Tooltip identifier="sachet_mode_priority" />
                         </Flex>
                      </th>
                      <th>
                         <Flex container alignItems="center">
                            Item
-                           <Tooltip identifier="sachet_tunnel_mode_item" />
+                           <Tooltip identifier="sachet_mode_item" />
                         </Flex>
                      </th>
                      <th>
                         <Flex container alignItems="center">
                            Accuracy
-                           <Tooltip identifier="sachet_tunnel_mode_accuracy" />
+                           <Tooltip identifier="sachet_mode_accuracy" />
                         </Flex>
                      </th>
                      <th>
                         <Flex container alignItems="center">
                            Packaging
-                           <Tooltip identifier="sachet_tunnel_mode_packaging" />
+                           <Tooltip identifier="sachet_mode_packaging" />
                         </Flex>
                      </th>
                      <th>
                         <Flex container alignItems="center">
                            Operational Configuration
-                           <Tooltip identifier="sachet_tunnel_mode_opconfig" />
+                           <Tooltip identifier="sachet_mode_opconfig" />
                         </Flex>
                      </th>
                   </tr>
@@ -347,7 +347,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                            >
                               Real Time
                            </Form.Checkbox>
-                           <Tooltip identifier="sachet_tunnel_real_time" />
+                           <Tooltip identifier="sachet_real_time" />
                         </Flex>
                      </td>
                      <td>
@@ -423,38 +423,44 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      </td>
                      <td>
                         {ingredientState.realTime.bulkItem ? (
-                           <Select
-                              option={ingredientState.realTime.packaging || []}
-                              addOption={() => selectPackaging('realTime')}
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'realTime',
-                                       name: 'packaging',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
+                           <>
+                              {ingredientState.realTime.packaging ? (
+                                 <>
+                                    {ingredientState.realTime.packaging?.title}
+                                 </>
+                              ) : (
+                                 <IconButton
+                                    type="ghost"
+                                    onClick={() => selectPackaging('realTime')}
+                                 >
+                                    <PlusIcon color="#07A8E2" />
+                                 </IconButton>
+                              )}
+                           </>
                         ) : (
                            '-'
                         )}
                      </td>
                      <td>
-                        {ingredientState.realTime.operationConfig ? (
-                           <Text as="p">
-                              {`${ingredientState.realTime.operationConfig.station.name} - ${ingredientState.realTime.operationConfig.labelTemplate.name}`}
-                           </Text>
+                        {ingredientState.realTime.bulkItem ? (
+                           <>
+                              {ingredientState.realTime.operationConfig ? (
+                                 <>
+                                    {`${ingredientState.realTime.operationConfig.station.name} - ${ingredientState.realTime.operationConfig.labelTemplate.name}`}
+                                 </>
+                              ) : (
+                                 <IconButton
+                                    type="ghost"
+                                    onClick={() =>
+                                       selectOperationConfiguration('realTime')
+                                    }
+                                 >
+                                    <PlusIcon color="#07A8E2" />
+                                 </IconButton>
+                              )}
+                           </>
                         ) : (
-                           <TextButton
-                              type="ghost"
-                              onClick={() =>
-                                 selectOperationConfiguration('realTime')
-                              }
-                           >
-                              Select
-                           </TextButton>
+                           '-'
                         )}
                      </td>
                   </tr>
@@ -474,7 +480,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                            >
                               Planned Lot
                            </Form.Checkbox>
-                           <Tooltip identifier="sachet_tunnel_planned_lot" />
+                           <Tooltip identifier="sachet_planned_lot" />
                         </Flex>
                      </td>
                      <td>
@@ -556,40 +562,51 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      </td>
                      <td>
                         {ingredientState.plannedLot.sachetItem ? (
-                           <Select
-                              option={
-                                 ingredientState.plannedLot.packaging || []
-                              }
-                              addOption={() => selectPackaging('plannedLot')}
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'plannedLot',
-                                       name: 'packaging',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
+                           <>
+                              {ingredientState.plannedLot.packaging ? (
+                                 <>
+                                    {
+                                       ingredientState.plannedLot.packaging
+                                          ?.title
+                                    }
+                                 </>
+                              ) : (
+                                 <IconButton
+                                    type="ghost"
+                                    onClick={() =>
+                                       selectPackaging('plannedLot')
+                                    }
+                                 >
+                                    <PlusIcon color="#07A8E2" />
+                                 </IconButton>
+                              )}
+                           </>
                         ) : (
                            '-'
                         )}
                      </td>
                      <td>
-                        {ingredientState.plannedLot.operationConfig ? (
-                           <Text as="p">
-                              {`${ingredientState.plannedLot.operationConfig.station.name} - ${ingredientState.plannedLot.operationConfig.labelTemplate.name}`}
-                           </Text>
+                        {ingredientState.plannedLot.sachetItem ? (
+                           <>
+                              {ingredientState.plannedLot.operationConfig ? (
+                                 <>
+                                    {`${ingredientState.plannedLot.operationConfig.station.name} - ${ingredientState.plannedLot.operationConfig.labelTemplate.name}`}
+                                 </>
+                              ) : (
+                                 <IconButton
+                                    type="ghost"
+                                    onClick={() =>
+                                       selectOperationConfiguration(
+                                          'plannedLot'
+                                       )
+                                    }
+                                 >
+                                    <PlusIcon color="#07A8E2" />
+                                 </IconButton>
+                              )}
+                           </>
                         ) : (
-                           <TextButton
-                              type="ghost"
-                              onClick={() =>
-                                 selectOperationConfiguration('plannedLot')
-                              }
-                           >
-                              Select
-                           </TextButton>
+                           '-'
                         )}
                      </td>
                   </tr>
