@@ -9,6 +9,7 @@ import {
    useTunnel,
    Form,
    Flex,
+   Spacer,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
@@ -123,7 +124,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
       <>
          <Container bottom="32">
             <Grid>
-               <Flex justify="start" align="center">
+               <Flex container alignItems="center">
                   <span>
                      {sachet.tracking ? (
                         <TickIcon color="#00A7E1" stroke={2} size={20} />
@@ -131,10 +132,15 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                         <CloseIcon color="#FF5A52" size={20} />
                      )}
                   </span>
+                  <Spacer xAxis size="8px" />
                   <Text as="title">Tracking Inventory</Text>
                </Flex>
-               <Flex align="center">
-                  <Flex justify="start" align="baseline">
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  <Flex container alignItems="center">
                      <Text as="subtitle">Active: </Text>{' '}
                      <Text as="title">
                         {sachet.liveModeOfFulfillment?.type === 'realTime' &&
