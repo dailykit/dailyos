@@ -10,7 +10,7 @@ import Header from './sections/Header'
 import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
 
-import ErrorBoundary from '../../shared/components/ErrorBoundary'
+import { ErrorBoundary } from '../../shared/components'
 
 // Styled
 import { StyledWrapper } from '../../styled'

@@ -12,9 +12,10 @@ export const INGREDIENTS_COUNT = gql`
 
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
-      ingredients {
+      ingredients(order_by: { createdAt: desc }) {
          id
          name
+         category
          image
          isValid
          isPublished
@@ -35,6 +36,9 @@ export const S_INGREDIENTS = gql`
                }
             }
          }
+         ingredientSachets {
+            id
+         }
       }
    }
 `
@@ -48,12 +52,12 @@ export const S_INGREDIENT = gql`
          image
          isValid
          isPublished
-         ingredientProcessings {
+         ingredientProcessings(order_by: { created_at: desc }) {
             id
             processingName
             nutritionalInfo
             cost
-            ingredientSachets {
+            ingredientSachets(order_by: { createdAt: desc }) {
                id
                tracking
                unit
@@ -64,7 +68,7 @@ export const S_INGREDIENT = gql`
                   id
                   type
                }
-               modeOfFulfillments {
+               modeOfFulfillments(order_by: { created_at: desc }) {
                   id
                   accuracy
                   isLive
@@ -74,9 +78,11 @@ export const S_INGREDIENT = gql`
                   operationConfig {
                      id
                      station {
+                        id
                         name
                      }
                      labelTemplate {
+                        id
                         name
                      }
                   }

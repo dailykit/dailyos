@@ -32,7 +32,7 @@ import { useTabs } from '../../../context'
 
 // local imports
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import ProcessingCount from '../../../utils/countFormatter'
+import Count from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 
 const address = 'apps.recipe.views.listings.ingredientslisting.'
@@ -110,10 +110,9 @@ const IngredientsListing = () => {
             height="72px"
          >
             <Flex container>
-               <Text as="h2">Ingredients</Text>
+               <Text as="h2">Ingredients({ingredients.length}) </Text>
                <Tooltip identifier="ingredients_list_heading" />
             </Flex>
-            <Text as="h3">Total: {ingredients.length}</Text>
          </Flex>
          <DataTable
             data={ingredients}
@@ -134,13 +133,30 @@ function DataTable({
    const tableRef = React.useRef()
 
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true },
+      {
+         title: 'Name',
+         field: 'name',
+         headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/recipe/ingredients/${id}`)
+         },
+      },
+      { title: 'Category', field: 'category', headerFilter: true },
       {
          title: 'Processings',
          field: 'ingredientProcessings',
          headerFilter: false,
          hozAlign: 'right',
-         formatter: reactFormatter(<ProcessingCount />),
+         formatter: reactFormatter(<Count />),
+         width: 150,
+      },
+      {
+         title: 'Sachets',
+         field: 'ingredientSachets',
+         headerFilter: false,
+         hozAlign: 'right',
+         formatter: reactFormatter(<Count />),
          width: 150,
       },
       {
@@ -163,11 +179,6 @@ function DataTable({
       },
    ]
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/recipe/ingredients/${id}`)
-   }
-
    return (
       <>
          <Flex container alignItems="center" justifyContent="space-between">
@@ -186,7 +197,6 @@ function DataTable({
             ref={tableRef}
             columns={columns}
             data={data}
-            rowClick={rowClick}
             options={tableOptions}
             data-custom-attr="test-custom-attribute"
             className="custom-css-class"
@@ -199,10 +209,7 @@ function DeleteIngredient({ cell, onDelete }) {
    const ingredient = cell.getData()
 
    return (
-      <IconButton
-         type="ghost"
-         onClick={e => e.stopPropagation() && onDelete(ingredient)}
-      >
+      <IconButton type="ghost" onClick={() => onDelete(ingredient)}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
