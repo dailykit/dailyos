@@ -1,102 +1,89 @@
-import { Text, Card, TextButton } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import {
+   Card,
+   HorizontalTab,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+   HorizontalTabs,
+} from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-
 // Styled
 import { FlexContainer, Flexible } from '../styled'
-import { ItemTab, TabContainer } from './styled'
-
-import RealTimeView from './RealtimeView'
 import PlannedLotView from './PlannedLot'
-import { ItemContext } from '../../../context/item'
+import RealTimeView from './RealtimeView'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function ProcessingView({ open, formState }) {
+export default function ProcessingView({ proc = {} }) {
    const { t } = useTranslation()
-   const [activeView, setActiveView] = React.useState('realtime') // realtime | plannedLot
-   const {
-      state: { activeProcessing },
-   } = useContext(ItemContext)
+
+   console.log(proc)
 
    return (
       <>
-         <TabContainer>
-            <ItemTab
-               active={activeView === 'realtime'}
-               onClick={() => setActiveView('realtime')}
-            >
-               <Text as="title">{t(address.concat('real-time'))}</Text>
-            </ItemTab>
-            <ItemTab
-               active={activeView === 'plannedLot'}
-               onClick={() => setActiveView('plannedLot')}
-            >
-               <Text as="title">{t(address.concat('planned-lot'))}</Text>
-            </ItemTab>
-         </TabContainer>
+         <HorizontalTabs>
+            <HorizontalTabList>
+               <HorizontalTab>{t(address.concat('real-time'))}</HorizontalTab>
+               <HorizontalTab>{t(address.concat('planned-lot'))}</HorizontalTab>
+            </HorizontalTabList>
 
-         {activeView === 'realtime' && (
-            <>
-               <FlexContainer>
-                  <Flexible width="4">
-                     <RealTimeView formState={formState} />
-                  </Flexible>
-                  <Flexible width="1">
-                     <Card>
-                        <Card.Title>{activeProcessing.name}</Card.Title>
-                        <Card.Img
-                           src={activeProcessing.image}
-                           alt="processing"
-                        />
-                        <Card.Body>
-                           <Card.Text>
-                              <Card.Stat>
-                                 <span>Bulk Density:</span>
-                                 <span>{activeProcessing.bulkDensity}</span>
-                              </Card.Stat>
-                           </Card.Text>
-                           <Card.Text>
-                              <Card.Stat>
-                                 <span>% of yield:</span>
-                                 <span>
-                                    {activeProcessing.yield.value || 'N/A'}
-                                 </span>
-                              </Card.Stat>
-                           </Card.Text>
-                           <Card.Text>
-                              <Card.Stat>
-                                 <span>Labour time per unit:</span>
-                                 <span>{`${
-                                    activeProcessing.labor?.value || 'N/A'
-                                 } ${
-                                    activeProcessing.labor?.unit || ''
-                                 }`}</span>
-                              </Card.Stat>
-                           </Card.Text>
-
-                           <Card.Text>
-                              <Card.Stat>
-                                 <span>Shelf life:</span>
-                                 <span>{`${
-                                    activeProcessing.shelfLife?.value || 'N/A'
-                                 } ${
-                                    activeProcessing.shelfLife?.unit || ''
-                                 }`}</span>
-                              </Card.Stat>
-                           </Card.Text>
-                        </Card.Body>
-                     </Card>
-                  </Flexible>
-               </FlexContainer>
-            </>
-         )}
-
-         {activeView === 'plannedLot' && (
-            <>
-               <PlannedLotView open={open} formState={formState} />
-            </>
-         )}
+            <HorizontalTabPanels>
+               <HorizontalTabPanel>
+                  <RealtimePanel proc={proc} />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <PlannedLotView sachetItems={proc.sachetItems} />
+               </HorizontalTabPanel>
+            </HorizontalTabPanels>
+         </HorizontalTabs>
       </>
+   )
+}
+
+function RealtimePanel({ proc }) {
+   return (
+      <FlexContainer>
+         <Flexible width="4">
+            <RealTimeView proc={proc} />
+         </Flexible>
+         <Flexible width="1">
+            <Card>
+               <Card.Title>{proc.name}</Card.Title>
+               <Card.Img src={proc.image} alt="processing" />
+               <Card.Body>
+                  <Card.Text>
+                     <Card.Stat>
+                        <span>Bulk Density:</span>
+                        <span>{proc.bulkDensity}</span>
+                     </Card.Stat>
+                  </Card.Text>
+                  <Card.Text>
+                     <Card.Stat>
+                        <span>% of yield:</span>
+                        <span>{proc.yield?.value || 'N/A'}</span>
+                     </Card.Stat>
+                  </Card.Text>
+                  <Card.Text>
+                     <Card.Stat>
+                        <span>Labour time per unit:</span>
+                        <span>{`${proc.labor?.value || 'N/A'} ${
+                           proc.labor?.unit || ''
+                        }`}</span>
+                     </Card.Stat>
+                  </Card.Text>
+
+                  <Card.Text>
+                     <Card.Stat>
+                        <span>Shelf life:</span>
+                        <span>{`${proc.shelfLife?.value || 'N/A'} ${
+                           proc.shelfLife?.unit || ''
+                        }`}</span>
+                     </Card.Stat>
+                  </Card.Text>
+               </Card.Body>
+            </Card>
+         </Flexible>
+      </FlexContainer>
    )
 }
