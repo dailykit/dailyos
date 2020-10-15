@@ -1,7 +1,8 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Avatar,
-   Input,
+   Flex,
+   Form,
    Loader,
    Text,
    TextButton,
@@ -28,7 +29,7 @@ import {
    SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
-import { FlexContainer, Flexible, StyledWrapper } from '../styled'
+import { FlexContainer, Flexible } from '../styled'
 import ProcessingView from './ProcessingView'
 import {
    ProcessingButton,
@@ -186,34 +187,37 @@ export default function ItemForm() {
             </Tunnel>
          </Tunnels>
 
-         <StyledWrapper>
+         <Flex maxWidth="calc(100vw - 64px)" margin="0 auto">
             <StyledHeader>
                {formState.name && (
                   <>
                      <StyledInfo>
-                        <div style={{ marginRight: '10px' }}>
-                           <Input
-                              style={{ margin: '10px 0 5px' }}
-                              type="text"
-                              name="itemName"
-                              value={itemName}
-                              label="Item Name"
-                              onChange={e => setItemName(e.target.value)}
-                              onBlur={() => {
-                                 if (!itemName.length) {
-                                    toast.error("Name can't be empty")
-                                    return setItemName(formState.name)
-                                 }
+                        <div>
+                           <Form.Group>
+                              <Form.Label htmlFor="itemName" title="itemName">
+                                 Item Name
+                              </Form.Label>
+                              <Form.Text
+                                 id="itemName"
+                                 name="itemName"
+                                 value={itemName}
+                                 onChange={e => setItemName(e.target.value)}
+                                 onBlur={() => {
+                                    if (!itemName.length) {
+                                       toast.error("Name can't be empty")
+                                       return setItemName(formState.name)
+                                    }
 
-                                 if (itemName !== formState.name)
-                                    updateSupplierItem({
-                                       variables: {
-                                          id: formState.id,
-                                          object: { name: itemName },
-                                       },
-                                    })
-                              }}
-                           />
+                                    if (itemName !== formState.name)
+                                       updateSupplierItem({
+                                          variables: {
+                                             id: formState.id,
+                                             object: { name: itemName },
+                                          },
+                                       })
+                                 }}
+                              />
+                           </Form.Group>
                            <span>sku: {formState.sku || 'N/A'}</span>
                         </div>
                      </StyledInfo>
@@ -226,7 +230,7 @@ export default function ItemForm() {
                   </>
                )}
             </StyledHeader>
-         </StyledWrapper>
+         </Flex>
          <StyledMain>
             <>
                <StyledGrid onClick={() => openInfoTunnel(1)}>
@@ -303,7 +307,7 @@ export default function ItemForm() {
                         </TransparentIconButton>
                      </FlexContainer>
 
-                     {formState.bulkItemAsShipped?.name && (
+                     {formState.bulkItemAsShipped?.name ? (
                         <>
                            <br />
                            <Text as="subtitle">
@@ -351,9 +355,9 @@ export default function ItemForm() {
                               </FlexContainer>
                            </ProcessingButton>
                         </>
-                     )}
+                     ) : null}
 
-                     {formState.bulkItems?.length && (
+                     {formState.bulkItems?.length ? (
                         <>
                            <br />
                            <Text as="subtitle">
@@ -437,7 +441,7 @@ export default function ItemForm() {
                               )
                            })}
                         </>
-                     )}
+                     ) : null}
                   </Flexible>
                   <Flexible style={{ marginTop: '14vh' }} width="4">
                      <div

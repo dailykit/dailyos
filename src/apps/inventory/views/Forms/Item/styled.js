@@ -6,9 +6,7 @@ export const Container = styled.div`
 `
 
 export const StyledHeader = styled.div`
-   margin-top: 10px;
-   padding: 0 20px;
-   height: 100px;
+   padding: 16px 0;
    display: flex;
    align-items: center;
    justify-content: space-between;
