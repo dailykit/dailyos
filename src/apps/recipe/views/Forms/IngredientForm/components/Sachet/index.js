@@ -7,6 +7,7 @@ import {
    Text,
    TextButton,
    useTunnel,
+   Form,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
@@ -15,7 +16,7 @@ import { UPDATE_MODE } from '../../../../../graphql'
 import { Container, Flex, Grid } from '../styled'
 import { StyledTable } from './styled'
 import { Nutrition } from '../../../../../../../shared/components'
-import { OperationConfig } from '../../../../../../../shared/components/OperationConfig'
+import { logger } from '../../../../../../../shared/utils'
 
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -50,8 +51,8 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          toast.success('Mode updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -76,6 +77,14 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          type: 'EDIT_MODE',
          payload: {
             ...mode,
+            priority: {
+               value: mode.priority,
+               meta: {
+                  isTouched: false,
+                  isValid: true,
+                  errors: [],
+               },
+            },
             packaging: mode.packaging
                ? {
                     ...mode.packaging,
@@ -159,11 +168,15 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                {sachet.modeOfFulfillments?.map(mode => (
                   <tr key={mode.id}>
                      <td>
-                        <Checkbox
-                           checked={mode.isLive}
-                           onChange={val => setLive(mode, val)}
-                        />
-                        {mode.type === 'realTime' ? 'Real Time' : 'Planned Lot'}
+                        <Form.Checkbox
+                           name={`${mode.type}-modeLive`}
+                           value={mode.isLive}
+                           onChange={() => setLive(mode, !mode.isLive)}
+                        >
+                           {mode.type === 'realTime'
+                              ? 'Real Time'
+                              : 'Planned Lot'}
+                        </Form.Checkbox>
                      </td>
                      <td>{mode.priority}</td>
                      <td>
@@ -181,9 +194,9 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                      <td>{mode.packaging?.name || '-'}</td>
                      <td>
                         {mode.operationConfig ? (
-                           <Text as="p">
+                           <>
                               {`${mode.operationConfig.station.name} - ${mode.operationConfig.labelTemplate.name}`}
-                           </Text>
+                           </>
                         ) : (
                            '-'
                         )}
