@@ -177,7 +177,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                   <Spacer xAxis size="16px" />
                   <Text as="title">
@@ -209,7 +209,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                   <Spacer xAxis size="16px" />
                   <Text as="title">
@@ -244,7 +244,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                </Flex>
                <Flex container alignItems="end" margin="0 0 16px 0">
@@ -270,7 +270,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">mg</Text>
                   <Spacer xAxis size="16px" />
                   <Text as="title">
@@ -301,7 +301,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">mg</Text>
                   <Spacer xAxis size="16px" />
                   <Text as="title">
@@ -337,7 +337,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            )
                         )}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                   <Spacer xAxis size="16px" />
                   <Text as="title">
@@ -372,7 +372,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                   <Spacer xAxis size="16px" />
                   <Text as="title">
@@ -407,7 +407,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                </Flex>
                <Flex container alignItems="end" margin="0 0 16px 0">
@@ -433,7 +433,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">gms</Text>
                </Flex>
                <Flex container alignItems="end" margin="0 0 16px 0">
@@ -459,7 +459,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">%</Text>
                </Flex>
                <Flex container alignItems="end" margin="0 0 16px 0">
@@ -485,7 +485,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">%</Text>
                </Flex>
                <Flex container alignItems="end" margin="0 0 16px 0">
@@ -511,7 +511,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">%</Text>
                </Flex>
                <Flex container alignItems="end" margin="0 0 16px 0">
@@ -536,7 +536,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Spacer xAxis size="32px" />
+                  <Spacer xAxis size="8px" />
                   <Text as="title">%</Text>
                </Flex>
             </Flex>

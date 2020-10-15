@@ -17,7 +17,7 @@ import {
    DollarIcon,
 } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { DELETE_PROCESSING } from '../../../../../graphql'
+import { DELETE_PROCESSING, UPDATE_PROCESSING } from '../../../../../graphql'
 import { Container } from '../styled'
 import {
    Actions,
@@ -27,8 +27,11 @@ import {
    StyledListingTile,
    StyledSection,
 } from './styled'
-import { NutritionTunnel, PriceTunnel, ProcessingsTunnel } from '../../tunnels'
-import { Tooltip } from '../../../../../../../shared/components'
+import { PriceTunnel, ProcessingsTunnel } from '../../tunnels'
+import {
+   Tooltip,
+   NutritionTunnel,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 
 const Processings = ({ state }) => {
@@ -62,6 +65,15 @@ const Processings = ({ state }) => {
          logger(error)
       },
    })
+   const [updateProcessing] = useMutation(UPDATE_PROCESSING, {
+      onCompleted: () => {
+         toast.success('Nutritional values updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    // Handler
    const remove = processing => {
@@ -80,17 +92,35 @@ const Processings = ({ state }) => {
 
    return (
       <>
+         <NutritionTunnel
+            tunnels={nutritionTunnels}
+            closeTunnel={closeNutritionTunnel}
+            onSave={value =>
+               updateProcessing({
+                  variables: {
+                     id:
+                        state.ingredientProcessings[
+                           ingredientState.processingIndex
+                        ].id,
+                     set: {
+                        nutritionalInfo: value,
+                     },
+                  },
+               })
+            }
+            value={
+               state.ingredientProcessings
+                  ? state.ingredientProcessings[ingredientState.processingIndex]
+                       .nutritionalInfo
+                  : {}
+            }
+         />
          <Tunnels tunnels={processingTunnels}>
             <Tunnel layer={1}>
                <ProcessingsTunnel
                   state={state}
                   closeTunnel={closeProcessingTunnel}
                />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={nutritionTunnels}>
-            <Tunnel layer={1}>
-               <NutritionTunnel state={state} close={closeNutritionTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={priceTunnels}>

@@ -5,6 +5,7 @@ import BasicInfo from './BasicInfo'
 import HorizontalCard from './HorizontalCard'
 import Conditions from './Conditions'
 import ErrorBoundary from './ErrorBoundary'
+import NutritionTunnel from './NutritionTunnel'
 
 export {
    Lang,
@@ -14,6 +15,7 @@ export {
    ProductTile,
    Conditions,
    ErrorBoundary,
+   NutritionTunnel,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

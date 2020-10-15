@@ -27,7 +27,6 @@ import {
    EditPackagingTunnel,
    EditSachetTunnel,
    ItemTunnel,
-   NutritionTunnel,
    PackagingTunnel,
    SachetTunnel,
 } from '../../tunnels'
@@ -112,12 +111,6 @@ const Sachets = ({ state, openNutritionTunnel }) => {
             </Tunnel>
             <Tunnel layer={4}>
                <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />
-            </Tunnel>
-            <Tunnel layer={5}>
-               <NutritionTunnel
-                  state={state}
-                  closeTunnel={closeEditSachetTunnel}
-               />
             </Tunnel>
          </Tunnels>
          <ErrorBoundary rootRoute="/apps/recipe">

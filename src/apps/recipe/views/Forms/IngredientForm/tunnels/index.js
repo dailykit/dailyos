@@ -6,7 +6,6 @@ import EditSachetTunnel from './EditSachetTunnel'
 import EditModeTunnel from './EditModeTunnel'
 import EditItemTunnel from './EditItemTunnel'
 import EditPackagingTunnel from './EditPackagingTunnel'
-import NutritionTunnel from './NutritionTunnel'
 import PhotoTunnel from './PhotoTunnel'
 import PriceTunnel from './PriceTunnel'
 
@@ -19,7 +18,6 @@ export {
    EditModeTunnel,
    EditItemTunnel,
    EditPackagingTunnel,
-   NutritionTunnel,
    PhotoTunnel,
    PriceTunnel,
 }
