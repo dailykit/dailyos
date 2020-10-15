@@ -9,7 +9,7 @@ const options = {
    persistence: false,
    persistenceMode: 'cookie',
    pagination: 'local',
-   pagination: 10,
+   paginationSize: 10,
 }
 
 export default options
