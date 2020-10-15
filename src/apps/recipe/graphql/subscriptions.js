@@ -15,6 +15,7 @@ export const S_INGREDIENTS = gql`
       ingredients(order_by: { createdAt: desc }) {
          id
          name
+         category
          image
          isValid
          isPublished
@@ -34,6 +35,9 @@ export const S_INGREDIENTS = gql`
                   name
                }
             }
+         }
+         ingredientSachets {
+            id
          }
       }
    }

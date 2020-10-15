@@ -111,7 +111,7 @@ const Processings = ({ state }) => {
             value={
                state.ingredientProcessings
                   ? state.ingredientProcessings[ingredientState.processingIndex]
-                       .nutritionalInfo
+                       ?.nutritionalInfo
                   : {}
             }
          />
