@@ -77,9 +77,10 @@ const ProductsSection = () => {
 
    const handleRowValidation = row => {
       if (!localStorage.getItem('serving_size')) return true
-      return (
-         row.getData().recipeYield.size === localStorage.getItem('serving_size')
-      )
+      const isValid =
+         row.getData().recipeYield.size ===
+         parseInt(localStorage.getItem('serving_size'), 10)
+      return isValid
    }
 
    return (
@@ -162,8 +163,8 @@ const MealKits = ({
          <ReactTabulator
             columns={columns}
             ref={mealKitTableRef}
-            data={productOptions.nodes}
             rowSelected={handleRowSelection}
+            data={productOptions.nodes || []}
             rowDeselected={handleRowSelection}
             selectableCheck={handleRowValidation}
             options={{
@@ -199,8 +200,8 @@ const ReadyToEats = ({
          <ReactTabulator
             columns={columns}
             ref={readyToEatTableRef}
-            data={productOptions.nodes}
             rowSelected={handleRowSelection}
+            data={productOptions.nodes || []}
             rowDeselected={handleRowSelection}
             selectableCheck={handleRowValidation}
             options={{
