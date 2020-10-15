@@ -1,16 +1,15 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Form,
    IconButton,
-   Input,
    Loader,
    Tag,
    TagGroup,
-   Text,
    Tunnel,
+   TunnelHeader,
    Tunnels,
    useTunnel,
-   TunnelHeader,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,18 +23,16 @@ import {
    UPDATE_BULK_ITEM,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
-import { StyledSelect } from '../../../styled'
 import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 import AllergensTunnel from '../Allergens'
 import NutritionTunnel from '../NutritionTunnel'
 import {
    Highlight,
-   InputWrapper,
+   ImageContainer,
    StyledInputGroup,
    StyledLabel,
    StyledRow,
    TunnelBody,
-   ImageContainer,
 } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
 
@@ -126,7 +123,7 @@ export default function ConfigTunnel({ close, formState }) {
                type: 'SET_ACTIVE_PROCESSING',
                payload: {
                   ...formState.bulkItemAsShipped,
-                  unit, // string
+                  unit: unit || units[0]?.title, // string
                   yield: { value: yieldPercentage },
                   shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                   parLevel: +parLevel,
@@ -233,49 +230,53 @@ export default function ConfigTunnel({ close, formState }) {
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('set par level'))}
+                  <Form.Group>
+                     <Form.Label title="parLevel" htmlFor="parLevel">
+                        {t(address.concat('set par level'))}
+                     </Form.Label>
+                     <Form.Number
+                        id="parLevel"
+                        placeholder="Par Level..."
                         name="par level"
-                        value={parLevel}
+                        value={+parLevel}
                         onChange={e => setParLevel(e.target.value)}
                         onBlur={e =>
                            handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
-                  </InputWrapper>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('max inventory level'))}
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label
+                        title="maxInventoryLevel"
+                        htmlFor="maxInventoryLevel"
+                     >
+                        {t(address.concat('max inventory level'))}
+                     </Form.Label>
+                     <Form.Number
+                        id="maxInventoryLevel"
                         name="max inventory level"
-                        value={maxValue}
+                        placeholder="Max Inventory Level"
+                        value={+maxValue}
                         onChange={e => setMaxValue(e.target.value)}
                         onBlur={e =>
                            handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
-                  </InputWrapper>
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
 
             <StyledRow>
-               <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Text as="title">Select Unit:</Text>
-                  <span style={{ width: '10px' }} />
-                  <StyledSelect
-                     name="unit"
-                     value={unit}
-                     onChange={e => setUnit(e.target.value)}
-                  >
-                     {units.map(unit => (
-                        <option key={unit.id} value={unit.name}>
-                           {unit.name}
-                        </option>
-                     ))}
-                  </StyledSelect>
-               </div>
+               <StyledInputGroup>
+                  <Form.Group>
+                     <Form.Label>Select Unit</Form.Label>
+                     <Form.Select
+                        options={units}
+                        value={unit}
+                        onChange={e => setUnit(e.target.value)}
+                     />
+                  </Form.Group>
+               </StyledInputGroup>
             </StyledRow>
 
             <StyledRow>
@@ -318,79 +319,95 @@ export default function ConfigTunnel({ close, formState }) {
             )}
             <StyledRow>
                <StyledInputGroup>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('labour time per 100gm'))}
-                        name="labor time"
-                        value={laborTime}
-                        onChange={e => setLaborTime(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
-                     />
-                     <StyledSelect
-                        name="unit"
-                        defaultValue={laborUnit}
-                        onChange={e => setLaborUnit(e.target.value)}
-                     >
-                        <option value="hours">{t('units.hours')}</option>
-                        <option value="minutes">{t('units.minutes')}</option>
-                     </StyledSelect>
-                  </InputWrapper>
-
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('percentage of yield'))}
+                  <Form.Group>
+                     <Form.Label htmlFor="labourTime">
+                        {t(address.concat('labour time per 100gm'))}
+                     </Form.Label>
+                     <Form.TextSelect>
+                        <Form.Number
+                           id="labourTime"
+                           name="labor time"
+                           placeholder="Labour Time"
+                           value={+laborTime}
+                           onChange={e => setLaborTime(e.target.value)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
+                           }
+                        />
+                        <Form.Select
+                           options={[
+                              { id: 0, title: t('units.hours') },
+                              { id: 1, title: t('units.minutes') },
+                           ]}
+                           defaultValue={laborUnit}
+                           onChange={e => setLaborUnit(e.target.value)}
+                        />
+                     </Form.TextSelect>
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label title="percentageYield" htmlFor="yield">
+                        {t(address.concat('percentage of yield'))}
+                     </Form.Label>
+                     <Form.Number
+                        id="yield"
                         name="yield"
-                        value={yieldPercentage}
+                        placeholder="Yield (in %)"
+                        value={+yieldPercentage}
                         onChange={e => setYieldPercentage(e.target.value)}
                         onBlur={e =>
                            handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
-                     <span>%</span>
-                  </InputWrapper>
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
                <StyledInputGroup>
-                  <InputWrapper>
-                     <Input
+                  <Form.Group>
+                     <Form.Label htmlFor="shelfLife" title="Shelf Life">
+                        {t(address.concat('shelf life'))}
+                     </Form.Label>
+                     <Form.TextSelect>
+                        <Form.Number
+                           id="shelfLife"
+                           name="shelf life"
+                           placeholder="Shelf Life"
+                           value={+shelfLife}
+                           onChange={e => setShelfLife(e.target.value)}
+                           onBlur={e =>
+                              handleNumberInputErrors(e, errors, setErrors)
+                           }
+                        />
+                        <Form.Select
+                           name="unit"
+                           options={[
+                              { id: 0, title: t('units.hours') },
+                              { id: 1, title: t('units.minutes') },
+                           ]}
+                           defaultValue={shelfLifeUnit}
+                           onChange={e => setShelfLifeUnit(e.target.value)}
+                        />
+                     </Form.TextSelect>
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label title="Bulk Density" htmlFor="bulkDensity">
+                        {t(address.concat('bulk dnesity'))}
+                     </Form.Label>
+                     <Form.Number
+                        id="bulkDensity"
                         type="number"
-                        label={t(address.concat('shelf life'))}
-                        name="shelf life"
-                        value={shelfLife}
-                        onChange={e => setShelfLife(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
-                     />
-                     <StyledSelect
-                        name="unit"
-                        defaultValue={shelfLifeUnit}
-                        onChange={e => setShelfLifeUnit(e.target.value)}
-                     >
-                        <option value="hours">{t('units.hours')}</option>
-                        <option value="minutes">{t('units.minutes')}</option>
-                     </StyledSelect>
-                  </InputWrapper>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('bulk dnesity'))}
                         name="bulk density"
-                        value={bulkDensity}
+                        placeholder="Bulk Density"
+                        value={+bulkDensity}
                         onChange={e => setBulkDensity(e.target.value)}
                         onBlur={e =>
                            handleNumberInputErrors(e, errors, setErrors)
                         }
                      />
-                  </InputWrapper>
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
-            <StyledRow>
+            <StyledRow style={{ marginBottom: '0' }}>
                <StyledLabel
                   style={{
                      width: '100%',
