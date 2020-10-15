@@ -14,7 +14,7 @@ export default function DataCard({ title, quantity, actionText }) {
       >
          <Text as="title">{title}</Text>
 
-         <Text as="h2">{quantity === 0 ? quantity : 'N/A'}</Text>
+         <Text as="h2">{quantity}</Text>
          <hr style={{ border: '1px solid #f3f3f3' }} />
          {actionText && (
             <span style={{ color: '#00A7E1', marginTop: '5px' }}>
