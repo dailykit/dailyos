@@ -1,40 +1,56 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Input } from '@dailykit/ui'
-import { TunnelBody, Grid, StyledInputWrapper } from '../styled'
+import { TunnelHeader, Form, Flex, Spacer } from '@dailykit/ui'
+import { TunnelBody } from '../styled'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_PROCESSING } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
+import validator from '../../validators'
 
 const PriceTunnel = ({ state, close }) => {
    const { ingredientState } = React.useContext(IngredientContext)
 
-   const [busy, setBusy] = React.useState(false)
-
-   const [cost, setCost] = React.useState(
-      state.ingredientProcessings[ingredientState.processingIndex].cost || {
-         value: 0,
-         per: 100,
-      }
-   )
-
-   // Mutation
-   const [updateProcessing] = useMutation(UPDATE_PROCESSING, {
-      onCompleted: () => {
-         toast.success('Cost updated!')
-         close(1)
-      },
-      onError: () => {
-         toast.error('Error')
-         setBusy(false)
+   const [cost, setCost] = React.useState({
+      value:
+         state.ingredientProcessings[ingredientState.processingIndex].cost
+            ?.value ?? 0,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
       },
    })
+   const [per, setPer] = React.useState({
+      value:
+         state.ingredientProcessings[ingredientState.processingIndex].cost
+            ?.per ?? 100,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+
+   // Mutation
+   const [updateProcessing, { loading: inFlight }] = useMutation(
+      UPDATE_PROCESSING,
+      {
+         onCompleted: () => {
+            toast.success('Cost updated!')
+            close(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    // Handlers
    const save = () => {
       try {
-         if (busy) return
-         setBusy(true)
+         if (inFlight || !cost.meta.isValid || !per.meta.isValid) return
          updateProcessing({
             variables: {
                id:
@@ -42,17 +58,15 @@ const PriceTunnel = ({ state, close }) => {
                      .id,
                set: {
                   cost: {
-                     value: +cost.value,
-                     per: +cost.per,
+                     value: cost.value,
+                     per: per.value,
                   },
                },
             },
          })
-      } catch (err) {
-         toast.error('Error')
-         console.log(err)
-      } finally {
-         setBusy(false)
+      } catch (error) {
+         toast.error('Something went wrong!')
+         logger(error)
       }
    }
 
@@ -63,32 +77,83 @@ const PriceTunnel = ({ state, close }) => {
                state.ingredientProcessings[ingredientState.processingIndex]
                   .processingName
             } ${state.name}`}
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
             close={() => close(1)}
          />
          <TunnelBody>
-            <Grid>
-               <StyledInputWrapper>
-                  $
-                  <Input
-                     type="number"
-                     label="Cost"
+            <Flex container>
+               <Form.Group>
+                  <Form.Label htmlFor="cost" title="cost">
+                     Cost*
+                  </Form.Label>
+                  <Form.Number
+                     id="cost"
                      name="cost"
+                     onChange={e =>
+                        setCost({
+                           ...cost,
+                           value: e.target.value,
+                        })
+                     }
+                     onBlur={() => {
+                        const { isValid, errors } = validator.price(cost.value)
+                        setCost({
+                           ...cost,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
                      value={cost.value}
-                     onChange={e => setCost({ ...cost, value: e.target.value })}
+                     placeholder="Enter cost"
+                     hasError={cost.meta.isTouched && !cost.meta.isValid}
                   />
-               </StyledInputWrapper>
-               <StyledInputWrapper>
-                  <Input
-                     type="number"
-                     label="Per"
+                  {cost.meta.isTouched &&
+                     !cost.meta.isValid &&
+                     cost.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Spacer xAxis size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="per" title="per">
+                     Quantity(per gms)*
+                  </Form.Label>
+                  <Form.Number
+                     id="per"
                      name="per"
-                     value={cost.per}
-                     onChange={e => setCost({ ...cost, per: e.target.value })}
+                     onChange={e =>
+                        setPer({
+                           ...per,
+                           value: e.target.value,
+                        })
+                     }
+                     onBlur={() => {
+                        const { isValid, errors } = validator.quantity(
+                           per.value
+                        )
+                        setPer({
+                           ...per,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
+                     value={per.value}
+                     placeholder="Enter quantity"
+                     hasError={per.meta.isTouched && !per.meta.isValid}
                   />
-                  gms
-               </StyledInputWrapper>
-            </Grid>
+                  {per.meta.isTouched &&
+                     !per.meta.isValid &&
+                     per.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+            </Flex>
          </TunnelBody>
       </>
    )

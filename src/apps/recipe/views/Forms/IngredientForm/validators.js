@@ -31,6 +31,15 @@ const validator = {
       }
       return { isValid, errors }
    },
+   price: value => {
+      let isValid = true
+      let errors = []
+      if (value <= 0) {
+         isValid = false
+         errors = [...errors, 'Invalid input!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator
