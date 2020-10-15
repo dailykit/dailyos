@@ -271,13 +271,7 @@ export default function ItemForm() {
                   </div>
                </StyledGrid>
 
-               <FlexContainer
-                  style={{
-                     marginTop: '30px',
-                     padding: '0 30px',
-                     backgroundColor: '#f3f3f3',
-                  }}
-               >
+               <Flex container maxWidth="calc(100vw - 64px)" margin="24px auto">
                   <Flexible width="1">
                      <FlexContainer
                         style={{
@@ -308,10 +302,21 @@ export default function ItemForm() {
                            <AddIcon size="18" strokeWidth="3" color="#555B6E" />
                         </TransparentIconButton>
                      </FlexContainer>
+                  </Flexible>
+                  <Flexible width="4" />
+               </Flex>
 
+               <Flex
+                  container
+                  maxWidth="calc(100vw - 64px)"
+                  style={{
+                     backgroundColor: '#f3f3f3',
+                  }}
+                  margin="0 auto"
+               >
+                  <Flexible width="1">
                      {formState.bulkItemAsShipped?.name ? (
                         <>
-                           <br />
                            <Text as="subtitle">
                               {t(address.concat('as recieved from supplier'))}.
                            </Text>
@@ -445,12 +450,11 @@ export default function ItemForm() {
                         </>
                      ) : null}
                   </Flexible>
-                  <Flexible style={{ marginTop: '14vh' }} width="4">
+                  <Flexible width="4">
                      <div
                         style={{
-                           padding: '15px',
+                           padding: '16px',
                            backgroundColor: '#fff',
-                           minHeight: '500px',
                         }}
                      >
                         {formState.bulkItems?.length &&
@@ -470,7 +474,7 @@ export default function ItemForm() {
                         )}
                      </div>
                   </Flexible>
-               </FlexContainer>
+               </Flex>
             </>
          </StyledMain>
       </ItemContext.Provider>
