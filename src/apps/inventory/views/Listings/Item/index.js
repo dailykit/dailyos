@@ -63,8 +63,8 @@ export default function ItemListing() {
    const tableRef = React.useRef()
 
    const openForm = (_, cell) => {
-      const { id, supplierItem } = cell.getData()
-      addTab(supplierItem.name, `/inventory/items/${id}`)
+      const { supplierItem } = cell.getData()
+      addTab(supplierItem.name, `/inventory/items/${supplierItem.id}`)
    }
 
    const columns = [
