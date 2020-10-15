@@ -200,6 +200,7 @@ export default function ItemForm() {
                               <Form.Text
                                  id="itemName"
                                  name="itemName"
+                                 placeholder="Supplier Item Name..."
                                  value={itemName}
                                  onChange={e => setItemName(e.target.value)}
                                  onBlur={() => {
@@ -241,11 +242,12 @@ export default function ItemForm() {
                      <div>
                         <span>{t(address.concat('unit qty'))}</span>
                         <div>
-                           <span>{formState.unitSize + formState.unit}</span>
                            <span>
+                              {formState.unitSize + formState.unit} (
                               {(formState.prices?.length &&
                                  `$ ${formState.prices[0]?.unitPrice?.value}`) ||
                                  null}
+                              )
                            </span>
                         </div>
                      </div>
