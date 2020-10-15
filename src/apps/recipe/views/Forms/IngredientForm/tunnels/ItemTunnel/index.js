@@ -1,20 +1,20 @@
 import React from 'react'
+import { useLazyQuery } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
-   Filler,
+   useSingleList,
 } from '@dailykit/ui'
-import { useLazyQuery } from '@apollo/react-hooks'
-import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody } from '../styled'
-import { BULK_ITEMS, SACHET_ITEMS } from '../../../../../graphql'
-import { logger } from '../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { BULK_ITEMS, SACHET_ITEMS } from '../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const ItemTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -95,7 +95,7 @@ const ItemTunnel = ({ closeTunnel }) => {
          <TunnelHeader title="Select Item" close={() => closeTunnel(2)} />
          <TunnelBody>
             {bulkItemsLoading || supplierItemsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
                <>
                   {list.length ? (

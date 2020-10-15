@@ -1,12 +1,12 @@
 import React from 'react'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Form, Flex, Spacer } from '@dailykit/ui'
-import { TunnelBody } from '../styled'
+import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_PROCESSING } from '../../../../../graphql'
-import { logger } from '../../../../../../../shared/utils'
 import validator from '../../validators'
+import { TunnelBody } from '../styled'
 
 const PriceTunnel = ({ state, close }) => {
    const { ingredientState } = React.useContext(IngredientContext)

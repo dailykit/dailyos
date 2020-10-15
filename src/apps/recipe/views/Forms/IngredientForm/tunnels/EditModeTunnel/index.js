@@ -1,27 +1,23 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
-   Input,
-   RadioGroup,
-   Select,
-   TunnelHeader,
-   IconButton,
-   Text,
-   TextButton,
-   useTunnel,
    Flex,
    Form,
+   IconButton,
    PlusIcon,
+   RadioGroup,
+   TunnelHeader,
+   useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { OperationConfig } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { StyledInputWrapper, TunnelBody } from '../styled'
-import { StyledTable } from './styled'
-import { OperationConfig } from '../../../../../../../shared/components'
-import { logger } from '../../../../../../../shared/utils'
 import validator from '../../validators'
+import { TunnelBody } from '../styled'
+import { StyledTable } from './styled'
 
 const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(

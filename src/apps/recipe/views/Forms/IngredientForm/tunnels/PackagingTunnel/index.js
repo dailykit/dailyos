@@ -1,20 +1,20 @@
 import React from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
-   Filler,
+   useSingleList,
 } from '@dailykit/ui'
-import { useSubscription } from '@apollo/react-hooks'
-import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody } from '../styled'
-import { FETCH_PACKAGINGS } from '../../../../../graphql'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { FETCH_PACKAGINGS } from '../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const PackagingTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -53,7 +53,7 @@ const PackagingTunnel = ({ closeTunnel }) => {
          <TunnelHeader title="Select Packaging" close={() => closeTunnel(3)} />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
                <>
                   {list.length ? (

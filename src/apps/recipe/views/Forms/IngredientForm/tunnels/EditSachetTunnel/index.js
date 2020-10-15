@@ -1,12 +1,13 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Form, TunnelHeader, Loader, Flex, Spacer } from '@dailykit/ui'
+import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { IngredientContext } from '../../../../../context/ingredient'
-import { UPDATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
-import { TunnelBody } from '../styled'
+import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { FETCH_UNITS, UPDATE_SACHET } from '../../../../../graphql'
 import validator from '../../validators'
+import { TunnelBody } from '../styled'
 
 const EditSachetTunnel = ({ state, closeTunnel }) => {
    const { ingredientState } = React.useContext(IngredientContext)
@@ -80,7 +81,7 @@ const EditSachetTunnel = ({ state, closeTunnel }) => {
          />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
                <>
                   <Flex>

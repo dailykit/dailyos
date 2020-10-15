@@ -1,24 +1,24 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
    Tag,
    TagGroup,
-   useMultiList,
    TunnelHeader,
-   Loader,
-   Filler,
+   useMultiList,
 } from '@dailykit/ui'
+import React from 'react'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import {
    CREATE_PROCESSINGS,
    FETCH_PROCESSING_NAMES,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
-import { logger } from '../../../../../../../shared/utils'
 
 const ProcessingsTunnel = ({ state, closeTunnel }) => {
    // Subscription
@@ -72,7 +72,7 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
          />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
                <>
                   {list.length ? (

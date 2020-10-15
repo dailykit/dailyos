@@ -1,34 +1,20 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
-import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Flex, Form, Loader, Spacer, Text } from '@dailykit/ui'
+import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
-import {
-   Input,
-   Loader,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   Text,
-   Toggle,
-   Form,
-   Flex,
-   Spacer,
-} from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
-
+import { useTabs } from '../../../context'
 import {
    IngredientContext,
    reducers,
    state as initialState,
 } from '../../../context/ingredient'
-import { useTabs } from '../../../context'
 import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
-
 import { Processings, Stats } from './components'
-
 import validator from './validators'
-import { logger } from '../../../../../shared/utils'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -86,7 +72,8 @@ const IngredientForm = () => {
          toast.success('Updated!')
       },
       onError: () => {
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 

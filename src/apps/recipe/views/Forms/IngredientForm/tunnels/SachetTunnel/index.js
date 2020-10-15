@@ -1,38 +1,27 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Checkbox,
-   Input,
-   RadioGroup,
-   Select,
-   Toggle,
-   TunnelHeader,
-   Loader,
-   Text,
-   TextButton,
-   useTunnel,
    Flex,
    Form,
-   Spacer,
-   PlusIcon,
    IconButton,
+   PlusIcon,
+   RadioGroup,
+   Spacer,
+   TunnelHeader,
+   useTunnel,
 } from '@dailykit/ui'
+import React from 'react'
 import { toast } from 'react-toastify'
-import { IngredientContext } from '../../../../../context/ingredient'
-import { CREATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
 import {
-   StyledInputWrapper,
-   StyledRow,
-   TunnelBody,
-   StyledSelect,
-} from '../styled'
-import { StyledTable } from './styled'
-import {
+   InlineLoader,
    OperationConfig,
    Tooltip,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { CREATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
 import validator from '../../validators'
+import { TunnelBody } from '../styled'
+import { StyledTable } from './styled'
 
 const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -202,7 +191,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
