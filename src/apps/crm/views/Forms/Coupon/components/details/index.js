@@ -52,6 +52,7 @@ const Details = ({ state }) => {
                   data={state?.metaDetails}
                   open={() => openTunnel(1)}
                   altMessage="Coupon Image"
+                  identifier="coupon_basic_details"
                />
             </StyledCard>
          ) : (

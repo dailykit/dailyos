@@ -52,6 +52,7 @@ const OrdersTable = ({ id }) => {
          field: 'id',
          headerFilter: true,
          hozAlign: 'right',
+         cssClass: 'rowClick',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()

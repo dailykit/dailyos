@@ -4,7 +4,8 @@ import {
    ButtonTile,
    useTunnel,
    Loader,
-   Checkbox,
+   Flex,
+   Form,
    Text,
    IconButton,
    ComboButton,
@@ -19,6 +20,7 @@ import {
    REWARD_DATA,
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
+import { Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
 
@@ -141,15 +143,18 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          {rewardInfoArray.length > 0 ? (
             <StyledContainer>
                <StyledRow>
-                  <Text as="title">Reward Information</Text>
+                  <Flex container alignItems="center">
+                     <Text as="title">Reward Information</Text>
+                     <Tooltip identifier="coupon_reward_info" />
+                  </Flex>
                   {rewardInfoArray.length > 1 && (
-                     <Checkbox
-                        id="label"
-                        checked={checkbox}
+                     <Form.Checkbox
+                        name="t&c"
+                        value={checkbox}
                         onChange={updateCheckbox}
                      >
                         Allow multiple rewards
-                     </Checkbox>
+                     </Form.Checkbox>
                   )}
                </StyledRow>
 

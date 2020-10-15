@@ -90,29 +90,25 @@ const CampaignForm = () => {
    })
 
    const updatetoggle = () => {
-      if (toggle || !toggle) {
-         updateCoupon({
-            variables: {
-               id: campaignId,
-               set: {
-                  isActive: !toggle,
-               },
+      updateCoupon({
+         variables: {
+            id: campaignId,
+            set: {
+               isActive: !toggle,
             },
-         })
-      }
+         },
+      })
    }
 
    const updateCheckbox = () => {
-      if (checkbox || !checkbox) {
-         updateCoupon({
-            variables: {
-               id: campaignId,
-               set: {
-                  isRewardMulti: !checkbox,
-               },
+      updateCoupon({
+         variables: {
+            id: campaignId,
+            set: {
+               isRewardMulti: !checkbox,
             },
-         })
-      }
+         },
+      })
    }
 
    //campaign name validation & update name handler
@@ -184,7 +180,13 @@ const CampaignForm = () => {
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
-               <Toggle checked={toggle} setChecked={updatetoggle} />
+               <Form.Toggle
+                  name="campaign_active"
+                  onChange={updatetoggle}
+                  value={toggle}
+               >
+                  Campaign Active
+               </Form.Toggle>
             </Flex>
          </InputWrapper>
 

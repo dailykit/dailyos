@@ -7,13 +7,13 @@ import {
    ButtonGroup,
    IconButton,
    PlusIcon,
-   Toggle,
    Loader,
    Tunnels,
    Tunnel,
    useTunnel,
    Flex,
    ComboButton,
+   Form,
 } from '@dailykit/ui'
 import {
    CAMPAIGN_LISTING,
@@ -67,7 +67,7 @@ const CampaignListing = () => {
       logger(error)
    }
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (!tab) {
          addTab('Campaign', '/crm/campaign')
       }
@@ -93,10 +93,13 @@ const CampaignListing = () => {
    const ToggleButton = ({ cell }) => {
       const rowData = cell._cell.row.data
       return (
-         <Toggle
-            checked={rowData.active}
-            setChecked={() => toggleHandler(!rowData.active, rowData.id)}
-         />
+         <Form.Group>
+            <Form.Toggle
+               name="campaign_active"
+               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               value={rowData.active}
+            />
+         </Form.Group>
       )
    }
 
@@ -139,6 +142,7 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },

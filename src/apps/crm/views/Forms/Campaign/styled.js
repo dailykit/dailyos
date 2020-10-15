@@ -22,8 +22,7 @@ export const StyledDiv = styled.div`
    padding: 0;
    background-color: #ffffff;
    .glXFlP {
-      padding-bottom: 16px;
-      border-bottom: none;
+      margin-bottom: 16px;
    }
    .flarUQ {
       padding: 0;

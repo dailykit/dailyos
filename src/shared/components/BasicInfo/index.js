@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { TunnelHeader, Input, Tunnels, Tunnel, ButtonTile } from '@dailykit/ui'
-import { TunnelBody, StyledRow, ImageContainer } from './styled'
+import {
+   TunnelHeader,
+   Tunnels,
+   Tunnel,
+   ButtonTile,
+   Form,
+   Spacer,
+   Flex,
+} from '@dailykit/ui'
+import { TunnelBody, ImageContainer } from './styled'
 import AssetTunnel from './asset'
+import { Tooltip } from '../Tooltip'
 import { DeleteIcon } from '../../assets/icons'
 
 const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
@@ -27,25 +36,30 @@ const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
                   close={() => closeTunnel(1)}
                />
                <TunnelBody>
-                  <StyledRow>
-                     <Input
-                        type="text"
-                        label="Title"
-                        name="text"
-                        rows="5"
+                  <Form.Group>
+                     <Form.Label htmlFor="text" title="title">
+                        Title
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
+                        name="title"
                         value={info.title}
+                        placeholder="Enter Title here"
                         onChange={e =>
                            setInfo({ ...info, title: e.target.value })
                         }
                      />
-                  </StyledRow>
-                  <StyledRow>
-                     <Input
-                        type="textarea"
-                        label="Description"
-                        name="textarea"
-                        rows="5"
+                  </Form.Group>
+                  <Spacer size="32px" />
+                  <Form.Group>
+                     <Form.Label htmlFor="textarea" title="description">
+                        Description
+                     </Form.Label>
+                     <Form.TextArea
+                        id="description"
+                        name="description"
                         value={info.description}
+                        placeholder="Enter Description here"
                         onChange={e =>
                            setInfo({
                               ...info,
@@ -53,7 +67,8 @@ const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
                            })
                         }
                      />
-                  </StyledRow>
+                  </Form.Group>
+                  <Spacer size="32px" />
                   {info.image ? (
                      <ImageContainer>
                         <div>

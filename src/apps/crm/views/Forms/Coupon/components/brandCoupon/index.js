@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-import { Text, Flex, Toggle, Loader } from '@dailykit/ui'
+import { Text, Flex, Form, Loader } from '@dailykit/ui'
 import { BRAND_COUPONS, UPSERT_BRAND_COUPON } from '../../../../../graphql'
 import { StyledHeader, StyledWrapper } from './styled'
 import options from '../../../../tableOptions'
@@ -115,5 +115,13 @@ const ToggleCoupon = ({ cell, couponId, onChange }) => {
       setActive(isActive)
    }, [brand.current])
 
-   return <Toggle checked={active} setChecked={val => toggleHandler(val)} />
+   return (
+      <Form.Group>
+         <Form.Toggle
+            name="brand_coupon_active"
+            onChange={val => toggleHandler(val)}
+            value={active}
+         />
+      </Form.Group>
+   )
 }

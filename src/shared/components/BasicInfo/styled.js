@@ -6,10 +6,6 @@ export const TunnelBody = styled.div`
    overflow: auto;
 `
 
-export const StyledRow = styled.div`
-   margin-bottom: 32px;
-`
-
 export const SolidTile = styled.button`
    width: 70%;
    display: block;

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Avatar, Toggle, Flex } from '@dailykit/ui'
+import { Text, Avatar, Form, Flex } from '@dailykit/ui'
 import {
    StyledCustomerCard,
    CustomerInfo,
@@ -27,7 +27,13 @@ const CustomerCard = ({ customer, walletAmount, toggle, toggleHandler }) => (
       </CustomerWallet>
       <StyledDiv>
          <Text as="p">Test Customer</Text>
-         <Toggle checked={toggle} setChecked={toggleHandler} />
+         <Form.Group>
+            <Form.Toggle
+               name="customer_isTest"
+               onChange={toggleHandler}
+               value={toggle}
+            />
+         </Form.Group>
       </StyledDiv>
    </StyledCustomerCard>
 )

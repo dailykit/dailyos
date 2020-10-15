@@ -2,16 +2,14 @@ import React, { useState } from 'react'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    ButtonTile,
-   ButtonGroup,
    useTunnel,
    Loader,
-   Checkbox,
-   Tunnels,
-   Tunnel,
+   Form,
    Text,
    IconButton,
    ComboButton,
    PlusIcon,
+   Flex,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { EditIcon, DeleteIcon } from '../../../../../../../shared/assets/icons'
@@ -23,6 +21,7 @@ import {
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
 import { logger } from '../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../shared/components'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
 
 const Rewards = ({ state, checkbox, updateCheckbox }) => {
@@ -143,15 +142,18 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          {rewardInfoArray.length > 0 ? (
             <StyledContainer>
                <StyledRow>
-                  <Text as="title">Reward Information</Text>
+                  <Flex container alignItems="center">
+                     <Text as="title">Reward Information</Text>
+                     <Tooltip identifier="campaign_reward_info" />
+                  </Flex>
                   {rewardInfoArray.length > 1 && (
-                     <Checkbox
-                        id="label"
-                        checked={checkbox}
+                     <Form.Checkbox
+                        name="t&c"
+                        value={checkbox}
                         onChange={updateCheckbox}
                      >
                         Allow multiple rewards
-                     </Checkbox>
+                     </Form.Checkbox>
                   )}
                </StyledRow>
 

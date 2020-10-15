@@ -72,6 +72,7 @@ const CustomerListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
@@ -85,7 +86,7 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 100,
+         width: 150,
       },
       {
          title: 'Email',

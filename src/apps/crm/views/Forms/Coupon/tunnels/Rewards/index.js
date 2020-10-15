@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, TunnelHeader, Loader, Tunnel, Tunnels } from '@dailykit/ui'
+import { Text, TunnelHeader, Loader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../shared/components'
 
 export default function RewardTypeTunnel({
    state,
@@ -61,10 +62,13 @@ export default function RewardTypeTunnel({
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <TunnelHeader
-                  title="Select Type of Reward"
-                  close={() => closeTunnel(1)}
-               />
+               <Flex container alignItems="center">
+                  <TunnelHeader
+                     title="Select Type of Reward"
+                     close={() => closeTunnel(1)}
+                  />
+                  <Tooltip identifier="coupon_reward_type" />
+               </Flex>
                <TunnelBody>
                   {types.map(type => {
                      return (

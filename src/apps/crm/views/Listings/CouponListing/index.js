@@ -8,9 +8,9 @@ import {
    IconButton,
    ComboButton,
    PlusIcon,
-   Toggle,
    Loader,
    Flex,
+   Form,
 } from '@dailykit/ui'
 import {
    COUPON_LISTING,
@@ -20,7 +20,7 @@ import {
    DELETE_COUPON,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../shared/components'
@@ -80,7 +80,7 @@ const CouponListing = () => {
       logger(error)
    }
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (!tab) {
          addTab('Coupons', '/crm/coupons')
       }
@@ -98,10 +98,13 @@ const CouponListing = () => {
    const ToggleButton = ({ cell }) => {
       const rowData = cell._cell.row.data
       return (
-         <Toggle
-            checked={rowData.active}
-            setChecked={() => toggleHandler(!rowData.active, rowData.id)}
-         />
+         <Form.Group>
+            <Form.Toggle
+               name="coupon_active"
+               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               value={rowData.active}
+            />
+         </Form.Group>
       )
    }
 
@@ -152,6 +155,7 @@ const CouponListing = () => {
          field: 'code',
          headerFilter: true,
          hozAlign: 'left',
+         cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },

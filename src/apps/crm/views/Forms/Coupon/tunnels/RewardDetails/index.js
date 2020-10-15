@@ -3,14 +3,14 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
    TunnelHeader,
-   Input,
+   Form,
    RadioGroup,
-   Loader,
+   Flex,
    Tunnel,
    Tunnels,
    ButtonTile,
-   useTunnel,
-   IconButton,
+   Spacer,
+   ComboButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -24,12 +24,11 @@ import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import { logger } from '../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../shared/components'
 
 export default function RewardDetailsunnel({
-   state,
    closeTunnel,
    tunnels,
-   openTunnel,
    openConditionTunnel,
    conditionId,
    rewardId,
@@ -114,15 +113,24 @@ export default function RewardDetailsunnel({
                <TunnelBody>
                   {conditionId ? (
                      <StyledContainer>
-                        <StyledRow>
-                           <Text as="p">View/Edit Conditions</Text>
-                           <IconButton
+                        <Flex
+                           container
+                           justifyContent="space-between"
+                           margin="0 0 16px 0"
+                        >
+                           <Flex container alignItems="flex-end">
+                              <Text as="title">Reward Condition</Text>
+                              <Tooltip identifier="coupon_reward_condition" />
+                           </Flex>
+                           <ComboButton
                               type="outline"
+                              size="sm"
                               onClick={() => openConditionTunnel(1)}
                            >
-                              <EditIcon />
-                           </IconButton>
-                        </StyledRow>
+                              <EditIcon color="#00a7e1" />
+                              View/Edit
+                           </ComboButton>
+                        </Flex>
                      </StyledContainer>
                   ) : (
                      <ButtonTile
@@ -133,30 +141,46 @@ export default function RewardDetailsunnel({
                         onClick={() => openConditionTunnel(1)}
                      />
                   )}
-                  <InputWrap>
-                     <Input
-                        type="number"
-                        label="Priority"
+                  <Form.Group>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label htmlFor="number" title="priority">
+                           Priority
+                        </Form.Label>
+                        <Tooltip identifier="coupon_reward_priority" />
+                     </Flex>
+                     <Form.Number
+                        id="priority"
+                        name="priority"
                         value={priority}
+                        placeholder="Enter Priority "
                         onChange={e => setPriority(e.target.value)}
                      />
-                  </InputWrap>
+                  </Form.Group>
+                  <Spacer size="24px" />
                   <InputWrap>
-                     <Wrap>
-                        <Text as="title">Add Reward Value</Text>
-                     </Wrap>
-                     <Wrap>
-                        <RadioGroup
-                           options={options}
-                           active={rewardValueType === 'absolute' ? 1 : 2}
-                           onChange={option => setRewardValueType(option.title)}
-                        />
-                     </Wrap>
+                     <Flex container alignItems="flex-end">
+                        <Text as="title">Reward Value Type</Text>
+                        <Tooltip identifier="coupon_reward_value_type" />
+                     </Flex>
+                     <Spacer size="24px" />
+                     <RadioGroup
+                        options={options}
+                        active={rewardValueType === 'absolute' ? 1 : 2}
+                        onChange={option => setRewardValueType(option.title)}
+                     />
+                     <Spacer size="24px" />
                      {rewardValueType === 'absolute' ? (
-                        <Wrap>
-                           <Input
-                              type="number"
-                              label="Reward Value"
+                        <Form.Group>
+                           <Form.Label
+                              htmlFor="number"
+                              title="absoluteRewardValue"
+                           >
+                              Reward Value
+                           </Form.Label>
+                           <Form.Number
+                              id="absoluteRewardVal"
+                              name="absoluteRewardVal"
+                              placeholder="Enter Reward Value "
                               value={rewardValue?.value || null}
                               onChange={e =>
                                  setRewardValue({
@@ -165,17 +189,24 @@ export default function RewardDetailsunnel({
                                  })
                               }
                            />
-                        </Wrap>
+                        </Form.Group>
                      ) : (
                         <InputWrap>
-                           <Wrap>
-                              <Input
-                                 type="number"
-                                 label="Maximum Reward Value"
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor="number"
+                                 title="MaxRewardValue"
+                              >
+                                 Maximum Reward Value
+                              </Form.Label>
+                              <Form.Number
+                                 id="MaxRewardValue"
+                                 name="MaxRewardValue"
+                                 placeholder="Enter maximum value of reward  "
                                  value={rewardValue?.value?.max}
                                  onChange={e =>
                                     setRewardValue({
-                                       // ...rewardValue,
+                                       ...rewardValue,
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue?.value,
@@ -184,15 +215,23 @@ export default function RewardDetailsunnel({
                                     })
                                  }
                               />
-                           </Wrap>
-                           <Wrap>
-                              <Input
-                                 type="number"
-                                 label="Reward In Percentage"
+                           </Form.Group>
+                           <Spacer size="24px" />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor="number"
+                                 title="PercentRewardValue"
+                              >
+                                 Reward Percentage
+                              </Form.Label>
+                              <Form.Number
+                                 id="PercentRewardValue"
+                                 name="PercentRewardValue"
+                                 placeholder="Enter percentage value of reward  "
                                  value={rewardValue?.value?.percentage}
                                  onChange={e =>
                                     setRewardValue({
-                                       // ...rewardValue,
+                                       ...rewardValue,
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue.value,
@@ -201,7 +240,7 @@ export default function RewardDetailsunnel({
                                     })
                                  }
                               />
-                           </Wrap>
+                           </Form.Group>
                         </InputWrap>
                      )}
                   </InputWrap>

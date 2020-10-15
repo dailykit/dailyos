@@ -178,12 +178,15 @@ const CouponForm = () => {
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
-
-               <Toggle
-                  checked={toggle}
-                  setChecked={updatetoggle}
-                  label="Coupon Active"
-               />
+               <Form.Group>
+                  <Form.Toggle
+                     name="coupon_active"
+                     onChange={updatetoggle}
+                     value={toggle}
+                  >
+                     Coupon Active
+                  </Form.Toggle>
+               </Form.Group>
             </Flex>
          </InputWrapper>
          <StyledDiv>
