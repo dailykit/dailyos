@@ -8,14 +8,15 @@ import {
    TextButton,
    useTunnel,
    Form,
+   Flex,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { Container, Flex, Grid } from '../styled'
+import { Container, Grid } from '../styled'
 import { StyledTable } from './styled'
-import { Nutrition } from '../../../../../../../shared/components'
+import { Nutrition, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
@@ -154,13 +155,48 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          <StyledTable cellSpacing="0">
             <thead>
                <tr>
-                  <th>Mode of Fulfillment</th>
-                  <th>Priority</th>
-                  <th>Item</th>
-                  <th>Cost</th>
-                  <th>Accuracy</th>
-                  <th>Packaging</th>
-                  <th>Operational Configuration</th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Mode of Fulfillment
+                        <Tooltip identifier="sachet_mof" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Priority
+                        <Tooltip identifier="sachet_mode_priority" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Item
+                        <Tooltip identifier="sachet_mode_item" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Cost
+                        <Tooltip identifier="sachet_mode_cost" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Accuracy
+                        <Tooltip identifier="sachet_mode_accuracy" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Packaging
+                        <Tooltip identifier="sachet_mode_packaging" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Operational Configuration
+                        <Tooltip identifier="sachet_mode_opconfig" />
+                     </Flex>
+                  </th>
                   <th> </th>
                </tr>
             </thead>
@@ -211,11 +247,17 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
             </tbody>
          </StyledTable>
          <Container top="32">
-            <Text as="subtitle"> Cost </Text>
+            <Flex container maxWidth="200px">
+               <Text as="subtitle"> Cost </Text>
+               <Tooltip identifier="sachet_cost" />
+            </Flex>
             <Text as="p">${sachet.cost}</Text>
          </Container>
          <Container top="32">
-            <Text as="subtitle"> Nutrition </Text>
+            <Flex container maxWidth="200px">
+               <Text as="subtitle"> Nutrition </Text>
+               <Tooltip identifier="sachet_nutritional_info" />
+            </Flex>
             {sachet.nutritionalInfo ? (
                <Nutrition data={sachet.nutritionalInfo} vertical />
             ) : (
