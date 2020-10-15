@@ -98,6 +98,7 @@ export default function SupplierListing() {
          title: 'Available',
          field: 'available',
          headerFilter: false,
+         formatter: 'tickCross',
          hozAlign: 'center',
          cssClass: 'center-text',
          width: 120,
