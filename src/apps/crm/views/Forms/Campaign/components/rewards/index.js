@@ -68,6 +68,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             toast.error('Something went wrong')
             logger(error)
          },
+         fetchPolicy: 'cache-and-network',
       }
    )
 
@@ -98,7 +99,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
       console.log(rewardInfo)
       if (
          window.confirm(
-            `Are you sure you want to delete reward - ${rewardInfo.id}?`
+            `Are you sure you want to delete reward - ${rewardInfo.type} ?`
          )
       ) {
          deleteReward({
@@ -127,6 +128,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             tunnels={rewardTunnels}
             state={state}
             openConditionTunnel={openConditionTunnel}
+            updateConditionId={val => setConditionId(val)}
             conditionId={conditionId}
             rewardId={rewardId}
             rewardInfo={rewardTunnelInfo}

@@ -36,10 +36,17 @@ export default function RewardDetailsunnel({
    rewardId,
    rewardInfo,
    closeRewardTypeTunnel,
+   updateConditionId,
 }) {
-   console.log(rewardInfo?.priority)
    const { addTab } = useTabs()
-   const [priority, setPriority] = useState(1)
+   const [priority, setPriority] = useState({
+      value: 1,
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [rewardValue, setRewardValue] = useState({
       type: 'absolute',
       value: '',
@@ -49,6 +56,26 @@ export default function RewardDetailsunnel({
       { id: 1, title: 'absolute' },
       { id: 2, title: 'conditional' },
    ])
+
+   // form validation
+   const validatorFunc = value => {
+      let isValid = true
+      let errors = []
+      if (value <= 0 && value !== '') {
+         isValid = false
+         errors = [...errors, "Priority can't be negative or zero"]
+      }
+      // if (typeof value === 'string' || value instanceof String) {
+      //    isValid = false
+      //    errors = [...errors, 'Priority must be numeric']
+      // }
+      if (value === '') {
+         isValid = false
+         errors = [...errors, 'Please enter priority']
+      }
+      console.log(typeof value)
+      return { isValid, errors }
+   }
 
    // Mutation
    const [updateReward] = useMutation(UPDATE_REWARD, {
@@ -66,23 +93,71 @@ export default function RewardDetailsunnel({
 
    // Handlers
    const saveInfo = () => {
-      console.log(rewardId, conditionId, priority, rewardValue)
-      updateReward({
-         variables: {
-            id: rewardId,
-            set: {
-               conditionId,
-               priority,
-               rewardValue,
+      if (validatorFunc(priority.value).isValid) {
+         updateReward({
+            variables: {
+               id: rewardId,
+               set: {
+                  conditionId,
+                  priority: priority.value,
+                  rewardValue,
+               },
             },
+         })
+         setPriority({
+            value: 1,
+            meta: {
+               isValid: false,
+               isTouched: false,
+               errors: [],
+            },
+         })
+         setRewardValue({
+            type: 'absolute',
+            value: '',
+         })
+         setRewardValueType('absolute')
+         updateConditionId(null)
+      } else {
+         toast.error('Please check reward details error !')
+      }
+   }
+
+   const closeFunc = () => {
+      setPriority({
+         value: 1,
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      })
+      setRewardValue({
+         type: 'absolute',
+         value: '',
+      })
+      setRewardValueType('absolute')
+      updateConditionId(null)
+      closeTunnel(1)
+   }
+
+   //reward priority value validation
+   const onBlur = e => {
+      setPriority({
+         ...priority,
+         meta: {
+            ...priority.meta,
+            isTouched: true,
+            errors: validatorFunc(e.target.value).errors,
+            isValid: validatorFunc(e.target.value).isValid,
          },
       })
    }
 
    useEffect(() => {
-      setPriority(rewardInfo?.priority)
-      setRewardValue(rewardInfo?.rewardValue)
-      setRewardValueType(rewardInfo?.rewardValue?.type)
+      setPriority({ ...priority, value: rewardInfo?.priority || 1 })
+      setRewardValue(rewardInfo?.rewardValue || { type: 'absolute', value: '' })
+      setRewardValueType(rewardInfo?.rewardValue?.type || 'absolute')
    }, [rewardInfo])
 
    return (
@@ -92,7 +167,7 @@ export default function RewardDetailsunnel({
                <TunnelHeader
                   title="Add Reward Details"
                   right={{ action: () => saveInfo(), title: 'Save' }}
-                  close={() => closeTunnel(1)}
+                  close={() => closeFunc()}
                />
                <TunnelBody>
                   {conditionId ? (
@@ -127,7 +202,7 @@ export default function RewardDetailsunnel({
                   )}
                   <Form.Group>
                      <Flex container alignItems="flex-end">
-                        <Form.Label htmlFor="number" title="priority">
+                        <Form.Label htmlFor="priority" title="priority">
                            Priority
                         </Form.Label>
                         <Tooltip identifier="campaign_reward_priority" />
@@ -135,10 +210,18 @@ export default function RewardDetailsunnel({
                      <Form.Number
                         id="priority"
                         name="priority"
-                        value={priority}
+                        value={priority.value}
                         placeholder="Enter Priority "
-                        onChange={e => setPriority(e.target.value)}
+                        onBlur={onBlur}
+                        onChange={e =>
+                           setPriority({ ...priority, value: e.target.value })
+                        }
                      />
+                     {priority.meta.isTouched &&
+                        !priority.meta.isValid &&
+                        priority.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
                   </Form.Group>
                   <Spacer size="24px" />
                   <InputWrap>

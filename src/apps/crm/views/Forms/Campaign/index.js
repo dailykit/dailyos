@@ -126,7 +126,6 @@ const CampaignForm = () => {
          validateCampaignName(e.target.value).isValid &&
          validateCampaignName(e.target.value).errors.length === 0
       ) {
-         console.log(`mutation should fire ${campaignTitle.meta.isValid}`)
          updateCoupon({
             variables: {
                id: campaignId,
