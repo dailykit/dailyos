@@ -242,12 +242,12 @@ export default function ItemForm() {
                      <div>
                         <span>{t(address.concat('unit qty'))}</span>
                         <div>
+                           {/* prettier-ignore */}
                            <span>
-                              {formState.unitSize + formState.unit} (
-                              {(formState.prices?.length &&
-                                 `$ ${formState.prices[0]?.unitPrice?.value}`) ||
-                                 null}
-                              )
+                              {formState.unitSize + formState.unit}
+                              {formState.prices?.length
+                                 ? ` ($ ${+formState.prices[0]?.unitPrice?.value})`
+                                 : null}
                            </span>
                         </div>
                      </div>
@@ -455,6 +455,7 @@ export default function ItemForm() {
                         style={{
                            padding: '16px',
                            backgroundColor: '#fff',
+                           minHeight: '472px',
                         }}
                      >
                         {formState.bulkItems?.length &&
