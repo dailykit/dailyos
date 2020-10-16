@@ -10,7 +10,7 @@ export const ImageContainer = styled.div`
    img {
       width: 464px;
       height: 128px;
-      object-fit: auto;
+      object-fit: cover;
    }
    div {
       position: absolute;
