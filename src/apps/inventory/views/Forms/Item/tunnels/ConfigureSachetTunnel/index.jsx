@@ -1,21 +1,16 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Loader, Text, TunnelHeader } from '@dailykit/ui'
-import React, { useContext, useState } from 'react'
+import { Form, Loader, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
 import { TunnelContainer } from '../../../../../components'
-import { ItemContext } from '../../../../../context/item'
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
-import { FlexContainer } from '../../../styled'
-import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
+import { StyledInputGroup } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ close, formState }) {
+export default function ConfigureSachetTunnel({ close, procId, unit }) {
    const { t } = useTranslation()
-   const { state } = useContext(ItemContext)
-   const [errors, setErrors] = useState([])
 
    const [quantity, setQuantity] = useState('')
    const [par, setPar] = useState('')
@@ -32,27 +27,16 @@ export default function ConfigureSachetTunnel({ close, formState }) {
          toast.error('Err! creating sachets. Please try again')
       },
    })
-
-   const active = formState.bulkItems.find(
-      item => item.id === state.activeProcessing.id
-   )
-
    const handleNext = () => {
-      if (!active) return toast.error('Error, Please try again.')
-      if (errors.length) {
-         errors.forEach(err => toast.error(err.message))
-         toast.error(`Cannot add sachets !`)
-      } else {
-         creatSachetItem({
-            variables: {
-               unitSize: quantity,
-               bulkItemId: active.id,
-               unit: active.unit,
-               par,
-               maxLevel: maxInventoryLevel,
-            },
-         })
-      }
+      creatSachetItem({
+         variables: {
+            unitSize: quantity,
+            bulkItemId: procId,
+            unit,
+            par,
+            maxLevel: maxInventoryLevel,
+         },
+      })
    }
 
    if (loading) return <Loader />
@@ -65,58 +49,49 @@ export default function ConfigureSachetTunnel({ close, formState }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <div
-               style={{ width: '45%', display: 'flex', alignItems: 'flex-end' }}
-            >
-               <div style={{ width: '70%' }}>
-                  <Input
-                     type="number"
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="quantity" title="sachetQuantity">
+                     Sachet Quantity (in {unit})
+                  </Form.Label>
+                  <Form.Number
+                     id="quantity"
                      name="quantity"
                      value={quantity}
-                     label="Sachet Quantity"
+                     placeholder={`Sachet Quantity (in ${unit})`}
                      onChange={e => setQuantity(e.target.value)}
-                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
-               </div>
-               <span style={{ width: '10px' }} />
-               <Text as="subtitle">in {active.unit}</Text>
-            </div>
+               </Form.Group>
+            </StyledInputGroup>
 
             <br />
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label title="parLevel" htmlFor="par">
+                     {t(address.concat('set par level'))} (packets)
+                  </Form.Label>
 
-            <FlexContainer
-               style={{
-                  justifyContent: 'space-between',
-               }}
-            >
-               <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
-                  <Input
-                     type="number"
+                  <Form.Number
+                     id="par"
                      name="par"
                      value={par}
-                     label={t(address.concat('set par level'))}
+                     placeholder={t(address.concat('set par level'))}
                      onChange={e => setPar(e.target.value)}
-                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
-                  <span style={{ marginLeft: '5px' }}>
-                     {t(address.concat('pkt'))}
-                  </span>
-               </FlexContainer>
-
-               <FlexContainer style={{ alignItems: 'flex-end', width: '45%' }}>
-                  <Input
-                     type="number"
-                     name="inventory level"
+               </Form.Group>
+               <Form.Group>
+                  <Form.Label title="maxLevel" htmlFor="maxLevel">
+                     {t(address.concat('max inventory level'))}
+                  </Form.Label>
+                  <Form.Number
+                     id="maxLevel"
+                     name="maxLevel"
+                     placeholder={t(address.concat('max inventory level'))}
                      value={maxInventoryLevel}
-                     label={t(address.concat('max inventory level'))}
                      onChange={e => setMaxInventoryLevel(e.target.value)}
-                     onBlur={e => handleNumberInputErrors(e, errors, setErrors)}
                   />
-                  <span style={{ marginLeft: '5px' }}>
-                     {t(address.concat('pkt'))}
-                  </span>
-               </FlexContainer>
-            </FlexContainer>
+               </Form.Group>
+            </StyledInputGroup>
          </TunnelContainer>
       </>
    )

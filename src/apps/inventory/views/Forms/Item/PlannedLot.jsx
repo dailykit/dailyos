@@ -7,22 +7,40 @@ import {
    SectionTabs,
    SectionTabsListHeader,
    Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { AddIcon } from '../../../../../shared/assets/icons'
 import { DataCard } from '../../../components'
 import { FlexContainer } from '../styled'
+import { ConfigureSachetTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function PlannedLotView({ sachetItems = [], open }) {
+export default function PlannedLotView({ sachetItems = [], procId, unit }) {
    const { t } = useTranslation()
-
-   if (!sachetItems.length) return null
+   const [
+      configureSachetTunnel,
+      openConfigureSachetTunnel,
+      closeConfigureSachetTunnel,
+   ] = useTunnel(1)
 
    return (
       <>
+         <Tunnels tunnels={configureSachetTunnel}>
+            <Tunnel layer={1}>
+               <ConfigureSachetTunnel
+                  open={openConfigureSachetTunnel}
+                  close={closeConfigureSachetTunnel}
+                  procId={procId}
+                  unit={unit}
+               />
+            </Tunnel>
+         </Tunnels>
+
          <SectionTabs>
             <SectionTabList>
                <SectionTabsListHeader>
@@ -30,7 +48,7 @@ export default function PlannedLotView({ sachetItems = [], open }) {
                   <IconButton
                      type="outline"
                      onClick={() => {
-                        open(1)
+                        openConfigureSachetTunnel(1)
                      }}
                   >
                      <AddIcon />
