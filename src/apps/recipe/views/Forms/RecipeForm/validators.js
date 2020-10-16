@@ -29,6 +29,24 @@ const validator = {
       }
       return { isValid, errors }
    },
+   serving: value => {
+      const serving = value.trim()
+      let isValid = true
+      let errors = []
+      if (serving === '') {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (!Number.isInteger(+value)) {
+         isValid = false
+         errors = [...errors, 'Integers only!']
+      }
+      if (+value <= 0) {
+         isValid = false
+         errors = [...errors, 'Should be greater than zero!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator

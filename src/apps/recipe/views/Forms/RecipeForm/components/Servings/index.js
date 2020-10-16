@@ -2,15 +2,17 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
    Select,
    Text,
-   Tunnels,
    Tunnel,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { DELETE_SIMPLE_RECIPE_YIELD } from '../../../../../graphql'
-import { Container } from '../styled'
 import { ServingsTunnel } from '../../tunnels'
 
 const Servings = ({ state }) => {
@@ -30,17 +32,17 @@ const Servings = ({ state }) => {
          toast.success('Deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const remove = serving => {
-      const check = window.confirm(
+      const confirmed = window.confirm(
          `Are you sure you want to delete serving - ${serving.title}?`
       )
-      if (check)
+      if (confirmed)
          deleteYield({
             variables: {
                id: serving.id,
@@ -51,29 +53,28 @@ const Servings = ({ state }) => {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <ServingsTunnel state={state} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Container top="32" paddingX="32">
+         <Flex container alignItems="center">
             <Text as="subtitle">Servings</Text>
-            <Container>
-               {options.length ? (
-                  <Select
-                     options={options}
-                     addOption={() => openTunnel(1)}
-                     placeholder="Add Servings"
-                     removeOption={remove}
-                  />
-               ) : (
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Servings"
-                     onClick={() => openTunnel(1)}
-                  />
-               )}
-            </Container>
-         </Container>
+            <Tooltip identifier="recipe_servings" />
+         </Flex>
+         {options.length ? (
+            <Select
+               options={options}
+               addOption={() => openTunnel(1)}
+               placeholder="Add Servings"
+               removeOption={remove}
+            />
+         ) : (
+            <ButtonTile
+               type="secondary"
+               text="Add Servings"
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </>
    )
 }
