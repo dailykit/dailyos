@@ -23,7 +23,6 @@ export const StyledTable = styled.table`
    tbody {
       tr {
          font-weight: 500;
-         font-size: 14px;
          line-height: 14px;
          color: #888d9d;
          height: 100px;
@@ -38,24 +37,6 @@ export const StyledTable = styled.table`
             padding: 0px 20px;
             align-items: center;
             height: inherit;
-
-            &:first-child {
-               display: flex;
-               position: relative;
-
-               span.badge {
-                  position: absolute;
-                  background: #28c1f6;
-                  text-transform: uppercase;
-                  color: #fff;
-                  padding: 4px;
-                  top: 4px;
-               }
-
-               > div {
-                  margin-right: 12px;
-               }
-            }
          }
       }
    }

@@ -1,8 +1,14 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Flex,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
-// eslint-disable-next-line import/no-cycle
 import { Sachet } from '..'
 import { AddIcon, DeleteIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -15,16 +21,29 @@ import {
    StyledListingTile,
    StyledSection,
 } from './styled'
+import {
+   EditItemTunnel,
+   EditModeTunnel,
+   EditPackagingTunnel,
+   EditSachetTunnel,
+   ItemTunnel,
+   PackagingTunnel,
+   SachetTunnel,
+} from '../../tunnels'
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip, ErrorBoundary } from '../../../../../../../shared/components'
 
-const Sachets = ({
-   state,
-   openSachetTunnel,
-   openEditSachetTunnel,
-   openNutritionTunnel,
-}) => {
+const Sachets = ({ state, openNutritionTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
+
+   const [sachetTunnels, openSachetTunnel, closeSachetTunnel] = useTunnel(5)
+   const [
+      editSachetTunnels,
+      openEditSachetTunnel,
+      closeEditSachetTunnel,
+   ] = useTunnel(7)
 
    // Mutation
    const [deleteSachet] = useMutation(DELETE_SACHET, {
@@ -36,8 +55,8 @@ const Sachets = ({
          })
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -58,89 +77,130 @@ const Sachets = ({
 
    return (
       <>
-         {state.ingredientProcessings[ingredientState.processingIndex]
-            .ingredientSachets.length ? (
-            <StyledSection>
-               <StyledListing>
-                  <StyledListingHeader>
-                     <h3>
-                        Sachets (
-                        {
-                           state.ingredientProcessings[
-                              ingredientState.processingIndex
-                           ].ingredientSachets.length
-                        }
-                        )
-                     </h3>
-                     <span
-                        role="button"
-                        tabIndex="0"
-                        onClick={() => openSachetTunnel(1)}
-                        onKeyDown={e =>
-                           e.charCode === 13 && openSachetTunnel(1)
-                        }
-                     >
-                        <AddIcon color="#555B6E" size="18" stroke="2.5" />
-                     </span>
-                  </StyledListingHeader>
-                  {state.ingredientProcessings[
-                     ingredientState.processingIndex
-                  ].ingredientSachets?.map((sachet, i) => (
-                     <StyledListingTile
-                        key={sachet.id}
-                        active={ingredientState.sachetIndex === i}
-                        onClick={() =>
-                           ingredientDispatch({
-                              type: 'SACHET_INDEX',
-                              payload: i,
-                           })
-                        }
-                     >
-                        <Actions active={ingredientState.sachetIndex === i}>
-                           <span
-                              role="button"
-                              tabIndex="0"
-                              onClick={() => remove(sachet)}
-                              onKeyDown={e =>
-                                 e.charCode === 13 && remove(sachet)
+         <Tunnels tunnels={sachetTunnels}>
+            <Tunnel layer={1} size="lg">
+               <SachetTunnel
+                  state={state}
+                  openTunnel={openSachetTunnel}
+                  closeTunnel={closeSachetTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ItemTunnel closeTunnel={closeSachetTunnel} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <PackagingTunnel closeTunnel={closeSachetTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={editSachetTunnels}>
+            <Tunnel layer={1} size="sm">
+               <EditSachetTunnel
+                  state={state}
+                  closeTunnel={closeEditSachetTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2} size="lg">
+               <EditModeTunnel
+                  state={state}
+                  closeTunnel={closeEditSachetTunnel}
+                  openTunnel={openEditSachetTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <EditItemTunnel closeTunnel={closeEditSachetTunnel} />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <ErrorBoundary rootRoute="/apps/recipe">
+            {state.ingredientProcessings[ingredientState.processingIndex]
+               .ingredientSachets.length ? (
+               <StyledSection>
+                  <StyledListing>
+                     <StyledListingHeader>
+                        <Flex container>
+                           <Text as="h3">
+                              Sachets (
+                              {
+                                 state.ingredientProcessings[
+                                    ingredientState.processingIndex
+                                 ].ingredientSachets.length
                               }
-                           >
-                              <DeleteIcon />
-                           </span>
-                        </Actions>
-                        <h3>{`${sachet.quantity} ${sachet.unit}`}</h3>
-                        <p>
-                           Active:{' '}
-                           {sachet.liveModeOfFulfillment?.type === 'realTime' &&
-                              'Real Time'}
-                           {sachet.liveModeOfFulfillment?.type ===
-                              'plannedLot' && 'Planned Lot'}
-                        </p>
-                        <p>Available: NA</p>
-                     </StyledListingTile>
-                  ))}
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     onClick={() => openSachetTunnel(1)}
-                  />
-               </StyledListing>
-               <StyledDisplay>
-                  <Sachet
-                     state={state}
-                     openEditSachetTunnel={openEditSachetTunnel}
-                     openNutritionTunnel={openNutritionTunnel}
-                  />
-               </StyledDisplay>
-            </StyledSection>
-         ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text="Add Sachet"
-               onClick={() => openSachetTunnel(1)}
-            />
-         )}
+                              )
+                           </Text>
+                           <Tooltip identifier="ingredient_form_sachets" />
+                        </Flex>
+                        <span
+                           role="button"
+                           tabIndex="0"
+                           onClick={() => openSachetTunnel(1)}
+                           onKeyDown={e =>
+                              e.charCode === 13 && openSachetTunnel(1)
+                           }
+                        >
+                           <AddIcon color="#555B6E" size="18" stroke="2.5" />
+                        </span>
+                     </StyledListingHeader>
+                     {state.ingredientProcessings[
+                        ingredientState.processingIndex
+                     ].ingredientSachets?.map((sachet, i) => (
+                        <StyledListingTile
+                           key={sachet.id}
+                           active={ingredientState.sachetIndex === i}
+                           onClick={() =>
+                              ingredientDispatch({
+                                 type: 'SACHET_INDEX',
+                                 payload: i,
+                              })
+                           }
+                        >
+                           <Actions active={ingredientState.sachetIndex === i}>
+                              <span
+                                 role="button"
+                                 tabIndex="0"
+                                 onClick={() => remove(sachet)}
+                                 onKeyDown={e =>
+                                    e.charCode === 13 && remove(sachet)
+                                 }
+                              >
+                                 <DeleteIcon />
+                              </span>
+                           </Actions>
+                           <h3>{`${sachet.quantity} ${sachet.unit}`}</h3>
+                           <p>
+                              Active:{' '}
+                              {sachet.liveModeOfFulfillment?.type ===
+                                 'realTime' && 'Real Time'}
+                              {sachet.liveModeOfFulfillment?.type ===
+                                 'plannedLot' && 'Planned Lot'}
+                           </p>
+                           <p>Available: NA</p>
+                        </StyledListingTile>
+                     ))}
+                     <ButtonTile
+                        type="primary"
+                        size="lg"
+                        onClick={() => openSachetTunnel(1)}
+                     />
+                  </StyledListing>
+                  <StyledDisplay>
+                     <Sachet
+                        state={state}
+                        openEditSachetTunnel={openEditSachetTunnel}
+                        openNutritionTunnel={openNutritionTunnel}
+                     />
+                  </StyledDisplay>
+               </StyledSection>
+            ) : (
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text="Add Sachet"
+                  onClick={() => openSachetTunnel(1)}
+               />
+            )}
+         </ErrorBoundary>
       </>
    )
 }
