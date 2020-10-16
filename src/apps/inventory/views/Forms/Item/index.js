@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import { Tooltip } from '../../../../../shared/components'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
@@ -33,39 +32,26 @@ import {
    state as initialState,
 } from '../../../context/item'
 import {
-   DELETE_BULK_ITEM,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
-import { FlexContainer, Flexible } from '../styled'
 import ProcessingView from './ProcessingView'
 import {
-   ProcessingButton,
    StatHeader,
    StatValue,
    StyledGrid,
    StyledHeader,
    StyledInfo,
-   StyledMain,
    StyledSupplier,
    TransparentIconButton,
 } from './styled'
-import {
-   ConfigTunnel,
-   ConfigureDerivedProcessingTunnel,
-   ConfigureSachetTunnel,
-   InfoTunnel,
-   ProcessingTunnel,
-   SelectDerivedProcessingTunnel,
-   SuppliersTunnel,
-} from './tunnels'
+import { InfoTunnel, ProcessingTunnel, SuppliersTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
 export default function ItemForm() {
    const { t } = useTranslation()
    const [state, dispatch] = React.useReducer(reducer, initialState)
-   const [active, setActive] = React.useState(false)
    const [formState, setFormState] = React.useState({})
    const [itemName, setItemName] = React.useState('')
    const { id } = useParams()
@@ -81,18 +67,6 @@ export default function ItemForm() {
       closeProcessingTunnel,
    ] = useTunnel(1)
 
-   const [
-      derivedProcessingsTunnel,
-      openDerivedProcessingTunnel,
-      closeDerivedProcessingTunnel,
-   ] = useTunnel(1)
-
-   const [
-      configureSachetTunnel,
-      openConfigureSachetTunnel,
-      closeConfigureSachetTunnel,
-   ] = useTunnel(1)
-
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
       {
@@ -102,19 +76,6 @@ export default function ItemForm() {
 
             setItemName(data.name)
             setFormState(data)
-         },
-      }
-   )
-
-   const [deleteBulkItem, { loading: bulkItemDeleteLoading }] = useMutation(
-      DELETE_BULK_ITEM,
-      {
-         onCompleted: () => {
-            toast.info('Bulk Item deleted successfully.')
-         },
-         onError: error => {
-            console.log(error)
-            toast.error('Error! cannot delete the bulk item. Please try again.')
          },
       }
    )
@@ -130,11 +91,7 @@ export default function ItemForm() {
       },
    })
 
-   const handleBulkItemDelete = id => {
-      deleteBulkItem({ variables: { id } })
-   }
-
-   if (itemDetailLoading || bulkItemDeleteLoading) return <Loader />
+   if (itemDetailLoading) return <Loader />
 
    return (
       <ItemContext.Provider value={{ state, dispatch }}>
@@ -162,40 +119,8 @@ export default function ItemForm() {
                   formState={formState}
                />
             </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} layer={2} size="lg">
-               <ConfigTunnel
-                  close={closeProcessingTunnel}
-                  open={openProcessingTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={derivedProcessingsTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-               <SelectDerivedProcessingTunnel
-                  next={() => openDerivedProcessingTunnel(2)}
-                  close={() => closeDerivedProcessingTunnel(1)}
-                  formState={formState}
-               />
-            </Tunnel>
-            <Tunnel style={{ overflowY: 'auto' }} size="lg" layer={2}>
-               <ConfigureDerivedProcessingTunnel
-                  open={openDerivedProcessingTunnel}
-                  close={closeDerivedProcessingTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
          </Tunnels>
 
-         <Tunnels tunnels={configureSachetTunnel}>
-            <Tunnel layer={1}>
-               <ConfigureSachetTunnel
-                  open={openConfigureSachetTunnel}
-                  close={closeConfigureSachetTunnel}
-                  formState={formState}
-               />
-            </Tunnel>
-         </Tunnels>
          <div
             style={{ background: '#f3f3f3', minHeight: 'calc(100vh - 40px)' }}
          >
@@ -332,11 +257,7 @@ export default function ItemForm() {
                                  type: 'CLEAR_STATE',
                               })
 
-                              if (formState.bulkItemAsShippedId) {
-                                 openDerivedProcessingTunnel(1)
-                              } else {
-                                 openProcessingTunnel(1)
-                              }
+                              openProcessingTunnel(1)
                            }}
                            type="outline"
                         >
@@ -351,9 +272,7 @@ export default function ItemForm() {
                               margin="0 0 8px 0"
                            >
                               <Text as="subtitle">
-                                 {t(
-                                    address.concat('as recieved from supplier')
-                                 )}
+                                 as received from supplier
                               </Text>
                               <Tooltip identifier="supplieritem_form_as_received_from_supplier_bulkitems" />
                            </Flex>
@@ -385,14 +304,6 @@ export default function ItemForm() {
                                           : ''}
                                     </Text>
                                  </div>
-                                 <FlexContainer>
-                                    <TransparentIconButton
-                                       onClick={() => openProcessingTunnel(2)}
-                                       type="button"
-                                    >
-                                       <EditIcon />
-                                    </TransparentIconButton>
-                                 </FlexContainer>
                               </Flex>
                            </SectionTab>
                         </>
@@ -402,11 +313,7 @@ export default function ItemForm() {
                         <>
                            <Flex container alignItems="center" margin="8px 0">
                               <Text as="subtitle">
-                                 {t(
-                                    address.concat(
-                                       'derived from recieved processing'
-                                    )
-                                 )}
+                                 derived from received processing
                               </Text>
                               <Tooltip identifier="supplieritem_form_derived_from_received_processing_bulkitems" />
                            </Flex>
@@ -417,52 +324,25 @@ export default function ItemForm() {
                               return (
                                  <SectionTab key={procs.id}>
                                     <Flex
-                                       container
                                        style={{
                                           textAlign: 'left',
                                        }}
                                        padding="14px"
-                                       justifyContent="space-between"
                                     >
-                                       <div>
-                                          <h3 style={{ marginBottom: '5px' }}>
-                                             {procs.name}
-                                          </h3>
-                                          <Text as="subtitle">
-                                             {t(address.concat('on hand'))}:{' '}
-                                             {procs.onHand} {procs.unit}
-                                          </Text>
-                                          <Text as="subtitle">
-                                             {t(address.concat('shelf life'))}:{' '}
-                                             {procs?.shelfLife?.value || 'N/A'}{' '}
-                                             {procs?.shelfLife?.value
-                                                ? procs?.shelfLife?.unit
-                                                : ''}
-                                          </Text>
-                                       </div>
-                                       <Flex container>
-                                          <IconButton
-                                             onClick={() => {
-                                                dispatch({
-                                                   type: 'SET_DER_ACTION',
-                                                   payload: 'UPDATE',
-                                                })
-                                                openDerivedProcessingTunnel(2)
-                                             }}
-                                             type="ghost"
-                                          >
-                                             <EditIcon />
-                                          </IconButton>
-                                          <span style={{ width: '5px' }} />
-                                          <IconButton
-                                             onClick={() =>
-                                                handleBulkItemDelete(procs.id)
-                                             }
-                                             type="ghost"
-                                          >
-                                             <DeleteIcon />
-                                          </IconButton>
-                                       </Flex>
+                                       <h3 style={{ marginBottom: '5px' }}>
+                                          {procs.name}
+                                       </h3>
+                                       <Text as="subtitle">
+                                          {t(address.concat('on hand'))}:{' '}
+                                          {procs.onHand} {procs.unit}
+                                       </Text>
+                                       <Text as="subtitle">
+                                          {t(address.concat('shelf life'))}:{' '}
+                                          {procs?.shelfLife?.value || 'N/A'}{' '}
+                                          {procs?.shelfLife?.value
+                                             ? procs?.shelfLife?.unit
+                                             : ''}
+                                       </Text>
                                     </Flex>
                                  </SectionTab>
                               )
@@ -472,14 +352,17 @@ export default function ItemForm() {
                   </SectionTabList>
                   <SectionTabPanels>
                      <SectionTabPanel>
-                        <ProcessingView proc={formState.bulkItemAsShipped} />
+                        <ProcessingView
+                           proc={formState.bulkItemAsShipped}
+                           isDefault
+                        />
                      </SectionTabPanel>
 
                      {formState.bulkItems?.map(procs => {
                         if (procs.id === formState.bulkItemAsShippedId)
                            return null
                         return (
-                           <SectionTabPanel>
+                           <SectionTabPanel key={procs.id}>
                               <ProcessingView proc={procs} />
                            </SectionTabPanel>
                         )

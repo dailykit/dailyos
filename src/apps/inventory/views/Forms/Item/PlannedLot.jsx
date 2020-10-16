@@ -56,7 +56,7 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
                </SectionTabsListHeader>
                {sachetItems.map(sachet => {
                   return (
-                     <SectionTab>
+                     <SectionTab key={sachet.id}>
                         <div style={{ textAlign: 'left', padding: '14px' }}>
                            <h3>
                               {sachet.unitSize} {sachet.unit}
@@ -75,7 +75,7 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
             <SectionTabPanels>
                {sachetItems.map(activeSachet => {
                   return (
-                     <SectionTabPanel>
+                     <SectionTabPanel key={activeSachet.id}>
                         <FlexContainer style={{ flexWrap: 'wrap' }}>
                            <DataCard
                               title={t(address.concat('awaiting'))}
