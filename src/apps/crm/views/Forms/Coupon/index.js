@@ -184,7 +184,7 @@ const CouponForm = () => {
                      onChange={updatetoggle}
                      value={toggle}
                   >
-                     Coupon Active
+                     Active
                   </Form.Toggle>
                </Form.Group>
             </Flex>

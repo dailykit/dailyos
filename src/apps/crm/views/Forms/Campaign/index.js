@@ -184,7 +184,7 @@ const CampaignForm = () => {
                   onChange={updatetoggle}
                   value={toggle}
                >
-                  Campaign Active
+                  Active
                </Form.Toggle>
             </Flex>
          </InputWrapper>

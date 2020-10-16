@@ -10,7 +10,7 @@ import {
    Tunnels,
    ButtonTile,
    Spacer,
-   ComboButton,
+   TextButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -22,7 +22,6 @@ import {
 } from './styled'
 import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip } from '../../../../../../../shared/components'
 
@@ -63,13 +62,9 @@ export default function RewardDetailsunnel({
          isValid = false
          errors = [...errors, "Priority can't be negative or zero"]
       }
-      // if (typeof value === 'string' || value instanceof String) {
-      //    isValid = false
-      //    errors = [...errors, 'Priority must be numeric']
-      // }
       if (value === '') {
          isValid = false
-         errors = [...errors, 'Please enter priority']
+         errors = [...errors, 'Please enter priority or valid priority ']
       }
       console.log(typeof value)
       return { isValid, errors }
@@ -179,14 +174,13 @@ export default function RewardDetailsunnel({
                               <Text as="title">Reward Condition</Text>
                               <Tooltip identifier="coupon_reward_condition" />
                            </Flex>
-                           <ComboButton
+                           <TextButton
                               type="outline"
                               size="sm"
                               onClick={() => openConditionTunnel(1)}
                            >
-                              <EditIcon color="#00a7e1" />
                               View/Edit
-                           </ComboButton>
+                           </TextButton>
                         </Flex>
                      </StyledContainer>
                   ) : (

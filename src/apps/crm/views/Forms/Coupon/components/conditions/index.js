@@ -1,9 +1,8 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { ButtonTile, Flex, useTunnel, Text, ComboButton } from '@dailykit/ui'
+import { ButtonTile, Flex, useTunnel, Text, TextButton } from '@dailykit/ui'
 import { UPDATE_COUPON } from '../../../../../graphql'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip } from '../../../../../../../shared/components'
@@ -56,14 +55,13 @@ const ConditionComp = ({ state }) => {
                      <Text as="title">Coupon Condition</Text>
                      <Tooltip identifier="coupon_condition" />
                   </Flex>
-                  <ComboButton
+                  <TextButton
                      type="outline"
                      size="sm"
                      onClick={() => openTunnel(1)}
                   >
-                     <EditIcon color="#00a7e1" />
                      View/Edit
-                  </ComboButton>
+                  </TextButton>
                </Flex>
             </StyledContainer>
          ) : (

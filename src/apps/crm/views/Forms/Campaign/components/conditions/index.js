@@ -1,9 +1,8 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { ButtonTile, useTunnel, Text, ComboButton, Flex } from '@dailykit/ui'
+import { ButtonTile, useTunnel, Text, TextButton, Flex } from '@dailykit/ui'
 import { UPDATE_CAMPAIGN } from '../../../../../graphql'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'
 import { Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
@@ -55,14 +54,13 @@ const ConditionComp = ({ state }) => {
                      <Text as="title">Campaign Condition</Text>
                      <Tooltip identifier="campaign_condition" />
                   </Flex>
-                  <ComboButton
+                  <TextButton
                      type="outline"
                      size="sm"
                      onClick={() => openTunnel(1)}
                   >
-                     <EditIcon color="#00a7e1" />
                      View/Edit
-                  </ComboButton>
+                  </TextButton>
                </Flex>
             </StyledContainer>
          ) : (
