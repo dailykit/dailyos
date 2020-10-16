@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Input, Loader, Text, Toggle } from '@dailykit/ui'
+import { Loader, Text, Toggle, Flex, Form, Spacer } from '@dailykit/ui'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { useTabs } from '../../../context'
 import {
@@ -12,13 +12,7 @@ import {
    RecipeContext,
 } from '../../../context/recipee'
 
-import {
-   StyledWrapper,
-   StyledHeader,
-   InputWrapper,
-   MasterSettings,
-   Flex,
-} from '../styled'
+import { StyledWrapper, InputWrapper, MasterSettings } from '../styled'
 
 import {
    Information,
@@ -29,6 +23,9 @@ import {
    RecipeCard,
 } from './components'
 import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
+import validator from './validators'
+import { Tooltip } from '../../../../../shared/components'
 
 const RecipeForm = () => {
    // Context
@@ -40,8 +37,16 @@ const RecipeForm = () => {
    )
 
    // States
-   const [title, setTitle] = React.useState('')
    const [state, setState] = React.useState({})
+
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
 
    // Subscription
    const { loading } = useSubscription(S_RECIPE, {
@@ -50,7 +55,10 @@ const RecipeForm = () => {
       },
       onSubscriptionData: data => {
          setState(data.subscriptionData.data.simpleRecipe)
-         setTitle(data.subscriptionData.data.simpleRecipe.name)
+         setTitle({
+            ...title,
+            value: data.subscriptionData.data.simpleRecipe.name,
+         })
       },
    })
 
@@ -59,46 +67,57 @@ const RecipeForm = () => {
       onCompleted: () => {
          toast.success('Updated!')
       },
-      onError: () => {
-         toast.error('Error!')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    React.useEffect(() => {
-      if (!tab && !loading && !isEmpty(title)) {
-         addTab(title, `/recipe/recipes/${recipeId}`)
+      if (!tab && !loading && !isEmpty(title.value)) {
+         addTab(title.value, `/recipe/recipes/${recipeId}`)
       }
-   }, [tab, loading, title, addTab])
+   }, [tab, loading, title.value, addTab])
 
    // Handlers
    const updateName = async () => {
-      if (title) {
+      const { isValid, errors } = validator.name(title.value)
+      if (isValid) {
          const { data } = await updateRecipe({
             variables: {
                id: state.id,
                set: {
-                  name: title,
+                  name: title.value,
                },
             },
          })
          if (data) {
-            setTabTitle(title)
+            setTabTitle(title.value)
          }
       }
-   }
-   const togglePublish = val => {
-      if (val && !state.isValid.status) {
-         toast.error('Recipe should be valid!')
-         return
-      }
-      updateRecipe({
-         variables: {
-            id: state.id,
-            set: {
-               isPublished: val,
-            },
+      setTitle({
+         ...title,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
          },
       })
+   }
+   const togglePublish = () => {
+      const val = !state.isPublished
+      if (val && !state.isValid.status) {
+         toast.error('Recipe should be valid!')
+      } else {
+         updateRecipe({
+            variables: {
+               id: state.id,
+               set: {
+                  isPublished: val,
+               },
+            },
+         })
+      }
    }
 
    if (loading) return <Loader />
@@ -107,74 +126,84 @@ const RecipeForm = () => {
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
          <>
             {/* View */}
-            <StyledHeader>
-               <Flex>
-                  <InputWrapper>
-                     <Input
-                        type="text"
-                        label="Recipe Title"
-                        name="title"
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                        onBlur={updateName}
-                     />
-                  </InputWrapper>
-                  {/* <BreadcrumbGroup>
-                     <Breadcrumb
-                        active={recipeState.stage >= 0}
-                        onClick={() =>
-                           recipeDispatch({ type: 'STAGE', payload: 0 })
-                        }
-                     >
-                        Add Recipe
-                     </Breadcrumb>
-                     <ChevronRightIcon color=" #00a7e1" size={16} />
-                     <Breadcrumb
-                        active={recipeState.stage >= 1}
-                        onClick={() =>
-                           recipeDispatch({ type: 'STAGE', payload: 1 })
-                        }
-                     >
-                        Recipe Card
-                     </Breadcrumb>
-                  </BreadcrumbGroup> */}
+            <Flex
+               container
+               justifyContent="space-between"
+               alignItems="start"
+               padding="16px 0"
+               maxWidth="1280px"
+               width="calc(100vw - 64px)"
+               margin="0 auto"
+               style={{ borderBottom: '1px solid #f3f3f3' }}
+            >
+               <Form.Group>
+                  <Form.Label htmlFor="title" title="title">
+                     Recipe Name*
+                  </Form.Label>
+                  <Form.Text
+                     id="title"
+                     name="title"
+                     value={title.value}
+                     placeholder="Enter recipe name"
+                     onChange={e =>
+                        setTitle({ ...title, value: e.target.value })
+                     }
+                     onBlur={updateName}
+                     hasError={!title.meta.isValid && title.meta.isTouched}
+                  />
+                  {title.meta.isTouched &&
+                     !title.meta.isValid &&
+                     title.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Flex container alignItems="center" height="100%">
+                  {state.isValid?.status ? (
+                     <>
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </>
+                  ) : (
+                     <>
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </>
+                  )}
+                  <Spacer xAxis size="16px" />
+                  <Form.Toggle
+                     name="published"
+                     value={state.isPublished}
+                     onChange={togglePublish}
+                  >
+                     <Flex container alignItems="center">
+                        Published
+                        <Tooltip identifier="recipe_publish" />
+                     </Flex>
+                  </Form.Toggle>
                </Flex>
-               <MasterSettings>
-                  <div>
-                     {state.isValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isValid?.error}</Text>
-                        </>
-                     )}
-                  </div>
-                  <div>
-                     <Toggle
-                        checked={state.isPublished}
-                        setChecked={togglePublish}
-                        label="Published"
-                     />
-                  </div>
-               </MasterSettings>
-            </StyledHeader>
-            <StyledWrapper width="980">
+            </Flex>
+            <Flex
+               maxWidth="1280px"
+               width="calc(100vw - 64px)"
+               margin="0 auto"
+               padding="32px 0"
+            >
                {recipeState.stage === 0 ? (
                   <>
                      <Information state={state} />
+                     <Spacer size="32px" />
                      <Photo state={state} />
+                     <Spacer size="32px" />
                      <Servings state={state} />
+                     <Spacer size="32px" />
                      <Ingredients state={state} />
+                     <Spacer size="32px" />
                      <Procedures state={state} />
                   </>
                ) : (
                   <RecipeCard state={state} />
                )}
-            </StyledWrapper>
+            </Flex>
          </>
       </RecipeContext.Provider>
    )
