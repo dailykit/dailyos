@@ -5,7 +5,6 @@ import {
 } from './sachetPackaging'
 
 export * from './tabs'
-export * from './item'
 export * from './supplier'
 
 export {

@@ -6,3 +6,8 @@ export const SUPPLIER_CANNOT_BE_DELETED =
 
 export const ERROR_DELETING_BULK_ITEM =
    'Error! cannot delete the bulk item. Please try again.'
+
+export const ERROR_UPDATING_BULK_ITEM =
+   'Error updating bulk item as shipped. Please try again'
+
+export const ERROR_ADDING_ALLERGENS = 'Error adding allergens!'

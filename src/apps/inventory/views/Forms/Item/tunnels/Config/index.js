@@ -1,5 +1,3 @@
-// FIXME: work on nutrition and allergens, AGAIN! **in monica's voice**
-
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -16,14 +14,14 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { NutritionTunnel } from '../../../../../../../shared/components'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
+import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
 import { BULK_ITEM_UPDATED } from '../../../../../constants/successMessages'
 import { VALUE_SHOULD_BE_NUMBER } from '../../../../../constants/validationMessages'
-import { ItemContext } from '../../../../../context/item'
 import { UNITS_SUBSCRIPTION, UPDATE_BULK_ITEM } from '../../../../../graphql'
 import AllergensTunnel from '../Allergens'
-import NutritionTunnel from '../NutritionTunnel'
 import {
    Highlight,
    ImageContainer,
@@ -86,13 +84,11 @@ export default function ConfigTunnel({
 
    const [udpateBulkItem, { loading }] = useMutation(UPDATE_BULK_ITEM, {
       onCompleted: () => {
-         close(1)
          toast.success(BULK_ITEM_UPDATED)
-         fromTunnel && closeParent()
       },
       onError: error => {
          console.log(error)
-         toast.error('Error updating bulk item as shipped. Please try again')
+         toast.error(ERROR_UPDATING_BULK_ITEM)
          close(1)
          fromTunnel && closeParent()
       },
@@ -111,7 +107,6 @@ export default function ConfigTunnel({
                yield: { value: yieldPercentage },
                shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                parLevel: +parLevel,
-               nutritionInfo: bulkItem.nutritionInfo || {},
                maxLevel: +maxValue,
                labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
@@ -119,7 +114,21 @@ export default function ConfigTunnel({
             },
          },
       })
+      close(1)
+      fromTunnel && closeParent()
    }
+
+   const handleNutriData = data => {
+      udpateBulkItem({
+         variables: {
+            id: id || bulkItem.id,
+            object: {
+               nutritionInfo: data,
+            },
+         },
+      })
+   }
+
    const handleErrors = (e, location) => {
       const value = parseFloat(e.target.value)
       if (!value) {
@@ -147,17 +156,19 @@ export default function ConfigTunnel({
       <>
          <Tunnels tunnels={allergensTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-               <AllergensTunnel close={() => closeAllergensTunnel(1)} />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={nutritionTunnel}>
-            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <NutritionTunnel
-                  close={closeNutritionTunnel}
-                  bulkItemId={bulkItem?.id}
+               <AllergensTunnel
+                  close={() => closeAllergensTunnel(1)}
+                  bulkItemId={bulkItem.id}
                />
             </Tunnel>
          </Tunnels>
+         <NutritionTunnel
+            closeTunnel={closeNutritionTunnel}
+            onSave={handleNutriData}
+            title="Add Nutrition Values"
+            tunnels={nutritionTunnel}
+            value={bulkItem.nutritionInfo}
+         />
 
          <Tunnels tunnels={photoTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
@@ -393,10 +404,6 @@ export default function ConfigTunnel({
                   <div>{t(address.concat('nutritions per 100gm'))}</div>
                   <IconButton
                      onClick={() => {
-                        // dispatch({
-                        //    type: 'SET_NUTRI_TARGET',
-                        //    payload: 'processing',
-                        // })
                         openNutritionTunnel(1)
                      }}
                      type="ghost"
@@ -421,16 +428,8 @@ export default function ConfigTunnel({
 
 function NutrientView({ bulkItem, openNutritionTunnel }) {
    const { t } = useTranslation()
-   const {
-      state: { processing: { nutrients } = {} },
-      dispatch,
-   } = React.useContext(ItemContext)
 
-   if (nutrients) return <Nutrition data={nutrients} />
-   else if (
-      bulkItem?.nutritionInfo &&
-      Object.keys(bulkItem?.nutritionInfo).length
-   )
+   if (bulkItem?.nutritionInfo && Object.keys(bulkItem?.nutritionInfo).length)
       return <Nutrition data={bulkItem.nutritionInfo} />
 
    return (
@@ -438,10 +437,6 @@ function NutrientView({ bulkItem, openNutritionTunnel }) {
          type="secondary"
          text={t(address.concat('add nutritions'))}
          onClick={() => {
-            dispatch({
-               type: 'SET_NUTRI_TARGET',
-               payload: 'processing',
-            })
             openNutritionTunnel(1)
          }}
       />
@@ -450,20 +445,9 @@ function NutrientView({ bulkItem, openNutritionTunnel }) {
 
 function AllergensView({ openAllergensTunnel, bulkItem }) {
    const { t } = useTranslation()
-   const { state } = React.useContext(ItemContext)
 
    const renderContent = () => {
-      if (state.processing.allergens.length)
-         return (
-            <Highlight pointer onClick={() => openAllergensTunnel(1)}>
-               <TagGroup>
-                  {state.processing.allergens.map(el => (
-                     <Tag key={el.id}> {el.title} </Tag>
-                  ))}
-               </TagGroup>
-            </Highlight>
-         )
-      else if (bulkItem?.allergens?.length)
+      if (bulkItem?.allergens?.length)
          return (
             <Highlight pointer onClick={() => openAllergensTunnel(1)}>
                <TagGroup>

@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/react-hooks'
 import {
    Card,
+   Filler,
    Flex,
    HorizontalTab,
    HorizontalTabList,
@@ -18,6 +19,7 @@ import { toast } from 'react-toastify'
 
 import { DeleteIcon, EditIcon } from '../../../../../shared/assets/icons'
 import { logger } from '../../../../../shared/utils/errorLog'
+import { NO_BULK_ITEMS } from '../../../constants/emptyMessages'
 import { ERROR_DELETING_BULK_ITEM } from '../../../constants/errorMessages'
 import {
    BULK_ITEM_DELETED,
@@ -70,35 +72,39 @@ export default function ProcessingView({ proc = {}, isDefault }) {
 
             <HorizontalTabPanels>
                <HorizontalTabPanel>
-                  <Flex container justifyContent="flex-end">
-                     <IconButton
-                        onClick={() =>
-                           isDefault ? openConfigTunnel(1) : openConfigTunnel(1)
-                        }
-                        type="outline"
-                     >
-                        <EditIcon />
-                     </IconButton>
-                     {!isDefault ? (
-                        <>
-                           <span style={{ width: '8px' }} />
-                           <IconButton
-                              onClick={handleBulkItemDelete}
-                              type="ghost"
-                              disabled={loading}
-                           >
-                              <DeleteIcon color="#FF5A52" />
-                           </IconButton>
-                        </>
-                     ) : null}
-                  </Flex>
-                  <RealtimePanel proc={proc} />
+                  {proc ? (
+                     <Flex container justifyContent="flex-end">
+                        <IconButton
+                           onClick={() =>
+                              isDefault
+                                 ? openConfigTunnel(1)
+                                 : openConfigTunnel(1)
+                           }
+                           type="outline"
+                        >
+                           <EditIcon />
+                        </IconButton>
+                        {!isDefault ? (
+                           <>
+                              <span style={{ width: '8px' }} />
+                              <IconButton
+                                 onClick={handleBulkItemDelete}
+                                 type="ghost"
+                                 disabled={loading}
+                              >
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
+                           </>
+                        ) : null}
+                     </Flex>
+                  ) : null}
+                  <RealtimePanel proc={proc || {}} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <PlannedLotView
-                     sachetItems={proc.sachetItems}
-                     procId={proc.id}
-                     unit={proc.unit}
+                     sachetItems={proc?.sachetItems}
+                     procId={proc?.id}
+                     unit={proc?.unit}
                   />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
@@ -108,6 +114,8 @@ export default function ProcessingView({ proc = {}, isDefault }) {
 }
 
 function RealtimePanel({ proc }) {
+   if (!Object.keys(proc).length) return <Filler message={NO_BULK_ITEMS} />
+
    return (
       <FlexContainer>
          <Flexible width="4">

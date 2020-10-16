@@ -1,4 +1,4 @@
-import { useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -12,35 +12,52 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { ItemContext } from '../../../../../context/item'
-import { MASTER_ALLERGENS_SUBSCRIPTION } from '../../../../../graphql'
+import { toast } from 'react-toastify'
+import { ERROR_ADDING_ALLERGENS } from '../../../../../constants/errorMessages'
+import { ALLERGENS_ADDED } from '../../../../../constants/successMessages'
+import {
+   MASTER_ALLERGENS_SUBSCRIPTION,
+   UPDATE_BULK_ITEM,
+} from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.allergens.'
 
-export default function AllergensTunnel({ close }) {
+export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
-   const { dispatch } = React.useContext(ItemContext)
 
    const {
       loading: allergensLoading,
       data: { masterAllergens = [] } = {},
    } = useSubscription(MASTER_ALLERGENS_SUBSCRIPTION)
 
+   const [udpateBulkItem, { loading }] = useMutation(UPDATE_BULK_ITEM, {
+      onCompleted: () => {
+         toast.success(ALLERGENS_ADDED)
+         close()
+      },
+      onError: error => {
+         console.log(error)
+         toast.error(ERROR_ADDING_ALLERGENS)
+         close()
+      },
+   })
+
    const [list, selected, selectOption] = useMultiList(masterAllergens)
 
    const save = () => {
-      dispatch({
-         type: 'ALLERGENS',
-         payload: {
-            value: selected,
+      udpateBulkItem({
+         variables: {
+            id: bulkItemId,
+            object: {
+               allergens: selected,
+            },
          },
       })
-      close()
    }
 
-   if (allergensLoading) return <Loader />
+   if (allergensLoading || loading) return <Loader />
 
    return (
       <>

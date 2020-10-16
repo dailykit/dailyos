@@ -31,7 +31,7 @@ import ConfigTunnel from '../Config'
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
 
-export default function ProcessingTunnel({ close, open, formState }) {
+export default function ProcessingTunnel({ close, formState }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
    const [data, setData] = React.useState([])
@@ -112,7 +112,6 @@ export default function ProcessingTunnel({ close, open, formState }) {
                <ConfigTunnel
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
-                  proc={{}}
                   fromTunnel
                   closeParent={() => close(1)}
                   id={bulkItems[0]?.id}

@@ -27,11 +27,6 @@ import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import { useTabs } from '../../../context'
 import {
-   ItemContext,
-   reducer,
-   state as initialState,
-} from '../../../context/item'
-import {
    SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
@@ -51,7 +46,6 @@ const address = 'apps.inventory.views.forms.item.'
 
 export default function ItemForm() {
    const { t } = useTranslation()
-   const [state, dispatch] = React.useReducer(reducer, initialState)
    const [formState, setFormState] = React.useState({})
    const [itemName, setItemName] = React.useState('')
    const { id } = useParams()
@@ -94,7 +88,7 @@ export default function ItemForm() {
    if (itemDetailLoading) return <Loader />
 
    return (
-      <ItemContext.Provider value={{ state, dispatch }}>
+      <>
          <Tunnels tunnels={supplierTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
@@ -253,10 +247,6 @@ export default function ItemForm() {
                               if (!formState.supplier)
                                  return toast.error('Select a supplier first!')
 
-                              dispatch({
-                                 type: 'CLEAR_STATE',
-                              })
-
                               openProcessingTunnel(1)
                            }}
                            type="outline"
@@ -371,7 +361,7 @@ export default function ItemForm() {
                </SectionTabs>
             </>
          </div>
-      </ItemContext.Provider>
+      </>
    )
 }
 

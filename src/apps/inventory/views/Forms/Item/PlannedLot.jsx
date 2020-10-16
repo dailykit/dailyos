@@ -1,4 +1,5 @@
 import {
+   Filler,
    IconButton,
    SectionTab,
    SectionTabList,
@@ -15,6 +16,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { AddIcon } from '../../../../../shared/assets/icons'
 import { DataCard } from '../../../components'
+import { NO_BULK_ITEMS } from '../../../constants/emptyMessages'
 import { FlexContainer } from '../styled'
 import { ConfigureSachetTunnel } from './tunnels'
 
@@ -27,6 +29,8 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
       openConfigureSachetTunnel,
       closeConfigureSachetTunnel,
    ] = useTunnel(1)
+
+   if (!procId) return <Filler message={NO_BULK_ITEMS} />
 
    return (
       <>

@@ -60,6 +60,7 @@ import {
    GET_BULK_ITEMS_SUBSCRIPTION,
    NUTRITION_INFO,
    SUPPLIER_ITEMS_LISTINGS,
+   BULK_ITEM,
 } from './subscriptions'
 
 export {
@@ -121,4 +122,5 @@ export {
    CREATE_ITEM_PURCHASE_ORDER,
    NUTRITION_INFO,
    SUPPLIER_ITEMS_LISTINGS,
+   BULK_ITEM,
 }

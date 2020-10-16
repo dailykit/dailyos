@@ -43,6 +43,40 @@ export const PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION = gql`
    }
 `
 
+export const BULK_ITEM = gql`
+   subscription BulkItem($id: Int!) {
+      bulkItem(id: $id) {
+         id
+         name: processingName
+         awaiting
+         onHand
+         committed
+         parLevel
+         maxLevel
+         nutritionInfo
+         allergens
+         isAvailable
+         shelfLife
+         unit
+         image
+         labor
+         yield
+         consumed
+         bulkDensity
+         sachetItems {
+            id
+            onHand
+            awaiting
+            consumed
+            unit
+            unitSize
+            parLevel
+            committed
+         }
+      }
+   }
+`
+
 export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
    subscription SupplierItem($id: Int!) {
       supplierItem(id: $id) {
