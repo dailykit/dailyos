@@ -8,6 +8,9 @@ import {
    HorizontalTabPanels,
    HorizontalTabs,
    IconButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -24,11 +27,14 @@ import { DELETE_BULK_ITEM } from '../../../graphql'
 import { FlexContainer, Flexible } from '../styled'
 import PlannedLotView from './PlannedLot'
 import RealTimeView from './RealtimeView'
+import { ConfigTunnel, SelectDerivedProcessingTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
 export default function ProcessingView({ proc = {}, isDefault }) {
    const { t } = useTranslation()
+
+   const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
 
    const [deleteBulkItem, { loading }] = useMutation(DELETE_BULK_ITEM, {
       onCompleted: () => {
@@ -47,6 +53,15 @@ export default function ProcessingView({ proc = {}, isDefault }) {
 
    return (
       <>
+         <Tunnels tunnels={configTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
+               <ConfigTunnel
+                  close={closeConfigTunnel}
+                  open={openConfigTunnel}
+                  proc={proc}
+               />
+            </Tunnel>
+         </Tunnels>
          <HorizontalTabs>
             <HorizontalTabList>
                <HorizontalTab>{t(address.concat('real-time'))}</HorizontalTab>
@@ -57,7 +72,9 @@ export default function ProcessingView({ proc = {}, isDefault }) {
                <HorizontalTabPanel>
                   <Flex container justifyContent="flex-end">
                      <IconButton
-                        // onClick={() => openProcessingTunnel(2)}
+                        onClick={() =>
+                           isDefault ? openConfigTunnel(1) : openConfigTunnel(1)
+                        }
                         type="outline"
                      >
                         <EditIcon />

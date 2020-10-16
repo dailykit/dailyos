@@ -1,4 +1,4 @@
-import { useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -7,22 +7,78 @@ import {
    Loader,
    TunnelHeader,
    useSingleList,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils/errorLog'
 
 import { TunnelContainer } from '../../../../../components'
-import { ItemContext } from '../../../../../context/item'
-import { MASTER_PROCESSINGS_SUBSCRIPTION } from '../../../../../graphql'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
+import {
+   BULK_ITEM_AS_SHIPPED_ADDED,
+   BULK_ITEM_CREATED,
+} from '../../../../../constants/successMessages'
+import {
+   CREATE_BULK_ITEM,
+   MASTER_PROCESSINGS_SUBSCRIPTION,
+   UPDATE_SUPPLIER_ITEM,
+} from '../../../../../graphql'
+import ConfigTunnel from '../Config'
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
 
 export default function ProcessingTunnel({ close, open, formState }) {
    const { t } = useTranslation()
-   const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
    const [data, setData] = React.useState([])
    const [list, current, selectOption] = useSingleList(data)
+
+   const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
+
+   const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
+      onCompleted: () => {
+         toast.info(BULK_ITEM_CREATED)
+         toast.success(BULK_ITEM_AS_SHIPPED_ADDED)
+         openConfigTunnel(1)
+      },
+      onError: error => {
+         console.log(error)
+         toast.error(error.message)
+         close(1)
+      },
+   })
+
+   const [
+      createBulkItem,
+      {
+         loading,
+         data: { createBulkItem: { returning: bulkItems = [] } = {} } = {},
+      },
+   ] = useMutation(CREATE_BULK_ITEM, {
+      onCompleted: data => {
+         if (formState.bulkItemAsShippedId) {
+            toast.info(BULK_ITEM_CREATED)
+            openConfigTunnel(1)
+         } else
+            updateSupplierItem({
+               variables: {
+                  id: formState.id,
+                  object: {
+                     bulkItemAsShippedId: data.createBulkItem.returning[0].id,
+                  },
+               },
+            })
+      },
+      onError: error => {
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
+         close(1)
+      },
+   })
 
    const { loading: processingsLoading } = useSubscription(
       MASTER_PROCESSINGS_SUBSCRIPTION,
@@ -37,20 +93,38 @@ export default function ProcessingTunnel({ close, open, formState }) {
       }
    )
 
-   if (processingsLoading) return <Loader />
+   const handleNext = () => {
+      createBulkItem({
+         variables: {
+            processingName: current.title,
+            itemId: formState.id,
+            unit: formState.unit, // string
+         },
+      })
+   }
+
+   if (processingsLoading || loading) return <Loader />
 
    return (
       <>
+         <Tunnels tunnels={configTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
+               <ConfigTunnel
+                  close={closeConfigTunnel}
+                  open={openConfigTunnel}
+                  proc={{}}
+                  fromTunnel
+                  closeParent={() => close(1)}
+                  id={bulkItems[0]?.id}
+               />
+            </Tunnel>
+         </Tunnels>
          <TunnelHeader
             title={t(address.concat('select processing as item shipped'))}
             close={() => close(1)}
             right={{
                title: 'Next',
-               action: () => {
-                  dispatch({ type: 'PROCESSING', payload: current })
-                  close(1)
-                  open(2)
-               },
+               action: handleNext,
             }}
          />
          <TunnelContainer>
