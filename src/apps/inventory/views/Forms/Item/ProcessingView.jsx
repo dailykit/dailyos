@@ -1,24 +1,49 @@
+import { useMutation } from '@apollo/react-hooks'
 import {
    Card,
+   Flex,
    HorizontalTab,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
    HorizontalTabs,
+   IconButton,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-// Styled
+import { toast } from 'react-toastify'
+
+import { DeleteIcon, EditIcon } from '../../../../../shared/assets/icons'
+import { logger } from '../../../../../shared/utils/errorLog'
+import { ERROR_DELETING_BULK_ITEM } from '../../../constants/errorMessages'
+import {
+   BULK_ITEM_DELETED,
+   CONFIRM_DELETE_BULK_ITEM,
+} from '../../../constants/successMessages'
+import { DELETE_BULK_ITEM } from '../../../graphql'
 import { FlexContainer, Flexible } from '../styled'
 import PlannedLotView from './PlannedLot'
 import RealTimeView from './RealtimeView'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function ProcessingView({ proc = {} }) {
+export default function ProcessingView({ proc = {}, isDefault }) {
    const { t } = useTranslation()
 
-   console.log(proc)
+   const [deleteBulkItem, { loading }] = useMutation(DELETE_BULK_ITEM, {
+      onCompleted: () => {
+         toast.info(BULK_ITEM_DELETED)
+      },
+      onError: error => {
+         logger(error)
+         toast.error(ERROR_DELETING_BULK_ITEM)
+      },
+   })
+
+   const handleBulkItemDelete = () => {
+      if (window.confirm(CONFIRM_DELETE_BULK_ITEM))
+         deleteBulkItem({ variables: { id: proc.id } })
+   }
 
    return (
       <>
@@ -30,10 +55,34 @@ export default function ProcessingView({ proc = {} }) {
 
             <HorizontalTabPanels>
                <HorizontalTabPanel>
+                  <Flex container justifyContent="flex-end">
+                     <IconButton
+                        // onClick={() => openProcessingTunnel(2)}
+                        type="outline"
+                     >
+                        <EditIcon />
+                     </IconButton>
+                     {!isDefault ? (
+                        <>
+                           <span style={{ width: '8px' }} />
+                           <IconButton
+                              onClick={handleBulkItemDelete}
+                              type="ghost"
+                              disabled={loading}
+                           >
+                              <DeleteIcon color="#FF5A52" />
+                           </IconButton>
+                        </>
+                     ) : null}
+                  </Flex>
                   <RealtimePanel proc={proc} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <PlannedLotView sachetItems={proc.sachetItems} />
+                  <PlannedLotView
+                     sachetItems={proc.sachetItems}
+                     procId={proc.id}
+                     unit={proc.unit}
+                  />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
