@@ -97,8 +97,8 @@ const ToggleCoupon = ({ cell, couponId, onChange }) => {
    const brand = useRef(cell.getData())
    const [active, setActive] = useState(false)
 
-   const toggleHandler = value => {
-      console.log(value)
+   const toggleHandler = () => {
+      const value = !active
       onChange({
          couponId,
          brandId: brand.current.id,
@@ -107,11 +107,9 @@ const ToggleCoupon = ({ cell, couponId, onChange }) => {
    }
 
    React.useEffect(() => {
-      console.log(brand)
       const isActive = brand.current.brand_coupons.some(
          coupon => coupon.couponId === couponId && coupon.isActive
       )
-      console.log(isActive)
       setActive(isActive)
    }, [brand.current])
 
@@ -119,7 +117,7 @@ const ToggleCoupon = ({ cell, couponId, onChange }) => {
       <Form.Group>
          <Form.Toggle
             name="brand_coupon_active"
-            onChange={val => toggleHandler(val)}
+            onChange={toggleHandler}
             value={active}
          />
       </Form.Group>

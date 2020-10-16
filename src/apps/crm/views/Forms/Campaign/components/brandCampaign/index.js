@@ -99,8 +99,8 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
    const brand = useRef(cell.getData())
    const [active, setActive] = useState(false)
 
-   const toggleHandler = value => {
-      console.log(value)
+   const toggleHandler = () => {
+      const value = !active
       onChange({
          campaignId,
          brandId: brand.current.id,
@@ -121,7 +121,7 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
       <Form.Group>
          <Form.Toggle
             name="brand_campaign_active"
-            onChange={val => toggleHandler(val)}
+            onChange={toggleHandler}
             value={active}
          />
       </Form.Group>
