@@ -186,7 +186,7 @@ export default function RewardDetailsunnel({
                               size="sm"
                               onClick={() => openConditionTunnel(1)}
                            >
-                              <EditIcon color="#00a7e1" />
+                              <EditIcon />
                               View/Edit
                            </ComboButton>
                         </Flex>

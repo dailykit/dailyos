@@ -24,11 +24,13 @@ import { StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 
 const CouponListing = () => {
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [coupons, setCoupons] = useState(undefined)
    const tableRef = useRef()
    // Subscription
@@ -159,6 +161,12 @@ const CouponListing = () => {
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_code_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Used',
@@ -167,6 +175,12 @@ const CouponListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_used_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },
@@ -178,6 +192,12 @@ const CouponListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_conversion_rate_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 200,
       },
       {
@@ -187,6 +207,12 @@ const CouponListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_amount_spent_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },
@@ -198,6 +224,12 @@ const CouponListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_active_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },

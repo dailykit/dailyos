@@ -8,6 +8,7 @@ import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../../shared/components'
+import { useTooltip } from '../../../../../../shared/providers'
 import { toast } from 'react-toastify'
 import {
    OrderStatusTunnel,
@@ -33,6 +34,7 @@ import { logger } from '../../../../../../shared/utils'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const [products, setProducts] = useState(undefined)
@@ -69,7 +71,18 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products', hozAlign: 'left', width: 300 },
+      {
+         title: 'Products',
+         field: 'products',
+         hozAlign: 'left',
+         width: 300,
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Servings',
          field: 'servings',
@@ -77,6 +90,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_serving_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          widht: 100,
       },
@@ -88,6 +107,12 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          widht: 100,
       },
       {
@@ -97,6 +122,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_discounted_price_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          widht: 100,
       },

@@ -28,11 +28,13 @@ import {
 } from './styled'
 import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../../shared/components'
+import { useTooltip } from '../../../../../../shared/providers'
 import { logger } from '../../../../../../shared/utils'
 import options from '../../../tableOptions'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -57,7 +59,18 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products', hozAlign: 'left', width: 300 },
+      {
+         title: 'Products',
+         field: 'products',
+         hozAlign: 'left',
+         width: 300,
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Servings',
          field: 'servings',
@@ -65,6 +78,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_serving_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },
@@ -76,6 +95,12 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 100,
       },
       {
@@ -85,6 +110,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_price_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },

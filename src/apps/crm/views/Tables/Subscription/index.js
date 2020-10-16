@@ -10,11 +10,13 @@ import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
 import options from '../../tableOptions'
 import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
 
 const SubscriptionTable = ({ id, sid }) => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const history = useHistory()
    const [occurences, setOccurences] = useState([])
    const tableRef = useRef(null)
@@ -133,6 +135,12 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_listing_date_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 200,
       },
       {
@@ -144,6 +152,12 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_listing_action_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 200,
       },
       {
@@ -154,6 +168,12 @@ const SubscriptionTable = ({ id, sid }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_orderId_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Amount Paid',
@@ -162,6 +182,12 @@ const SubscriptionTable = ({ id, sid }) => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_listing_paid_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },

@@ -7,12 +7,14 @@ import { useTabs } from '../../../context'
 import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
 import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 
 const OrdersTable = ({ id }) => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [orders, setOrders] = useState([])
    const tableRef = useRef(null)
    const history = useHistory()
@@ -57,6 +59,12 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_id_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
@@ -69,6 +77,12 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_products_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
       {
@@ -78,6 +92,12 @@ const OrdersTable = ({ id }) => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_wallet_used_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },
@@ -89,6 +109,12 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
       {
@@ -99,9 +125,25 @@ const OrdersTable = ({ id }) => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_paid_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
-      { title: 'Channel', field: 'channel', hozAlign: 'left' },
+      {
+         title: 'Channel',
+         field: 'channel',
+         hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_channel_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Ordered On',
          field: 'orderedOn',
@@ -109,6 +151,12 @@ const OrdersTable = ({ id }) => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_ordered_on_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },
@@ -119,6 +167,12 @@ const OrdersTable = ({ id }) => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_delivered_on_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },

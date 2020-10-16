@@ -11,12 +11,14 @@ import {
    CUSTOMERS_LISTING,
 } from '../../../graphql'
 import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const tableRef = useRef(null)
    const [customersList, setCustomersList] = useState(undefined)
 
@@ -76,6 +78,12 @@ const CustomerListing = () => {
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Phone',
@@ -86,6 +94,12 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_phone_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
       {
@@ -93,8 +107,25 @@ const CustomerListing = () => {
          field: 'email',
          headerFilter: true,
          hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_email_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
-      { title: 'Source', field: 'source', hozAlign: 'left', width: '150' },
+      {
+         title: 'Source',
+         field: 'source',
+         hozAlign: 'left',
+         width: '150',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_source_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Referrals Sent',
          field: 'refSent',
@@ -102,6 +133,12 @@ const CustomerListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_referrals_sent_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },
@@ -113,6 +150,12 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_paid_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
       {
@@ -123,6 +166,12 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_orders_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
       {
@@ -132,6 +181,12 @@ const CustomerListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },

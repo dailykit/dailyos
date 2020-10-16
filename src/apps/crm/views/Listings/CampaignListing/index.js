@@ -25,12 +25,14 @@ import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
 import options from '../../tableOptions'
 
 const CampaignListing = () => {
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [campaign, setCampaign] = useState(undefined)
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -142,6 +144,12 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
@@ -153,6 +161,12 @@ const CampaignListing = () => {
          headerFilter: true,
          hozAlign: 'left',
          width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_type_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Active',
@@ -164,6 +178,12 @@ const CampaignListing = () => {
             return '' + cell.getValue()
          },
          width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_active_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Action',
