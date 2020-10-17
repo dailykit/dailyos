@@ -1,20 +1,22 @@
 import React from 'react'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
+   useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipee'
 import {
    CREATE_SIMPLE_RECIPE_YIELD_SACHET,
-   UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
    SACHETS,
+   UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
@@ -22,7 +24,6 @@ const SachetTunnel = ({ closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
    const [sachets, setSachets] = React.useState([])
-   const [busy, setBusy] = React.useState(false)
 
    // Query
    const { loading } = useQuery(SACHETS, {
@@ -42,8 +43,8 @@ const SachetTunnel = ({ closeTunnel }) => {
          setSachets(updatedSachets)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error: Cannot fetch Sachets!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -68,8 +69,9 @@ const SachetTunnel = ({ closeTunnel }) => {
          toast.success('Sachet added!')
          closeTunnel(3)
       },
-      onError: () => {
-         toast.error()
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [updateSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
@@ -84,54 +86,63 @@ const SachetTunnel = ({ closeTunnel }) => {
          toast.success('Sachet updated!')
          closeTunnel(3)
       },
-      onError: () => {
-         toast.error()
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    const save = () => {
-      if (busy) return
-      setBusy(true)
       if (recipeState.updating) updateSachet()
       else createSachet()
    }
 
+   React.useEffect(() => {
+      if (current.id) {
+         save()
+      }
+   }, [current])
+
    return (
       <>
-         <TunnelHeader
-            title="Select Sachet"
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
-            close={() => closeTunnel(3)}
-         />
+         <TunnelHeader title="Select Sachet" close={() => closeTunnel(3)} />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.title} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
-                     />
-                  )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+               <>
+                  {sachets.length ? (
+                     <List>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder="type what you’re looking for..."
                            />
-                        ))}
-                  </ListOptions>
-               </List>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="SSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    isActive={option.id === current.id}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler message="No sachets found in processing! To start, add some." />
+                  )}
+               </>
             )}
          </TunnelBody>
       </>

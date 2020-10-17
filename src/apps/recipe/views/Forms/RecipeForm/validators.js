@@ -47,6 +47,16 @@ const validator = {
       }
       return { isValid, errors }
    },
+   slipName: value => {
+      const name = value.trim()
+      let isValid = true
+      let errors = []
+      if (!name.length) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator
