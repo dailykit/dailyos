@@ -649,7 +649,7 @@ export const NUTRITION_INFO = gql`
    }
 `
 
-export const SUPPLIER_ITEMS_LISTINGS = gql`
+export const SUPPLIER_ITEMS_LISTINGS_BULK = gql`
    subscription SupplierItems {
       bulkItems {
          id
@@ -667,6 +667,24 @@ export const SUPPLIER_ITEMS_LISTINGS = gql`
             supplier {
                id
                name
+            }
+         }
+      }
+   }
+`
+
+export const SUPPLIER_ITEM_LISTINGS = gql`
+   subscription SupplierItemsListings {
+      supplierItems {
+         id
+         name
+         supplier {
+            id
+            name
+         }
+         bulkItems_aggregate {
+            aggregate {
+               count
             }
          }
       }
