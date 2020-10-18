@@ -1,6 +1,7 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
    Form,
    IconButton,
    Loader,
@@ -14,7 +15,10 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { NutritionTunnel } from '../../../../../../../shared/components'
+import {
+   NutritionTunnel,
+   Tooltip,
+} from '../../../../../../../shared/components'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
@@ -194,7 +198,10 @@ export default function ConfigTunnel({
                <StyledInputGroup>
                   <Form.Group>
                      <Form.Label title="parLevel" htmlFor="parLevel">
-                        {t(address.concat('set par level'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('set par level'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_parLevel_formfield" />
+                        </Flex>
                      </Form.Label>
                      <Form.Number
                         id="parLevel"
@@ -218,7 +225,10 @@ export default function ConfigTunnel({
                         title="maxInventoryLevel"
                         htmlFor="maxInventoryLevel"
                      >
-                        {t(address.concat('max inventory level'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('max inventory level'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_maxLevel_formfield" />
+                        </Flex>
                      </Form.Label>
                      <Form.Number
                         id="maxInventoryLevel"
@@ -242,7 +252,12 @@ export default function ConfigTunnel({
             <StyledRow>
                <StyledInputGroup>
                   <Form.Group>
-                     <Form.Label>Select Unit</Form.Label>
+                     <Form.Label>
+                        <Flex container alignItems="center">
+                           Select Unit
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_select_unit_formselect" />
+                        </Flex>
+                     </Form.Label>
                      <Form.Select
                         options={units}
                         value={unit}
@@ -254,7 +269,10 @@ export default function ConfigTunnel({
 
             <StyledRow>
                <StyledLabel>
-                  {t(address.concat('processing information'))}
+                  <Flex container alignItems="center">
+                     {t(address.concat('processing information'))}
+                     <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_processingInformation_section" />
+                  </Flex>
                </StyledLabel>
             </StyledRow>
             {bulkItem?.id && (
@@ -294,7 +312,10 @@ export default function ConfigTunnel({
                <StyledInputGroup>
                   <Form.Group>
                      <Form.Label htmlFor="labourTime">
-                        {t(address.concat('labour time per 100gm'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('labour time per 100gm'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_labor_time_form_field" />
+                        </Flex>
                      </Form.Label>
                      <Form.TextSelect>
                         <Form.Number
@@ -324,7 +345,10 @@ export default function ConfigTunnel({
                   </Form.Group>
                   <Form.Group>
                      <Form.Label title="percentageYield" htmlFor="yield">
-                        {t(address.concat('percentage of yield'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('percentage of yield'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_yield_formfield" />
+                        </Flex>
                      </Form.Label>
                      <Form.Number
                         id="yield"
@@ -348,7 +372,10 @@ export default function ConfigTunnel({
                <StyledInputGroup>
                   <Form.Group>
                      <Form.Label htmlFor="shelfLife" title="Shelf Life">
-                        {t(address.concat('shelf life'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('shelf life'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_shelfLife_formfield" />
+                        </Flex>
                      </Form.Label>
                      <Form.TextSelect>
                         <Form.Number
@@ -379,7 +406,10 @@ export default function ConfigTunnel({
                   </Form.Group>
                   <Form.Group>
                      <Form.Label title="Bulk Density" htmlFor="bulkDensity">
-                        {t(address.concat('bulk dnesity'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('bulk dnesity'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_bulkDensity_formfield" />
+                        </Flex>
                      </Form.Label>
                      <Form.Number
                         id="bulkDensity"
@@ -408,7 +438,10 @@ export default function ConfigTunnel({
                      justifyContent: 'space-between',
                   }}
                >
-                  <div>{t(address.concat('nutritions per 100gm'))}</div>
+                  <Flex container alignItems="center">
+                     {t(address.concat('nutritions per 100gm'))}
+                     <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_nutrition_section" />
+                  </Flex>
                   <IconButton
                      onClick={() => {
                         openNutritionTunnel(1)
@@ -485,7 +518,12 @@ function AllergensView({ openAllergensTunnel, bulkItemId }) {
       <>
          <br />
          <StyledRow>
-            <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
+            <StyledLabel>
+               <Flex container alignItems="center">
+                  {t(address.concat('allergens'))}
+                  <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_allergens_section" />
+               </Flex>
+            </StyledLabel>
             {renderContent()}
          </StyledRow>
       </>
