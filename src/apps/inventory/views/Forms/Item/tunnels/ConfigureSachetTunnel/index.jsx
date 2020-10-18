@@ -1,8 +1,9 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Form, Loader, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../../shared/components'
 import { TunnelContainer } from '../../../../../components'
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { StyledInputGroup } from '../styled'
@@ -52,7 +53,10 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
             <StyledInputGroup>
                <Form.Group>
                   <Form.Label htmlFor="quantity" title="sachetQuantity">
-                     Sachet Quantity (in {unit})
+                     <Flex container alignItems="center">
+                        Sachet Quantity (in {unit})
+                        <Tooltip identifier="supplier_form_add_sachet_quantity_formfield" />
+                     </Flex>
                   </Form.Label>
                   <Form.Number
                      id="quantity"
@@ -68,7 +72,10 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
             <StyledInputGroup>
                <Form.Group>
                   <Form.Label title="parLevel" htmlFor="par">
-                     {t(address.concat('set par level'))} (packets)
+                     <Flex container alignItems="center">
+                        {t(address.concat('set par level'))} (packets)
+                        <Tooltip identifier="supplier_form_add_sachet_parLevel_formfield" />
+                     </Flex>
                   </Form.Label>
 
                   <Form.Number
@@ -81,7 +88,10 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
                </Form.Group>
                <Form.Group>
                   <Form.Label title="maxLevel" htmlFor="maxLevel">
-                     {t(address.concat('max inventory level'))}
+                     <Flex container alignItems="center">
+                        {t(address.concat('max inventory level'))}
+                        <Tooltip identifie="supplier_form_add_sachet_maxLevel_formfield" />
+                     </Flex>
                   </Form.Label>
                   <Form.Number
                      id="maxLevel"
