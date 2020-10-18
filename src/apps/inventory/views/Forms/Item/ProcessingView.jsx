@@ -16,8 +16,8 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
 import { DeleteIcon, EditIcon } from '../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { NO_BULK_ITEMS } from '../../../constants/emptyMessages'
 import { ERROR_DELETING_BULK_ITEM } from '../../../constants/errorMessages'
@@ -29,7 +29,7 @@ import { DELETE_BULK_ITEM } from '../../../graphql'
 import { FlexContainer, Flexible } from '../styled'
 import PlannedLotView from './PlannedLot'
 import RealTimeView from './RealtimeView'
-import { ConfigTunnel, SelectDerivedProcessingTunnel } from './tunnels'
+import { ConfigTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -66,8 +66,18 @@ export default function ProcessingView({ proc = {}, isDefault }) {
          </Tunnels>
          <HorizontalTabs>
             <HorizontalTabList>
-               <HorizontalTab>{t(address.concat('real-time'))}</HorizontalTab>
-               <HorizontalTab>{t(address.concat('planned-lot'))}</HorizontalTab>
+               <HorizontalTab>
+                  <Flex container alignItems="center">
+                     {t(address.concat('real-time'))}
+                     <Tooltip identifier="supplier_item_form_realtime_panel" />
+                  </Flex>
+               </HorizontalTab>
+               <HorizontalTab>
+                  <Flex container alignItems="center">
+                     {t(address.concat('planned-lot'))}
+                     <Tooltip identifier="supplier_item_form_planned-lot_panel" />
+                  </Flex>
+               </HorizontalTab>
             </HorizontalTabList>
 
             <HorizontalTabPanels>
