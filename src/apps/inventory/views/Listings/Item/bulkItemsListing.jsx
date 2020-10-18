@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Filler, Loader } from '@dailykit/ui'
 import React from 'react'
+import { useTooltip } from '../../../../../shared/providers/tooltip'
 import { logger } from '../../../../../shared/utils/index'
 import { NO_BULK_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
 import { useTabs } from '../../../context'
@@ -14,6 +15,7 @@ export default function BulkItemsListings({ tableRef }) {
       data: { bulkItems = [] } = {},
       error,
    } = useSubscription(SUPPLIER_ITEMS_LISTINGS_BULK)
+   const { tooltip } = useTooltip()
 
    if (error) {
       logger(error)
@@ -48,6 +50,10 @@ export default function BulkItemsListings({ tableRef }) {
          headerHozAlign: 'left',
          width: 150,
          cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'items_listings_bulk_item_processingName'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Item Name',
@@ -56,6 +62,10 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'items_listings_item_name'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Supplier',
@@ -63,6 +73,10 @@ export default function BulkItemsListings({ tableRef }) {
          headerFilter: false,
          hozAlign: 'center',
          headerHozAlign: 'center',
+         headerTooltip: col => {
+            const identifier = 'items_listings_supplier'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Par Level',
@@ -71,6 +85,10 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'items_listings_bulkItems_par_level'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'On Hand',
@@ -79,6 +97,10 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'items_listings_bulkItems_onHand'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Max Level',
@@ -87,6 +109,10 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'items_listings_bulkItems_maxLevel'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Awaiting',
@@ -95,6 +121,10 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'items_listings_bulkItems_awaiting'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Committed',
@@ -103,6 +133,10 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'items_listings_bulkItems_committed'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
    ]
 

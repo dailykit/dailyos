@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Filler, Loader } from '@dailykit/ui'
 import React from 'react'
+import { useTooltip } from '../../../../../shared/providers/tooltip'
 import { logger } from '../../../../../shared/utils/index'
 import { NO_SUPPLIER_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
 import { useTabs } from '../../../context'
@@ -14,6 +15,8 @@ export default function SupplierItemsListings({ tableRef }) {
       data: { supplierItems = [] } = {},
       error,
    } = useSubscription(SUPPLIER_ITEM_LISTINGS)
+
+   const { tooltip } = useTooltip()
 
    if (error) {
       logger(error)
@@ -48,6 +51,10 @@ export default function SupplierItemsListings({ tableRef }) {
          headerHozAlign: 'left',
          width: 150,
          cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'items_listings_item_name'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Supplier',
@@ -55,6 +62,10 @@ export default function SupplierItemsListings({ tableRef }) {
          headerFilter: false,
          hozAlign: 'center',
          headerHozAlign: 'center',
+         headerTooltip: col => {
+            const identifier = 'items_listings_supplier'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Bulk Items count',
@@ -62,6 +73,10 @@ export default function SupplierItemsListings({ tableRef }) {
          headerFilter: false,
          hozAlign: 'center',
          headerHozAlign: 'center',
+         headerTooltip: col => {
+            const identifier = 'items_listings_supplier_item_bulkItemCount'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
    ]
 
