@@ -176,7 +176,10 @@ export default function ConfigTunnel({
 
          <Tunnels tunnels={photoTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <PhotoTunnel close={closePhotoTunnel} bulkItem={bulkItem} />
+               <PhotoTunnel
+                  close={closePhotoTunnel}
+                  bulkItemId={bulkItem?.id || id}
+               />
             </Tunnel>
          </Tunnels>
 

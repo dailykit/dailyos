@@ -4,18 +4,20 @@ import { useMutation } from '@apollo/react-hooks'
 import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
 import { AssetUploader } from '../../../../../../../shared/components'
 import { UPDATE_BULK_ITEM } from '../../../../../graphql'
+import { BULK_ITEM_IMAGE_ADDED } from '../../../../../constants/successMessages'
+import { logger } from '../../../../../../../shared/utils/errorLog'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 
-export default function PhotoTunnel({ close, bulkItem }) {
+export default function PhotoTunnel({ close, bulkItemId }) {
    const [udpateBulkItem, { loading }] = useMutation(UPDATE_BULK_ITEM, {
       onCompleted: () => {
          close(1)
 
-         toast.info('Image Added!')
+         toast.info(BULK_ITEM_IMAGE_ADDED)
       },
       onError: error => {
-         console.log(error)
-
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(1)
       },
    })
@@ -23,7 +25,7 @@ export default function PhotoTunnel({ close, bulkItem }) {
    const addImage = ({ url }) => {
       udpateBulkItem({
          variables: {
-            id: bulkItem.id,
+            id: bulkItemId,
             object: {
                image: url,
             },
