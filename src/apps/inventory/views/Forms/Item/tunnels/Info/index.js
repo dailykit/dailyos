@@ -1,8 +1,9 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Form, Loader, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../../shared/components'
 import { useTabs } from '../../../../../context'
 import {
    UNITS_SUBSCRIPTION,
@@ -89,7 +90,10 @@ export default function InfoTunnel({ close, formState }) {
                <StyledInputGroup>
                   <Form.Group>
                      <Form.Label title="title" htmlFor="title">
-                        {t(address.concat('item name'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('item name'))}
+                           <Tooltip identifier="supplieritem_form_itemname_formfield" />
+                        </Flex>
                      </Form.Label>
                      <Form.Text
                         id="title"
@@ -101,7 +105,10 @@ export default function InfoTunnel({ close, formState }) {
                   </Form.Group>
                   <Form.Group>
                      <Form.Label title="itemSku" htmlFor="sku">
-                        {t(address.concat('item sku'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('item sku'))}
+                           <Tooltip identifier="supplieritem_form_item_sku_form_field" />
+                        </Flex>
                      </Form.Label>
                      <Form.Text
                         id="sku"
@@ -118,7 +125,10 @@ export default function InfoTunnel({ close, formState }) {
                   <StyledInputGroup>
                      <Form.Group>
                         <Form.Label title="unitQuantity" htmlFor="unitQuantity">
-                           {t(address.concat('unit qty'))}
+                           <Flex container alignItems="center">
+                              {t(address.concat('unit qty'))}
+                              <Tooltip identifier="supplieritem_form_unitquantity" />
+                           </Flex>
                         </Form.Label>
                         <Form.TextSelect>
                            <Form.Number
@@ -142,7 +152,10 @@ export default function InfoTunnel({ close, formState }) {
                      </Form.Group>
                      <Form.Group>
                         <Form.Label title="unit price" htmlFor="unitPrice">
-                           {t(address.concat('unit price')).concat(':')}
+                           <Flex container alignItems="center">
+                              {t(address.concat('unit price')).concat(':')}
+                              <Tooltip identifier="supplieritem_form_item_unit_pric_form_field" />
+                           </Flex>
                         </Form.Label>
                         <Form.Number
                            id="unitPrice"
@@ -163,7 +176,10 @@ export default function InfoTunnel({ close, formState }) {
                   <Highlight>
                      <Form.Group>
                         <Form.Label title="Lead Time" htmlFor="leadTime">
-                           {t(address.concat('lead time')).concat(':')}
+                           <Flex container alignItems="center">
+                              {t(address.concat('lead time')).concat(':')}
+                              <Tooltip identifier="supplieritem_form_leadtime" />
+                           </Flex>
                         </Form.Label>
                         <Form.TextSelect>
                            <Form.Number
