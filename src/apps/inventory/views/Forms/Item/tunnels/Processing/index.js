@@ -112,6 +112,7 @@ export default function ProcessingTunnel({ close, formState }) {
                <ConfigTunnel
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
+                  proc={{}}
                   fromTunnel
                   closeParent={() => close(1)}
                   id={bulkItems[0]?.id}

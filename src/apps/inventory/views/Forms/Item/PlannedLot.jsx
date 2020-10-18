@@ -16,7 +16,10 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { AddIcon } from '../../../../../shared/assets/icons'
 import { DataCard } from '../../../components'
-import { NO_BULK_ITEMS } from '../../../constants/emptyMessages'
+import {
+   NO_BULK_ITEMS,
+   NO_SACHET_ITEMS,
+} from '../../../constants/emptyMessages'
 import { FlexContainer } from '../styled'
 import { ConfigureSachetTunnel } from './tunnels'
 
@@ -77,26 +80,30 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
             </SectionTabList>
 
             <SectionTabPanels>
-               {sachetItems.map(activeSachet => {
-                  return (
-                     <SectionTabPanel key={activeSachet.id}>
-                        <FlexContainer style={{ flexWrap: 'wrap' }}>
-                           <DataCard
-                              title={t(address.concat('awaiting'))}
-                              quantity={`${activeSachet.awaiting || 0} pkt`}
-                           />
-                           <DataCard
-                              title={t(address.concat('commited'))}
-                              quantity={`${activeSachet.committed || 0} pkt`}
-                           />
-                           <DataCard
-                              title={t(address.concat('consumed'))}
-                              quantity={`${activeSachet.consumed || 0} pkt`}
-                           />
-                        </FlexContainer>
-                     </SectionTabPanel>
-                  )
-               })}
+               {sachetItems.length ? (
+                  sachetItems.map(activeSachet => {
+                     return (
+                        <SectionTabPanel key={activeSachet.id}>
+                           <FlexContainer style={{ flexWrap: 'wrap' }}>
+                              <DataCard
+                                 title={t(address.concat('awaiting'))}
+                                 quantity={`${activeSachet.awaiting || 0} pkt`}
+                              />
+                              <DataCard
+                                 title={t(address.concat('commited'))}
+                                 quantity={`${activeSachet.committed || 0} pkt`}
+                              />
+                              <DataCard
+                                 title={t(address.concat('consumed'))}
+                                 quantity={`${activeSachet.consumed || 0} pkt`}
+                              />
+                           </FlexContainer>
+                        </SectionTabPanel>
+                     )
+                  })
+               ) : (
+                  <Filler message={NO_SACHET_ITEMS} />
+               )}
             </SectionTabPanels>
          </SectionTabs>
       </>

@@ -644,6 +644,7 @@ export const NUTRITION_INFO = gql`
    subscription NutriInfo($id: Int!) {
       bulkItem(id: $id) {
          nutritionInfo
+         allergens
       }
    }
 `

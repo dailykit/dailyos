@@ -20,7 +20,11 @@ import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
 import { BULK_ITEM_UPDATED } from '../../../../../constants/successMessages'
 import { VALUE_SHOULD_BE_NUMBER } from '../../../../../constants/validationMessages'
-import { UNITS_SUBSCRIPTION, UPDATE_BULK_ITEM } from '../../../../../graphql'
+import {
+   NUTRITION_INFO,
+   UNITS_SUBSCRIPTION,
+   UPDATE_BULK_ITEM,
+} from '../../../../../graphql'
 import AllergensTunnel from '../Allergens'
 import {
    Highlight,
@@ -158,7 +162,7 @@ export default function ConfigTunnel({
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <AllergensTunnel
                   close={() => closeAllergensTunnel(1)}
-                  bulkItemId={bulkItem.id}
+                  bulkItemId={bulkItem?.id || id}
                />
             </Tunnel>
          </Tunnels>
@@ -413,24 +417,27 @@ export default function ConfigTunnel({
                </StyledLabel>
             </StyledRow>
             <NutrientView
-               bulkItem={bulkItem}
+               bulkItemId={bulkItem?.id || id}
                dispatch={() => {}}
                openNutritionTunnel={openNutritionTunnel}
             />
             <AllergensView
                openAllergensTunnel={openAllergensTunnel}
-               bulkItem={bulkItem}
+               bulkItemId={bulkItem?.id || id}
             />
          </TunnelBody>
       </>
    )
 }
 
-function NutrientView({ bulkItem, openNutritionTunnel }) {
+function NutrientView({ bulkItemId, openNutritionTunnel }) {
    const { t } = useTranslation()
+   const {
+      data: { bulkItem: { nutritionInfo } = {} } = {},
+   } = useSubscription(NUTRITION_INFO, { variables: { id: bulkItemId } })
 
-   if (bulkItem?.nutritionInfo && Object.keys(bulkItem?.nutritionInfo).length)
-      return <Nutrition data={bulkItem.nutritionInfo} />
+   if (nutritionInfo && Object.keys(nutritionInfo).length)
+      return <Nutrition data={nutritionInfo} />
 
    return (
       <ButtonTile
@@ -443,15 +450,19 @@ function NutrientView({ bulkItem, openNutritionTunnel }) {
    )
 }
 
-function AllergensView({ openAllergensTunnel, bulkItem }) {
+function AllergensView({ openAllergensTunnel, bulkItemId }) {
    const { t } = useTranslation()
 
+   const {
+      data: { bulkItem: { allergens = [] } = {} } = {},
+   } = useSubscription(NUTRITION_INFO, { variables: { id: bulkItemId } })
+
    const renderContent = () => {
-      if (bulkItem?.allergens?.length)
+      if (allergens?.length)
          return (
             <Highlight pointer onClick={() => openAllergensTunnel(1)}>
                <TagGroup>
-                  {bulkItem.allergens.map(el => (
+                  {allergens.map(el => (
                      <Tag key={el.id}> {el.title} </Tag>
                   ))}
                </TagGroup>
