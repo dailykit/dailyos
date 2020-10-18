@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
-import { ComboButton, RadioGroup, Text, TextButton } from '@dailykit/ui'
+import { ComboButton, Flex, RadioGroup, Text, TextButton } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { logger, randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -62,7 +63,10 @@ export default function ItemListing() {
    return (
       <StyledWrapper>
          <StyledTableHeader>
-            <Text as="title">Supplier Items</Text>
+            <Flex container alignItems="center">
+               <Text as="title">Supplier Items</Text>
+               <Tooltip identifier="items_listings_header_title" />
+            </Flex>
             <StyledTableActions>
                <TextButton
                   type="outline"
