@@ -3,6 +3,7 @@ import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
@@ -127,7 +128,10 @@ export default function AddressTunnel({ close, formState }) {
                   <br />
                   <Form.Group>
                      <Form.Label htmlFor="instructions" title="instructions">
-                        {t(address.concat('special instructions'))}
+                        <Flex container alignItems="center">
+                           {t(address.concat('special instructions'))}
+                           <Tooltip identifier="supplier_form_address_tunnel_special_instructions_form" />
+                        </Flex>
                      </Form.Label>
                      <Form.TextArea
                         id="instructions"

@@ -25,12 +25,15 @@ import {
    SUPPLIER_DELETED,
 } from '../../../constants/successMessages'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
 export default function SupplierListing() {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+
+   const { tooltip } = useTooltip()
 
    const {
       loading: listLoading,
@@ -85,7 +88,16 @@ export default function SupplierListing() {
    }
 
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true, cellClick: openForm },
+      {
+         title: 'Name',
+         field: 'name',
+         headerFilter: true,
+         cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'suppliers_listings_supplier_name'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
       {
          title: 'Person of Contact',
          field: 'contactPerson',
@@ -93,6 +105,10 @@ export default function SupplierListing() {
          headerSort: false,
          hozAlign: 'left',
          formatter: reactFormatter(<ContactPerson />),
+         headerTooltip: col => {
+            const identifier = 'suppliers_listings_contact_person'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Available',
@@ -102,6 +118,10 @@ export default function SupplierListing() {
          hozAlign: 'center',
          cssClass: 'center-text',
          width: 120,
+         headerTooltip: col => {
+            const identifier = 'suppliers_listings_supplier_availability'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Actions',
