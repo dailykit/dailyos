@@ -38,8 +38,8 @@ export default function SupplierItemsListings({ tableRef }) {
    }
 
    const openForm = (_, cell) => {
-      const { supplierItem } = cell.getData()
-      addTab(supplierItem.name, `/inventory/items/${supplierItem.id}`)
+      const { id, name } = cell.getData()
+      addTab(name, `/inventory/items/${id}`)
    }
 
    const columns = [
