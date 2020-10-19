@@ -153,7 +153,7 @@ export default function BulkWorkOrderForm() {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={outputBulkItemTunnel}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectOutputBulkItemTunnel
                   close={closeOutputBulkItemTunnel}
                   state={state}
@@ -161,17 +161,17 @@ export default function BulkWorkOrderForm() {
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={usersTunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectUserTunnel close={closeUserTunnel} state={state} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={stationsTunnel}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectStationTunnel close={closeStationTunnel} state={state} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={inputBulkItemTunnel}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SelectInputBulkItemTunnel
                   close={closeInputBulkItemTunnel}
                   state={state}

@@ -17,6 +17,8 @@ import {
    SETTINGS_USERS_SUBSCRIPTION,
    UPDATE_BULK_WORK_ORDER,
 } from '../../../../graphql'
+import { logger } from '../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
@@ -28,7 +30,7 @@ export default function SelectUserTunnel({ close, state }) {
    const [search, setSearch] = React.useState('')
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(SETTINGS_USERS_SUBSCRIPTION, {
+   const { loading, error } = useSubscription(SETTINGS_USERS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.settings_user?.map(user => ({
             ...user,
@@ -41,8 +43,8 @@ export default function SelectUserTunnel({ close, state }) {
 
    const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(1)
       },
       onCompleted: () => {
@@ -64,6 +66,10 @@ export default function SelectUserTunnel({ close, state }) {
       })
    }
 
+   if (error) {
+      logger(error)
+      return toast.error(GENERAL_ERROR_MESSAGE)
+   }
    if (loading) return <Loader />
 
    return (

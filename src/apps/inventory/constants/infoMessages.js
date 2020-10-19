@@ -15,3 +15,9 @@ export const ADD_PACKAGING_TUNNEL_SACHETS =
 
 export const ADD_PACKAGING_TUNNEL_ASSEMBLY_PACKET =
    'Assembly packet is used to assemble all the sacheted ingredients into one kit.'
+
+export const NO_SUPPLIER_ITEMS = 'No supplier items found!'
+
+export const NO_BULK_ITEMS = 'No bulk items found!'
+
+export const NO_STATIONS = 'No stations found!'
