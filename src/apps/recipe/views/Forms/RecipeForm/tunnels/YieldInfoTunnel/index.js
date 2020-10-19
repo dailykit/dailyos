@@ -1,7 +1,7 @@
 import React from 'react'
 import { TunnelHeader, Text } from '@dailykit/ui'
 import { TunnelBody, Container } from '../styled'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 import { Nutrition } from '../../../../../../../shared/components'
 
 const InfoTunnel = ({ close }) => {

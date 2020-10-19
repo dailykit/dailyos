@@ -15,6 +15,7 @@ import {
 import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
+import { Tooltip } from '../../../../../shared/components'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -223,7 +224,10 @@ const IngredientForm = () => {
                      value={state.isPublished}
                      onChange={togglePublish}
                   >
-                     Published
+                     <Flex container alignItems="center">
+                        Published
+                        <Tooltip identifier="ingredient_publish" />
+                     </Flex>
                   </Form.Toggle>
                </Flex>
             </Flex>

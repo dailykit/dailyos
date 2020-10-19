@@ -34,6 +34,7 @@ import { useTabs } from '../../../context'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import Count from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
+import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.recipe.views.listings.ingredientslisting.'
 
@@ -131,6 +132,7 @@ function DataTable({
    createIngredientHandler,
 }) {
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
 
    const columns = [
       {
@@ -140,6 +142,13 @@ function DataTable({
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
             addTab(name, `/recipe/ingredients/${id}`)
+         },
+         cssClass: 'colHover',
+         headerTooltip: function (column) {
+            const identifier = 'ingredients_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
       },
       { title: 'Category', field: 'category', headerFilter: true },
@@ -160,12 +169,12 @@ function DataTable({
          width: 150,
       },
       {
-         title: 'Created At',
-         field: 'createdAt',
-         headerFilter: false,
-         hozAlign: 'right',
-         formatter: reactFormatter(<FormatDate />),
-         width: 250,
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Actions',
