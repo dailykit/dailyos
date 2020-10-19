@@ -1,13 +1,13 @@
-import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
+import { ButtonTile, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { ButtonTile, Tunnels, useTunnel, Tunnel } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
-import { ImageContainer, PhotoTileWrapper, Container } from './styled'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
 import { AssetsTunnel } from '../../tunnels'
-import { logger } from '../../../../../../../../shared/utils'
+import { ImageContainer, PhotoTileWrapper } from './styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.assets.'

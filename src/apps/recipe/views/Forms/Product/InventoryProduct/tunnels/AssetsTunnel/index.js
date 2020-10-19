@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { AssetUploader } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
-import { TunnelBody } from '../../../styled'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.assetstunnel.'
