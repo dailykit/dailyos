@@ -78,6 +78,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
       },
       onError: error => {
          toast.error('Something went wrong')
+         console.log(error)
          logger(error)
       },
    })
