@@ -49,7 +49,10 @@ import {
    ModifierPhotoTunnel,
 } from '../../tunnels'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
-import { OperationConfig } from '../../../../../../../../shared/components'
+import {
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
@@ -144,7 +147,8 @@ export default function Item({ state }) {
             })
          }
       } catch (error) {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       }
    }
 
@@ -282,26 +286,72 @@ export default function Item({ state }) {
                      </Text>
                      <HorizontalTabs>
                         <HorizontalTabList>
-                           <HorizontalTab>Pricing</HorizontalTab>
-                           <HorizontalTab>Recommendations</HorizontalTab>
+                           <HorizontalTab>
+                              <Flex container alignItems="center">
+                                 Pricing
+                                 <Tooltip identifier="inventory_product_pricing" />
+                              </Flex>
+                           </HorizontalTab>
+                           <HorizontalTab>
+                              <Flex container alignItems="center">
+                                 Recommendations
+                                 <Tooltip identifier="inventory_product_recommendations" />
+                              </Flex>
+                           </HorizontalTab>
                         </HorizontalTabList>
                         <HorizontalTabPanels>
                            <HorizontalTabPanel>
                               <StyledTable>
                                  <thead>
                                     <tr>
-                                       <th>{t(address.concat('default'))}</th>
-                                       <th>{t(address.concat('options'))}</th>
-                                       <th>{t(address.concat('quantity'))}</th>
-                                       <th>{t(address.concat('price'))}</th>
-                                       <th>{t(address.concat('discount'))}</th>
                                        <th>
-                                          {t(
-                                             address.concat('discounted price')
-                                          )}
+                                          <Flex container alignItems="center">
+                                             Default
+                                             <Tooltip identifier="inventory_product_option_default" />
+                                          </Flex>
                                        </th>
-                                       <th>{t(address.concat('modifiers'))}</th>
-                                       <th> Operational Configuration </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Label
+                                             <Tooltip identifier="inventory_product_option_label" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Quantity
+                                             <Tooltip identifier="inventory_product_option_quantity" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Price
+                                             <Tooltip identifier="inventory_product_option_price" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Discount
+                                             <Tooltip identifier="inventory_product_option_discount" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Discounted Price
+                                             <Tooltip identifier="inventory_product_option_discounted_price" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Modifiers
+                                             <Tooltip identifier="inventory_product_option_modifiers" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Operational Configuration
+                                             <Tooltip identifier="inventory_product_option_opconfig" />
+                                          </Flex>
+                                       </th>
                                        <th> </th>
                                     </tr>
                                  </thead>
@@ -457,6 +507,7 @@ export default function Item({ state }) {
                                              <td>
                                                 <Grid>
                                                    <IconButton
+                                                      type="ghost"
                                                       onClick={() =>
                                                          editOption(option)
                                                       }
@@ -464,6 +515,7 @@ export default function Item({ state }) {
                                                       <EditIcon color="#00A7E1" />
                                                    </IconButton>
                                                    <IconButton
+                                                      type="ghost"
                                                       onClick={() =>
                                                          remove(option)
                                                       }
