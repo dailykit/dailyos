@@ -337,14 +337,17 @@ export const ROLES = {
    `,
    LIST: gql`
       subscription roles {
-         roles {
-            id
-            title
-            apps {
+         roles: rolesAggregate {
+            aggregate {
+               count(columns: id)
+            }
+            nodes {
                id
-               app {
-                  id
-                  title
+               title
+               apps: apps_aggregate {
+                  aggregate {
+                     count(columns: id)
+                  }
                }
             }
          }

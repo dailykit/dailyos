@@ -1,9 +1,9 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { toast } from 'react-toastify'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
-import { IconButton, Avatar, Text, Flex, ComboButton } from '@dailykit/ui'
+import { Avatar, Text, Flex, ComboButton } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { useTabs } from '../../../context'
 import tableOptions from '../tableOption'
