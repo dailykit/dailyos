@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const CUSTOMERS_COUNT = gql`
    subscription CustomerCount {
-      customers_aggregate {
+      customers_aggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }
@@ -11,7 +11,7 @@ export const CUSTOMERS_COUNT = gql`
 `
 export const TOTAL_REVENUE = gql`
    subscription totalRevenue {
-      ordersAggregate {
+      ordersAggregate(where: { customer: { isArchived: { _eq: false } } }) {
          aggregate {
             sum {
                amountPaid
@@ -31,7 +31,7 @@ export const CUSTOMER_ISTEST = gql`
 
 export const COUPON_LISTING = gql`
    subscription COUPON_LISTING {
-      coupons {
+      coupons(where: { isArchived: { _eq: false } }) {
          id
          code
          isActive
@@ -40,7 +40,7 @@ export const COUPON_LISTING = gql`
 `
 export const CAMPAIGN_LISTING = gql`
    subscription CAMPAIGN_LISTING {
-      campaigns {
+      campaigns(where: { isArchived: { _eq: false } }) {
          id
          type
          conditionId
@@ -53,7 +53,7 @@ export const CAMPAIGN_LISTING = gql`
 
 export const COUPON_TOTAL = gql`
    subscription COUPON_TOTAL {
-      couponsAggregate {
+      couponsAggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }
@@ -62,7 +62,7 @@ export const COUPON_TOTAL = gql`
 `
 export const CAMPAIGN_TOTAL = gql`
    subscription CAMPAIGN_TOTAL {
-      campaignsAggregate {
+      campaignsAggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }

@@ -37,7 +37,7 @@ const CampaignListing = () => {
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    // Subscription
-   const { loading: listLoading, error } = useSubscription(CAMPAIGN_LISTING, {
+   const { loading: listLoading, error1 } = useSubscription(CAMPAIGN_LISTING, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.campaigns.map(campaign => {
             return {
@@ -51,7 +51,14 @@ const CampaignListing = () => {
       },
    })
 
-   const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
+   const { data: campaignTotal, loading, error2 } = useSubscription(
+      CAMPAIGN_TOTAL
+   )
+
+   if (error1 || error2) {
+      toast.error('Something went wrong !')
+      logger(error1 || error2)
+   }
 
    // Mutation
    const [updateCampaignActive] = useMutation(CAMPAIGN_ACTIVE, {
@@ -64,10 +71,15 @@ const CampaignListing = () => {
       },
    })
 
-   if (error) {
-      toast.error('Something went wrong !')
-      logger(error)
-   }
+   const [deleteCampaign] = useMutation(DELETE_CAMPAIGN, {
+      onCompleted: () => {
+         toast.success('Campaign deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
 
    useEffect(() => {
       if (!tab) {
@@ -105,22 +117,13 @@ const CampaignListing = () => {
       )
    }
 
-   const [deleteCampaign] = useMutation(DELETE_CAMPAIGN, {
-      onCompleted: () => {
-         toast.success('Campaign deleted!')
-      },
-      onError: error => {
-         console.log(error)
-         toast.error('Could not delete!')
-      },
-   })
-
    // Handler
    const deleteHandler = (e, Campaign) => {
+      console.log(Campaign)
       e.stopPropagation()
       if (
          window.confirm(
-            `Are you sure you want to delete Campaign - ${Campaign.type}?`
+            `Are you sure you want to delete Campaign - ${Campaign.name}?`
          )
       ) {
          deleteCampaign({
