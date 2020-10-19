@@ -2,59 +2,53 @@ import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
+   HorizontalTab,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+   HorizontalTabs,
    IconButton,
-   useTunnel,
-   Tunnel,
-   Tunnels,
-   SectionTabs,
-   SectionTabList,
+   PlusIcon,
    SectionTab,
+   SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
-   HorizontalTabs,
-   HorizontalTabList,
-   HorizontalTab,
-   HorizontalTabPanels,
-   HorizontalTabPanel,
+   SectionTabs,
    Text,
-   PlusIcon,
-   Flex,
    TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { Recommendations } from '..'
 import {
-   DeleteIcon,
-   EditIcon,
-   EyeIcon,
-   AddIcon,
-} from '../../../../../../assets/icons'
-import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
-import {
-   DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
-   UPDATE_SIMPLE_RECIPE_PRODUCT,
-   UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
-   STORE_SETTINGS,
-} from '../../../../../../graphql'
-import {
-   RecipeTunnel,
-   PriceConfigurationTunnel,
-   ModifierTypeTunnel,
-   ModifierModeTunnel,
-   ModifierFormTunnel,
-   ModifierOptionsTunnel,
-   ModifierTemplatesTunnel,
-   ModifierPhotoTunnel,
-} from '../../tunnels'
-import { ModifiersContext } from '../../../../../../context/product/modifiers'
-
-import { ItemInfo, StyledTable, StyledWrapper, Modifier } from './styled'
-import {
    OperationConfig,
    Tooltip,
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
+import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import {
+   DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   STORE_SETTINGS,
+   UPDATE_SIMPLE_RECIPE_PRODUCT,
+   UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
+} from '../../../../../../graphql'
+import {
+   ModifierFormTunnel,
+   ModifierModeTunnel,
+   ModifierOptionsTunnel,
+   ModifierPhotoTunnel,
+   ModifierTemplatesTunnel,
+   ModifierTypeTunnel,
+   PriceConfigurationTunnel,
+   RecipeTunnel,
+} from '../../tunnels'
+import { ItemInfo, Modifier, StyledTable } from './styled'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -511,9 +505,7 @@ export default function Recipe({ state }) {
                                                       alignItems="center"
                                                       justifyContent="space-between"
                                                    >
-                                                      <Text as="p">
-                                                         {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                      </Text>
+                                                      {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
                                                       <span
                                                          onClick={() => {
                                                             productDispatch({
@@ -719,9 +711,7 @@ export default function Recipe({ state }) {
                                                       alignItems="center"
                                                       justifyContent="space-between"
                                                    >
-                                                      <Text as="p">
-                                                         {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                      </Text>
+                                                      {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
                                                       <span
                                                          onClick={() => {
                                                             productDispatch({

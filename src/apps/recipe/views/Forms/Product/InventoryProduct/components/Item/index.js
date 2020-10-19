@@ -468,9 +468,7 @@ export default function Item({ state }) {
                                                       alignItems="center"
                                                       justifyContent="space-between"
                                                    >
-                                                      <Text as="p">
-                                                         {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                      </Text>
+                                                      {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
                                                       <span
                                                          onClick={() => {
                                                             productDispatch({
