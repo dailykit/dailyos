@@ -92,7 +92,7 @@ const StationsListing = () => {
             justifyContent="space-between"
          >
             <Flex as="section" container alignItems="center">
-               <Text as="h2">Stations</Text>
+               <Text as="h2">Stations ({stations?.aggregate?.count || 0})</Text>
                <Tooltip identifier="station_listing_heading" />
             </Flex>
             <ComboButton

@@ -169,13 +169,18 @@ export const STATIONS = gql`
 `
 
 export const USERS = gql`
-   subscription settings_user {
-      settings_user {
-         id
-         firstName
-         lastName
-         email
-         phoneNo
+   subscription users {
+      users: settings_user_aggregate {
+         aggregate {
+            count(columns: keycloakId)
+         }
+         nodes {
+            id
+            firstName
+            lastName
+            email
+            phoneNo
+         }
       }
    }
 `
