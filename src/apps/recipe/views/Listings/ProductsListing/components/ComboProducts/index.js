@@ -19,12 +19,14 @@ import { useTabs } from '../../../../../context/tabs'
 
 // local imports
 import tableOptions from '../../../tableOption'
+import { useTooltip } from '../../../../../../../shared/providers'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
 const ComboProducts = () => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const tableRef = React.useRef()
 
@@ -69,6 +71,17 @@ const ComboProducts = () => {
          title: t(address.concat('product name')),
          field: 'name',
          headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/recipe/combo-products/${id}`)
+         },
+         cssClass: 'colHover',
+         headerTooltip: function (column) {
+            const identifier = 'combo_products_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: t(address.concat('labels')),
@@ -76,6 +89,14 @@ const ComboProducts = () => {
          headerFilter: false,
          headerSort: false,
          formatter: reactFormatter(<ShowLabels />),
+      },
+      {
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Actions',
@@ -88,11 +109,6 @@ const ComboProducts = () => {
          width: 150,
       },
    ]
-
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/recipe/combo-products/${id}`)
-   }
 
    if (loading) return <Loader />
 
@@ -109,7 +125,6 @@ const ComboProducts = () => {
             ref={tableRef}
             columns={columns}
             data={comboProducts}
-            rowClick={rowClick}
             options={tableOptions}
          />
       </>
@@ -120,10 +135,7 @@ function DeleteProduct({ cell, onDelete }) {
    const product = cell.getData()
 
    return (
-      <IconButton
-         type="ghost"
-         onClick={e => e.stopPropagation() && onDelete(product)}
-      >
+      <IconButton type="ghost" onClick={() => onDelete(product)}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
