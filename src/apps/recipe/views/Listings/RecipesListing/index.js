@@ -33,6 +33,7 @@ import { useTabs } from '../../../context'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
+import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.recipe.views.listings.recipeslisting.'
 
@@ -130,6 +131,7 @@ const RecipesListing = () => {
 
 function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
 
    const columns = [
       {
@@ -139,6 +141,12 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
             addTab(name, `/recipe/recipes/${id}`)
+         },
+         headerTooltip: function (column) {
+            const identifier = 'recipe_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          cssClass: 'colHover',
       },
@@ -160,7 +168,6 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          formatter: reactFormatter(<ServingsCount />),
          width: 150,
       },
-
       {
          title: 'Published',
          field: 'isPublished',
