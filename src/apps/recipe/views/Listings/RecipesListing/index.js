@@ -112,12 +112,11 @@ const RecipesListing = () => {
             height="72px"
          >
             <Flex container alignItems="center">
-               <Text as="h2">{t(address.concat('recipes'))}</Text>
+               <Text as="h2">
+                  {t(address.concat('recipes'))}({recipes.length})
+               </Text>
                <Tooltip identifier="recipes_list_heading" />
             </Flex>
-            <Text as="h3">
-               {t(address.concat('total'))}: {recipes.length}
-            </Text>
          </Flex>
          <DataTable
             data={recipes}
@@ -133,7 +132,16 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
    const tableRef = React.useRef()
 
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true },
+      {
+         title: 'Name',
+         field: 'name',
+         headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/recipe/recipes/${id}`)
+         },
+         cssClass: 'colHover',
+      },
       { title: 'Author', field: 'author', headerFilter: true },
       {
          title: 'Cooking Time',
@@ -157,7 +165,6 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          title: 'Published',
          field: 'isPublished',
          formatter: 'tickCross',
-         headerFilter: true,
          hozAlign: 'center',
          headerHozAlign: 'center',
          width: 150,
@@ -174,11 +181,6 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          width: 150,
       },
    ]
-
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/recipe/recipes/${id}`)
-   }
 
    return (
       <>
@@ -198,7 +200,6 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
             ref={tableRef}
             columns={columns}
             data={data}
-            rowClick={rowClick}
             options={tableOptions}
             data-custom-attr="test-custom-attribute"
             className="custom-css-class"
@@ -211,10 +212,7 @@ function DeleteRecipe({ cell, onDelete }) {
    const recipe = cell.getData()
 
    return (
-      <IconButton
-         type="ghost"
-         onClick={e => e.stopPropagation() && onDelete(recipe)}
-      >
+      <IconButton type="ghost" onClick={() => onDelete(recipe)}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
