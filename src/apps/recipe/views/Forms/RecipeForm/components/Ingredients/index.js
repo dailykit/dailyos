@@ -2,40 +2,43 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
+   Form,
    IconButton,
    PlusIcon,
+   Spacer,
    Table,
    TableBody,
    TableCell,
    TableHead,
    TableRow,
    Text,
-   Toggle,
-   Input,
-   Tunnels,
    Tunnel,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import {
    DeleteIcon,
    EditIcon,
-   UserIcon,
    InfoIcon,
+   UserIcon,
 } from '../../../../../assets/icons'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 import {
    DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
    UPDATE_RECIPE,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
 } from '../../../../../graphql'
-import { Container, Grid, Flex } from '../styled'
 import {
    IngredientsTunnel,
    ProcessingsTunnel,
    SachetTunnel,
    YieldInfoTunnel,
 } from '../../tunnels'
+import validator from '../../validators'
 
 const Ingredients = ({ state }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
@@ -53,8 +56,8 @@ const Ingredients = ({ state }) => {
          toast.success('Deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [deleteYieldSachets] = useMutation(
@@ -64,7 +67,8 @@ const Ingredients = ({ state }) => {
             console.log('Deleted Sachets!')
          },
          onError: error => {
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
@@ -161,127 +165,117 @@ const Ingredients = ({ state }) => {
                <YieldInfoTunnel close={closeYieldInfoTunnel} />
             </Tunnel>
          </Tunnels>
-         <Container top="32" paddingX="32">
+         <Flex container alignItems="center" justifyContent="flex-start">
             <Text as="subtitle">Ingredients</Text>
-            {!state.simpleRecipeYields?.length ? (
-               <Text as="p">
-                  You have to add atleast one serving before adding Ingredients.
-               </Text>
-            ) : (
-               <>
-                  {state.ingredients?.length ? (
-                     <Container bottom="16">
-                        <Table>
-                           <TableHead>
-                              <TableRow>
-                                 <TableCell>Name</TableCell>
-                                 <TableCell>Processing</TableCell>
-                                 {state.simpleRecipeYields.map(serving => (
-                                    <TableCell key={serving.id}>
-                                       <UserIcon color="#555B6E" />{' '}
-                                       {serving.yield.serving}{' '}
-                                       <span
-                                          tabIndex="0"
-                                          role="button"
-                                          onKeyPress={e => {
-                                             if (e.charCode === 13) {
-                                                recipeDispatch({
-                                                   type: 'SERVING',
-                                                   payload: serving,
-                                                })
-                                             }
-                                             openYieldInfoTunnel(1)
-                                          }}
-                                          onClick={() => {
+            <Tooltip identifier="recipe_ingredients" />
+         </Flex>
+         {!state.simpleRecipeYields?.length ? (
+            <Text as="p">
+               You have to add at least one serving before adding Ingredients.
+            </Text>
+         ) : (
+            <>
+               {Boolean(state.ingredients?.length) && (
+                  <Table>
+                     <TableHead>
+                        <TableRow>
+                           <TableCell>Name</TableCell>
+                           <TableCell>Processing</TableCell>
+                           {state.simpleRecipeYields.map(serving => (
+                              <TableCell key={serving.id}>
+                                 <Flex container alignItems="center">
+                                    <UserIcon color="#555B6E" />
+                                    <Spacer xAxis size="4px" />
+                                    {serving.yield.serving}
+                                    <Spacer xAxis size="16px" />
+                                    <span
+                                       tabIndex="0"
+                                       role="button"
+                                       onKeyPress={e => {
+                                          if (e.charCode === 13) {
                                              recipeDispatch({
                                                 type: 'SERVING',
                                                 payload: serving,
                                              })
-                                             openYieldInfoTunnel(1)
-                                          }}
+                                          }
+                                          openYieldInfoTunnel(1)
+                                       }}
+                                       onClick={() => {
+                                          recipeDispatch({
+                                             type: 'SERVING',
+                                             payload: serving,
+                                          })
+                                          openYieldInfoTunnel(1)
+                                       }}
+                                    >
+                                       <InfoIcon color="#555B6E" />
+                                    </span>
+                                 </Flex>
+                              </TableCell>
+                           ))}
+                           <TableCell align="right">Actions</TableCell>
+                        </TableRow>
+                     </TableHead>
+                     <TableBody noHoverEffect>
+                        {state.ingredients.map(ingredient => (
+                           <TableRow key={ingredient.id}>
+                              <TableCell>{ingredient.name}</TableCell>
+                              <TableCell>
+                                 {
+                                    ingredient.ingredientProcessing
+                                       .processingName
+                                 }
+                              </TableCell>
+                              {state.simpleRecipeYields.map(serving => (
+                                 <TableCell key={serving.id}>
+                                    {serving.ingredientSachets?.find(
+                                       sachet =>
+                                          sachet.ingredientSachet.ingredient
+                                             ?.id === ingredient.id &&
+                                          sachet.ingredientSachet
+                                             .ingredientProcessing.id ===
+                                             ingredient.ingredientProcessing.id
+                                    ) ? (
+                                       <Sachet
+                                          ingredient={ingredient}
+                                          serving={serving}
+                                          editSachet={editSachet}
+                                       />
+                                    ) : (
+                                       <IconButton
+                                          type="ghost"
+                                          onClick={() =>
+                                             addSachet(ingredient, serving)
+                                          }
                                        >
-                                          <InfoIcon color="#555B6E" />
-                                       </span>
-                                    </TableCell>
-                                 ))}
-                                 <TableCell>Actions</TableCell>
-                              </TableRow>
-                           </TableHead>
-                           <TableBody>
-                              {state.ingredients.map(ingredient => (
-                                 <TableRow key={ingredient.id}>
-                                    <TableCell>{ingredient.name}</TableCell>
-                                    <TableCell>
-                                       {
-                                          ingredient.ingredientProcessing
-                                             .processingName
-                                       }
-                                    </TableCell>
-                                    {state.simpleRecipeYields.map(serving => (
-                                       <TableCell key={serving.id}>
-                                          {serving.ingredientSachets?.find(
-                                             sachet =>
-                                                sachet.ingredientSachet
-                                                   .ingredient?.id ===
-                                                   ingredient.id &&
-                                                sachet.ingredientSachet
-                                                   .ingredientProcessing.id ===
-                                                   ingredient
-                                                      .ingredientProcessing.id
-                                          ) ? (
-                                             <Sachet
-                                                ingredient={ingredient}
-                                                serving={serving}
-                                                editSachet={editSachet}
-                                             />
-                                          ) : (
-                                             <span
-                                                tabIndex="0"
-                                                role="button"
-                                                onKeyDown={e =>
-                                                   e.charCode === 13 &&
-                                                   addSachet(
-                                                      ingredient,
-                                                      serving
-                                                   )
-                                                }
-                                                onClick={() =>
-                                                   addSachet(
-                                                      ingredient,
-                                                      serving
-                                                   )
-                                                }
-                                             >
-                                                <PlusIcon color="#00A7E1" />
-                                             </span>
-                                          )}
-                                       </TableCell>
-                                    ))}
-                                    <TableCell>
-                                       <Grid>
-                                          <IconButton
-                                             onClick={() => remove(ingredient)}
-                                          >
-                                             <DeleteIcon color="#FF5A52" />
-                                          </IconButton>
-                                       </Grid>
-                                    </TableCell>
-                                 </TableRow>
+                                          <PlusIcon color="#00A7E1" />
+                                       </IconButton>
+                                    )}
+                                 </TableCell>
                               ))}
-                           </TableBody>
-                        </Table>
-                     </Container>
-                  ) : (
-                     ''
-                  )}
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Ingredient"
-                     onClick={() => openTunnel(1)}
-                  />
-               </>
-            )}
-         </Container>
+                              <TableCell align="right">
+                                 <Flex container justifyContent="flex-end">
+                                    <IconButton
+                                       type="ghost"
+                                       onClick={() => remove(ingredient)}
+                                    >
+                                       <DeleteIcon color="#FF5A52" />
+                                    </IconButton>
+                                 </Flex>
+                              </TableCell>
+                           </TableRow>
+                        ))}
+                     </TableBody>
+                  </Table>
+               )}
+               <Spacer size="16px" />
+               <ButtonTile
+                  type="secondary"
+                  text="Add Ingredient"
+                  onClick={() => openTunnel(1)}
+               />
+            </>
+         )}
       </>
    )
 }
@@ -298,7 +292,14 @@ const Sachet = ({ ingredient, serving, editSachet }) => {
                ingredient.ingredientProcessing.id
       )
    )
-   const [slipName, setSlipName] = React.useState(sachet.slipName || '')
+   const [slipName, setSlipName] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
 
    // Effects
    React.useEffect(() => {
@@ -311,8 +312,9 @@ const Sachet = ({ ingredient, serving, editSachet }) => {
          )
       )
    }, [serving])
+
    React.useEffect(() => {
-      setSlipName(sachet.slipName)
+      setSlipName({ ...slipName, value: sachet.slipName })
    }, [sachet])
 
    // Mutation
@@ -321,8 +323,8 @@ const Sachet = ({ ingredient, serving, editSachet }) => {
          toast.success('Sachet updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error()
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -339,56 +341,79 @@ const Sachet = ({ ingredient, serving, editSachet }) => {
       })
    }
    const updateSlipName = () => {
-      if (slipName) {
+      const { isValid, errors } = validator.slipName(slipName.value)
+      if (isValid) {
          updateSachet({
             variables: {
                sachetId: sachet.ingredientSachet.id,
                yieldId: serving.id,
                set: {
-                  slipName,
+                  slipName: slipName.value,
                },
             },
          })
       }
+      setSlipName({
+         ...slipName,
+         meta: {
+            isTouched: true,
+            isValid,
+            errors,
+         },
+      })
    }
 
    return (
-      <Flex direction="column">
-         <Container top="8">
-            <Flex>
-               <span>
-                  {sachet?.ingredientSachet.quantity.toString()}{' '}
-                  {sachet?.ingredientSachet.unit}
-               </span>
-               <span
-                  tabIndex="0"
-                  role="button"
-                  onKeyDown={e =>
-                     e.charCode === 13 && editSachet(ingredient, serving)
-                  }
-                  onClick={() => editSachet(ingredient, serving)}
-               >
-                  <EditIcon color="#00A7E1" />
-               </span>
-            </Flex>
-         </Container>
-         <Container top="10">
-            <Toggle
-               checked={sachet.isVisible}
-               label="Visibility"
-               setChecked={updateVisibility}
-            />
-         </Container>
-         <Container top="12">
-            <Input
-               type="text"
-               label="Slip Name"
-               name="slip-name"
-               value={slipName}
-               onChange={e => setSlipName(e.target.value)}
+      <Flex>
+         <Flex container alignItems="center">
+            {sachet?.ingredientSachet.quantity.toString()}{' '}
+            {sachet?.ingredientSachet.unit}
+            <IconButton
+               type="ghost"
+               onClick={() => editSachet(ingredient, serving)}
+            >
+               <EditIcon color="#00A7E1" />
+            </IconButton>
+         </Flex>
+         <Form.Group>
+            <Form.Toggle
+               id={`isVisible=${sachet.ingredientSachet.id}`}
+               name={`isVisible=${sachet.ingredientSachet.id}`}
+               onChange={() => updateVisibility(!sachet.isVisible)}
+               value={sachet.isVisible}
+            >
+               <Flex container alignItems="center">
+                  Visibility
+                  <Tooltip identifier="recipe_ingredient_sachet_visibility" />
+               </Flex>
+            </Form.Toggle>
+         </Form.Group>
+         <Spacer size="8px" />
+         <Form.Group>
+            <Form.Label htmlFor="slipName" title="slipName">
+               <Flex container alignItems="center">
+                  Slip Name*
+                  <Tooltip identifier="recipe_ingredient_sachet_slip_name" />
+               </Flex>
+            </Form.Label>
+            <Form.Text
+               id={`slipName-${sachet.ingredientSachet.id}`}
+               name={`slipName-${sachet.ingredientSachet.id}`}
                onBlur={updateSlipName}
+               onChange={e =>
+                  setSlipName({ ...slipName, value: e.target.value })
+               }
+               value={slipName.value}
+               placeholder="Enter slip name"
+               hasError={slipName.meta.isTouched && !slipName.meta.isValid}
             />
-         </Container>
+            {slipName.meta.isTouched &&
+               !slipName.meta.isValid &&
+               slipName.meta.errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
+         </Form.Group>
+         <Spacer size="8px" />
       </Flex>
    )
 }

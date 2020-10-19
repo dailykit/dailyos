@@ -460,7 +460,7 @@ function AllergensView({ openDerivedAllergensTunnel }) {
    const {
       state: {
          configurable: { allergens = [] } = {},
-         activeProcessing: { allergens: otherAllergens } = {},
+         activeProcessing: { allergens: otherAllergens = [] } = {},
       },
    } = useContext(ItemContext)
 
@@ -470,17 +470,17 @@ function AllergensView({ openDerivedAllergensTunnel }) {
             <Highlight pointer onClick={() => openDerivedAllergensTunnel(1)}>
                <TagGroup>
                   {allergens.map(el => (
-                     <Tag key={el.id}> {el.title} </Tag>
+                     <Tag key={el?.id}> {el?.title} </Tag>
                   ))}
                </TagGroup>
             </Highlight>
          )
-      else if (otherAllergens.length)
+      else if (otherAllergens?.length)
          return (
             <Highlight pointer onClick={() => openDerivedAllergensTunnel(1)}>
                <TagGroup>
                   {otherAllergens.map(el => (
-                     <Tag key={el.id}> {el.title} </Tag>
+                     <Tag key={el?.id}> {el?.title} </Tag>
                   ))}
                </TagGroup>
             </Highlight>

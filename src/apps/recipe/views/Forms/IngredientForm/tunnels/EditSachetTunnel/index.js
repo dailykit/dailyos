@@ -1,15 +1,13 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Toggle, TunnelHeader, Loader } from '@dailykit/ui'
+import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { UPDATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
-import {
-   Container,
-   StyledInputWrapper,
-   TunnelBody,
-   StyledSelect,
-} from '../styled'
+import { FETCH_UNITS, UPDATE_SACHET } from '../../../../../graphql'
+import validator from '../../validators'
+import { TunnelBody } from '../styled'
 
 const EditSachetTunnel = ({ state, closeTunnel }) => {
    const { ingredientState } = React.useContext(IngredientContext)
@@ -18,31 +16,44 @@ const EditSachetTunnel = ({ state, closeTunnel }) => {
       state.ingredientProcessings[ingredientState.processingIndex]
          .ingredientSachets[ingredientState.sachetIndex]
 
-   const [busy, setBusy] = React.useState(false)
-   const [units, setUnits] = React.useState([])
-
-   const [tracking, setTracking] = React.useState(sachet.tracking)
-   const [quantity, setQuantity] = React.useState(sachet.quantity)
-   const [unit, setUnit] = React.useState(sachet.unit)
-
-   // Subscription
-   const { loading } = useSubscription(FETCH_UNITS, {
-      onSubscriptionData: data => {
-         setUnits([...data.subscriptionData.data.units])
-      },
-      onError: error => {
-         console.log(error)
+   const [quantity, setQuantity] = React.useState({
+      value: sachet.quantity,
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
       },
    })
+   const [unit, setUnit] = React.useState({
+      value: sachet.unit,
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [tracking, setTracking] = React.useState({
+      value: sachet.tracking,
+   })
+
+   // Subscription
+   const { data: { units = [] } = {}, loading, error } = useSubscription(
+      FETCH_UNITS
+   )
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Mutation
-   const [updateSachet] = useMutation(UPDATE_SACHET, {
+   const [updateSachet, { loading: inFlight }] = useMutation(UPDATE_SACHET, {
       variables: {
          id: sachet.id,
          set: {
-            tracking,
-            quantity,
-            unit,
+            tracking: tracking.value,
+            quantity: quantity.value,
+            unit: unit.value,
          },
       },
       onCompleted: () => {
@@ -50,67 +61,93 @@ const EditSachetTunnel = ({ state, closeTunnel }) => {
          closeTunnel(1)
       },
       onError: () => {
-         toast.error('Error')
-         setBusy(false)
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handler
    const save = () => {
-      try {
-         if (busy) return
-         setBusy(true)
-         if (!quantity || Number.isNaN(quantity) || parseInt(quantity) === 0) {
-            throw Error('Invalid Quantity!')
-         }
-         updateSachet()
-      } catch (e) {
-         toast.error(e.message)
-         setBusy(false)
-      }
+      if (inFlight) return
+      updateSachet()
    }
 
    return (
       <>
          <TunnelHeader
             title="Configure Sachet"
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
             close={() => closeTunnel(1)}
          />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
                <>
-                  <Container bottom="32">
-                     <StyledInputWrapper width="300">
-                        <Toggle
-                           label="Track Inventory"
-                           checked={tracking}
-                           setChecked={val => setTracking(val)}
-                        />
-                     </StyledInputWrapper>
-                  </Container>
-                  <Container bottom="32">
-                     <StyledInputWrapper width="300">
-                        <Input
-                           type="text"
-                           label="Quantity"
-                           value={quantity}
-                           onChange={e => setQuantity(e.target.value)}
-                        />
-                        <StyledSelect
-                           value={unit}
-                           onChange={e => setUnit(e.target.value)}
-                        >
-                           {units.map(item => (
-                              <option key={item.id} value={item.title}>
-                                 {item.title}
-                              </option>
+                  <Flex>
+                     <Form.Group>
+                        <Form.Label htmlFor="quantity" title="quantity">
+                           Quantity*
+                        </Form.Label>
+                        <Form.TextSelect>
+                           <Form.Number
+                              id="quantity"
+                              name="quantity"
+                              value={quantity.value}
+                              placeholder="Enter sachet quantity"
+                              onChange={e =>
+                                 setQuantity({
+                                    ...quantity,
+                                    value: e.target.value,
+                                 })
+                              }
+                              onBlur={() => {
+                                 const { isValid, errors } = validator.quantity(
+                                    quantity.value
+                                 )
+                                 setQuantity({
+                                    ...quantity,
+                                    meta: {
+                                       isTouched: true,
+                                       isValid,
+                                       errors,
+                                    },
+                                 })
+                              }}
+                           />
+                           <Form.Select
+                              id="unit"
+                              name="unit"
+                              options={units}
+                              value={unit.value}
+                              placeholder="Choose unit"
+                              defaultValue={unit.value}
+                              onChange={e =>
+                                 setUnit({ ...unit, value: e.target.value })
+                              }
+                           />
+                        </Form.TextSelect>
+                        {quantity.meta.isTouched &&
+                           !quantity.meta.isValid &&
+                           quantity.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
                            ))}
-                        </StyledSelect>
-                     </StyledInputWrapper>
-                  </Container>
+                     </Form.Group>
+                  </Flex>
+                  <Spacer size="24px" />
+                  <Flex>
+                     <Form.Toggle
+                        id="tracking"
+                        name="tracking"
+                        value={tracking.value}
+                        onChange={() =>
+                           setTracking({ ...tracking, value: !tracking.value })
+                        }
+                     >
+                        Track Inventory
+                     </Form.Toggle>
+                  </Flex>
+                  <Spacer size="24px" />
                </>
             )}
          </TunnelBody>
