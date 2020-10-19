@@ -29,22 +29,16 @@ import {
 import { Header } from './styled'
 import { TunnelMain, StyledInfo } from '../../styled'
 
-import { KOT_PRINTERS } from '../../../../../graphql/subscriptions'
-import {
-   CREATE_STATION_KOT_PRINTER,
-   UPDATE_STATION_KOT_PRINTER,
-   DELETE_STATION_KOT_PRINTER,
-   UPDATE_STATION_DEFAULT_KOT_PRINTER,
-} from '../../../../../graphql/mutations'
+import { STATIONS } from '../../../../../graphql'
 
 export const KotPrinters = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_STATION_KOT_PRINTER)
-   const [remove] = useMutation(DELETE_STATION_KOT_PRINTER)
-   const [updateDefault] = useMutation(UPDATE_STATION_DEFAULT_KOT_PRINTER)
+   const [update] = useMutation(STATIONS.KOT_PRINTERS.UPDATE)
+   const [remove] = useMutation(STATIONS.KOT_PRINTERS.DELETE)
+   const [updateDefault] = useMutation(STATIONS.UPDATE)
 
    const { loading, error, data: { kotPrinters = [] } = {} } = useSubscription(
-      KOT_PRINTERS,
+      STATIONS.KOT_PRINTERS.LIST,
       {
          variables: {
             type: 'KOT_PRINTER',
@@ -117,9 +111,11 @@ export const KotPrinters = ({ station }) => {
                                  onClick={() =>
                                     updateDefault({
                                        variables: {
-                                          id: station.id,
-                                          defaultKotPrinterId:
-                                             node.kotPrinter.printNodeId,
+                                          pk_columns: { id: station.id },
+                                          _set: {
+                                             defaultKotPrinterId:
+                                                node.kotPrinter.printNodeId,
+                                          },
                                        },
                                     })
                                  }
@@ -173,7 +169,7 @@ const AddPrinterTunnel = ({
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(CREATE_STATION_KOT_PRINTER, {
+   const [create] = useMutation(STATIONS.KOT_PRINTERS.CREATE, {
       onCompleted: () => setIsOpen(false),
    })
 

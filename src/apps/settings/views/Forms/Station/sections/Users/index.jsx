@@ -26,12 +26,7 @@ import {
    SectionTabPanel,
 } from '../../../../../components'
 
-import {
-   USER_BY_STATION,
-   CREATE_STATION_USERS,
-   UPDATE_STATION_USER_STATUS,
-   DELETE_STATION_USER,
-} from '../../../../../graphql'
+import { STATIONS } from '../../../../../graphql'
 
 import { TunnelMain, StyledInfo } from '../../styled'
 
@@ -39,13 +34,13 @@ import { Header } from './styled'
 
 export const Users = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [deleteStationUser] = useMutation(DELETE_STATION_USER)
-   const [updateStationUserStatus] = useMutation(UPDATE_STATION_USER_STATUS)
+   const [deleteStationUser] = useMutation(STATIONS.USERS.DELETE)
+   const [updateStationUserStatus] = useMutation(STATIONS.USERS.UPDATE)
    const {
       error,
       loading,
       data: { settings_user: users = [] } = {},
-   } = useSubscription(USER_BY_STATION, {
+   } = useSubscription(STATIONS.USERS.LIST, {
       variables: {
          _eq: station.id,
       },
@@ -150,7 +145,7 @@ const AddUserTunnel = ({
 }) => {
    const [search, setSearch] = React.useState('')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [createStationUsers] = useMutation(CREATE_STATION_USERS, {
+   const [createStationUsers] = useMutation(STATIONS.USERS.CREATE, {
       onCompleted: () => {
          setIsOpen(false)
       },

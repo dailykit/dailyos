@@ -29,21 +29,17 @@ import {
 import { Header } from './styled'
 import { TunnelMain, StyledInfo } from '../../styled'
 
-import { UNASSIGNED_SCALES } from '../../../../../graphql/subscriptions'
-import {
-   UPDATE_SCALE_STATUS,
-   REMOVE_SCALE_STATION,
-   ADD_STATION_TO_SCALE,
-} from '../../../../../graphql/mutations'
+import { STATIONS } from '../../../../../graphql'
 
 export const Scales = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_SCALE_STATUS)
-   const [remove] = useMutation(REMOVE_SCALE_STATION)
+   const [update] = useMutation(STATIONS.SCALES.UPDATE)
+   const [remove] = useMutation(STATIONS.SCALES.DELETE)
 
    const { loading, error, data: { scales = [] } = {} } = useSubscription(
-      UNASSIGNED_SCALES
+      STATIONS.SCALES.LIST
    )
+   console.log('Scales -> scales', scales)
 
    const updateStatus = (num, name, id, status) => {
       update({
@@ -151,7 +147,7 @@ const AddPrinterTunnel = ({
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(scales)
 
-   const [create] = useMutation(ADD_STATION_TO_SCALE)
+   const [create] = useMutation(STATIONS.SCALES.CREATE)
 
    React.useEffect(() => {
       if (isOpen) {

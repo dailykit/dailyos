@@ -6,13 +6,7 @@ import { useHistory } from 'react-router-dom'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useTabs } from '../../../context'
-import {
-   ACCOMPANIMENT_TYPES,
-   ALLERGENS,
-   CUISINES,
-   PROCESSINGS,
-   UNITS_COUNT,
-} from '../../../graphql'
+import { MASTER } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 
@@ -25,11 +19,11 @@ const MasterList = () => {
    const tableRef = React.useRef()
 
    // subscription
-   const { data: accompaniments } = useSubscription(ACCOMPANIMENT_TYPES)
-   const { data: processings } = useSubscription(PROCESSINGS)
-   const { data: allergens } = useSubscription(ALLERGENS)
-   const { data: cuisines } = useSubscription(CUISINES)
-   const { data: units } = useSubscription(UNITS_COUNT)
+   const { data: accompaniments } = useSubscription(MASTER.ACCOMPANIMENTS.LIST)
+   const { data: processings } = useSubscription(MASTER.PROCESSINGS.LIST)
+   const { data: allergens } = useSubscription(MASTER.ALLERGENS.LIST)
+   const { data: cuisines } = useSubscription(MASTER.CUISINES.LIST)
+   const { data: units } = useSubscription(MASTER.UNITS.AGGREGATE)
 
    const rowClick = (e, row) => {
       const { _click } = row._row.data

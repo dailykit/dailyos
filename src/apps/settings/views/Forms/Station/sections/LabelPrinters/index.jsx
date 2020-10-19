@@ -29,25 +29,19 @@ import {
 import { Header } from './styled'
 import { TunnelMain, StyledInfo } from '../../styled'
 
-import { LABEL_PRINTERS } from '../../../../../graphql/subscriptions'
-import {
-   CREATE_STATION_LABEL_PRINTER,
-   UPDATE_STATION_LABEL_PRINTER,
-   DELETE_STATION_LABEL_PRINTER,
-   UPDATE_STATION_DEFAULT_LABEL_PRINTER,
-} from '../../../../../graphql/mutations'
+import { STATIONS } from '../../../../../graphql'
 
 export const LabelPrinters = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_STATION_LABEL_PRINTER)
-   const [remove] = useMutation(DELETE_STATION_LABEL_PRINTER)
-   const [updateDefault] = useMutation(UPDATE_STATION_DEFAULT_LABEL_PRINTER)
+   const [update] = useMutation(STATIONS.LABEL_PRINTERS.UPDATE)
+   const [remove] = useMutation(STATIONS.LABEL_PRINTERS.DELETE)
+   const [updateDefault] = useMutation(STATIONS.UPDATE)
 
    const {
       loading,
       error,
       data: { labelPrinters = [] } = {},
-   } = useSubscription(LABEL_PRINTERS, {
+   } = useSubscription(STATIONS.LABEL_PRINTERS.LIST, {
       variables: {
          type: 'LABEL_PRINTER',
          stationId: station.id,
@@ -118,9 +112,11 @@ export const LabelPrinters = ({ station }) => {
                                  onClick={() =>
                                     updateDefault({
                                        variables: {
-                                          id: station.id,
-                                          defaultLabelPrinterId:
-                                             node.labelPrinter.printNodeId,
+                                          pk_columns: { id: station.id },
+                                          _set: {
+                                             defaultLabelPrinterId:
+                                                node.labelPrinter.printNodeId,
+                                          },
                                        },
                                     })
                                  }
@@ -176,7 +172,7 @@ const AddPrinterTunnel = ({
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(CREATE_STATION_LABEL_PRINTER, {
+   const [create] = useMutation(STATIONS.LABEL_PRINTERS.CREATE, {
       onCompleted: () => setIsOpen(false),
    })
 

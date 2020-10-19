@@ -14,7 +14,7 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import tableOptions from '../../../Listings/tableOption'
 
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import { ALLERGENS, DELETE_ALLERGENS } from '../../../../graphql'
+import { MASTER } from '../../../../graphql'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
 import { AddTypesTunnel } from './tunnels'
 
@@ -26,10 +26,10 @@ const AllergensForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(ALLERGENS)
+   const { loading, data, error } = useSubscription(MASTER.ALLERGENS.LIST)
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_ALLERGENS, {
+   const [deleteElement] = useMutation(MASTER.ALLERGENS.DELETE, {
       onCompleted: () => {
          toast.success('Deleted!')
       },

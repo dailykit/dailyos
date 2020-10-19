@@ -31,12 +31,7 @@ import { useTabs } from '../../../context'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { PrinterIcon } from '../../../../../shared/assets/icons'
 import { Flex, InlineLoader } from '../../../../../shared/components'
-import {
-   DEVICES,
-   PRINTNODE_CREDS,
-   ONLINE_PRINTERS,
-   PRINT_JOB,
-} from '../../../graphql'
+import { DEVICES, PRINT_JOB } from '../../../graphql'
 
 const DevicesListing = () => {
    const { tab, addTab } = useTabs()
@@ -44,8 +39,8 @@ const DevicesListing = () => {
    const [printers, setPrinters] = React.useState([])
    const [scales, setScales] = React.useState([])
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const { data: { admins = [] } = {} } = useQuery(PRINTNODE_CREDS)
-   const { loading, error } = useSubscription(DEVICES, {
+   const { data: { admins = [] } = {} } = useQuery(DEVICES.PRINTNODE_DETAILS)
+   const { loading, error } = useSubscription(DEVICES.LIST, {
       onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
          setComputers(data.computers)
          setPrinters(
@@ -235,9 +230,12 @@ const PrintTunnel = ({ closeTunnel }) => {
          closeTunnel(1)
          toast.success('Successfully Printed!')
       },
-      onError: () => toast.error('Failed to print!'),
+      onError: error => {
+         toast.error('Failed to print!')
+         console.log(error)
+      },
    })
-   const { loading } = useQuery(ONLINE_PRINTERS, {
+   const { loading } = useQuery(DEVICES.PRINTERS.ONLINE, {
       onCompleted: ({ printers = [] }) => {
          setPrinters(
             printers.map(node => ({ id: node.printNodeId, title: node.name }))

@@ -7,7 +7,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 // Components
 import { Input, Loader } from '@dailykit/ui'
 
-import { STATION, UPSERT_STATION } from '../../../graphql'
+import { STATIONS } from '../../../graphql'
 
 // State
 import { useTabs } from '../../../context'
@@ -33,18 +33,21 @@ const StationForm = () => {
    const params = useParams()
    const [title, setTitle] = React.useState('')
    const { tab, addTab, setTabTitle } = useTabs()
-   const [update] = useMutation(UPSERT_STATION, {
+   const [update] = useMutation(STATIONS.UPDATE, {
       onCompleted: () => toast.success('Successfully updated station name!'),
-      onError: () => toast.success('Failed to update the station name!'),
+      onError: () => toast.error('Failed to update the station name!'),
    })
-   const { loading, data: { station = {} } = {} } = useSubscription(STATION, {
-      variables: { id: params.id },
-      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         const { station } = data
-         setTitle(station.name)
-         setTabTitle(station.name)
-      },
-   })
+   const { loading, data: { station = {} } = {} } = useSubscription(
+      STATIONS.STATION,
+      {
+         variables: { id: params.id },
+         onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+            const { station } = data
+            setTitle(station.name)
+            setTabTitle(station.name)
+         },
+      }
+   )
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(station)) {
@@ -55,10 +58,8 @@ const StationForm = () => {
    const handleSubmit = value => {
       update({
          variables: {
-            object: {
-               name: value,
-               id: params.id,
-            },
+            _set: { name: value },
+            pk_columns: { id: params.id },
          },
       })
    }

@@ -9,7 +9,7 @@ import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
 // Styles
 import { TunnelBody } from '../styled'
 
-import { CREATE_ACCOMPANIMENT_TYPES } from '../../../../../../graphql'
+import { MASTER } from '../../../../../../graphql'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 
@@ -20,7 +20,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_ACCOMPANIMENT_TYPES, {
+   const [addType] = useMutation(MASTER.ACCOMPANIMENTS.CREATE, {
       onCompleted: () => {
          toast.success('Accompaniment types added.')
          closeTunnel(1)

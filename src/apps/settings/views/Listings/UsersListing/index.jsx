@@ -8,7 +8,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTabs } from '../../../context'
 import tableOptions from '../tableOption'
 import { logger } from '../../../../../shared/utils'
-import { CREATE_USER, USERS } from '../../../graphql'
+import { USERS } from '../../../graphql'
 import { AddIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
@@ -17,8 +17,10 @@ const UsersListing = () => {
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
    const { tab, addTab } = useTabs()
-   const { loading, error, data: { users = {} } = {} } = useSubscription(USERS)
-   const [createUser] = useMutation(CREATE_USER, {
+   const { loading, error, data: { users = {} } = {} } = useSubscription(
+      USERS.LIST
+   )
+   const [createUser] = useMutation(USERS.CREATE, {
       onCompleted: ({ insert_settings_user_one = {} }) => {
          const { id, firstName } = insert_settings_user_one
          addTab(firstName, `/settings/users/${id}`)

@@ -9,7 +9,7 @@ import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
 // Styles
 import { TunnelBody } from '../styled'
 
-import { CREATE_CUISINES } from '../../../../../../graphql'
+import { MASTER } from '../../../../../../graphql'
 
 const address = 'apps.settings.views.forms.cuisines.tunnels.addnew.'
 
@@ -20,7 +20,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_CUISINES, {
+   const [addType] = useMutation(MASTER.CUISINES.CREATE, {
       onCompleted: () => {
          toast.success('Cuisines added.')
          closeTunnel(1)

@@ -11,16 +11,16 @@ import { logger } from '../../../../../shared/utils'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
-import { STATIONS, DELETE_STATION, UPSERT_STATION } from '../../../graphql'
+import { STATIONS } from '../../../graphql'
 
 const StationsListing = () => {
    const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const { error, loading, data: { stations = {} } = {} } = useSubscription(
-      STATIONS
+      STATIONS.LIST
    )
-   const [create] = useMutation(UPSERT_STATION, {
+   const [create] = useMutation(STATIONS.CREATE, {
       onCompleted: ({ insertStation = {} }) => {
          addTab(insertStation.name, `/settings/stations/${insertStation.id}`)
       },
@@ -29,7 +29,7 @@ const StationsListing = () => {
          logger(error)
       },
    })
-   const [remove] = useMutation(DELETE_STATION, {
+   const [remove] = useMutation(STATIONS.DELETE, {
       onCompleted: () => {
          toast.success('Successfully deleted the station!')
       },
