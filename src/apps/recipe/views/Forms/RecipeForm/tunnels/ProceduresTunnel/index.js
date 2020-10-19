@@ -1,21 +1,26 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Input, Toggle, TunnelHeader } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Flex,
+   Form,
+   IconButton,
+   Spacer,
+   TunnelHeader,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
 import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
+import { RecipeContext } from '../../../../../context/recipe'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { Container, InputWrapper, TunnelBody } from '../styled'
-import { RecipeContext } from '../../../../../context/recipee'
+import { TunnelBody } from '../styled'
 import { ImageContainer, PhotoTileWrapper } from './styled'
 
 const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
    const { recipeState, recipeDispatch } = React.useContext(RecipeContext)
 
-   // State
-   const [busy, setBusy] = React.useState(false)
-
    // Mutation
-   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+   const [updateRecipe, { loading: inFlight }] = useMutation(UPDATE_RECIPE, {
       variables: {
          id: state.id,
          set: {
@@ -26,9 +31,9 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
          toast.success('Updated!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error!')
-         setBusy(false)
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -44,8 +49,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
    }
 
    const save = () => {
-      if (busy) return
-      setBusy(true)
+      if (inFlight) return
       updateRecipe()
    }
 
@@ -62,63 +66,62 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
       <>
          <TunnelHeader
             title="Add Cooking Steps"
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
             close={() => closeTunnel(1)}
          />
          <TunnelBody>
             {recipeState.procedures?.map((procedure, index) => (
-               <Container bottom="32">
-                  <InputWrapper>
-                     <div style={{ marginRight: '16px', maxWidth: '240px' }}>
-                        <Input
-                           type="text"
-                           placeholder="Procedure Title"
-                           name={`procedure-${index}-title`}
-                           value={procedure.title}
-                           onChange={e =>
+               <>
+                  <Flex>
+                     <Flex container alignItems="end">
+                        <Form.Group>
+                           <Form.Label
+                              htmlFor={`procedureTitle-${index}`}
+                              title="Procedure Title"
+                           >
+                              Procedure
+                           </Form.Label>
+                           <Form.Text
+                              id={`procedureTitle-${index}`}
+                              name={`procedureTitle-${index}`}
+                              onChange={e =>
+                                 recipeDispatch({
+                                    type: 'PROCEDURE_TITLE',
+                                    payload: { index, value: e.target.value },
+                                 })
+                              }
+                              value={procedure.title}
+                              placeholder="Enter procedure title"
+                           />
+                        </Form.Group>
+                        <Spacer xAxis size="8px" />
+                        <IconButton
+                           type="ghost"
+                           onClick={() =>
                               recipeDispatch({
-                                 type: 'PROCEDURE_TITLE',
-                                 payload: { index, value: e.target.value },
+                                 type: 'DELETE_PROCEDURE',
+                                 payload: { index },
                               })
                            }
-                        />
-                     </div>
-                     <span
-                        tabIndex="0"
-                        role="button"
-                        onKeyDown={e =>
-                           e.charCode === 13 &&
-                           recipeDispatch({
-                              type: 'DELETE_PROCEDURE',
-                              payload: { index },
-                           })
-                        }
-                        onClick={() =>
-                           recipeDispatch({
-                              type: 'DELETE_PROCEDURE',
-                              payload: { index },
-                           })
-                        }
-                     >
-                        <DeleteIcon color="#FF5A52" size="20" />
-                     </span>
-                  </InputWrapper>
-                  {procedure.steps?.map((step, stepIndex) => (
-                     <Container>
-                        <Container bottom="16">
-                           <InputWrapper>
-                              <div
-                                 style={{
-                                    marginRight: '16px',
-                                    maxWidth: '240px',
-                                 }}
-                              >
-                                 <Input
-                                    type="text"
-                                    placeholder="Step Title"
-                                    name={`step-${stepIndex}-title`}
-                                    value={step.title}
-                                    onChange={e => {
+                        >
+                           <DeleteIcon color="#FF5A52" />
+                        </IconButton>
+                     </Flex>
+                     <Spacer size="16px" />
+                     {procedure.steps?.map((step, stepIndex) => (
+                        <>
+                           <Flex container alignItems="end">
+                              <Form.Group>
+                                 <Form.Label
+                                    htmlFor={`stepTitle-${stepIndex}-${index}`}
+                                    title="Step Title"
+                                 >
+                                    Step
+                                 </Form.Label>
+                                 <Form.Text
+                                    id={`stepTitle-${stepIndex}-${index}`}
+                                    name={`stepTitle-${stepIndex}-${index}`}
+                                    onChange={e =>
                                        recipeDispatch({
                                           type: 'STEP_TITLE',
                                           payload: {
@@ -127,14 +130,16 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                              value: e.target.value,
                                           },
                                        })
-                                    }}
+                                    }
+                                    value={step.title}
+                                    placeholder="Enter step title"
                                  />
-                              </div>
-                              <div>
-                                 <Toggle
-                                    checked={step.isVisible}
-                                    label="Visibility"
-                                    setChecked={() => {
+                              </Form.Group>
+                              <Spacer xAxis size="8px" />
+                              <Form.Group>
+                                 <Form.Toggle
+                                    name={`stepVisibilityToggle-${stepIndex}-${index}`}
+                                    onChange={() => {
                                        recipeDispatch({
                                           type: 'STEP_VISIBILITY',
                                           payload: {
@@ -143,30 +148,25 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                           },
                                        })
                                     }}
-                                 />
-                                 <span
-                                    tabIndex="0"
-                                    role="button"
-                                    onKeyDown={e =>
-                                       e.charCode === 13 &&
-                                       recipeDispatch({
-                                          type: 'DELETE_STEP',
-                                          payload: { index, stepIndex },
-                                       })
-                                    }
-                                    onClick={() =>
-                                       recipeDispatch({
-                                          type: 'DELETE_STEP',
-                                          payload: { index, stepIndex },
-                                       })
-                                    }
+                                    value={step.isVisible}
                                  >
-                                    <DeleteIcon color="#FF5A52" size="20" />
-                                 </span>
-                              </div>
-                           </InputWrapper>
-                        </Container>
-                        <Container bottom="16">
+                                    Visibility
+                                 </Form.Toggle>
+                              </Form.Group>
+                              <Spacer xAxis size="8px" />
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() =>
+                                    recipeDispatch({
+                                       type: 'DELETE_STEP',
+                                       payload: { index, stepIndex },
+                                    })
+                                 }
+                              >
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
+                           </Flex>
+                           <Spacer size="16px" />
                            {step.assets.images.length ? (
                               <ImageContainer>
                                  <div>
@@ -214,45 +214,55 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
                                     type="primary"
                                     size="sm"
                                     text="Add Photo for this Step"
-                                    helper="upto 1MB - only JPG, PNG, PDF allowed"
+                                    helper="upto 1MB - only JPG, PNG allowed"
                                     onClick={() => addPhoto(index, stepIndex)}
                                  />
                               </PhotoTileWrapper>
                            )}
-                        </Container>
-                        <Container bottom="16">
-                           <Input
-                              type="textarea"
-                              placeholder="Description"
-                              name={`description-${stepIndex}-title`}
-                              rows="3"
-                              value={step.description}
-                              onChange={e => {
-                                 recipeDispatch({
-                                    type: 'STEP_DESCRIPTION',
-                                    payload: {
-                                       index,
-                                       stepIndex,
-                                       value: e.target.value,
-                                    },
-                                 })
-                              }}
-                           />
-                        </Container>
-                     </Container>
-                  ))}
-                  <ButtonTile
-                     type="secondary"
-                     text="Add a Step"
-                     onClick={() => {
-                        recipeDispatch({
-                           type: 'ADD_STEP',
-                           payload: { index },
-                        })
-                     }}
-                  />
-               </Container>
+                           <Spacer size="16px" />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={`description-${stepIndex}-${index}`}
+                                 title="description"
+                              >
+                                 Description
+                              </Form.Label>
+                              <Form.TextArea
+                                 id={`description-${stepIndex}-${index}`}
+                                 name={`description-${stepIndex}-${index}`}
+                                 onChange={e => {
+                                    recipeDispatch({
+                                       type: 'STEP_DESCRIPTION',
+                                       payload: {
+                                          index,
+                                          stepIndex,
+                                          value: e.target.value,
+                                       },
+                                    })
+                                 }}
+                                 value={step.description}
+                                 placeholder="Write step description"
+                              />
+                           </Form.Group>
+                           <Spacer size="16px" />
+                        </>
+                     ))}
+                     <Spacer size="16px" />
+                     <ButtonTile
+                        type="secondary"
+                        text="Add a Step"
+                        onClick={() => {
+                           recipeDispatch({
+                              type: 'ADD_STEP',
+                              payload: { index },
+                           })
+                        }}
+                     />
+                  </Flex>
+                  <Spacer size="16px" />
+               </>
             ))}
+            <Spacer size="16px" />
             <ButtonTile
                type="secondary"
                text="Add a Procedure"

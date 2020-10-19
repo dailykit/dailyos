@@ -12,7 +12,7 @@ import {
 import { toast } from 'react-toastify'
 import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 import { PROCESSINGS, UPDATE_RECIPE } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 

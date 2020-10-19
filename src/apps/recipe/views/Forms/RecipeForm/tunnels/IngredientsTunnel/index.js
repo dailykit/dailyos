@@ -10,7 +10,7 @@ import {
 } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 import { TunnelBody } from '../styled'
 import { INGREDIENTS } from '../../../../../graphql'
 import { InlineLoader } from '../../../../../../../shared/components'

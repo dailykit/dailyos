@@ -26,7 +26,7 @@ import {
    InfoIcon,
    UserIcon,
 } from '../../../../../assets/icons'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 import {
    DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
    UPDATE_RECIPE,

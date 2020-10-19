@@ -3,7 +3,7 @@ import { Text, Checkbox, ComboButton } from '@dailykit/ui'
 import { Container, Flex } from '../styled'
 import { StyledTable, Preview, Pill } from './styled'
 import { EyeIcon } from '../../../../../assets/icons'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 
 const RecipeCard = ({ state, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)

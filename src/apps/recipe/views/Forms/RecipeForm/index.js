@@ -10,7 +10,7 @@ import {
    state as initialState,
    reducers,
    RecipeContext,
-} from '../../../context/recipee'
+} from '../../../context/recipe'
 
 import { StyledWrapper, InputWrapper, MasterSettings } from '../styled'
 
