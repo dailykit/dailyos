@@ -12,7 +12,7 @@ const validator = {
    quantity: value => {
       let isValid = true
       let errors = []
-      if (value <= 0) {
+      if (!Number.isInteger(+value) || +value <= 0) {
          isValid = false
          errors = [...errors, 'Invalid quantity!']
       }
@@ -21,9 +21,26 @@ const validator = {
    price: value => {
       let isValid = true
       let errors = []
-      if (value <= 0) {
+      if (!value) {
          isValid = false
-         errors = [...errors, 'Invalid input!']
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (+value <= 0) {
+         isValid = false
+         errors = [...errors, 'Should be greater than 0!']
+      }
+      return { isValid, errors }
+   },
+   discount: value => {
+      let isValid = true
+      let errors = []
+      if (!value) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (+value < 0) {
+         isValid = false
+         errors = [...errors, 'Should be greater than 0!']
       }
       return { isValid, errors }
    },
