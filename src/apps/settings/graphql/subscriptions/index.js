@@ -156,9 +156,14 @@ export const STATION = gql`
 
 export const STATIONS = gql`
    subscription stations {
-      stations {
-         id
-         name
+      stations: stationsAggregate {
+         aggregate {
+            count(columns: id)
+         }
+         nodes {
+            id
+            name
+         }
       }
    }
 `
