@@ -119,11 +119,16 @@ export default function Item({ state }) {
       if (option.id === state.default) {
          toast.error('Default option cannot be deleted!')
       } else {
-         deleteOption({
-            variables: {
-               id: { _eq: option.id },
-            },
-         })
+         const confirmed = window.confirm(
+            `Do you want to delete option - ${option.label}?`
+         )
+         if (confirmed) {
+            deleteOption({
+               variables: {
+                  id: { _eq: option.id },
+               },
+            })
+         }
       }
    }
    const deleteItem = async () => {
