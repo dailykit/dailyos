@@ -1,21 +1,25 @@
-import { Text, Loader } from '@dailykit/ui'
-import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
+import { Loader, Text, TunnelHeader } from '@dailykit/ui'
+import React from 'react'
 import { toast } from 'react-toastify'
-
-import { randomSuffix } from '../../../../../shared/utils/index'
-import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
-import { SolidTile } from '../styled'
-import { CREATE_PACKAGING } from '../../../graphql'
+import { logger, randomSuffix } from '../../../../../shared/utils/index'
+import { TunnelContainer } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import {
+   ADD_PACKAGING_TUNNEL_ASSEMBLY_PACKET,
+   ADD_PACKAGING_TUNNEL_SACHETS,
+} from '../../../constants/infoMessages'
 import { useTabs } from '../../../context'
+import { CREATE_PACKAGING } from '../../../graphql'
+import { SolidTile } from '../styled'
 
 export default function WorkOrderTypeTunnel({ close }) {
    const { addTab } = useTabs()
 
    const [createPackaging, { loading }] = useMutation(CREATE_PACKAGING, {
       onError: error => {
-         console.log(error)
-         toast.error('Error! Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
       onCompleted: input => {
          const { packagingName, id } = input.createPackaging.returning[0]
@@ -28,7 +32,7 @@ export default function WorkOrderTypeTunnel({ close }) {
       createPackaging({
          variables: {
             object: {
-               packagingName,
+               name: packagingName,
                type,
                packagingSpecification: {
                   data: {
@@ -43,32 +47,26 @@ export default function WorkOrderTypeTunnel({ close }) {
    if (loading) return <Loader />
 
    return (
-      <TunnelContainer>
+      <>
          <TunnelHeader
             title="select type of packaging"
             close={() => {
                close(1)
             }}
-            next={() => {
-               close(1)
-            }}
-            nextAction="Save"
          />
-         <Spacer />
-         <SolidTile onClick={() => createPackagingHandler('SACHET_PACKAGE')}>
-            <Text as="h1">Sachets</Text>
-            <Text as="subtitle">
-               Sachets are used for packaging ingredients for a meal kit.
-            </Text>
-         </SolidTile>
-         <br />
-         <SolidTile onClick={() => createPackagingHandler('ASSEMBLY_PACKAGE')}>
-            <Text as="h1">Assembly Packet</Text>
-            <Text as="subtitle">
-               Assembly packet is used to assemble all the sacheted ingredients
-               into one kit.
-            </Text>
-         </SolidTile>
-      </TunnelContainer>
+         <TunnelContainer>
+            <SolidTile onClick={() => createPackagingHandler('SACHET_PACKAGE')}>
+               <Text as="h1">Sachets</Text>
+               <Text as="subtitle">{ADD_PACKAGING_TUNNEL_SACHETS}</Text>
+            </SolidTile>
+            <br />
+            <SolidTile
+               onClick={() => createPackagingHandler('ASSEMBLY_PACKAGE')}
+            >
+               <Text as="h1">Assembly Packet</Text>
+               <Text as="subtitle">{ADD_PACKAGING_TUNNEL_ASSEMBLY_PACKET}</Text>
+            </SolidTile>
+         </TunnelContainer>
+      </>
    )
 }

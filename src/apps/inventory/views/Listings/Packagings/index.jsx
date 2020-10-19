@@ -2,7 +2,6 @@ import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    ComboButton,
-   IconButton,
    Loader,
    Text,
    Tunnel,
@@ -11,7 +10,9 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
 import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
 import { FlexContainer } from '../../Forms/styled'
@@ -26,12 +27,13 @@ export default function Packagings() {
    const {
       loading: subLoading,
       data: { packagings = [] } = {},
-   } = useSubscription(PACKAGINGS_LISTINGS_SUBSCRIPTION, {
-      onError: error => {
-         toast.error('Error! Please try reloading the page')
-         console.log(error)
-      },
-   })
+      error,
+   } = useSubscription(PACKAGINGS_LISTINGS_SUBSCRIPTION)
+
+   if (error) {
+      toast.error(GENERAL_ERROR_MESSAGE)
+      logger(error)
+   }
 
    const tableRef = React.useRef()
 
@@ -99,7 +101,7 @@ export default function Packagings() {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <PackagingTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
@@ -117,22 +119,20 @@ export default function Packagings() {
                      EXPLORE PACKAGING HUB
                   </ComboButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
-                  </IconButton>
+                     Add Packaging
+                  </ComboButton>
                </FlexContainer>
             </StyledHeader>
             <br />
-
-            <div>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={packagings}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={packagings}
+               rowClick={rowClick}
+               options={tableOptions}
+            />
          </StyledWrapper>
       </>
    )

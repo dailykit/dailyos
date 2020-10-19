@@ -1,7 +1,7 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
-   IconButton,
+   ComboButton,
    Loader,
    Tag,
    Text,
@@ -14,7 +14,9 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
+import { logger } from '../../../../../shared/utils'
 import { AddIcon } from '../../../assets/icons'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import { FlexContainer } from '../../Forms/styled'
@@ -30,15 +32,16 @@ export default function PurchaseOrders() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   const { loading, data: { purchaseOrderItems = [] } = {} } = useSubscription(
-      PURCHASE_ORDERS_SUBSCRIPTION,
-      {
-         onError: error => {
-            toast.error('Error! Please try reloading the page')
-            console.log(error)
-         },
-      }
-   )
+   const {
+      loading,
+      data: { purchaseOrderItems = [] } = {},
+      error,
+   } = useSubscription(PURCHASE_ORDERS_SUBSCRIPTION)
+
+   if (error) {
+      toast.error(GENERAL_ERROR_MESSAGE)
+      logger(error)
+   }
 
    const tableRef = React.useRef()
 
@@ -76,7 +79,7 @@ export default function PurchaseOrders() {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <SelectPurchaseOrderTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
@@ -91,21 +94,20 @@ export default function PurchaseOrders() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
+                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
-                  </IconButton>
+                     Create Purchase Order
+                  </ComboButton>
                </FlexContainer>
             </StyledHeader>
-
-            <div style={{ width: '90%', margin: '0 auto' }}>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={purchaseOrderItems}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <br />
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={purchaseOrderItems}
+               rowClick={rowClick}
+               options={tableOptions}
+            />
          </StyledWrapper>
       </>
    )

@@ -1,36 +1,40 @@
+import { useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
+   ComboButton,
+   Flex,
    IconButton,
+   Loader,
+   Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   Text,
-   Loader,
-   TextButton,
 } from '@dailykit/ui'
+import moment from 'moment'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useSubscription } from '@apollo/react-hooks'
-import moment from 'moment'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
-
+import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { logger } from '../../../../../shared/utils'
 import { AddIcon } from '../../../assets/icons'
-import { StyledHeader, StyledWrapper } from '../styled'
-import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { useTabs } from '../../../context'
 import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
-import tableOptions from '../tableOption'
 import { FlexContainer } from '../../Forms/styled'
-import { useTabs } from '../../../context'
+import { StyledHeader, StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
+import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function WorkOrders() {
@@ -42,12 +46,19 @@ export default function WorkOrders() {
    const {
       data: bulkWorkOrdersData,
       loading: bulkWorkOrderLoading,
-   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION, { onError })
+      error: bulkError,
+   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION)
 
    const {
       data: sachetWorkOrdersData,
       loading: sachetWorkOrderLoading,
-   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION, { onError })
+      error: sachetError,
+   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION)
+
+   if (bulkError || sachetError) {
+      onError(bulkError || sachetError)
+      return
+   }
 
    const rowClick = (e, row) => {
       const { id, type, name } = row._row.data
@@ -122,13 +133,16 @@ export default function WorkOrders() {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <WorkOrderTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-               <Text as="h1">{t(address.concat('work orders'))}</Text>
+               <Flex container alignItems="center">
+                  <Text as="h1">{t(address.concat('work orders'))}</Text>
+                  <Tooltip identifier="work-orders_listings_header_title" />
+               </Flex>
                <FlexContainer>
                   <TextButton
                      type="outline"
@@ -137,27 +151,26 @@ export default function WorkOrders() {
                      Clear Filters
                   </TextButton>
                   <span style={{ width: '10px' }} />
-                  <IconButton
+                  <ComboButton
                      type="solid"
                      onClick={() => {
                         openTunnel(1)
                      }}
                   >
                      <AddIcon color="#fff" size={24} />
-                  </IconButton>
+                     Create Work Order
+                  </ComboButton>
                </FlexContainer>
             </StyledHeader>
 
             <br />
-            <div style={{ width: '90%', margin: '0 auto' }}>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={data}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={data}
+               rowClick={rowClick}
+               options={tableOptions}
+            />
          </StyledWrapper>
       </>
    )

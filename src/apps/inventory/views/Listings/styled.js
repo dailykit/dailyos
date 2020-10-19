@@ -74,7 +74,7 @@ export const OnHandData = styled.span`
    }};
 `
 export const SolidTile = styled.button`
-   width: 70%;
+   width: 100%;
    display: block;
    margin: 0 auto;
    border: 1px solid #cecece;

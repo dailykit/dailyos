@@ -1,9 +1,15 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Loader, Text } from '@dailykit/ui'
+import { Loader, Text, TunnelHeader } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
-import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
+import { logger } from '../../../../../shared/utils'
+import { TunnelContainer } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import {
+   ITEM_PURCHASE_ORDERS_CREATE_TUNNEL,
+   PACKAGING_PURCHASE_ORDERS_CREATE_TUNNEL,
+} from '../../../constants/infoMessages'
 import { useTabs } from '../../../context'
 import {
    CREATE_ITEM_PURCHASE_ORDER,
@@ -12,8 +18,8 @@ import {
 import { SolidTile } from '../styled'
 
 function onError(error) {
-   toast.error(error.message)
-   console.log(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
+   logger(error)
 }
 
 export default function SelectPurchaseOrderTypeTunnel({ close }) {
@@ -54,31 +60,26 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
    if (loading || itemOrderLoading) return <Loader />
 
    return (
-      <TunnelContainer>
+      <>
          <TunnelHeader
             title="select type of packaging"
             close={() => {
                close(1)
             }}
-            next={() => {
-               close(1)
-            }}
-            nextAction="Save"
          />
-         <Spacer />
-         <SolidTile onClick={createPackagingPurchaseOrder}>
-            <Text as="h1">Packaging</Text>
-            <Text as="subtitle">
-               Purchase orders associated with inventory packagings.
-            </Text>
-         </SolidTile>
-         <br />
-         <SolidTile onClick={createSupplierItemPurchaseOrder}>
-            <Text as="h1">Supplier Item</Text>
-            <Text as="subtitle">
-               Purchase orders associated with inventory supplier items.
-            </Text>
-         </SolidTile>
-      </TunnelContainer>
+         <TunnelContainer>
+            <SolidTile onClick={createPackagingPurchaseOrder}>
+               <Text as="h1">Packaging</Text>
+               <Text as="subtitle">
+                  {PACKAGING_PURCHASE_ORDERS_CREATE_TUNNEL}
+               </Text>
+            </SolidTile>
+            <br />
+            <SolidTile onClick={createSupplierItemPurchaseOrder}>
+               <Text as="h1">Supplier Item</Text>
+               <Text as="subtitle">{ITEM_PURCHASE_ORDERS_CREATE_TUNNEL}</Text>
+            </SolidTile>
+         </TunnelContainer>
+      </>
    )
 }
