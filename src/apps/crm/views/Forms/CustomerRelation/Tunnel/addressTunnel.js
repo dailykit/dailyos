@@ -4,11 +4,17 @@ import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
 import { concatAddress } from '../../../../Utils'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
+import { logger } from '../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
    const { loading: listLoading, data: allAddress } = useQuery(ALL_DATA, {
       variables: {
          keycloakId: id,
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
    if (listLoading) return <Loader />

@@ -14,9 +14,7 @@ export const StyledHeader = styled.div`
    }
 `
 export const StyledWrapper = styled.div`
-   margin: 0;
-   max-width: 1280px;
-   margin-bottom: 80px;
+   margin: 0 32px;
    h1 {
       color: #555b6e;
       font-size: 20px;

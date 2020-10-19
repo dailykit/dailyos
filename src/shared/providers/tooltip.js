@@ -25,6 +25,7 @@ export const TooltipProvider = ({ app, children }) => {
    const { loading } = useQuery(TOOLTIPS_BY_APP, {
       variables: { title: app },
       onCompleted: ({ app = {} }) => {
+         console.log(app)
          if (!isEmpty(app.tooltips)) {
             const tooltips = {}
 
@@ -50,6 +51,7 @@ export const useTooltip = () => {
 
    const tooltip = React.useCallback(
       identifier => {
+         console.log(identifier)
          if (has(state.tooltips, identifier)) {
             return state.tooltips[identifier]
          }

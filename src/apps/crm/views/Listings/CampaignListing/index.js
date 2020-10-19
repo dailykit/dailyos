@@ -7,11 +7,13 @@ import {
    ButtonGroup,
    IconButton,
    PlusIcon,
-   Toggle,
    Loader,
    Tunnels,
    Tunnel,
    useTunnel,
+   Flex,
+   ComboButton,
+   Form,
 } from '@dailykit/ui'
 import {
    CAMPAIGN_LISTING,
@@ -20,12 +22,17 @@ import {
    DELETE_CAMPAIGN,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
+import options from '../../tableOptions'
 
 const CampaignListing = () => {
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [campaign, setCampaign] = useState(undefined)
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -43,9 +50,7 @@ const CampaignListing = () => {
          setCampaign(result)
       },
    })
-   if (error) {
-      console.log(error)
-   }
+
    const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
 
    // Mutation
@@ -54,10 +59,17 @@ const CampaignListing = () => {
          toast.info('Coupon Updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
-   React.useEffect(() => {
+
+   if (error) {
+      toast.error('Something went wrong !')
+      logger(error)
+   }
+
+   useEffect(() => {
       if (!tab) {
          addTab('Campaign', '/crm/campaign')
       }
@@ -72,13 +84,24 @@ const CampaignListing = () => {
       })
    }
 
+   const DeleteButton = () => {
+      return (
+         <IconButton type="ghost">
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
+      )
+   }
+
    const ToggleButton = ({ cell }) => {
       const rowData = cell._cell.row.data
       return (
-         <Toggle
-            checked={rowData.active}
-            setChecked={() => toggleHandler(!rowData.active, rowData.id)}
-         />
+         <Form.Group>
+            <Form.Toggle
+               name="campaign_active"
+               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               value={rowData.active}
+            />
+         </Form.Group>
       )
    }
 
@@ -108,8 +131,8 @@ const CampaignListing = () => {
       }
    }
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
+   const rowClick = (e, cell) => {
+      const { id, name } = cell._cell.row.data
       const param = `/crm/campaign/${id}`
       const tabTitle = name
       addTab(tabTitle, param)
@@ -121,6 +144,16 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         cssClass: 'rowClick',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
       },
       {
          title: 'Campaign Type',
@@ -128,6 +161,12 @@ const CampaignListing = () => {
          headerFilter: true,
          hozAlign: 'left',
          width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_type_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Active',
@@ -139,6 +178,12 @@ const CampaignListing = () => {
             return '' + cell.getValue()
          },
          width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_active_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Action',
@@ -147,7 +192,7 @@ const CampaignListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         formatter: reactFormatter(<DeleteButton />),
          hozAlign: 'center',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'
@@ -159,23 +204,30 @@ const CampaignListing = () => {
    if (listLoading || loading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  0fr">
-            <Text as="title">
-               Campaign(
-               {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})
-            </Text>
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container height="80px" alignItems="center">
+               <Text as="title">
+                  Campaign(
+                  {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
+                  )
+               </Text>
+               <Tooltip identifier="campaign_list_heading" />
+            </Flex>
             <ButtonGroup>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
+               <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
-               </IconButton>
+                  Create Campaign
+               </ComboButton>
             </ButtonGroup>
-         </StyledHeader>
+         </Flex>
          {Boolean(campaign) && (
             <ReactTabulator
                columns={columns}
                data={campaign}
-               rowClick={rowClick}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Campaigns Available Yet !',
+               }}
                ref={tableRef}
             />
          )}
@@ -189,16 +241,3 @@ const CampaignListing = () => {
 }
 
 export default CampaignListing
-const options = {
-   cellVertAlign: 'middle',
-   layout: 'fitColumns',
-   autoResize: true,
-   maxHeight: '420px',
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

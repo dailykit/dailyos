@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Text, Avatar, useTunnel, Loader } from '@dailykit/ui'
+import { Text, Avatar, useTunnel, Loader, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
@@ -7,6 +7,9 @@ import { useTabs } from '../../../../context'
 import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../../shared/components'
+import { useTooltip } from '../../../../../../shared/providers'
+import { toast } from 'react-toastify'
 import {
    OrderStatusTunnel,
    PaymentStatusTunnel,
@@ -26,14 +29,17 @@ import {
    CardInfo,
    Heading,
 } from './styled'
+import options from '../../../tableOptions'
+import { logger } from '../../../../../../shared/utils'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const [products, setProducts] = useState(undefined)
    const tableRef = useRef()
-   const { data: orderData, loading, error } = useQuery(ORDER, {
+   const { data: orderData, loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
       },
@@ -48,10 +54,12 @@ const OrderInfo = () => {
          })
          setProducts(result)
       },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
+      },
    })
-   if (error) {
-      console.log(error)
-   }
+
    const setOrder = (orderId, order) => {
       dispatch({
          type: 'STORE_TAB_DATA',
@@ -63,7 +71,18 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products', hozAlign: 'left', width: 300 },
+      {
+         title: 'Products',
+         field: 'products',
+         hozAlign: 'left',
+         width: 300,
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Servings',
          field: 'servings',
@@ -71,6 +90,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_serving_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          widht: 100,
       },
@@ -82,6 +107,12 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          widht: 100,
       },
       {
@@ -91,6 +122,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'product_listing_discounted_price_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          widht: 100,
       },
@@ -150,10 +187,8 @@ const OrderInfo = () => {
    if (loading) return <Loader />
    return (
       <StyledWrapper>
-         <Heading>
-            <StyledContainer
-               style={{ margin: '16px', boxSizing: 'border-box' }}
-            >
+         <Flex container alignItems="center" justifyContent="space-between">
+            <StyledContainer>
                <StyledInput
                   type="button"
                   onClick={() => setOrder('', false)}
@@ -165,13 +200,16 @@ const OrderInfo = () => {
             <SmallText onClick={() => openTunnel(1)}>
                Check Order Status
             </SmallText>
-         </Heading>
-         <Text as="h1">Order Id: #{tab.data.oid}</Text>
+         </Flex>
+         <Flex container margin="0 0 0 6px" height="80px" alignItems="center">
+            <Text as="h1">Order Id: #{tab.data.oid}</Text>
+            <Tooltip identifier="product_list_heading" />
+         </Flex>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
                   <StyledSpan>
-                     Ordered on:{' '}
+                     Ordered on:
                      {orderData?.order?.created_at.substr(0, 16) || 'N/A'}
                   </StyledSpan>
                   <StyledSpan>Deliverd on: N/A</StyledSpan>
@@ -188,7 +226,10 @@ const OrderInfo = () => {
                         columns={columns}
                         data={products}
                         ref={tableRef}
-                        options={options}
+                        options={{
+                           ...options,
+                           placeholder: 'No Order Available Yet !',
+                        }}
                      />
                   )}
                   <CardInfo>
@@ -243,16 +284,3 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

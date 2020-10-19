@@ -1,7 +1,10 @@
 import React, { useRef } from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
+import options from '../../tableOptions'
+import { Tooltip } from '../../../../../shared/components'
+
 const WalletTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
@@ -108,34 +111,23 @@ const WalletTable = () => {
       addTab(name, param)
    }
    return (
-      <React.Fragment>
-         <div style={{ padding: '16px' }}>
+      <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
+         <Flex container height="80px" padding="16px" alignItems="center">
             <Text as="title">Wallet Transactions</Text>
-         </div>
-         <div style={{ overflowX: 'scroll' }}>
-            <ReactTabulator
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               ref={tableRef}
-               options={options}
-            />
-         </div>
-      </React.Fragment>
+            <Tooltip identifier="wallet_list_heading" />
+         </Flex>
+         <ReactTabulator
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            ref={tableRef}
+            options={{
+               ...options,
+               placeholder: 'No Wallet Data Available Yet !',
+            }}
+         />
+      </Flex>
    )
 }
 
 export default WalletTable
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

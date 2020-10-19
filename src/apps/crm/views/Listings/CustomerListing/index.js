@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Text, Loader } from '@dailykit/ui'
+import { Text, Loader, Flex } from '@dailykit/ui'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
@@ -10,9 +10,15 @@ import {
    TOTAL_REVENUE,
    CUSTOMERS_LISTING,
 } from '../../../graphql'
+import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
+import options from '../../tableOptions'
+import { toast } from 'react-toastify'
 
 const CustomerListing = () => {
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const tableRef = useRef(null)
    const [customersList, setCustomersList] = useState(undefined)
 
@@ -23,7 +29,7 @@ const CustomerListing = () => {
    )
 
    // Query
-   const { loading: listloading, error } = useQuery(CUSTOMERS_LISTING, {
+   const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
       onCompleted: ({ customers = {} }) => {
          const result = customers.map(customer => {
             return {
@@ -45,10 +51,11 @@ const CustomerListing = () => {
          })
          setCustomersList(result)
       },
+      onError: error => {
+         toast.error('Something went wrong !')
+         logger(error)
+      },
    })
-   if (error) {
-      console.log(error)
-   }
 
    useEffect(() => {
       if (!tab) {
@@ -56,8 +63,8 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
-   const rowClick = (e, row) => {
-      const { keycloakId, name } = row._row.data
+   const rowClick = (e, cell) => {
+      const { keycloakId, name } = cell._cell.row.data
       const param = '/crm/customers/'.concat(keycloakId)
       addTab(name, param)
    }
@@ -67,6 +74,16 @@ const CustomerListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         cssClass: 'rowClick',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Phone',
@@ -77,15 +94,38 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 100,
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_phone_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 150,
       },
       {
          title: 'Email',
          field: 'email',
          headerFilter: true,
          hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_email_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
-      { title: 'Source', field: 'source', hozAlign: 'left', width: '150' },
+      {
+         title: 'Source',
+         field: 'source',
+         hozAlign: 'left',
+         width: '150',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_source_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Referrals Sent',
          field: 'refSent',
@@ -93,6 +133,12 @@ const CustomerListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_referrals_sent_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },
@@ -104,6 +150,12 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_paid_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
       {
@@ -113,6 +165,12 @@ const CustomerListing = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_orders_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 150,
       },
@@ -124,6 +182,12 @@ const CustomerListing = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
    ]
@@ -133,33 +197,42 @@ const CustomerListing = () => {
    if (listloading) return <Loader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="1fr 1fr">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            padding="32px 0 0 0"
+         >
             <HeadingTile
                title="Total Customers"
                value={
-                  customersCount?.customers_aggregate?.aggregate?.count || '...'
+                  customersCount?.customers_aggregate?.aggregate?.count || 0
                }
             />
             <HeadingTile
                title="Total Revenue generated"
                value={'$'.concat(
-                  totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid ||
-                     '...'
+                  totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid || 0
                )}
             />
-         </StyledHeader>
-         <StyledHeader gridCol="10fr 1fr">
+         </Flex>
+
+         <Flex container height="80px" alignItems="center">
             <Text as="title">
                Customers(
-               {customersCount?.customers_aggregate?.aggregate?.count || '...'})
+               {customersCount?.customers_aggregate?.aggregate?.count || 0})
             </Text>
-         </StyledHeader>
+            <Tooltip identifier="customer_list_heading" />
+         </Flex>
+
          {Boolean(customersList) && (
             <ReactTabulator
                columns={columns}
                data={customersList}
-               rowClick={rowClick}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Customers Available Yet !',
+               }}
                ref={tableRef}
             />
          )}
@@ -168,17 +241,3 @@ const CustomerListing = () => {
 }
 
 export default CustomerListing
-
-const options = {
-   cellVertAlign: 'middle',
-   layout: 'fitColumns',
-   autoResize: true,
-   maxHeight: '420px',
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

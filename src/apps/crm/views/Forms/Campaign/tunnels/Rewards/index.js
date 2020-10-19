@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, TunnelHeader, Loader, Tunnel, Tunnels } from '@dailykit/ui'
+import { Text, TunnelHeader, Loader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, CAMPAIGN_DATA } from '../../../../../graphql'
-import RewardDetailsTunnel from '../RewardDetails'
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../shared/components'
 
 export default function RewardTypeTunnel({
    state,
@@ -18,7 +19,7 @@ export default function RewardTypeTunnel({
 
    const [types, setTypes] = useState([])
    // Subscription
-   const { data: rewardType, loading } = useSubscription(CAMPAIGN_DATA, {
+   const { data: rewardType, loading, error } = useSubscription(CAMPAIGN_DATA, {
       variables: {
          id: state.id,
       },
@@ -31,10 +32,13 @@ export default function RewardTypeTunnel({
                }
             }
          )
-         console.log(result)
          setTypes(result)
       },
    })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    //Mutation
    const [createReward] = useMutation(CREATE_REWARD, {
@@ -44,7 +48,8 @@ export default function RewardTypeTunnel({
          toast.success('Reward created!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -62,10 +67,13 @@ export default function RewardTypeTunnel({
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <TunnelHeader
-                  title="Select Type of Reward"
-                  close={() => closeTunnel(1)}
-               />
+               <Flex container alignItems="center">
+                  <TunnelHeader
+                     title="Select Type of Reward"
+                     close={() => closeTunnel(1)}
+                  />
+                  <Tooltip identifier="campaign_reward_type" />
+               </Flex>
                <TunnelBody>
                   {types.map(type => {
                      return (
