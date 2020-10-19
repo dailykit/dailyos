@@ -22,12 +22,14 @@ import { useTabs } from '../../../../../context'
 
 // local imports
 import tableOptions from '../../../tableOption'
+import { useTooltip } from '../../../../../../../shared/providers'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
 const CustomizableProducts = () => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const tableRef = React.useRef()
 
@@ -72,6 +74,25 @@ const CustomizableProducts = () => {
          title: t(address.concat('product name')),
          field: 'name',
          headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/recipe/customizable-products/${id}`)
+         },
+         cssClass: 'colHover',
+         headerTooltip: function (column) {
+            const identifier = 'customizable_products_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Actions',
@@ -84,11 +105,6 @@ const CustomizableProducts = () => {
          width: 150,
       },
    ]
-
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/recipe/customizable-products/${id}`)
-   }
 
    if (loading) return <Loader />
 
@@ -105,7 +121,6 @@ const CustomizableProducts = () => {
             ref={tableRef}
             columns={columns}
             data={customizableProducts}
-            rowClick={rowClick}
             options={tableOptions}
          />
       </>
@@ -116,10 +131,7 @@ function DeleteProduct({ cell, onDelete }) {
    const product = cell.getData()
 
    return (
-      <IconButton
-         type="ghost"
-         onClick={e => e.stopPropagation() && onDelete(product)}
-      >
+      <IconButton type="ghost" onClick={() => onDelete(product)}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
