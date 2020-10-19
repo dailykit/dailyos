@@ -248,10 +248,12 @@ const PricingTunnel = ({ state, close }) => {
                </Form.Group>
                <Spacer xAxis size="16px" />
                <Form.Group>
-                  <Flex container alignItems="center">
-                     Price*
-                     <Tooltip identifier="inventory_product_option_price" />
-                  </Flex>
+                  <Form.Label htmlFor="price" title="price">
+                     <Flex container alignItems="center">
+                        Price*
+                        <Tooltip identifier="inventory_product_option_price" />
+                     </Flex>
+                  </Form.Label>
                   <Form.Number
                      id="price"
                      name="price"
@@ -291,7 +293,7 @@ const PricingTunnel = ({ state, close }) => {
                </Form.Group>
                <Spacer xAxis size="16px" />
                <Form.Group>
-                  <Form.Label htmlFor="price" title="price">
+                  <Form.Label htmlFor="discount" title="discount">
                      <Flex container alignItems="center">
                         Discount(%)*
                         <Tooltip identifier="inventory_product_option_discount" />
