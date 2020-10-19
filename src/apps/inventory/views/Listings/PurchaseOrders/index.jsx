@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    ComboButton,
+   Flex,
    Loader,
    Tag,
    Text,
@@ -14,6 +15,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
+import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { logger } from '../../../../../shared/utils'
 import { AddIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -85,7 +87,10 @@ export default function PurchaseOrders() {
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-               <Text as="title">{t(address.concat('purchase orders'))}</Text>
+               <Flex container alignItems="center">
+                  <Text as="title">{t(address.concat('purchase orders'))}</Text>
+                  <Tooltip identifier="purchase-orders_listings_header_title" />
+               </Flex>
                <FlexContainer>
                   <TextButton
                      type="outline"

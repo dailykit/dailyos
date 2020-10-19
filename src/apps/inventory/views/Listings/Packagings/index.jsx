@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    ComboButton,
+   Flex,
    Loader,
    Text,
    Tunnel,
@@ -10,6 +11,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { logger } from '../../../../../shared/utils'
 import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -107,7 +109,10 @@ export default function Packagings() {
          </Tunnels>
          <StyledWrapper>
             <StyledHeader>
-               <Text as="title">Packagings</Text>
+               <Flex container alignItems="center">
+                  <Text as="title">Packagings</Text>
+                  <Tooltip identifier="packagings_listings_header_title" />
+               </Flex>
                <FlexContainer>
                   <ComboButton
                      type="outline"
