@@ -136,9 +136,7 @@ const ProductsTunnel = ({ state, close }) => {
             title={t(address.concat('select products to add'))}
             right={{
                action: save,
-               title: busy
-                  ? t(address.concat('saving'))
-                  : t(address.concat('save')),
+               title: busy ? 'Adding...' : 'Add',
             }}
             close={() => close(2)}
          />
@@ -191,7 +189,7 @@ const ProductsTunnel = ({ state, close }) => {
                         </ListOptions>
                      </List>
                   ) : (
-                     <Filler message="No products found!" />
+                     <Filler message="No products found!" height="500px" />
                   )}
                </>
             )}
