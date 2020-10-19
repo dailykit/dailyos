@@ -222,6 +222,7 @@ export default function InventoryProduct() {
                   <Flex flex="2">
                      <Description state={state} />
                   </Flex>
+                  <Spacer xAxis size="16px" />
                   <Flex flex="1">
                      <Assets state={state} />
                   </Flex>
