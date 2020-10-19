@@ -133,8 +133,10 @@ export default StationsListing
 
 const Delete = ({ cell, remove }) => {
    const removeItem = () => {
-      const { id } = cell._cell.row.data
-      remove({ variables: { id } })
+      const { id = null, name = '' } = cell._cell.row.data
+      if (window.confirm(`Are your sure you want to delete ${name} station?`)) {
+         remove({ variables: { id } })
+      }
    }
 
    return (
