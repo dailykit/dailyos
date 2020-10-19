@@ -12,6 +12,7 @@ import {
 import React from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -25,6 +26,7 @@ import PackagingTypeTunnel from './PackagingTypeTunnel'
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const {
       loading: subLoading,
@@ -39,13 +41,22 @@ export default function Packagings() {
 
    const tableRef = React.useRef()
 
-   const rowClick = (_, row) => {
-      const { id, packagingName } = row._row.data
+   const openForm = (_, cell) => {
+      const { id, packagingName } = cell.getData()
       addTab(packagingName, `/inventory/packagings/${id}`)
    }
 
    const columns = [
-      { title: 'Name', field: 'packagingName', headerFilter: true },
+      {
+         title: 'Name',
+         field: 'packagingName',
+         headerFilter: true,
+         cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_name'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
       {
          title: 'Supplier',
          field: 'supplier',
@@ -54,6 +65,10 @@ export default function Packagings() {
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 180,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_Supplier'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Type',
@@ -62,6 +77,10 @@ export default function Packagings() {
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 200,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_Type'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Par Level',
@@ -71,6 +90,10 @@ export default function Packagings() {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 120,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_Par_Level'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'On Hand',
@@ -79,6 +102,10 @@ export default function Packagings() {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 120,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_On_Hand'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Max Level',
@@ -87,6 +114,10 @@ export default function Packagings() {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 120,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_Max_Level'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Awaiting',
@@ -95,6 +126,10 @@ export default function Packagings() {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 120,
+         headerTooltip: col => {
+            const identifier = 'packagings_listings_table_awaiting'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
    ]
 
@@ -135,7 +170,6 @@ export default function Packagings() {
                ref={tableRef}
                columns={columns}
                data={packagings}
-               rowClick={rowClick}
                options={tableOptions}
             />
          </StyledWrapper>
