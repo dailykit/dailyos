@@ -23,7 +23,6 @@ import {
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-// eslint-disable-next-line import/no-cycle
 import { Recommendations } from '..'
 import {
    DeleteIcon,
@@ -51,7 +50,11 @@ import {
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 
 import { ItemInfo, StyledTable, StyledWrapper, Modifier } from './styled'
-import { OperationConfig } from '../../../../../../../../shared/components'
+import {
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
@@ -102,8 +105,8 @@ export default function Recipe({ state }) {
          toast.success('Default set!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [updateProductOption] = useMutation(
@@ -113,8 +116,8 @@ export default function Recipe({ state }) {
             toast.success('Updated!')
          },
          onError: error => {
-            console.log(error)
-            toast.error('Error!')
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
@@ -126,8 +129,8 @@ export default function Recipe({ state }) {
          toast.success('Product options deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [removeRecipe] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -143,8 +146,8 @@ export default function Recipe({ state }) {
          deleteOptions()
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -256,256 +259,262 @@ export default function Recipe({ state }) {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
-         <StyledWrapper>
-            {state.simpleRecipe ? (
-               <SectionTabs>
-                  <SectionTabList>
-                     <SectionTab>
-                        <ItemInfo>
-                           {Boolean(state.simpleRecipe.image) && (
-                              <img src={state.simpleRecipe.image} />
-                           )}
-                           <h3>{state.simpleRecipe.name}</h3>
-                           <button onClick={remove}>
-                              <DeleteIcon color="#fff" />
-                           </button>
-                        </ItemInfo>
-                     </SectionTab>
-                  </SectionTabList>
-                  <SectionTabPanels>
-                     <SectionTabPanel>
-                        <Text as="h1">{state.simpleRecipe.name}</Text>
-                        <HorizontalTabs>
-                           <HorizontalTabList>
-                              <HorizontalTab>Pricing</HorizontalTab>
-                              <HorizontalTab>Recommendations</HorizontalTab>
-                           </HorizontalTabList>
-                           <HorizontalTabPanels>
-                              <HorizontalTabPanel>
-                                 <StyledTable>
-                                    <thead>
-                                       <tr>
-                                          <th> </th>
-                                          <th style={{ textAlign: 'center' }}>
-                                             {t(address.concat('visibility'))}
-                                          </th>
-                                          <th style={{ textAlign: 'center' }}>
-                                             {t(address.concat('default'))}
-                                          </th>
-                                          <th>
-                                             {t(address.concat('servings'))}
-                                          </th>
-                                          <th>
-                                             {t(
-                                                address.concat(
-                                                   'recommended price'
-                                                )
-                                             )}
-                                          </th>
-                                          <th>{t(address.concat('price'))}</th>
-                                          <th>
-                                             {t(address.concat('discount'))}
-                                          </th>
-                                          <th>
-                                             {t(
-                                                address.concat(
-                                                   'discounted price'
-                                                )
-                                             )}
-                                          </th>
-                                          <th> Modifiers </th>
-                                          <th> Operational Configuration </th>
-                                          <th> </th>
-                                       </tr>
-                                    </thead>
-                                    <tbody>
-                                       {state.simpleRecipeProductOptions
-                                          .filter(
-                                             option => option.type === 'mealKit'
-                                          )
-                                          .map((option, i) => (
-                                             <tr key={option.id}>
-                                                <td>
-                                                   {i === 0 ? (
-                                                      <span>
-                                                         {t(
-                                                            address.concat(
-                                                               'meal kit'
-                                                            )
-                                                         )}
-                                                      </span>
-                                                   ) : (
-                                                      ''
-                                                   )}
-                                                </td>
-                                                <td
-                                                   style={{
-                                                      textAlign: 'center',
-                                                   }}
-                                                >
-                                                   <span
-                                                      hidden={!option.isActive}
-                                                   >
-                                                      <EyeIcon color="#00A7E1" />
+         {state.simpleRecipe ? (
+            <SectionTabs>
+               <SectionTabList>
+                  <SectionTab>
+                     <ItemInfo>
+                        {Boolean(state.simpleRecipe.image) && (
+                           <img src={state.simpleRecipe.image} />
+                        )}
+                        <h3>{state.simpleRecipe.name}</h3>
+                        <button onClick={remove}>
+                           <DeleteIcon color="#fff" />
+                        </button>
+                     </ItemInfo>
+                  </SectionTab>
+               </SectionTabList>
+               <SectionTabPanels>
+                  <SectionTabPanel>
+                     <Text as="h1">{state.simpleRecipe.name}</Text>
+                     <HorizontalTabs>
+                        <HorizontalTabList>
+                           <HorizontalTab>
+                              <Flex container alignItems="center">
+                                 Pricing
+                                 <Tooltip identifier="simple_recipe_product_pricing" />
+                              </Flex>
+                           </HorizontalTab>
+                           <HorizontalTab>
+                              <Flex container alignItems="center">
+                                 Recommendations
+                                 <Tooltip identifier="simple_recipe_product_recommendations" />
+                              </Flex>
+                           </HorizontalTab>
+                        </HorizontalTabList>
+                        <HorizontalTabPanels>
+                           <HorizontalTabPanel>
+                              <StyledTable>
+                                 <thead>
+                                    <tr>
+                                       <th> </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Visibility
+                                             <Tooltip identifier="simple_recipe_product_option_visibility" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Default
+                                             <Tooltip identifier="simple_recipe_product_option_default" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Serving
+                                             <Tooltip identifier="simple_recipe_product_option_serving" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Recommended Price
+                                             <Tooltip identifier="simple_recipe_product_option_recommended_price" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Price
+                                             <Tooltip identifier="simple_recipe_product_option_price" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Discount
+                                             <Tooltip identifier="simple_recipe_product_option_discount" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Discounted Price
+                                             <Tooltip identifier="simple_recipe_product_option_discounted_price" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Modifiers
+                                             <Tooltip identifier="simple_recipe_product_option_modifiers" />
+                                          </Flex>
+                                       </th>
+                                       <th>
+                                          <Flex container alignItems="center">
+                                             Operational Configuration
+                                             <Tooltip identifier="simple_recipe_product_option_opconfig" />
+                                          </Flex>
+                                       </th>
+                                       <th> </th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {state.simpleRecipeProductOptions
+                                       .filter(
+                                          option => option.type === 'mealKit'
+                                       )
+                                       .map((option, i) => (
+                                          <tr key={option.id}>
+                                             <td>
+                                                {i === 0 ? (
+                                                   <span>
+                                                      {t(
+                                                         address.concat(
+                                                            'meal kit'
+                                                         )
+                                                      )}
                                                    </span>
-                                                </td>
-                                                <td
-                                                   style={{
-                                                      textAlign: 'center',
-                                                   }}
-                                                >
-                                                   <input
-                                                      type="radio"
-                                                      checked={
-                                                         state.default ===
-                                                         option.id
-                                                      }
-                                                      onClick={() =>
-                                                         changeDefault(option)
-                                                      }
-                                                   />
-                                                </td>
-                                                <td>
-                                                   {
-                                                      option.simpleRecipeYield
-                                                         .yield.serving
+                                                ) : (
+                                                   ''
+                                                )}
+                                             </td>
+                                             <td
+                                                style={{
+                                                   textAlign: 'center',
+                                                }}
+                                             >
+                                                <span hidden={!option.isActive}>
+                                                   <EyeIcon color="#00A7E1" />
+                                                </span>
+                                             </td>
+                                             <td
+                                                style={{
+                                                   textAlign: 'center',
+                                                }}
+                                             >
+                                                <input
+                                                   type="radio"
+                                                   checked={
+                                                      state.default ===
+                                                      option.id
                                                    }
-                                                </td>
-                                                <td>
-                                                   {option.cost
-                                                      ? `$${
-                                                           option.cost +
-                                                           (option.cost *
-                                                              foodCostPercent.lowerLimit) /
-                                                              100
-                                                        } - $${
-                                                           option.cost +
-                                                           (option.cost *
-                                                              foodCostPercent.upperLimit) /
-                                                              100
-                                                        }`
-                                                      : '-'}
-                                                </td>
-                                                <td>
-                                                   ${option.price[0].value}{' '}
-                                                </td>
-                                                <td>
-                                                   {option.price[0].discount} %
-                                                </td>
-                                                <td>
-                                                   $
-                                                   {(
-                                                      parseFloat(
-                                                         option.price[0].value
-                                                      ) -
-                                                      parseFloat(
-                                                         option.price[0].value
-                                                      ) *
-                                                         (parseFloat(
-                                                            option.price[0]
-                                                               .discount
-                                                         ) /
-                                                            100)
-                                                   ).toFixed(2) || ''}
-                                                </td>
-                                                <td>
-                                                   {option.modifier?.name ? (
-                                                      <Modifier>
-                                                         <span>
-                                                            <span
-                                                               tabIndex="0"
-                                                               role="button"
-                                                               onKeyPress={() =>
-                                                                  editModifier(
-                                                                     option.modifier
-                                                                  )
-                                                               }
-                                                               onClick={() =>
-                                                                  editModifier(
-                                                                     option.modifier
-                                                                  )
-                                                               }
-                                                            >
-                                                               <EditIcon
-                                                                  color="#00A7E1"
-                                                                  size={14}
-                                                               />
-                                                            </span>
-                                                            <span
-                                                               tabIndex="0"
-                                                               role="button"
-                                                               onKeyPress={() =>
-                                                                  removeModifier(
-                                                                     option.id
-                                                                  )
-                                                               }
-                                                               onClick={() =>
-                                                                  removeModifier(
-                                                                     option.id
-                                                                  )
-                                                               }
-                                                            >
-                                                               <DeleteIcon
-                                                                  color="#FF5A52"
-                                                                  size={14}
-                                                               />
-                                                            </span>
-                                                         </span>
-                                                         {option.modifier.name}
-                                                      </Modifier>
-                                                   ) : (
-                                                      <IconButton
-                                                         type="ghost"
-                                                         onClick={() => {
-                                                            modifiersDispatch({
-                                                               type: 'META',
-                                                               payload: {
-                                                                  name:
-                                                                     'optionId',
-                                                                  value:
-                                                                     option.id,
-                                                               },
-                                                            })
-                                                            openModifiersTunnel(
-                                                               1
-                                                            )
-                                                         }}
-                                                      >
-                                                         <PlusIcon color="#36B6E2" />
-                                                      </IconButton>
-                                                   )}
-                                                </td>
-                                                <td>
-                                                   {option.operationConfig ? (
-                                                      <Flex
-                                                         container
-                                                         alignItems="center"
-                                                         justifyContent="space-between"
-                                                      >
-                                                         <Text as="p">
-                                                            {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                         </Text>
+                                                   onClick={() =>
+                                                      changeDefault(option)
+                                                   }
+                                                />
+                                             </td>
+                                             <td>
+                                                {
+                                                   option.simpleRecipeYield
+                                                      .yield.serving
+                                                }
+                                             </td>
+                                             <td>
+                                                {option.cost
+                                                   ? `$${
+                                                        option.cost +
+                                                        (option.cost *
+                                                           foodCostPercent.lowerLimit) /
+                                                           100
+                                                     } - $${
+                                                        option.cost +
+                                                        (option.cost *
+                                                           foodCostPercent.upperLimit) /
+                                                           100
+                                                     }`
+                                                   : '-'}
+                                             </td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>
+                                                {option.price[0].discount} %
+                                             </td>
+                                             <td>
+                                                $
+                                                {(
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) -
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) *
+                                                      (parseFloat(
+                                                         option.price[0]
+                                                            .discount
+                                                      ) /
+                                                         100)
+                                                ).toFixed(2) || ''}
+                                             </td>
+                                             <td>
+                                                {option.modifier?.name ? (
+                                                   <Modifier>
+                                                      <span>
                                                          <span
-                                                            onClick={() => {
-                                                               productDispatch({
-                                                                  type:
-                                                                     'OPTION_ID',
-                                                                  payload: {
-                                                                     optionId:
-                                                                        option.id,
-                                                                  },
-                                                               })
-                                                               openOperationConfigTunnel(
-                                                                  1
+                                                            tabIndex="0"
+                                                            role="button"
+                                                            onKeyPress={() =>
+                                                               editModifier(
+                                                                  option.modifier
                                                                )
-                                                            }}
+                                                            }
+                                                            onClick={() =>
+                                                               editModifier(
+                                                                  option.modifier
+                                                               )
+                                                            }
                                                          >
-                                                            <EditIcon color="#36B6E2" />
+                                                            <EditIcon
+                                                               color="#00A7E1"
+                                                               size={14}
+                                                            />
                                                          </span>
-                                                      </Flex>
-                                                   ) : (
-                                                      <TextButton
-                                                         type="ghost"
+                                                         <span
+                                                            tabIndex="0"
+                                                            role="button"
+                                                            onKeyPress={() =>
+                                                               removeModifier(
+                                                                  option.id
+                                                               )
+                                                            }
+                                                            onClick={() =>
+                                                               removeModifier(
+                                                                  option.id
+                                                               )
+                                                            }
+                                                         >
+                                                            <DeleteIcon
+                                                               color="#FF5A52"
+                                                               size={14}
+                                                            />
+                                                         </span>
+                                                      </span>
+                                                      {option.modifier.name}
+                                                   </Modifier>
+                                                ) : (
+                                                   <IconButton
+                                                      type="ghost"
+                                                      onClick={() => {
+                                                         modifiersDispatch({
+                                                            type: 'META',
+                                                            payload: {
+                                                               name: 'optionId',
+                                                               value: option.id,
+                                                            },
+                                                         })
+                                                         openModifiersTunnel(1)
+                                                      }}
+                                                   >
+                                                      <PlusIcon color="#36B6E2" />
+                                                   </IconButton>
+                                                )}
+                                             </td>
+                                             <td>
+                                                {option.operationConfig ? (
+                                                   <Flex
+                                                      container
+                                                      alignItems="center"
+                                                      justifyContent="space-between"
+                                                   >
+                                                      <Text as="p">
+                                                         {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
+                                                      </Text>
+                                                      <span
                                                          onClick={() => {
                                                             productDispatch({
                                                                type:
@@ -520,209 +529,200 @@ export default function Recipe({ state }) {
                                                             )
                                                          }}
                                                       >
-                                                         <PlusIcon color="#36B6E2" />
-                                                      </TextButton>
-                                                   )}
-                                                </td>
-                                                <td>
-                                                   <IconButton
-                                                      onClick={() =>
-                                                         editOption(option)
-                                                      }
-                                                   >
-                                                      <EditIcon color="#00A7E1" />
-                                                   </IconButton>
-                                                </td>
-                                             </tr>
-                                          ))}
-                                       {state.simpleRecipeProductOptions
-                                          .filter(
-                                             option =>
-                                                option.type === 'readyToEat'
-                                          )
-                                          .map((option, i) => (
-                                             <tr key={option.id}>
-                                                <td>
-                                                   {i === 0 ? (
-                                                      <span>
-                                                         {t(
-                                                            address.concat(
-                                                               'ready to eat'
-                                                            )
-                                                         )}
+                                                         <EditIcon color="#36B6E2" />
                                                       </span>
-                                                   ) : (
-                                                      ''
-                                                   )}
-                                                </td>
-                                                <td
-                                                   style={{
-                                                      textAlign: 'center',
-                                                   }}
-                                                >
-                                                   <span
-                                                      hidden={!option.isActive}
+                                                   </Flex>
+                                                ) : (
+                                                   <TextButton
+                                                      type="ghost"
+                                                      onClick={() => {
+                                                         productDispatch({
+                                                            type: 'OPTION_ID',
+                                                            payload: {
+                                                               optionId:
+                                                                  option.id,
+                                                            },
+                                                         })
+                                                         openOperationConfigTunnel(
+                                                            1
+                                                         )
+                                                      }}
                                                    >
-                                                      <EyeIcon color="#00A7E1" />
-                                                   </span>
-                                                </td>
-                                                <td
-                                                   style={{
-                                                      textAlign: 'center',
-                                                   }}
-                                                >
-                                                   <input
-                                                      type="radio"
-                                                      checked={
-                                                         state.default ===
-                                                         option.id
-                                                      }
-                                                      onClick={() =>
-                                                         changeDefault(option)
-                                                      }
-                                                   />
-                                                </td>
-                                                <td>
-                                                   {
-                                                      option.simpleRecipeYield
-                                                         .yield.serving
+                                                      <PlusIcon color="#36B6E2" />
+                                                   </TextButton>
+                                                )}
+                                             </td>
+                                             <td>
+                                                <IconButton
+                                                   type="ghost"
+                                                   onClick={() =>
+                                                      editOption(option)
                                                    }
-                                                </td>
-                                                <td>
-                                                   {option.cost
-                                                      ? `$${
-                                                           option.cost +
-                                                           (option.cost *
-                                                              foodCostPercent.lowerLimit) /
-                                                              100
-                                                        } - $${
-                                                           option.cost +
-                                                           (option.cost *
-                                                              foodCostPercent.upperLimit) /
-                                                              100
-                                                        }`
-                                                      : '-'}
-                                                </td>
-                                                <td>
-                                                   ${option.price[0].value}{' '}
-                                                </td>
-                                                <td>
-                                                   {option.price[0].discount} %
-                                                </td>
-                                                <td>
-                                                   $
-                                                   {(
-                                                      parseFloat(
-                                                         option.price[0].value
-                                                      ) -
-                                                      parseFloat(
-                                                         option.price[0].value
-                                                      ) *
-                                                         (parseFloat(
-                                                            option.price[0]
-                                                               .discount
-                                                         ) /
-                                                            100)
-                                                   ).toFixed(2) || ''}
-                                                </td>
-                                                <td>
-                                                   {option.modifier?.name ? (
-                                                      <Modifier>
-                                                         <span>
-                                                            <span
-                                                               tabIndex="0"
-                                                               role="button"
-                                                               onKeyPress={() =>
-                                                                  editModifier(
-                                                                     option.modifier
-                                                                  )
-                                                               }
-                                                               onClick={() =>
-                                                                  editModifier(
-                                                                     option.modifier
-                                                                  )
-                                                               }
-                                                            >
-                                                               <EditIcon
-                                                                  color="#00A7E1"
-                                                                  size={14}
-                                                               />
-                                                            </span>
-                                                            <span
-                                                               tabIndex="0"
-                                                               role="button"
-                                                               onKeyPress={() =>
-                                                                  removeModifier(
-                                                                     option.id
-                                                                  )
-                                                               }
-                                                               onClick={() =>
-                                                                  removeModifier(
-                                                                     option.id
-                                                                  )
-                                                               }
-                                                            >
-                                                               <DeleteIcon
-                                                                  color="#FF5A52"
-                                                                  size={14}
-                                                               />
-                                                            </span>
-                                                         </span>
-                                                         {option.modifier.name}
-                                                      </Modifier>
-                                                   ) : (
-                                                      <IconButton
-                                                         type="ghost"
-                                                         onClick={() => {
-                                                            modifiersDispatch({
-                                                               type: 'META',
-                                                               payload: {
-                                                                  name:
-                                                                     'optionId',
-                                                                  value:
-                                                                     option.id,
-                                                               },
-                                                            })
-                                                            openModifiersTunnel(
-                                                               1
-                                                            )
-                                                         }}
-                                                      >
-                                                         <PlusIcon color="#36B6E2" />
-                                                      </IconButton>
-                                                   )}
-                                                </td>
-                                                <td>
-                                                   {option.operationConfig ? (
-                                                      <Flex
-                                                         container
-                                                         alignItems="center"
-                                                         justifyContent="space-between"
-                                                      >
-                                                         <Text as="p">
-                                                            {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                         </Text>
+                                                >
+                                                   <EditIcon color="#00A7E1" />
+                                                </IconButton>
+                                             </td>
+                                          </tr>
+                                       ))}
+                                    {state.simpleRecipeProductOptions
+                                       .filter(
+                                          option => option.type === 'readyToEat'
+                                       )
+                                       .map((option, i) => (
+                                          <tr key={option.id}>
+                                             <td>
+                                                {i === 0 ? (
+                                                   <span>
+                                                      {t(
+                                                         address.concat(
+                                                            'ready to eat'
+                                                         )
+                                                      )}
+                                                   </span>
+                                                ) : (
+                                                   ''
+                                                )}
+                                             </td>
+                                             <td
+                                                style={{
+                                                   textAlign: 'center',
+                                                }}
+                                             >
+                                                <span hidden={!option.isActive}>
+                                                   <EyeIcon color="#00A7E1" />
+                                                </span>
+                                             </td>
+                                             <td
+                                                style={{
+                                                   textAlign: 'center',
+                                                }}
+                                             >
+                                                <input
+                                                   type="radio"
+                                                   checked={
+                                                      state.default ===
+                                                      option.id
+                                                   }
+                                                   onClick={() =>
+                                                      changeDefault(option)
+                                                   }
+                                                />
+                                             </td>
+                                             <td>
+                                                {
+                                                   option.simpleRecipeYield
+                                                      .yield.serving
+                                                }
+                                             </td>
+                                             <td>
+                                                {option.cost
+                                                   ? `$${
+                                                        option.cost +
+                                                        (option.cost *
+                                                           foodCostPercent.lowerLimit) /
+                                                           100
+                                                     } - $${
+                                                        option.cost +
+                                                        (option.cost *
+                                                           foodCostPercent.upperLimit) /
+                                                           100
+                                                     }`
+                                                   : '-'}
+                                             </td>
+                                             <td>${option.price[0].value} </td>
+                                             <td>
+                                                {option.price[0].discount} %
+                                             </td>
+                                             <td>
+                                                $
+                                                {(
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) -
+                                                   parseFloat(
+                                                      option.price[0].value
+                                                   ) *
+                                                      (parseFloat(
+                                                         option.price[0]
+                                                            .discount
+                                                      ) /
+                                                         100)
+                                                ).toFixed(2) || ''}
+                                             </td>
+                                             <td>
+                                                {option.modifier?.name ? (
+                                                   <Modifier>
+                                                      <span>
                                                          <span
-                                                            onClick={() => {
-                                                               productDispatch({
-                                                                  type:
-                                                                     'OPTION_ID',
-                                                                  payload: {
-                                                                     optionId:
-                                                                        option.id,
-                                                                  },
-                                                               })
-                                                               openOperationConfigTunnel(
-                                                                  1
+                                                            tabIndex="0"
+                                                            role="button"
+                                                            onKeyPress={() =>
+                                                               editModifier(
+                                                                  option.modifier
                                                                )
-                                                            }}
+                                                            }
+                                                            onClick={() =>
+                                                               editModifier(
+                                                                  option.modifier
+                                                               )
+                                                            }
                                                          >
-                                                            <EditIcon color="#36B6E2" />
+                                                            <EditIcon
+                                                               color="#00A7E1"
+                                                               size={14}
+                                                            />
                                                          </span>
-                                                      </Flex>
-                                                   ) : (
-                                                      <TextButton
-                                                         type="ghost"
+                                                         <span
+                                                            tabIndex="0"
+                                                            role="button"
+                                                            onKeyPress={() =>
+                                                               removeModifier(
+                                                                  option.id
+                                                               )
+                                                            }
+                                                            onClick={() =>
+                                                               removeModifier(
+                                                                  option.id
+                                                               )
+                                                            }
+                                                         >
+                                                            <DeleteIcon
+                                                               color="#FF5A52"
+                                                               size={14}
+                                                            />
+                                                         </span>
+                                                      </span>
+                                                      {option.modifier.name}
+                                                   </Modifier>
+                                                ) : (
+                                                   <IconButton
+                                                      type="ghost"
+                                                      onClick={() => {
+                                                         modifiersDispatch({
+                                                            type: 'META',
+                                                            payload: {
+                                                               name: 'optionId',
+                                                               value: option.id,
+                                                            },
+                                                         })
+                                                         openModifiersTunnel(1)
+                                                      }}
+                                                   >
+                                                      <PlusIcon color="#36B6E2" />
+                                                   </IconButton>
+                                                )}
+                                             </td>
+                                             <td>
+                                                {option.operationConfig ? (
+                                                   <Flex
+                                                      container
+                                                      alignItems="center"
+                                                      justifyContent="space-between"
+                                                   >
+                                                      <Text as="p">
+                                                         {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
+                                                      </Text>
+                                                      <span
                                                          onClick={() => {
                                                             productDispatch({
                                                                type:
@@ -737,41 +737,60 @@ export default function Recipe({ state }) {
                                                             )
                                                          }}
                                                       >
-                                                         <PlusIcon color="#36B6E2" />
-                                                      </TextButton>
-                                                   )}
-                                                </td>
-                                                <td>
-                                                   <IconButton
-                                                      onClick={() =>
-                                                         editOption(option)
-                                                      }
+                                                         <EditIcon color="#36B6E2" />
+                                                      </span>
+                                                   </Flex>
+                                                ) : (
+                                                   <TextButton
+                                                      type="ghost"
+                                                      onClick={() => {
+                                                         productDispatch({
+                                                            type: 'OPTION_ID',
+                                                            payload: {
+                                                               optionId:
+                                                                  option.id,
+                                                            },
+                                                         })
+                                                         openOperationConfigTunnel(
+                                                            1
+                                                         )
+                                                      }}
                                                    >
-                                                      <EditIcon color="#00A7E1" />
-                                                   </IconButton>
-                                                </td>
-                                             </tr>
-                                          ))}
-                                    </tbody>
-                                 </StyledTable>
-                              </HorizontalTabPanel>
-                              <HorizontalTabPanel>
-                                 <Recommendations state={state} />
-                              </HorizontalTabPanel>
-                           </HorizontalTabPanels>
-                        </HorizontalTabs>
-                     </SectionTabPanel>
-                  </SectionTabPanels>
-               </SectionTabs>
-            ) : (
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat('add recipe'))}
-                  onClick={() => openTunnel(1)}
-               />
-            )}
-         </StyledWrapper>
+                                                      <PlusIcon color="#36B6E2" />
+                                                   </TextButton>
+                                                )}
+                                             </td>
+                                             <td>
+                                                <IconButton
+                                                   type="ghost"
+                                                   onClick={() =>
+                                                      editOption(option)
+                                                   }
+                                                >
+                                                   <EditIcon color="#00A7E1" />
+                                                </IconButton>
+                                             </td>
+                                          </tr>
+                                       ))}
+                                 </tbody>
+                              </StyledTable>
+                           </HorizontalTabPanel>
+                           <HorizontalTabPanel>
+                              <Recommendations state={state} />
+                           </HorizontalTabPanel>
+                        </HorizontalTabPanels>
+                     </HorizontalTabs>
+                  </SectionTabPanel>
+               </SectionTabPanels>
+            </SectionTabs>
+         ) : (
+            <ButtonTile
+               type="primary"
+               size="lg"
+               text={t(address.concat('add recipe'))}
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </>
    )
 }
