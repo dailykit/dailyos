@@ -78,9 +78,7 @@ const StyledCard = styled.div`
    display: flex;
    justify-content: space-between;
    align-items: center;
-   padding: 10px 20px;
-   margin-top: 20px;
-   margin-left: 20px;
+   margin-top: 16px;
+   margin-left: 16px;
    width: 80%;
-   background-color: #f3f3f3;
 `

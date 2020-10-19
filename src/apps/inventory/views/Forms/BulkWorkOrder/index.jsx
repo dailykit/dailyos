@@ -1,6 +1,8 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
+   Form,
    Input,
    Loader,
    Text,
@@ -13,18 +15,16 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
-import FormHeading from '../../../components/FormHeading'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { WORK_ORDER_UPDATED } from '../../../constants/successMessages'
 import {
    BULK_WORK_ORDER_SUBSCRIPTION,
    UPDATE_BULK_WORK_ORDER,
 } from '../../../graphql'
-import {
-   FlexContainer,
-   FormActions,
-   StyledForm,
-   StyledWrapper,
-} from '../styled'
+import { StyledHeader } from '../../Listings/styled'
+import { StyledWrapper } from '../styled'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
 import SelectStationTunnel from './Tunnels/SelectStationTunnel'
@@ -34,8 +34,8 @@ import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function BulkWorkOrderForm() {
@@ -45,15 +45,15 @@ export default function BulkWorkOrderForm() {
    const {
       data: { bulkWorkOrder: state = {} } = {},
       loading,
+      error,
    } = useSubscription(BULK_WORK_ORDER_SUBSCRIPTION, {
       variables: { id },
-      onError,
    })
 
    const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
       onError,
       onCompleted: () => {
-         toast.success('Work Order updated!')
+         toast.success(WORK_ORDER_UPDATED)
       },
    })
 
@@ -75,6 +75,11 @@ export default function BulkWorkOrderForm() {
       openInputBulkItemTunnel,
       closeInputBulkItemTunnel,
    ] = useTunnel(1)
+
+   if (error) {
+      onError(error)
+      return
+   }
 
    const checkForm = () => {
       if (!state.supplierItem?.id) {
@@ -175,144 +180,122 @@ export default function BulkWorkOrderForm() {
          </Tunnels>
 
          <StyledWrapper>
-            <FormHeading>
-               <div
-                  style={{
-                     width: '30%',
-                  }}
-               >
-                  <Text as="h1">
-                     {t(address.concat('work order'))}{' '}
-                     {state.supplierItem?.name
-                        ? `- ${state.supplierItem.name}`
-                        : null}
-                  </Text>
-               </div>
-
-               <FormActions style={{ position: 'relative' }}>
-                  {state.isPublished ? (
-                     <StatusSwitch
-                        currentStatus={state.status}
-                        onSave={updateStatus}
-                     />
-                  ) : (
-                     <TextButton onClick={handlePublish} type="solid">
-                        {t(address.concat('publish'))}
-                     </TextButton>
-                  )}
-               </FormActions>
-            </FormHeading>
-
-            <StyledForm style={{ padding: '0px 60px' }}>
-               <Text as="title">
-                  {t(address.concat('select supplier item'))}
+            <StyledHeader>
+               <Text as="h1">
+                  {t(address.concat('work order'))}{' '}
+                  {state.supplierItem?.name
+                     ? `- ${state.supplierItem.name}`
+                     : null}
                </Text>
-               {state.supplierItem?.name ? (
-                  <>
-                     {state.isPublished ? (
-                        <ItemCard title={state.supplierItem.name} />
-                     ) : (
-                        <ItemCard
-                           title={state.supplierItem.name}
-                           edit={() => openSupplierItemTunnel(1)}
-                        />
-                     )}
-                  </>
+
+               {state.isPublished ? (
+                  <StatusSwitch
+                     currentStatus={state.status}
+                     onSave={updateStatus}
+                  />
                ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat('select supplier item'))}
-                     onClick={() => openSupplierItemTunnel(1)}
-                  />
+                  <TextButton onClick={handlePublish} type="solid">
+                     {t(address.concat('publish'))}
+                  </TextButton>
                )}
+            </StyledHeader>
 
-               <br />
+            <Text as="title">{t(address.concat('select supplier item'))}</Text>
+            {state.supplierItem?.name ? (
+               <>
+                  {state.isPublished ? (
+                     <ItemCard title={state.supplierItem.name} />
+                  ) : (
+                     <ItemCard
+                        title={state.supplierItem.name}
+                        edit={() => openSupplierItemTunnel(1)}
+                     />
+                  )}
+               </>
+            ) : (
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(address.concat('select supplier item'))}
+                  onClick={() => openSupplierItemTunnel(1)}
+               />
+            )}
 
-               {state.supplierItem?.name ? (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('input bulk item'))}
-                     </Text>
-                     {state.inputBulkItem?.processingName ? (
-                        <>
-                           {state.isPublished ? (
-                              <ItemCard
-                                 title={state.inputBulkItem.processingName}
-                                 onHand={state.inputBulkItem.onHand}
-                                 shelfLife={
-                                    state.inputBulkItem.shelfLife?.value
-                                 }
-                              />
-                           ) : (
-                              <ItemCard
-                                 title={state.inputBulkItem.processingName}
-                                 onHand={state.inputBulkItem.onHand}
-                                 shelfLife={
-                                    state.inputBulkItem.shelfLife?.value
-                                 }
-                                 edit={() => openInputBulkItemTunnel(1)}
-                              />
-                           )}
-                        </>
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select input bulk item'))}
-                           onClick={() => openInputBulkItemTunnel(1)}
-                        />
-                     )}
-                  </>
-               ) : null}
+            <br />
 
-               <Spacer />
+            {state.supplierItem?.name ? (
+               <>
+                  <Text as="title">{t(address.concat('input bulk item'))}</Text>
+                  {state.inputBulkItem?.processingName ? (
+                     <>
+                        {state.isPublished ? (
+                           <ItemCard
+                              title={state.inputBulkItem.processingName}
+                              onHand={state.inputBulkItem.onHand}
+                              shelfLife={state.inputBulkItem.shelfLife?.value}
+                           />
+                        ) : (
+                           <ItemCard
+                              title={state.inputBulkItem.processingName}
+                              onHand={state.inputBulkItem.onHand}
+                              shelfLife={state.inputBulkItem.shelfLife?.value}
+                              edit={() => openInputBulkItemTunnel(1)}
+                           />
+                        )}
+                     </>
+                  ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat('select input bulk item'))}
+                        onClick={() => openInputBulkItemTunnel(1)}
+                     />
+                  )}
+               </>
+            ) : null}
 
-               {state.supplierItem?.name ? (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('output bulk item'))}
-                     </Text>
-                     {state.outputBulkItem?.processingName ? (
-                        <>
-                           {state.isPublished ? (
-                              <ItemCard
-                                 title={state.outputBulkItem.processingName}
-                                 onHand={state.outputBulkItem.onHand}
-                                 shelfLife={
-                                    state.outputBulkItem.shelfLife?.value
-                                 }
-                              />
-                           ) : (
-                              <ItemCard
-                                 title={state.outputBulkItem.processingName}
-                                 onHand={state.outputBulkItem.onHand}
-                                 shelfLife={
-                                    state.outputBulkItem.shelfLife?.value
-                                 }
-                                 edit={() => openOutputBulkItemTunnel(1)}
-                              />
-                           )}
-                        </>
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select output bulk item'))}
-                           onClick={() => openOutputBulkItemTunnel(1)}
-                        />
-                     )}
-                  </>
-               ) : null}
+            <br />
 
-               {state.outputBulkItem?.processingName ? (
-                  <Configurator
-                     openUserTunnel={openUserTunnel}
-                     openStationTunnel={openStationTunnel}
-                     bulkWorkOrder={state}
-                  />
-               ) : null}
-            </StyledForm>
+            {state.supplierItem?.name ? (
+               <>
+                  <Text as="title">
+                     {t(address.concat('output bulk item'))}
+                  </Text>
+                  {state.outputBulkItem?.processingName ? (
+                     <>
+                        {state.isPublished ? (
+                           <ItemCard
+                              title={state.outputBulkItem.processingName}
+                              onHand={state.outputBulkItem.onHand}
+                              shelfLife={state.outputBulkItem.shelfLife?.value}
+                           />
+                        ) : (
+                           <ItemCard
+                              title={state.outputBulkItem.processingName}
+                              onHand={state.outputBulkItem.onHand}
+                              shelfLife={state.outputBulkItem.shelfLife?.value}
+                              edit={() => openOutputBulkItemTunnel(1)}
+                           />
+                        )}
+                     </>
+                  ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat('select output bulk item'))}
+                        onClick={() => openOutputBulkItemTunnel(1)}
+                     />
+                  )}
+               </>
+            ) : null}
+
+            {state.outputBulkItem?.processingName ? (
+               <Configurator
+                  openUserTunnel={openUserTunnel}
+                  openStationTunnel={openStationTunnel}
+                  bulkWorkOrder={state}
+               />
+            ) : null}
          </StyledWrapper>
       </>
    )
@@ -344,61 +327,54 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    return (
       <>
          <Spacer />
-         <div
-            style={{
-               width: '20%',
-               display: 'flex',
-               alignItems: 'flex-end',
-            }}
-         >
-            <Input
-               type="number"
-               label={t(address.concat('yield percentage'))}
-               name="yield"
-               disabled={bulkWorkOrder.outputBulkItem.yield?.value}
-               value={yieldPercentage}
-               onChange={e => {
-                  const value = parseInt(e.target.value)
-                  if (e.target.value.length === 0) setYieldPercentage('')
-                  if (value) {
-                     setYieldPercentage(value)
-                  }
-               }}
-               onBlur={e => {
-                  if (e.target.value.length === 0) {
-                     setYieldPercentage(
-                        bulkWorkOrder.outputBulkItem?.yield || ''
-                     )
-                  }
+         <Flex width="10rem">
+            <Form.Group>
+               <Form.Label htmlFor="yield" title="yield">
+                  {t(address.concat('yield percentage'))}
+               </Form.Label>
 
-                  updateBulkWorkOrder({
-                     variables: {
-                        id: bulkWorkOrder.id,
-                        object: {
-                           outputYield: +e.target.value,
+               <Form.Number
+                  name="yield"
+                  id="yield"
+                  disabled={bulkWorkOrder.outputBulkItem.yield?.value}
+                  value={yieldPercentage}
+                  placeholder={t(address.concat('yield percentage'))}
+                  onChange={e => {
+                     setYieldPercentage(e.target.value)
+                  }}
+                  onBlur={e => {
+                     if (e.target.value.length === 0) {
+                        setYieldPercentage(
+                           bulkWorkOrder.outputBulkItem?.yield || ''
+                        )
+                     }
+
+                     updateBulkWorkOrder({
+                        variables: {
+                           id: bulkWorkOrder.id,
+                           object: {
+                              outputYield: +e.target.value,
+                           },
                         },
-                     },
-                  })
-               }}
-            />
-            %
-         </div>
+                     })
+                  }}
+               />
+            </Form.Group>
+         </Flex>
          <br />
-         <FlexContainer
-            style={{ width: '50%', justifyContent: 'space-between' }}
-         >
-            <div style={{ width: '45%' }}>
+         <Flex container alignItems="center">
+            <Form.Group>
+               <Form.Label title="output quantity" htmlFor="output">
+                  {t(address.concat('enter output quantity'))}
+               </Form.Label>
+
                <Input
-                  type="number"
-                  label={t(address.concat('enter output quantity'))}
+                  id="output"
                   name="output"
                   value={outputQuantity}
                   onChange={e => {
-                     const value = parseInt(e.target.value)
                      if (e.target.value.length === 0) setOutputQuantity('')
-                     if (value) {
-                        setOutputQuantity(e.target.value)
-                     }
+                     setOutputQuantity(e.target.value)
                   }}
                   onBlur={e => {
                      if (e.target.value.length === 0) {
@@ -416,7 +392,9 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                      }
                   }}
                />
-            </div>
+            </Form.Group>
+
+            <span style={{ width: '16px' }} />
 
             <div>
                {bulkWorkOrder.outputQuantity ? (
@@ -428,9 +406,10 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                   </>
                ) : null}
             </div>
-         </FlexContainer>
+         </Flex>
 
          <br />
+         <Text as="title">User Assigned</Text>
 
          <>
             {bulkWorkOrder.user?.firstName ? (
@@ -451,34 +430,31 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
          </>
 
          <br />
-         <br />
-
-         <Text as="title">{t(address.concat('scheduled on'))}</Text>
-         <br />
-
-         <Input
-            style={{
-               border: 0,
-               borderBottom: '1px solid rgba(0,0,0,0.2)',
-               color: '#555b6e',
-               padding: '5px',
-            }}
-            value={assignedDate}
-            onChange={e => {
-               setAssignedDate(e.target.value)
-            }}
-            type="datetime-local"
-            onBlur={e => {
-               updateBulkWorkOrder({
-                  variables: {
-                     id: bulkWorkOrder.id,
-                     object: {
-                        scheduledOn: e.target.value,
-                     },
-                  },
-               })
-            }}
-         />
+         <Flex container>
+            <Form.Group>
+               <Form.Label htmlFor="scheduledDate" title="scheduledDate">
+                  {t(address.concat('scheduled on'))}
+               </Form.Label>
+               <Form.Date
+                  id="scheduledDate"
+                  name="scheduledDate"
+                  value={assignedDate}
+                  onChange={e => {
+                     setAssignedDate(e.target.value)
+                  }}
+                  onBlur={e => {
+                     updateBulkWorkOrder({
+                        variables: {
+                           id: bulkWorkOrder.id,
+                           object: {
+                              scheduledOn: e.target.value,
+                           },
+                        },
+                     })
+                  }}
+               />
+            </Form.Group>
+         </Flex>
 
          <br />
 
