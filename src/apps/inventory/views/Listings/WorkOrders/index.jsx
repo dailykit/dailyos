@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { AddIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -42,6 +43,7 @@ export default function WorkOrders() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const tableRef = React.useRef()
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const {
       data: bulkWorkOrdersData,
@@ -60,8 +62,8 @@ export default function WorkOrders() {
       return
    }
 
-   const rowClick = (e, row) => {
-      const { id, type, name } = row._row.data
+   const openForm = (_, cell) => {
+      const { id, type, name } = cell.getData()
       const altName = `Work Order-${uuid().substring(30)}`
 
       if (type === 'bulk') {
@@ -72,7 +74,17 @@ export default function WorkOrders() {
    }
 
    const columns = [
-      { title: 'Status', field: 'status', headerFilter: true, width: 150 },
+      {
+         title: 'Status',
+         field: 'status',
+         headerFilter: true,
+         width: 150,
+         cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_status'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
       {
          title: 'Scheduled On',
          field: 'scheduledOn',
@@ -81,6 +93,10 @@ export default function WorkOrders() {
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_scheduledOn'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'User Assigned',
@@ -89,6 +105,10 @@ export default function WorkOrders() {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_user_assigned'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Station Assigned',
@@ -97,6 +117,10 @@ export default function WorkOrders() {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_station_assigned'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Type',
@@ -105,6 +129,10 @@ export default function WorkOrders() {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_order_type'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
    ]
 
@@ -168,7 +196,6 @@ export default function WorkOrders() {
                ref={tableRef}
                columns={columns}
                data={data}
-               rowClick={rowClick}
                options={tableOptions}
             />
          </StyledWrapper>
