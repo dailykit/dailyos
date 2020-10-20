@@ -103,6 +103,7 @@ export const S_INGREDIENT = gql`
                      unitSize
                      unit
                      bulkItem {
+                        id
                         processingName
                         supplierItem {
                            id
@@ -322,9 +323,11 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             operationConfig {
                id
                station {
+                  id
                   name
                }
                labelTemplate {
+                  id
                   name
                }
             }
@@ -373,6 +376,7 @@ export const S_INVENTORY_PRODUCT = gql`
             unitSize
             unit
             bulkItemAsShipped {
+               id
                image
             }
          }
@@ -381,9 +385,11 @@ export const S_INVENTORY_PRODUCT = gql`
             unitSize
             unit
             bulkItem {
+               id
                image
                processingName
                supplierItem {
+                  id
                   name
                }
             }
@@ -396,9 +402,11 @@ export const S_INVENTORY_PRODUCT = gql`
             operationConfig {
                id
                station {
+                  id
                   name
                }
                labelTemplate {
+                  id
                   name
                }
             }
@@ -522,6 +530,7 @@ export const S_COMBO_PRODUCT = gql`
                   price
                   type
                   simpleRecipeYield {
+                     id
                      yield
                   }
                }
