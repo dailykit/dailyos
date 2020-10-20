@@ -1,12 +1,12 @@
 import React from 'react'
-import { ButtonTile, useTunnel, Tunnels, Tunnel } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
-import { ImageContainer, PhotoTileWrapper, Container } from './styled'
 import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 import { AssetsTunnel } from '../../tunnels'
-import { logger } from '../../../../../../../../shared/utils'
+import { ImageContainer, PhotoTileWrapper } from './styled'
 
 const Assets = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -71,7 +71,7 @@ const Assets = ({ state }) => {
                   type="primary"
                   size="sm"
                   text="Add Photo to your Product"
-                  helper="upto 1MB - only JPG, PNG, PDF allowed"
+                  helper="upto 1MB - only JPG, PNG allowed"
                   onClick={() => openTunnel(1)}
                />
             </PhotoTileWrapper>
