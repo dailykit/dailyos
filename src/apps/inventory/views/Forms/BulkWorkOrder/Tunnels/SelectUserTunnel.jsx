@@ -6,6 +6,7 @@ import {
    useSingleList,
    Loader,
    TunnelHeader,
+   Filler,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -19,6 +20,7 @@ import {
 } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_USERS } from '../../../../constants/infoMessages'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
@@ -80,33 +82,37 @@ export default function SelectUserTunnel({ close, state }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.name} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.name.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.name}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.name} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        )}
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.name.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.name}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_USERS} />
+            )}
          </TunnelContainer>
       </>
    )

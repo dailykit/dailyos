@@ -15,3 +15,9 @@ export const NO_SUPPLIER_ITEMS = 'No supplier items found!'
 export const NO_BULK_ITEMS = 'No bulk items found!'
 
 export const NO_STATIONS = 'No stations found!'
+
+export const NO_USERS = 'No users found!'
+
+export const NO_PACKAGINGS = 'No packagings found!'
+
+export const NO_SACHETS = 'No sachets found!'

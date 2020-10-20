@@ -54,7 +54,7 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
    if (error) {
       logger(error)
       toast.error(GENERAL_ERROR_MESSAGE)
-      return
+      return null
    }
 
    const handleSave = () => {
