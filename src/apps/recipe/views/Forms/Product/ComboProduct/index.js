@@ -1,25 +1,23 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Input, Loader, Text, Toggle, Checkbox } from '@dailykit/ui'
-import { useParams } from 'react-router-dom'
+import { Flex, Form, Loader, Spacer, Text } from '@dailykit/ui'
+import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { TickIcon, CloseIcon } from '../../../../assets/icons'
-// context
+import { Tooltip } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
+import { CloseIcon, TickIcon } from '../../../../assets/icons'
+import { useTabs } from '../../../../context'
 import {
    ComboProductContext,
    reducers,
    state as initialState,
 } from '../../../../context/product/comboProduct'
-import { useTabs } from '../../../../context'
-// graphql
 import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
-// styles
-import { StyledWrapper, MasterSettings } from '../../styled'
-import { StyledBody, StyledHeader, StyledMeta, StyledRule } from '../styled'
-// components
-import { Description, Items, Assets } from './components'
+import { StyledRule } from '../styled'
+import validator from '../validators'
+import { Assets, Description, Items } from './components'
 
 const address = 'apps.online_store.views.forms.product.comboproduct.'
 
@@ -34,23 +32,35 @@ export default function ComboProduct() {
       initialState
    )
 
-   const [title, setTitle] = React.useState('')
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [state, setState] = React.useState({})
 
    // Subscriptions
-   const { loading } = useSubscription(S_COMBO_PRODUCT, {
+   const { loading, error } = useSubscription(S_COMBO_PRODUCT, {
       variables: {
          id: productId,
       },
       onSubscriptionData: data => {
-         console.log('ComboProduct -> data', data)
+         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.comboProduct)
-         setTitle(data.subscriptionData.data.comboProduct.name)
-      },
-      onError: error => {
-         console.log(error)
+         setTitle({
+            ...title,
+            value: data.subscriptionData.data.comboProduct.name,
+         })
       },
    })
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Mutations
    const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
@@ -58,39 +68,48 @@ export default function ComboProduct() {
          toast.success(t(address.concat('updated!')))
       },
       onError: error => {
-         console.log(error)
-         toast.error(t(address.concat('error!')))
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    React.useEffect(() => {
-      if (!tab && !loading && !isEmpty(title)) {
-         addTab(title, `/recipe/combo-products/${productId}`)
+      if (!tab && !loading && !isEmpty(title.value)) {
+         addTab(title.value, `/recipe/combo-products/${productId}`)
       }
-   }, [tab, addTab, loading, title])
+   }, [tab, addTab, loading, title.value])
 
    // Handlers
    const updateName = async () => {
-      if (title) {
+      const { isValid, errors } = validator.name(title.value)
+      if (isValid) {
          const { data } = await updateProduct({
             variables: {
                id: state.id,
                set: {
-                  name: title,
+                  name: title.value,
                },
             },
          })
          if (data) {
-            setTabTitle(title)
+            setTabTitle(title.value)
          }
       }
+      setTitle({
+         ...title,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
    }
-   const togglePublish = val => {
+   const togglePublish = () => {
+      const val = !state.isPublished
       if (val && !state.isValid.status) {
-         toast.error(t(address.concat('product should be valid!')))
-         return
+         return toast.error('Product should be valid!')
       }
-      updateProduct({
+      return updateProduct({
          variables: {
             id: state.id,
             set: {
@@ -99,7 +118,8 @@ export default function ComboProduct() {
          },
       })
    }
-   const togglePopup = val => {
+   const togglePopup = () => {
+      const val = !state.isPopupAllowed
       return updateProduct({
          variables: {
             id: state.id,
@@ -114,61 +134,83 @@ export default function ComboProduct() {
 
    return (
       <ComboProductContext.Provider value={{ productState, productDispatch }}>
-         <StyledWrapper>
-            <StyledHeader>
-               <div>
-                  <Input
-                     label={t(address.concat('product name'))}
-                     type="text"
-                     name="name"
-                     value={title}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
-                  />
-               </div>
-               <MasterSettings>
-                  <div>
-                     {state.isValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">{t(address.concat('all good!'))}</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isValid?.error}</Text>
-                        </>
-                     )}
-                  </div>
-                  <div>
-                     <Checkbox
-                        id="label"
-                        checked={state.isPopupAllowed}
-                        onChange={togglePopup}
-                     >
-                        Popup Allowed
-                     </Checkbox>
-                     <Toggle
-                        checked={state.isPublished}
-                        setChecked={togglePublish}
-                        label="Published"
-                     />
-                  </div>
-               </MasterSettings>
-            </StyledHeader>
-            <StyledBody>
-               <StyledMeta>
-                  <div>
-                     <Description state={state} />
-                  </div>
-                  <div>
-                     <Assets state={state} />
-                  </div>
-               </StyledMeta>
-               <StyledRule />
-               <Items state={state} />
-            </StyledBody>
-         </StyledWrapper>
+         <Flex
+            as="header"
+            container
+            padding="16px 32px"
+            alignItems="start"
+            justifyContent="space-between"
+         >
+            <Form.Group>
+               <Form.Label htmlFor="title" title="title">
+                  Product Name*
+               </Form.Label>
+               <Form.Text
+                  id="title"
+                  name="title"
+                  value={title.value}
+                  placeholder="Enter product name"
+                  onChange={e => setTitle({ ...title, value: e.target.value })}
+                  onBlur={updateName}
+                  hasError={!title.meta.isValid && title.meta.isTouched}
+               />
+               {title.meta.isTouched &&
+                  !title.meta.isValid &&
+                  title.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
+            <Flex container alignItems="center">
+               {state.isValid?.status ? (
+                  <>
+                     <TickIcon color="#00ff00" stroke={2} />
+                     <Text as="p">All good!</Text>
+                  </>
+               ) : (
+                  <>
+                     <CloseIcon color="#ff0000" />
+                     <Text as="p">{state.isValid?.error}</Text>
+                  </>
+               )}
+               <Spacer xAxis size="16px" />
+               <Form.Checkbox
+                  name="popup"
+                  value={state.isPopupAllowed}
+                  onChange={togglePopup}
+               >
+                  <Flex container alignItems="center">
+                     Popup Allowed
+                     <Tooltip identifier="combo_product_popup_checkbox" />
+                  </Flex>
+               </Form.Checkbox>
+               <Spacer xAxis size="16px" />
+               <Form.Toggle
+                  name="published"
+                  value={state.isPublished}
+                  onChange={togglePublish}
+               >
+                  <Flex container alignItems="center">
+                     Published
+                     <Tooltip identifier="combo_product_publish" />
+                  </Flex>
+               </Form.Toggle>
+            </Flex>
+         </Flex>
+         <Flex as="main" padding="32px" style={{ background: '#f3f3f3' }}>
+            <Flex as="section" container>
+               <Flex flex="2">
+                  <Description state={state} />
+               </Flex>
+               <Spacer xAxis size="16px" />
+               <Flex flex="1">
+                  <Assets state={state} />
+               </Flex>
+            </Flex>
+            <Spacer size="16px" />
+            <StyledRule />
+            <Spacer size="16px" />
+            <Items state={state} />
+         </Flex>
       </ComboProductContext.Provider>
    )
 }
