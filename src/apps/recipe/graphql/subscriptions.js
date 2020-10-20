@@ -440,6 +440,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
             inventoryProduct {
                id
                name
+               assets
                inventoryProductOptions {
                   id
                   label
@@ -450,6 +451,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
             simpleRecipeProduct {
                id
                name
+               assets
                simpleRecipeProductOptions {
                   id
                   isActive

@@ -7,6 +7,18 @@ import {
    Tunnels,
    Tunnel,
    useTunnel,
+   SectionTabs,
+   SectionTabList,
+   SectionTabsListHeader,
+   Text,
+   IconButton,
+   PlusIcon,
+   SectionTab,
+   Avatar,
+   ClearIcon,
+   SectionTabPanels,
+   SectionTabPanel,
+   Flex,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -30,9 +42,10 @@ import {
    StyledTable,
    StyledTabs,
    StyledTabView,
-   StyledWrapper,
+   ItemInfo,
 } from './styled'
 import { ProductTypeTunnel, ProductsTunnel } from '../../tunnels'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.components.products.'
@@ -49,15 +62,11 @@ const Products = ({ state }) => {
    // Mutation
    const [deleteOption] = useMutation(DELETE_CUSTOMIZABLE_PRODUCT_OPTION, {
       onCompleted: () => {
-         toast.success(t(address.concat('product deleted')))
-         productDispatch({
-            type: 'PRODUCT_INDEX',
-            payload: 0,
-         })
+         toast.success('Product removed!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(t(address.concat('error')))
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
@@ -65,8 +74,8 @@ const Products = ({ state }) => {
          toast.success(t(address.concat('default updated!')))
       },
       onError: error => {
-         console.log(error)
-         toast.error(t(address.concat('error')))
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -74,7 +83,7 @@ const Products = ({ state }) => {
    const remove = product => {
       if (
          window.confirm(
-            `t(address.concat("are you sure you want to delete product")) - ${
+            `Do you want to remove - ${
                product.inventoryProduct?.name ||
                product.simpleRecipeProduct?.name
             }?`
@@ -87,14 +96,12 @@ const Products = ({ state }) => {
          })
       }
    }
-   const makeDefault = () => {
+   const makeDefault = id => {
       updateProduct({
          variables: {
             id: state.id,
             set: {
-               default:
-                  state.customizableProductOptions[productState.productIndex]
-                     .id,
+               default: id,
             },
          },
       })
@@ -110,124 +117,96 @@ const Products = ({ state }) => {
                <ProductsTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <StyledWrapper>
-            {state.customizableProductOptions?.length ? (
-               <StyledLayout>
-                  <StyledListing>
-                     {state.customizableProductOptions.map((option, index) => (
-                        <StyledListingTile
-                           active={productState.productIndex === index}
-                           onClick={() =>
-                              productDispatch({
-                                 type: 'PRODUCT_INDEX',
-                                 payload: index,
-                              })
-                           }
-                        >
+         {state.customizableProductOptions?.length ? (
+            <SectionTabs>
+               <SectionTabList>
+                  <SectionTabsListHeader>
+                     <Text as="title">
+                        Products({state.customizableProductOptions.length})
+                     </Text>
+                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                        <PlusIcon color="#555b6e" />
+                     </IconButton>
+                  </SectionTabsListHeader>
+                  {state.customizableProductOptions.map(option => (
+                     <SectionTab key={option.id}>
+                        <ItemInfo>
+                           {Boolean(
+                              option.simpleRecipeProduct?.assets?.images
+                                 ?.length ||
+                                 option.inventoryProduct?.assets?.images?.length
+                           ) && (
+                              <img
+                                 src={
+                                    option.simpleRecipeProduct?.assets
+                                       ?.images[0] ||
+                                    option.inventoryProduct?.assets?.images[0]
+                                 }
+                              />
+                           )}
                            <h3>
                               {option.inventoryProduct?.name ||
                                  option.simpleRecipeProduct?.name}
                            </h3>
-                           <span
-                              tabIndex="0"
-                              role="button"
-                              onKeyDown={e =>
-                                 e.charCode === 13 && remove(option)
-                              }
-                              onClick={() => remove(option)}
-                           >
+                           <button onClick={() => remove(option)}>
                               <DeleteIcon color="#fff" />
-                           </span>
-                           <StyledDefault hidden={state.default !== option.id}>
+                           </button>
+                           <label hidden={state.default !== option.id}>
                               {t(address.concat('default'))}
-                           </StyledDefault>
-                        </StyledListingTile>
-                     ))}
-                     <ButtonTile
-                        type="primary"
-                        size="sm"
-                        text={t(address.concat('add products'))}
-                        onClick={() => openTunnel(1)}
-                     />
-                  </StyledListing>
-                  <StyledPanel>
-                     <h2>
-                        {state.customizableProductOptions[
-                           productState.productIndex
-                        ].inventoryProduct?.name ||
-                           state.customizableProductOptions[
-                              productState.productIndex
-                           ].simpleRecipeProduct?.name}
-                        <StyledLink
-                           onClick={() =>
-                              state.customizableProductOptions[
-                                 productState.productIndex
-                              ].inventoryProduct
-                                 ? addTab(
-                                      state.customizableProductOptions[
-                                         productState.productIndex
-                                      ].inventoryProduct.name,
-                                      `/recipe/inventory-products/${
-                                         state.customizableProductOptions[
-                                            productState.productIndex
-                                         ].inventoryProduct.id
-                                      }`
-                                   )
-                                 : addTab(
-                                      state.customizableProductOptions[
-                                         productState.productIndex
-                                      ].simpleRecipeProduct.name,
-                                      `/recipe/simple-recipe-products/${
-                                         state.customizableProductOptions[
-                                            productState.productIndex
-                                         ].simpleRecipeProduct.id
-                                      }`
-                                   )
-                           }
+                           </label>
+                        </ItemInfo>
+                     </SectionTab>
+                  ))}
+               </SectionTabList>
+               <SectionTabPanels>
+                  {state.customizableProductOptions.map(option => (
+                     <SectionTabPanel key={option.id}>
+                        <Flex
+                           container
+                           alignItems="center"
+                           justifyContent="space-between"
                         >
-                           <LinkIcon color="#00A7E1" stroke={1.5} />
-                        </StyledLink>
-                     </h2>
-                     <HelperText
-                        type="hint"
-                        message={t(
-                           address.concat(
-                              'accompanients are taken as per added on the selected product'
-                           )
-                        )}
-                     />
-                     <StyledAction
-                        hidden={
-                           state.default ===
-                           state.customizableProductOptions[
-                              productState.productIndex
-                           ].id
-                        }
-                     >
-                        <TextButton type="ghost" onClick={makeDefault}>
-                           {t(address.concat('make default'))}
-                        </TextButton>
-                     </StyledAction>
-                     <StyledTabs>
-                        <StyledTab active>
-                           {t(address.concat('pricing'))}
-                        </StyledTab>
-                     </StyledTabs>
-                     <StyledTabView>
+                           <Flex container alignItems="center">
+                              <Text as="h2">
+                                 {option.inventoryProduct?.name ||
+                                    option.simpleRecipeProduct?.name}
+                              </Text>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() =>
+                                    option.inventoryProduct
+                                       ? addTab(
+                                            option.inventoryProduct.name,
+                                            `/recipe/inventory-products/${option.inventoryProduct.id}`
+                                         )
+                                       : addTab(
+                                            option.simpleRecipeProduct.name,
+                                            `/recipe/simple-recipe-products/${option.simpleRecipeProduct.id}`
+                                         )
+                                 }
+                              >
+                                 <LinkIcon color="#00A7E1" stroke={1.5} />
+                              </IconButton>
+                           </Flex>
+                           {Boolean(state.default !== option.id) && (
+                              <TextButton
+                                 type="ghost"
+                                 onClick={() => makeDefault(option.id)}
+                              >
+                                 Set as Default
+                              </TextButton>
+                           )}
+                        </Flex>
                         <StyledTable>
                            <thead>
                               <tr>
                                  <th>
-                                    {state.customizableProductOptions[
-                                       productState.productIndex
-                                    ].simpleRecipeProduct
+                                    {option.simpleRecipeProduct
                                        ? ''
                                        : t(address.concat('labels'))}
                                  </th>
                                  <th>
-                                    {state.customizableProductOptions[
-                                       productState.productIndex
-                                    ].simpleRecipeProduct
+                                    {option.simpleRecipeProduct
                                        ? t(address.concat('servings'))
                                        : t(address.concat('options'))}
                                  </th>
@@ -239,19 +218,13 @@ const Products = ({ state }) => {
                               </tr>
                            </thead>
                            <tbody>
-                              {state.customizableProductOptions[
-                                 productState.productIndex
-                              ].simpleRecipeProduct ? (
+                              {option.simpleRecipeProduct ? (
                                  <>
-                                    {state.customizableProductOptions[
-                                       productState.productIndex
-                                    ].simpleRecipeProduct.simpleRecipeProductOptions
-                                       .filter(
-                                          option => option.type === 'mealKit'
-                                       )
-                                       .filter(option => option.isActive)
-                                       .map((option, i) => (
-                                          <tr key={option.id}>
+                                    {option.simpleRecipeProduct.simpleRecipeProductOptions
+                                       .filter(op => op.type === 'mealKit')
+                                       .filter(op => op.isActive)
+                                       .map((op, i) => (
+                                          <tr key={op.id}>
                                              <td>
                                                 {i === 0 ? (
                                                    <span>
@@ -267,41 +240,34 @@ const Products = ({ state }) => {
                                              </td>
                                              <td>
                                                 {
-                                                   option.simpleRecipeYield
-                                                      .yield.serving
+                                                   op.simpleRecipeYield.yield
+                                                      .serving
                                                 }
                                              </td>
-                                             <td>${option.price[0].value} </td>
-                                             <td>
-                                                {option.price[0].discount} %
-                                             </td>
+                                             <td>${op.price[0].value} </td>
+                                             <td>{op.price[0].discount} %</td>
                                              <td>
                                                 $
                                                 {(
                                                    parseFloat(
-                                                      option.price[0].value
+                                                      op.price[0].value
                                                    ) -
                                                    parseFloat(
-                                                      option.price[0].value
+                                                      op.price[0].value
                                                    ) *
                                                       (parseFloat(
-                                                         option.price[0]
-                                                            .discount
+                                                         op.price[0].discount
                                                       ) /
                                                          100)
                                                 ).toFixed(2) || ''}
                                              </td>
                                           </tr>
                                        ))}
-                                    {state.customizableProductOptions[
-                                       productState.productIndex
-                                    ].simpleRecipeProduct.simpleRecipeProductOptions
-                                       .filter(
-                                          option => option.type === 'readyToEat'
-                                       )
-                                       .filter(option => option.isActive)
-                                       .map((option, i) => (
-                                          <tr key={option.id}>
+                                    {option.simpleRecipeProduct.simpleRecipeProductOptions
+                                       .filter(op => op.type === 'readyToEat')
+                                       .filter(op => op.isActive)
+                                       .map((op, i) => (
+                                          <tr key={op.id}>
                                              <td>
                                                 {i === 0 ? (
                                                    <span>
@@ -317,26 +283,23 @@ const Products = ({ state }) => {
                                              </td>
                                              <td>
                                                 {
-                                                   option.simpleRecipeYield
-                                                      .yield.serving
+                                                   op.simpleRecipeYield.yield
+                                                      .serving
                                                 }
                                              </td>
-                                             <td>${option.price[0].value} </td>
-                                             <td>
-                                                {option.price[0].discount} %
-                                             </td>
+                                             <td>${op.price[0].value} </td>
+                                             <td>{op.price[0].discount} %</td>
                                              <td>
                                                 $
                                                 {(
                                                    parseFloat(
-                                                      option.price[0].value
+                                                      op.price[0].value
                                                    ) -
                                                    parseFloat(
-                                                      option.price[0].value
+                                                      op.price[0].value
                                                    ) *
                                                       (parseFloat(
-                                                         option.price[0]
-                                                            .discount
+                                                         op.price[0].discount
                                                       ) /
                                                          100)
                                                 ).toFixed(2) || ''}
@@ -346,29 +309,24 @@ const Products = ({ state }) => {
                                  </>
                               ) : (
                                  <>
-                                    {state.customizableProductOptions[
-                                       productState.productIndex
-                                    ].inventoryProduct.inventoryProductOptions.map(
-                                       option => (
-                                          <tr key={option.id}>
-                                             <td>{option.label}</td>
-                                             <td>{option.quantity}</td>
-                                             <td>${option.price[0].value} </td>
-                                             <td>
-                                                {option.price[0].discount} %
-                                             </td>
+                                    {option.inventoryProduct.inventoryProductOptions.map(
+                                       op => (
+                                          <tr key={op.id}>
+                                             <td>{op.label}</td>
+                                             <td>{op.quantity}</td>
+                                             <td>${op.price[0].value} </td>
+                                             <td>{op.price[0].discount} %</td>
                                              <td>
                                                 $
                                                 {(
                                                    parseFloat(
-                                                      option.price[0].value
+                                                      op.price[0].value
                                                    ) -
                                                    parseFloat(
-                                                      option.price[0].value
+                                                      op.price[0].value
                                                    ) *
                                                       (parseFloat(
-                                                         option.price[0]
-                                                            .discount
+                                                         op.price[0].discount
                                                       ) /
                                                          100)
                                                 ).toFixed(2) || ''}
@@ -380,18 +338,18 @@ const Products = ({ state }) => {
                               )}
                            </tbody>
                         </StyledTable>
-                     </StyledTabView>
-                  </StyledPanel>
-               </StyledLayout>
-            ) : (
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat('add products'))}
-                  onClick={() => openTunnel(1)}
-               />
-            )}
-         </StyledWrapper>
+                     </SectionTabPanel>
+                  ))}
+               </SectionTabPanels>
+            </SectionTabs>
+         ) : (
+            <ButtonTile
+               type="primary"
+               size="lg"
+               text={t(address.concat('add products'))}
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </>
    )
 }
