@@ -1,4 +1,4 @@
-import { IconButton, Text } from '@dailykit/ui'
+import { Flex, IconButton, Spacer, Text } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -15,14 +15,15 @@ export default function ItemCard({
    edit,
    available,
    par,
+   isBulk,
 }) {
    const { t } = useTranslation()
    return (
       <StyledCard>
-         <div>
-            <Text as="title">{title}</Text>
+         <Flex>
+            <Text as="h2">{title}</Text>
 
-            <div style={{ display: 'flex' }}>
+            <Flex container>
                {shippedProcessing && (
                   <>
                      <Text as="subtitle">
@@ -32,43 +33,41 @@ export default function ItemCard({
                      <span style={{ width: '20px' }} />
                   </>
                )}
-               {onHand ? (
+
+               {isBulk ? (
                   <>
                      <Text as="subtitle">
-                        {t(address.concat('on hand'))}: {onHand}{' '}
+                        {t(address.concat('on hand'))}: {onHand ?? 'N/A'}
                      </Text>
-                     <span style={{ width: '20px' }} />
-                  </>
-               ) : null}
-               {shelfLife ? (
-                  <Text as="subtitle">
-                     {t(address.concat('shelf life'))}: {shelfLife}{' '}
-                  </Text>
-               ) : null}
-
-               {available ? (
-                  <Text as="subtitle">
-                     {t(address.concat('available'))}: {available}{' '}
-                  </Text>
-               ) : null}
-
-               {par ? (
-                  <>
                      <span style={{ width: '20px' }} />
                      <Text as="subtitle">
-                        {t(address.concat('par'))}: {par}
+                        {t(address.concat('shelf life'))}: {shelfLife ?? 'N/A'}
                      </Text>
+
+                     {available ? (
+                        <Text as="subtitle">
+                           {t(address.concat('available'))}: {available}{' '}
+                        </Text>
+                     ) : null}
+
+                     <>
+                        <span style={{ width: '20px' }} />
+                        <Text as="subtitle">
+                           {t(address.concat('par'))}: {par ?? 'N/A'}
+                        </Text>
+                     </>
                   </>
                ) : null}
-            </div>
-         </div>
+            </Flex>
+         </Flex>
 
          {edit && (
-            <div>
-               <IconButton type="ghost" onClick={() => edit()}>
-                  <EditIcon color="#555b6e" />
+            <>
+               <Spacer xAxis size="16px" />
+               <IconButton type="outline" onClick={() => edit()}>
+                  <EditIcon />
                </IconButton>
-            </div>
+            </>
          )}
       </StyledCard>
    )
@@ -76,7 +75,6 @@ export default function ItemCard({
 
 const StyledCard = styled.div`
    display: flex;
-   justify-content: space-between;
    align-items: center;
    margin-top: 16px;
    margin-left: 16px;

@@ -7,10 +7,6 @@ import { v4 as uuid } from 'uuid'
 import { logger } from '../../../../../shared/utils'
 import { TunnelContainer } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
-import {
-   BULK_WORK_ORDER_INFO_TUNNEL,
-   SACHET_WORK_ORDER_INFO_TUNNEL,
-} from '../../../constants/infoMessages'
 import { useTabs } from '../../../context'
 import {
    CREATE_BULK_WORK_ORDER,
@@ -68,7 +64,8 @@ export default function WorkOrderTypeTunnel({ close }) {
                <Text as="h1">{t(address.concat('bulk work order'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('bulk subtitle 1')}>
-                     {BULK_WORK_ORDER_INFO_TUNNEL}
+                     Bulk Work Order is to create bulk items with changing
+                     processing
                   </Trans>
                </Text>
             </SolidTile>
@@ -77,7 +74,8 @@ export default function WorkOrderTypeTunnel({ close }) {
                <Text as="h1">{t(address.concat('sachet work order'))}</Text>
                <Text as="subtitle">
                   <Trans i18nKey={address.concat('sachet subtitle 1')}>
-                     {SACHET_WORK_ORDER_INFO_TUNNEL}
+                     Sachet Work Order is to create planned lot items by
+                     portioning and packaging
                   </Trans>
                </Text>
             </SolidTile>

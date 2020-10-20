@@ -233,6 +233,7 @@ export default function BulkWorkOrderForm() {
                               title={state.inputBulkItem.processingName}
                               onHand={state.inputBulkItem.onHand}
                               shelfLife={state.inputBulkItem.shelfLife?.value}
+                              isBulk
                            />
                         ) : (
                            <ItemCard
@@ -240,6 +241,7 @@ export default function BulkWorkOrderForm() {
                               onHand={state.inputBulkItem.onHand}
                               shelfLife={state.inputBulkItem.shelfLife?.value}
                               edit={() => openInputBulkItemTunnel(1)}
+                              isBulk
                            />
                         )}
                      </>
@@ -267,6 +269,7 @@ export default function BulkWorkOrderForm() {
                            <ItemCard
                               title={state.outputBulkItem.processingName}
                               onHand={state.outputBulkItem.onHand}
+                              isBulk
                               shelfLife={state.outputBulkItem.shelfLife?.value}
                            />
                         ) : (
@@ -274,6 +277,7 @@ export default function BulkWorkOrderForm() {
                               title={state.outputBulkItem.processingName}
                               onHand={state.outputBulkItem.onHand}
                               shelfLife={state.outputBulkItem.shelfLife?.value}
+                              isBulk
                               edit={() => openOutputBulkItemTunnel(1)}
                            />
                         )}
