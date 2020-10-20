@@ -46,6 +46,7 @@ import {
 } from './styled'
 import { ProductTypeTunnel, ProductsTunnel } from '../../tunnels'
 import { logger } from '../../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.online_store.views.forms.product.customizableproduct.components.products.'
@@ -121,9 +122,12 @@ const Products = ({ state }) => {
             <SectionTabs>
                <SectionTabList>
                   <SectionTabsListHeader>
-                     <Text as="title">
-                        Products({state.customizableProductOptions.length})
-                     </Text>
+                     <Flex container alignItems="center">
+                        <Text as="title">
+                           Products({state.customizableProductOptions.length})
+                        </Text>
+                        <Tooltip identifier="customizable_product_products" />
+                     </Flex>
                      <IconButton type="ghost" onClick={() => openTunnel(1)}>
                         <PlusIcon color="#555b6e" />
                      </IconButton>
