@@ -1,18 +1,20 @@
 import React from 'react'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
    Tag,
    TagGroup,
-   useMultiList,
    TunnelHeader,
-   Loader,
+   useMultiList,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
    CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
@@ -27,8 +29,6 @@ const address =
 const ProductsTunnel = ({ state, close }) => {
    const { t } = useTranslation()
    const { productState } = React.useContext(CustomizableProductContext)
-
-   const [busy, setBusy] = React.useState(false)
 
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
@@ -51,7 +51,8 @@ const ProductsTunnel = ({ state, close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -71,29 +72,29 @@ const ProductsTunnel = ({ state, close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
 
-   const [createCustomizableProductOptions] = useMutation(
-      CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
-      {
-         onCompleted: () => {
-            toast.success(t(address.concat('products added!')))
-            close(2)
-            close(1)
-         },
-         onError: () => {
-            toast.error(t(address.concat('error')))
-            setBusy(false)
-         },
-      }
-   )
+   const [
+      createCustomizableProductOptions,
+      { loading: inFlight },
+   ] = useMutation(CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS, {
+      onCompleted: () => {
+         toast.success(t(address.concat('products added!')))
+         close(2)
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    const save = () => {
-      if (busy) return
-      setBusy(true)
+      if (inFlight) return
       const objects = selected.map(product => {
          return {
             customizableProductId: state.id,
@@ -130,54 +131,65 @@ const ProductsTunnel = ({ state, close }) => {
                   ${t(address.concat('to add'))}`}
             right={{
                action: save,
-               title: busy
-                  ? t(address.concat('saving'))
-                  : t(address.concat('save')),
+               title: inFlight ? 'Adding...' : 'Add',
             }}
             close={() => close(2)}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading || inventoryProductsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
+               <>
+                  {products.length ? (
+                     <List>
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder={t(
+                              address.concat("type what you're looking for")
+                           )}
+                        />
+                        {selected.length > 0 && (
+                           <TagGroup style={{ margin: '8px 0' }}>
+                              {selected.map(option => (
+                                 <Tag
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 >
+                                    {option.title}
+                                 </Tag>
+                              ))}
+                           </TagGroup>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="MSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                    isActive={selected.find(
+                                       item => item.id === option.id
+                                    )}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler
+                        message="No products found! To state, please add some."
+                        height="500px"
+                     />
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1"
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>
