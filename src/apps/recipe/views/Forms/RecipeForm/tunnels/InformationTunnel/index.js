@@ -30,7 +30,7 @@ const InformationTunnel = ({ state, closeTunnel }) => {
    // Subscription
    const { data: { cuisineNames = [] } = {}, loading } = useQuery(CUISINES, {
       onCompleted: data => {
-         if (!state.cuisine) {
+         if (!state.cuisine && data.cuisineNames.length) {
             _dispatch({
                type: 'SET_VALUE',
                payload: {
@@ -67,7 +67,7 @@ const InformationTunnel = ({ state, closeTunnel }) => {
          closeTunnel(1)
       },
       onError: error => {
-         console.log('Something went wrong!')
+         toast.error('Something went wrong!')
          logger(error)
       },
    })
@@ -84,13 +84,13 @@ const InformationTunnel = ({ state, closeTunnel }) => {
    React.useEffect(() => {
       const seedState = {
          type: {
-            value: state.type,
+            value: state.type || 'Vegetarian',
          },
          cuisine: {
             value: state.cuisine || '',
          },
          cookingTime: {
-            value: state.cookingTime || 30,
+            value: state.cookingTime || '30',
             meta: {
                isTouched: false,
                isValid: true,
@@ -395,7 +395,7 @@ const initialState = {
       value: '',
    },
    cookingTime: {
-      value: 30,
+      value: '30',
       meta: {
          isTouched: false,
          isValid: true,
