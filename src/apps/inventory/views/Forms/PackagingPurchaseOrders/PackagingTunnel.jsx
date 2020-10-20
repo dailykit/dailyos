@@ -1,5 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
@@ -11,15 +12,18 @@ import {
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils/errorLog'
 import { TunnelContainer } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { NO_PACKAGINGS } from '../../../constants/infoMessages'
 import {
    PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function AddressTunnel({ close }) {
@@ -29,13 +33,15 @@ export default function AddressTunnel({ close }) {
 
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION, {
-      onSubscriptionData: input => {
-         const data = input.subscriptionData.data.packagings
-         setData(data)
-      },
-      onError,
-   })
+   const { loading, error } = useSubscription(
+      PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION,
+      {
+         onSubscriptionData: input => {
+            const data = input.subscriptionData.data.packagings
+            setData(data)
+         },
+      }
+   )
 
    const [updatePurchaseOrderItem] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
       onError,
@@ -54,6 +60,11 @@ export default function AddressTunnel({ close }) {
       })
    }
 
+   if (error) {
+      onError(error)
+      return null
+   }
+
    if (loading) return <Loader />
 
    return (
@@ -64,33 +75,35 @@ export default function AddressTunnel({ close }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.name} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.name.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.name}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
-            <br />
-            <br />
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.name} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.name.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.name}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_PACKAGINGS} />
+            )}
          </TunnelContainer>
       </>
    )
