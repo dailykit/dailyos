@@ -1,7 +1,7 @@
 import React from 'react'
 import { TunnelHeader, Flex } from '@dailykit/ui'
 import { AssetUploader } from '../../../../../../../shared/components'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 
 const StepPhotoTunnel = ({ closeTunnel }) => {
    const { recipeState, recipeDispatch } = React.useContext(RecipeContext)

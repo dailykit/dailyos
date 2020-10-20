@@ -2,12 +2,10 @@ import React, { useState } from 'react'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    ButtonTile,
-   ButtonGroup,
    useTunnel,
    Loader,
-   Checkbox,
-   Tunnels,
-   Tunnel,
+   Flex,
+   Form,
    Text,
    IconButton,
    ComboButton,
@@ -22,7 +20,10 @@ import {
    REWARD_DATA,
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
+import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
+
 const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [typeTunnels, openTypeTunnel, closeTypeTunnel] = useTunnel(1)
    const [rewardTunnels, openRewardTunnel, closeRewardTunnel] = useTunnel(1)
@@ -36,18 +37,20 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [rewardInfoArray, setRewardInfoArray] = useState([])
    const [rewardTunnelInfo, setRewardTunnelInfo] = useState({})
    const [editMode, setEditMode] = useState(false)
+
    // Subscription
-   const { data: rewardData, loading } = useSubscription(
-      REWARD_DATA_BY_COUPON_ID,
-      {
-         variables: {
-            couponId: state.id,
-         },
-         onSubscriptionData: data => {
-            setRewardInfoArray(data.subscriptionData.data.crm_reward)
-         },
-      }
-   )
+   const { loading, error } = useSubscription(REWARD_DATA_BY_COUPON_ID, {
+      variables: {
+         couponId: state.id,
+      },
+      onSubscriptionData: data => {
+         setRewardInfoArray(data.subscriptionData.data.crm_reward)
+      },
+   })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    const [fetchReward, { loading: listLoading, data }] = useLazyQuery(
       REWARD_DATA,
@@ -59,6 +62,10 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             setRewardId(data.crm_reward_by_pk.id)
             setEditMode(true)
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
          fetchPolicy: 'cache-and-network',
       }
    )
@@ -68,8 +75,8 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          toast.success('Reward deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Could not delete!')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -136,15 +143,18 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          {rewardInfoArray.length > 0 ? (
             <StyledContainer>
                <StyledRow>
-                  <Text as="title">Reward Information</Text>
+                  <Flex container alignItems="center">
+                     <Text as="title">Reward Information</Text>
+                     <Tooltip identifier="coupon_reward_info" />
+                  </Flex>
                   {rewardInfoArray.length > 1 && (
-                     <Checkbox
-                        id="label"
-                        checked={checkbox}
+                     <Form.Checkbox
+                        name="t&c"
+                        value={checkbox}
                         onChange={updateCheckbox}
                      >
                         Allow multiple rewards
-                     </Checkbox>
+                     </Form.Checkbox>
                   )}
                </StyledRow>
 

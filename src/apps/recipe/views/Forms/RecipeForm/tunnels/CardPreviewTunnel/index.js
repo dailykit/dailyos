@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, TunnelHeader } from '@dailykit/ui'
 import { TunnelBody, StyledRow, ImageContainer } from '../styled'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 
 const CardPreviewTunnel = ({ closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)

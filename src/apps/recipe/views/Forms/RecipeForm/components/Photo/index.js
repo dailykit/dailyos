@@ -1,24 +1,23 @@
 import React from 'react'
-import { toast } from 'react-toastify'
-import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, Flex, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
 import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
-import { ImageContainer, PhotoTileWrapper } from './styled'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import { Container } from '../styled'
 import { PhotoTunnel } from '../../tunnels'
+import { ImageContainer, PhotoTileWrapper } from './styled'
 
 const Photo = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
-         toast.success('Image added!')
-         // close tunnel
+         toast.success('Image removed!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -42,7 +41,7 @@ const Photo = ({ state }) => {
                <PhotoTunnel state={state} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Container top="32" paddingX="32">
+         <Flex>
             {state.image ? (
                <ImageContainer>
                   <div>
@@ -71,12 +70,12 @@ const Photo = ({ state }) => {
                      type="primary"
                      size="sm"
                      text="Add Photo to your Recipe"
-                     helper="upto 1MB - only JPG, PNG, PDF allowed"
+                     helper="upto 1MB - only JPG & PNG allowed"
                      onClick={() => openTunnel(1)}
                   />
                </PhotoTileWrapper>
             )}
-         </Container>
+         </Flex>
       </>
    )
 }

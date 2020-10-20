@@ -4,7 +4,7 @@ export const CUISINES = gql`
    query Cuisines {
       cuisineNames {
          id
-         name
+         title: name
       }
    }
 `

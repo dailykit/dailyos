@@ -2,7 +2,7 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { Input, Text, Toggle, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { RecipeContext } from '../../../../../context/recipee'
+import { RecipeContext } from '../../../../../context/recipe'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 import { Container, Grid, TunnelBody } from '../styled'
 

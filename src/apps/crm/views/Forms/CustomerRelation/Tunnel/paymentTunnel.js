@@ -4,11 +4,17 @@ import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
 import { PaymentCard } from '../../../../components'
 import { TunnelHeaderContainer } from './styled'
+import { logger } from '../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 const TunnelVision = ({ id, tunnels, closeTunnel }) => {
    const { loading: listLoading, data: allCards } = useQuery(ALL_DATA, {
       variables: {
          keycloakId: id,
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
    if (listLoading) return <Loader />

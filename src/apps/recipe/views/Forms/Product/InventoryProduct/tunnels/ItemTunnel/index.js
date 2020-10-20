@@ -7,7 +7,7 @@ import {
    ListSearch,
    useSingleList,
    TunnelHeader,
-   Loader,
+   Filler,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -18,6 +18,8 @@ import {
    SACHET_ITEMS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
+import { logger } from '../../../../../../../../shared/utils'
+import { InlineLoader } from '../../../../../../../../shared/components'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
@@ -45,7 +47,8 @@ export default function ItemTunnel({ state, close }) {
             setItems([...updatedItems])
          },
          onError: error => {
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -63,7 +66,8 @@ export default function ItemTunnel({ state, close }) {
             setItems([...updatedItems])
          },
          onError: error => {
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -84,8 +88,9 @@ export default function ItemTunnel({ state, close }) {
          close(2)
          close(1)
       },
-      onError: () => {
-         toast.error('Error')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
          setBusy(false)
       },
    })
@@ -105,49 +110,57 @@ export default function ItemTunnel({ state, close }) {
       }
    }, [])
 
+   React.useEffect(() => {
+      if (current.id) {
+         add()
+      }
+   }, [current])
+
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select an item'))}
-            right={{
-               action: add,
-               title: busy
-                  ? t(address.concat('adding'))
-                  : t(address.concat('add')),
-            }}
             close={() => close(2)}
          />
          <TunnelBody>
             {sachetItemsLoading || supplierItemsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.title} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        )}
-                     />
-                  )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+               <>
+                  {list.length ? (
+                     <List>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder={t(
+                                 address.concat("type what you're looking for")
+                              )}
                            />
-                        ))}
-                  </ListOptions>
-               </List>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="SSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    isActive={option.id === current.id}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler message="No items found!" height="500px" />
+                  )}
+               </>
             )}
          </TunnelBody>
       </>

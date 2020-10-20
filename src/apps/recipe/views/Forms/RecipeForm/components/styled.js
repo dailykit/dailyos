@@ -15,7 +15,7 @@ export const Container = styled.div`
 export const ContainerAction = styled.span`
    position: absolute;
    right: 0;
-   top: 0;
+   top: 32px;
    cursor: pointer;
    z-index: 1;
 `

@@ -61,12 +61,11 @@ export const StyledBody = styled.div`
 `
 
 export const StyledRule = styled.hr`
-   color: #dddddd;
+   color: #e8e8e8;
 `
 
 export const StyledMeta = styled.div`
    display: flex;
-   padding: 16px;
 
    > div {
       &:nth-child(1) {

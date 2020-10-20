@@ -11,7 +11,6 @@ import {
    HorizontalTabPanel,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-// eslint-disable-next-line import/no-cycle
 import { ProductTile } from '../../../../../../../../shared/components'
 import { Grid } from './styled'
 import {
@@ -23,6 +22,7 @@ import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.accompaniments.'
@@ -40,8 +40,9 @@ const Recommendations = ({ state }) => {
       onCompleted: () => {
          toast.success('Product removed!')
       },
-      onError: () => {
-         toast.error('Error')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -57,26 +58,31 @@ const Recommendations = ({ state }) => {
 
    const deleteProduct = (recommendationType, product) => {
       try {
-         const { recommendations } = state
-         const index = recommendations.findIndex(
-            ({ type }) => type === recommendationType
+         const confirmed = window.confirm(
+            `Do you want to remove ${product.title} from recommendations?`
          )
-         recommendations[index].products = recommendations[
-            index
-         ].products.filter(
-            item => !(item.id === product.id && item.type === product.type)
-         )
-         updateProduct({
-            variables: {
-               id: state.id,
-               set: {
-                  recommendations,
+         if (confirmed) {
+            const { recommendations } = state
+            const index = recommendations.findIndex(
+               ({ type }) => type === recommendationType
+            )
+            recommendations[index].products = recommendations[
+               index
+            ].products.filter(
+               item => !(item.id === product.id && item.type === product.type)
+            )
+            updateProduct({
+               variables: {
+                  id: state.id,
+                  set: {
+                     recommendations,
+                  },
                },
-            },
-         })
-      } catch (err) {
-         console.log(err.message)
-         toast.error(err.message)
+            })
+         }
+      } catch (error) {
+         toast.error('Something went wrong!')
+         logger(error)
       }
    }
 
