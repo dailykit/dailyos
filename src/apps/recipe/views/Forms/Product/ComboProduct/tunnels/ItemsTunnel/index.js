@@ -52,9 +52,11 @@ export default function ItemTunnel({ state, close }) {
 
    // Handlers
    const save = () => {
-      if (inFlight) return
-      const hasInvalidValues = labels.some(label => !label.value.trim())
-      if (!labels.length || hasInvalidValues) {
+      if (inFlight || !labels.length) return
+      const hasInvalidValues = labels.some(
+         label => !label.meta.isValid || !label.value.trim()
+      )
+      if (hasInvalidValues) {
          return toast.error('Invalid values!')
       }
       const objects = labels.map(label => {
