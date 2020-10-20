@@ -1,30 +1,24 @@
+import { useMutation } from '@apollo/react-hooks'
 import {
    Avatar,
    ButtonTile,
    Flex,
    Form,
    IconButton,
-   Input,
    Spacer,
    Text,
 } from '@dailykit/ui/'
 import React, { useState } from 'react'
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-
-import {
-   UPDATE_SACHET_WORK_ORDER,
-   CHANGE_OUTPUT_QUANTITY,
-} from '../../../graphql'
-
-import AddIcon from '../../../../../shared/assets/icons/Add'
-import { ItemCard, Spacer as Separator } from '../../../components'
-import { FlexContainer } from '../styled'
-import { logger } from '../../../../../shared/utils'
-import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
-import { debounce, delay } from 'lodash'
+import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../shared/assets/icons'
+import { logger } from '../../../../../shared/utils'
+import { ItemCard, Spacer as Separator } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import {
+   CHANGE_OUTPUT_QUANTITY,
+   UPDATE_SACHET_WORK_ORDER,
+} from '../../../graphql'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.'
 
@@ -162,14 +156,17 @@ export default function Configurator({
 
          <>
             {state.user?.firstName ? (
-               <Flex container margin="16px 0 16px 0">
+               <Flex
+                  container
+                  margin="16px 0 16px 0"
+                  justifyContent="space-between"
+               >
                   <Avatar
                      withName
                      title={`${state.user.firstName} ${
                         state.user.lastName || ''
                      }`}
                   />
-                  <Spacer xAxis size="16px" />
                   <IconButton onClick={() => openUserTunnel(1)} type="outline">
                      <EditIcon />
                   </IconButton>

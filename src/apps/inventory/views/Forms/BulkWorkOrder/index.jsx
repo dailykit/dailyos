@@ -1,8 +1,10 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Avatar,
    ButtonTile,
    Flex,
    Form,
+   IconButton,
    Input,
    Loader,
    Text,
@@ -15,6 +17,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { EditIcon } from '../../../../../shared/assets/icons'
 import { logger } from '../../../../../shared/utils'
 import { ItemCard, Spacer, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -417,12 +420,21 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
 
          <>
             {bulkWorkOrder.user?.firstName ? (
-               <ItemCard
-                  title={`${bulkWorkOrder.user.firstName} ${
-                     bulkWorkOrder.user?.lastName || ''
-                  }`}
-                  edit={() => openUserTunnel(1)}
-               />
+               <Flex
+                  container
+                  margin="16px 0 16px 0"
+                  justifyContent="space-between"
+               >
+                  <Avatar
+                     withName
+                     title={`${bulkWorkOrder.user?.firstName} ${
+                        bulkWorkOrder.user?.lastName || ''
+                     }`}
+                  />
+                  <IconButton onClick={() => openUserTunnel(1)} type="outline">
+                     <EditIcon />
+                  </IconButton>
+               </Flex>
             ) : (
                <ButtonTile
                   noIcon
