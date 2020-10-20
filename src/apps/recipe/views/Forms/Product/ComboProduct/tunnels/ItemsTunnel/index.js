@@ -54,17 +54,15 @@ export default function ItemTunnel({ state, close }) {
    const save = () => {
       if (inFlight) return
       const hasInvalidValues = labels.some(label => !label.value.trim())
-      if (hasInvalidValues) {
+      if (!labels.length || hasInvalidValues) {
          return toast.error('Invalid values!')
       }
-      const objects = labels
-         .filter(label => label.length)
-         .map(label => {
-            return {
-               comboProductId: state.id,
-               label,
-            }
-         })
+      const objects = labels.map(label => {
+         return {
+            comboProductId: state.id,
+            label: label.value,
+         }
+      })
       createComboProductComponent({
          variables: {
             objects,
