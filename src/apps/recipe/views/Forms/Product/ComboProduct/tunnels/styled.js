@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const TunnelBody = styled.div`
-   padding: 32px;
+   padding: 16px;
    height: calc(100% - 106px);
    overflow: auto;
 `
@@ -11,7 +11,7 @@ export const StyledRow = styled.div`
 `
 
 export const SolidTile = styled.button`
-   width: 70%;
+   width: 100%;
    display: block;
    margin: 0 auto;
    border: 1px solid #cecece;

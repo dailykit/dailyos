@@ -45,7 +45,9 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
 
    const save = () => {
       if (inFlight || !servings.length) return
-      const hasInvalidFields = servings.some(serving => !serving.meta.isValid)
+      const hasInvalidFields = servings.some(
+         serving => !serving.meta.isValid || !serving.value
+      )
       if (hasInvalidFields) {
          return toast.error('All servings should be valid!')
       }
