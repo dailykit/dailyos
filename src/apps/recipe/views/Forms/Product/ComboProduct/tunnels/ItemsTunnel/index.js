@@ -1,11 +1,22 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Input, Text, TunnelHeader } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Form,
+   IconButton,
+   Spacer,
+   Text,
+   TunnelHeader,
+   Flex,
+} from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 // graphql
 import { CREATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
-import { StyledRow, TunnelBody } from '../styled'
+import { TunnelBody } from '../styled'
+import { logger } from '../../../../../../../../shared/utils'
+import validator from '../../../validators'
+import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.itemstunnel.'
@@ -13,55 +24,52 @@ const address =
 export default function ItemTunnel({ state, close }) {
    const { t } = useTranslation()
 
-   const [busy, setBusy] = React.useState(false)
-
-   const [labels, setLabels] = React.useState([''])
+   const [labels, setLabels] = React.useState([
+      {
+         value: '',
+         meta: {
+            isTocuhed: false,
+            isValid: true,
+            errors: [],
+         },
+      },
+   ])
 
    // Mutation
-   const [createComboProductComponent] = useMutation(
+   const [createComboProductComponent, { loading: inFlight }] = useMutation(
       CREATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: () => {
             close(1)
             toast.success(t(address.concat('items added!')))
          },
-         onError: () => {
-            setBusy(false)
+         onError: error => {
+            console.log('Something went wrong!')
+            logger(error)
          },
       }
    )
 
    // Handlers
    const save = () => {
-      try {
-         if (busy) return
-         setBusy(true)
-         const objects = labels
-            .filter(label => label.length)
-            .map(label => {
-               return {
-                  comboProductId: state.id,
-                  label,
-               }
-            })
-         if (!objects.length) {
-            throw Error(t(address.concat('no labels added!')))
-         }
-         createComboProductComponent({
-            variables: {
-               objects,
-            },
-         })
-      } catch (e) {
-         toast.error(e.message)
-         setBusy(false)
+      if (inFlight) return
+      const hasInvalidValues = labels.some(label => !label.value.trim())
+      if (hasInvalidValues) {
+         return toast.error('Invalid values!')
       }
-   }
-
-   const updatedLabel = (index, value) => {
-      const updatedLabels = labels
-      updatedLabels[index] = value
-      setLabels([...updatedLabels])
+      const objects = labels
+         .filter(label => label.length)
+         .map(label => {
+            return {
+               comboProductId: state.id,
+               label,
+            }
+         })
+      createComboProductComponent({
+         variables: {
+            objects,
+         },
+      })
    }
 
    return (
@@ -70,31 +78,85 @@ export default function ItemTunnel({ state, close }) {
             title={t(address.concat('add items'))}
             right={{
                action: save,
-               title: busy
+               title: inFlight
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
             close={() => close(1)}
          />
          <TunnelBody>
-            <Text as="h2">
+            <Text as="h3">
                {t(address.concat('label your items to add recipes for'))}
             </Text>
+            <Spacer size="16px" />
             {labels.map((label, i) => (
-               <StyledRow>
-                  <Input
-                     type="text"
-                     placeholder={t(address.concat('enter'))}
-                     name={`label-${i}`}
-                     value={label}
-                     onChange={e => updatedLabel(i, e.target.value)}
-                  />
-               </StyledRow>
+               <>
+                  <Flex container alignItems="end">
+                     <Form.Group>
+                        <Form.Text
+                           id={`label-${i}`}
+                           name={`label-${i}`}
+                           onBlur={() => {
+                              const { isValid, errors } = validator.name(
+                                 label.value
+                              )
+                              const newLabels = labels
+                              newLabels[i] = {
+                                 ...newLabels[i],
+                                 meta: { isTouched: true, isValid, errors },
+                              }
+                              setLabels([...newLabels])
+                           }}
+                           onChange={e => {
+                              const newLabels = labels
+                              newLabels[i] = {
+                                 ...newLabels[i],
+                                 value: e.target.value,
+                              }
+                              setLabels([...newLabels])
+                           }}
+                           value={label.value}
+                           placeholder="Enter label"
+                           hasError={
+                              label.meta.isTouched && !label.meta.isValid
+                           }
+                        />
+                        {label.meta.isTouched &&
+                           !label.meta.isValid &&
+                           label.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
+                     <IconButton
+                        type="ghost"
+                        onClick={() => {
+                           const newLabels = labels
+                           newLabels.splice(i, 1)
+                           setLabels([...newLabels])
+                        }}
+                     >
+                        <DeleteIcon color="#FF5A52" />
+                     </IconButton>
+                  </Flex>
+                  <Spacer size="16px" />
+               </>
             ))}
             <ButtonTile
                type="secondary"
                text={t(address.concat('add another item'))}
-               onClick={() => setLabels([...labels, ''])}
+               onClick={() =>
+                  setLabels([
+                     ...labels,
+                     {
+                        value: '',
+                        meta: {
+                           isTocuhed: false,
+                           isValid: true,
+                           errors: [],
+                        },
+                     },
+                  ])
+               }
             />
          </TunnelBody>
       </>

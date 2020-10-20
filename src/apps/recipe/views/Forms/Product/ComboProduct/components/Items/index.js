@@ -109,7 +109,7 @@ const Items = ({ state }) => {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <ItemsTunnel state={state} close={closeTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
