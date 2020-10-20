@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import {
    Toggle,
    Flex,
-   Loader,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
@@ -23,6 +22,7 @@ import {
    BrandCoupons,
 } from './components'
 import { logger } from '../../../../../shared/utils'
+import { InlineLoader } from '../../../../../shared/components'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -145,7 +145,7 @@ const CouponForm = () => {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <InputWrapper>

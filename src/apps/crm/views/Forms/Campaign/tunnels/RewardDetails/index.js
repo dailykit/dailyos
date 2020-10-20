@@ -20,10 +20,8 @@ import { logger } from '../../../../../../../shared/utils'
 import { Tooltip } from '../../../../../../../shared/components'
 
 export default function RewardDetailsunnel({
-   state,
    closeTunnel,
    tunnels,
-   openTunnel,
    openConditionTunnel,
    conditionId,
    rewardId,
@@ -67,7 +65,7 @@ export default function RewardDetailsunnel({
    }
 
    // Mutation
-   const [updateReward] = useMutation(UPDATE_REWARD, {
+   const [updateReward, { loading }] = useMutation(UPDATE_REWARD, {
       onCompleted: () => {
          toast.success('Updated!')
          closeTunnel(1)
@@ -155,7 +153,10 @@ export default function RewardDetailsunnel({
             <Tunnel layer={1}>
                <TunnelHeader
                   title="Add Reward Details"
-                  right={{ action: () => saveInfo(), title: 'Save' }}
+                  right={{
+                     action: () => saveInfo(),
+                     title: loading ? 'Saving...' : 'Save',
+                  }}
                   close={() => closeFunc()}
                />
                <TunnelBody>

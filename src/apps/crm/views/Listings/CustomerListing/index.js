@@ -1,16 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Text, Loader, Flex } from '@dailykit/ui'
-import { useSubscription, useQuery } from '@apollo/react-hooks'
-import { ReactTabulator } from '@dailykit/react-tabulator'
+import { Text, Loader, Flex, IconButton } from '@dailykit/ui'
+import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
+import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
 import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
    CUSTOMERS_LISTING,
+   CUSTOMER_ARCHIVED,
 } from '../../../graphql'
-import { Tooltip } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
@@ -21,12 +23,40 @@ const CustomerListing = () => {
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
    const [customersList, setCustomersList] = useState(undefined)
-
+   const [customerCount, setCustomerCount] = useState(0)
+   const [revenue, setRevenue] = useState(0)
    // Subscription
-   const { data: totalRevenue, loading } = useSubscription(TOTAL_REVENUE)
-   const { data: customersCount, customerCountLoading } = useSubscription(
-      CUSTOMERS_COUNT
-   )
+   const { loading, error1 } = useSubscription(TOTAL_REVENUE, {
+      onSubscriptionData: data => {
+         setRevenue(
+            data?.subscriptionData?.data?.ordersAggregate?.aggregate?.sum
+               ?.amountPaid || 0
+         )
+      },
+   })
+   const { customerCountLoading, error2 } = useSubscription(CUSTOMERS_COUNT, {
+      onSubscriptionData: data => {
+         setCustomerCount(
+            data?.subscriptionData?.data?.customers_aggregate?.aggregate
+               ?.count || 0
+         )
+      },
+   })
+   if (error1 || error2) {
+      toast.error('Something went wrong !')
+      logger(error1 || error2)
+   }
+
+   // Mutation
+   const [deleteCustomer] = useMutation(CUSTOMER_ARCHIVED, {
+      onCompleted: () => {
+         toast.success('Customer deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
 
    // Query
    const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
@@ -63,11 +93,37 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
+   // Handler
+   const deleteHandler = (e, Customer) => {
+      console.log(Customer)
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete Customer - ${Customer.name}?`
+         )
+      ) {
+         deleteCustomer({
+            variables: {
+               keycloakId: Customer.keycloakId,
+            },
+         })
+      }
+   }
+
    const rowClick = (e, cell) => {
       const { keycloakId, name } = cell._cell.row.data
       const param = '/crm/customers/'.concat(keycloakId)
       addTab(name, param)
    }
+
+   const DeleteButton = () => {
+      return (
+         <IconButton type="ghost">
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
+      )
+   }
+
    const columns = [
       {
          title: 'Customer Name',
@@ -190,11 +246,24 @@ const CustomerListing = () => {
          },
          width: 150,
       },
+      {
+         title: 'Action',
+         field: 'action',
+         cellClick: (e, cell) => {
+            e.stopPropagation()
+            deleteHandler(e, cell._cell.row.data)
+         },
+         formatter: reactFormatter(<DeleteButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
    ]
 
-   if (loading) return <Loader />
-   if (customerCountLoading) return <Loader />
-   if (listloading) return <Loader />
+   if (loading || customerCountLoading || listloading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Flex
@@ -203,24 +272,17 @@ const CustomerListing = () => {
             justifyContent="space-between"
             padding="32px 0 0 0"
          >
-            <HeadingTile
-               title="Total Customers"
-               value={
-                  customersCount?.customers_aggregate?.aggregate?.count || 0
-               }
-            />
+            <HeadingTile title="Total Customers" value={customerCount} />
             <HeadingTile
                title="Total Revenue generated"
-               value={'$'.concat(
-                  totalRevenue?.ordersAggregate?.aggregate?.sum?.amountPaid || 0
-               )}
+               value={`$ ${revenue}`}
             />
          </Flex>
 
          <Flex container height="80px" alignItems="center">
             <Text as="title">
                Customers(
-               {customersCount?.customers_aggregate?.aggregate?.count || 0})
+               {customerCount})
             </Text>
             <Tooltip identifier="customer_list_heading" />
          </Flex>

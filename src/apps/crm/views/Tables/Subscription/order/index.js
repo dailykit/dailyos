@@ -27,7 +27,7 @@ import {
    Heading,
 } from './styled'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { useTooltip } from '../../../../../../shared/providers'
 import { logger } from '../../../../../../shared/utils'
 import options from '../../../tableOptions'
@@ -38,7 +38,7 @@ const OrderInfo = () => {
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { data: orderData } = useQuery(ORDER, {
+   const { data: orderData, loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
       },
@@ -184,7 +184,7 @@ const OrderInfo = () => {
             {deliveryAgent}
          </SideCard>
       )
-
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Heading>

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-import { Text, Flex, Form, Loader } from '@dailykit/ui'
+import { Text, Flex, Form } from '@dailykit/ui'
 import { BRAND_CAMPAIGNS, UPSERT_BRAND_CAMPAIGN } from '../../../../../graphql'
 import { StyledWrapper } from './styled'
 import options from '../../../../tableOptions'
-import { Tooltip } from '../../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 
 const BrandCampaign = ({ state }) => {
@@ -68,7 +68,7 @@ const BrandCampaign = ({ state }) => {
       },
    ]
 
-   if (listloading) return <Loader />
+   if (listloading) return <InlineLoader />
 
    return (
       <StyledWrapper>
