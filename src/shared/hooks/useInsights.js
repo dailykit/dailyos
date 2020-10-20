@@ -69,6 +69,7 @@ export const useInsights = (
             id: null,
             filters: null,
             defaultOptions: {},
+            config: {},
          },
       } = {},
    } = useQuery(GET_INSIGHT, {
@@ -133,6 +134,7 @@ export const useInsights = (
       switches: variableSwitches,
       optionVariables: variableOptions,
       options: whereObject,
+      config: insight.config,
       updateSwitches: setVariableSwitches,
       updateOptions,
       oldAggregates,
@@ -152,6 +154,7 @@ export const GET_INSIGHT = gql`
          identifier
          availableOptions
          filters
+         config
          defaultOptions
          query
          switches
