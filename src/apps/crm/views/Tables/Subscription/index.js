@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Text, Loader, Flex } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
@@ -9,7 +9,7 @@ import { OCCURENCES } from '../../../graphql'
 import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
 import options from '../../tableOptions'
-import { Tooltip } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
@@ -212,7 +212,7 @@ const SubscriptionTable = ({ id, sid }) => {
       setOrder(orderId, true)
    }
 
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
    return (
       <>
          <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">

@@ -3,7 +3,7 @@ import { Text, Loader, Flex, IconButton } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
 import {
    CUSTOMERS_COUNT,
@@ -11,7 +11,7 @@ import {
    CUSTOMERS_LISTING,
    CUSTOMER_ARCHIVED,
 } from '../../../graphql'
-import { Tooltip } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
@@ -263,9 +263,7 @@ const CustomerListing = () => {
       },
    ]
 
-   if (loading) return <Loader />
-   if (customerCountLoading) return <Loader />
-   if (listloading) return <Loader />
+   if (loading || customerCountLoading || listloading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Flex

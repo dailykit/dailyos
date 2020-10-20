@@ -8,7 +8,6 @@ import {
    IconButton,
    ComboButton,
    PlusIcon,
-   Loader,
    Flex,
    Form,
 } from '@dailykit/ui'
@@ -23,7 +22,7 @@ import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { Tooltip } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
@@ -249,7 +248,7 @@ const CouponListing = () => {
          width: 100,
       },
    ]
-   if (loading || listLoading) return <Loader />
+   if (loading || listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Flex container alignItems="center" justifyContent="space-between">

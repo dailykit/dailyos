@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Text, Loader, Flex } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderPage from './Order'
 import { ORDERS_LISTING } from '../../../graphql'
-import { Tooltip } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
@@ -196,7 +196,7 @@ const OrdersTable = ({ id }) => {
       setOrder(orderId, true)
    }
 
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
    return (
       <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
          {tab.data.isOrderClicked ? (

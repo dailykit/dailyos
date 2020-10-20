@@ -24,7 +24,7 @@ import {
 import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { Tooltip } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
@@ -204,7 +204,7 @@ const CampaignListing = () => {
          width: 150,
       },
    ]
-   if (listLoading || loading) return <Loader />
+   if (listLoading || loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Flex container alignItems="center" justifyContent="space-between">

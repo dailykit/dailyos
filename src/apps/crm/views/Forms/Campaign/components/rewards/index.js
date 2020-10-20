@@ -3,7 +3,6 @@ import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    ButtonTile,
    useTunnel,
-   Loader,
    Form,
    Text,
    IconButton,
@@ -21,7 +20,7 @@ import {
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
 import { logger } from '../../../../../../../shared/utils'
-import { Tooltip } from '../../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
 
 const Rewards = ({ state, checkbox, updateCheckbox }) => {
@@ -111,7 +110,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
       }
    }
 
-   if (loading || listLoading) return <Loader />
+   if (loading || listLoading) return <InlineLoader />
 
    return (
       <>
