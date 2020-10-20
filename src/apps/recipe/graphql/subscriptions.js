@@ -499,10 +499,12 @@ export const S_COMBO_PRODUCT = gql`
             customizableProduct {
                id
                name
+               assets
             }
             inventoryProduct {
                id
                name
+               assets
                inventoryProductOptions {
                   id
                   label
@@ -513,6 +515,7 @@ export const S_COMBO_PRODUCT = gql`
             simpleRecipeProduct {
                id
                name
+               assets
                simpleRecipeProductOptions {
                   id
                   isActive
