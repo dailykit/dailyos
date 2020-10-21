@@ -12,7 +12,7 @@ const validator = {
    price: value => {
       let isValid = true
       let errors = []
-      if (!value) {
+      if (!value.trim()) {
          isValid = false
          errors = [...errors, 'Cannot be empty!']
       }
@@ -28,6 +28,47 @@ const validator = {
       if (!value) {
          isValid = false
          errors = [...errors, 'Invalid time!']
+      }
+      return { isValid, errors }
+   },
+   minutes: value => {
+      let isValid = true
+      let errors = []
+      if (!value.trim().length) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      const val = +value
+      if (!Number.isInteger(val) || val <= 0) {
+         isValid = false
+         errors = [...errors, 'Invalid value!']
+      }
+      return { isValid, errors }
+   },
+   distance: value => {
+      let isValid = true
+      let errors = []
+      if (!value.trim().length) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      const val = +value
+      if (val < 0) {
+         isValid = false
+         errors = [...errors, 'Invalid value!']
+      }
+      return { isValid, errors }
+   },
+   charge: value => {
+      let isValid = true
+      let errors = []
+      if (!value.trim()) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (+value < 0) {
+         isValid = false
+         errors = [...errors, 'Invalid value!']
       }
       return { isValid, errors }
    },
