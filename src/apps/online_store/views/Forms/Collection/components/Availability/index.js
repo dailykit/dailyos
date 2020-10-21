@@ -9,7 +9,7 @@ import { CollectionBrands } from '../'
 import { UPDATE_COLLECTION } from '../../../../../graphql'
 
 import { logger } from '../../../../../../../shared/utils'
-import { ErrorBoundary } from '../../../../../../../shared/components'
+import { ErrorBoundary, Tooltip } from '../../../../../../../shared/components'
 import validator from '../../../validators'
 
 const Availability = ({ state }) => {
@@ -69,7 +69,10 @@ const Availability = ({ state }) => {
                <Flex container alignItems="start">
                   <Form.Group>
                      <Form.Label htmlFor="start" title="start">
-                        Start Time
+                        <Flex container alignItems="center">
+                           Start Time
+                           <Tooltip identifier="collection_availability_start_time" />
+                        </Flex>
                      </Form.Label>
                      <Form.Time
                         id="start"
@@ -104,7 +107,10 @@ const Availability = ({ state }) => {
                   <Spacer xAxis size="16px" />
                   <Form.Group>
                      <Form.Label htmlFor="end" title="end">
-                        End Time
+                        <Flex container alignItems="center">
+                           End Time
+                           <Tooltip identifier="collection_availability_end_time" />
+                        </Flex>
                      </Form.Label>
                      <Form.Time
                         id="end"

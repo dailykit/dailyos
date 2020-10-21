@@ -27,6 +27,7 @@ import { Products, Availability } from './components'
 import { FormBody, FormHeader } from './styled'
 import validator from '../validators'
 import { logger } from '../../../../../shared/utils'
+import { Tooltip } from '../../../../../shared/components'
 
 const address = 'apps.online_store.views.forms.collection.'
 
@@ -153,9 +154,24 @@ const CollectionForm = () => {
                <Flex padding="16px 32px">
                   <HorizontalTabs>
                      <HorizontalTabList>
-                        <HorizontalTab>Products</HorizontalTab>
-                        <HorizontalTab>Availability</HorizontalTab>
-                        <HorizontalTab>Insights</HorizontalTab>
+                        <HorizontalTab>
+                           <Flex container alignItems="center">
+                              Products
+                              <Tooltip identifier="collection_products" />
+                           </Flex>
+                        </HorizontalTab>
+                        <HorizontalTab>
+                           <Flex container alignItems="center">
+                              Availability
+                              <Tooltip identifier="collection_availability" />
+                           </Flex>
+                        </HorizontalTab>
+                        <HorizontalTab>
+                           <Flex container alignItems="center">
+                              Insights
+                              <Tooltip identifier="collection_insights" />
+                           </Flex>
+                        </HorizontalTab>
                      </HorizontalTabList>
                      <HorizontalTabPanels>
                         <HorizontalTabPanel>
