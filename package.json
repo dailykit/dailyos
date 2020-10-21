@@ -6,7 +6,7 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "^0.7.8",
+      "@dailykit/ui": "0.8.6",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
       "@testing-library/jest-dom": "4.2.4",
@@ -72,11 +72,11 @@
    "devDependencies": {
       "eslint": "^6.8.0",
       "eslint-config-airbnb": "^18.2.0",
-      "eslint-config-prettier": "^6.11.0",
-      "eslint-plugin-import": "^2.22.0",
+      "eslint-config-prettier": "^6.12.0",
+      "eslint-plugin-import": "^2.22.1",
       "eslint-plugin-jsx-a11y": "^6.3.1",
       "eslint-plugin-prettier": "^3.1.4",
-      "eslint-plugin-react": "^7.20.6",
-      "prettier": "^2.1.1"
+      "eslint-plugin-react": "^7.21.4",
+      "prettier": "^2.1.2"
    }
 }
