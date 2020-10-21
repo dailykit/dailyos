@@ -22,6 +22,15 @@ const validator = {
       }
       return { isValid, errors }
    },
+   time: value => {
+      let isValid = true
+      let errors = []
+      if (!value) {
+         isValid = false
+         errors = [...errors, 'Invalid time!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator

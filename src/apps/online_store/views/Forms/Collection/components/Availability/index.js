@@ -2,64 +2,153 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import ReactRRule from '../../../../../../../shared/components/ReactRRule'
 import { toast } from 'react-toastify'
-import { TextButton } from '@dailykit/ui'
+import { TextButton, Flex, Form, Spacer } from '@dailykit/ui'
 
 import { CollectionBrands } from '../'
 
 import { UPDATE_COLLECTION } from '../../../../../graphql'
 
-import { StyledWrapper } from './styled'
+import { logger } from '../../../../../../../shared/utils'
+import { ErrorBoundary } from '../../../../../../../shared/components'
+import validator from '../../../validators'
 
 const Availability = ({ state }) => {
-   const [isSaving, setIsSaving] = React.useState(false)
    const [rrule, setRrule] = React.useState(state.rrule)
-   const [startTime, setStartTime] = React.useState(null)
-   const [endTime, setEndTime] = React.useState(null)
+   const [startTime, setStartTime] = React.useState({
+      value: state.startTime,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [endTime, setEndTime] = React.useState({
+      value: state.endTime,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
 
    const save = () => {
-      try {
-         if (isSaving) return
-         setIsSaving(true)
-         console.log(rrule)
+      if (inFlight) return
+      if (startTime.meta.isValid && endTime.meta.isValid) {
          updateCollection({
             variables: {
                id: state.id,
                set: {
                   rrule,
-                  startTime,
-                  endTime,
+                  startTime: startTime.value,
+                  endTime: endTime.value,
                },
             },
          })
-      } catch (err) {
-         console.log(err)
-      } finally {
-         setIsSaving(false)
+      } else {
+         toast.error('Invalid inputs!')
       }
    }
 
-   const [updateCollection] = useMutation(UPDATE_COLLECTION, {
-      onCompleted: () => {
-         toast.success('Availability updated!')
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
+   const [updateCollection, { loading: inFlight }] = useMutation(
+      UPDATE_COLLECTION,
+      {
+         onCompleted: () => {
+            toast.success('Availability updated!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    return (
-      <>
-         <StyledWrapper>
-            <ReactRRule
-               value={rrule}
-               onChange={val => setRrule(val.psqlObject)}
-            />
+      <ErrorBoundary rootRoute="/apps/online-store">
+         <Flex container alignItems="start" justifyContent="space-between">
+            <Flex>
+               <Flex container alignItems="start">
+                  <Form.Group>
+                     <Form.Label htmlFor="start" title="start">
+                        Start Time
+                     </Form.Label>
+                     <Form.Time
+                        id="start"
+                        name="start"
+                        onChange={e =>
+                           setStartTime({ ...startTime, value: e.target.value })
+                        }
+                        onBlur={() => {
+                           const { isValid, errors } = validator.time(
+                              startTime.value
+                           )
+                           setStartTime({
+                              ...startTime,
+                              meta: {
+                                 isTouched: true,
+                                 isValid,
+                                 errors,
+                              },
+                           })
+                        }}
+                        value={startTime.value}
+                        hasError={
+                           startTime.meta.isTouched && !startTime.meta.isValid
+                        }
+                     />
+                     {startTime.meta.isTouched &&
+                        !startTime.meta.isValid &&
+                        startTime.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Spacer xAxis size="16px" />
+                  <Form.Group>
+                     <Form.Label htmlFor="end" title="end">
+                        End Time
+                     </Form.Label>
+                     <Form.Time
+                        id="end"
+                        name="end"
+                        onChange={e =>
+                           setEndTime({ ...endTime, value: e.target.value })
+                        }
+                        value={endTime.value}
+                        onBlur={() => {
+                           const { isValid, errors } = validator.time(
+                              endTime.value
+                           )
+                           setEndTime({
+                              ...endTime,
+                              meta: {
+                                 isTouched: true,
+                                 isValid,
+                                 errors,
+                              },
+                           })
+                        }}
+                        hasError={
+                           endTime.meta.isTouched && !endTime.meta.isValid
+                        }
+                     />
+                     {endTime.meta.isTouched &&
+                        !endTime.meta.isValid &&
+                        endTime.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+               </Flex>
+               <Spacer size="16px" />
+               <ReactRRule
+                  value={rrule}
+                  onChange={val => setRrule(val.psqlObject)}
+               />
+            </Flex>
             <TextButton type="solid" onClick={save}>
-               Save
+               {inFlight ? 'Saving...' : 'Save'}
             </TextButton>
-         </StyledWrapper>
+         </Flex>
          <CollectionBrands state={state} />
-      </>
+      </ErrorBoundary>
    )
 }
 
