@@ -3,6 +3,7 @@ import {
    Avatar,
    Flex,
    Form,
+   IconButton,
    Spacer,
    Text,
    TextButton,
@@ -17,11 +18,7 @@ import { logger } from '../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { UPDATE_PACKAGING } from '../../../graphql'
-import {
-   StyledHeader,
-   StyledSupplier,
-   TransparentIconButton,
-} from '../Item/styled'
+import { StyledHeader, StyledSupplier } from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
 import {
@@ -144,9 +141,12 @@ function SupplierInfo({ state }) {
             <StyledSupplier>
                <span>{state.supplier.name}</span>
                {renderAvatar(state.supplier?.contactPerson)}
-               <TransparentIconButton onClick={() => openSuppliersTunnel(1)}>
-                  <EditIcon size="18" color="#555B6E" />
-               </TransparentIconButton>
+               <IconButton
+                  type="outline"
+                  onClick={() => openSuppliersTunnel(1)}
+               >
+                  <EditIcon />
+               </IconButton>
             </StyledSupplier>
          </>
       )
