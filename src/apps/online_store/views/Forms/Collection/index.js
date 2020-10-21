@@ -1,21 +1,24 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
-import { toast } from 'react-toastify'
-import { useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Form,
    Flex,
-   Spacer,
-   Loader,
+   Form,
    HorizontalTab,
-   HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   HorizontalTabs,
 } from '@dailykit/ui'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-
+import { isEmpty } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import {
+   ErrorBoundary,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import {
    CollectionContext,
    reducer,
@@ -23,11 +26,8 @@ import {
 } from '../../../context/collection'
 import { useTabs } from '../../../context/tabs'
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
-import { Products, Availability } from './components'
-import { FormBody, FormHeader } from './styled'
 import validator from '../validators'
-import { logger } from '../../../../../shared/utils'
-import { Tooltip } from '../../../../../shared/components'
+import { Availability, Products } from './components'
 
 const address = 'apps.online_store.views.forms.collection.'
 
@@ -114,11 +114,13 @@ const CollectionForm = () => {
       })
    }
 
-   if (loading) return <Loader />
+   if (!loading && error) return <ErrorBoundary />
 
    return (
       <>
-         {state ? (
+         {loading || !state ? (
+            <InlineLoader />
+         ) : (
             <CollectionContext.Provider
                value={{ collectionState, collectionDispatch }}
             >
@@ -187,8 +189,6 @@ const CollectionForm = () => {
                   </HorizontalTabs>
                </Flex>
             </CollectionContext.Provider>
-         ) : (
-            <p>Could not fetch collection!</p>
          )}
       </>
    )
