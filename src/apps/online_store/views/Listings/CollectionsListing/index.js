@@ -26,7 +26,11 @@ import {
 // Styled
 import { StyledHeader, StyledWrapper, Flexible } from '../styled'
 import tableOptions from '../tableOption'
-import { ErrorBoundary, Tooltip } from '../../../../../shared/components'
+import {
+   ErrorBoundary,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
@@ -170,12 +174,16 @@ const CollectionsListing = () => {
             </ComboButton>
          </Flex>
          <Spacer size="16px" />
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={collections}
-            options={tableOptions}
-         />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={collections}
+               options={tableOptions}
+            />
+         )}
       </Flex>
    )
 }
