@@ -1,24 +1,26 @@
 import React from 'react'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
+   useSingleList,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../../shared/components'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
-   UPDATE_COMBO_PRODUCT_COMPONENT,
-   SIMPLE_RECIPE_PRODUCTS,
-   INVENTORY_PRODUCTS,
    CUSTOMIZABLE_PRODUCTS,
+   INVENTORY_PRODUCTS,
+   SIMPLE_RECIPE_PRODUCTS,
+   UPDATE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'
@@ -48,7 +50,8 @@ const ProductsTunnel = ({ close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -68,7 +71,8 @@ const ProductsTunnel = ({ close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -88,7 +92,8 @@ const ProductsTunnel = ({ close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -101,6 +106,10 @@ const ProductsTunnel = ({ close }) => {
             toast.success(t(address.concat('product added!')))
             close(3)
             close(2)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
@@ -148,35 +157,44 @@ const ProductsTunnel = ({ close }) => {
             {simpleRecipeProductsLoading ||
             inventoryProductsLoading ||
             customizableProductsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.title} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
+               <>
+                  {list.length ? (
+                     <List>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder={t(
+                                 address.concat("type what you're looking for")
+                              )}
+                           />
                         )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="SSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    isActive={option.id === current.id}
+                                    onClick={() => select(option)}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler
+                        message="No products found! To start, please add some."
+                        height="500px"
                      />
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => select(option)}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>

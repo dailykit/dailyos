@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { Loader, useTunnel, Flex } from '@dailykit/ui'
+import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
 import {
@@ -36,6 +36,7 @@ import {
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
 import { logger } from '../../../../../shared/utils'
+import { InlineLoader } from '../../../../../shared/components'
 
 const CustomerRelation = ({ match }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -139,7 +140,7 @@ const CustomerRelation = ({ match }) => {
       )
    }
    if (listLoading || list_Loading || list__Loading || customerloading) {
-      return <Loader />
+      return <InlineLoader />
    }
    return (
       <StyledWrapper>

@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import {
-   Toggle,
-   Loader,
    Flex,
    HorizontalTab,
    HorizontalTabs,
@@ -23,6 +21,7 @@ import {
    BrandCampaign,
 } from './components'
 import { logger } from '../../../../../shared/utils'
+import { InlineLoader } from '../../../../../shared/components'
 
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -146,7 +145,7 @@ const CampaignForm = () => {
       }
    }, [addTab, tab])
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <InputWrapper>

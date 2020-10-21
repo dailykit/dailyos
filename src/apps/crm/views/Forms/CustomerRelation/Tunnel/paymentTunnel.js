@@ -1,10 +1,11 @@
 import React from 'react'
-import { Tunnels, Tunnel, TunnelHeader, Loader } from '@dailykit/ui'
+import { Tunnels, Tunnel, TunnelHeader } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
 import { PaymentCard } from '../../../../components'
 import { TunnelHeaderContainer } from './styled'
 import { logger } from '../../../../../../shared/utils'
+import { InlineLoader } from '../../../../../../shared/components'
 import { toast } from 'react-toastify'
 
 const TunnelVision = ({ id, tunnels, closeTunnel }) => {
@@ -17,7 +18,7 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
          logger(error)
       },
    })
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>

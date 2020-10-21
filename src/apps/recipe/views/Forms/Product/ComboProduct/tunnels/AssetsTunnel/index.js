@@ -1,11 +1,12 @@
 import React from 'react'
-import { TunnelHeader, Flex } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
+import { TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-
+import { toast } from 'react-toastify'
 import { AssetUploader } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.tunnels.assetstunnel.'
@@ -16,8 +17,9 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
          toast.success(t(address.concat('image added!')))
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error(t(address.concat('error')))
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -41,12 +43,12 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
             title={t(address.concat('select photo'))}
             close={() => closeTunnel(1)}
          />
-         <Flex padding="0 14px">
+         <TunnelBody>
             <AssetUploader
                onAssetUpload={url => addImage(url)}
                onImageSelect={image => addImage(image)}
             />
-         </Flex>
+         </TunnelBody>
       </>
    )
 }

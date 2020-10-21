@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, TunnelHeader, Loader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
+import { Text, TunnelHeader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
-import { Tooltip } from '../../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 
 export default function RewardTypeTunnel({
    state,
@@ -57,7 +57,7 @@ export default function RewardTypeTunnel({
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
    return (
       <>
          <Tunnels tunnels={tunnels}>

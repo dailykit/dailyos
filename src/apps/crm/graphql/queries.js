@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const CUSTOMERS_LISTING = gql`
    query CUSTOMER_LISTING {
-      customers {
+      customers(where: { isArchived: { _eq: false } }) {
          keycloakId
          source
          platform_customer {
