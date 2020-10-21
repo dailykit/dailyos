@@ -1,5 +1,5 @@
 import React from 'react'
-import { ButtonTile } from '@dailykit/ui'
+import { ButtonTile, IconButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 
@@ -8,6 +8,7 @@ import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
 import { DELETE_CHARGE } from '../../../../../../graphql'
+import { logger } from '../../../../../../../../shared/utils'
 
 const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -18,14 +19,14 @@ const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
          toast.success('Deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const deleteHandler = id => {
-      if (window.confirm('Are you sure you want to delete?')) {
+      if (window.confirm('Are you sure you want to delete this charge?')) {
          deleteCharge({
             variables: {
                id,
@@ -62,18 +63,16 @@ const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
                   ${charge.orderValueFrom} - ${charge.orderValueUpto}
                </div>
                <div style={{ padding: '8px' }}>${charge.charge}</div>
-               <Flex
-                  direction="row"
-                  justify="flex-start"
-                  className="action"
-                  style={{ padding: '8px' }}
-               >
-                  <span onClick={() => updateCharge(charge)}>
+               <Flex direction="row" align="center" style={{ padding: '8px' }}>
+                  <IconButton type="ghost" onClick={() => updateCharge(charge)}>
                      <EditIcon color="#00A7E1" />
-                  </span>
-                  <span onClick={() => deleteHandler(charge.id)}>
+                  </IconButton>
+                  <IconButton
+                     type="ghost"
+                     onClick={() => deleteHandler(charge.id)}
+                  >
                      <DeleteIcon color="#FF5A52" />
-                  </span>
+                  </IconButton>
                </Flex>
             </TableRecord>
          ))}

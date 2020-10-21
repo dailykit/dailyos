@@ -1,16 +1,15 @@
 import React from 'react'
-import { ButtonTile, Toggle } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
+import { ButtonTile, Form, IconButton } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
-
-import { TableRecord } from './styled'
-
+import { toast } from 'react-toastify'
 import { DeliveryRanges } from '../'
-import { RecurrenceContext } from '../../../../../../context/recurrence'
-import { Flex } from '../../../styled'
+import { logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../assets/icons'
-import { UPDATE_TIME_SLOT, DELETE_TIME_SLOT } from '../../../../../../graphql'
+import { RecurrenceContext } from '../../../../../../context/recurrence'
+import { DELETE_TIME_SLOT, UPDATE_TIME_SLOT } from '../../../../../../graphql'
+import { Flex } from '../../../styled'
+import { TableRecord } from './styled'
 
 const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -22,8 +21,8 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -32,14 +31,14 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
          toast.success('Deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const deleteHandler = id => {
-      if (window.confirm('Are you sure you want to delete?')) {
+      if (window.confirm('Are you sure you want to delete this time slot?')) {
          deleteTimeSlot({
             variables: {
                id,
@@ -73,26 +72,31 @@ const TimeSlots = ({ recurrenceId, timeSlots, openTunnel }) => {
                            mins.
                         </div>
                      )}
-                     <Flex direction="row" style={{ padding: '16px' }}>
-                        <Toggle
-                           checked={timeSlot.isActive}
-                           setChecked={val =>
+                     <Flex
+                        direction="row"
+                        align="center"
+                        style={{ padding: '16px' }}
+                     >
+                        <Form.Toggle
+                           name={`timeSlot-${timeSlot.id}`}
+                           value={timeSlot.isActive}
+                           onChange={() =>
                               updateTimeSlot({
                                  variables: {
                                     id: timeSlot.id,
                                     set: {
-                                       isActive: val,
+                                       isActive: !timeSlot.isActive,
                                     },
                                  },
                               })
                            }
                         />
-                        <span
-                           className="action"
+                        <IconButton
+                           type="ghost"
                            onClick={() => deleteHandler(timeSlot.id)}
                         >
                            <DeleteIcon color=" #FF5A52" />
-                        </span>
+                        </IconButton>
                      </Flex>
                      {type.includes('DELIVERY') && (
                         <div>

@@ -10,6 +10,6 @@ export const TableRecord = styled.div`
    border: 1px solid #ececec;
    padding: 2px;
    padding-left: 0px;
-   align-items: start;
+   align-items: center;
    margin-bottom: 4px;
 `
