@@ -8,7 +8,7 @@ import {
    TagGroup,
    useMultiList,
    TunnelHeader,
-   Loader,
+   Filler,
 } from '@dailykit/ui'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
@@ -22,6 +22,8 @@ import {
    CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
 } from '../../../../../graphql'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 
 const address = 'apps.online_store.views.forms.collection.tunnels.products.'
 
@@ -29,7 +31,6 @@ const ProductsTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()
    const { collectionState } = React.useContext(CollectionContext)
 
-   const [isSaving, setIsSaving] = React.useState(false)
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
    const [list, selected, selectOption] = useMultiList(products)
@@ -51,7 +52,8 @@ const ProductsTunnel = ({ closeTunnel }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -71,7 +73,8 @@ const ProductsTunnel = ({ closeTunnel }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -91,7 +94,8 @@ const ProductsTunnel = ({ closeTunnel }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -110,13 +114,14 @@ const ProductsTunnel = ({ closeTunnel }) => {
             setProducts([...updatedProducts])
          },
          onError: error => {
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
          fetchPolicy: 'cache-and-network',
       }
    )
 
-   const [createRecord] = useMutation(
+   const [createRecord, { loading: inFlight }] = useMutation(
       CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
       {
          onCompleted: data => {
@@ -132,44 +137,36 @@ const ProductsTunnel = ({ closeTunnel }) => {
             closeTunnel(1)
          },
          onError: error => {
-            console.log(error)
-            toast.error('Error')
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
 
    const save = () => {
-      try {
-         if (isSaving || !selected.length) return
-         setIsSaving(true)
-         const objects = selected.map(product => {
-            const obj = {
-               collection_productCategoryId: collectionState.categoryId,
-            }
-            if (collectionState.productType === 'inventory') {
-               obj.inventoryProductId = product.id
-            } else if (collectionState.productType === 'simple') {
-               obj.simpleRecipeProductId = product.id
-            } else if (collectionState.productType === 'combo') {
-               obj.comboProductId = product.id
-            } else if (collectionState.productType === 'customizable') {
-               obj.customizableProductId = product.id
-            } else {
-               throw Error('Could not resolve product type!')
-            }
-            return obj
-         })
-         createRecord({
-            variables: {
-               objects,
-            },
-         })
-      } catch (err) {
-         console.log(err)
-         toast.error(err.message)
-      } finally {
-         setIsSaving(false)
-      }
+      if (inFlight || !selected.length) return
+      const objects = selected.map(product => {
+         const obj = {
+            collection_productCategoryId: collectionState.categoryId,
+         }
+         if (collectionState.productType === 'inventory') {
+            obj.inventoryProductId = product.id
+         } else if (collectionState.productType === 'simple') {
+            obj.simpleRecipeProductId = product.id
+         } else if (collectionState.productType === 'combo') {
+            obj.comboProductId = product.id
+         } else if (collectionState.productType === 'customizable') {
+            obj.customizableProductId = product.id
+         } else {
+            throw Error('Could not resolve product type!')
+         }
+         return obj
+      })
+      createRecord({
+         variables: {
+            objects,
+         },
+      })
    }
 
    React.useEffect(() => {
@@ -192,7 +189,7 @@ const ProductsTunnel = ({ closeTunnel }) => {
             title={t(
                address.concat('select and add products to the collection')
             )}
-            right={{ action: save, title: t(address.concat('save')) }}
+            right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(2)}
          />
          <TunnelBody>
@@ -200,46 +197,59 @@ const ProductsTunnel = ({ closeTunnel }) => {
             inventoryProductsLoading ||
             customizableProductsLoading ||
             comboProductsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
+               <>
+                  {products?.length ? (
+                     <List>
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder={t(
+                              address.concat("type what you're looking for")
+                           )}
+                        />
+                        {selected.length > 0 && (
+                           <TagGroup style={{ margin: '8px 0' }}>
+                              {selected.map(option => (
+                                 <Tag
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 >
+                                    {option.title}
+                                 </Tag>
+                              ))}
+                           </TagGroup>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="MSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                    isActive={selected.find(
+                                       item => item.id === option.id
+                                    )}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler
+                        message="No products found! To start, please add some."
+                        height="500px"
+                     />
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1"
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>
