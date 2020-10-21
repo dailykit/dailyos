@@ -1,19 +1,24 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
-import { toast } from 'react-toastify'
-import { useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Input,
-   Loader,
+   Flex,
+   Form,
    HorizontalTab,
-   HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   HorizontalTabs,
 } from '@dailykit/ui'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-
+import { isEmpty } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import {
+   ErrorBoundary,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import {
    CollectionContext,
    reducer,
@@ -21,8 +26,8 @@ import {
 } from '../../../context/collection'
 import { useTabs } from '../../../context/tabs'
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
-import { Products, Availability } from './components'
-import { FormBody, FormHeader } from './styled'
+import validator from '../validators'
+import { Availability, Products } from './components'
 
 const address = 'apps.online_store.views.forms.collection.'
 
@@ -37,76 +42,138 @@ const CollectionForm = () => {
       initialState
    )
 
-   const [title, setTitle] = React.useState('')
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [state, setState] = React.useState(undefined)
 
    // Subscription
-   const { loading } = useSubscription(S_COLLECTION, {
+   const { loading, error } = useSubscription(S_COLLECTION, {
       variables: {
          id: collectionId,
       },
       onSubscriptionData: data => {
+         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.collection)
-         setTitle(data.subscriptionData.data.collection.name)
+         setTitle({
+            ...title,
+            value: data.subscriptionData.data.collection.name,
+         })
       },
    })
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Mutations
    const [updateCollection] = useMutation(UPDATE_COLLECTION, {
       onCompleted: () => {
          toast.success('Updated!')
-         setTabTitle(title)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    React.useEffect(() => {
-      if (!tab && !loading && !isEmpty(title)) {
-         addTab(title, `/online-store/collections/${collectionId}`)
+      if (!tab && !loading && !isEmpty(title.value)) {
+         addTab(title.value, `/online-store/collections/${collectionId}`)
       }
-   }, [tab, addTab, loading, title])
+   }, [tab, addTab, loading, title.value])
 
-   const updateName = () => {
-      if (title) {
-         updateCollection({
+   const updateName = async () => {
+      const { isValid, errors } = validator.name(title.value)
+      if (isValid) {
+         const { data } = await updateCollection({
             variables: {
                id: state.id,
                set: {
-                  name: title,
+                  name: title.value,
                },
             },
          })
+         if (data) {
+            setTabTitle(title.value)
+         }
       }
+      setTitle({
+         ...title,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
    }
 
-   if (loading) return <Loader />
+   if (!loading && error) return <ErrorBoundary />
 
    return (
       <>
-         {state ? (
+         {loading || !state ? (
+            <InlineLoader />
+         ) : (
             <CollectionContext.Provider
                value={{ collectionState, collectionDispatch }}
             >
-               <FormHeader>
-                  <Input
-                     label={t(address.concat('collection name'))}
-                     type="text"
-                     name="title"
-                     value={title}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={updateName}
-                     style={{ maxWidth: 400 }}
-                  />
-               </FormHeader>
-               <FormBody>
+               <Flex
+                  as="header"
+                  container
+                  padding="16px 32px"
+                  alignItems="start"
+                  justifyContent="space-between"
+               >
+                  <Form.Group>
+                     <Form.Label htmlFor="title" title="title">
+                        Collection Name*
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
+                        name="title"
+                        value={title.value}
+                        placeholder="Enter product name"
+                        onChange={e =>
+                           setTitle({ ...title, value: e.target.value })
+                        }
+                        onBlur={updateName}
+                        hasError={!title.meta.isValid && title.meta.isTouched}
+                     />
+                     {title.meta.isTouched &&
+                        !title.meta.isValid &&
+                        title.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+               </Flex>
+               <Flex padding="16px 32px">
                   <HorizontalTabs>
                      <HorizontalTabList>
-                        <HorizontalTab>Products</HorizontalTab>
-                        <HorizontalTab>Availability</HorizontalTab>
-                        <HorizontalTab>Insights</HorizontalTab>
+                        <HorizontalTab>
+                           <Flex container alignItems="center">
+                              Products
+                              <Tooltip identifier="collection_products" />
+                           </Flex>
+                        </HorizontalTab>
+                        <HorizontalTab>
+                           <Flex container alignItems="center">
+                              Availability
+                              <Tooltip identifier="collection_availability" />
+                           </Flex>
+                        </HorizontalTab>
+                        <HorizontalTab>
+                           <Flex container alignItems="center">
+                              Insights
+                              <Tooltip identifier="collection_insights" />
+                           </Flex>
+                        </HorizontalTab>
                      </HorizontalTabList>
                      <HorizontalTabPanels>
                         <HorizontalTabPanel>
@@ -120,10 +187,8 @@ const CollectionForm = () => {
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>
-               </FormBody>
+               </Flex>
             </CollectionContext.Provider>
-         ) : (
-            <p>Could not fetch collection!</p>
          )}
       </>
    )
