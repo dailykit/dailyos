@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Toggle, Loader } from '@dailykit/ui'
+import { Text, Form } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    BRAND_COLLECTIONS,
@@ -7,6 +7,9 @@ import {
 } from '../../../../../graphql'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
+import { Flex } from '../../../../../../../shared/components/BasicInfo/styled'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 
 const CollectionBrands = ({ state }) => {
    const tableRef = React.useRef()
@@ -19,12 +22,11 @@ const CollectionBrands = ({ state }) => {
 
    const [upsertBrandCollection] = useMutation(UPSERT_BRAND_COLLECTION, {
       onCompleted: data => {
-         console.log(data)
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -68,13 +70,18 @@ const CollectionBrands = ({ state }) => {
       paginationSize: 10,
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
-         <Text as="h2"> Brands </Text>
-         {error ? (
-            <Text as="p">Could not load brands!</Text>
+         <Text as="h2">
+            <Flex container alignItems="center" justifyContent="flex-start">
+               Brands
+               <Tooltip identifier="collection_brands" />
+            </Flex>
+         </Text>
+         {!loading && error ? (
+            <Text as="p">Could not fetch brands!</Text>
          ) : (
             <ReactTabulator
                ref={tableRef}
@@ -93,12 +100,11 @@ const ToggleCollection = ({ cell, collectionId, onChange }) => {
    const brand = React.useRef(cell.getData())
    const [active, setActive] = React.useState(false)
 
-   const toggleHandler = value => {
-      console.log(value)
+   const toggleHandler = () => {
       onChange({
          collectionId,
          brandId: brand.current.id,
-         isActive: value,
+         isActive: !active,
       })
    }
 
@@ -110,5 +116,13 @@ const ToggleCollection = ({ cell, collectionId, onChange }) => {
       setActive(isActive)
    }, [brand.current])
 
-   return <Toggle checked={active} setChecked={val => toggleHandler(val)} />
+   return (
+      <Form.Group>
+         <Form.Toggle
+            name={`available-${brand.current.id}`}
+            onChange={toggleHandler}
+            value={active}
+         ></Form.Toggle>
+      </Form.Group>
+   )
 }
