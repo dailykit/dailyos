@@ -153,6 +153,7 @@ const Availability = ({ state }) => {
                {inFlight ? 'Saving...' : 'Save'}
             </TextButton>
          </Flex>
+         <Spacer size="32px" />
          <CollectionBrands state={state} />
       </ErrorBoundary>
    )
