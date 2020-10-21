@@ -89,20 +89,30 @@ const CollectionsListing = () => {
          title: t(address.concat('collection name')),
          field: 'name',
          headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
       {
          title: t(address.concat('categories')),
          field: 'categoriesCount',
          headerFilter: true,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: t(address.concat('products')),
          field: 'productsCount',
          headerFilter: true,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: t(address.concat('availability')),
          field: 'rrule',
+         hozAlign: 'left',
+         headerHozAlign: 'left',
       },
       {
          title: 'Actions',
@@ -114,6 +124,8 @@ const CollectionsListing = () => {
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteIngredient />),
+         headerHozAlign: 'center',
+         width: 100,
       },
    ]
 
@@ -141,7 +153,7 @@ const CollectionsListing = () => {
                </IconButton>
             </Flexible>
          </StyledHeader>
-         <div style={{ width: '80%', margin: '0 auto' }}>
+         <div>
             <ReactTabulator
                ref={tableRef}
                columns={columns}

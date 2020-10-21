@@ -62,6 +62,8 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             unit
             yield
             consumed
+            nutritionInfo
+            allergens
             image
             labor
             bulkDensity
@@ -96,6 +98,8 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             committed
             parLevel
             maxLevel
+            nutritionInfo
+            allergens
             isAvailable
             shelfLife
             unit
@@ -599,6 +603,37 @@ export const GET_BULK_ITEMS_SUBSCRIPTION = gql`
          shelfLife
          onHand
          unit
+      }
+   }
+`
+export const NUTRITION_INFO = gql`
+   subscription NutriInfo($id: Int!) {
+      bulkItem(id: $id) {
+         nutritionInfo
+      }
+   }
+`
+
+export const SUPPLIER_ITEMS_LISTINGS = gql`
+   subscription SupplierItems {
+      bulkItems {
+         id
+         processingName
+         awaiting
+         onHand
+         committed
+         parLevel
+         maxLevel
+
+         supplierItem {
+            id
+            name
+
+            supplier {
+               id
+               name
+            }
+         }
       }
    }
 `

@@ -12,9 +12,10 @@ export const INGREDIENTS_COUNT = gql`
 
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
-      ingredients {
+      ingredients(order_by: { createdAt: desc }) {
          id
          name
+         category
          image
          isValid
          isPublished
@@ -35,6 +36,9 @@ export const S_INGREDIENTS = gql`
                }
             }
          }
+         ingredientSachets {
+            id
+         }
       }
    }
 `
@@ -48,12 +52,12 @@ export const S_INGREDIENT = gql`
          image
          isValid
          isPublished
-         ingredientProcessings {
+         ingredientProcessings(order_by: { created_at: desc }) {
             id
             processingName
             nutritionalInfo
             cost
-            ingredientSachets {
+            ingredientSachets(order_by: { createdAt: desc }) {
                id
                tracking
                unit
@@ -64,24 +68,28 @@ export const S_INGREDIENT = gql`
                   id
                   type
                }
-               modeOfFulfillments {
+               modeOfFulfillments(order_by: { created_at: desc }) {
                   id
                   accuracy
-                  station {
-                     id
-                     name
-                  }
                   isLive
                   priority
-                  labelTemplate {
+                  cost
+                  type
+                  operationConfig {
                      id
-                     name
+                     station {
+                        id
+                        name
+                     }
+                     labelTemplate {
+                        id
+                        name
+                     }
                   }
                   packaging {
                      id
                      name
                   }
-                  type
                   bulkItem {
                      id
                      processingName
@@ -95,6 +103,7 @@ export const S_INGREDIENT = gql`
                      unitSize
                      unit
                      bulkItem {
+                        id
                         processingName
                         supplierItem {
                            id
@@ -102,7 +111,6 @@ export const S_INGREDIENT = gql`
                         }
                      }
                   }
-                  cost
                }
             }
          }
@@ -312,6 +320,17 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             isActive
             price
             type
+            operationConfig {
+               id
+               station {
+                  id
+                  name
+               }
+               labelTemplate {
+                  id
+                  name
+               }
+            }
             simpleRecipeYield {
                id
                yield
@@ -357,6 +376,7 @@ export const S_INVENTORY_PRODUCT = gql`
             unitSize
             unit
             bulkItemAsShipped {
+               id
                image
             }
          }
@@ -365,9 +385,11 @@ export const S_INVENTORY_PRODUCT = gql`
             unitSize
             unit
             bulkItem {
+               id
                image
                processingName
                supplierItem {
+                  id
                   name
                }
             }
@@ -377,6 +399,17 @@ export const S_INVENTORY_PRODUCT = gql`
             label
             price
             quantity
+            operationConfig {
+               id
+               station {
+                  id
+                  name
+               }
+               labelTemplate {
+                  id
+                  name
+               }
+            }
             modifier {
                id
                name
@@ -415,6 +448,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
             inventoryProduct {
                id
                name
+               assets
                inventoryProductOptions {
                   id
                   label
@@ -425,6 +459,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
             simpleRecipeProduct {
                id
                name
+               assets
                simpleRecipeProductOptions {
                   id
                   isActive
@@ -472,10 +507,12 @@ export const S_COMBO_PRODUCT = gql`
             customizableProduct {
                id
                name
+               assets
             }
             inventoryProduct {
                id
                name
+               assets
                inventoryProductOptions {
                   id
                   label
@@ -486,12 +523,14 @@ export const S_COMBO_PRODUCT = gql`
             simpleRecipeProduct {
                id
                name
+               assets
                simpleRecipeProductOptions {
                   id
                   isActive
                   price
                   type
                   simpleRecipeYield {
+                     id
                      yield
                   }
                }

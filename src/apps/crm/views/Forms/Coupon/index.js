@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
 import {
    Toggle,
-   Input,
-   Loader,
+   Flex,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   Form,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper, StyledComp, InputWrapper } from './styled'
+import { StyledWrapper, StyledComp, InputWrapper, StyledDiv } from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import {
    ConditionComp,
@@ -21,56 +21,73 @@ import {
    RewardComp,
    BrandCoupons,
 } from './components'
+import { logger } from '../../../../../shared/utils'
+import { InlineLoader } from '../../../../../shared/components'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
    const { id: couponId } = useParams()
-   const [codeTitle, setCodeTitle] = useState('')
+   const [codeTitle, setCodeTitle] = useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+
+   // form validation
+   const validateCouponCode = value => {
+      const text = value.trim()
+      console.log(`text ${text.length}`)
+      let isValid = true
+      let errors = []
+      if (text.length < 2) {
+         isValid = false
+         errors = [...errors, 'Must have atleast two letters.']
+      }
+      console.log(isValid)
+      return { isValid, errors }
+   }
+
    // Subscription
-   const { loading } = useSubscription(COUPON_DATA, {
+   const { loading, error } = useSubscription(COUPON_DATA, {
       variables: {
          id: couponId,
       },
       onSubscriptionData: data => {
          console.log(data)
-         setState(data.subscriptionData.data.coupon)
-         setCodeTitle(data.subscriptionData.data.coupon.code)
-         setToggle(data.subscriptionData.data.coupon.isActive)
-         setCheckbox(data.subscriptionData.data.coupon.isRewardMulti)
-         // collectionDispatch({
-         //    type: 'SEED',
-         //    payload: data.coupon,
-         // })
+         setState(data?.subscriptionData?.data?.coupon || {})
+         setCodeTitle({
+            ...codeTitle,
+            value: data?.subscriptionData?.data?.coupon?.code || '',
+         })
+         setToggle(data?.subscriptionData?.data?.coupon?.isActive || false)
+         setCheckbox(
+            data?.subscriptionData?.data?.coupon?.isRewardMulti || false
+         )
       },
    })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    // Mutation
    const [updateCoupon] = useMutation(UPDATE_COUPON, {
       onCompleted: () => {
          toast.success('Updated!')
-         setTabTitle(codeTitle)
+         setTabTitle(codeTitle.value)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
-   const updateCodeTitle = () => {
-      if (codeTitle) {
-         updateCoupon({
-            variables: {
-               id: couponId,
-               set: {
-                  code: codeTitle,
-               },
-            },
-         })
-      }
-   }
    const updatetoggle = () => {
       if (toggle || !toggle) {
          updateCoupon({
@@ -102,27 +119,77 @@ const CouponForm = () => {
       }
    }, [addTab, tab])
 
-   if (loading) return <Loader />
+   //coupon code validation & update name handler
+   const onBlur = e => {
+      setCodeTitle({
+         ...codeTitle,
+         meta: {
+            ...codeTitle.meta,
+            isTouched: true,
+            errors: validateCouponCode(e.target.value).errors,
+            isValid: validateCouponCode(e.target.value).isValid,
+         },
+      })
+      if (
+         validateCouponCode(e.target.value).isValid &&
+         validateCouponCode(e.target.value).errors.length === 0
+      ) {
+         updateCoupon({
+            variables: {
+               id: couponId,
+               set: {
+                  code: e.target.value,
+               },
+            },
+         })
+      }
+   }
+
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1.5fr">
-            <InputWrapper>
-               <Input
-                  type="text"
-                  label="Coupon Code"
-                  name="code"
-                  value={codeTitle}
-                  onChange={e => setCodeTitle(e.target.value)}
-                  onBlur={updateCodeTitle}
-               />
-            </InputWrapper>
-            <Toggle
-               checked={toggle}
-               setChecked={updatetoggle}
-               label="Coupon Active"
-            />
-         </StyledHeader>
-         <div style={{ padding: '0 32px', backgroundColor: '#ffffff' }}>
+         <InputWrapper>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="0 0 16px 0"
+            >
+               <Form.Group>
+                  <Form.Label htmlFor="name" title="Coupon Code ">
+                     Coupon Code*
+                  </Form.Label>
+                  <Form.Text
+                     id="couponCode"
+                     name="couponCode"
+                     value={codeTitle.value}
+                     placeholder="Enter the Coupon Code "
+                     onBlur={onBlur}
+                     onChange={e =>
+                        setCodeTitle({
+                           ...codeTitle,
+                           value: e.target.value,
+                        })
+                     }
+                  />
+                  {codeTitle.meta.isTouched &&
+                     !codeTitle.meta.isValid &&
+                     codeTitle.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Form.Group>
+                  <Form.Toggle
+                     name="coupon_active"
+                     onChange={updatetoggle}
+                     value={toggle}
+                  >
+                     Active
+                  </Form.Toggle>
+               </Form.Group>
+            </Flex>
+         </InputWrapper>
+         <StyledDiv>
             <HorizontalTabs>
                <HorizontalTabList>
                   <HorizontalTab>Details</HorizontalTab>
@@ -149,7 +216,7 @@ const CouponForm = () => {
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
-         </div>
+         </StyledDiv>
       </StyledWrapper>
    )
 }

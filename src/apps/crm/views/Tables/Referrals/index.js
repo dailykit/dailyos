@@ -1,16 +1,32 @@
 import React, { useRef } from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
+import options from '../../tableOptions'
+import { Tooltip } from '../../../../../shared/components'
 
 const ReferralTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const columns = [
-      { title: 'Invitation Sent To', field: 'invitation', headerFilter: true },
-      { title: 'Email Address', field: 'email' },
-      { title: 'Phone Number', field: 'phone' },
-      { title: 'Status', field: 'status' },
+      {
+         title: 'Invitation Sent To',
+         field: 'invitation',
+         headerFilter: true,
+         hozAlign: 'left',
+      },
+      { title: 'Email Address', field: 'email', hozAlign: 'left' },
+      {
+         title: 'Phone Number',
+         field: 'phone',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      { title: 'Status', field: 'status', hozAlign: 'left', width: 100 },
    ]
    const data = [
       {
@@ -39,19 +55,23 @@ const ReferralTable = () => {
       addTab(name, param)
    }
    return (
-      <React.Fragment>
-         <div style={{ padding: '16px' }}>
-            <Text as="title">Refferals(3)</Text>
-         </div>
-         <div style={{ overflowX: 'scroll' }}>
-            <ReactTabulator
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               ref={tableRef}
-            />
-         </div>
-      </React.Fragment>
+      <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
+         <Flex container height="80px" padding="16px" alignItems="center">
+            <Text as="title">Referrals(3)</Text>
+            <Tooltip identifier="referral_list_heading" />
+         </Flex>
+
+         <ReactTabulator
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            ref={tableRef}
+            options={{
+               ...options,
+               placeholder: 'No Referrals Available Yet !',
+            }}
+         />
+      </Flex>
    )
 }
 

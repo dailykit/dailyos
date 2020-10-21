@@ -1,91 +1,34 @@
 import styled from 'styled-components'
 
-export const StyledWrapper = styled.div`
-   padding: 16px;
-`
-
-export const StyledLayout = styled.div`
-   display: grid;
-   grid-template-columns: 270px 1fr;
-   grid-gap: 16px;
-   padding: 12px;
-`
-
-export const StyledPanel = styled.div`
-   background: #fff;
-   padding: 24px;
-   position: relative;
-
-   h2 {
-      font-weight: 500;
-      font-size: 24px;
-      line-height: 28px;
-      color: #555b6e;
-      margin-bottom: 16px;
-   }
-`
-
-export const StyledLink = styled.span`
-   margin-left: 8px;
-   cursor: pointer;
-`
-
-export const StyledListing = styled.div`
-   display: flex;
-   flex-direction: column;
-`
-
-export const StyledListingTile = styled.div`
-   background: ${props => (props.active ? '#555B6E' : '#fff')};
-   padding: 16px;
-   margin-bottom: 16px;
-   color: ${props => (props.active ? '#fff' : '#555B6E')};
-   cursor: pointer;
-   height: 80px;
+export const ItemInfo = styled.div`
+   height: 4rem;
+   padding: 0.5rem;
    display: flex;
    align-items: center;
    position: relative;
-
+   img {
+      height: 2.8rem;
+      width: 2.8rem;
+      object-fit: cover;
+      border-radius: 2px;
+      margin-right: 0.5rem;
+   }
    h3 {
-      font-weight: 500;
-      font-size: 16px;
-      line-height: 14px;
-      margin-bottom: 8px;
+      font-weight: normal;
+      text-align: left;
+      width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
    }
-
-   span {
+   button {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
    }
-`
-
-export const StyledTabs = styled.div`
-   display: flex;
-   margin: 8px 0;
-   border-bottom: 1px solid rgba(136, 141, 157, 0.3);
-`
-
-export const StyledTab = styled.div`
-   padding: 12px 8px;
-   margin-right: 16px;
-   font-weight: 500;
-   font-size: 16px;
-   line-height: 14px;
-   color: ${props => (props.active ? '#00A7E1' : '#888D9D')};
-   border-bottom: ${props => (props.active ? '3px solid #00A7E1' : 'none')};
-   cursor: pointer;
-`
-
-export const StyledTabView = styled.div`
-   padding: 16px;
-   position: relative;
-`
-
-export const StyledAction = styled.div`
-   position: absolute;
-   right: 16px;
-   top: 16px;
 `
 
 export const StyledTable = styled.table`
@@ -129,35 +72,5 @@ export const StyledTable = styled.table`
             }
          }
       }
-   }
-`
-
-export const StyledLabel = styled.h5`
-   font-weight: 500;
-   font-size: 14px;
-   line-height: 16px;
-   color: #888d9d;
-   margin-top: 8px;
-   margin-bottom: 4px;
-
-   span {
-      margin-left: 8px;
-      cursor: pointer;
-   }
-`
-
-export const StyledComboTile = styled.div`
-   display: flex;
-   flex-direction: column;
-   margin-bottom: 12px;
-`
-
-export const StyledHeader = styled.div`
-   display: flex;
-   align-items: baseline;
-
-   span {
-      cursor: pointer;
-      margin-left: 12px;
    }
 `

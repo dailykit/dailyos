@@ -10,6 +10,8 @@ import Header from './sections/Header'
 import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
 
+import { ErrorBoundary } from '../../shared/components'
+
 // Styled
 import { StyledWrapper } from '../../styled'
 
@@ -20,7 +22,9 @@ const App = () => {
          <Router basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <Main />
+            <ErrorBoundary rootRoute="/apps/recipe">
+               <Main />
+            </ErrorBoundary>
          </Router>
       </StyledWrapper>
    )

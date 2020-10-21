@@ -1,17 +1,22 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
-   Input,
-   RadioGroup,
-   Select,
-   TunnelHeader,
+   Flex,
+   Form,
    IconButton,
+   PlusIcon,
+   RadioGroup,
+   TunnelHeader,
+   useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { OperationConfig } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { StyledInputWrapper, TunnelBody } from '../styled'
+import validator from '../../validators'
+import { TunnelBody } from '../styled'
 import { StyledTable } from './styled'
 
 const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
@@ -19,7 +24,11 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
       IngredientContext
    )
 
-   const [busy, setBusy] = React.useState(false)
+   const [
+      operationConfigTunnels,
+      openOperationConfigTunnel,
+      closeOperationConfigTunnel,
+   ] = useTunnel(4)
 
    const options = [
       { id: 1, title: 'Atleast 80%', value: '80' },
@@ -40,55 +49,60 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
    }
 
    // Mutation
-   const [updateMode] = useMutation(UPDATE_MODE, {
+   const [updateMode, { loading: inFlight }] = useMutation(UPDATE_MODE, {
       onCompleted: () => {
          toast.success('Mode updated!')
          close()
       },
-      onError: () => {
-         toast.error('Error')
-         setBusy(false)
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const save = () => {
       try {
-         if (busy) return
-         setBusy(true)
-         if (
-            !ingredientState.editMode.priority ||
-            Number.isNaN(ingredientState.editMode.priority) ||
-            parseInt(ingredientState.editMode.priority) === 0
-         ) {
-            throw Error('Invalid Priority!')
-         }
+         if (inFlight) return
          updateMode({
             variables: {
                id: ingredientState.editMode.id,
                set: {
-                  priority: parseInt(ingredientState.editMode.priority),
-                  stationId: ingredientState.editMode.station?.id || null,
+                  priority: ingredientState.editMode.priority.value ?? 1,
                   accuracy: ingredientState.editMode.accuracy,
                   bulkItemId: ingredientState.editMode.bulkItem?.id || null,
                   sachetItemId: ingredientState.editMode.sachetItem?.id || null,
                   packagingId: ingredientState.editMode.packaging?.id || null,
-                  labelTemplateId:
-                     ingredientState.editMode.labelTemplate?.id || null,
+                  operationConfigId:
+                     ingredientState.editMode.operationConfig?.id || null,
                },
             },
          })
-      } catch (e) {
-         toast.error(e.message)
-         setBusy(false)
+      } catch (error) {
+         toast.error('Something went wrong!')
+         logger(error)
       }
    }
 
    return (
       <>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={config =>
+               ingredientDispatch({
+                  type: 'EDIT_MODE',
+                  payload: {
+                     ...ingredientState.editMode,
+                     operationConfig: config,
+                  },
+               })
+            }
+         />
          <TunnelHeader
             title="Edit Mode"
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
             close={close}
          />
          <TunnelBody>
@@ -97,55 +111,85 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                   <tr>
                      <th>Mode of Fulfillment</th>
                      <th>Priority</th>
-                     <th>Station</th>
                      <th>Item</th>
                      <th>Accuracy</th>
                      <th>Packaging</th>
-                     <th>Label</th>
+                     <th>Operational Configuration</th>
                   </tr>
                </thead>
                <tbody>
                   <tr>
                      <td>
-                        {ingredientState.editMode.type === 'realTime'
+                        {ingredientState?.editMode?.type === 'realTime'
                            ? 'Real Time'
                            : 'Planned Lot'}
                      </td>
                      <td>
-                        <StyledInputWrapper width="50">
-                           <Input
-                              type="text"
-                              value={ingredientState.editMode.priority}
-                              onChange={e =>
+                        <Flex maxWidth="100px">
+                           <Form.Stepper
+                              id="editModePriority"
+                              name="editModePriority"
+                              value={ingredientState.editMode.priority.value}
+                              placeholder="Enter priority"
+                              onChange={value =>
                                  ingredientDispatch({
                                     type: 'EDIT_MODE',
                                     payload: {
-                                       ...ingredientState.editMode,
-                                       priority: e.target.value,
+                                       ...ingredientState?.editMode,
+                                       priority: {
+                                          ...ingredientState?.editMode.priority,
+                                          value,
+                                       },
                                     },
                                  })
                               }
+                              onBlur={() => {
+                                 const { isValid, errors } = validator.priority(
+                                    ingredientState.editMode.priority.value
+                                 )
+                                 ingredientDispatch({
+                                    type: 'EDIT_MODE',
+                                    payload: {
+                                       ...ingredientState?.editMode.priority,
+                                       meta: {
+                                          isTouched: true,
+                                          isValid,
+                                          errors,
+                                       },
+                                    },
+                                 })
+                              }}
                            />
-                        </StyledInputWrapper>
+                           {ingredientState.editMode.priority.meta.isTouched &&
+                              !ingredientState.editMode.priority.meta.isValid &&
+                              ingredientState.editMode.priority.meta.errors.map(
+                                 (error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 )
+                              )}
+                        </Flex>
                      </td>
                      <td>
-                        {ingredientState.editMode.station?.name ||
-                           ingredientState.editMode.station?.title ||
-                           '-'}
-                        <IconButton type="ghost" onClick={() => openTunnel(3)}>
-                           <EditIcon color="#00A7E1" />
-                        </IconButton>
-                     </td>
-                     <td>
-                        {ingredientState.editMode.bulkItem
-                           ? ingredientState.editMode.bulkItem.title
-                           : ''}
-                        {ingredientState.editMode.sachetItem
-                           ? ingredientState.editMode.sachetItem.title
-                           : ''}
-                        <IconButton type="ghost" onClick={() => openTunnel(4)}>
-                           <EditIcon color="#00A7E1" />
-                        </IconButton>
+                        {ingredientState?.editMode?.bulkItem ||
+                        ingredientState?.editMode?.sachetItem ? (
+                           <Flex container>
+                              {ingredientState?.editMode?.bulkItem?.title ||
+                                 ingredientState?.editMode?.sachetItem?.title}
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => openTunnel(3)}
+                              >
+                                 <EditIcon color="#00A7E1" />
+                              </IconButton>
+                           </Flex>
+                        ) : (
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openTunnel(3)}
+                           >
+                              <PlusIcon color="#00A7E1" />
+                           </IconButton>
+                        )}
                      </td>
                      <td>
                         <RadioGroup
@@ -154,14 +198,14 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                               options.find(
                                  op =>
                                     op.value ===
-                                    ingredientState.editMode.accuracy
+                                    ingredientState?.editMode?.accuracy
                               )?.id || 3
                            }
                            onChange={option =>
                               ingredientDispatch({
                                  type: 'EDIT_MODE',
                                  payload: {
-                                    ...ingredientState.editMode,
+                                    ...ingredientState?.editMode,
                                     accuracy: option.value,
                                  },
                               })
@@ -169,34 +213,44 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                         />
                      </td>
                      <td>
-                        <Select
-                           option={ingredientState.editMode.packaging || []}
-                           addOption={() => openTunnel(5)}
-                           removeOption={() =>
-                              ingredientDispatch({
-                                 type: 'EDIT_MODE',
-                                 payload: {
-                                    ...ingredientState.editMode,
-                                    packaging: undefined,
-                                 },
-                              })
-                           }
-                        />
+                        {ingredientState.editMode.packaging ? (
+                           <Flex container>
+                              {ingredientState.editMode.packaging?.title}
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => openTunnel(4)}
+                              >
+                                 <EditIcon color="#07A8E2" />
+                              </IconButton>
+                           </Flex>
+                        ) : (
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openTunnel(4)}
+                           >
+                              <PlusIcon color="#07A8E2" />
+                           </IconButton>
+                        )}
                      </td>
                      <td>
-                        <Select
-                           option={ingredientState.editMode.labelTemplate || []}
-                           addOption={() => openTunnel(6)}
-                           removeOption={() =>
-                              ingredientDispatch({
-                                 type: 'EDIT_MODE',
-                                 payload: {
-                                    ...ingredientState.editMode,
-                                    labelTemplate: undefined,
-                                 },
-                              })
-                           }
-                        />
+                        {ingredientState?.editMode?.operationConfig ? (
+                           <Flex container>
+                              {`${ingredientState.editMode.operationConfig.station.name} - ${ingredientState.editMode.operationConfig.labelTemplate.name}`}
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => openOperationConfigTunnel(1)}
+                              >
+                                 <EditIcon color="#07A8E2" />
+                              </IconButton>
+                           </Flex>
+                        ) : (
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openOperationConfigTunnel(1)}
+                           >
+                              <PlusIcon color="#07A8E2" />
+                           </IconButton>
+                        )}
                      </td>
                   </tr>
                </tbody>

@@ -15,7 +15,7 @@ import {
    ComboProductForm,
    ProductsListing,
 } from '../../views'
-import { Flex } from '../../../../shared/components'
+import { ErrorBoundary, Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
 
 const Main = () => {
@@ -25,7 +25,9 @@ const Main = () => {
          <Switch>
             <Route path="/recipe" exact>
                {canAccessRoute('home') ? (
-                  <Home />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <Home />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -43,7 +45,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/recipes" exact>
                {canAccessRoute('recipes') ? (
-                  <RecipesListing />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <RecipesListing />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -61,7 +65,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/recipes/:id" exact>
                {canAccessRoute('recipe') ? (
-                  <RecipeForm />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <RecipeForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -79,7 +85,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/ingredients" exact>
                {canAccessRoute('ingredients') ? (
-                  <IngredientsListing />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <IngredientsListing />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -97,7 +105,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/ingredients/:id" exact>
                {canAccessRoute('ingredient') ? (
-                  <IngredientForm />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <IngredientForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -115,7 +125,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/products" exact>
                {canAccessRoute('products') ? (
-                  <ProductsListing />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <ProductsListing />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -133,7 +145,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/inventory-products/:id" exact>
                {canAccessRoute('inventory-product') ? (
-                  <InventoryProductForm />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <InventoryProductForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -151,7 +165,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/simple-recipe-products/:id" exact>
                {canAccessRoute('simple-recipe-product') ? (
-                  <SimpleRecipeProductForm />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <SimpleRecipeProductForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -169,7 +185,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/customizable-products/:id" exact>
                {canAccessRoute('customizable-product') ? (
-                  <CustomizableProductForm />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <CustomizableProductForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -187,7 +205,9 @@ const Main = () => {
             </Route>
             <Route path="/recipe/combo-products/:id" exact>
                {canAccessRoute('combo-product') ? (
-                  <ComboProductForm />
+                  <ErrorBoundary rootRoute="/apps/recipe">
+                     <ComboProductForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container

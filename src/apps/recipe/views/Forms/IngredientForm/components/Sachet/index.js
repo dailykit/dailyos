@@ -1,13 +1,24 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Checkbox, IconButton, Text } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Checkbox,
+   IconButton,
+   Text,
+   TextButton,
+   useTunnel,
+   Form,
+   Flex,
+   Spacer,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { UPDATE_MODE } from '../../../../../graphql'
-import { Container, Flex, Grid } from '../styled'
+import { Container, Grid } from '../styled'
 import { StyledTable } from './styled'
-import { Nutrition } from '../../../../../../../shared/components'
+import { Nutrition, Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -42,15 +53,15 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          toast.success('Mode updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const setLive = (mode, val) => {
       if (val) {
-         if (!(mode.station && (mode.bulkItem || mode.sachetItem))) {
+         if (!(mode.operationConfig && (mode.bulkItem || mode.sachetItem))) {
             return toast.error('Mode not configured!')
          }
       }
@@ -68,6 +79,14 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          type: 'EDIT_MODE',
          payload: {
             ...mode,
+            priority: {
+               value: mode.priority,
+               meta: {
+                  isTouched: false,
+                  isValid: true,
+                  errors: [],
+               },
+            },
             packaging: mode.packaging
                ? {
                     ...mode.packaging,
@@ -105,7 +124,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
       <>
          <Container bottom="32">
             <Grid>
-               <Flex justify="start" align="center">
+               <Flex container alignItems="center">
                   <span>
                      {sachet.tracking ? (
                         <TickIcon color="#00A7E1" stroke={2} size={20} />
@@ -113,10 +132,15 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                         <CloseIcon color="#FF5A52" size={20} />
                      )}
                   </span>
+                  <Spacer xAxis size="8px" />
                   <Text as="title">Tracking Inventory</Text>
                </Flex>
-               <Flex align="center">
-                  <Flex justify="start" align="baseline">
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  <Flex container alignItems="center">
                      <Text as="subtitle">Active: </Text>{' '}
                      <Text as="title">
                         {sachet.liveModeOfFulfillment?.type === 'realTime' &&
@@ -125,7 +149,10 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                            'Planned Lot'}
                      </Text>
                   </Flex>
-                  <IconButton onClick={() => openEditSachetTunnel(1)}>
+                  <IconButton
+                     type="ghost"
+                     onClick={() => openEditSachetTunnel(1)}
+                  >
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                </Flex>
@@ -134,14 +161,48 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          <StyledTable cellSpacing="0">
             <thead>
                <tr>
-                  <th>Mode of Fulfillment</th>
-                  <th>Priority</th>
-                  <th>Station</th>
-                  <th>Item</th>
-                  <th>Cost</th>
-                  <th>Accuracy</th>
-                  <th>Packaging</th>
-                  <th>Label</th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Mode of Fulfillment
+                        <Tooltip identifier="sachet_mof" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Priority
+                        <Tooltip identifier="sachet_mode_priority" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Item
+                        <Tooltip identifier="sachet_mode_item" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Cost
+                        <Tooltip identifier="sachet_mode_cost" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Accuracy
+                        <Tooltip identifier="sachet_mode_accuracy" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Packaging
+                        <Tooltip identifier="sachet_mode_packaging" />
+                     </Flex>
+                  </th>
+                  <th>
+                     <Flex container alignItems="center">
+                        Operational Configuration
+                        <Tooltip identifier="sachet_mode_opconfig" />
+                     </Flex>
+                  </th>
                   <th> </th>
                </tr>
             </thead>
@@ -149,14 +210,17 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                {sachet.modeOfFulfillments?.map(mode => (
                   <tr key={mode.id}>
                      <td>
-                        <Checkbox
-                           checked={mode.isLive}
-                           onChange={val => setLive(mode, val)}
-                        />
-                        {mode.type === 'realTime' ? 'Real Time' : 'Planned Lot'}
+                        <Form.Checkbox
+                           name={`${mode.type}-modeLive`}
+                           value={mode.isLive}
+                           onChange={() => setLive(mode, !mode.isLive)}
+                        >
+                           {mode.type === 'realTime'
+                              ? 'Real Time'
+                              : 'Planned Lot'}
+                        </Form.Checkbox>
                      </td>
                      <td>{mode.priority}</td>
-                     <td>{mode.station?.name || ''}</td>
                      <td>
                         {mode.bulkItem &&
                            `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`}
@@ -170,7 +234,15 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                            : "Don't Weigh"}
                      </td>
                      <td>{mode.packaging?.name || '-'}</td>
-                     <td>{mode.labelTemplate?.title || '-'}</td>
+                     <td>
+                        {mode.operationConfig ? (
+                           <>
+                              {`${mode.operationConfig.station.name} - ${mode.operationConfig.labelTemplate.name}`}
+                           </>
+                        ) : (
+                           '-'
+                        )}
+                     </td>
                      <td>
                         <IconButton type="ghost" onClick={() => editMOF(mode)}>
                            <EditIcon color="#00A7E1" />
@@ -181,11 +253,17 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
             </tbody>
          </StyledTable>
          <Container top="32">
-            <Text as="subtitle"> Cost </Text>
+            <Flex container maxWidth="200px">
+               <Text as="subtitle"> Cost </Text>
+               <Tooltip identifier="sachet_cost" />
+            </Flex>
             <Text as="p">${sachet.cost}</Text>
          </Container>
          <Container top="32">
-            <Text as="subtitle"> Nutrition </Text>
+            <Flex container maxWidth="200px">
+               <Text as="subtitle"> Nutrition </Text>
+               <Tooltip identifier="sachet_nutritional_info" />
+            </Flex>
             {sachet.nutritionalInfo ? (
                <Nutrition data={sachet.nutritionalInfo} vertical />
             ) : (

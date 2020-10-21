@@ -1,23 +1,35 @@
 import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Loader, Text, TextButton } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { toast } from 'react-toastify'
-import { useTranslation } from 'react-i18next'
 
+// third party imports
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { IconButton, Loader, Spacer, TextButton } from '@dailykit/ui'
+
+// shared dir imports
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
-import { useTabs } from '../../../../../context'
+import { logger } from '../../../../../../../shared/utils'
+
+// graphql imports
 import {
-   S_SIMPLE_RECIPE_PRODUCTS,
    DELETE_SIMPLE_RECIPE_PRODUCTS,
+   S_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../../graphql'
+
+// context imports
+import { useTabs } from '../../../../../context'
+
+// local imports
 import tableOptions from '../../../tableOption'
+import { useTooltip } from '../../../../../../../shared/providers'
 
 const address = 'apps.online_store.views.listings.productslisting.'
 
 const InventoryProducts = () => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const tableRef = React.useRef()
 
@@ -27,19 +39,23 @@ const InventoryProducts = () => {
       error,
    } = useSubscription(S_SIMPLE_RECIPE_PRODUCTS)
 
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
    const [deleteProducts] = useMutation(DELETE_SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: () => {
          toast.success('Product deleted!')
       },
-      onError: err => {
-         console.log(err)
-         toast.error('Could not delete!')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handler
-   const deleteHandler = (e, product) => {
-      e.stopPropagation()
+   const deleteProductHandler = product => {
       if (
          window.confirm(
             `Are you sure you want to delete product - ${product.name}?`
@@ -58,61 +74,76 @@ const InventoryProducts = () => {
          title: t(address.concat('product name')),
          field: 'name',
          headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/recipe/simple-recipe-products/${id}`)
+         },
+         cssClass: 'colHover',
+         headerTooltip: function (column) {
+            const identifier = 'simple_recipe_products_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: t(address.concat('recipe')),
          field: 'simpleRecipe',
-         headerFilter: false,
-         formatter: reactFormatter(<RcipeName />),
+         headerFilter: true,
+         formatter: reactFormatter(<RecipeName />),
+      },
+      {
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Actions',
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteIngredient />),
+         formatter: reactFormatter(
+            <DeleteProduct onDelete={deleteProductHandler} />
+         ),
+         width: 150,
       },
    ]
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/recipe/simple-recipe-products/${id}`)
-   }
-
    if (loading) return <Loader />
-   if (error) {
-      console.log(error)
-      return <Text as="p">Error: Could`&apos;`nt fetch products!</Text>
-   }
+
    return (
-      <div style={{ width: '80%', margin: '0 auto' }}>
+      <>
          <TextButton
             type="outline"
             onClick={() => tableRef.current.table.clearHeaderFilter()}
-            style={{ marginBottom: '20px' }}
          >
             Clear Filters
          </TextButton>
+         <Spacer size="16px" />
          <ReactTabulator
             ref={tableRef}
             columns={columns}
             data={simpleRecipeProducts}
-            rowClick={rowClick}
             options={tableOptions}
          />
-      </div>
+      </>
    )
 }
 
-function DeleteIngredient() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteProduct({ cell, onDelete }) {
+   const product = cell.getData()
+
+   return (
+      <IconButton type="ghost" onClick={() => onDelete(product)}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
-function RcipeName({
+function RecipeName({
    cell: {
       _cell: { value },
    },

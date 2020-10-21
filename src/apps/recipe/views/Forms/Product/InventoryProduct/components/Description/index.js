@@ -7,11 +7,15 @@ import {
    useTunnel,
    Tunnels,
    Tunnel,
+   Text,
+   Spacer,
+   Flex,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { EditIcon } from '../../../../../../assets/icons'
 import { StyledAction, StyledContainer, StyledRow } from './styled'
 import { DescriptionTunnel } from '../../tunnels'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.components.description.'
@@ -32,20 +36,30 @@ const Description = ({ state }) => {
             {state.description || state.tags?.length ? (
                <StyledContainer>
                   <StyledAction>
-                     <IconButton type="outline" onClick={() => openTunnel(1)}>
-                        <EditIcon />
+                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                        <EditIcon color="#00A7E1" />
                      </IconButton>
                   </StyledAction>
-                  <StyledRow>
+                  <Flex container alignItems="center">
+                     <Text as="subtitle">Tags</Text>
+                     <Tooltip identifier="inventory_product_tags" />
+                  </Flex>
+                  <Spacer size="4px" />
+                  {state.tags?.length ? (
                      <TagGroup>
                         {state.tags.map(tag => (
                            <Tag key={tag}>{tag}</Tag>
                         ))}
                      </TagGroup>
-                  </StyledRow>
-                  <StyledRow>
-                     <p>{state.description}</p>
-                  </StyledRow>
+                  ) : (
+                     <Text as="p">NA</Text>
+                  )}
+                  <Spacer size="16px" />
+                  <Flex container alignItems="center">
+                     <Text as="subtitle">Description</Text>
+                     <Tooltip identifier="inventory_product_description" />
+                  </Flex>
+                  <Text as="p">{state.description || 'NA'}</Text>
                </StyledContainer>
             ) : (
                <ButtonTile

@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation} from '@apollo/react-hooks'
-import { Form, Spacer,TextButton } from '@dailykit/ui'
+import { Form, Spacer,TextButton ,Text} from '@dailykit/ui'
 import { StyledWrapper} from '../Listings/styled'
 import { Flex } from '../../../../shared/components'
 import { INSERT_INFO_GRID} from '../../graphql'

@@ -9,7 +9,7 @@ import {
    TagGroup,
    useMultiList,
    TunnelHeader,
-   Loader,
+   Filler,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -18,6 +18,8 @@ import {
    S_ACCOMPANIMENT_TYPES,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
+import { InlineLoader } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
@@ -25,34 +27,39 @@ const address =
 const RecommendationTypeTunnel = ({ state, close }) => {
    const { t } = useTranslation()
 
-   const [busy, setBusy] = React.useState(false)
-
    const [search, setSearch] = React.useState('')
    const [accompanimentTypes, setAccompanimentTypes] = React.useState([])
    const [list, selected, selectOption] = useMultiList(accompanimentTypes)
 
    // Subscription
-   const { loading } = useSubscription(S_ACCOMPANIMENT_TYPES, {
+   const { loading, error } = useSubscription(S_ACCOMPANIMENT_TYPES, {
       onSubscriptionData: data => {
          setAccompanimentTypes([...data.subscriptionData.data.accompaniments])
       },
    })
 
-   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
-      onCompleted: () => {
-         toast.success(t(address.concat('accompaniment types added!')))
-         close(1)
-      },
-      onError: () => {
-         toast.error(t(address.concat('error')))
-         setBusy(false)
-      },
-   })
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
+   const [updateProduct, { loading: inFlight }] = useMutation(
+      UPDATE_INVENTORY_PRODUCT,
+      {
+         onCompleted: () => {
+            toast.success(t(address.concat('accompaniment types added!')))
+            close(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    // Handlers
    const save = () => {
-      if (busy) return
-      setBusy(true)
+      if (inFlight) return
       const recommendations = selected.map(type => ({
          type: type.title,
          products: [],
@@ -73,7 +80,7 @@ const RecommendationTypeTunnel = ({ state, close }) => {
             title="Select Recommendation Types"
             right={{
                action: save,
-               title: busy
+               title: inFlight
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
@@ -81,46 +88,59 @@ const RecommendationTypeTunnel = ({ state, close }) => {
          />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
+               <>
+                  {list.length ? (
+                     <List>
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder={t(
+                              address.concat("type what you're looking for")
+                           )}
+                        />
+                        {selected.length > 0 && (
+                           <TagGroup style={{ margin: '8px 0' }}>
+                              {selected.map(option => (
+                                 <Tag
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 >
+                                    {option.title}
+                                 </Tag>
+                              ))}
+                           </TagGroup>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="MSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                    isActive={selected.find(
+                                       item => item.id === option.id
+                                    )}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler
+                        message="No types found! Please add some, to start."
+                        height="500px"
+                     />
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1"
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>

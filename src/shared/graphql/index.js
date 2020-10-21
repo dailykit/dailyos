@@ -88,6 +88,27 @@ export const CREATE_OPERATION_CONFIG = gql`
          object: $object
       ) {
          id
+         station {
+            id
+            name
+         }
+         labelTemplate {
+            id
+            name
+         }
+      }
+   }
+`
+
+export const TOOLTIPS_BY_APP = gql`
+   query app($title: String!) {
+      app: dailyos_ux_app_by_pk(title: $title) {
+         tooltips {
+            id
+            link
+            identifier
+            description
+         }
       }
    }
 `

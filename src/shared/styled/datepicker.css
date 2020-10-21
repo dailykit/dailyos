@@ -4,6 +4,7 @@
    font-weight: 400;
    height: 40px;
    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+   width: 100%;
 }
 
 .react-datepicker__input-container input:focus {

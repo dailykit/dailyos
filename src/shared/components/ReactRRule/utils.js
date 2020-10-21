@@ -120,6 +120,11 @@ export const getPSQLRule = rule => {
 
    object.freq = getFreq(object.freq)
    object.wkst = getWkst(object.wkst)
+
+   if (object.freq === 'DAILY') {
+      delete object.byweekday
+   }
+
    if (object.byweekday?.length) {
       object.byday = getByweekday(object.byweekday)
       delete object.byweekday

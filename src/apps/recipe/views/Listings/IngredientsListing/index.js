@@ -1,30 +1,40 @@
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
-import * as moment from 'moment'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+
+// third party imports
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import tableOptions from '../tableOption'
+import {
+   ComboButton,
+   Flex,
+   IconButton,
+   Loader,
+   Spacer,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
+import * as moment from 'moment'
 
-import ProcessingCount from '../../../utils/countFormatter'
+// shared dir imports
+import { Tooltip } from '../../../../../shared/components'
+import { logger, randomSuffix } from '../../../../../shared/utils'
 
-import { randomSuffix } from '../../../../../shared/utils'
-import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
+// graphql imports
 import {
    CREATE_INGREDIENT,
    DELETE_INGREDIENTS,
    S_INGREDIENTS,
 } from '../../../graphql'
-import {
-   StyledContent,
-   StyledHeader,
-   StyledPagination,
-   StyledTableActions,
-   StyledTableHeader,
-   StyledWrapper,
-} from '../styled'
+
+// context imports
+import { useTabs } from '../../../context'
+
+// local imports
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import Count from '../../../utils/countFormatter'
+import tableOptions from '../tableOption'
+import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.recipe.views.listings.ingredientslisting.'
 
@@ -36,7 +46,10 @@ const IngredientsListing = () => {
       S_INGREDIENTS
    )
 
-   if (error) console.log(error)
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
@@ -48,8 +61,8 @@ const IngredientsListing = () => {
          )
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [deleteIngredients] = useMutation(DELETE_INGREDIENTS, {
@@ -57,8 +70,8 @@ const IngredientsListing = () => {
          toast.success('Ingredient deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Failed to delete!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -73,8 +86,7 @@ const IngredientsListing = () => {
       createIngredient({ variables: { name } })
    }
 
-   const deleteIngredientHandler = (e, ingredient) => {
-      e.stopPropagation()
+   const deleteIngredientHandler = ingredient => {
       if (
          window.confirm(
             `Are you sure you want to delete ingredient - ${ingredient.name}?`
@@ -91,18 +103,25 @@ const IngredientsListing = () => {
    if (loading) return <Loader />
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <h1>{t(address.concat('ingredients'))}</h1>
-            <StyledPagination>Total: {ingredients?.length}</StyledPagination>
-         </StyledHeader>
+      <Flex maxWidth="1280px" margin="0 auto" width="calc(100vw - 64px)">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            height="72px"
+         >
+            <Flex container>
+               <Text as="h2">Ingredients({ingredients.length}) </Text>
+               <Tooltip identifier="ingredients_list_heading" />
+            </Flex>
+         </Flex>
          <DataTable
             data={ingredients}
             addTab={addTab}
             deleteIngredientHandler={deleteIngredientHandler}
             createIngredientHandler={createIngredientHandler}
          />
-      </StyledWrapper>
+      </Flex>
    )
 }
 
@@ -113,74 +132,96 @@ function DataTable({
    createIngredientHandler,
 }) {
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
 
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true },
+      {
+         title: 'Name',
+         field: 'name',
+         headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/recipe/ingredients/${id}`)
+         },
+         cssClass: 'colHover',
+         headerTooltip: function (column) {
+            const identifier = 'ingredients_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      { title: 'Category', field: 'category', headerFilter: true },
       {
          title: 'Processings',
          field: 'ingredientProcessings',
          headerFilter: false,
          hozAlign: 'right',
-         formatter: reactFormatter(<ProcessingCount />),
+         formatter: reactFormatter(<Count />),
+         width: 150,
       },
       {
-         title: 'Created At',
-         field: 'createdAt',
+         title: 'Sachets',
+         field: 'ingredientSachets',
          headerFilter: false,
          hozAlign: 'right',
-         formatter: reactFormatter(<FormatDate />),
+         formatter: reactFormatter(<Count />),
+         width: 150,
+      },
+      {
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Actions',
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteIngredientHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteIngredient />),
+         formatter: reactFormatter(
+            <DeleteIngredient onDelete={deleteIngredientHandler} />
+         ),
+         width: 150,
       },
    ]
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/recipe/ingredients/${id}`)
-   }
-
    return (
       <>
-         <StyledTableHeader>
+         <Flex container alignItems="center" justifyContent="space-between">
             <TextButton
                type="outline"
                onClick={() => tableRef.current.table.clearHeaderFilter()}
             >
                Clear Filters
             </TextButton>
-
-            <StyledTableActions>
-               <IconButton type="solid" onClick={createIngredientHandler}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
-            </StyledTableActions>
-         </StyledTableHeader>
-         <StyledContent>
-            <ReactTabulator
-               ref={tableRef}
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               options={tableOptions}
-               data-custom-attr="test-custom-attribute"
-               className="custom-css-class"
-            />
-         </StyledContent>
+            <ComboButton type="solid" onClick={createIngredientHandler}>
+               <AddIcon color="#fff" size={24} /> Add Ingredient
+            </ComboButton>
+         </Flex>
+         <Spacer size="16px" />
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data}
+            options={tableOptions}
+            data-custom-attr="test-custom-attribute"
+            className="custom-css-class"
+         />
       </>
    )
 }
 
-function DeleteIngredient() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteIngredient({ cell, onDelete }) {
+   const ingredient = cell.getData()
+
+   return (
+      <IconButton type="ghost" onClick={() => onDelete(ingredient)}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
 function FormatDate({

@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyledWrapper } from '../styled'
-import Insight from '../../components/Insight'
+import Insight from '../../../../shared/components/Insight'
 import { useQuery } from '@apollo/react-hooks'
 
 import { INSIGHTS } from '../../graphql'
@@ -22,10 +22,12 @@ const ReferralPlansListing = () => {
          {insights.map(insight => {
             return (
                <Insight
-                  key={insight.title}
-                  title={insight.title}
+                  key={insight.identifier}
+                  identifier={insight.identifier}
                   includeChart
-                  statsPosition="chart"
+                  // where={{ amountPaid: { _lte: 2 } }}
+                  // limit={2}
+                  // order={{ amountPaid: 'desc' }}
                />
             )
          })}

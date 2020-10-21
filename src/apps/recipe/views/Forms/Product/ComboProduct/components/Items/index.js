@@ -2,42 +2,40 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
-   HelperText,
+   Flex,
+   IconButton,
+   PlusIcon,
+   SectionTab,
+   SectionTabList,
+   SectionTabPanel,
+   SectionTabPanels,
+   SectionTabs,
+   SectionTabsListHeader,
    Text,
-   Tunnels,
    Tunnel,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { AddIcon, DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
+import { logger } from '../../../../../../../../shared/utils'
+import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import { useTabs } from '../../../../../../context'
+import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
    DELETE_COMBO_PRODUCT_COMPONENT,
    UPDATE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
-import {
-   StyledComboTile,
-   StyledHeader,
-   StyledLabel,
-   StyledLayout,
-   StyledLink,
-   StyledListing,
-   StyledListingTile,
-   StyledPanel,
-   StyledTab,
-   StyledTable,
-   StyledTabs,
-   StyledWrapper,
-} from './styled'
-import { ItemsTunnel, ProductTypeTunnel, ProductsTunnel } from '../../tunnels'
+import { ItemsTunnel, ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
+import { ItemInfo, StyledTable } from './styled'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.online_store.views.forms.product.comboproduct.components.items.'
 
 const Items = ({ state }) => {
    const { t } = useTranslation()
+   const { addTab } = useTabs()
    const { productDispatch } = React.useContext(ComboProductContext)
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
@@ -61,134 +59,11 @@ const Items = ({ state }) => {
             toast.success(t(address.concat('label removed!')))
          },
          onError: error => {
-            console.log(error)
-            toast.error(t(address.concat('error')))
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
-
-   // Handlers
-   const removeComponent = component => {
-      if (
-         window.confirm(
-            `t(address.concat('are you sure you want to remove label')) - ${component.label}?`
-         )
-      ) {
-         deleteComboProductComponent({
-            variables: {
-               id: component.id,
-            },
-         })
-      }
-   }
-
-   return (
-      <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <ItemsTunnel state={state} close={closeTunnel} />
-            </Tunnel>
-            <Tunnel layer={2}>
-               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
-            </Tunnel>
-            <Tunnel layer={3}>
-               <ProductsTunnel
-                  state={state}
-                  close={closeTunnel}
-                  // products={products[productState.meta.productType]}
-               />
-            </Tunnel>
-         </Tunnels>
-         <StyledWrapper>
-            {state.comboProductComponents?.length ? (
-               <>
-                  <StyledHeader>
-                     <Text as="h2">
-                        {t(address.concat('items'))} (
-                        {state.comboProductComponents.length})
-                     </Text>
-                     <span
-                        role="button"
-                        tabIndex="0"
-                        onKeyDown={e => e.charCode === 13 && openTunnel(1)}
-                        onClick={() => openTunnel(1)}
-                     >
-                        <AddIcon color="#555B6E" size="16" stroke="3" />
-                     </span>
-                  </StyledHeader>
-                  {/* This filter will see if any of the item has product in it, if yes then view will change */}
-                  {state.comboProductComponents.filter(
-                     component =>
-                        component.customizableProduct ||
-                        component.inventoryProduct ||
-                        component.simpleRecipeProduct
-                  ).length ? (
-                     <ItemsView
-                        state={state}
-                        openTunnel={openTunnel}
-                        deleteComboProductComponent={
-                           deleteComboProductComponent
-                        }
-                     />
-                  ) : (
-                     state.comboProductComponents.map(component => (
-                        <>
-                           <StyledLabel>
-                              {component.label}
-                              <span
-                                 role="button"
-                                 tabIndex="0"
-                                 onKeyDown={e =>
-                                    e.charCode === 13 &&
-                                    removeComponent(component)
-                                 }
-                                 onClick={() => removeComponent(component)}
-                              >
-                                 <DeleteIcon color="#FF5A52" />
-                              </span>
-                           </StyledLabel>
-                           <ButtonTile
-                              type="primary"
-                              size="sm"
-                              text={t(address.concat('add product'))}
-                              onClick={() => open(component.id)}
-                           />
-                        </>
-                     ))
-                  )}
-               </>
-            ) : (
-               <ButtonTile
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat('add items'))}
-                  onClick={() => openTunnel(1)}
-               />
-            )}
-         </StyledWrapper>
-      </>
-   )
-}
-
-const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
-   const { t } = useTranslation()
-   const { addTab } = useTabs()
-   const { productDispatch } = React.useContext(ComboProductContext)
-
-   const [active, setActive] = React.useState('')
-
-   const open = id => {
-      productDispatch({
-         type: 'META',
-         payload: {
-            name: 'componentId',
-            value: id,
-         },
-      })
-      openTunnel(2)
-   }
-
-   // Mutation
    const [updateComboProductComponent] = useMutation(
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
@@ -196,17 +71,26 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
             toast.success('Product removed!')
          },
          onError: error => {
-            console.log(error)
-            toast.error('Error')
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
 
    // Handlers
+   const removeComponent = component => {
+      if (window.confirm(`Do you want to remove label - ${component.label}?`)) {
+         deleteComboProductComponent({
+            variables: {
+               id: component.id,
+            },
+         })
+      }
+   }
    const removeProduct = component => {
       if (
          window.confirm(
-            `t(address.concat('are you sure you want to remove product from')) ${component.label}?`
+            `Do you want to remove product from label ${component.label}?`
          )
       ) {
          updateComboProductComponent({
@@ -221,268 +105,364 @@ const ItemsView = ({ state, openTunnel, deleteComboProductComponent }) => {
          })
       }
    }
-   const removeComponent = component => {
-      if (
-         window.confirm(
-            `Are you sure you want to remove label - ${component.label}?`
-         )
-      ) {
-         deleteComboProductComponent({
-            variables: {
-               id: component.id,
-            },
-         })
-      }
-   }
 
    return (
-      <StyledLayout>
-         <StyledListing>
-            {state.comboProductComponents.map(component => (
-               <StyledComboTile key={component.id}>
-                  <StyledLabel>
-                     {component.label}{' '}
-                     <span
-                        role="button"
-                        tabIndex="0"
-                        onKeyDown={e =>
-                           e.charCode === 13 && removeComponent(component)
-                        }
-                        onClick={() => removeComponent(component)}
-                     >
-                        <DeleteIcon color="#FF5A52" />
-                     </span>{' '}
-                  </StyledLabel>
-                  {component.customizableProduct ||
-                  component.inventoryProduct ||
-                  component.simpleRecipeProduct ? (
-                     <StyledListingTile
-                        active={active.id === component.id}
-                        onClick={() => setActive(component)}
-                     >
-                        <h3>
-                           {component.customizableProduct?.name ||
-                              component.inventoryProduct?.name ||
-                              component.simpleRecipeProduct?.name}
-                        </h3>
-                        <span
-                           role="button"
-                           tabIndex="0"
-                           onKeyDown={e =>
-                              e.charCode === 13 && removeProduct(component)
-                           }
-                           onClick={() => removeProduct(component)}
+      <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="sm">
+               <ItemsTunnel state={state} close={closeTunnel} />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ProductsTunnel state={state} close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         {state.comboProductComponents?.length ? (
+            <SectionTabs>
+               <SectionTabList>
+                  <SectionTabsListHeader>
+                     <Flex container alignItems="center">
+                        <Text as="title">
+                           Items({state.comboProductComponents.length})
+                        </Text>
+                        <Tooltip identifier="combo_product_items" />
+                     </Flex>
+                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                        <PlusIcon color="#555b6e" />
+                     </IconButton>
+                  </SectionTabsListHeader>
+                  {state.comboProductComponents.map(component => (
+                     <>
+                        <Flex
+                           container
+                           alignItems="center"
+                           justifyContent="space-between"
                         >
-                           <DeleteIcon color="#fff" />
-                        </span>
-                     </StyledListingTile>
-                  ) : (
-                     <ButtonTile
-                        type="secondary"
-                        size="sm"
-                        text={t(address.concat('add product'))}
-                        onClick={() => open(component.id)}
-                     />
-                  )}
-               </StyledComboTile>
-            ))}
-         </StyledListing>
-         <StyledPanel>
-            {active && (
-               <>
-                  <h2>
-                     {active.customizableProduct?.name ||
-                        active.inventoryProduct?.name ||
-                        active.simpleRecipeProduct?.name}
-                     <StyledLink
-                        onClick={() =>
-                           // eslint-disable-next-line no-nested-ternary
-                           active.inventoryProduct
-                              ? addTab(
-                                   active.inventoryProduct.name,
-                                   `/recipe/inventory-products/${active.inventoryProduct.id}`
-                                )
-                              : active.simpleRecipeProduct
-                              ? addTab(
-                                   active.simpleRecipeProduct.name,
-                                   `/recipe/simple-recipe-products/${active.simpleRecipeProduct.id}`
-                                )
-                              : addTab(
-                                   active.customizableProduct.name,
-                                   `/recipe/customizable-products/${active.customizableProduct.id}`
-                                )
-                        }
-                     >
-                        <LinkIcon color="#00A7E1" stroke={1.5} />
-                     </StyledLink>
-                  </h2>
-                  <HelperText
-                     type="hint"
-                     message={t(
-                        address.concat(
-                           'accompanients are taken as per added on the selected product'
-                        )
-                     )}
-                  />
-                  <StyledTabs>
-                     <StyledTab active>
-                        {t(address.concat('pricing'))}
-                     </StyledTab>
-                  </StyledTabs>
-                  {active.simpleRecipeProduct || active.inventoryProduct ? (
-                     <StyledTable>
-                        <thead>
-                           <tr>
-                              <th>
-                                 {active.simpleRecipeProduct
-                                    ? ''
-                                    : t(address.concat('labels'))}
-                              </th>
-                              <th>
-                                 {active.simpleRecipeProduct
-                                    ? t(address.concat('servings'))
-                                    : t(address.concat('options'))}
-                              </th>
-                              <th>{t(address.concat('price'))}</th>
-                              <th>{t(address.concat('discount'))}</th>
-                              <th>{t(address.concat('discounted price'))}</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                           {active.simpleRecipeProduct ? (
-                              <>
-                                 {active.simpleRecipeProduct.simpleRecipeProductOptions
-                                    .filter(option => option.type === 'mealKit')
-                                    .filter(option => option.isActive)
-                                    .map((option, i) => (
-                                       <tr key={option.id}>
-                                          <td>
-                                             {i === 0 ? (
-                                                <span>
-                                                   {t(
-                                                      address.concat('meal kit')
-                                                   )}
-                                                </span>
-                                             ) : (
-                                                ''
-                                             )}
-                                          </td>
-                                          <td>
-                                             {
-                                                option.simpleRecipeYield.yield
-                                                   .serving
-                                             }
-                                          </td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
-                                             {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    ))}
-                                 {active.simpleRecipeProduct.simpleRecipeProductOptions
-                                    .filter(
-                                       option => option.type === 'readyToEat'
-                                    )
-                                    .filter(option => option.isActive)
-                                    .map((option, i) => (
-                                       <tr key={option.id}>
-                                          <td>
-                                             {i === 0 ? (
-                                                <span>
-                                                   {t(
-                                                      address.concat(
-                                                         'ready to eat'
-                                                      )
-                                                   )}
-                                                </span>
-                                             ) : (
-                                                ''
-                                             )}
-                                          </td>
-                                          <td>
-                                             {
-                                                option.simpleRecipeYield.yield
-                                                   .serving
-                                             }
-                                          </td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
-                                             {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    ))}
-                              </>
-                           ) : (
-                              <>
-                                 {active.inventoryProduct.inventoryProductOptions.map(
-                                    option => (
-                                       <tr key={option.id}>
-                                          <td>{option.label}</td>
-                                          <td>{option.quantity}</td>
-                                          <td>${option.price[0].value} </td>
-                                          <td>{option.price[0].discount} %</td>
-                                          <td>
-                                             $
-                                             {(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) *
-                                                   (parseFloat(
-                                                      option.price[0].discount
-                                                   ) /
-                                                      100)
-                                             ).toFixed(2) || ''}
-                                          </td>
-                                       </tr>
-                                    )
+                           <Text as="h4"> {component.label} </Text>
+                           <IconButton
+                              type="ghost"
+                              onClick={() => removeComponent(component)}
+                           >
+                              <DeleteIcon color="#FF5A52" />
+                           </IconButton>
+                        </Flex>
+                        <SectionTab>
+                           {Boolean(
+                              component.customizableProduct ||
+                                 component.inventoryProduct ||
+                                 component.simpleRecipeProduct
+                           ) ? (
+                              <ItemInfo>
+                                 {Boolean(
+                                    component.simpleRecipeProduct?.assets
+                                       ?.images?.length ||
+                                       component.inventoryProduct?.assets
+                                          ?.images?.length ||
+                                       component.customizableProduct?.assets
+                                          ?.images?.length
+                                 ) && (
+                                    <img
+                                       src={
+                                          component.simpleRecipeProduct?.assets
+                                             ?.images[0] ||
+                                          component.inventoryProduct?.assets
+                                             ?.images[0] ||
+                                          component.customizableProduct?.assets
+                                             ?.images[0]
+                                       }
+                                    />
                                  )}
-                              </>
+                                 <h3>
+                                    {component.inventoryProduct?.name ||
+                                       component.simpleRecipeProduct?.name ||
+                                       component.customizableProduct?.name}
+                                 </h3>
+                                 <button
+                                    onClick={() => removeProduct(component)}
+                                 >
+                                    <DeleteIcon color="#fff" />
+                                 </button>
+                              </ItemInfo>
+                           ) : (
+                              <ButtonTile
+                                 type="secondary"
+                                 text="Add Product"
+                                 onClick={() => open(component.id)}
+                              />
                            )}
-                        </tbody>
-                     </StyledTable>
-                  ) : (
-                     <Text as="p">
-                        {t(
-                           address.concat(
-                              'cannot display pricing for a customizable product'
-                           )
+                        </SectionTab>
+                     </>
+                  ))}
+               </SectionTabList>
+               <SectionTabPanels>
+                  {state.comboProductComponents.map(component => (
+                     <SectionTabPanel key={component.id}>
+                        {Boolean(
+                           component.customizableProduct ||
+                              component.inventoryProduct ||
+                              component.simpleRecipeProduct
+                        ) ? (
+                           <>
+                              <Flex container alignItems="center">
+                                 <Text as="h2">
+                                    {component.customizableProduct?.name ||
+                                       component.inventoryProduct?.name ||
+                                       component.simpleRecipeProduct?.name}
+                                 </Text>
+                                 <IconButton
+                                    type="ghost"
+                                    onClick={() =>
+                                       component.inventoryProduct
+                                          ? addTab(
+                                               component.inventoryProduct.name,
+                                               `/recipe/inventory-products/${component.inventoryProduct.id}`
+                                            )
+                                          : component.simpleRecipeProduct
+                                          ? addTab(
+                                               component.simpleRecipeProduct
+                                                  .name,
+                                               `/recipe/simple-recipe-products/${component.simpleRecipeProduct.id}`
+                                            )
+                                          : addTab(
+                                               component.customizableProduct
+                                                  .name,
+                                               `/recipe/customizable-products/${component.customizableProduct.id}`
+                                            )
+                                    }
+                                 >
+                                    <LinkIcon color="#00A7E1" stroke={1.5} />
+                                 </IconButton>
+                              </Flex>
+                              {component.simpleRecipeProduct ||
+                              component.inventoryProduct ? (
+                                 <StyledTable>
+                                    <thead>
+                                       <tr>
+                                          <th>
+                                             {component.simpleRecipeProduct
+                                                ? ''
+                                                : t(address.concat('labels'))}
+                                          </th>
+                                          <th>
+                                             {component.simpleRecipeProduct
+                                                ? t(address.concat('servings'))
+                                                : t(address.concat('options'))}
+                                          </th>
+                                          <th>{t(address.concat('price'))}</th>
+                                          <th>
+                                             {t(address.concat('discount'))}
+                                          </th>
+                                          <th>
+                                             {t(
+                                                address.concat(
+                                                   'discounted price'
+                                                )
+                                             )}
+                                          </th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                       {component.simpleRecipeProduct ? (
+                                          <>
+                                             {component.simpleRecipeProduct.simpleRecipeProductOptions
+                                                .filter(
+                                                   option =>
+                                                      option.type === 'mealKit'
+                                                )
+                                                .filter(
+                                                   option => option.isActive
+                                                )
+                                                .map((option, i) => (
+                                                   <tr key={option.id}>
+                                                      <td>
+                                                         {i === 0 ? (
+                                                            <span>
+                                                               {t(
+                                                                  address.concat(
+                                                                     'meal kit'
+                                                                  )
+                                                               )}
+                                                            </span>
+                                                         ) : (
+                                                            ''
+                                                         )}
+                                                      </td>
+                                                      <td>
+                                                         {
+                                                            option
+                                                               .simpleRecipeYield
+                                                               .yield.serving
+                                                         }
+                                                      </td>
+                                                      <td>
+                                                         $
+                                                         {option.price[0].value}{' '}
+                                                      </td>
+                                                      <td>
+                                                         {
+                                                            option.price[0]
+                                                               .discount
+                                                         }{' '}
+                                                         %
+                                                      </td>
+                                                      <td>
+                                                         $
+                                                         {(
+                                                            parseFloat(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) -
+                                                            parseFloat(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) *
+                                                               (parseFloat(
+                                                                  option
+                                                                     .price[0]
+                                                                     .discount
+                                                               ) /
+                                                                  100)
+                                                         ).toFixed(2) || ''}
+                                                      </td>
+                                                   </tr>
+                                                ))}
+                                             {component.simpleRecipeProduct.simpleRecipeProductOptions
+                                                .filter(
+                                                   option =>
+                                                      option.type ===
+                                                      'readyToEat'
+                                                )
+                                                .filter(
+                                                   option => option.isActive
+                                                )
+                                                .map((option, i) => (
+                                                   <tr key={option.id}>
+                                                      <td>
+                                                         {i === 0 ? (
+                                                            <span>
+                                                               {t(
+                                                                  address.concat(
+                                                                     'ready to eat'
+                                                                  )
+                                                               )}
+                                                            </span>
+                                                         ) : (
+                                                            ''
+                                                         )}
+                                                      </td>
+                                                      <td>
+                                                         {
+                                                            option
+                                                               .simpleRecipeYield
+                                                               .yield.serving
+                                                         }
+                                                      </td>
+                                                      <td>
+                                                         $
+                                                         {option.price[0].value}{' '}
+                                                      </td>
+                                                      <td>
+                                                         {
+                                                            option.price[0]
+                                                               .discount
+                                                         }{' '}
+                                                         %
+                                                      </td>
+                                                      <td>
+                                                         $
+                                                         {(
+                                                            parseFloat(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) -
+                                                            parseFloat(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) *
+                                                               (parseFloat(
+                                                                  option
+                                                                     .price[0]
+                                                                     .discount
+                                                               ) /
+                                                                  100)
+                                                         ).toFixed(2) || ''}
+                                                      </td>
+                                                   </tr>
+                                                ))}
+                                          </>
+                                       ) : (
+                                          <>
+                                             {component.inventoryProduct.inventoryProductOptions.map(
+                                                option => (
+                                                   <tr key={option.id}>
+                                                      <td>{option.label}</td>
+                                                      <td>{option.quantity}</td>
+                                                      <td>
+                                                         $
+                                                         {option.price[0].value}{' '}
+                                                      </td>
+                                                      <td>
+                                                         {
+                                                            option.price[0]
+                                                               .discount
+                                                         }{' '}
+                                                         %
+                                                      </td>
+                                                      <td>
+                                                         $
+                                                         {(
+                                                            parseFloat(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) -
+                                                            parseFloat(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) *
+                                                               (parseFloat(
+                                                                  option
+                                                                     .price[0]
+                                                                     .discount
+                                                               ) /
+                                                                  100)
+                                                         ).toFixed(2) || ''}
+                                                      </td>
+                                                   </tr>
+                                                )
+                                             )}
+                                          </>
+                                       )}
+                                    </tbody>
+                                 </StyledTable>
+                              ) : (
+                                 <Text as="p">
+                                    {t(
+                                       address.concat(
+                                          'cannot display pricing for a customizable product'
+                                       )
+                                    )}
+                                    .
+                                 </Text>
+                              )}
+                           </>
+                        ) : (
+                           <Text as="subtitle">No product added yet. </Text>
                         )}
-                        .
-                     </Text>
-                  )}
-               </>
-            )}
-         </StyledPanel>
-      </StyledLayout>
+                     </SectionTabPanel>
+                  ))}
+               </SectionTabPanels>
+            </SectionTabs>
+         ) : (
+            <ButtonTile
+               type="primary"
+               size="lg"
+               text={t(address.concat('add items'))}
+               onClick={() => openTunnel(1)}
+            />
+         )}
+      </>
    )
 }
 

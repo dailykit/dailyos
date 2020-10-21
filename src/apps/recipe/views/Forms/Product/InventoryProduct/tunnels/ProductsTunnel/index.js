@@ -9,7 +9,7 @@ import {
    TagGroup,
    useMultiList,
    TunnelHeader,
-   Loader,
+   Filler,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -20,6 +20,8 @@ import {
    INVENTORY_PRODUCTS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
+import { InlineLoader } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.online_store.views.forms.product.inventoryproduct.tunnels.productstunnel.'
@@ -50,7 +52,8 @@ const ProductsTunnel = ({ state, close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -70,7 +73,8 @@ const ProductsTunnel = ({ state, close }) => {
          setProducts([...updatedProducts])
       },
       onError: error => {
-         console.log(error)
+         toast.error('Something went wrong!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -81,8 +85,9 @@ const ProductsTunnel = ({ state, close }) => {
          close(2)
          close(1)
       },
-      onError: () => {
-         toast.error('Error')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
          setBusy(false)
       },
    })
@@ -131,54 +136,62 @@ const ProductsTunnel = ({ state, close }) => {
             title={t(address.concat('select products to add'))}
             right={{
                action: save,
-               title: busy
-                  ? t(address.concat('saving'))
-                  : t(address.concat('save')),
+               title: busy ? 'Adding...' : 'Add',
             }}
             close={() => close(2)}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading || inventoryProductsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-                  {selected.length > 0 && (
-                     <TagGroup style={{ margin: '8px 0' }}>
-                        {selected.map(option => (
-                           <Tag
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                           >
-                              {option.title}
-                           </Tag>
-                        ))}
-                     </TagGroup>
+               <>
+                  {list.length ? (
+                     <List>
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder={t(
+                              address.concat("type what you're looking for")
+                           )}
+                        />
+                        {selected.length > 0 && (
+                           <TagGroup style={{ margin: '8px 0' }}>
+                              {selected.map(option => (
+                                 <Tag
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 >
+                                    {option.title}
+                                 </Tag>
+                              ))}
+                           </TagGroup>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="MSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                    isActive={selected.find(
+                                       item => item.id === option.id
+                                    )}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler message="No products found!" height="500px" />
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="MSL1"
-                              key={option.id}
-                              title={option.title}
-                              onClick={() => selectOption('id', option.id)}
-                              isActive={selected.find(
-                                 item => item.id === option.id
-                              )}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>

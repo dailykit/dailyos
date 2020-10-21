@@ -1,9 +1,11 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import { TunnelHeader, Flex } from '@dailykit/ui'
+import { TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { AssetUploader } from '../../../../../../../../shared/components'
 import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
+import { logger } from '../../../../../../../../shared/utils'
+import { TunnelBody } from '../styled'
 
 const AssetsTunnel = ({ state, closeTunnel }) => {
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
@@ -11,8 +13,9 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
          toast.success('Image added!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -33,12 +36,12 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
    return (
       <>
          <TunnelHeader title="Select Photo" close={() => closeTunnel(1)} />
-         <Flex padding="0 14px">
+         <TunnelBody>
             <AssetUploader
                onAssetUpload={url => addImage(url)}
                onImageSelect={image => addImage(image)}
             />
-         </Flex>
+         </TunnelBody>
       </>
    )
 }

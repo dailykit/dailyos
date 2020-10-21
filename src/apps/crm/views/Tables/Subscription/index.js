@@ -1,18 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Text, Loader } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
 import OrderComp from './order'
 import { OCCURENCES } from '../../../graphql'
-import tableOptions from '../../Listings/tableOptions'
 import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
-import './style.css'
+import options from '../../tableOptions'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 const SubscriptionTable = ({ id, sid }) => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const history = useHistory()
    const [occurences, setOccurences] = useState([])
    const tableRef = useRef(null)
@@ -49,13 +53,17 @@ const SubscriptionTable = ({ id, sid }) => {
                cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
                date: occurence?.fulfillmentDate || 'N/A',
                action,
-               oid: occurence?.customers?.[0]?.orderCart?.orderId || '',
+               oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
                amountPaid: `$ ${
                   occurence?.customers?.[0]?.orderCart?.amount || 'N/A'
                }`,
             }
          })
          setOccurences(result)
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
    useEffect(() => {
@@ -118,15 +126,71 @@ const SubscriptionTable = ({ id, sid }) => {
          field: 'date',
          headerFilter: true,
          cssClass: 'fulfillmentDate',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
          formatter: reactFormatter(<InfoButton />),
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_listing_date_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 200,
       },
       {
          title: 'Action',
          field: 'action',
          formatter: reactFormatter(<ActionText />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_listing_action_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 200,
       },
-      { title: 'Order Id', field: 'oid' },
-      { title: 'Amount Paid', field: 'amountPaid' },
+      {
+         title: 'Order Id',
+         field: 'oid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_orderId_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Amount Paid',
+         field: 'amountPaid',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_occurence_listing_paid_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 150,
+      },
    ]
 
    const setOrder = (orderId, order) => {
@@ -143,38 +207,45 @@ const SubscriptionTable = ({ id, sid }) => {
       setOrder('', false)
    }, [])
 
-   const rowClick = (e, row) => {
-      const orderId = row._row.data.oid.toString()
-
+   const rowClick = (e, cell) => {
+      const orderId = cell._cell.row.data.oid.toString()
       setOrder(orderId, true)
    }
 
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
    return (
       <>
-         <div style={{ overflowX: 'scroll' }}>
+         <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
             {tab.data.isOccurencesClicked ? (
                <OrderComp />
             ) : (
                <>
-                  <div style={{ padding: '16px' }}>
+                  <Flex
+                     container
+                     height="80px"
+                     padding="16px"
+                     alignItems="center"
+                  >
                      <Text as="title">
                         Occurences(
                         {occurencesData?.subscriptionOccurencesAggregate
                            ?.occurenceCount?.count || 'N/A'}
                         )
                      </Text>
-                  </div>
+                     <Tooltip identifier="order_list_heading" />
+                  </Flex>
                   <ReactTabulator
                      columns={columns}
                      data={occurences}
-                     rowClick={rowClick}
-                     options={tableOptions}
+                     options={{
+                        ...options,
+                        placeholder: 'No Occurences Available Yet !',
+                     }}
                      ref={tableRef}
                   />
                </>
             )}
-         </div>
+         </Flex>
       </>
    )
 }

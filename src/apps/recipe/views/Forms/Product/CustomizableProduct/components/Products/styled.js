@@ -1,7 +1,46 @@
 import styled from 'styled-components'
 
-export const StyledWrapper = styled.div`
-   padding: 16px;
+export const ItemInfo = styled.div`
+   height: 4rem;
+   padding: 0.5rem;
+   display: flex;
+   align-items: center;
+   position: relative;
+
+   img {
+      height: 2.8rem;
+      width: 2.8rem;
+      object-fit: cover;
+      border-radius: 2px;
+      margin-right: 0.5rem;
+   }
+
+   h3 {
+      font-weight: normal;
+      text-align: left;
+      width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+   }
+
+   button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+   }
+
+   label {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      color: #00a7e1;
+      text-transform: uppercase;
+      font-size: 12px;
+   }
 `
 
 export const StyledLayout = styled.div`

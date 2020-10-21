@@ -5,16 +5,19 @@ import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
 
 import { UPDATE_SUPPLIER } from '../../../../graphql'
 import { AssetUploader } from '../../../../../../shared/components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { logger } from '../../../../../../shared/utils'
+import { SUPPLIER_LOGO_ADDED } from '../../../../constants/successMessages'
 
 export default function LogoTunnel({ close, formState }) {
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Supplier Logo Added!')
+         toast.info(SUPPLIER_LOGO_ADDED)
          close(1)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(1)
       },
    })

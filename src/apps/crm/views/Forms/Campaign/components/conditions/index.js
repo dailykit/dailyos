@@ -1,18 +1,12 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import {
-   ButtonTile,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-   IconButton,
-   Text,
-} from '@dailykit/ui'
+import { ButtonTile, useTunnel, Text, TextButton, Flex } from '@dailykit/ui'
 import { UPDATE_CAMPAIGN } from '../../../../../graphql'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'
-import { StyledContainer, StyledRow } from './styled'
+import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import { StyledContainer } from './styled'
 const ConditionComp = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
@@ -22,9 +16,10 @@ const ConditionComp = ({ state }) => {
          toast.success('Updated!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error!')
+      onError: error => {
+         toast.error('Something went wrong')
          closeTunnel(1)
+         logger(error)
       },
    })
 
@@ -50,12 +45,23 @@ const ConditionComp = ({ state }) => {
          />
          {state.conditionId ? (
             <StyledContainer>
-               <StyledRow>
-                  <Text as="p">View/Edit Conditions</Text>
-                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                     <EditIcon color="#00a7e1" />
-                  </IconButton>
-               </StyledRow>
+               <Flex
+                  container
+                  justifyContent="space-between"
+                  margin="0 0 16px 0"
+               >
+                  <Flex container alignItems="center">
+                     <Text as="title">Campaign Condition</Text>
+                     <Tooltip identifier="campaign_condition" />
+                  </Flex>
+                  <TextButton
+                     type="outline"
+                     size="sm"
+                     onClick={() => openTunnel(1)}
+                  >
+                     View/Edit
+                  </TextButton>
+               </Flex>
             </StyledContainer>
          ) : (
             <ButtonTile

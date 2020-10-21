@@ -1,14 +1,12 @@
 import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
-import { Text, Toggle } from '@dailykit/ui'
+import { Text, Toggle, Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
 import { SUBSCRIPTION_OCCURENCES } from '../../../graphql'
-
 const PlansSection = () => {
    const tableRef = React.useRef()
    const { state, dispatch } = useMenu()
@@ -22,13 +20,14 @@ const PlansSection = () => {
          },
       },
    })
-
    const columns = [
       {
          title: 'Servings',
          headerFilter: true,
          headerFilterPlaceholder: 'Search servings...',
          field: 'subscription.itemCount.serving.size',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
       },
       {
          title: 'Title',
@@ -41,6 +40,8 @@ const PlansSection = () => {
          headerFilter: true,
          headerFilterPlaceholder: 'Search item counts...',
          field: 'subscription.itemCount.count',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
       },
       {
          title: 'Cut Off',
@@ -58,16 +59,18 @@ const PlansSection = () => {
          hozAlign: 'right',
          title: 'Menu Products',
          formatter: reactFormatter(<ProductsCount />),
+         hozAlign: 'right',
+         headerHozAlign: 'right',
       },
       {
          title: 'Customers',
          field: 'subscription.customers.aggregate.count',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
       },
    ]
-
    const handleRowSelection = row => {
       const data = row.getData()
-
       if (row.isSelected()) {
          dispatch({
             type: 'SET_PLAN',
@@ -84,7 +87,6 @@ const PlansSection = () => {
          })
       }
    }
-
    const handleRowValidation = row => {
       if (!localStorage.getItem('serving_size')) return true
       return (
@@ -92,17 +94,21 @@ const PlansSection = () => {
          Number(localStorage.getItem('serving_size'))
       )
    }
-
    return (
       <Wrapper>
-         <Header>
+         <Flex
+            container
+            height="48px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="h2">Plans</Text>
             <Toggle
                label="Add Permanently"
                checked={state.plans.isPermanent}
                setChecked={() => dispatch({ type: 'TOGGLE_PERMANENT' })}
             />
-         </Header>
+         </Flex>
          {!state.date && <span>Select a date to view plans.</span>}
          {!loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
@@ -124,9 +130,7 @@ const PlansSection = () => {
       </Wrapper>
    )
 }
-
 export default PlansSection
-
 const ProductsCount = ({ cell: { _cell } }) => {
    const data = _cell.row.getData()
    return (
@@ -144,10 +148,4 @@ const ProductsCount = ({ cell: { _cell } }) => {
 
 const Wrapper = styled.main`
    padding: 0 16px;
-`
-
-const Header = styled.header`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
 `

@@ -6,9 +6,10 @@ import {
    Text,
    ButtonGroup,
    IconButton,
+   ComboButton,
    PlusIcon,
-   Toggle,
-   Loader,
+   Flex,
+   Form,
 } from '@dailykit/ui'
 import {
    COUPON_LISTING,
@@ -18,13 +19,17 @@ import {
    DELETE_COUPON,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
-import tableOptions from '../tableOptions'
+import { StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
+import options from '../../tableOptions'
 
 const CouponListing = () => {
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [coupons, setCoupons] = useState(undefined)
    const tableRef = useRef()
    // Subscription
@@ -44,9 +49,7 @@ const CouponListing = () => {
          setCoupons(result)
       },
    })
-   if (error) {
-      console.log(error)
-   }
+
    const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
 
    // Mutation
@@ -55,7 +58,8 @@ const CouponListing = () => {
          toast.info('Coupon Updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong !')
+         logger(error)
       },
    })
    const [createCoupon] = useMutation(CREATE_COUPON, {
@@ -67,11 +71,17 @@ const CouponListing = () => {
          toast.success('Coupon created!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong !')
+         logger(error)
       },
    })
 
-   React.useEffect(() => {
+   if (error) {
+      toast.error('Something went wrong !')
+      logger(error)
+   }
+
+   useEffect(() => {
       if (!tab) {
          addTab('Coupons', '/crm/coupons')
       }
@@ -89,10 +99,21 @@ const CouponListing = () => {
    const ToggleButton = ({ cell }) => {
       const rowData = cell._cell.row.data
       return (
-         <Toggle
-            checked={rowData.active}
-            setChecked={() => toggleHandler(!rowData.active, rowData.id)}
-         />
+         <Form.Group>
+            <Form.Toggle
+               name="coupon_active"
+               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               value={rowData.active}
+            />
+         </Form.Group>
+      )
+   }
+
+   const DeleteButton = () => {
+      return (
+         <IconButton type="ghost">
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
       )
    }
 
@@ -122,22 +143,94 @@ const CouponListing = () => {
       }
    }
 
-   const rowClick = (e, row) => {
-      const { id, code } = row._row.data
+   const rowClick = (e, cell) => {
+      const { id, code } = cell._cell.row.data
       const param = `/crm/coupons/${id}`
       const tabTitle = code
       addTab(tabTitle, param)
    }
 
    const columns = [
-      { title: 'Coupon Code', field: 'code', headerFilter: true },
-      { title: 'Used', field: 'used', headerFilter: true },
-      { title: 'Conversion Rate', field: 'rate', headerFilter: true },
-      { title: 'Amount Spent', field: 'amount' },
+      {
+         title: 'Coupon Code',
+         field: 'code',
+         headerFilter: true,
+         hozAlign: 'left',
+         cssClass: 'rowClick',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_code_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Used',
+         field: 'used',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_used_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 100,
+      },
+      {
+         title: 'Conversion Rate',
+         field: 'rate',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_conversion_rate_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 200,
+      },
+      {
+         title: 'Amount Spent',
+         field: 'amount',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_amount_spent_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 150,
+      },
       {
          title: 'Active',
          field: 'active',
          formatter: reactFormatter(<ToggleButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'coupon_listing_active_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 100,
       },
       {
          title: 'Action',
@@ -146,29 +239,41 @@ const CouponListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+         formatter: reactFormatter(<DeleteButton />),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 100,
       },
    ]
-   if (loading || listLoading) return <Loader />
+   if (loading || listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
-            <Text as="title">
-               Coupons(
-               {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
-            </Text>
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container height="80px" alignItems="center">
+               <Text as="h2">
+                  Coupons(
+                  {couponTotal?.couponsAggregate?.aggregate?.count || '...'})
+               </Text>
+               <Tooltip identifier="coupon_list_heading" />
+            </Flex>
             <ButtonGroup>
-               <IconButton type="solid" onClick={createCoupon}>
+               <ComboButton type="solid" onClick={createCoupon}>
                   <PlusIcon />
-               </IconButton>
+                  Create Coupon
+               </ComboButton>
             </ButtonGroup>
-         </StyledHeader>
+         </Flex>
          {Boolean(coupons) && (
             <ReactTabulator
                columns={columns}
                data={coupons}
-               rowClick={rowClick}
-               options={tableOptions}
+               options={{
+                  ...options,
+                  placeholder: 'No Coupons Available Yet !',
+               }}
                ref={tableRef}
             />
          )}

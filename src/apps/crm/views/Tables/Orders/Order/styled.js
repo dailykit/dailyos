@@ -1,12 +1,15 @@
 import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
-   width: 100%;
+   max-width: 1280px;
+   width: calc(100vw-64px);
+   margin: 0 auto;
    background: #ffffff;
 `
 export const StyledContainer = styled.div`
    display: flex;
    flex-direction: row;
+   align-items: center;
 `
 export const StyledDiv = styled.div`
    display: grid;
@@ -14,7 +17,6 @@ export const StyledDiv = styled.div`
 `
 export const StyledTable = styled.div`
    background: #ffffff;
-   width: 97%;
    border-top: 1px solid #ececec;
 `
 export const StyledSideBar = styled.div`
@@ -52,7 +54,7 @@ export const StyledInput = styled.input`
    font-size: inherit;
 `
 export const StyledSpan = styled.span`
-   padding: 0 30px 16px 30px;
+   padding: 0 30px 16px 6px;
    border-right: 1px solid #ececec;
 `
 export const SmallText = styled.small`
@@ -66,4 +68,6 @@ export const SmallText = styled.small`
 
 export const Heading = styled(StyledContainer)`
    justify-content: space-between;
+   margin: 0 0 0 6px;
+   align-items: center;
 `

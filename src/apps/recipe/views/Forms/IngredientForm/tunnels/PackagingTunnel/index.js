@@ -1,36 +1,38 @@
 import React from 'react'
+import { useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
+   useSingleList,
 } from '@dailykit/ui'
-import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody } from '../styled'
 import { FETCH_PACKAGINGS } from '../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const PackagingTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
-   const [packagings, setPackagings] = React.useState([])
-   const [search, setSearch] = React.useState('')
-
-   const [list, current, selectOption] = useSingleList(packagings)
 
    // Subscription
-   const { loading } = useSubscription(FETCH_PACKAGINGS, {
-      onSubscriptionData: data => {
-         setPackagings([...data.subscriptionData.data.packagings])
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
+   const { data: { packagings = [] } = {}, loading, error } = useSubscription(
+      FETCH_PACKAGINGS
+   )
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
+   const [search, setSearch] = React.useState('')
+   const [list, current, selectOption] = useSingleList(packagings)
 
    React.useEffect(() => {
       if (Object.keys(current).length) {
@@ -42,42 +44,50 @@ const PackagingTunnel = ({ closeTunnel }) => {
                value: current,
             },
          })
-         closeTunnel(4)
+         closeTunnel(3)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Packaging" close={() => closeTunnel(4)} />
+         <TunnelHeader title="Select Packaging" close={() => closeTunnel(3)} />
          <TunnelBody>
             {loading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.title} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
-                     />
-                  )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+               <>
+                  {list.length ? (
+                     <List>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder="type what you’re looking for..."
                            />
-                        ))}
-                  </ListOptions>
-               </List>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="SSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    isActive={option.id === current.id}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler height="500px" message="No packagings found!" />
+                  )}
+               </>
             )}
          </TunnelBody>
       </>

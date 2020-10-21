@@ -1,18 +1,74 @@
 import React, { useRef } from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../../context'
-import tableOption from '../../Listings/tableOptions'
+import options from '../../tableOptions'
+import { Tooltip } from '../../../../../shared/components'
+
 const WalletTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const columns = [
-      { title: 'Txn Date', field: 'date', headerFilter: true },
-      { title: 'Reference number', field: 'reference' },
-      { title: 'Order Id', field: 'id' },
-      { title: 'Debit', field: 'debit' },
-      { title: 'Credit', field: 'credit' },
-      { title: 'Balance', field: 'balance' },
+      {
+         title: 'Txn Date',
+         field: 'date',
+         headerFilter: true,
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 150,
+      },
+      {
+         title: 'Reference number',
+         field: 'reference',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 200,
+      },
+      {
+         title: 'Order Id',
+         field: 'id',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+      },
+      {
+         title: 'Debit',
+         field: 'debit',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
+      {
+         title: 'Credit',
+         field: 'credit',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
+      {
+         title: 'Balance',
+         field: 'balance',
+         hozAlign: 'right',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         width: 100,
+      },
    ]
    const data = [
       {
@@ -55,20 +111,22 @@ const WalletTable = () => {
       addTab(name, param)
    }
    return (
-      <React.Fragment>
-         <div style={{ padding: '16px' }}>
+      <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
+         <Flex container height="80px" padding="16px" alignItems="center">
             <Text as="title">Wallet Transactions</Text>
-         </div>
-         <div style={{ overflowX: 'scroll' }}>
-            <ReactTabulator
-               columns={columns}
-               data={data}
-               rowClick={rowClick}
-               ref={tableRef}
-               options={tableOption}
-            />
-         </div>
-      </React.Fragment>
+            <Tooltip identifier="wallet_list_heading" />
+         </Flex>
+         <ReactTabulator
+            columns={columns}
+            data={data}
+            rowClick={rowClick}
+            ref={tableRef}
+            options={{
+               ...options,
+               placeholder: 'No Wallet Data Available Yet !',
+            }}
+         />
+      </Flex>
    )
 }
 

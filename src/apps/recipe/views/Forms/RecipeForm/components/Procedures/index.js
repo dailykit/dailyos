@@ -1,16 +1,18 @@
 import React from 'react'
 import {
    ButtonTile,
+   Flex,
    IconButton,
    Text,
-   Tunnels,
    Tunnel,
+   Tunnels,
    useTunnel,
 } from '@dailykit/ui'
+import { Tooltip } from '../../../../../../../shared/components'
 import { EditIcon } from '../../../../../assets/icons'
+import { ProceduresTunnel, StepPhotoTunnel } from '../../tunnels'
 import { Container, ContainerAction } from '../styled'
 import { Image } from './styled'
-import { ProceduresTunnel, StepPhotoTunnel } from '../../tunnels'
 
 const Procedures = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
@@ -29,27 +31,28 @@ const Procedures = ({ state }) => {
                <StepPhotoTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Container top="32" paddingX="32">
+         <Flex container alignItems="center">
             <Text as="subtitle">Cooking Steps</Text>
-            {state.procedures?.length ? (
-               <>
-                  <ContainerAction>
-                     <IconButton onClick={() => openTunnel(1)}>
-                        <EditIcon color="#00A7E1" />
-                     </IconButton>
-                  </ContainerAction>
-                  {state.procedures.map(procedure => (
-                     <Procedure key={procedure.title} procedure={procedure} />
-                  ))}
-               </>
-            ) : (
-               <ButtonTile
-                  type="secondary"
-                  text="Add Procedures"
-                  onClick={() => openTunnel(1)}
-               />
-            )}
-         </Container>
+            <Tooltip identifier="recipe_cooking_steps" />
+         </Flex>
+         {state.procedures?.length ? (
+            <Container>
+               <ContainerAction>
+                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                     <EditIcon color="#00A7E1" />
+                  </IconButton>
+               </ContainerAction>
+               {state.procedures.map(procedure => (
+                  <Procedure key={procedure.title} procedure={procedure} />
+               ))}
+            </Container>
+         ) : (
+            <ButtonTile
+               type="secondary"
+               text="Add Cooking Steps"
+               onClick={() => openTunnel(1)}
+            />
+         )}
       </>
    )
 }

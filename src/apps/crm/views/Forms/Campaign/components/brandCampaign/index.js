@@ -2,16 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-import {
-   Text,
-   ButtonGroup,
-   IconButton,
-   PlusIcon,
-   Toggle,
-   Loader,
-} from '@dailykit/ui'
+import { Text, Flex, Form } from '@dailykit/ui'
 import { BRAND_CAMPAIGNS, UPSERT_BRAND_CAMPAIGN } from '../../../../../graphql'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
+import options from '../../../../tableOptions'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 
 const BrandCampaign = ({ state }) => {
    const tableRef = useRef()
@@ -23,14 +19,19 @@ const BrandCampaign = ({ state }) => {
       data: { brands = [] } = {},
    } = useSubscription(BRAND_CAMPAIGNS)
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    const [upsertBrandCampaign] = useMutation(UPSERT_BRAND_CAMPAIGN, {
       onCompleted: data => {
          console.log(data)
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -38,12 +39,14 @@ const BrandCampaign = ({ state }) => {
       {
          title: 'Title',
          field: 'title',
+         hozAlign: 'left',
          headerFilter: true,
          headerSort: false,
       },
       {
          title: 'Domain',
          field: 'domain',
+         hozAlign: 'left',
          headerFilter: true,
       },
       {
@@ -56,27 +59,23 @@ const BrandCampaign = ({ state }) => {
                }
             />
          ),
+         hozAlign: 'center',
+         titleFormatter: function (cell, formatterParams, onRendered) {
+            cell.getElement().style.textAlign = 'center'
+            return '' + cell.getValue()
+         },
+         width: 200,
       },
    ]
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      maxHeight: 420,
-      resizableColumns: true,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-   }
-
-   if (listloading) return <Loader />
+   if (listloading) return <InlineLoader />
 
    return (
       <StyledWrapper>
-         <Text as="h2">Brands</Text>
-
+         <Flex container alignItems="center" padding="6px">
+            <Text as="h2">Brands</Text>
+            <Tooltip identifier="brand_campaign_list_heading" />
+         </Flex>
          {error ? (
             <Text as="p">Could not load brands</Text>
          ) : (
@@ -84,7 +83,10 @@ const BrandCampaign = ({ state }) => {
                ref={tableRef}
                columns={columns}
                data={brands}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Brand Campaigns Data Available Yet !',
+               }}
             />
          )}
       </StyledWrapper>
@@ -97,8 +99,8 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
    const brand = useRef(cell.getData())
    const [active, setActive] = useState(false)
 
-   const toggleHandler = value => {
-      console.log(value)
+   const toggleHandler = () => {
+      const value = !active
       onChange({
          campaignId,
          brandId: brand.current.id,
@@ -115,5 +117,13 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
       setActive(isActive)
    }, [brand.current])
 
-   return <Toggle checked={active} setChecked={val => toggleHandler(val)} />
+   return (
+      <Form.Group>
+         <Form.Toggle
+            name="brand_campaign_active"
+            onChange={toggleHandler}
+            value={active}
+         />
+      </Form.Group>
+   )
 }

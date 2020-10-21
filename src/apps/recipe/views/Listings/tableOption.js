@@ -3,11 +3,14 @@ const options = {
    layout: 'fitColumns',
    autoResize: true,
    maxHeight: 420,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
+   tooltips: true,
 }
 
 export default options

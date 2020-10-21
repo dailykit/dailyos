@@ -10,6 +10,6 @@ export const StyledRow = styled.div`
 
 export const StyledAction = styled.div`
    position: absolute;
-   right: 16px;
-   top: 16px;
+   right: 0px;
+   top: 0px;
 `

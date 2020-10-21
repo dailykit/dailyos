@@ -1,19 +1,22 @@
 import React from 'react'
-import { Text, IconButton, Card } from '@dailykit/ui'
-import { StyledWrapper, StyledCard, StyledInfo, HorizontalCard } from './styled'
-import { EditIcon } from '../../assets/icons'
+import { Text, TextButton, Card, Flex } from '@dailykit/ui'
+import { StyledCard, StyledInfo } from './styled'
+import { Tooltip } from '../Tooltip'
 
-const HorizontalStyledCard = ({ data, open }) => {
+const HorizontalStyledCard = ({ data, open, altMessage, identifier }) => {
    return (
       <StyledCard>
-         <StyledWrapper>
-            <Text as="title">Basic Information</Text>
-            <IconButton type="outline" onClick={() => open(1)}>
-               <EditIcon />
-            </IconButton>
-         </StyledWrapper>
-         <HorizontalCard>
-            <img src={data.image} alt="CardImage" />
+         <Flex container justifyContent="space-between">
+            <Flex container alignItems="flex-start">
+               <Card.Title>Basic Information</Card.Title>
+               <Tooltip identifier={identifier} />
+            </Flex>
+            <TextButton type="outline" size="sm" onClick={() => open(1)}>
+               Edit
+            </TextButton>
+         </Flex>
+         <Flex container>
+            <Card.Img src={data.image} alt={altMessage} />
             <StyledInfo>
                <Card>
                   <Card.Body>
@@ -30,7 +33,7 @@ const HorizontalStyledCard = ({ data, open }) => {
                   </Card.Body>
                </Card>
             </StyledInfo>
-         </HorizontalCard>
+         </Flex>
       </StyledCard>
    )
 }

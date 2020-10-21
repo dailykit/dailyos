@@ -1,17 +1,20 @@
 import React from 'react'
+import { useLazyQuery } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
+   useSingleList,
 } from '@dailykit/ui'
-import { useLazyQuery } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { TunnelBody } from '../styled'
 import { BULK_ITEMS, SACHET_ITEMS } from '../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const EditItemTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -36,8 +39,10 @@ const EditItemTunnel = ({ closeTunnel }) => {
             setItems([...updatedItems])
          },
          onError: error => {
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
+         fetchPolicy: 'cache-and-network',
       }
    )
    const [fetchSupplierItems, { loading: supplierItemsLoading }] = useLazyQuery(
@@ -53,8 +58,10 @@ const EditItemTunnel = ({ closeTunnel }) => {
             setItems([...updatedItems])
          },
          onError: error => {
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
+         fetchPolicy: 'cache-and-network',
       }
    )
 
@@ -80,42 +87,50 @@ const EditItemTunnel = ({ closeTunnel }) => {
                      : null,
             },
          })
-         closeTunnel(4)
+         closeTunnel(3)
       }
    }, [current])
 
    return (
       <>
-         <TunnelHeader title="Select Item" close={() => closeTunnel(4)} />
+         <TunnelHeader title="Select Item" close={() => closeTunnel(3)} />
          <TunnelBody>
             {bulkItemsLoading || supplierItemsLoading ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.title} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
-                     />
-                  )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+               <>
+                  {list.length ? (
+                     <List>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder="type what you’re looking for..."
                            />
-                        ))}
-                  </ListOptions>
-               </List>
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="SSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    isActive={option.id === current.id}
+                                    onClick={() =>
+                                       selectOption('id', option.id)
+                                    }
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
+                  ) : (
+                     <Filler height="500px" message="No Items found!" />
+                  )}
+               </>
             )}
          </TunnelBody>
       </>

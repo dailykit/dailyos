@@ -1,17 +1,24 @@
 import React from 'react'
-import { Tunnels, Tunnel, TunnelHeader, Loader, Text } from '@dailykit/ui'
+import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
 import { concatAddress } from '../../../../Utils'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
+import { logger } from '../../../../../../shared/utils'
+import { InlineLoader } from '../../../../../../shared/components'
+import { toast } from 'react-toastify'
 
 const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
    const { loading: listLoading, data: allAddress } = useQuery(ALL_DATA, {
       variables: {
          keycloakId: id,
       },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
+      },
    })
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
 
    return (
       <Tunnels tunnels={tunnels}>

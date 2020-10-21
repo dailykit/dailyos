@@ -1,23 +1,27 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Checkbox,
-   Input,
+   Flex,
+   Form,
+   IconButton,
+   PlusIcon,
    RadioGroup,
-   Select,
-   Toggle,
+   Spacer,
    TunnelHeader,
-   Loader,
+   useTunnel,
+   Filler,
 } from '@dailykit/ui'
+import React from 'react'
 import { toast } from 'react-toastify'
+import {
+   InlineLoader,
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { CREATE_SACHET, FETCH_UNITS } from '../../../../../graphql'
-import {
-   StyledInputWrapper,
-   StyledRow,
-   TunnelBody,
-   StyledSelect,
-} from '../styled'
+import validator from '../../validators'
+import { TunnelBody } from '../styled'
 import { StyledTable } from './styled'
 
 const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
@@ -25,12 +29,32 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
       IngredientContext
    )
 
+   const [
+      operationConfigTunnels,
+      openOperationConfigTunnel,
+      closeOperationConfigTunnel,
+   ] = useTunnel(4)
+
    // State
-   const [busy, setBusy] = React.useState(false)
-   const [quantity, setQuantity] = React.useState('')
-   const [units, setUnits] = React.useState([])
-   const [unit, setUnit] = React.useState(units[0]?.title || '')
-   const [tracking, setTracking] = React.useState(true)
+   const [quantity, setQuantity] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [unit, setUnit] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [tracking, setTracking] = React.useState({
+      value: true,
+   })
 
    const options = [
       { id: 1, title: 'Atleast 80%', value: '80' },
@@ -39,18 +63,24 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
    ]
 
    // Subscription
-   const { loading } = useSubscription(FETCH_UNITS, {
-      onSubscriptionData: data => {
-         console.log(
-            'SachetTunnel -> data.subscriptionData.data.units',
-            data.subscriptionData.data.units
-         )
-         setUnits([...data.subscriptionData.data.units])
-      },
-      onError: error => {
-         console.log(error)
-      },
-   })
+   const { data: { units = [] } = {}, loading, error } = useSubscription(
+      FETCH_UNITS,
+      {
+         onSubscriptionData: data => {
+            if (data.subscriptionData.data.units.length) {
+               setUnit({
+                  ...unit,
+                  value: data.subscriptionData.data.units[0].title,
+               })
+            }
+         },
+      }
+   )
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    // Handlers
    const close = () => {
@@ -84,87 +114,69 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
          type: 'CURRENT_MODE',
          payload: type,
       })
-      openTunnel(4)
+      openTunnel(3)
    }
-   const selectLabelTemplate = type => {
+   const selectOperationConfiguration = type => {
       ingredientDispatch({
          type: 'CURRENT_MODE',
          payload: type,
       })
-      openTunnel(5)
+      openOperationConfigTunnel(1)
    }
 
    // Mutations
-   const [createSachet] = useMutation(CREATE_SACHET, {
+   const [createSachet, { loading: inFlight }] = useMutation(CREATE_SACHET, {
       onCompleted: () => {
          toast.success('Sachet added!')
          close()
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
-         setBusy(false)
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    const add = () => {
       try {
-         if (busy) return
-         setBusy(true)
-         if (!quantity || Number.isNaN(quantity) || parseInt(quantity) === 0) {
-            throw Error('Invalid Quantity!')
-         }
-         if (
-            !ingredientState.realTime.priority ||
-            Number.isNaN(ingredientState.realTime.priority) ||
-            parseInt(ingredientState.realTime.priority) === 0
-         ) {
-            throw Error('Invalid Priority!')
-         }
-         if (
-            !ingredientState.plannedLot.priority ||
-            Number.isNaN(ingredientState.plannedLot.priority) ||
-            parseInt(ingredientState.plannedLot.priority) === 0
-         ) {
-            throw Error('Invalid Priority!')
+         if (inFlight) return
+         if (!quantity.value) {
+            return toast.error('Quantity is required!')
          }
          const object = {
             ingredientId: state.id,
             ingredientProcessingId:
                state.ingredientProcessings[ingredientState.processingIndex].id,
-            quantity,
-            unit,
-            tracking,
+            quantity: quantity.value,
+            unit: unit.value,
+            tracking: tracking.value,
             modeOfFulfillments: {
                data: [
                   {
                      type: 'realTime',
-                     stationId: ingredientState.realTime.station?.id || null,
                      isPublished: ingredientState.realTime.isPublished,
                      isLive: ingredientState.realTime.isLive,
-                     priority: parseInt(ingredientState.realTime.priority),
+                     priority: ingredientState.realTime.priority.value ?? 1,
                      bulkItemId: ingredientState.realTime.bulkItem?.id || null,
                      sachetItemId: null,
                      accuracy: ingredientState.realTime.accuracy,
                      packagingId:
                         ingredientState.realTime.packaging?.id || null,
-                     labelTemplateId:
-                        ingredientState.realTime.labelTemplate?.id || null,
+                     operationConfigId:
+                        ingredientState.realTime.operationConfig?.id || null,
                   },
                   {
                      type: 'plannedLot',
-                     stationId: ingredientState.plannedLot.station?.id || null,
                      isPublished: ingredientState.plannedLot.isPublished,
                      isLive: ingredientState.plannedLot.isLive,
-                     priority: parseInt(ingredientState.plannedLot.priority),
+                     priority: ingredientState.plannedLot.priority.value ?? 2,
                      bulkItemId: null,
                      sachetItemId:
                         ingredientState.plannedLot.sachetItem?.id || null,
                      accuracy: ingredientState.plannedLot.accuracy,
                      packagingId:
                         ingredientState.plannedLot.packaging?.id || null,
-                     labelTemplateId:
-                        ingredientState.plannedLot.labelTemplate?.id || null,
+                     operationConfigId:
+                        ingredientState.realTime.operationConfig?.id || null,
                   },
                ],
             },
@@ -174,257 +186,468 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                objects: [object],
             },
          })
-      } catch (e) {
-         toast.error(e.message)
-         setBusy(false)
+      } catch (error) {
+         toast.error('Something went wrong!')
+         logger(error)
       }
    }
 
-   React.useEffect(() => {
-      if (units.length) {
-         setUnit(units[0].title)
-      }
-   }, [units])
-
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={config =>
+               ingredientDispatch({
+                  type: 'MODE',
+                  payload: {
+                     mode: ingredientState.currentMode,
+                     name: 'operationConfig',
+                     value: config,
+                  },
+               })
+            }
+         />
          <TunnelHeader
             title="Add Sachet"
-            right={{ action: add, title: busy ? 'Adding...' : 'Add' }}
+            right={{ action: add, title: inFlight ? 'Adding...' : 'Add' }}
             close={close}
          />
          <TunnelBody>
-            <StyledRow>
-               <StyledInputWrapper width="300">
-                  <Input
-                     type="text"
-                     label="Quantity"
-                     value={quantity}
-                     onChange={e => setQuantity(e.target.value)}
-                  />
-                  <StyledSelect onChange={e => setUnit(e.target.value)}>
-                     {units.map(item => (
-                        <option key={item.id} value={item.title}>
-                           {item.title}
-                        </option>
-                     ))}
-                  </StyledSelect>
-               </StyledInputWrapper>
-            </StyledRow>
-            <StyledRow>
-               <StyledInputWrapper width="300">
-                  <Toggle
-                     label="Track Inventory"
-                     checked={tracking}
-                     setChecked={val => setTracking(val)}
-                  />
-               </StyledInputWrapper>
-            </StyledRow>
-            <StyledTable cellSpacing={0}>
-               <thead>
-                  <tr>
-                     <th>Mode of Fulfillment</th>
-                     <th>Priority</th>
-                     <th>Station</th>
-                     <th>Item</th>
-                     <th>Accuracy</th>
-                     <th>Packaging</th>
-                     <th>Label</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr>
-                     <td>
-                        <Checkbox
-                           checked={ingredientState.realTime.isLive}
-                           onChange={val => propagate('realTime', val)}
-                        />
-                        Real Time
-                     </td>
-                     <td>
-                        <StyledInputWrapper width="50">
-                           <Input
-                              type="text"
-                              value={ingredientState.realTime.priority}
+            {units.length ? (
+               <>
+                  <Flex maxWidth="300px">
+                     <Form.Group>
+                        <Form.Label htmlFor="quantity" title="quantity">
+                           Quantity*
+                        </Form.Label>
+                        <Form.TextSelect>
+                           <Form.Number
+                              id="quantity"
+                              name="quantity"
+                              value={quantity.value}
+                              placeholder="Enter sachet quantity"
                               onChange={e =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'realTime',
-                                       name: 'priority',
-                                       value: e.target.value,
-                                    },
+                                 setQuantity({
+                                    ...quantity,
+                                    value: e.target.value,
                                  })
                               }
-                           />
-                        </StyledInputWrapper>
-                     </td>
-                     <td>{ingredientState.realTime.station?.title || '-'}</td>
-                     <td>{ingredientState.realTime.bulkItem?.title || '-'}</td>
-                     <td>
-                        {ingredientState.realTime.bulkItem ? (
-                           <RadioGroup
-                              options={options}
-                              active={3}
-                              onChange={option =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'realTime',
-                                       name: 'accuracy',
-                                       value: option.value,
+                              onBlur={() => {
+                                 const { isValid, errors } = validator.quantity(
+                                    quantity.value
+                                 )
+                                 setQuantity({
+                                    ...quantity,
+                                    meta: {
+                                       isTouched: true,
+                                       isValid,
+                                       errors,
                                     },
                                  })
-                              }
+                              }}
                            />
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                     <td>
-                        {ingredientState.realTime.bulkItem ? (
-                           <Select
-                              option={ingredientState.realTime.packaging || []}
-                              addOption={() => selectPackaging('realTime')}
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'realTime',
-                                       name: 'packaging',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                     <td>
-                        {ingredientState.realTime.bulkItem ? (
-                           <Select
-                              option={
-                                 ingredientState.realTime.labelTemplate || []
-                              }
-                              addOption={() => selectLabelTemplate('realTime')}
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'realTime',
-                                       name: 'labelTemplate',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                  </tr>
-                  <tr>
-                     <td>
-                        <Checkbox
-                           checked={ingredientState.plannedLot.isLive}
-                           onChange={val => propagate('plannedLot', val)}
-                        />
-                        Planned Lot
-                     </td>
-                     <td>
-                        <StyledInputWrapper width="50">
-                           <Input
-                              type="text"
-                              value={ingredientState.plannedLot.priority}
+                           <Form.Select
+                              id="unit"
+                              name="unit"
+                              options={units}
+                              value={unit.value}
+                              placeholder="Choose unit"
+                              defaultValue={unit.value}
                               onChange={e =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'plannedLot',
-                                       name: 'priority',
-                                       value: e.target.value,
-                                    },
-                                 })
+                                 setUnit({ ...unit, value: e.target.value })
                               }
                            />
-                        </StyledInputWrapper>
-                     </td>
-                     <td>{ingredientState.plannedLot.station?.title || '-'}</td>
-                     <td>
-                        {ingredientState.plannedLot.sachetItem?.title || '-'}
-                     </td>
-                     <td>
-                        {ingredientState.plannedLot.sachetItem ? (
-                           <RadioGroup
-                              options={options}
-                              active={3}
-                              onChange={option =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'plannedLot',
-                                       name: 'accuracy',
-                                       value: option.value,
-                                    },
-                                 })
-                              }
-                           />
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                     <td>
-                        {ingredientState.plannedLot.sachetItem ? (
-                           <Select
-                              option={
-                                 ingredientState.plannedLot.packaging || []
-                              }
-                              addOption={() => selectPackaging('plannedLot')}
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'plannedLot',
-                                       name: 'packaging',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                     <td>
-                        {ingredientState.plannedLot.sachetItem ? (
-                           <Select
-                              option={
-                                 ingredientState.plannedLot.labelTemplate || []
-                              }
-                              addOption={() =>
-                                 selectLabelTemplate('plannedLot')
-                              }
-                              removeOption={() =>
-                                 ingredientDispatch({
-                                    type: 'MODE',
-                                    payload: {
-                                       mode: 'plannedLot',
-                                       name: 'labelTemplate',
-                                       value: undefined,
-                                    },
-                                 })
-                              }
-                           />
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                  </tr>
-               </tbody>
-            </StyledTable>
+                        </Form.TextSelect>
+                        {quantity.meta.isTouched &&
+                           !quantity.meta.isValid &&
+                           quantity.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
+                  </Flex>
+                  <Spacer size="24px" />
+                  <Flex container maxWidth="300px">
+                     <Form.Toggle
+                        id="tracking"
+                        name="tracking"
+                        value={tracking.value}
+                        onChange={() =>
+                           setTracking({ ...tracking, value: !tracking.value })
+                        }
+                     >
+                        <Flex container>
+                           Track Inventory
+                           <Tooltip identifier="sachet_tracking_inventory" />
+                        </Flex>
+                     </Form.Toggle>
+                  </Flex>
+                  <Spacer size="24px" />
+                  <StyledTable cellSpacing={0}>
+                     <thead>
+                        <tr>
+                           <th>
+                              <Flex container alignItems="center">
+                                 Mode of Fulfillment
+                                 <Tooltip identifier="sachet_mof" />
+                              </Flex>
+                           </th>
+                           <th>
+                              <Flex container alignItems="center">
+                                 Priority
+                                 <Tooltip identifier="sachet_mode_priority" />
+                              </Flex>
+                           </th>
+                           <th>
+                              <Flex container alignItems="center">
+                                 Item
+                                 <Tooltip identifier="sachet_mode_item" />
+                              </Flex>
+                           </th>
+                           <th>
+                              <Flex container alignItems="center">
+                                 Accuracy
+                                 <Tooltip identifier="sachet_mode_accuracy" />
+                              </Flex>
+                           </th>
+                           <th>
+                              <Flex container alignItems="center">
+                                 Packaging
+                                 <Tooltip identifier="sachet_mode_packaging" />
+                              </Flex>
+                           </th>
+                           <th>
+                              <Flex container alignItems="center">
+                                 Operational Configuration
+                                 <Tooltip identifier="sachet_mode_opconfig" />
+                              </Flex>
+                           </th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td>
+                              <Flex container>
+                                 <Form.Checkbox
+                                    id="realTimeIsLive"
+                                    name="realTimeIsLive"
+                                    value={ingredientState.realTime.isLive}
+                                    onChange={() =>
+                                       propagate(
+                                          'realTime',
+                                          !ingredientState.realTime.isLive
+                                       )
+                                    }
+                                 >
+                                    Real Time
+                                 </Form.Checkbox>
+                                 <Tooltip identifier="sachet_real_time" />
+                              </Flex>
+                           </td>
+                           <td>
+                              <Flex maxWidth="100px">
+                                 <Form.Stepper
+                                    id="realTimePriority"
+                                    name="realTimePriority"
+                                    value={
+                                       ingredientState.realTime.priority.value
+                                    }
+                                    placeholder="Enter priority"
+                                    onChange={value =>
+                                       ingredientDispatch({
+                                          type: 'MODE',
+                                          payload: {
+                                             mode: 'realTime',
+                                             name: 'priority',
+                                             value: {
+                                                ...ingredientState.realTime
+                                                   .priority,
+                                                value,
+                                             },
+                                          },
+                                       })
+                                    }
+                                    onBlur={() => {
+                                       const {
+                                          isValid,
+                                          errors,
+                                       } = validator.priority(
+                                          ingredientState.realTime.priority
+                                             .value
+                                       )
+                                       ingredientDispatch({
+                                          type: 'MODE',
+                                          payload: {
+                                             mode: 'realTime',
+                                             name: 'priority',
+                                             value: {
+                                                ...ingredientState.realTime
+                                                   .priority,
+                                                meta: {
+                                                   isTouched: true,
+                                                   isValid,
+                                                   errors,
+                                                },
+                                             },
+                                          },
+                                       })
+                                    }}
+                                 />
+                                 {ingredientState.realTime.priority.meta
+                                    .isTouched &&
+                                    !ingredientState.realTime.priority.meta
+                                       .isValid &&
+                                    ingredientState.realTime.priority.meta.errors.map(
+                                       (error, index) => (
+                                          <Form.Error key={index}>
+                                             {error}
+                                          </Form.Error>
+                                       )
+                                    )}
+                              </Flex>
+                           </td>
+                           <td>
+                              {ingredientState.realTime.bulkItem?.title || '-'}
+                           </td>
+                           <td>
+                              {ingredientState.realTime.bulkItem ? (
+                                 <RadioGroup
+                                    options={options}
+                                    active={3}
+                                    onChange={option =>
+                                       ingredientDispatch({
+                                          type: 'MODE',
+                                          payload: {
+                                             mode: 'realTime',
+                                             name: 'accuracy',
+                                             value: option.value,
+                                          },
+                                       })
+                                    }
+                                 />
+                              ) : (
+                                 '-'
+                              )}
+                           </td>
+                           <td>
+                              {ingredientState.realTime.bulkItem ? (
+                                 <>
+                                    {ingredientState.realTime.packaging ? (
+                                       <>
+                                          {
+                                             ingredientState.realTime.packaging
+                                                ?.title
+                                          }
+                                       </>
+                                    ) : (
+                                       <IconButton
+                                          type="ghost"
+                                          onClick={() =>
+                                             selectPackaging('realTime')
+                                          }
+                                       >
+                                          <PlusIcon color="#07A8E2" />
+                                       </IconButton>
+                                    )}
+                                 </>
+                              ) : (
+                                 '-'
+                              )}
+                           </td>
+                           <td>
+                              {ingredientState.realTime.bulkItem ? (
+                                 <>
+                                    {ingredientState.realTime
+                                       .operationConfig ? (
+                                       <>
+                                          {`${ingredientState.realTime.operationConfig.station.name} - ${ingredientState.realTime.operationConfig.labelTemplate.name}`}
+                                       </>
+                                    ) : (
+                                       <IconButton
+                                          type="ghost"
+                                          onClick={() =>
+                                             selectOperationConfiguration(
+                                                'realTime'
+                                             )
+                                          }
+                                       >
+                                          <PlusIcon color="#07A8E2" />
+                                       </IconButton>
+                                    )}
+                                 </>
+                              ) : (
+                                 '-'
+                              )}
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>
+                              <Flex container>
+                                 <Form.Checkbox
+                                    id="plannedLotIsLive"
+                                    name="plannedLotIsLive"
+                                    value={ingredientState.plannedLot.isLive}
+                                    onChange={() =>
+                                       propagate(
+                                          'plannedLot',
+                                          !ingredientState.plannedLot.isLive
+                                       )
+                                    }
+                                 >
+                                    Planned Lot
+                                 </Form.Checkbox>
+                                 <Tooltip identifier="sachet_planned_lot" />
+                              </Flex>
+                           </td>
+                           <td>
+                              <Flex maxWidth="100px">
+                                 <Form.Stepper
+                                    id="plannedLotPriority"
+                                    name="plannedLotPriority"
+                                    value={
+                                       ingredientState.plannedLot.priority.value
+                                    }
+                                    placeholder="Enter priority"
+                                    onChange={value =>
+                                       ingredientDispatch({
+                                          type: 'MODE',
+                                          payload: {
+                                             mode: 'plannedLot',
+                                             name: 'priority',
+                                             value: {
+                                                ...ingredientState.plannedLot
+                                                   .priority,
+                                                value,
+                                             },
+                                          },
+                                       })
+                                    }
+                                    onBlur={() => {
+                                       const {
+                                          isValid,
+                                          errors,
+                                       } = validator.priority(
+                                          ingredientState.plannedLot.priority
+                                             .value
+                                       )
+                                       ingredientDispatch({
+                                          type: 'MODE',
+                                          payload: {
+                                             mode: 'plannedLot',
+                                             name: 'priority',
+                                             value: {
+                                                ...ingredientState.plannedLot
+                                                   .priority,
+                                                meta: {
+                                                   isTouched: true,
+                                                   isValid,
+                                                   errors,
+                                                },
+                                             },
+                                          },
+                                       })
+                                    }}
+                                 />
+                                 {ingredientState.plannedLot.priority.meta
+                                    .isTouched &&
+                                    !ingredientState.plannedLot.priority.meta
+                                       .isValid &&
+                                    ingredientState.plannedLot.priority.meta.errors.map(
+                                       (error, index) => (
+                                          <Form.Error key={index}>
+                                             {error}
+                                          </Form.Error>
+                                       )
+                                    )}
+                              </Flex>
+                           </td>
+                           <td>
+                              {ingredientState.plannedLot.sachetItem?.title ||
+                                 '-'}
+                           </td>
+                           <td>
+                              {ingredientState.plannedLot.sachetItem ? (
+                                 <RadioGroup
+                                    options={options}
+                                    active={3}
+                                    onChange={option =>
+                                       ingredientDispatch({
+                                          type: 'MODE',
+                                          payload: {
+                                             mode: 'plannedLot',
+                                             name: 'accuracy',
+                                             value: option.value,
+                                          },
+                                       })
+                                    }
+                                 />
+                              ) : (
+                                 '-'
+                              )}
+                           </td>
+                           <td>
+                              {ingredientState.plannedLot.sachetItem ? (
+                                 <>
+                                    {ingredientState.plannedLot.packaging ? (
+                                       <>
+                                          {
+                                             ingredientState.plannedLot
+                                                .packaging?.title
+                                          }
+                                       </>
+                                    ) : (
+                                       <IconButton
+                                          type="ghost"
+                                          onClick={() =>
+                                             selectPackaging('plannedLot')
+                                          }
+                                       >
+                                          <PlusIcon color="#07A8E2" />
+                                       </IconButton>
+                                    )}
+                                 </>
+                              ) : (
+                                 '-'
+                              )}
+                           </td>
+                           <td>
+                              {ingredientState.plannedLot.sachetItem ? (
+                                 <>
+                                    {ingredientState.plannedLot
+                                       .operationConfig ? (
+                                       <>
+                                          {`${ingredientState.plannedLot.operationConfig.station.name} - ${ingredientState.plannedLot.operationConfig.labelTemplate.name}`}
+                                       </>
+                                    ) : (
+                                       <IconButton
+                                          type="ghost"
+                                          onClick={() =>
+                                             selectOperationConfiguration(
+                                                'plannedLot'
+                                             )
+                                          }
+                                       >
+                                          <PlusIcon color="#07A8E2" />
+                                       </IconButton>
+                                    )}
+                                 </>
+                              ) : (
+                                 '-'
+                              )}
+                           </td>
+                        </tr>
+                     </tbody>
+                  </StyledTable>
+               </>
+            ) : (
+               <Filler
+                  message="No units found! To start, please add some."
+                  height="500px"
+               />
+            )}
          </TunnelBody>
       </>
    )
