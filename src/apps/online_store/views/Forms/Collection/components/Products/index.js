@@ -24,6 +24,7 @@ import {
    ProductImage,
    ActionButton,
 } from './styled'
+import { logger } from '../../../../../../../shared/utils'
 
 const Products = ({ state }) => {
    const { collectionDispatch } = React.useContext(CollectionContext)
@@ -40,8 +41,8 @@ const Products = ({ state }) => {
             toast.success('Category removed!')
          },
          onError: error => {
-            console.log(error)
-            toast.error(error.message)
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
@@ -57,20 +58,15 @@ const Products = ({ state }) => {
    }
 
    const deleteCategory = category => {
-      try {
-         const isConfirmed = window.confirm(
-            `Are you sure you want to remove ${category.productCategoryName}?`
-         )
-         if (isConfirmed) {
-            deleteCollectionProductCategory({
-               variables: {
-                  id: category.id,
-               },
-            })
-         }
-      } catch (err) {
-         console.log(err)
-         toast.error(err.message)
+      const isConfirmed = window.confirm(
+         `Are you sure you want to remove ${category.productCategoryName}?`
+      )
+      if (isConfirmed) {
+         deleteCollectionProductCategory({
+            variables: {
+               id: category.id,
+            },
+         })
       }
    }
 
@@ -134,33 +130,29 @@ const Product = ({ product }) => {
             toast.success('Product removed!')
          },
          onError: error => {
-            throw Error(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
 
    const removeProduct = () => {
-      try {
-         const isConfirmed = window.confirm(
-            `Are you sure you want to remove ${product.data.name}?`
-         )
-         if (isConfirmed) {
-            deleteRecord({
-               variables: {
-                  id: product.id,
-               },
-            })
-         }
-      } catch (err) {
-         console.log(err)
-         toast.error(err.message)
+      const isConfirmed = window.confirm(
+         `Are you sure you want to remove ${product.data.name}?`
+      )
+      if (isConfirmed) {
+         deleteRecord({
+            variables: {
+               id: product.id,
+            },
+         })
       }
    }
 
    return (
       <StyledProductWrapper>
          <ProductContent>
-            <ProductImage src={product.data.image} />
+            {product.data.image && <ProductImage src={product.data.image} />}
             <Text as="p"> {product.data.name} </Text>
          </ProductContent>
          <ActionButton onClick={removeProduct}>
