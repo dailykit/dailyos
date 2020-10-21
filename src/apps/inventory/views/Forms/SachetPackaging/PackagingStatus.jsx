@@ -1,12 +1,17 @@
+import {
+   ButtonTile,
+   Flex,
+   Spacer,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import React from 'react'
-import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
-
-import { DataCard } from '../../../components'
-import { FlexContainer, Flexible, ShadowCard } from '../styled'
-import { ImageContainer } from './styled'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
+import { DataCard } from '../../../components'
+import { ShadowCard } from '../styled'
 import PackagingInformation from './PackagingInformation'
-
+import { ImageContainer } from './styled'
 import { PhotoTunnel } from './Tunnels'
 
 export default function PackagingStats({ state }) {
@@ -19,8 +24,8 @@ export default function PackagingStats({ state }) {
                <PhotoTunnel state={state} close={closePhotoTunnel} />
             </Tunnel>
          </Tunnels>
-         <FlexContainer style={{ padding: '0 30px', margin: '0 20px' }}>
-            <Flexible width="2">
+         <Flex container>
+            <Flex style={{ flex: 2 }}>
                {state.images && state.images.length ? (
                   <ImageContainer>
                      <div>
@@ -45,9 +50,9 @@ export default function PackagingStats({ state }) {
                      onClick={() => openPhotoTunnel(1)}
                   />
                )}
-            </Flexible>
-            <span style={{ width: '20px' }} />
-            <Flexible width="3">
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex style={{ flex: 3 }}>
                <ShadowCard>
                   <DataCard title="Par Level" quantity={state.parLevel} />
                   <DataCard title="Max. Level" quantity={state.maxLevel} />
@@ -58,9 +63,9 @@ export default function PackagingStats({ state }) {
 
                   <DataCard title="Consumed" quantity={state.consumed} />
                </ShadowCard>
-            </Flexible>
-         </FlexContainer>
-         <br />
+            </Flex>
+         </Flex>
+         <Spacer size="16px" />
          <PackagingInformation state={state} />
       </>
    )
