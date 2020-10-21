@@ -1,5 +1,5 @@
 import Tabs from './Tabs'
-import Spacer from './Form/Spacer'
+import Separator from './Form/Spacer'
 import { TunnelContainer } from './Form/styled'
 import ItemCard from './WorkOrder/ItemCard'
 import { AddressCard } from './Card'
@@ -9,7 +9,7 @@ import DataCard from './DataCard'
 
 export {
    Tabs,
-   Spacer,
+   Separator,
    TunnelContainer,
    FormHeading,
    AddressCard,

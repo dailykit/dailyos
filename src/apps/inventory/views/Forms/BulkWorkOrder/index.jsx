@@ -19,7 +19,7 @@ import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../shared/assets/icons'
 import { logger } from '../../../../../shared/utils'
-import { ItemCard, Spacer, StatusSwitch } from '../../../components'
+import { ItemCard, Separator, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { WORK_ORDER_UPDATED } from '../../../constants/successMessages'
 import {
@@ -333,7 +333,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
 
    return (
       <>
-         <Spacer />
+         <Separator />
          <Flex width="10rem">
             <Form.Group>
                <Form.Label htmlFor="yield" title="yield">

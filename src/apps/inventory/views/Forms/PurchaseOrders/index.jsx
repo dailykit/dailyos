@@ -3,7 +3,6 @@ import {
    ButtonTile,
    Flex,
    Form,
-   Input,
    Loader,
    Spacer,
    Text,
@@ -16,11 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils/errorLog'
-import {
-   ItemCard,
-   Spacer as Separator,
-   StatusSwitch,
-} from '../../../components'
+import { ItemCard, Separator, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
    PURCHASE_ORDER_SUBSCRIPTION,
