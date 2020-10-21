@@ -35,7 +35,7 @@ const InformationTunnel = ({ state, closeTunnel }) => {
                type: 'SET_VALUE',
                payload: {
                   field: 'cuisine',
-                  value: data.cuisineNames[0].name,
+                  value: data.cuisineNames[0].title,
                },
             })
          }
