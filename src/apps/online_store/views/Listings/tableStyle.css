@@ -11,10 +11,6 @@
    border-bottom: 1px solid #d8d8d8;
 }
 
-.tabulator-row:hover {
-   background: #f3f3f3;
-}
-
 .center-text {
    text-align: center !important;
 }
@@ -27,4 +23,9 @@
    border: 1px solid #d8d8d8;
    border-radius: 2px;
    margin-top: 5px;
+}
+
+.colHover:hover {
+   background: #e5e5e5;
+   cursor: pointer;
 }
