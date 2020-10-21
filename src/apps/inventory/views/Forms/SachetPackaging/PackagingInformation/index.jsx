@@ -13,6 +13,8 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { EditIcon } from '../../../../../../shared/assets/icons'
+import { logger } from '../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { PACKAGING_SPECS_SUBSCRIPTION } from '../../../../graphql'
 import { ShadowCard } from '../../styled'
 import AdditionalInfo from '../AdditionalInfo'
@@ -35,18 +37,20 @@ export default function PackagingInformation({ state }) {
 
    const {
       data: { packaging: { packagingSpecification: spec = {} } = {} } = {},
+      error,
    } = useSubscription(PACKAGING_SPECS_SUBSCRIPTION, {
       variables: { id: state.id },
-      onError: error => {
-         console.log(error)
-         toast.error(error.message)
-      },
    })
+
+   if (error) {
+      logger(error)
+      toast.error(GENERAL_ERROR_MESSAGE)
+   }
 
    return (
       <>
          <Tunnels tunnels={otherPropertiesTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }} size="sm">
                <OtherProperties
                   state={spec}
                   close={closeOtherPropertiesTunnel}
@@ -55,7 +59,7 @@ export default function PackagingInformation({ state }) {
          </Tunnels>
 
          <Tunnels tunnels={packagingMaterial}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }} size="sm">
                <PackagingMaterial state={spec} close={closePackagingMaterial} />
             </Tunnel>
          </Tunnels>
@@ -129,6 +133,7 @@ export default function PackagingInformation({ state }) {
                         Opacity: <b>{spec.opacity ? spec.opacity : 'N/A'}</b>
                      </h4>
                   </Content>
+                  <Spacer size="16px" />
                </ShadowCard>
             </Flex>
          </Flex>
