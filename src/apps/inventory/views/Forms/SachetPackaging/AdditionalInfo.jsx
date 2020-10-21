@@ -1,13 +1,13 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Loader, Toggle, Text } from '@dailykit/ui'
+import { Loader, Toggle, Text, Spacer } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
 import {
    UPDATE_PACKAGING_SPECS,
    PACKAGING_SPECS_SUBSCRIPTION,
 } from '../../../graphql'
-import { Spacer } from '../../../components'
+import { Separator } from '../../../components'
 import { FlexContainer, ShadowCard } from '../styled'
 
 function errorHandler(error) {
@@ -49,7 +49,7 @@ export default function AdditionalInfo({ id }) {
          >
             <Text as="title">Additional Information</Text>
          </FlexContainer>
-         <Spacer />
+         <Separator />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
                checked={spec.innerWaterResistant}
@@ -63,7 +63,7 @@ export default function AdditionalInfo({ id }) {
                setChecked={() => handleSave('microwaveable')}
             />
          </FlexContainer>
-         <br />
+         <Spacer size="16px" />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
                checked={spec.outerWaterResistant}
@@ -77,7 +77,7 @@ export default function AdditionalInfo({ id }) {
                setChecked={() => handleSave('recyclable')}
             />
          </FlexContainer>
-         <br />
+         <Spacer size="16px" />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
                checked={spec.innerGreaseResistant}
@@ -91,7 +91,7 @@ export default function AdditionalInfo({ id }) {
                setChecked={() => handleSave('compostable')}
             />
          </FlexContainer>
-         <br />
+         <Spacer size="16px" />
          <FlexContainer style={{ justifyContent: 'space-between' }}>
             <Toggle
                checked={spec.outerGreaseResistant}

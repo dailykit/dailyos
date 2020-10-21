@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../shared/assets/icons'
 import { logger } from '../../../../../shared/utils'
-import { ItemCard, Spacer as Separator } from '../../../components'
+import { ItemCard, Separator } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
    CHANGE_OUTPUT_QUANTITY,
