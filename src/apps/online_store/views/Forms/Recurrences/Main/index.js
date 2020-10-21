@@ -15,6 +15,7 @@ import {
    IconButton,
    Tag,
    TextButton,
+   ComboButton,
 } from '@dailykit/ui'
 import { Container, Flex, Grid } from '../styled'
 import { TableHeader, TableRecord } from './styled'
@@ -38,6 +39,8 @@ import {
    state as initialState,
 } from '../../../../context/recurrence'
 import { DeleteIcon } from '../../../../assets/icons'
+import { ErrorBoundary, Tooltip } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 
 const Main = () => {
    const [recurrences, setRecurrences] = React.useState(undefined)
@@ -65,8 +68,8 @@ const Main = () => {
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
    const [deleteRecurrence] = useMutation(DELETE_RECURRENCE, {
@@ -74,8 +77,8 @@ const Main = () => {
          toast.success('Deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -98,9 +101,8 @@ const Main = () => {
       openTunnel(5)
    }
 
-   if (loading) return <Loader />
-
-   if (error) return <Text as="p">Some error occured!</Text>
+   if (!loading && error)
+      return <ErrorBoundary rootRoute="/apps/online-store" />
 
    return (
       <RecurrenceContext.Provider
@@ -130,6 +132,7 @@ const Main = () => {
          >
             <Container
                paddingX="32"
+               paddingY="16"
                bg="#fff"
                position="fixed"
                width="100%"
@@ -144,34 +147,112 @@ const Main = () => {
                         ))}
                      </div>
                   </Grid>
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
-                     <PlusIcon />
-                  </IconButton>
+                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                     <PlusIcon /> Create Recurrence
+                  </ComboButton>
                </Flex>
             </Container>
             <Container top="80" paddingX="32" bottom="64">
                {Boolean(recurrences?.length) && (
                   <>
                      <TableHeader>
-                        <span>Recurrences</span>
-                        <span>Availability</span>
-                        <span>Time Slots</span>
+                        <Flex
+                           direction="row"
+                           align="center"
+                           justify="flex-start"
+                        >
+                           Recurrences
+                           <Tooltip identifier="recurrences_table_recurrences" />
+                        </Flex>
+                        <Flex
+                           direction="row"
+                           align="center"
+                           justify="flex-start"
+                        >
+                           Availability
+                           <Tooltip identifier="recurrences_table_availability" />
+                        </Flex>
+                        <Flex
+                           direction="row"
+                           align="center"
+                           justify="flex-start"
+                        >
+                           Time Slots
+                           <Tooltip identifier="recurrences_table_time_slots" />
+                        </Flex>
                         {type.includes('PICKUP') && (
-                           <span>
+                           <Flex
+                              direction="row"
+                              align="center"
+                              justify="flex-start"
+                           >
                               {type.includes('PREORDER') ? 'Lead' : 'Prep'} Time
-                           </span>
+                              <Tooltip
+                                 identifier={
+                                    type.includes('PREORDER')
+                                       ? 'recurrences_table_lead_time'
+                                       : 'recurrences_table_prep_time'
+                                 }
+                              />
+                           </Flex>
                         )}
-                        <span>Availability</span>
+                        <Flex
+                           direction="row"
+                           align="center"
+                           justify="flex-start"
+                        >
+                           Availability
+                           <Tooltip identifier="recurrences_table_availability" />
+                        </Flex>
                         {type.includes('DELIVERY') && (
                            <>
-                              <span>Delivery Range</span>
-                              <span>
+                              <Flex
+                                 direction="row"
+                                 align="center"
+                                 justify="flex-start"
+                              >
+                                 Delivery Range
+                                 <Tooltip identifier="recurrences_table_delivery_range" />
+                              </Flex>
+                              <Flex
+                                 direction="row"
+                                 align="center"
+                                 justify="flex-start"
+                              >
                                  {type.includes('PREORDER') ? 'Lead' : 'Prep'}{' '}
                                  Time
-                              </span>
-                              <span>Availability</span>
-                              <span>Order Value</span>
-                              <span>Charges</span>
+                                 <Tooltip
+                                    identifier={
+                                       type.includes('PREORDER')
+                                          ? 'recurrences_table_lead_time'
+                                          : 'recurrences_table_prep_time'
+                                    }
+                                 />
+                              </Flex>
+                              <Flex
+                                 direction="row"
+                                 align="center"
+                                 justify="flex-start"
+                              >
+                                 Availability
+                                 <Tooltip identifier="recurrences_table_availability" />
+                              </Flex>
+                              <Flex
+                                 direction="row"
+                                 align="center"
+                                 justify="flex-start"
+                              >
+                                 Order Value
+                                 <Tooltip identifier="recurrences_table_order_value" />
+                              </Flex>
+                              <Flex
+                                 direction="row"
+                                 align="center"
+                                 justify="flex-start"
+                              >
+                                 Charges
+                                 <Tooltip identifier="recurrences_table_charges" />
+                              </Flex>
                            </>
                         )}
                      </TableHeader>
