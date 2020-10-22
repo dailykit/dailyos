@@ -51,7 +51,7 @@ import {
 import { ItemInfo, Modifier, StyledTable } from './styled'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.components.recipe.'
+   'apps.menu.views.forms.product.simplerecipeproduct.components.recipe.'
 
 export default function Recipe({ state }) {
    const { t } = useTranslation()

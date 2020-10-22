@@ -22,7 +22,7 @@ import { StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Products } from './components'
 
-const address = 'apps.online_store.views.forms.product.customizableproduct.'
+const address = 'apps.menu.views.forms.product.customizableproduct.'
 
 export default function CustomizableProduct() {
    const { t } = useTranslation()

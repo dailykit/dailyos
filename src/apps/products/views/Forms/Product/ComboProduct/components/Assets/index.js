@@ -10,7 +10,7 @@ import { ImageContainer, PhotoTileWrapper } from './styled'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.components.assets.'
+   'apps.menu.views.forms.product.inventoryproduct.components.assets.'
 const Assets = ({ state }) => {
    const { t } = useTranslation()
 

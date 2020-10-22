@@ -24,7 +24,7 @@ import { InlineLoader } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.productstunnel.'
+   'apps.menu.views.forms.product.inventoryproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ state, close }) => {
    const { t } = useTranslation()

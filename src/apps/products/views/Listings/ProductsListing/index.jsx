@@ -29,7 +29,7 @@ import {
 } from './components'
 import { ProductTypeTunnel } from './tunnels'
 
-const address = 'apps.online_store.views.listings.productslisting.'
+const address = 'apps.menu.views.listings.productslisting.'
 
 const ProductsListing = () => {
    const { t } = useTranslation()

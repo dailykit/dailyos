@@ -19,7 +19,7 @@ import { StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Items } from './components'
 
-const address = 'apps.online_store.views.forms.product.comboproduct.'
+const address = 'apps.menu.views.forms.product.comboproduct.'
 
 export default function ComboProduct() {
    const { t } = useTranslation()

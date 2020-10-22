@@ -19,7 +19,7 @@ import validator from '../../../validators'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 
 const address =
-   'apps.online_store.views.forms.product.comboproduct.tunnels.itemstunnel.'
+   'apps.menu.views.forms.product.comboproduct.tunnels.itemstunnel.'
 
 export default function ItemTunnel({ state, close }) {
    const { t } = useTranslation()

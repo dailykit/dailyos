@@ -9,7 +9,7 @@ import { AssetsTunnel } from '../../tunnels'
 import { ImageContainer, PhotoTileWrapper } from './styled'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.components.assets.'
+   'apps.menu.views.forms.product.inventoryproduct.components.assets.'
 const Assets = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 

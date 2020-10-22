@@ -5,7 +5,7 @@ import { SimpleProductContext } from '../../../../../../context/product/simplePr
 import { SolidTile, TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.productstypetunnel.'
+   'apps.menu.views.forms.product.simplerecipeproduct.tunnels.productstypetunnel.'
 
 const ProductsTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()

@@ -21,7 +21,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { InlineLoader } from '../../../../../../../../shared/components'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.recipetunnel.'
+   'apps.menu.views.forms.product.simplerecipeproduct.tunnels.recipetunnel.'
 
 export default function RecipeTunnel({ state, close }) {
    const { t } = useTranslation()

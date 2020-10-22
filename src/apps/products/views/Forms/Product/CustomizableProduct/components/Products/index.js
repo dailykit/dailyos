@@ -49,7 +49,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.components.products.'
+   'apps.menu.views.forms.product.customizableproduct.components.products.'
 
 const Products = ({ state }) => {
    const { t } = useTranslation()

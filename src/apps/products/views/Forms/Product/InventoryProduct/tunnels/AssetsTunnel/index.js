@@ -9,7 +9,7 @@ import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.assetstunnel.'
+   'apps.menu.views.forms.product.inventoryproduct.tunnels.assetstunnel.'
 const AssetsTunnel = ({ state, closeTunnel }) => {
    const { t } = useTranslation()
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {

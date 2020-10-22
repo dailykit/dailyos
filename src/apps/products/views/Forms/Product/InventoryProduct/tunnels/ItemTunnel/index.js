@@ -22,7 +22,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { InlineLoader } from '../../../../../../../../shared/components'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
+   'apps.menu.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
 
 export default function ItemTunnel({ state, close }) {
    const { t } = useTranslation()

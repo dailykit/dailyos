@@ -13,7 +13,7 @@ import {
    CREATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../../graphql'
 
-const address = 'apps.online_store.views.listings.productslisting.'
+const address = 'apps.menu.views.listings.productslisting.'
 
 export default function ProductTypeTunnel({ close }) {
    const { t } = useTranslation()

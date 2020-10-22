@@ -22,7 +22,7 @@ import {
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.accompanimenttypetunnel.'
+   'apps.menu.views.forms.product.simplerecipeproduct.tunnels.accompanimenttypetunnel.'
 
 const RecommendationTypeTunnel = ({ state, close }) => {
    const { t } = useTranslation()

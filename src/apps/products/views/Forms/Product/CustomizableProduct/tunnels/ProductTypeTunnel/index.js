@@ -5,7 +5,7 @@ import { CustomizableProductContext } from '../../../../../../context/product/cu
 import { SolidTile, TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.tunnels.productstypetunnel.'
+   'apps.menu.views.forms.product.customizableproduct.tunnels.productstypetunnel.'
 
 const ProductTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()

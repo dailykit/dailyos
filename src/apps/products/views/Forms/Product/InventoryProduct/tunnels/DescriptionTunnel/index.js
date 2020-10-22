@@ -9,7 +9,7 @@ import validator from '../../../validators'
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.descriptiontunnel.'
+   'apps.menu.views.forms.product.inventoryproduct.tunnels.descriptiontunnel.'
 
 export default function DescriptionTunnel({ state, close }) {
    const { t } = useTranslation()

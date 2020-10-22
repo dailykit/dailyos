@@ -27,7 +27,7 @@ import { StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Item } from './components'
 
-const address = 'apps.online_store.views.forms.product.inventoryproduct.'
+const address = 'apps.menu.views.forms.product.inventoryproduct.'
 
 export default function InventoryProduct() {
    const { t } = useTranslation()

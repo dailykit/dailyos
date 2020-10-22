@@ -23,7 +23,7 @@ import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.comboproduct.tunnels.productstunnel.'
+   'apps.menu.views.forms.product.comboproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ close }) => {
    const { t } = useTranslation()

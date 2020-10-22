@@ -14,7 +14,7 @@ import { TunnelBody } from '../styled'
 import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.pricingtunnel.'
+   'apps.menu.views.forms.product.inventoryproduct.tunnels.pricingtunnel.'
 
 const PricingTunnel = ({ state, close }) => {
    const { t } = useTranslation()

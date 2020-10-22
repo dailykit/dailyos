@@ -9,7 +9,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import validator from '../../../validators'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.descriptiontunnel.'
+   'apps.menu.views.forms.product.simplerecipeproduct.tunnels.descriptiontunnel.'
 
 const DescriptionTunnel = ({ state, close }) => {
    const { t } = useTranslation()

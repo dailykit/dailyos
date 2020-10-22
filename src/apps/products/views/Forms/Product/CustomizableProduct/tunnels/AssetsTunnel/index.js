@@ -9,7 +9,7 @@ import { UPDATE_CUSTOMIZABLE_PRODUCT } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.tunnels.assetstunnel.'
+   'apps.menu.views.forms.product.customizableproduct.tunnels.assetstunnel.'
 const AssetsTunnel = ({ state, closeTunnel }) => {
    const { t } = useTranslation()
    const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {

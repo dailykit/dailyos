@@ -18,7 +18,7 @@ import { DescriptionTunnel } from '../../tunnels'
 import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.components.description.'
+   'apps.menu.views.forms.product.inventoryproduct.components.description.'
 
 const Description = ({ state }) => {
    const { t } = useTranslation()

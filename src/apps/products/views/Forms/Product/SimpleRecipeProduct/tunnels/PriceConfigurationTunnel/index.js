@@ -11,7 +11,7 @@ import validator from '../../../validators'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
+   'apps.menu.views.forms.product.simplerecipeproduct.tunnels.priceconfigurationtunnel.'
 
 const PriceConfigurationTunnel = ({ state, close }) => {
    const { t } = useTranslation()

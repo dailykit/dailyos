@@ -5,7 +5,7 @@ import { ComboProductContext } from '../../../../../../context/product/comboProd
 import { SolidTile, TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.comboproduct.tunnels.producttypetunnel.'
+   'apps.menu.views.forms.product.comboproduct.tunnels.producttypetunnel.'
 
 const ProductTypeTunnel = ({ close, open }) => {
    const { t } = useTranslation()

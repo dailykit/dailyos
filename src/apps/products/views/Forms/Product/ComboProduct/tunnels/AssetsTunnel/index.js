@@ -9,7 +9,7 @@ import { UPDATE_COMBO_PRODUCT } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.comboproduct.tunnels.assetstunnel.'
+   'apps.menu.views.forms.product.comboproduct.tunnels.assetstunnel.'
 const AssetsTunnel = ({ state, closeTunnel }) => {
    const { t } = useTranslation()
    const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {

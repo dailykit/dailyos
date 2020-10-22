@@ -1,7 +1,7 @@
 {
    "inventory": "Inventory",
    "recipe": "Recipe",
-   "online store": "Online Store",
+   "menu": "Menu",
    "settings": "Settings",
    "units": {
       "gm": "gm",
@@ -479,7 +479,7 @@
             }
          }
       },
-      "online_store": {
+      "menu": {
          "components": {
             "formheading": {},
             "tabs": {
@@ -880,7 +880,7 @@
                }
             },
             "home": {
-               "seller app": "Seller App",
+               "menu": "Menu App",
                "products": "Products",
                "10 created so far": "10 created so far",
                "all active": "All active",

@@ -21,7 +21,7 @@ import { useTabs } from '../../../../../context/tabs'
 import tableOptions from '../../../tableOption'
 import { useTooltip } from '../../../../../../../shared/providers'
 
-const address = 'apps.online_store.views.listings.productslisting.'
+const address = 'apps.menu.views.listings.productslisting.'
 
 const ComboProducts = () => {
    const { t } = useTranslation()

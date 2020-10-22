@@ -1,7 +1,7 @@
 {
    "inventory": "Αποθηκευτικός χώρος",
    "recipe": "Συνταγή",
-   "online store": "Ηλεκτρονικό Κατάστημα",
+   "menu": "Ηλεκτρονικό Κατάστημα",
    "settings": "Ρυθμίσεις",
    "units": {
       "gm": "gm",
@@ -495,7 +495,7 @@
             }
          }
       },
-      "online_store": {
+      "menu": {
          "components": {
             "formheading": {},
             "tabs": {
@@ -924,7 +924,7 @@
                }
             },
             "home": {
-               "seller app": "Εφαρμογή πωλητή",
+               "menu": "Εφαρμογή πωλητή",
                "products": "Προϊόντα",
                "10 created so far": "10 δημιουργήθηκαν μέχρι στιγμής",
                "all active": "Όλα ενεργά",

@@ -24,8 +24,8 @@
 5. Inventory App: The inventory app is to track, manage inventory with supplier items, supplier. 
     1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/inventory/README.md "View Features")
     2. [View Docs](http://docs.dailykit.org/docs/inventory/overview "View Docs")
-6. Online Store: The seller app is to create and manage menu, products for sales channels. Each sales channel for e.g.: Online Store, RestaurantMealKits.com, uberEats, and more will have different seller app for each sales channel. 
-    1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/online_store/README.md "View Features")
+6. Menu: The menu app is to create and manage menu, products for sales channels. Each sales channel for e.g.: Online Store, RestaurantMealKits.com, uberEats, and more will have different menu app for each sales channel. 
+    1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/menu/README.md "View Features")
     2. [View Docs](http://docs.dailykit.org/docs/store/overview "View Docs")
 7. CRM App: 
     1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/crm/README.md "View Features")

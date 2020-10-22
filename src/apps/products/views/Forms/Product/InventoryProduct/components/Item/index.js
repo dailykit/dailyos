@@ -56,7 +56,7 @@ import {
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.components.item.'
+   'apps.menu.views.forms.product.inventoryproduct.components.item.'
 
 export default function Item({ state }) {
    const { t } = useTranslation()

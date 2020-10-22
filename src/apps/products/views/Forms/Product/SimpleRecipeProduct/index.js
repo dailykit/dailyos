@@ -27,7 +27,7 @@ import { StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Recipe } from './components'
 
-const address = 'apps.online_store.views.forms.product.simplerecipeproduct.'
+const address = 'apps.menu.views.forms.product.simplerecipeproduct.'
 
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()

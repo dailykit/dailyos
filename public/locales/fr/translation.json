@@ -1,7 +1,7 @@
 {
    "inventory": "Inventaire",
    "recipe": "Recette",
-   "online store": "Boutique en ligne",
+   "menu": "Boutique en ligne",
    "settings": "Réglages",
    "units": {
       "gm": "gm",
@@ -495,7 +495,7 @@
             }
          }
       },
-      "online_store": {
+      "menu": {
          "components": {
             "formheading": {},
             "tabs": {
@@ -924,7 +924,7 @@
                }
             },
             "home": {
-               "seller app": "Application du vendeur",
+               "menu": "Application du vendeur",
                "products": "Articles",
                "10 created so far": "10 créés jusqu'à présent",
                "all active": "Tous les Actifs",

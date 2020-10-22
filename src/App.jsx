@@ -19,8 +19,8 @@ const Products = Loadable({
    loader: () => import('./apps/products'),
    loading: Loader,
 })
-const OnlineStore = Loadable({
-   loader: () => import('./apps/online_store'),
+const Menu = Loadable({
+   loader: () => import('./apps/menu'),
    loading: Loader,
 })
 const Settings = Loadable({
@@ -76,8 +76,8 @@ const App = () => {
                         </Link>
                      </AppItem>
                      <AppItem>
-                        <Link to="/online-store">
-                           <Trans i18nKey="online store">Online Store</Trans>
+                        <Link to="/menu">
+                           <Trans i18nKey="menu">Menu</Trans>
                         </Link>
                      </AppItem>
                      <AppItem>
@@ -115,7 +115,7 @@ const App = () => {
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
                <Route path="/products" component={Products} />
-               <Route path="/online-store" component={OnlineStore} />
+               <Route path="/menu" component={Menu} />
                <Route path="/settings" component={Settings} />
                <Route path="/order" component={Order} />
                <Route path="/crm" component={CRM} />

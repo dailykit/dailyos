@@ -30,8 +30,7 @@ import { ItemsTunnel, ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
 import { ItemInfo, StyledTable } from './styled'
 import { Tooltip } from '../../../../../../../../shared/components'
 
-const address =
-   'apps.online_store.views.forms.product.comboproduct.components.items.'
+const address = 'apps.menu.views.forms.product.comboproduct.components.items.'
 
 const Items = ({ state }) => {
    const { t } = useTranslation()

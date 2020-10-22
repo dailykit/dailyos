@@ -25,7 +25,7 @@ import { SimpleProductContext } from '../../../../../../context/product/simplePr
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.components.accompaniments.'
+   'apps.menu.views.forms.product.inventoryproduct.components.accompaniments.'
 
 const Recommendations = ({ state }) => {
    const { t } = useTranslation()

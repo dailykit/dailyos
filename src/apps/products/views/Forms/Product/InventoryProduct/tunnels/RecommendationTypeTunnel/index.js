@@ -22,7 +22,7 @@ import { InlineLoader } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
-   'apps.online_store.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
+   'apps.menu.views.forms.product.inventoryproduct.tunnels.accompanimenttypetunnel.'
 
 const RecommendationTypeTunnel = ({ state, close }) => {
    const { t } = useTranslation()

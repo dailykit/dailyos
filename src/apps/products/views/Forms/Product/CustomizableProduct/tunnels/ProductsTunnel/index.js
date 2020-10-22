@@ -24,7 +24,7 @@ import {
 import { TunnelBody } from '../styled'
 
 const address =
-   'apps.online_store.views.forms.product.customizableproduct.tunnels.productstunnel.'
+   'apps.menu.views.forms.product.customizableproduct.tunnels.productstunnel.'
 
 const ProductsTunnel = ({ state, close }) => {
    const { t } = useTranslation()

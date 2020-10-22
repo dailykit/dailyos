@@ -18,7 +18,7 @@ import { DescriptionTunnel } from '../../../SimpleRecipeProduct/tunnels'
 import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
-   'apps.online_store.views.forms.product.simplerecipeproduct.components.description.'
+   'apps.menu.views.forms.product.simplerecipeproduct.components.description.'
 
 const Description = ({ state }) => {
    const { t } = useTranslation()
