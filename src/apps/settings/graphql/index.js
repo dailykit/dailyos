@@ -119,8 +119,10 @@ export const STATIONS = {
    `,
    SCALES: {
       LIST: gql`
-         subscription scales {
-            scales(where: { _not: { stationId: { _is_null: true } } }) {
+         subscription scales($stationId: Int!) {
+            scales(
+               where: { _not: { assignedStation: { id: { _eq: $stationId } } } }
+            ) {
                deviceNum
                deviceName
                computer {
@@ -322,7 +324,7 @@ export const STATIONS = {
                where: {
                   printerType: { _eq: $type }
                   _not: {
-                     attachedStations_label: {
+                     attachedStations_kot: {
                         station: { id: { _eq: $stationId } }
                      }
                   }
