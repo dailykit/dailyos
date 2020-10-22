@@ -14,32 +14,33 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
-   ACCOMPANIMENT_TYPES,
-   DELETE_ACCOMPANIMENT_TYPES,
+   PRODUCT_CATEGORIES,
+   DELETE_PRODUCT_CATEGORY,
 } from '../../../../graphql'
 import tableOptions from '../../../Listings/tableOption'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
-import { AddTypesTunnel } from './tunnels'
+import { Add } from './tunnels'
+import { logger } from '../../../../../../shared/utils'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
-const AccompanimentTypesForm = () => {
+const ProductCategoriesForm = () => {
    const { t } = useTranslation()
    const tableRef = React.useRef()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(ACCOMPANIMENT_TYPES)
+   const { loading, data, error } = useSubscription(PRODUCT_CATEGORIES)
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_ACCOMPANIMENT_TYPES, {
+   const [deleteElement] = useMutation(DELETE_PRODUCT_CATEGORY, {
       onCompleted: () => {
          toast.success('Deleted!')
       },
-      onError: err => {
-         console.log(err)
-         toast.error('Error')
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -85,18 +86,16 @@ const AccompanimentTypesForm = () => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <AddTypesTunnel closeTunnel={closeTunnel} />
+               <Add closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Layout>
             <Card>
                <div>
-                  <Text as="title">
-                     {t(address.concat('accompaniment types'))}
-                  </Text>
+                  <Text as="title">Product Categories</Text>
                </div>
                <div>
-                  <Text as="title">{data.accompaniments.length}</Text>
+                  <Text as="title">{data.productCategories.length}</Text>
                   <IconButton type="ghost" onClick={() => openTunnel(1)}>
                      <AddIcon color="#00A7E1" size={24} />
                   </IconButton>
@@ -105,17 +104,16 @@ const AccompanimentTypesForm = () => {
             <Listing>
                <ListingHeader>
                   <Text as="p">
-                     {t(address.concat('accompaniment types'))} (
-                     {data.accompaniments.length})
+                     Product Categories ({data.productCategories.length})
                   </Text>
                   <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                     <AddIcon size={24} /> Create Accompaniment Type
+                     <AddIcon size={24} /> Create Product Category
                   </ComboButton>
                </ListingHeader>
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
-                  data={data.accompaniments}
+                  data={data.productCategories}
                   options={tableOptions}
                />
             </Listing>
@@ -124,4 +122,4 @@ const AccompanimentTypesForm = () => {
    )
 }
 
-export default AccompanimentTypesForm
+export default ProductCategoriesForm

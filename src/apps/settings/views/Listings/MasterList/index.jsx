@@ -12,6 +12,7 @@ import {
    CUISINES,
    PROCESSINGS,
    UNITS_COUNT,
+   PRODUCT_CATEGORIES_COUNT,
 } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
@@ -30,6 +31,7 @@ const MasterList = () => {
    const { data: allergens } = useSubscription(ALLERGENS)
    const { data: cuisines } = useSubscription(CUISINES)
    const { data: units } = useSubscription(UNITS_COUNT)
+   const { data: productCategories } = useSubscription(PRODUCT_CATEGORIES_COUNT)
 
    const rowClick = (e, row) => {
       const { _click } = row._row.data
@@ -89,6 +91,18 @@ const MasterList = () => {
          length: units?.unitsAggregate.aggregate.count || '...',
          _click() {
             addTab('Units', '/settings/master-lists/units')
+         },
+      },
+      {
+         listName: 'Product Categories',
+         length:
+            productCategories?.productCategoriesAggregate.aggregate.count ||
+            '...',
+         _click() {
+            addTab(
+               'Product Categories',
+               '/settings/master-lists/product-categories'
+            )
          },
       },
    ]

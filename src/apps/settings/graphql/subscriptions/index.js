@@ -460,3 +460,24 @@ export const ONLINE_PRINTERS = gql`
       }
    }
 `
+
+export const PRODUCT_CATEGORIES_COUNT = gql`
+   subscription ProductCategoriesAggregate {
+      productCategoriesAggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const PRODUCT_CATEGORIES = gql`
+   subscription ProductCategories {
+      productCategories {
+         name
+         imageUrl
+         iconUrl
+         metaDetails
+      }
+   }
+`
