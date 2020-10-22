@@ -1,5 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   ComboButton,
    IconButton,
    Loader,
    Text,
@@ -91,9 +92,9 @@ const AllergensForm = () => {
                </div>
                <div>
                   <Text as="title">{data.masterAllergens.length}</Text>
-                  <span onClick={() => openTunnel(1)}>
+                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
                      <AddIcon color="#00A7E1" size={24} />
-                  </span>
+                  </IconButton>
                </div>
             </Card>
             <Listing>
@@ -102,9 +103,9 @@ const AllergensForm = () => {
                      {t(address.concat('allergens'))} (
                      {data.masterAllergens.length})
                   </Text>
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
-                     <AddIcon size={24} />
-                  </IconButton>
+                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                     <AddIcon size={24} /> Create Allergen
+                  </ComboButton>
                </ListingHeader>
                <ReactTabulator
                   columns={columns}

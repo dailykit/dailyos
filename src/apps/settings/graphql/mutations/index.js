@@ -391,3 +391,23 @@ export const PRINT_JOB = gql`
       }
    }
 `
+
+export const DELETE_PRODUCT_CATEGORY = gql`
+   mutation DeleteProductCategory($where: master_productCategory_bool_exp!) {
+      deleteProductCategory(where: $where) {
+         returning {
+            name
+         }
+      }
+   }
+`
+
+export const CREATE_PRODUCT_CATEGORY = gql`
+   mutation CreateProductCategory(
+      $object: master_productCategory_insert_input!
+   ) {
+      insertProductCategory(object: $object) {
+         name
+      }
+   }
+`
