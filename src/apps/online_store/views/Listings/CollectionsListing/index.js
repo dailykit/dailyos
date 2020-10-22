@@ -3,10 +3,17 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 // Components
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
+import {
+   Flex,
+   TextButton,
+   ComboButton,
+   Spacer,
+   Text,
+   IconButton,
+} from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { randomSuffix } from '../../../../../shared/utils'
+import { logger, randomSuffix } from '../../../../../shared/utils'
 // Icons
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 // State
@@ -19,23 +26,25 @@ import {
 // Styled
 import { StyledHeader, StyledWrapper, Flexible } from '../styled'
 import tableOptions from '../tableOption'
+import {
+   ErrorBoundary,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.online_store.views.listings.collectionslisting.'
 
 const CollectionsListing = () => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const tableRef = React.useRef()
 
    // Queries
-   const { data: { collections = [] } = {}, loading } = useSubscription(
-      S_COLLECTIONS,
-      {
-         onError: error => {
-            console.log(error)
-         },
-      }
+   const { data: { collections = [] } = {}, loading, error } = useSubscription(
+      S_COLLECTIONS
    )
 
    // Mutation
@@ -53,8 +62,8 @@ const CollectionsListing = () => {
          toast.success('Collection created!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Some error occurred!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -63,14 +72,13 @@ const CollectionsListing = () => {
          toast.success('Collection deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Could not delete!')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handler
-   const deleteHandler = (e, collection) => {
-      e.stopPropagation()
+   const deleteCollectionHandler = collection => {
       if (
          window.confirm(
             `Are you sure you want to delete collection - ${collection.name}?`
@@ -91,6 +99,17 @@ const CollectionsListing = () => {
          headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/online-store/collections/${id}`)
+         },
+         headerTooltip: function (column) {
+            const identifier = 'collection_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         cssClass: 'colHover',
       },
       {
          title: t(address.concat('categories')),
@@ -119,55 +138,64 @@ const CollectionsListing = () => {
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            deleteHandler(e, cell._cell.row.data)
-         },
-         formatter: reactFormatter(<DeleteIngredient />),
+         formatter: reactFormatter(
+            <DeleteCollection onDelete={deleteCollectionHandler} />
+         ),
          headerHozAlign: 'center',
          width: 100,
       },
    ]
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/online-store/collections/${id}`)
-   }
-
-   if (loading) return <Loader />
+   if (!loading && error)
+      return <ErrorBoundary rootRoute="/apps/online-store" />
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <h1>{t(address.concat('collections'))}</h1>
-            <Flexible style={{ alingItems: 'center' }}>
-               <TextButton
-                  type="outline"
-                  onClick={() => tableRef.current.table.clearHeaderFilter()}
-               >
-                  Clear Filters
-               </TextButton>
-               <span style={{ width: '10px' }} />
-               <IconButton type="solid" onClick={createCollection}>
-                  <AddIcon color="#fff" size={24} />
-               </IconButton>
-            </Flexible>
-         </StyledHeader>
-         <div>
+      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            height="72px"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">Collections({collections.length})</Text>
+               <Tooltip identifier="collections_list_heading" />
+            </Flex>
+         </Flex>
+         <Flex container alignItems="center" justifyContent="space-between">
+            <TextButton
+               type="outline"
+               onClick={() => tableRef.current.table.clearHeaderFilter()}
+            >
+               Clear Filters
+            </TextButton>
+            <ComboButton type="solid" onClick={createCollection}>
+               <AddIcon color="#fff" size={24} /> Create Collection
+            </ComboButton>
+         </Flex>
+         <Spacer size="16px" />
+         {loading ? (
+            <InlineLoader />
+         ) : (
             <ReactTabulator
                ref={tableRef}
                columns={columns}
                data={collections}
-               rowClick={rowClick}
                options={tableOptions}
             />
-         </div>
-      </StyledWrapper>
+         )}
+      </Flex>
    )
 }
 
-function DeleteIngredient() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteCollection({ cell, onDelete }) {
+   const collection = cell.getData()
+
+   return (
+      <IconButton type="ghost" onClick={() => onDelete(collection)}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
 export default CollectionsListing
