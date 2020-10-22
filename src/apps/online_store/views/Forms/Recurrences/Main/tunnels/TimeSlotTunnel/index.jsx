@@ -1,102 +1,195 @@
 import React from 'react'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
+import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
-import { Text, Input, TunnelHeader } from '@dailykit/ui'
-
-import { TunnelBody, StyledRow } from '../styled'
-import { Container, Flex } from '../../../styled'
-import { CREATE_TIME_SLOTS } from '../../../../../../graphql'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
+import { CREATE_TIME_SLOTS } from '../../../../../../graphql'
+import validator from '../../../../validators'
+import { TunnelBody } from '../styled'
 
 const TimeSlotTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const { type } = useParams()
-   const [busy, setBusy] = React.useState(false)
-   const [from, setFrom] = React.useState('')
-   const [to, setTo] = React.useState('')
-   const [advance, setAdvance] = React.useState('')
-
-   // Mutation
-   const [createTimeSlots] = useMutation(CREATE_TIME_SLOTS, {
-      onCompleted: () => {
-         toast.success('Time slot added!')
-         closeTunnel(2)
+   const [from, setFrom] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
       },
-      onError: () => {
-         setBusy(false)
-         toast.error('Error')
+   })
+   const [to, setTo] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [advance, setAdvance] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
       },
    })
 
+   // Mutation
+   const [createTimeSlots, { loading: inFlight }] = useMutation(
+      CREATE_TIME_SLOTS,
+      {
+         onCompleted: () => {
+            toast.success('Time slot added!')
+            closeTunnel(2)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
    // Handlers
    const save = () => {
-      setBusy(true)
-      if (Number.isNaN(advance) && type.includes('PICKUP')) {
-         setBusy(false)
-         return toast.error('Invalid time!')
+      if (inFlight) return
+      if (
+         !from.value ||
+         !to.value ||
+         (!advance.value && type.includes('PICKUP'))
+      ) {
+         return toast.error('Invalid values!')
       }
-      createTimeSlots({
-         variables: {
-            objects: [
-               {
-                  recurrenceId: recurrenceState.recurrenceId,
-                  from,
-                  to,
-                  pickUpLeadTime: type === 'PREORDER_PICKUP' ? advance : null,
-                  pickUpPrepTime: type === 'ONDEMAND_PICKUP' ? advance : null,
-               },
-            ],
-         },
-      })
+      if (advance.meta.isValid && from.meta.isValid && to.meta.isValid) {
+         createTimeSlots({
+            variables: {
+               objects: [
+                  {
+                     recurrenceId: recurrenceState.recurrenceId,
+                     from: from.value,
+                     to: to.value,
+                     pickUpLeadTime:
+                        type === 'PREORDER_PICKUP' ? +advance.value : null,
+                     pickUpPrepTime:
+                        type === 'ONDEMAND_PICKUP' ? +advance.value : null,
+                  },
+               ],
+            },
+         })
+      } else {
+         toast.error('Invalid values!')
+      }
    }
 
    return (
       <>
          <TunnelHeader
             title="Add Time Slot"
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(2)}
          />
          <TunnelBody>
-            <StyledRow>
-               <Text as="p">Enter time slot:</Text>
-            </StyledRow>
-            <StyledRow>
-               <Flex direction="row" justify="flex-start">
-                  <label style={{ marginRight: '16px' }}>
-                     From
-                     <input
-                        style={{ marginLeft: '8px' }}
-                        type="time"
-                        value={from}
-                        onChange={e => setFrom(e.target.value)}
-                     />
-                  </label>
-                  <span style={{ marginRight: '16px' }}>-</span>
-                  <label>
-                     To
-                     <input
-                        style={{ marginLeft: '8px' }}
-                        type="time"
-                        value={to}
-                        onChange={e => setTo(e.target.value)}
-                     />
-                  </label>
-               </Flex>
-               {type.includes('PICKUP') && (
-                  <Container top="32">
-                     <Input
-                        type="number"
-                        label={`${
-                           type.includes('ONDEMAND') ? 'Prep' : 'Lead'
-                        } Time(minutes)`}
-                        value={advance}
-                        onChange={e => setAdvance(e.target.value)}
-                     />
-                  </Container>
-               )}
-            </StyledRow>
+            <Text as="p">Enter time slot:</Text>
+            <Spacer size="16px" />
+            <Flex container>
+               <Form.Group>
+                  <Form.Label htmlFor="from" title="from">
+                     From*
+                  </Form.Label>
+                  <Form.Time
+                     id="from"
+                     name="from"
+                     onChange={e => setFrom({ ...from, value: e.target.value })}
+                     onBlur={() => {
+                        const { isValid, errors } = validator.time(from.value)
+                        setFrom({
+                           ...from,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
+                     value={from.value}
+                     hasError={from.meta.isTouched && !from.meta.isValid}
+                  />
+                  {from.meta.isTouched &&
+                     !from.meta.isValid &&
+                     from.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Spacer xAxis size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="to" title="to">
+                     To*
+                  </Form.Label>
+                  <Form.Time
+                     id="to"
+                     name="to"
+                     onChange={e => setTo({ ...to, value: e.target.value })}
+                     onBlur={() => {
+                        const { isValid, errors } = validator.time(to.value)
+                        setTo({
+                           ...to,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
+                     value={to.value}
+                     hasError={to.meta.isTouched && !to.meta.isValid}
+                  />
+                  {to.meta.isTouched &&
+                     !to.meta.isValid &&
+                     to.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+            </Flex>
+            <Spacer size="16px" />
+            {type.includes('PICKUP') && (
+               <Form.Group>
+                  <Form.Label htmlFor="advance" title="advance">
+                     {`${
+                        type.includes('ONDEMAND') ? 'Prep' : 'Lead'
+                     } Time(minutes)*`}
+                  </Form.Label>
+                  <Form.Number
+                     id="advance"
+                     name="advance"
+                     onChange={e =>
+                        setAdvance({ ...advance, value: e.target.value })
+                     }
+                     onBlur={() => {
+                        const { isValid, errors } = validator.minutes(
+                           advance.value
+                        )
+                        setAdvance({
+                           ...advance,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
+                     value={advance.value}
+                     placeholder="Enter minutes"
+                     hasError={advance.meta.isTouched && !advance.meta.isValid}
+                  />
+                  {advance.meta.isTouched &&
+                     !advance.meta.isValid &&
+                     advance.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+            )}
          </TunnelBody>
       </>
    )

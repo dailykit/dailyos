@@ -1,27 +1,49 @@
 import React from 'react'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { Text, Input, TunnelHeader, Toggle, HelperText } from '@dailykit/ui'
-
-import { TunnelBody, StyledRow } from '../styled'
-import { Grid } from '../../../styled'
-import { CREATE_CHARGES, UPDATE_CHARGE } from '../../../../../../graphql'
+import {
+   Flex,
+   Form,
+   HelperText,
+   Spacer,
+   Text,
+   TunnelHeader,
+} from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
+import { CREATE_CHARGES, UPDATE_CHARGE } from '../../../../../../graphql'
+import validator from '../../../../validators'
+import { TunnelBody } from '../styled'
 
 const ChargesTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const [busy, setBusy] = React.useState(false)
-   const [from, setFrom] = React.useState(
-      recurrenceState?.charge?.orderValueFrom || ''
-   )
-   const [to, setTo] = React.useState(
-      recurrenceState?.charge?.orderValueUpto || ''
-   )
+   const [from, setFrom] = React.useState({
+      value: recurrenceState?.charge?.orderValueFrom || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [to, setTo] = React.useState({
+      value: recurrenceState?.charge?.orderValueUpto || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [charge, setCharge] = React.useState({
+      value: recurrenceState?.charge?.charge || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [auto] = React.useState(
       recurrenceState?.charge?.autoDeliverySelection || false
-   )
-   const [charge, setCharge] = React.useState(
-      recurrenceState?.charge?.charge || ''
    )
 
    // Mutation
@@ -30,9 +52,10 @@ const ChargesTunnel = ({ closeTunnel }) => {
          toast.success('Charge added!')
          closeTunnel(4)
       },
-      onError: () => {
+      onError: error => {
          setBusy(false)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -41,94 +64,166 @@ const ChargesTunnel = ({ closeTunnel }) => {
          toast.success('Charge Updated!')
          closeTunnel(4)
       },
-      onError: () => {
+      onError: error => {
          setBusy(false)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const save = () => {
+      if (busy) return
       setBusy(true)
-      if (Number.isNaN(charge)) {
+      if (!from.value || !to.value || !charge.value) {
          setBusy(false)
-         return toast.error('Invalid charge!')
+         return toast.error('Invalid values!')
       }
-      if (Number.isNaN(from)) {
-         setBusy(false)
-         return toast.error('From value invalid!')
-      }
-      if (Number.isNaN(to)) {
-         setBusy(false)
-         return toast.error('To value invalid!')
-      }
-      if (recurrenceState.charge) {
-         updateCharge({
-            variables: {
-               id: recurrenceState.charge.id,
-               set: {
-                  orderValueFrom: from,
-                  orderValueUpto: to,
-                  charge,
+      if (from.meta.isValid && to.meta.isValid && charge.meta.isValid) {
+         if (recurrenceState.charge) {
+            updateCharge({
+               variables: {
+                  id: recurrenceState.charge.id,
+                  set: {
+                     orderValueFrom: +from.value,
+                     orderValueUpto: +to.value,
+                     charge: +charge.value,
+                  },
                },
-            },
-         })
+            })
+         } else {
+            createCharges({
+               variables: {
+                  objects: {
+                     mileRangeId: recurrenceState.mileRangeId,
+                     orderValueFrom: +from.value,
+                     orderValueUpto: +to.value,
+                     charge: +charge.value,
+                  },
+               },
+            })
+         }
       } else {
-         createCharges({
-            variables: {
-               objects: {
-                  mileRangeId: recurrenceState.mileRangeId,
-                  orderValueFrom: from,
-                  orderValueUpto: to,
-                  charge,
-               },
-            },
-         })
+         setBusy(false)
+         toast.error('Invalid values!')
       }
    }
 
    return (
       <>
          <TunnelHeader
-            title="Add Delivery Charges"
-            right={{ action: save, title: busy ? 'Saving...' : 'Save' }}
+            title={`${
+               recurrenceState.charge ? 'Update' : 'Add'
+            } Delivery Charges`}
+            right={{
+               action: save,
+               title: busy
+                  ? `${recurrenceState.charge ? 'Sav' : 'Add'}ing...`
+                  : `${recurrenceState.charge ? 'Save' : 'Add'}`,
+            }}
             close={() => closeTunnel(4)}
          />
          <TunnelBody>
-            <StyledRow>
-               <Text as="p">Enter Order Value Range and Charges:</Text>
-            </StyledRow>
-            <StyledRow>
-               <Grid cols="3" gap="16">
-                  <Input
-                     type="text"
-                     label="Order Value From"
+            <Text as="p">Enter Order Value Range and Charges:</Text>
+            <Spacer size="16px" />
+            <Flex container>
+               <Form.Group>
+                  <Form.Label htmlFor="from" title="from">
+                     From*
+                  </Form.Label>
+                  <Form.Number
+                     id="from"
                      name="from"
-                     value={from}
-                     onChange={e => setFrom(e.target.value)}
+                     onChange={e => setFrom({ ...from, value: e.target.value })}
+                     onBlur={() => {
+                        const { isValid, errors } = validator.charge(from.value)
+                        setFrom({
+                           ...from,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
+                     value={from.value}
+                     placeholder="Enter order value"
+                     hasError={from.meta.isTouched && !from.meta.isValid}
                   />
-                  <Input
-                     type="text"
-                     label="Order Value Upto"
+                  {from.meta.isTouched &&
+                     !from.meta.isValid &&
+                     from.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Spacer xAxis size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="to" title="to">
+                     To*
+                  </Form.Label>
+                  <Form.Number
+                     id="to"
                      name="to"
-                     value={to}
-                     onChange={e => setTo(e.target.value)}
+                     onChange={e => setTo({ ...to, value: e.target.value })}
+                     onBlur={() => {
+                        const { isValid, errors } = validator.charge(to.value)
+                        setTo({
+                           ...to,
+                           meta: {
+                              isTouched: true,
+                              isValid,
+                              errors,
+                           },
+                        })
+                     }}
+                     value={to.value}
+                     placeholder="Enter order value"
+                     hasError={to.meta.isTouched && !to.meta.isValid}
                   />
-                  <Input
-                     type="text"
-                     label="Charge"
-                     name="charge"
-                     value={charge}
-                     onChange={e => setCharge(e.target.value)}
-                  />
-               </Grid>
-            </StyledRow>
-            <section>
-               <Toggle
-                  checked={auto}
-                  setChecked={() => {}}
-                  label="Handle delivery automatically?"
+                  {to.meta.isTouched &&
+                     !to.meta.isValid &&
+                     to.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+            </Flex>
+            <Spacer size="16px" />
+            <Form.Group>
+               <Form.Label htmlFor="charge" title="charge">
+                  Charge*
+               </Form.Label>
+               <Form.Number
+                  id="charge"
+                  name="charge"
+                  onChange={e =>
+                     setCharge({ ...charge, value: e.target.value })
+                  }
+                  onBlur={() => {
+                     const { isValid, errors } = validator.charge(charge.value)
+                     setCharge({
+                        ...charge,
+                        meta: {
+                           isTouched: true,
+                           isValid,
+                           errors,
+                        },
+                     })
+                  }}
+                  value={charge.value}
+                  placeholder="Enter charge"
+                  hasError={charge.meta.isTouched && !charge.meta.isValid}
                />
+               {charge.meta.isTouched &&
+                  !charge.meta.isValid &&
+                  charge.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
+            <Spacer size="16px" />
+            <section>
+               <Form.Toggle name="auto" value={auto} onChange={() => {}}>
+                  Handle delivery automatically?
+               </Form.Toggle>
                <HelperText type="hint" message="Coming Soon!" />
             </section>
          </TunnelBody>

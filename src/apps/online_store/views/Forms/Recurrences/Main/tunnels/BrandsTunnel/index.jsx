@@ -1,8 +1,13 @@
+import React from 'react'
+import { Form, TunnelHeader } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { Loader, Text, Toggle, TunnelHeader } from '@dailykit/ui'
-import React from 'react'
 import { toast } from 'react-toastify'
+import {
+   ErrorBoundary,
+   InlineLoader,
+} from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import {
    BRAND_RECURRENCES,
@@ -23,12 +28,11 @@ const BrandTunnel = ({ closeTunnel }) => {
 
    const [upsertBrandRecurrence] = useMutation(UPSERT_BRAND_RECURRENCE, {
       onCompleted: data => {
-         console.log(data)
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -69,7 +73,7 @@ const BrandTunnel = ({ closeTunnel }) => {
       persistenceMode: 'cookie',
    }
 
-   if (loading) return <Loader />
+   if (!loading && error) return <ErrorBoundary />
 
    return (
       <>
@@ -78,8 +82,8 @@ const BrandTunnel = ({ closeTunnel }) => {
             close={() => closeTunnel(5)}
          />
          <TunnelBody>
-            {error ? (
-               <Text as="p">Could not load brands!</Text>
+            {loading ? (
+               <InlineLoader />
             ) : (
                <ReactTabulator
                   ref={tableRef}
@@ -104,7 +108,7 @@ const ToggleRecurrence = ({ cell, recurrenceId, onChange }) => {
       onChange({
          recurrenceId,
          brandId: brand.current.id,
-         isActive: value,
+         isActive: !active,
       })
    }
 
@@ -116,5 +120,11 @@ const ToggleRecurrence = ({ cell, recurrenceId, onChange }) => {
       setActive(isActive)
    }, [brand.current])
 
-   return <Toggle checked={active} setChecked={val => toggleHandler(val)} />
+   return (
+      <Form.Toggle
+         name={`toggle-${brand.current.id}`}
+         value={active}
+         onChange={toggleHandler}
+      />
+   )
 }
