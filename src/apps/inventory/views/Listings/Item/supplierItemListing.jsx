@@ -7,6 +7,7 @@ import { logger } from '../../../../../shared/utils/index'
 import { NO_SUPPLIER_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
 import { useTabs } from '../../../context'
 import { SUPPLIER_ITEM_LISTINGS } from '../../../graphql'
+import tableOptions from '../tableOption'
 
 export default function SupplierItemsListings({ tableRef }) {
    const { addTab } = useTabs()
@@ -23,20 +24,6 @@ export default function SupplierItemsListings({ tableRef }) {
       throw error // let this error catched by the ErrorBoundary as the view requires this.
    }
 
-   const tableOptions = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      maxHeight: '420px',
-      resizableColumns: false,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-      pagination: 'local',
-      paginationSize: 10,
-   }
-
    const openForm = (_, cell) => {
       const { id, name } = cell.getData()
       addTab(name, `/inventory/items/${id}`)
@@ -49,7 +36,6 @@ export default function SupplierItemsListings({ tableRef }) {
          headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
-         width: 150,
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'items_listings_item_name'
@@ -60,8 +46,6 @@ export default function SupplierItemsListings({ tableRef }) {
          title: 'Supplier',
          field: 'supplier.name',
          headerFilter: false,
-         hozAlign: 'center',
-         headerHozAlign: 'center',
          headerTooltip: col => {
             const identifier = 'items_listings_supplier'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -71,8 +55,6 @@ export default function SupplierItemsListings({ tableRef }) {
          title: 'Bulk Items count',
          field: 'bulkItems_aggregate.aggregate.count',
          headerFilter: false,
-         hozAlign: 'center',
-         headerHozAlign: 'center',
          headerTooltip: col => {
             const identifier = 'items_listings_supplier_item_bulkItemCount'
             return tooltip(identifier)?.description || col.getDefinition().title

@@ -7,6 +7,7 @@ import { logger } from '../../../../../shared/utils/index'
 import { NO_BULK_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
 import { useTabs } from '../../../context'
 import { SUPPLIER_ITEMS_LISTINGS_BULK } from '../../../graphql'
+import tableOptions from '../tableOption'
 
 export default function BulkItemsListings({ tableRef }) {
    const { addTab } = useTabs()
@@ -20,20 +21,6 @@ export default function BulkItemsListings({ tableRef }) {
    if (error) {
       logger(error)
       throw error // let this error catched by the ErrorBoundary as the view requires this.
-   }
-
-   const tableOptions = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      maxHeight: '420px',
-      resizableColumns: false,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-      pagination: 'local',
-      paginationSize: 10,
    }
 
    const openForm = (_, cell) => {
