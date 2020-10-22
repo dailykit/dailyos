@@ -1,15 +1,14 @@
 import React from 'react'
-import { ButtonTile, Toggle } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
+import { ButtonTile, Form, IconButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-
-import { TableRecord } from './styled'
-
 import { DeliveryCharges } from '../'
-import { RecurrenceContext } from '../../../../../../context/recurrence'
-import { Flex } from '../../../styled'
+import { logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../assets/icons'
+import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { DELETE_MILE_RANGE, UPDATE_MILE_RANGE } from '../../../../../../graphql'
+import { Flex } from '../../../styled'
+import { TableRecord } from './styled'
 
 const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -20,8 +19,8 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
@@ -30,14 +29,14 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
          toast.success('Deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
 
    // Handlers
    const deleteHandler = id => {
-      if (window.confirm('Are you sure you want to delete?')) {
+      if (window.confirm('Are you sure you want to delete this mile range?')) {
          deleteMileRange({
             variables: {
                id,
@@ -64,26 +63,27 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                <div style={{ padding: '8px' }}>
                   {mileRange.leadTime || mileRange.prepTime} mins.
                </div>
-               <Flex direction="row" style={{ padding: '16px' }}>
-                  <Toggle
-                     checked={mileRange.isActive}
-                     setChecked={val =>
+               <Flex direction="row" align="center" style={{ padding: '16px' }}>
+                  <Form.Toggle
+                     name={`mileRange-${mileRange.id}`}
+                     value={mileRange.isActive}
+                     onChange={() =>
                         updateMileRange({
                            variables: {
                               id: mileRange.id,
                               set: {
-                                 isActive: val,
+                                 isActive: !mileRange.isActive,
                               },
                            },
                         })
                      }
                   />
-                  <span
-                     className="action"
+                  <IconButton
+                     type="ghost"
                      onClick={() => deleteHandler(mileRange.id)}
                   >
                      <DeleteIcon color=" #FF5A52" />
-                  </span>
+                  </IconButton>
                </Flex>
                <div>
                   <DeliveryCharges

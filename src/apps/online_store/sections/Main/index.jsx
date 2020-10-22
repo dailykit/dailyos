@@ -2,7 +2,7 @@ import React from 'react'
 import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
-import { Flex } from '../../../../shared/components'
+import { ErrorBoundary, Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
 
 // Views
@@ -21,7 +21,9 @@ const Main = () => {
          <Switch>
             <Route path="/online-store" exact>
                {canAccessRoute('home') ? (
-                  <Home />
+                  <ErrorBoundary rootRoute="/apps/online-store">
+                     <Home />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -39,7 +41,9 @@ const Main = () => {
             </Route>
             <Route path="/online-store/collections" exact>
                {canAccessRoute('collections') ? (
-                  <CollectionsListing />
+                  <ErrorBoundary rootRoute="/apps/online-store">
+                     <CollectionsListing />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -57,7 +61,9 @@ const Main = () => {
             </Route>
             <Route path="/online-store/collections/:id" exact>
                {canAccessRoute('collection') ? (
-                  <CollectionForm />
+                  <ErrorBoundary rootRoute="/apps/online-store">
+                     <CollectionForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -75,7 +81,9 @@ const Main = () => {
             </Route>
             <Route path="/online-store/settings" exact>
                {canAccessRoute('settings') ? (
-                  <StoreSettingsForm />
+                  <ErrorBoundary rootRoute="/apps/online-store">
+                     <StoreSettingsForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
@@ -93,7 +101,9 @@ const Main = () => {
             </Route>
             <Route path="/online-store/settings/recurrences/:type" exact>
                {canAccessRoute('recurrence') ? (
-                  <RecurrencesForm />
+                  <ErrorBoundary rootRoute="/apps/online-store">
+                     <RecurrencesForm />
+                  </ErrorBoundary>
                ) : (
                   <Flex
                      container
