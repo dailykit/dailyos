@@ -458,7 +458,7 @@
                }
             },
             "home": {
-               "recipe app": "Niveau de recette",
+               "products app": "Niveau de recette",
                "recipes": "Recette",
                "ingredients": "Ingrédients"
             },

@@ -15,7 +15,7 @@ import { EditIcon } from '../../../../../../assets/icons'
 import { Container, Flex } from '../../../styled'
 import { ImageContainer } from '../../styled'
 import { UPDATE_STORE_SETTING, STORE_SETTINGS } from '../../../../../../graphql'
-import { DeleteIcon } from '../../../../../../../recipe/assets/icons'
+import { DeleteIcon } from '../../../../../../../products/assets/icons'
 
 const VisualSettings = ({ setUpdating, openTunnel }) => {
    const [title, setTitle] = React.useState('')

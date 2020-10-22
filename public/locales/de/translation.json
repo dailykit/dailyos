@@ -458,7 +458,7 @@
                }
             },
             "home": {
-               "recipe app": "Recipe App",
+               "products app": "Products App",
                "recipes": "Recipes",
                "ingredients": "Ingredients"
             },

@@ -11,7 +11,7 @@ import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 
-import EditIcon from '../../../../../recipe/assets/icons/Edit'
+import EditIcon from '../../../../../products/assets/icons/Edit'
 import { FlexContainer, Flexible, ShadowCard } from '../../styled'
 import AdditionalInfo from '../AdditionalInfo'
 

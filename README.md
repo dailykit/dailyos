@@ -16,9 +16,9 @@
     1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/order/README.md "View Features")
 2. Subscription App: 
     1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/subscription/README.md "View Features")
-3. Recipe App: Recipe app host all your recipes in one place, where you can create, edit, search and scale all your recipes. Recipe app also allows read-only accounts for your staff in the kitchen. 
-    1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/recipe/README.md "View Features")
-    2. [View Docs](http://docs.dailykit.org/docs/recipe/overview "View Docs")
+3. Products App: Products app host all your recipes in one place, where you can create, edit, search and scale all your recipes. Recipe app also allows read-only accounts for your staff in the kitchen. 
+    1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/products/README.md "View Features")
+    2. [View Docs](http://docs.dailykit.org/docs/products/overview "View Docs")
 4. Settings App: 
     1. [View Features](https://github.com/dailykit/dailyos/blob/master/src/apps/settings/README.md "View Features")
 5. Inventory App: The inventory app is to track, manage inventory with supplier items, supplier. 

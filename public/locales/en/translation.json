@@ -1,6 +1,6 @@
 {
    "inventory": "Inventory",
-   "recipe": "Recipe",
+   "products": "Products",
    "online store": "Online Store",
    "settings": "Settings",
    "crm": "CRM",
@@ -461,7 +461,7 @@
                }
             },
             "home": {
-               "recipe app": "Recipe App",
+               "products app": "Products App",
                "recipes": "Recipes",
                "ingredients": "Ingredients",
                "products": "Products"
