@@ -1,26 +1,27 @@
+import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    ComboButton,
    IconButton,
-   Loader,
    Text,
    Tunnel,
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import React from 'react'
+import { ErrorBoundary } from '@sentry/react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import { InlineLoader } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 import {
-   PRODUCT_CATEGORIES,
    DELETE_PRODUCT_CATEGORY,
+   PRODUCT_CATEGORIES,
 } from '../../../../graphql'
 import tableOptions from '../../../Listings/tableOption'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
 import { Add } from './tunnels'
-import { logger } from '../../../../../../shared/utils'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
@@ -45,8 +46,7 @@ const ProductCategoriesForm = () => {
    })
 
    // Handlers
-   const deleteHandler = (e, el) => {
-      e.stopPropagation()
+   const deleteHandler = el => {
       if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
          deleteElement({
             variables: {
@@ -68,19 +68,11 @@ const ProductCategoriesForm = () => {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            const { id, name } = cell._cell.row.data
-            deleteHandler(e, { id, name })
-         },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         formatter: reactFormatter(<DeleteCategory onDelete={deleteHandler} />),
       },
    ]
 
-   if (error) {
-      console.log(error)
-   }
-   if (loading) return <Loader />
+   if (!loading && error) return <ErrorBoundary rootRoute="/apps/settings" />
 
    return (
       <>
@@ -89,37 +81,51 @@ const ProductCategoriesForm = () => {
                <Add closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Layout>
-            <Card>
-               <div>
-                  <Text as="title">Product Categories</Text>
-               </div>
-               <div>
-                  <Text as="title">{data.productCategories.length}</Text>
-                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                     <AddIcon color="#00A7E1" size={24} />
-                  </IconButton>
-               </div>
-            </Card>
-            <Listing>
-               <ListingHeader>
-                  <Text as="p">
-                     Product Categories ({data.productCategories.length})
-                  </Text>
-                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                     <AddIcon size={24} /> Create Product Category
-                  </ComboButton>
-               </ListingHeader>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={data.productCategories}
-                  options={tableOptions}
-               />
-            </Listing>
-         </Layout>
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <Layout>
+               <Card>
+                  <div>
+                     <Text as="title">Product Categories</Text>
+                  </div>
+                  <div>
+                     <Text as="title">{data.productCategories.length}</Text>
+                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                        <AddIcon color="#00A7E1" size={24} />
+                     </IconButton>
+                  </div>
+               </Card>
+               <Listing>
+                  <ListingHeader>
+                     <Text as="p">
+                        Product Categories ({data.productCategories.length})
+                     </Text>
+                     <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                        <AddIcon size={24} /> Create Product Category
+                     </ComboButton>
+                  </ListingHeader>
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={data.productCategories}
+                     options={tableOptions}
+                  />
+               </Listing>
+            </Layout>
+         )}
       </>
    )
 }
 
 export default ProductCategoriesForm
+
+function DeleteCategory({ cell, onDelete }) {
+   const category = cell.getData()
+
+   return (
+      <IconButton type="ghost" onClick={() => onDelete(category)}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
+}
