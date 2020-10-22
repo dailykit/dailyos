@@ -17,7 +17,7 @@ import {
    INGREDIENTS_COUNT,
 } from '../../graphql'
 
-const address = 'apps.recipe.views.home.'
+const address = 'apps.products.views.home.'
 
 const Home = () => {
    const { addTab } = useTabs()

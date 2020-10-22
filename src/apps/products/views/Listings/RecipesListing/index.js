@@ -35,7 +35,7 @@ import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 import { useTooltip } from '../../../../../shared/providers'
 
-const address = 'apps.recipe.views.listings.recipeslisting.'
+const address = 'apps.products.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
    const { t } = useTranslation()

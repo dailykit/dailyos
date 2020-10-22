@@ -1,6 +1,6 @@
 {
    "inventory": "Αποθηκευτικός χώρος",
-   "recipe": "Συνταγή",
+   "products": "Products",
    "menu": "Ηλεκτρονικό Κατάστημα",
    "settings": "Ρυθμίσεις",
    "units": {
@@ -311,7 +311,7 @@
             }
          }
       },
-      "recipe": {
+      "products": {
          "components": {
             "menu": {},
             "processings": {

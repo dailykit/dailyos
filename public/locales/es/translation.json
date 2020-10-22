@@ -1,6 +1,6 @@
 {
    "inventory": "Inventario",
-   "recipe": "Receta",
+   "products": "Products",
    "menu": "Menu",
    "settings": "Configuración",
    "units": {
@@ -311,7 +311,7 @@
             }
          }
       },
-      "recipe": {
+      "products": {
          "components": {
             "menu": {},
             "processings": {

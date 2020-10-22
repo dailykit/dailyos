@@ -12,7 +12,7 @@ import {
    StyledHeading,
 } from './styled'
 
-const address = 'apps.recipe.sections.sidebar.'
+const address = 'apps.products.sections.sidebar.'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { t } = useTranslation()
