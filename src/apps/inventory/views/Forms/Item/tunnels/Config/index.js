@@ -16,7 +16,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
-import EditIcon from '../../../../../../recipe/assets/icons/Edit'
+import EditIcon from '../../../../../../products/assets/icons/Edit'
 import { ItemContext } from '../../../../../context/item'
 import {
    CREATE_BULK_ITEM,

@@ -20,7 +20,7 @@ const App = () => {
          <Router basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <ErrorBoundary rootRoute="/apps/recipe">
+            <ErrorBoundary rootRoute="/apps/crm">
                <Main />
             </ErrorBoundary>
          </Router>

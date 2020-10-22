@@ -4,7 +4,7 @@ import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { DataCard } from '../../../components'
 import { FlexContainer, Flexible, ShadowCard } from '../styled'
 import { ImageContainer } from './styled'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
+import EditIcon from '../../../../products/assets/icons/Edit'
 import PackagingInformation from './PackagingInformation'
 
 import { PhotoTunnel } from './Tunnels'

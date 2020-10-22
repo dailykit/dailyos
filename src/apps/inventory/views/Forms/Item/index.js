@@ -15,7 +15,7 @@ import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
+import EditIcon from '../../../../products/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import { useTabs } from '../../../context'
 import {
