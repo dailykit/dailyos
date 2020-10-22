@@ -50,7 +50,9 @@ const ProductCategoriesForm = () => {
       if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
          deleteElement({
             variables: {
-               ids: [el.id],
+               where: {
+                  name: { _eq: el.name },
+               },
             },
          })
       }
