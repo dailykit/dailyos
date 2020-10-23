@@ -22,6 +22,7 @@ import {
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import { InlineLoader } from '../../../../../shared/components'
+import CampaignContext from '../../../context/Campaign/CampaignForm'
 
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -147,76 +148,82 @@ const CampaignForm = () => {
 
    if (loading) return <InlineLoader />
    return (
-      <StyledWrapper>
-         <InputWrapper>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               padding="0 0 16px 0"
-            >
-               <Form.Group>
-                  <Form.Label htmlFor="name" title="Campaign Name">
-                     Campaign Name*
-                  </Form.Label>
-                  <Form.Text
-                     id="campaignName"
-                     name="campaignName"
-                     value={campaignTitle.value}
-                     placeholder="Enter the campaign Name"
-                     onBlur={onBlur}
-                     onChange={e =>
-                        setCampaignTitle({
-                           ...campaignTitle,
-                           value: e.target.value,
-                        })
-                     }
-                  />
-                  {campaignTitle.meta.isTouched &&
-                     !campaignTitle.meta.isValid &&
-                     campaignTitle.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-               <Form.Toggle
-                  name="campaign_active"
-                  onChange={updatetoggle}
-                  value={toggle}
+      <CampaignContext.Provider
+         value={{
+            state,
+            campaignType: type,
+            toggle,
+            checkbox,
+            updateCheckbox: updateCheckbox,
+         }}
+      >
+         <StyledWrapper>
+            <InputWrapper>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="0 0 16px 0"
                >
-                  Active
-               </Form.Toggle>
-            </Flex>
-         </InputWrapper>
+                  <Form.Group>
+                     <Form.Label htmlFor="name" title="Campaign Name">
+                        Campaign Name*
+                     </Form.Label>
+                     <Form.Text
+                        id="campaignName"
+                        name="campaignName"
+                        value={campaignTitle.value}
+                        placeholder="Enter the campaign Name"
+                        onBlur={onBlur}
+                        onChange={e =>
+                           setCampaignTitle({
+                              ...campaignTitle,
+                              value: e.target.value,
+                           })
+                        }
+                     />
+                     {campaignTitle.meta.isTouched &&
+                        !campaignTitle.meta.isValid &&
+                        campaignTitle.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Form.Toggle
+                     name="campaign_active"
+                     onChange={updatetoggle}
+                     value={toggle}
+                  >
+                     Active
+                  </Form.Toggle>
+               </Flex>
+            </InputWrapper>
 
-         <StyledDiv>
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  <HorizontalTab>Details</HorizontalTab>
-                  <HorizontalTab>Brand</HorizontalTab>
-                  <HorizontalTab>Insights</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     <StyledComp>
-                        <DetailsComp state={state} campaignType={type} />
-                        <ConditionComp state={state} />
-                        <RewardComp
-                           state={state}
-                           checkbox={checkbox}
-                           updateCheckbox={updateCheckbox}
-                        />
-                     </StyledComp>
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <BrandCampaign state={state} />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     Insights Content coming soon!!
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
-         </StyledDiv>
-      </StyledWrapper>
+            <StyledDiv>
+               <HorizontalTabs>
+                  <HorizontalTabList>
+                     <HorizontalTab>Details</HorizontalTab>
+                     <HorizontalTab>Brand</HorizontalTab>
+                     <HorizontalTab>Insights</HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <StyledComp>
+                           <DetailsComp />
+                           <ConditionComp />
+                           <RewardComp />
+                        </StyledComp>
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <BrandCampaign />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        Insights Content coming soon!!
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            </StyledDiv>
+         </StyledWrapper>
+      </CampaignContext.Provider>
    )
 }
 

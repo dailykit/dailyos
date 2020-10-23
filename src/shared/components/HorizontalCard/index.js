@@ -3,7 +3,14 @@ import { Text, TextButton, Card, Flex } from '@dailykit/ui'
 import { StyledCard, StyledInfo } from './styled'
 import { Tooltip } from '../Tooltip'
 
-const HorizontalStyledCard = ({ data, open, altMessage, identifier }) => {
+const HorizontalStyledCard = ({
+   data,
+   open,
+   altMessage,
+   identifier,
+   type,
+   subheading,
+}) => {
    return (
       <StyledCard>
          <Flex container justifyContent="space-between">
@@ -21,6 +28,12 @@ const HorizontalStyledCard = ({ data, open, altMessage, identifier }) => {
                <Card>
                   <Card.Body>
                      <Card.Text>
+                        {type && subheading && (
+                           <Card.Stat>
+                              <Text as="title">{subheading || ''}:</Text>
+                              <Text as="subtitle">{type || ''}</Text>
+                           </Card.Stat>
+                        )}
                         <Card.Stat>
                            <Text as="title">Title :</Text>
                            <Text as="subtitle">{data.title}</Text>

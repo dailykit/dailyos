@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { ButtonTile, useTunnel } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
@@ -7,8 +7,10 @@ import BasicInfoTunnel from '../../../../../../../shared/components/BasicInfo'
 import HorizontalCard from '../../../../../../../shared/components/HorizontalCard'
 import { logger } from '../../../../../../../shared/utils'
 import { StyledCard } from './styled'
+import CouponContext from '../../../../../context/Coupon/CouponForm'
 
-const Details = ({ state }) => {
+const Details = () => {
+   const context = useContext(CouponContext)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    // Mutations
    const [updateCoupon] = useMutation(UPDATE_COUPON, {
@@ -27,7 +29,7 @@ const Details = ({ state }) => {
    const saveInfo = info => {
       updateCoupon({
          variables: {
-            id: state.id,
+            id: context.state.id,
             set: {
                metaDetails: info,
             },
@@ -38,18 +40,18 @@ const Details = ({ state }) => {
    return (
       <>
          <BasicInfoTunnel
-            data={state.metaDetails}
+            data={context.state.metaDetails}
             closeTunnel={closeTunnel}
             openTunnel={openTunnel}
             tunnels={tunnels}
             onSave={info => saveInfo(info)}
          />
-         {state?.metaDetails?.title ||
-         state?.metaDetails?.description ||
-         state?.metaDetails?.image ? (
+         {context.state?.metaDetails?.title ||
+         context.state?.metaDetails?.description ||
+         context.state?.metaDetails?.image ? (
             <StyledCard>
                <HorizontalCard
-                  data={state?.metaDetails}
+                  data={context.state?.metaDetails}
                   open={() => openTunnel(1)}
                   altMessage="Coupon Image"
                   identifier="coupon_basic_details"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -22,8 +22,10 @@ import Conditions from '../../../../../../../shared/components/Conditions'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
+import CouponContext from '../../../../../context/Coupon/CouponForm'
 
-const Rewards = ({ state, checkbox, updateCheckbox }) => {
+const Rewards = () => {
+   const context = useContext(CouponContext)
    const [typeTunnels, openTypeTunnel, closeTypeTunnel] = useTunnel(1)
    const [rewardTunnels, openRewardTunnel, closeRewardTunnel] = useTunnel(1)
    const [
@@ -40,7 +42,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
    // Subscription
    const { loading, error } = useSubscription(REWARD_DATA_BY_COUPON_ID, {
       variables: {
-         couponId: state.id,
+         couponId: context.state.id,
       },
       onSubscriptionData: data => {
          setRewardInfoArray(data.subscriptionData.data.crm_reward)
@@ -113,7 +115,6 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
    return (
       <>
          <RewardsTunnel
-            state={state}
             closeTunnel={closeTypeTunnel}
             openTunnel={openTypeTunnel}
             tunnels={typeTunnels}
@@ -124,7 +125,6 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             closeTunnel={closeRewardTunnel}
             openTunnel={openRewardTunnel}
             tunnels={rewardTunnels}
-            state={state}
             openConditionTunnel={openConditionTunnel}
             conditionId={conditionId}
             rewardId={rewardId}
@@ -149,8 +149,8 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
                   {rewardInfoArray.length > 1 && (
                      <Form.Checkbox
                         name="t&c"
-                        value={checkbox}
-                        onChange={updateCheckbox}
+                        value={context.checkbox}
+                        onChange={context.updateCheckbox}
                      >
                         Allow multiple rewards
                      </Form.Checkbox>
