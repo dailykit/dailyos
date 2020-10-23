@@ -23,10 +23,14 @@ import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import { Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils/errorLog'
 import EditIcon from '../../../../recipe/assets/icons/Edit'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { BULK_ITEM_CREATED } from '../../../constants/successMessages'
 import { useTabs } from '../../../context'
 import {
+   CREATE_BULK_ITEM,
    SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
@@ -40,7 +44,12 @@ import {
    StyledSupplier,
    TransparentIconButton,
 } from './styled'
-import { InfoTunnel, ProcessingTunnel, SuppliersTunnel } from './tunnels'
+import {
+   ConfigTunnel,
+   InfoTunnel,
+   ProcessingTunnel,
+   SuppliersTunnel,
+} from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -60,6 +69,7 @@ export default function ItemForm() {
       openProcessingTunnel,
       closeProcessingTunnel,
    ] = useTunnel(1)
+   const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
 
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
@@ -76,12 +86,39 @@ export default function ItemForm() {
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onError: error => {
-         console.log(error)
-         toast.error('Error! Please try again.')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
       onCompleted: () => {
-         toast.info('Item name updated successfully')
+         toast.info('Supplier Item updated!')
          setTabTitle(itemName)
+      },
+   })
+
+   const [
+      createBulkItem,
+      {
+         loading: creatingBulkItem,
+         data: { createBulkItem: { returning: bulktItems = [] } = {} } = {},
+      },
+   ] = useMutation(CREATE_BULK_ITEM, {
+      onCompleted: data => {
+         if (formState.bulkItemAsShippedId) {
+            toast.info(BULK_ITEM_CREATED)
+            openConfigTunnel(1)
+         } else
+            updateSupplierItem({
+               variables: {
+                  id: formState.id,
+                  object: {
+                     bulkItemAsShippedId: data.createBulkItem.returning[0].id,
+                  },
+               },
+            })
+      },
+      onError: error => {
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
@@ -111,6 +148,17 @@ export default function ItemForm() {
                   close={closeProcessingTunnel}
                   open={openProcessingTunnel}
                   formState={formState}
+                  createBulkItem={createBulkItem}
+                  creatingBulkItem={creatingBulkItem}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={configTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
+               <ConfigTunnel
+                  close={closeConfigTunnel}
+                  open={openConfigTunnel}
+                  id={bulktItems[0]?.id}
                />
             </Tunnel>
          </Tunnels>
