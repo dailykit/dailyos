@@ -71,13 +71,15 @@ export default function SelectPurchaseOrderTypeTunnel({ close }) {
             <SolidTile onClick={createPackagingPurchaseOrder}>
                <Text as="h1">Packaging</Text>
                <Text as="subtitle">
-                  {PACKAGING_PURCHASE_ORDERS_CREATE_TUNNEL}
+                  Purchase orders associated with inventory packagings.
                </Text>
             </SolidTile>
             <br />
             <SolidTile onClick={createSupplierItemPurchaseOrder}>
                <Text as="h1">Supplier Item</Text>
-               <Text as="subtitle">{ITEM_PURCHASE_ORDERS_CREATE_TUNNEL}</Text>
+               <Text as="subtitle">
+                  Purchase orders associated with inventory supplier items.
+               </Text>
             </SolidTile>
          </TunnelContainer>
       </>

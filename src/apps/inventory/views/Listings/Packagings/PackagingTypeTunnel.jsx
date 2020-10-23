@@ -57,14 +57,19 @@ export default function WorkOrderTypeTunnel({ close }) {
          <TunnelContainer>
             <SolidTile onClick={() => createPackagingHandler('SACHET_PACKAGE')}>
                <Text as="h1">Sachets</Text>
-               <Text as="subtitle">{ADD_PACKAGING_TUNNEL_SACHETS}</Text>
+               <Text as="subtitle">
+                  Sachets are used for packaging ingredients for a meal kit.
+               </Text>
             </SolidTile>
             <br />
             <SolidTile
                onClick={() => createPackagingHandler('ASSEMBLY_PACKAGE')}
             >
                <Text as="h1">Assembly Packet</Text>
-               <Text as="subtitle">{ADD_PACKAGING_TUNNEL_ASSEMBLY_PACKET}</Text>
+               <Text as="subtitle">
+                  Assembly packet is used to assemble all the sacheted
+                  ingredients into one kit.
+               </Text>
             </SolidTile>
          </TunnelContainer>
       </>
