@@ -331,14 +331,14 @@ export default function ItemForm() {
                                        {formState.bulkItemAsShipped.onHand}{' '}
                                        {formState.bulkItemAsShipped?.unit || ''}
                                     </Text>
+                                    {/* prettier-ignore */}
                                     <Text as="subtitle">
                                        {t(address.concat('shelf life'))}:{' '}
                                        {formState.bulkItemAsShipped.shelfLife
                                           ?.value || 'N/A'}{' '}
                                        {formState.bulkItemAsShipped.shelfLife
                                           ?.value
-                                          ? formState.bulkItemAsShipped
-                                               .shelfLife?.unit
+                                          ? formState.bulkItemAsShipped.shelfLife?.unit
                                           : ''}
                                     </Text>
                                  </div>

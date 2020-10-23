@@ -4,6 +4,7 @@ import {
    ComboButton,
    Flex,
    Loader,
+   Spacer,
    Tag,
    Text,
    TextButton,
@@ -22,8 +23,6 @@ import { AddIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { PURCHASE_ORDERS_SUBSCRIPTION } from '../../../graphql'
-import { FlexContainer } from '../../Forms/styled'
-import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 
@@ -105,34 +104,39 @@ export default function PurchaseOrders() {
                <SelectPurchaseOrderTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <StyledWrapper>
-            <StyledHeader>
+         <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+            <Flex container alignItems="center" justifyContent="space-between">
                <Flex container alignItems="center">
                   <Text as="title">{t(address.concat('purchase orders'))}</Text>
                   <Tooltip identifier="purchase-orders_listings_header_title" />
                </Flex>
-               <FlexContainer>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="16px 0"
+               >
                   <TextButton
                      type="outline"
                      onClick={() => tableRef.current.table.clearHeaderFilter()}
                   >
                      Clear Filters
                   </TextButton>
-                  <span style={{ width: '10px' }} />
+                  <Spacer xAxis size="10px" />
                   <ComboButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
                      Create Purchase Order
                   </ComboButton>
-               </FlexContainer>
-            </StyledHeader>
-            <br />
+               </Flex>
+            </Flex>
+            <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}
                columns={columns}
                data={purchaseOrderItems}
                options={tableOptions}
             />
-         </StyledWrapper>
+         </Flex>
       </>
    )
 }
