@@ -63,6 +63,12 @@ const ModifierTemplatesTunnel = ({ close }) => {
       })
    }
 
+   React.useEffect(() => {
+      if (current.id) {
+         save()
+      }
+   }, [current.id])
+
    if (loading) return <InlineLoader />
    if (!loading && error) return <ErrorBoundary rootRoute="/apps/products" />
 
@@ -71,7 +77,6 @@ const ModifierTemplatesTunnel = ({ close }) => {
          <TunnelHeader
             title="Choose Modifier Template"
             close={() => close(6)}
-            right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
          />
          <TunnelBody>
             {!modifiers.length ? (
