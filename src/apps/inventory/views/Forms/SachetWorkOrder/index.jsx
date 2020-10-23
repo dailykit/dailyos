@@ -13,6 +13,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { ErrorState } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { ItemCard, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -131,7 +132,7 @@ export default function SachetWorkOrder() {
 
    if (error) {
       onError(error)
-      throw error
+      return <ErrorState />
    }
 
    if (orderLoading) return <Loader />

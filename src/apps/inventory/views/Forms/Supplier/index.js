@@ -15,7 +15,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../shared/components'
+import { ErrorState, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard } from '../../../components'
@@ -62,11 +62,6 @@ export default function SupplierForm() {
       }
    )
 
-   if (error) {
-      logger(error)
-      throw error // the page will have nothing to show if this fails, so rendering the error boundary.
-   }
-
    const [updateSupplier] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
          toast.info(GENERAL_SUCCESS_MESSAGE)
@@ -89,6 +84,11 @@ export default function SupplierForm() {
             },
          },
       })
+   }
+
+   if (error) {
+      logger(error)
+      return <ErrorState />
    }
 
    if (supplierLoading) return <Loader />

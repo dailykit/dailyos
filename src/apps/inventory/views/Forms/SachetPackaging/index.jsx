@@ -6,6 +6,7 @@ import { PACKAGING_SUBSCRIPTION } from '../../../graphql'
 import { StyledWrapper } from '../styled'
 import FormView from './FormView'
 import { logger } from '../../../../../shared/utils'
+import { ErrorState } from '../../../../../shared/components'
 
 export default function SachetPackaging() {
    const { id } = useParams()
@@ -21,7 +22,7 @@ export default function SachetPackaging() {
 
    if (error) {
       logger(error)
-      throw error
+      return <ErrorState />
    }
 
    return (

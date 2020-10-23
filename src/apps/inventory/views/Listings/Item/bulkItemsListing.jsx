@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Filler, Loader } from '@dailykit/ui'
 import React from 'react'
+import { ErrorState } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers/tooltip'
 import { logger } from '../../../../../shared/utils/index'
 import { NO_BULK_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
@@ -20,7 +21,7 @@ export default function BulkItemsListings({ tableRef }) {
 
    if (error) {
       logger(error)
-      throw error // let this error catched by the ErrorBoundary as the view requires this.
+      return <ErrorState />
    }
 
    const openForm = (_, cell) => {
