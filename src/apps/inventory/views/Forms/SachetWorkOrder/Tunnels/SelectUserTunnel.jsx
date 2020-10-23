@@ -5,13 +5,13 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
@@ -68,11 +68,11 @@ export default function SelectUserTunnel({ close, state }) {
    }
 
    if (error) {
-      onError(error)
-      return null
+      logger(error)
+      return <ErrorState />
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

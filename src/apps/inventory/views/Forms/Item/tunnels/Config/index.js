@@ -4,7 +4,6 @@ import {
    Flex,
    Form,
    IconButton,
-   Loader,
    Tag,
    TagGroup,
    Tunnel,
@@ -17,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
+   InlineLoader,
    NutritionTunnel,
    Tooltip,
 } from '../../../../../../../shared/components'
@@ -150,7 +150,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

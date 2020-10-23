@@ -1,26 +1,25 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
-   Filler,
+   useSingleList,
 } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
+import { toast } from 'react-toastify'
+import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
+import { TunnelContainer } from '../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_BULK_ITEMS } from '../../../../constants/infoMessages'
 import {
    GET_BULK_ITEMS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../../graphql'
-import { TunnelContainer } from '../../../../components'
-import { logger } from '../../../../../../shared/utils'
-import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
-import { NO_BULK_ITEMS } from '../../../../constants/infoMessages'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
@@ -67,11 +66,11 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
    }
 
    if (error) {
-      onError(error)
-      return null
+      logger(error)
+      return <ErrorState />
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

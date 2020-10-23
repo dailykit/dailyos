@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Loader, Spacer, Text, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
@@ -52,7 +53,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

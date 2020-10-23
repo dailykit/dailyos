@@ -1,13 +1,15 @@
+import { useMutation } from '@apollo/react-hooks'
+import { Flex, TunnelHeader } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
-
-import { UPDATE_SUPPLIER } from '../../../../graphql'
-import { AssetUploader } from '../../../../../../shared/components'
-import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import {
+   AssetUploader,
+   InlineLoader,
+} from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { SUPPLIER_LOGO_ADDED } from '../../../../constants/successMessages'
+import { UPDATE_SUPPLIER } from '../../../../graphql'
 
 export default function LogoTunnel({ close, formState }) {
    const [updateSupplier, { loading }] = useMutation(UPDATE_SUPPLIER, {
@@ -26,7 +28,7 @@ export default function LogoTunnel({ close, formState }) {
       updateSupplier({ variables: { id: formState.id, object: { logo: url } } })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

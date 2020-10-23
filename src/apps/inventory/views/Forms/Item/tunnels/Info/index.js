@@ -1,9 +1,9 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { useTabs } from '../../../../../context'
 import {
    UNITS_SUBSCRIPTION,
@@ -75,7 +75,7 @@ export default function InfoTunnel({ close, formState }) {
       }
    }
 
-   if (loading || unitsLoading) return <Loader />
+   if (loading || unitsLoading) return <InlineLoader />
 
    return (
       <>

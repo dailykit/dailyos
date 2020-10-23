@@ -1,28 +1,25 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
-   Loader,
    TunnelHeader,
-   Filler,
+   useSingleList,
 } from '@dailykit/ui'
 import React from 'react'
-import { toast } from 'react-toastify'
-
-import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
-
+import { toast } from 'react-toastify'
+import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
-
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_PACKAGINGS } from '../../../../constants/infoMessages'
 import {
    PACKAGINGS_LIST_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../../graphql'
-import { logger } from '../../../../../../shared/utils'
-import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
-import { NO_PACKAGINGS } from '../../../../constants/infoMessages'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
@@ -68,11 +65,11 @@ export default function SelectPackagingTunnel({ close, state }) {
    }
 
    if (error) {
-      onError(error)
-      return null
+      logger(error)
+      return <ErrorState />
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

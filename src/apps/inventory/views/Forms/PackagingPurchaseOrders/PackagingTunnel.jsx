@@ -5,13 +5,13 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { TunnelContainer } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -62,10 +62,10 @@ export default function AddressTunnel({ close }) {
 
    if (error) {
       onError(error)
-      return null
+      return <ErrorState />
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

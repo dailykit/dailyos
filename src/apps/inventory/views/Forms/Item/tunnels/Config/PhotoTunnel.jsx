@@ -1,12 +1,15 @@
+import { useMutation } from '@apollo/react-hooks'
+import { Flex, TunnelHeader } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
-import { AssetUploader } from '../../../../../../../shared/components'
-import { UPDATE_BULK_ITEM } from '../../../../../graphql'
-import { BULK_ITEM_IMAGE_ADDED } from '../../../../../constants/successMessages'
+import {
+   AssetUploader,
+   InlineLoader,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils/errorLog'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
+import { BULK_ITEM_IMAGE_ADDED } from '../../../../../constants/successMessages'
+import { UPDATE_BULK_ITEM } from '../../../../../graphql'
 
 export default function PhotoTunnel({ close, bulkItemId }) {
    const [udpateBulkItem, { loading }] = useMutation(UPDATE_BULK_ITEM, {
@@ -33,7 +36,7 @@ export default function PhotoTunnel({ close, bulkItemId }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

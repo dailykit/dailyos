@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Form, Loader, TunnelHeader } from '@dailykit/ui'
+import { Form, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
@@ -34,7 +35,7 @@ export default function PackagingTypeTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

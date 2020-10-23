@@ -12,6 +12,10 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
@@ -74,9 +78,9 @@ export default function SuppliersTunnel({ close, state }) {
 
    if (error) {
       logger(error)
-      return toast.error(GENERAL_ERROR_MESSAGE)
+      return <ErrorState />
    }
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

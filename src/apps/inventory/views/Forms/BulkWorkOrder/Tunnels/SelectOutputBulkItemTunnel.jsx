@@ -5,13 +5,13 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../shared/components/InlineLoader'
 import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
@@ -72,7 +72,7 @@ export default function SelectOutputBulkItem({ close, state }) {
       return toast.error(GENERAL_ERROR_MESSAGE)
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

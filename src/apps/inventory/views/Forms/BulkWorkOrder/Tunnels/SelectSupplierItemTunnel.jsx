@@ -1,26 +1,25 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
-   useSingleList,
    TunnelHeader,
-   Filler,
+   useSingleList,
 } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
+import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../shared/components/InlineLoader'
+import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_SUPPLIER_ITEMS } from '../../../../constants/infoMessages'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_BULK_WORK_ORDER,
 } from '../../../../graphql'
-import { logger } from '../../../../../../shared/utils'
-import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
-import { NO_SUPPLIER_ITEMS } from '../../../../constants/infoMessages'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.tunnels.'
 
@@ -68,7 +67,7 @@ export default function SelectSupplierTunnel({ close, state }) {
       return toast.error(GENERAL_ERROR_MESSAGE)
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

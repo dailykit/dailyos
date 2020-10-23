@@ -1,27 +1,28 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
+   Flex,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
-   Loader,
    TunnelHeader,
-   Flex,
-   Filler,
+   useSingleList,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
+import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils/errorLog'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
+import { NO_SUPPLIER_ITEMS } from '../../../../../constants/infoMessages'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../../../graphql'
-import { logger } from '../../../../../../../shared/utils/errorLog'
-import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
-import { NO_SUPPLIER_ITEMS } from '../../../../../constants/infoMessages'
 
 const address =
    'apps.inventory.views.forms.purchaseorders.tunnels.selectsupplieritemtunnel.'
@@ -67,10 +68,10 @@ export default function AddressTunnel({ close, state }) {
 
    if (error) {
       logger(error)
-      return toast.error(GENERAL_ERROR_MESSAGE)
+      return <ErrorState />
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

@@ -1,11 +1,12 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Loader, Spacer, Toggle, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, Spacer, Toggle, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { Separator, TunnelContainer } from '../../../../../components'
-import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
+import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import { Separator, TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
+import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
 
 function errorHandler(error) {
    logger(error)
@@ -39,7 +40,7 @@ export default function OtherProperties({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

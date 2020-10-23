@@ -3,7 +3,7 @@ import { Flex, Form, Loader, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { TunnelContainer } from '../../../../../components'
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { StyledInputGroup } from '../styled'
@@ -40,7 +40,7 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
