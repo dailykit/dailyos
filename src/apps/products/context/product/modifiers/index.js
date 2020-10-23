@@ -265,13 +265,107 @@ export const reducers = (state, { type, payload }) => {
          }
       }
       case 'POPULATE': {
+         const object = {
+            id: payload.modifier.id,
+            name: {
+               value: payload.modifier.name,
+               meta: {
+                  isValid: true,
+                  isTouched: false,
+                  errors: [],
+               },
+            },
+         }
+         object.categories = payload.modifier.data.categories.map(category => {
+            const cat = {
+               name: {
+                  value: category.name,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               isActive: { value: category.isActive },
+               isRequired: { value: category.isRequired },
+               type: { value: category.type },
+            }
+            if (cat.type.value === 'multiple') {
+               cat.limits = {
+                  min: {
+                     value: category.limits.min + '',
+                     meta: {
+                        isValid: true,
+                        isTouched: false,
+                        errors: [],
+                     },
+                  },
+                  max: {
+                     value: category.limits.max + '',
+                     meta: {
+                        isValid: true,
+                        isTouched: false,
+                        errors: [],
+                     },
+                  },
+                  free: {
+                     value: category.limits.free + '',
+                     meta: {
+                        isValid: true,
+                        isTouched: false,
+                        errors: [],
+                     },
+                  },
+               }
+            }
+            cat.options = category.options.map(option => ({
+               name: {
+                  value: option.name,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               originalName: option.originalName,
+               isActive: { value: option.isActive },
+               isVisible: { value: option.isVisible },
+               isAlwaysCharged: { value: option.isAlwaysCharged },
+               price: {
+                  value: option.price + '',
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               discount: {
+                  value: option.discount + '',
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               productQuantity: {
+                  value: option.productQuantity + '',
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               image: { value: option.image },
+               unit: option.unit,
+               productId: option.productId,
+               productType: option.productType,
+            }))
+            return cat
+         })
+         console.log(object)
          return {
             ...state,
-            modifier: {
-               id: payload.modifier.id,
-               name: payload.modifier.name,
-               categories: payload.modifier.data.categories,
-            },
+            modifier: object,
          }
       }
       case 'RESET': {
