@@ -25,7 +25,7 @@ export default function PackagingStats({ state }) {
             </Tunnel>
          </Tunnels>
          <Flex container>
-            <Flex style={{ flex: 2 }}>
+            <Flex flex={2}>
                {state.images && state.images.length ? (
                   <ImageContainer>
                      <div>
@@ -52,7 +52,7 @@ export default function PackagingStats({ state }) {
                )}
             </Flex>
             <Spacer xAxis size="16px" />
-            <Flex style={{ flex: 3 }}>
+            <Flex flex={3}>
                <ShadowCard>
                   <DataCard title="Par Level" quantity={state.parLevel} />
                   <DataCard title="Max. Level" quantity={state.maxLevel} />

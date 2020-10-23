@@ -65,11 +65,11 @@ export default function PackagingInformation({ state }) {
          </Tunnels>
 
          <Flex container>
-            <Flex style={{ flex: 2 }}>
+            <Flex flex={2}>
                <AdditionalInfo id={state.id} />
             </Flex>
             <Spacer xAxis size="16px" />
-            <Flex style={{ flex: 3 }}>
+            <Flex flex={3}>
                <ShadowCard style={{ flexDirection: 'column' }}>
                   <Spacer size="16px" />
                   <Flex

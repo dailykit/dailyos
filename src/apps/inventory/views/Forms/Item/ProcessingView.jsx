@@ -11,7 +11,7 @@ import {
    IconButton,
    Tunnel,
    Tunnels,
-   useTunnel
+   useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +23,7 @@ import { NO_BULK_ITEMS } from '../../../constants/emptyMessages'
 import { ERROR_DELETING_BULK_ITEM } from '../../../constants/errorMessages'
 import {
    BULK_ITEM_DELETED,
-   CONFIRM_DELETE_BULK_ITEM
+   CONFIRM_DELETE_BULK_ITEM,
 } from '../../../constants/successMessages'
 import { DELETE_BULK_ITEM } from '../../../graphql'
 import PlannedLotView from './PlannedLot'
@@ -123,10 +123,10 @@ function RealtimePanel({ proc }) {
 
    return (
       <Flex container>
-         <Flex style={{ flex: 4 }}>
+         <Flex flex={4}>
             <RealTimeView proc={proc} />
          </Flex>
-         <Flex style={{ flex: 1 }}>
+         <Flex flex={1}>
             <Card>
                <Card.Title>{proc.name}</Card.Title>
                <Card.Img src={proc.image} alt="processing" />
