@@ -4,7 +4,6 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    Tag,
    TagGroup,
    TunnelHeader,
@@ -13,6 +12,7 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../shared/components/InlineLoader'
 import { ERROR_ADDING_ALLERGENS } from '../../../../../constants/errorMessages'
 import { ALLERGENS_ADDED } from '../../../../../constants/successMessages'
 import {
@@ -57,7 +57,7 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
       })
    }
 
-   if (allergensLoading || loading) return <Loader />
+   if (allergensLoading || loading) return <InlineLoader />
 
    return (
       <>
