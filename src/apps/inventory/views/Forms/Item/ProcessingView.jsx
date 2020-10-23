@@ -85,11 +85,7 @@ export default function ProcessingView({ proc = {}, isDefault }) {
                   {proc ? (
                      <Flex container justifyContent="flex-end">
                         <IconButton
-                           onClick={() =>
-                              isDefault
-                                 ? openConfigTunnel(1)
-                                 : openConfigTunnel(1)
-                           }
+                           onClick={() => openConfigTunnel(1)}
                            type="outline"
                         >
                            <EditIcon />
