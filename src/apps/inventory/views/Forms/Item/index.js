@@ -36,8 +36,6 @@ import {
 } from '../../../graphql'
 import ProcessingView from './ProcessingView'
 import {
-   StatHeader,
-   StatValue,
    StyledGrid,
    StyledInfo,
    StyledSupplier,
@@ -233,21 +231,21 @@ export default function ItemForm() {
                      </div>
                      <div>
                         <span>
-                           <StatHeader>
+                           <Text as="h4">
                               <Flex container alignItems="center">
                                  {t(address.concat('unit qty'))}
                                  <Tooltip identifier="supplieritem_form_unitquantity" />
                               </Flex>
-                           </StatHeader>
+                           </Text>
                         </span>
                         <div>
                            {/* prettier-ignore */}
-                           <StatValue>
+                           <Text as="h3">
                               {formState.unitSize + formState.unit}
                               {formState.prices?.length
                                  ? ` ($ ${+formState.prices[0]?.unitPrice?.value})`
                                  : null}
-                           </StatValue>
+                           </Text>
                         </div>
                      </div>
                   </div>
@@ -257,15 +255,15 @@ export default function ItemForm() {
                      </div>
                      <div>
                         <span>
-                           <StatHeader>
+                           <Text as="h4">
                               <Flex container alignItems="center">
                                  {t(address.concat('lead time'))}
                                  <Tooltip identifier="supplieritem_form_leadtime" />
                               </Flex>
-                           </StatHeader>
+                           </Text>
                         </span>
                         <div>
-                           <StatValue>
+                           <Text as="h3">
                               {formState.leadTime?.value ? (
                                  <span>
                                     {`${formState.leadTime?.value} ${formState.leadTime?.unit}`}
@@ -273,7 +271,7 @@ export default function ItemForm() {
                               ) : (
                                  'N/A'
                               )}
-                           </StatValue>
+                           </Text>
                         </div>
                      </div>
                   </div>

@@ -153,18 +153,6 @@ export const StyledGrid = styled.div`
    }
 `
 
-export const StatHeader = styled.div`
-   font-weight: 500;
-   font-size: 14px;
-   line-height: 16px;
-   color: #555b6e;
-`
-
-export const StatValue = styled.div`
-   font-size: 16px;
-   line-height: 19px;
-`
-
 export const ProcessingButton = styled.div`
    margin-top: 14px;
    width: 90%;
