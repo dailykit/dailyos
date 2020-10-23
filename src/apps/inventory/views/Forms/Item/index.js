@@ -39,7 +39,6 @@ import {
    StatHeader,
    StatValue,
    StyledGrid,
-   StyledHeader,
    StyledInfo,
    StyledSupplier,
    TransparentIconButton,
@@ -171,7 +170,12 @@ export default function ItemForm() {
                padding="0 32px"
                style={{ background: '#fff' }}
             >
-               <StyledHeader>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="16px 0"
+               >
                   {formState.name && (
                      <>
                         <StyledInfo>
@@ -219,7 +223,7 @@ export default function ItemForm() {
                         </StyledSupplier>
                      </>
                   )}
-               </StyledHeader>
+               </Flex>
             </Flex>
             <>
                <StyledGrid onClick={() => openInfoTunnel(1)}>

@@ -1,21 +1,21 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { ComboButton, Loader, TextButton, Flex, IconButton } from '@dailykit/ui'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import {
+   ComboButton,
+   Flex,
+   IconButton,
+   Loader,
+   Spacer,
+   TextButton,
+} from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
+import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
-import {
-   CREATE_SUPPLIER,
-   DELETE_SUPPLIER,
-   ALL_SUPPLIERS_SUBSCRIPTION,
-} from '../../../graphql'
-import { StyledHeader, StyledWrapper } from '../styled'
-import tableOptions from '../tableOption'
-import { useTabs } from '../../../context'
 import {
    GENERAL_ERROR_MESSAGE,
    SUPPLIER_CANNOT_BE_DELETED,
@@ -24,8 +24,14 @@ import {
    CONFIRM_DELETE_SUPPLIER,
    SUPPLIER_DELETED,
 } from '../../../constants/successMessages'
-import { Tooltip } from '../../../../../shared/components/Tooltip'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTabs } from '../../../context'
+import {
+   ALL_SUPPLIERS_SUBSCRIPTION,
+   CREATE_SUPPLIER,
+   DELETE_SUPPLIER,
+} from '../../../graphql'
+import { StyledWrapper } from '../styled'
+import tableOptions from '../tableOption'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -141,7 +147,12 @@ export default function SupplierListing() {
    return (
       <>
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Flex container>
                   <h1>{t(address.concat('suppliers'))}</h1>
                   <Tooltip identifier="suppliers_listings_heading" />
@@ -157,14 +168,14 @@ export default function SupplierListing() {
                   >
                      Clear Filters
                   </TextButton>
-                  <span style={{ width: '10px' }} />
+                  <Spacer xAxis size="10px" />
                   <ComboButton type="solid" onClick={createSupplierHandler}>
                      <AddIcon color="#fff" size={24} /> Add Supplier
                   </ComboButton>
                </Flex>
-            </StyledHeader>
-            <br />
+            </Flex>
 
+            <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}
                columns={columns}

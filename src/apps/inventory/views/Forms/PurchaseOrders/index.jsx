@@ -22,7 +22,6 @@ import {
    PURCHASE_ORDER_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
-import { StyledHeader } from '../../Listings/styled'
 import { StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 
@@ -102,11 +101,16 @@ export default function PurchaseOrderForm() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Text as="h1">{t(address.concat('purchase order'))}</Text>
 
                <StatusSwitch currentStatus={state.status} onSave={saveStatus} />
-            </StyledHeader>
+            </Flex>
 
             <Text as="title">{t(address.concat('supplier item'))}</Text>
             {state.supplierItem?.name ? (

@@ -5,13 +5,6 @@ export const Container = styled.div`
    margin: 0 auto;
 `
 
-export const StyledHeader = styled.div`
-   padding: 16px 0;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-`
-
 export const InputWrapper = styled.div`
    max-width: 256px;
 `

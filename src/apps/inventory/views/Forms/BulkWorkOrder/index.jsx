@@ -26,7 +26,6 @@ import {
    BULK_WORK_ORDER_SUBSCRIPTION,
    UPDATE_BULK_WORK_ORDER,
 } from '../../../graphql'
-import { StyledHeader } from '../../Listings/styled'
 import { StyledWrapper } from '../styled'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
@@ -183,7 +182,13 @@ export default function BulkWorkOrderForm() {
          </Tunnels>
 
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               margin="0 auto"
+               padding="16px 0"
+            >
                <Text as="h1">
                   {t(address.concat('work order'))}{' '}
                   {state.supplierItem?.name
@@ -201,7 +206,7 @@ export default function BulkWorkOrderForm() {
                      {t(address.concat('publish'))}
                   </TextButton>
                )}
-            </StyledHeader>
+            </Flex>
 
             <Text as="title">{t(address.concat('select supplier item'))}</Text>
             {state.supplierItem?.name ? (

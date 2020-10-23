@@ -12,14 +12,6 @@ export const StyledWrapper = styled.div`
    }
 `
 
-export const StyledHeader = styled.div`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   margin: 0 auto;
-   padding: 16px 0;
-`
-
 export const StyledIconGroup = styled.div`
    display: flex;
    > div {

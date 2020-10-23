@@ -16,14 +16,6 @@ export const StyledWrapper = styled.div`
    }
 `
 
-export const StyledHeader = styled.div`
-   height: 80px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   border-bottom: 1px solid #d8d8d8;
-`
-
 export const StyledForm = styled.div`
    padding: 40px 0;
 `

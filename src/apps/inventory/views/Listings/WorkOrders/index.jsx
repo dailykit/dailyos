@@ -26,7 +26,7 @@ import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
-import { StyledHeader, StyledWrapper } from '../styled'
+import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
 
@@ -165,7 +165,12 @@ export default function WorkOrders() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Flex container alignItems="center">
                   <Text as="h1">{t(address.concat('work orders'))}</Text>
                   <Tooltip identifier="work-orders_listings_header_title" />
@@ -188,7 +193,7 @@ export default function WorkOrders() {
                      Create Work Order
                   </ComboButton>
                </Flex>
-            </StyledHeader>
+            </Flex>
 
             <Spacer size="16px" />
             <ReactTabulator

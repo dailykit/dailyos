@@ -18,7 +18,7 @@ import { logger } from '../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { UPDATE_PACKAGING } from '../../../graphql'
-import { StyledHeader, StyledSupplier } from '../Item/styled'
+import { StyledSupplier } from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
 import {
@@ -60,7 +60,12 @@ export default function FormView({ state }) {
             </Tunnel>
          </Tunnels>
 
-         <StyledHeader>
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            padding="16px 0"
+         >
             {state.packagingName && (
                <>
                   <Flex>
@@ -97,7 +102,7 @@ export default function FormView({ state }) {
                   <SupplierInfo state={state} />
                </>
             )}
-         </StyledHeader>
+         </Flex>
 
          <InfoBar open={openItemInfoTunnel} state={state} />
          <Spacer size="16px" />

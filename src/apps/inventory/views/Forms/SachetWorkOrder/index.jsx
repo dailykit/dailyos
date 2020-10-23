@@ -1,6 +1,7 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
    Loader,
    Spacer,
    Text,
@@ -21,7 +22,6 @@ import {
    SACHET_WORK_ORDER_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../graphql'
-import { StyledHeader } from '../../Listings/styled'
 import { StyledWrapper } from '../styled'
 import Configurator from './Configurator'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
@@ -191,7 +191,12 @@ export default function SachetWorkOrder() {
          </Tunnels>
 
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Text as="h1">
                   {t(address.concat('work order'))}{' '}
                   {state.supplierItem?.name
@@ -209,7 +214,7 @@ export default function SachetWorkOrder() {
                      {t(address.concat('publish'))}
                   </TextButton>
                )}
-            </StyledHeader>
+            </Flex>
 
             <Spacer size="16px" />
 

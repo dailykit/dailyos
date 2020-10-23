@@ -6,7 +6,6 @@ import {
    Form,
    IconButton,
    Loader,
-   Spacer,
    Text,
    Tunnel,
    Tunnels,
@@ -24,8 +23,7 @@ import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { GENERAL_SUCCESS_MESSAGE } from '../../../constants/successMessages'
 import { useTabs } from '../../../context'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
-import { StyledHeader } from '../../Listings/styled'
-import { FlexContainer, StyledWrapper } from '../styled'
+import { StyledWrapper } from '../styled'
 import { ImageContainer } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import LogoTunnel from './Tunnels/LogoTunnel'
@@ -119,7 +117,12 @@ export default function SupplierForm() {
          </Tunnels>
 
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Form.Group>
                   <Form.Label htmlFor="supplierName" title="Supplier Name">
                      <Flex container alignItems="center">
@@ -140,7 +143,7 @@ export default function SupplierForm() {
                <div style={{ width: '110px' }}>
                   <ShowAvailability formState={formState} />
                </div>
-            </StyledHeader>
+            </Flex>
             {formState.logo ? (
                <ImageContainer>
                   <div>

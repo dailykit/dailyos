@@ -19,7 +19,7 @@ import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
-import { StyledHeader, StyledWrapper } from '../styled'
+import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
 
@@ -143,7 +143,12 @@ export default function Packagings() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Flex container alignItems="center">
                   <Text as="title">Packagings</Text>
                   <Tooltip identifier="packagings_listings_header_title" />
@@ -164,7 +169,7 @@ export default function Packagings() {
                      Add Packaging
                   </ComboButton>
                </Flex>
-            </StyledHeader>
+            </Flex>
             <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}

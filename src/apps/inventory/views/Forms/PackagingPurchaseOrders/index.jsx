@@ -24,7 +24,6 @@ import {
    UPDATE_PURCHASE_ORDER,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
-import { StyledHeader } from '../../Listings/styled'
 import { StyledWrapper } from '../styled'
 import PackagingTunnel from './PackagingTunnel'
 
@@ -78,7 +77,12 @@ export default function PackagingPurchaseOrderForm() {
    return (
       <>
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Text as="h1">{t(address.concat('purchase order'))}</Text>
 
                {item.status ? (
@@ -91,7 +95,7 @@ export default function PackagingPurchaseOrderForm() {
                      {t(address.concat('submit'))}
                   </TextButton>
                )}
-            </StyledHeader>
+            </Flex>
 
             <Content
                item={item}
