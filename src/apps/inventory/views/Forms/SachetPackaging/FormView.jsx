@@ -1,32 +1,31 @@
-import React from 'react'
-import {
-   TextButton,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-   Avatar,
-   Input,
-} from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-
 import {
-   StyledHeader,
-   StyledInfo,
-   StyledSupplier,
-   TransparentIconButton,
-} from '../Item/styled'
+   Avatar,
+   Flex,
+   Form,
+   IconButton,
+   Spacer,
+   Text,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
+import React from 'react'
+import { toast } from 'react-toastify'
+import EditIcon from '../../../../../shared/assets/icons/Edit'
+import { logger } from '../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { useTabs } from '../../../context'
+import { UPDATE_PACKAGING } from '../../../graphql'
+import { StyledSupplier } from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
-import EditIcon from '../../../../../shared/assets/icons/Edit'
-
 import {
    ItemInformationTunnel,
    MoreItemInfoTunnel,
    SuppliersTunnel,
 } from './Tunnels'
-import { UPDATE_PACKAGING } from '../../../graphql'
-import { useTabs } from '../../../context'
 
 export default function FormView({ state }) {
    const { setTabTitle } = useTabs()
@@ -41,8 +40,8 @@ export default function FormView({ state }) {
          setTabTitle(itemName)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
@@ -61,43 +60,52 @@ export default function FormView({ state }) {
             </Tunnel>
          </Tunnels>
 
-         <StyledHeader>
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            padding="16px 0"
+         >
             {state.packagingName && (
                <>
-                  <StyledInfo>
-                     <div style={{ marginRight: '10px' }}>
-                        <Input
-                           style={{ margin: '10px 0 5px' }}
-                           type="text"
-                           name="itemName"
-                           value={itemName}
-                           label="Packaging Name"
-                           onChange={e => setItemName(e.target.value)}
-                           onBlur={() => {
-                              if (!itemName.length) {
-                                 toast.error("Name can't be empty")
-                                 return setItemName(state.name)
-                              }
+                  <Flex>
+                     <Form.Group>
+                        <Form.Label htmlFor="itemName" title="itemName">
+                           Packaging Name
+                        </Form.Label>
+                     </Form.Group>
+                     <Form.Text
+                        id="itemName"
+                        name="itemName"
+                        placeholder="Packaging Name"
+                        value={itemName}
+                        onChange={e => setItemName(e.target.value)}
+                        onBlur={() => {
+                           if (!itemName.length) {
+                              toast.error("Name can't be empty")
+                              return setItemName(state.name)
+                           }
 
-                              if (itemName !== state.name)
-                                 updatePackaging({
-                                    variables: {
-                                       id: state.id,
-                                       object: { name: itemName },
-                                    },
-                                 })
-                           }}
-                        />
-                        <span>sku: {state.packagingSku || 'N/A'}</span>
-                     </div>
-                  </StyledInfo>
+                           if (itemName !== state.name)
+                              updatePackaging({
+                                 variables: {
+                                    id: state.id,
+                                    object: { name: itemName },
+                                 },
+                              })
+                        }}
+                     />
+                     <Text as="subtitle">
+                        sku: {state.packagingSku || 'N/A'}
+                     </Text>
+                  </Flex>
                   <SupplierInfo state={state} />
                </>
             )}
-         </StyledHeader>
+         </Flex>
 
          <InfoBar open={openItemInfoTunnel} state={state} />
-         <br />
+         <Spacer size="16px" />
 
          <PackagingStats state={state} />
       </>
@@ -138,9 +146,12 @@ function SupplierInfo({ state }) {
             <StyledSupplier>
                <span>{state.supplier.name}</span>
                {renderAvatar(state.supplier?.contactPerson)}
-               <TransparentIconButton onClick={() => openSuppliersTunnel(1)}>
-                  <EditIcon size="18" color="#555B6E" />
-               </TransparentIconButton>
+               <IconButton
+                  type="outline"
+                  onClick={() => openSuppliersTunnel(1)}
+               >
+                  <EditIcon />
+               </IconButton>
             </StyledSupplier>
          </>
       )

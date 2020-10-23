@@ -1,42 +1,33 @@
-import React, { useContext } from 'react'
+import { Flex } from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-
 import { DataCard } from '../../../components'
-import { ItemContext } from '../../../context/item'
-import { FlexContainer } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function RealTimeView({ formState }) {
+export default function RealTimeView({ proc }) {
    const { t } = useTranslation()
 
-   const {
-      state: { activeProcessing },
-   } = useContext(ItemContext)
-   const active = formState.bulkItems.find(
-      item => item.id === activeProcessing.id
-   )
-
-   if (!active) return null
+   if (!proc) return null
 
    return (
-      <FlexContainer style={{ flexWrap: 'wrap' }}>
+      <Flex container style={{ flexWrap: 'wrap' }}>
          <DataCard
             title={t(address.concat('awaiting'))}
-            quantity={`${active.awaiting} ${active.unit}`}
+            quantity={`${proc.awaiting} ${proc.unit}`}
          />
          <DataCard
             title={t(address.concat('commited'))}
-            quantity={`${active.committed} ${active.unit}`}
+            quantity={`${proc.committed} ${proc.unit}`}
          />
          <DataCard
             title={t(address.concat('consumed'))}
-            quantity={`${active.consumed} ${active.unit}`}
+            quantity={`${proc.consumed} ${proc.unit}`}
          />
          <DataCard
             title={t(address.concat('on hand'))}
-            quantity={`${active.onHand} ${active.unit}`}
+            quantity={`${proc.onHand} ${proc.unit}`}
          />
-      </FlexContainer>
+      </Flex>
    )
 }

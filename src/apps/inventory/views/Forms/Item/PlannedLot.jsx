@@ -1,50 +1,70 @@
-import { ButtonTile, Text } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import {
+   Filler,
+   Flex,
+   IconButton,
+   SectionTab,
+   SectionTabList,
+   SectionTabPanel,
+   SectionTabPanels,
+   SectionTabs,
+   SectionTabsListHeader,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-
+import { AddIcon } from '../../../../../shared/assets/icons'
 import { DataCard } from '../../../components'
-import { ItemContext } from '../../../context/item'
-import { FlexContainer, Flexible } from '../styled'
-import { ProcessingButton } from './styled'
+import {
+   NO_BULK_ITEMS,
+   NO_SACHET_ITEMS,
+} from '../../../constants/emptyMessages'
+import { ConfigureSachetTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function PlannedLotView({ open, formState }) {
+export default function PlannedLotView({ sachetItems = [], procId, unit }) {
    const { t } = useTranslation()
-   const {
-      state: { activeProcessing },
-      state,
-      dispatch,
-   } = useContext(ItemContext)
+   const [
+      configureSachetTunnel,
+      openConfigureSachetTunnel,
+      closeConfigureSachetTunnel,
+   ] = useTunnel(1)
 
-   const active = formState.bulkItems.find(
-      item => item.id === activeProcessing.id
-   )
-
-   if (!active) return null
-
-   const activeSachet = active.sachetItems.find(
-      item => item.id === state.activeSachet.id
-   )
+   if (!procId) return <Filler message={NO_BULK_ITEMS} />
 
    return (
       <>
-         <FlexContainer>
-            <Flexible width="1">
-               <Text as="h2">{t(address.concat('sachets'))}</Text>
+         <Tunnels tunnels={configureSachetTunnel}>
+            <Tunnel layer={1}>
+               <ConfigureSachetTunnel
+                  open={openConfigureSachetTunnel}
+                  close={closeConfigureSachetTunnel}
+                  procId={procId}
+                  unit={unit}
+               />
+            </Tunnel>
+         </Tunnels>
 
-               {active.sachetItems.map(sachet => {
+         <SectionTabs>
+            <SectionTabList>
+               <SectionTabsListHeader>
+                  <Text as="h2">{t(address.concat('sachets'))}</Text>
+                  <IconButton
+                     type="outline"
+                     onClick={() => {
+                        openConfigureSachetTunnel(1)
+                     }}
+                  >
+                     <AddIcon />
+                  </IconButton>
+               </SectionTabsListHeader>
+               {sachetItems.map(sachet => {
                   return (
-                     <ProcessingButton
-                        active={sachet.id === state.activeSachet.id}
-                        onClick={() =>
-                           dispatch({
-                              type: 'SET_ACTIVE_SACHET',
-                              payload: sachet,
-                           })
-                        }
-                     >
-                        <div style={{ textAlign: 'left' }}>
+                     <SectionTab key={sachet.id}>
+                        <div style={{ textAlign: 'left', padding: '14px' }}>
                            <h3>
                               {sachet.unitSize} {sachet.unit}
                            </h3>
@@ -54,44 +74,38 @@ export default function PlannedLotView({ open, formState }) {
                               {sachet.unit}
                            </Text>
                         </div>
-                     </ProcessingButton>
+                     </SectionTab>
                   )
                })}
+            </SectionTabList>
 
-               <div style={{ width: '90%', marginTop: '10px' }}>
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text={t(address.concat('add sachets'))}
-                     onClick={() => {
-                        dispatch({
-                           type: 'SET_UNIT_QUANTITY',
-                           payload: { unit: active.unit },
-                        })
-                        open(1)
-                     }}
-                  />
-               </div>
-            </Flexible>
-            <Flexible width="4">
-               {(activeSachet?.id || state.activeSachet?.quantity) && (
-                  <FlexContainer style={{ flexWrap: 'wrap' }}>
-                     <DataCard
-                        title={t(address.concat('awaiting'))}
-                        quantity={`${activeSachet.awaiting || 0} pkt`}
-                     />
-                     <DataCard
-                        title={t(address.concat('commited'))}
-                        quantity={`${activeSachet.committed || 0} pkt`}
-                     />
-                     <DataCard
-                        title={t(address.concat('consumed'))}
-                        quantity={`${activeSachet.consumed || 0} pkt`}
-                     />
-                  </FlexContainer>
+            <SectionTabPanels>
+               {sachetItems.length ? (
+                  sachetItems.map(activeSachet => {
+                     return (
+                        <SectionTabPanel key={activeSachet.id}>
+                           <Flex container style={{ flexWrap: 'wrap' }}>
+                              <DataCard
+                                 title={t(address.concat('awaiting'))}
+                                 quantity={`${activeSachet.awaiting || 0} pkt`}
+                              />
+                              <DataCard
+                                 title={t(address.concat('commited'))}
+                                 quantity={`${activeSachet.committed || 0} pkt`}
+                              />
+                              <DataCard
+                                 title={t(address.concat('consumed'))}
+                                 quantity={`${activeSachet.consumed || 0} pkt`}
+                              />
+                           </Flex>
+                        </SectionTabPanel>
+                     )
+                  })
+               ) : (
+                  <Filler message={NO_SACHET_ITEMS} />
                )}
-            </Flexible>
-         </FlexContainer>
+            </SectionTabPanels>
+         </SectionTabs>
       </>
    )
 }

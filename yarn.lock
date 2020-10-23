@@ -1203,10 +1203,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-"@dailykit/ui@0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.3.tgz#8858c77435748cb47ca59a8b1bd2377d63adad3c"
-  integrity sha512-FJ7LiWV8Qx/qNf5sc4oKH9zjnR6ZQ1AN65uErqrPpfrmuXluviuZbdOzuON1IVgMiMOhp3tuNzQVteQ36mziKg==
+"@dailykit/ui@0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.5.tgz#d1b8bb9f7d9eb62944164032b3ea03f206c6e931"
+  integrity sha512-6BkzmXYwMeX53ePZD3bZoqonBvFabTI9bptMXzFsHaQiD/DbygeaTBzd1gy1gzWqW4tm5UJDiH3DFYu6enur7w==
   dependencies:
     concurrently "^5.3.0"
 

@@ -5,15 +5,6 @@ export const Container = styled.div`
    margin: 0 auto;
 `
 
-export const StyledHeader = styled.div`
-   margin-top: 10px;
-   padding: 0 20px;
-   height: 100px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-`
-
 export const InputWrapper = styled.div`
    max-width: 256px;
 `
@@ -24,8 +15,6 @@ export const ActionsWrapper = styled.div`
 `
 
 export const StyledMain = styled.div`
-   margin-top: 32px;
-   height: 100%;
    background: #f3f3f3;
 `
 
@@ -126,7 +115,7 @@ export const StyledGrid = styled.div`
    width: 100%;
    display: grid;
    padding: 0 20px;
-   grid-template-columns: repeat(4, 1fr);
+   grid-template-columns: repeat(2, 1fr);
    height: 96px;
    border-bottom: 1px solid #dddddd;
    border-top: 1px solid #dddddd;
@@ -152,30 +141,18 @@ export const StyledGrid = styled.div`
             display: flex;
             flex-direction: column;
 
-            > span {
-               font-weight: 500;
-               font-size: 14px;
-               line-height: 16px;
-               color: #555b6e;
-               margin-bottom: 8px;
-            }
             div {
                font-weight: 500;
-               font-size: 20px;
                line-height: 23px;
                color: #555b6e;
                display: flex;
                justify-content: space-between;
-
-               span:last-child {
-                  font-size: 16px;
-                  line-height: 19px;
-               }
             }
          }
       }
    }
 `
+
 export const ProcessingButton = styled.div`
    margin-top: 14px;
    width: 90%;

@@ -1,30 +1,38 @@
 import { useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils/errorLog'
 import { TunnelContainer } from '../../../../../components'
-import { ItemContext } from '../../../../../context/item'
+import { NO_PROCESSING } from '../../../../../constants/infoMessages'
 import { MASTER_PROCESSINGS_SUBSCRIPTION } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.processing.'
 
-export default function ProcessingTunnel({ close, open, formState }) {
+export default function ProcessingTunnel({
+   close,
+   formState,
+   createBulkItem,
+   creatingBulkItem,
+}) {
    const { t } = useTranslation()
-   const { dispatch } = useContext(ItemContext)
    const [search, setSearch] = React.useState('')
    const [data, setData] = React.useState([])
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading: processingsLoading } = useSubscription(
+   const { loading: processingsLoading, error } = useSubscription(
       MASTER_PROCESSINGS_SUBSCRIPTION,
       {
          variables: { supplierItemId: formState.id },
@@ -37,7 +45,23 @@ export default function ProcessingTunnel({ close, open, formState }) {
       }
    )
 
-   if (processingsLoading) return <Loader />
+   const handleNext = () => {
+      createBulkItem({
+         variables: {
+            processingName: current.title,
+            itemId: formState.id,
+            unit: formState.unit, // string
+         },
+      })
+      close(1)
+   }
+
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (creatingBulkItem || processingsLoading) return <InlineLoader />
 
    return (
       <>
@@ -46,41 +70,41 @@ export default function ProcessingTunnel({ close, open, formState }) {
             close={() => close(1)}
             right={{
                title: 'Next',
-               action: () => {
-                  dispatch({ type: 'PROCESSING', payload: current })
-                  close(1)
-                  open(2)
-               },
+               action: handleNext,
             }}
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.title} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.title}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        )}
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_PROCESSING} />
+            )}
          </TunnelContainer>
       </>
    )

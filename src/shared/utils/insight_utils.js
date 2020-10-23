@@ -1,13 +1,8 @@
 import unflatten from 'unflatten'
 import { isObject } from './isObject'
+import { dateFmt } from './dateFmt'
 
 const _dateMatcher = new RegExp(/created_at|date|month|year/i)
-export const dateFmt = new Intl.DateTimeFormat('en-US', {
-   weekday: 'long',
-   year: 'numeric',
-   month: 'numeric',
-   day: 'numeric',
-})
 
 export const buildOptions = (object, prefix = '') => {
    let result = {}

@@ -1,57 +1,56 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
+   Form,
    IconButton,
-   Input,
-   Loader,
    Tag,
    TagGroup,
-   Text,
    Tunnel,
+   TunnelHeader,
    Tunnels,
    useTunnel,
-   TunnelHeader,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import Nutrition from '../../../../../../../shared/components/Nutrition/index'
-import EditIcon from '../../../../../../products/assets/icons/Edit'
-import { ItemContext } from '../../../../../context/item'
+import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
-   CREATE_BULK_ITEM,
+   InlineLoader,
+   NutritionTunnel,
+   Tooltip,
+} from '../../../../../../../shared/components'
+import Nutrition from '../../../../../../../shared/components/Nutrition/index'
+import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
+import { BULK_ITEM_UPDATED } from '../../../../../constants/successMessages'
+import { VALUE_SHOULD_BE_NUMBER } from '../../../../../constants/validationMessages'
+import {
+   NUTRITION_INFO,
    UNITS_SUBSCRIPTION,
    UPDATE_BULK_ITEM,
-   UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
-import { StyledSelect } from '../../../styled'
-import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
 import AllergensTunnel from '../Allergens'
-import NutritionTunnel from '../NutritionTunnel'
 import {
    Highlight,
-   InputWrapper,
+   ImageContainer,
    StyledInputGroup,
    StyledLabel,
    StyledRow,
    TunnelBody,
-   ImageContainer,
 } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, formState }) {
+export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
    const { t } = useTranslation()
-   const { state, dispatch } = React.useContext(ItemContext)
+
    const [errors, setErrors] = useState([])
+
    const [units, setUnits] = useState([])
-
-   const bulkItem = formState.bulkItemAsShipped
-
-   const [parLevel, setParLevel] = useState(bulkItem?.parLevel || '')
+   const [parLevel, setParLevel] = useState(bulkItem?.parLevel || 0)
    const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(bulkItem?.unit || formState?.unit)
+   const [unit, setUnit] = useState(bulkItem?.unit)
    const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
    const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
    const [yieldPercentage, setYieldPercentage] = useState(
@@ -63,7 +62,7 @@ export default function ConfigTunnel({ close, formState }) {
    )
    const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
 
-   const { loading: unitsLoading } = useSubscription(UNITS_SUBSCRIPTION, {
+   useSubscription(UNITS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.units
          setUnits(data)
@@ -85,202 +84,189 @@ export default function ConfigTunnel({ close, formState }) {
 
    const [photoTunnel, openPhotoTunnel, closePhotoTunnel] = useTunnel(1)
 
-   const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
+   const [udpateBulkItem, { loading }] = useMutation(UPDATE_BULK_ITEM, {
       onCompleted: () => {
-         close(2)
-         toast.success('Bulk Item as Shipped Added!')
+         toast.success(BULK_ITEM_UPDATED)
       },
       onError: error => {
          console.log(error)
-         toast.error(error.message)
-         close(2)
+         toast.error(ERROR_UPDATING_BULK_ITEM)
+         close(1)
       },
    })
-   const [createBulkItem, { loading: createBulkItemLoading }] = useMutation(
-      CREATE_BULK_ITEM,
-      {
-         onCompleted: data => {
-            updateSupplierItem({
-               variables: {
-                  id: formState.id,
-                  object: {
-                     bulkItemAsShippedId: data.createBulkItem.returning[0].id,
-                  },
-               },
-            })
-         },
-         onError: error => {
-            console.log(error)
-            toast.error(error.message)
-            close(2)
-         },
-      }
-   )
-
-   const [udpateBulkItem, { loading: updateBulkItemLoading }] = useMutation(
-      UPDATE_BULK_ITEM,
-      {
-         onCompleted: () => {
-            close(2)
-            dispatch({
-               type: 'SET_ACTIVE_PROCESSING',
-               payload: {
-                  ...formState.bulkItemAsShipped,
-                  unit, // string
-                  yield: { value: yieldPercentage },
-                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
-                  parLevel: +parLevel,
-                  nutritionInfo: state.processing.nutrients,
-                  maxLevel: +maxValue,
-                  labor: { value: laborTime, unit: laborUnit },
-                  bulkDensity: +bulkDensity,
-                  allergens: state.processing.allergens,
-               },
-            })
-            toast.success('Bulk Item updated successfully !')
-         },
-         onError: error => {
-            console.log(error)
-            toast.error('Error updating bulk item as shipped. Please try again')
-            close(2)
-         },
-      }
-   )
 
    const handleSave = () => {
       if (!parLevel || !maxValue)
          return toast.error('Please fill the form properly')
 
-      if (errors.length) {
-         errors.forEach(err => toast.error(err.message))
-         toast.error(`Cannot update item information !`)
-      } else if (formState.bulkItemAsShippedId) {
-         const allergens = state.processing.allergens.length
-            ? state.processing.allergens
-            : bulkItem.allergens
-
-         udpateBulkItem({
-            variables: {
-               id: formState.bulkItemAsShippedId,
-               object: {
-                  unit, // string
-                  yield: { value: yieldPercentage },
-                  shelfLife: { unit: shelfLifeUnit, value: shelfLife },
-                  parLevel: +parLevel,
-                  nutritionInfo:
-                     state.processing.nutrients || bulkItem.nutritionInfo || {},
-                  maxLevel: +maxValue,
-                  labor: { value: laborTime, unit: laborUnit },
-                  bulkDensity: +bulkDensity,
-                  allergens: allergens?.length ? allergens : [],
-               },
-            },
-         })
-      } else {
-         const allergens = state.processing.allergens.length
-            ? state.processing.allergens
-            : bulkItem?.allergens
-         createBulkItem({
-            variables: {
-               processingName: state.processing.title,
-               itemId: formState.id,
-               unit, // string
+      const allergens = bulkItem.allergens
+      udpateBulkItem({
+         variables: {
+            id: id || bulkItem.id,
+            object: {
+               unit: unit || units[0]?.title, // string
                yield: { value: yieldPercentage },
                shelfLife: { unit: shelfLifeUnit, value: shelfLife },
                parLevel: +parLevel,
-               nutritionInfo:
-                  state.processing.nutrients || bulkItem.nutritionInfo || {},
                maxLevel: +maxValue,
                labor: { value: laborTime, unit: laborUnit },
                bulkDensity: +bulkDensity,
                allergens: allergens?.length ? allergens : [],
             },
-         })
+         },
+      })
+      close(1)
+   }
+
+   const handleNutriData = data => {
+      udpateBulkItem({
+         variables: {
+            id: id || bulkItem.id,
+            object: {
+               nutritionInfo: data,
+            },
+         },
+      })
+   }
+
+   const handleErrors = (e, location) => {
+      const value = parseFloat(e.target.value)
+      if (!value) {
+         const alreadyExist = errors.filter(err => err.location === location)
+            .length
+
+         if (!alreadyExist) {
+            setErrors([
+               ...errors,
+               {
+                  location,
+                  message: VALUE_SHOULD_BE_NUMBER,
+               },
+            ])
+         }
+      } else {
+         const newErrors = errors.filter(err => err.location !== location)
+         setErrors(newErrors)
       }
    }
 
-   if (createBulkItemLoading || updateBulkItemLoading || unitsLoading)
-      return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
          <Tunnels tunnels={allergensTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
-               <AllergensTunnel close={() => closeAllergensTunnel(1)} />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={nutritionTunnel}>
-            <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <NutritionTunnel
-                  close={closeNutritionTunnel}
-                  bulkItemId={bulkItem?.id}
+               <AllergensTunnel
+                  close={() => closeAllergensTunnel(1)}
+                  bulkItemId={bulkItem?.id || id}
                />
             </Tunnel>
          </Tunnels>
+         <NutritionTunnel
+            closeTunnel={closeNutritionTunnel}
+            onSave={handleNutriData}
+            title="Add Nutrition Values"
+            tunnels={nutritionTunnel}
+            value={bulkItem.nutritionInfo}
+         />
 
          <Tunnels tunnels={photoTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1}>
-               <PhotoTunnel close={closePhotoTunnel} bulkItem={bulkItem} />
+               <PhotoTunnel
+                  close={closePhotoTunnel}
+                  bulkItemId={bulkItem?.id || id}
+               />
             </Tunnel>
          </Tunnels>
 
          <TunnelHeader
             title={t(address.concat('configure processing'))}
-            close={() => close(2)}
+            close={() => close(1)}
             right={{ title: t(address.concat('save')), action: handleSave }}
          />
 
          <TunnelBody>
             <StyledRow>
                <StyledInputGroup>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('set par level'))}
+                  <Form.Group>
+                     <Form.Label title="parLevel" htmlFor="parLevel">
+                        <Flex container alignItems="center">
+                           {t(address.concat('set par level'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_parLevel_formfield" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Number
+                        id="parLevel"
+                        placeholder="Par Level..."
                         name="par level"
                         value={parLevel}
                         onChange={e => setParLevel(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
+                        onBlur={e => handleErrors(e, 'parLevel')}
                      />
-                  </InputWrapper>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('max inventory level'))}
+
+                     {errors
+                        .filter(err => err?.location === 'parLevel')
+                        .map(error => (
+                           <Form.Error key={error.location}>
+                              {error.message}
+                           </Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label
+                        title="maxInventoryLevel"
+                        htmlFor="maxInventoryLevel"
+                     >
+                        <Flex container alignItems="center">
+                           {t(address.concat('max inventory level'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_maxLevel_formfield" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Number
+                        id="maxInventoryLevel"
                         name="max inventory level"
+                        placeholder="Max Inventory Level"
                         value={maxValue}
                         onChange={e => setMaxValue(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
+                        onBlur={e => handleErrors(e, 'maxInventoryLevel')}
                      />
-                  </InputWrapper>
+                     {errors
+                        .filter(err => err?.location === 'maxInventoryLevel')
+                        .map(error => (
+                           <Form.Error key={error.location}>
+                              {error.message}
+                           </Form.Error>
+                        ))}
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
 
             <StyledRow>
-               <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Text as="title">Select Unit:</Text>
-                  <span style={{ width: '10px' }} />
-                  <StyledSelect
-                     name="unit"
-                     value={unit}
-                     onChange={e => setUnit(e.target.value)}
-                  >
-                     {units.map(unit => (
-                        <option key={unit.id} value={unit.name}>
-                           {unit.name}
-                        </option>
-                     ))}
-                  </StyledSelect>
-               </div>
+               <StyledInputGroup>
+                  <Form.Group>
+                     <Form.Label htmlFor="units" title="SelectUnit">
+                        <Flex container alignItems="center">
+                           Select Unit
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_select_unit_formselect" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Select
+                        name="units"
+                        id="units"
+                        options={units}
+                        value={unit}
+                        onChange={e => setUnit(e.target.value)}
+                     />
+                  </Form.Group>
+               </StyledInputGroup>
             </StyledRow>
 
             <StyledRow>
                <StyledLabel>
-                  {t(address.concat('processing information'))}
+                  <Flex container alignItems="center">
+                     {t(address.concat('processing information'))}
+                     <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_processingInformation_section" />
+                  </Flex>
                </StyledLabel>
             </StyledRow>
             {bulkItem?.id && (
@@ -318,79 +304,130 @@ export default function ConfigTunnel({ close, formState }) {
             )}
             <StyledRow>
                <StyledInputGroup>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('labour time per 100gm'))}
-                        name="labor time"
-                        value={laborTime}
-                        onChange={e => setLaborTime(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
-                     />
-                     <StyledSelect
-                        name="unit"
-                        defaultValue={laborUnit}
-                        onChange={e => setLaborUnit(e.target.value)}
-                     >
-                        <option value="hours">{t('units.hours')}</option>
-                        <option value="minutes">{t('units.minutes')}</option>
-                     </StyledSelect>
-                  </InputWrapper>
-
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('percentage of yield'))}
+                  <Form.Group>
+                     <Form.Label htmlFor="labourTime" title="labourTime">
+                        <Flex container alignItems="center">
+                           {t(address.concat('labour time per 100gm'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_labor_time_form_field" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.TextSelect>
+                        <Form.Number
+                           id="labourTime"
+                           name="labor time"
+                           placeholder="Labour Time"
+                           value={laborTime}
+                           onChange={e => setLaborTime(e.target.value)}
+                           onBlur={e => handleErrors(e, 'laboutTime')}
+                        />
+                        <Form.Select
+                           name="time"
+                           id="time"
+                           options={[
+                              { id: 0, title: t('units.hours') },
+                              { id: 1, title: t('units.minutes') },
+                           ]}
+                           value={laborUnit}
+                           onChange={e => setLaborUnit(e.target.value)}
+                        />
+                     </Form.TextSelect>
+                     {errors
+                        .filter(err => err?.location === 'labourTime')
+                        .map(error => (
+                           <Form.Error key={error.location}>
+                              {error.message}
+                           </Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label title="percentageYield" htmlFor="yield">
+                        <Flex container alignItems="center">
+                           {t(address.concat('percentage of yield'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_yield_formfield" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Number
+                        id="yield"
                         name="yield"
+                        placeholder="Yield (in %)"
                         value={yieldPercentage}
                         onChange={e => setYieldPercentage(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
+                        onBlur={e => handleErrors(e, 'yield')}
                      />
-                     <span>%</span>
-                  </InputWrapper>
+                     {errors
+                        .filter(err => err?.location === 'yield')
+                        .map(error => (
+                           <Form.Error key={error.location}>
+                              {error.message}
+                           </Form.Error>
+                        ))}
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
             <StyledRow>
                <StyledInputGroup>
-                  <InputWrapper>
-                     <Input
+                  <Form.Group>
+                     <Form.Label htmlFor="shelfLife" title="Shelf Life">
+                        <Flex container alignItems="center">
+                           {t(address.concat('shelf life'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_shelfLife_formfield" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.TextSelect>
+                        <Form.Number
+                           id="shelfLife"
+                           name="shelf life"
+                           placeholder="Shelf Life"
+                           value={shelfLife}
+                           onChange={e => setShelfLife(e.target.value)}
+                           onBlur={e => handleErrors(e, 'shelfLife')}
+                        />
+                        <Form.Select
+                           id="unit"
+                           name="unit"
+                           options={[
+                              { id: 0, title: t('units.hours') },
+                              { id: 1, title: t('units.minutes') },
+                           ]}
+                           value={shelfLifeUnit}
+                           onChange={e => setShelfLifeUnit(e.target.value)}
+                        />
+                     </Form.TextSelect>
+                     {errors
+                        .filter(err => err?.location === 'shelfLife')
+                        .map(error => (
+                           <Form.Error key={error.location}>
+                              {error.message}
+                           </Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Label title="Bulk Density" htmlFor="bulkDensity">
+                        <Flex container alignItems="center">
+                           {t(address.concat('bulk dnesity'))}
+                           <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_bulkDensity_formfield" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Number
+                        id="bulkDensity"
                         type="number"
-                        label={t(address.concat('shelf life'))}
-                        name="shelf life"
-                        value={shelfLife}
-                        onChange={e => setShelfLife(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
-                     />
-                     <StyledSelect
-                        name="unit"
-                        defaultValue={shelfLifeUnit}
-                        onChange={e => setShelfLifeUnit(e.target.value)}
-                     >
-                        <option value="hours">{t('units.hours')}</option>
-                        <option value="minutes">{t('units.minutes')}</option>
-                     </StyledSelect>
-                  </InputWrapper>
-                  <InputWrapper>
-                     <Input
-                        type="number"
-                        label={t(address.concat('bulk dnesity'))}
                         name="bulk density"
+                        placeholder="Bulk Density"
                         value={bulkDensity}
                         onChange={e => setBulkDensity(e.target.value)}
-                        onBlur={e =>
-                           handleNumberInputErrors(e, errors, setErrors)
-                        }
+                        onblur={e => handleErrors(e, 'bulkDensity')}
                      />
-                  </InputWrapper>
+                     {errors
+                        .filter(err => err?.location === 'bulkDensity')
+                        .map(error => (
+                           <Form.Error key={error.location}>
+                              {error.message}
+                           </Form.Error>
+                        ))}
+                  </Form.Group>
                </StyledInputGroup>
             </StyledRow>
-            <StyledRow>
+            <StyledRow style={{ marginBottom: '0' }}>
                <StyledLabel
                   style={{
                      width: '100%',
@@ -398,13 +435,12 @@ export default function ConfigTunnel({ close, formState }) {
                      justifyContent: 'space-between',
                   }}
                >
-                  <div>{t(address.concat('nutritions per 100gm'))}</div>
+                  <Flex container alignItems="center">
+                     {t(address.concat('nutritions per 100gm'))}
+                     <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_nutrition_section" />
+                  </Flex>
                   <IconButton
                      onClick={() => {
-                        dispatch({
-                           type: 'SET_NUTRI_TARGET',
-                           payload: 'processing',
-                        })
                         openNutritionTunnel(1)
                      }}
                      type="ghost"
@@ -414,68 +450,52 @@ export default function ConfigTunnel({ close, formState }) {
                </StyledLabel>
             </StyledRow>
             <NutrientView
-               bulkItem={bulkItem}
-               dispatch={dispatch}
+               bulkItemId={bulkItem?.id || id}
+               dispatch={() => {}}
                openNutritionTunnel={openNutritionTunnel}
             />
             <AllergensView
                openAllergensTunnel={openAllergensTunnel}
-               bulkItem={bulkItem}
+               bulkItemId={bulkItem?.id || id}
             />
          </TunnelBody>
       </>
    )
 }
 
-function NutrientView({ bulkItem, openNutritionTunnel }) {
+function NutrientView({ bulkItemId, openNutritionTunnel }) {
    const { t } = useTranslation()
    const {
-      state: { processing: { nutrients } = {} },
-      dispatch,
-   } = React.useContext(ItemContext)
+      data: { bulkItem: { nutritionInfo } = {} } = {},
+   } = useSubscription(NUTRITION_INFO, { variables: { id: bulkItemId } })
 
-   if (nutrients) return <Nutrition data={nutrients} />
-   else if (
-      bulkItem?.nutritionInfo &&
-      Object.keys(bulkItem?.nutritionInfo).length
-   )
-      return <Nutrition data={bulkItem.nutritionInfo} />
+   if (nutritionInfo && Object.keys(nutritionInfo).length)
+      return <Nutrition data={nutritionInfo} />
 
    return (
       <ButtonTile
          type="secondary"
          text={t(address.concat('add nutritions'))}
          onClick={() => {
-            dispatch({
-               type: 'SET_NUTRI_TARGET',
-               payload: 'processing',
-            })
             openNutritionTunnel(1)
          }}
       />
    )
 }
 
-function AllergensView({ openAllergensTunnel, bulkItem }) {
+function AllergensView({ openAllergensTunnel, bulkItemId }) {
    const { t } = useTranslation()
-   const { state } = React.useContext(ItemContext)
+
+   const {
+      data: { bulkItem: { allergens = [] } = {} } = {},
+   } = useSubscription(NUTRITION_INFO, { variables: { id: bulkItemId } })
 
    const renderContent = () => {
-      if (state.processing.allergens.length)
+      if (allergens?.length)
          return (
             <Highlight pointer onClick={() => openAllergensTunnel(1)}>
                <TagGroup>
-                  {state.processing.allergens.map(el => (
-                     <Tag key={el.id}> {el.title} </Tag>
-                  ))}
-               </TagGroup>
-            </Highlight>
-         )
-      else if (bulkItem?.allergens?.length)
-         return (
-            <Highlight pointer onClick={() => openAllergensTunnel(1)}>
-               <TagGroup>
-                  {bulkItem.allergens.map(el => (
+                  {allergens.map(el => (
                      <Tag key={el.id}> {el.title} </Tag>
                   ))}
                </TagGroup>
@@ -495,7 +515,12 @@ function AllergensView({ openAllergensTunnel, bulkItem }) {
       <>
          <br />
          <StyledRow>
-            <StyledLabel>{t(address.concat('allergens'))}</StyledLabel>
+            <StyledLabel>
+               <Flex container alignItems="center">
+                  {t(address.concat('allergens'))}
+                  <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_allergens_section" />
+               </Flex>
+            </StyledLabel>
             {renderContent()}
          </StyledRow>
       </>

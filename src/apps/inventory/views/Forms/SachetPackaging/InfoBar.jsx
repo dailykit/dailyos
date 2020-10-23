@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { TextButton } from '@dailykit/ui'
 import styled from 'styled-components'
 
-import { StyledGrid } from '../Item/styled'
-
 import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
 
 const address = 'apps.inventory.views.forms.item.'
@@ -93,4 +91,46 @@ const EmptyWrapper = styled.div`
    text-align: center;
    border-bottom: 1px solid #dddddd;
    border-top: 1px solid #dddddd;
+`
+
+const StyledGrid = styled.div`
+   width: 100%;
+   display: grid;
+   padding: 0 20px;
+   grid-template-columns: repeat(4, 1fr);
+   height: 96px;
+   border-bottom: 1px solid #dddddd;
+   border-top: 1px solid #dddddd;
+
+   &:hover {
+      background-color: #ededed;
+      cursor: pointer;
+   }
+
+   > div {
+      &:not(:last-child) {
+         border-right: 1px solid #dddddd;
+      }
+
+      display: flex;
+      align-items: center;
+      padding: 12px;
+
+      > div {
+         &:last-child {
+            flex: 1;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+
+            div {
+               font-weight: 500;
+               line-height: 23px;
+               color: #555b6e;
+               display: flex;
+               justify-content: space-between;
+            }
+         }
+      }
+   }
 `
