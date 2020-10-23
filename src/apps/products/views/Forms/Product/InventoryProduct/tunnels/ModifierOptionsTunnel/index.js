@@ -1,23 +1,26 @@
 import React from 'react'
 import { useLazyQuery } from '@apollo/react-hooks'
 import {
-   TunnelHeader,
-   Loader,
+   Filler,
    List,
-   ListSearch,
-   ListOptions,
    ListItem,
+   ListOptions,
+   ListSearch,
+   TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
-import { TunnelBody } from '../styled'
-import {
-   SIMPLE_RECIPE_PRODUCT_OPTIONS,
-   SACHET_ITEMS,
-   BULK_ITEMS,
-   SUPPLIER_ITEMS,
-   INVENTORY_PRODUCT_OPTIONS,
-} from '../../../../../../graphql'
+import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import {
+   BULK_ITEMS,
+   INVENTORY_PRODUCT_OPTIONS,
+   SACHET_ITEMS,
+   SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   SUPPLIER_ITEMS,
+} from '../../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const ModifierOptionsTunnel = ({ close }) => {
    const { modifiersState, modifiersDispatch } = React.useContext(
@@ -47,7 +50,8 @@ const ModifierOptionsTunnel = ({ close }) => {
          setOptions([...updatedOptions])
       },
       onError: error => {
-         console.log('Error in fetching Inventory Products: ', error)
+         toast.error('Failed to fetch Inventory Products!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -69,7 +73,8 @@ const ModifierOptionsTunnel = ({ close }) => {
          setOptions([...updatedOptions])
       },
       onError: error => {
-         console.log('Error in fetching Simple Recipe Products: ', error)
+         toast.error('Failed to fetch Simple Recipe Products!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -86,7 +91,8 @@ const ModifierOptionsTunnel = ({ close }) => {
             setOptions([...updatedOptions])
          },
          onError: error => {
-            console.log('Error in fetching Sachet Items: ', error)
+            toast.error('Failed to fetch Sachet Items!')
+            logger(error)
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -101,7 +107,8 @@ const ModifierOptionsTunnel = ({ close }) => {
          setOptions([...updatedOptions])
       },
       onError: error => {
-         console.log('Error in fetching Bulk Items: ', error)
+         toast.error('Failed to fetch Bulk Items!')
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
@@ -117,7 +124,8 @@ const ModifierOptionsTunnel = ({ close }) => {
             setOptions([...updatedOptions])
          },
          onError: error => {
-            console.log('Error in fetching Supplier Items: ', error)
+            toast.error('Failed to fetch Supplier Items!')
+            logger(error)
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -147,41 +155,79 @@ const ModifierOptionsTunnel = ({ close }) => {
       const object = {
          productId: option.id,
          productType: modifiersState.meta.modifierProductType,
-         name: option.title,
+         name: {
+            value: option.title,
+            meta: { isValid: true, isTouched: false, errors: [] },
+         },
          originalName: option.title,
-         image:
-            option.inventoryProduct?.assets?.images[0] ||
-            option.simpleRecipeProduct?.assets?.images[0] ||
-            '',
-         isActive: true,
-         isVisible: true,
-         productQuantity: 1,
-         discount: 0,
-         isAlwaysCharged: false,
+         image: {
+            value:
+               option.inventoryProduct?.assets?.images[0] ||
+               option.simpleRecipeProduct?.assets?.images[0] ||
+               '',
+         },
+         isActive: { value: true },
+         isVisible: { value: true },
+         productQuantity: {
+            value: 1,
+            meta: { isValid: true, isTouched: false, errors: [] },
+         },
+         discount: {
+            value: 10,
+            meta: { isValid: true, isTouched: false, errors: [] },
+         },
+         isAlwaysCharged: { value: false },
          unit: option.unit || null,
       }
       switch (modifiersState.meta.modifierProductType) {
          case 'inventoryProductOption':
-            object.price = option.price[0]?.value
+            object.price = {
+               value: option.price[0]?.value,
+               meta: { isValid: true, isTouched: false, errors: [] },
+            }
             break
          case 'simpleRecipeProductOption':
-            object.price = option.price[0]?.value
+            object.price = {
+               value: option.price[0]?.value,
+               meta: { isValid: true, isTouched: false, errors: [] },
+            }
             break
          case 'sachetItem':
-            object.price =
-               option.bulkItem?.supplierItem?.prices[0]?.unitPrice?.value
+            object.price = {
+               value:
+                  option.bulkItem?.supplierItem?.prices[0]?.unitPrice?.value,
+               meta: { isValid: true, isTouched: false, errors: [] },
+            }
             break
          case 'bulkItem':
-            object.price = option?.supplierItem?.prices[0]?.unitPrice?.value
+            object.price = {
+               value: option?.supplierItem?.prices[0]?.unitPrice?.value,
+               meta: {
+                  isValid: true,
+                  isTouched: false,
+                  errors: [],
+               },
+            }
             break
          case 'supplierItem':
-            object.price = option?.prices[0]?.unitPrice?.value
+            object.price = {
+               value: option?.prices[0]?.unitPrice?.value,
+               meta: {
+                  isValid: true,
+                  isTouched: false,
+                  errors: [],
+               },
+            }
             break
          default:
-            object.price = 1
-      }
-      if (!object.price) {
-         object.price = 1
+            object.price = {
+               value: 1,
+               meta: {
+                  isValid: true,
+                  isTouched: false,
+                  errors: [],
+               },
+            }
       }
       modifiersDispatch({
          type: 'ADD_CATEGORY_OPTION',
@@ -204,33 +250,42 @@ const ModifierOptionsTunnel = ({ close }) => {
                bulkItemsLoading,
                supplierItemsLoading,
             ].some(loading => loading) ? (
-               <Loader />
+               <InlineLoader />
             ) : (
-               <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.title} />
+               <>
+                  {list.length ? (
+                     <List>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder="type what you’re looking for..."
+                           />
+                        )}
+                        <ListOptions>
+                           {list
+                              .filter(option =>
+                                 option.title.toLowerCase().includes(search)
+                              )
+                              .map(option => (
+                                 <ListItem
+                                    type="SSL1"
+                                    key={option.id}
+                                    title={option.title}
+                                    isActive={option.id === current.id}
+                                    onClick={() => select(option)}
+                                 />
+                              ))}
+                        </ListOptions>
+                     </List>
                   ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
+                     <Filler
+                        message="No products/items found! To start, please add some."
+                        height="500px"
                      />
                   )}
-                  <ListOptions>
-                     {list
-                        .filter(option =>
-                           option.title.toLowerCase().includes(search)
-                        )
-                        .map(option => (
-                           <ListItem
-                              type="SSL1"
-                              key={option.id}
-                              title={option.title}
-                              isActive={option.id === current.id}
-                              onClick={() => select(option)}
-                           />
-                        ))}
-                  </ListOptions>
-               </List>
+               </>
             )}
          </TunnelBody>
       </>

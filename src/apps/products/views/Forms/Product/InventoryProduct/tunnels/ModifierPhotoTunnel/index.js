@@ -11,9 +11,9 @@ const ModifierPhotoTunnel = ({ close }) => {
 
    const addImage = image => {
       modifiersDispatch({
-         type: 'EDIT_CATEGORY_OPTION',
+         type: 'OPTION_VALUE',
          payload: {
-            label: 'image',
+            field: 'image',
             index: meta.selectedCategoryIndex,
             optionIndex: meta.selectedOptionIndex,
             value: image.url,

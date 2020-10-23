@@ -55,6 +55,32 @@ const validator = {
       }
       return { isValid, errors }
    },
+   min: value => {
+      let isValid = true
+      let errors = []
+      if (!value) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (!Number.isInteger(+value) || +value < 0) {
+         isValid = false
+         errors = [...errors, 'Invalid value!']
+      }
+      return { isValid, errors }
+   },
+   max: value => {
+      let isValid = true
+      let errors = []
+      if (!value) {
+         isValid = false
+         errors = [...errors, 'Cannot be empty!']
+      }
+      if (!Number.isInteger(+value) || +value < 1) {
+         isValid = false
+         errors = [...errors, 'Invalid value!']
+      }
+      return { isValid, errors }
+   },
 }
 
 export default validator
