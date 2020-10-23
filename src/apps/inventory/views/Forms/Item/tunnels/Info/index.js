@@ -10,7 +10,7 @@ import {
    UPDATE_SUPPLIER_ITEM,
 } from '../../../../../graphql'
 import handleNumberInputErrors from '../../../utils/handleNumberInputErrors'
-import { Highlight, StyledInputGroup, StyledRow, TunnelBody } from '../styled'
+import { Highlight, StyledInputGroup, TunnelBody } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
@@ -86,7 +86,7 @@ export default function InfoTunnel({ close, formState }) {
          />
 
          <TunnelBody>
-            <StyledRow>
+            <Flex margin="0 0 32px 0">
                <StyledInputGroup>
                   <Form.Group>
                      <Form.Label title="title" htmlFor="title">
@@ -119,8 +119,8 @@ export default function InfoTunnel({ close, formState }) {
                      />
                   </Form.Group>
                </StyledInputGroup>
-            </StyledRow>
-            <StyledRow>
+            </Flex>
+            <Flex margin="0 0 32px 0">
                <Highlight>
                   <StyledInputGroup>
                      <Form.Group>
@@ -170,8 +170,8 @@ export default function InfoTunnel({ close, formState }) {
                      </Form.Group>
                   </StyledInputGroup>
                </Highlight>
-            </StyledRow>
-            <StyledRow>
+            </Flex>
+            <Flex margin="0 0 32px 0">
                <StyledInputGroup>
                   <Highlight>
                      <Form.Group>
@@ -206,7 +206,7 @@ export default function InfoTunnel({ close, formState }) {
                      </Form.Group>
                   </Highlight>
                </StyledInputGroup>
-            </StyledRow>
+            </Flex>
          </TunnelBody>
       </>
    )
