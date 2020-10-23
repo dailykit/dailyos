@@ -7,7 +7,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
+import { EditIcon } from '../../../../../shared/assets/icons'
 import { DataCard } from '../../../components'
 import { ShadowCard } from '../styled'
 import PackagingInformation from './PackagingInformation'
