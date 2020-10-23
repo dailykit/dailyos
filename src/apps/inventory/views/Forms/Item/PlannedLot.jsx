@@ -1,5 +1,6 @@
 import {
    Filler,
+   Flex,
    IconButton,
    SectionTab,
    SectionTabList,
@@ -20,7 +21,6 @@ import {
    NO_BULK_ITEMS,
    NO_SACHET_ITEMS,
 } from '../../../constants/emptyMessages'
-import { FlexContainer } from '../styled'
 import { ConfigureSachetTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
@@ -84,7 +84,7 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
                   sachetItems.map(activeSachet => {
                      return (
                         <SectionTabPanel key={activeSachet.id}>
-                           <FlexContainer style={{ flexWrap: 'wrap' }}>
+                           <Flex container style={{ flexWrap: 'wrap' }}>
                               <DataCard
                                  title={t(address.concat('awaiting'))}
                                  quantity={`${activeSachet.awaiting || 0} pkt`}
@@ -97,7 +97,7 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
                                  title={t(address.concat('consumed'))}
                                  quantity={`${activeSachet.consumed || 0} pkt`}
                               />
-                           </FlexContainer>
+                           </Flex>
                         </SectionTabPanel>
                      )
                   })

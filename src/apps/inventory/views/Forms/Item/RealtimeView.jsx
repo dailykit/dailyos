@@ -1,7 +1,7 @@
+import { Flex } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { DataCard } from '../../../components'
-import { FlexContainer } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -11,7 +11,7 @@ export default function RealTimeView({ proc }) {
    if (!proc) return null
 
    return (
-      <FlexContainer style={{ flexWrap: 'wrap' }}>
+      <Flex container style={{ flexWrap: 'wrap' }}>
          <DataCard
             title={t(address.concat('awaiting'))}
             quantity={`${proc.awaiting} ${proc.unit}`}
@@ -28,6 +28,6 @@ export default function RealTimeView({ proc }) {
             title={t(address.concat('on hand'))}
             quantity={`${proc.onHand} ${proc.unit}`}
          />
-      </FlexContainer>
+      </Flex>
    )
 }

@@ -1,27 +1,28 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Loader, Toggle, Text, Spacer } from '@dailykit/ui'
+import { Flex, Loader, Spacer, Text, Toggle } from '@dailykit/ui'
+import React from 'react'
 import { toast } from 'react-toastify'
-
-import {
-   UPDATE_PACKAGING_SPECS,
-   PACKAGING_SPECS_SUBSCRIPTION,
-} from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
 import { Separator } from '../../../components'
-import { FlexContainer, ShadowCard } from '../styled'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import {
+   PACKAGING_SPECS_SUBSCRIPTION,
+   UPDATE_PACKAGING_SPECS,
+} from '../../../graphql'
+import { ShadowCard } from '../styled'
 
 function errorHandler(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function AdditionalInfo({ id }) {
    const {
       data: { packaging: { packagingSpecification: spec = {} } = {} } = {},
       loading,
+      error,
    } = useSubscription(PACKAGING_SPECS_SUBSCRIPTION, {
       variables: { id },
-      onError: errorHandler,
    })
 
    const [updateSpecs] = useMutation(UPDATE_PACKAGING_SPECS, {
@@ -40,17 +41,19 @@ export default function AdditionalInfo({ id }) {
       })
    }
 
+   if (error) {
+      errorHandler(error)
+   }
+
    return loading ? (
       <Loader />
    ) : (
       <ShadowCard style={{ flexDirection: 'column' }}>
-         <FlexContainer
-            style={{ justifyContent: 'space-between', alignItems: 'center' }}
-         >
+         <Flex container justifyContent="space-between" alignItems="center">
             <Text as="title">Additional Information</Text>
-         </FlexContainer>
+         </Flex>
          <Separator />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
+         <Flex container justifyContent="space-between">
             <Toggle
                checked={spec.innerWaterResistant}
                label="Inner Water Resistant"
@@ -62,9 +65,9 @@ export default function AdditionalInfo({ id }) {
                label="Microwaveable"
                setChecked={() => handleSave('microwaveable')}
             />
-         </FlexContainer>
+         </Flex>
          <Spacer size="16px" />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
+         <Flex container justifyContent="space-between">
             <Toggle
                checked={spec.outerWaterResistant}
                label="Outer Water Resistant"
@@ -76,9 +79,9 @@ export default function AdditionalInfo({ id }) {
                label="Recyclable"
                setChecked={() => handleSave('recyclable')}
             />
-         </FlexContainer>
+         </Flex>
          <Spacer size="16px" />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
+         <Flex container justifyContent="space-between">
             <Toggle
                checked={spec.innerGreaseResistant}
                label="Inner Grease Resistant"
@@ -90,9 +93,9 @@ export default function AdditionalInfo({ id }) {
                label="Compostable"
                setChecked={() => handleSave('compostable')}
             />
-         </FlexContainer>
+         </Flex>
          <Spacer size="16px" />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
+         <Flex container justifyContent="space-between">
             <Toggle
                checked={spec.outerGreaseResistant}
                label="Outer Grease Resistant"
@@ -104,7 +107,7 @@ export default function AdditionalInfo({ id }) {
                label="FDA compliant"
                setChecked={() => handleSave('fdaCompliant')}
             />
-         </FlexContainer>
+         </Flex>
       </ShadowCard>
    )
 }

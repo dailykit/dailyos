@@ -3,8 +3,8 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    ComboButton,
    Flex,
-   IconButton,
    Loader,
+   Spacer,
    Text,
    TextButton,
    Tunnel,
@@ -26,7 +26,6 @@ import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
-import { FlexContainer } from '../../Forms/styled'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
@@ -171,14 +170,14 @@ export default function WorkOrders() {
                   <Text as="h1">{t(address.concat('work orders'))}</Text>
                   <Tooltip identifier="work-orders_listings_header_title" />
                </Flex>
-               <FlexContainer>
+               <Flex container>
                   <TextButton
                      type="outline"
                      onClick={() => tableRef.current.table.clearHeaderFilter()}
                   >
                      Clear Filters
                   </TextButton>
-                  <span style={{ width: '10px' }} />
+                  <Spacer xAxis size="10px" />
                   <ComboButton
                      type="solid"
                      onClick={() => {
@@ -188,10 +187,10 @@ export default function WorkOrders() {
                      <AddIcon color="#fff" size={24} />
                      Create Work Order
                   </ComboButton>
-               </FlexContainer>
+               </Flex>
             </StyledHeader>
 
-            <br />
+            <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}
                columns={columns}

@@ -4,6 +4,7 @@ import {
    ComboButton,
    Flex,
    Loader,
+   Spacer,
    Text,
    Tunnel,
    Tunnels,
@@ -18,7 +19,6 @@ import { AddIcon, PackagingHubIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
-import { FlexContainer } from '../../Forms/styled'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
@@ -148,7 +148,7 @@ export default function Packagings() {
                   <Text as="title">Packagings</Text>
                   <Tooltip identifier="packagings_listings_header_title" />
                </Flex>
-               <FlexContainer>
+               <Flex container>
                   <ComboButton
                      type="outline"
                      onClick={() =>
@@ -158,14 +158,14 @@ export default function Packagings() {
                      <PackagingHubIcon />
                      EXPLORE PACKAGING HUB
                   </ComboButton>
-                  <span style={{ width: '10px' }} />
+                  <Spacer xAxis size="10px" />
                   <ComboButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
                      Add Packaging
                   </ComboButton>
-               </FlexContainer>
+               </Flex>
             </StyledHeader>
-            <br />
+            <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}
                columns={columns}

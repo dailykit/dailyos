@@ -6,6 +6,7 @@ import {
    Form,
    IconButton,
    Loader,
+   Spacer,
    Text,
    Tunnel,
    Tunnels,
@@ -137,12 +138,7 @@ export default function SupplierForm() {
                </Form.Group>
 
                <div style={{ width: '110px' }}>
-                  <FlexContainer>
-                     <>
-                        <ShowAvailability formState={formState} />
-                        <span style={{ width: '20px' }} />
-                     </>
-                  </FlexContainer>
+                  <ShowAvailability formState={formState} />
                </div>
             </StyledHeader>
             {formState.logo ? (
