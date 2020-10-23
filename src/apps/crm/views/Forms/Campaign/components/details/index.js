@@ -56,7 +56,7 @@ const Details = () => {
                   open={() => openTunnel(1)}
                   altMessage="Campaign Image"
                   identifier="campaign_basic_details"
-                  subheading="Campaign Type"
+                  subheading="Type"
                />
             </StyledCard>
          ) : (

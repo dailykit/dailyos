@@ -7,6 +7,8 @@ import {
    HorizontalTabPanel,
    HorizontalTabPanels,
    Form,
+   Spacer,
+   Text,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -22,6 +24,7 @@ import {
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import { InlineLoader } from '../../../../../shared/components'
+import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CampaignContext from '../../../context/Campaign/CampaignForm'
 
 const CampaignForm = () => {
@@ -90,14 +93,19 @@ const CampaignForm = () => {
    })
 
    const updatetoggle = () => {
-      updateCoupon({
-         variables: {
-            id: campaignId,
-            set: {
-               isActive: !toggle,
+      const val = !toggle
+      if (val && !state.isCampaignValid.status) {
+         toast.error('Campaign should be valid!')
+      } else {
+         updateCoupon({
+            variables: {
+               id: campaignId,
+               set: {
+                  isActive: val,
+               },
             },
-         },
-      })
+         })
+      }
    }
 
    const updateCheckbox = () => {
@@ -188,13 +196,27 @@ const CampaignForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Form.Toggle
-                     name="campaign_active"
-                     onChange={updatetoggle}
-                     value={toggle}
-                  >
-                     Active
-                  </Form.Toggle>
+                  <Flex container alignItems="center" height="100%">
+                     {state.isCampaignValid?.status ? (
+                        <>
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p">All good!</Text>
+                        </>
+                     ) : (
+                        <>
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isCampaignValid?.error}</Text>
+                        </>
+                     )}
+                     <Spacer xAxis size="16px" />
+                     <Form.Toggle
+                        name="campaign_active"
+                        onChange={updatetoggle}
+                        value={toggle}
+                     >
+                        Publish
+                     </Form.Toggle>
+                  </Flex>
                </Flex>
             </InputWrapper>
 
