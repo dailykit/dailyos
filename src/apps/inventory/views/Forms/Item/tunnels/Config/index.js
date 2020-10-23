@@ -42,13 +42,7 @@ import PhotoTunnel from './PhotoTunnel'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({
-   close,
-   proc: bulkItem,
-   id,
-   fromTunnel,
-   closeParent,
-}) {
+export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
    const { t } = useTranslation()
 
    const [errors, setErrors] = useState([])
@@ -98,7 +92,6 @@ export default function ConfigTunnel({
          console.log(error)
          toast.error(ERROR_UPDATING_BULK_ITEM)
          close(1)
-         fromTunnel && closeParent()
       },
    })
 
@@ -123,7 +116,6 @@ export default function ConfigTunnel({
          },
       })
       close(1)
-      fromTunnel && closeParent()
    }
 
    const handleNutriData = data => {
@@ -252,13 +244,15 @@ export default function ConfigTunnel({
             <StyledRow>
                <StyledInputGroup>
                   <Form.Group>
-                     <Form.Label>
+                     <Form.Label htmlFor="units" title="SelectUnit">
                         <Flex container alignItems="center">
                            Select Unit
                            <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_select_unit_formselect" />
                         </Flex>
                      </Form.Label>
                      <Form.Select
+                        name="units"
+                        id="units"
                         options={units}
                         value={unit}
                         onChange={e => setUnit(e.target.value)}
@@ -311,7 +305,7 @@ export default function ConfigTunnel({
             <StyledRow>
                <StyledInputGroup>
                   <Form.Group>
-                     <Form.Label htmlFor="labourTime">
+                     <Form.Label htmlFor="labourTime" title="labourTime">
                         <Flex container alignItems="center">
                            {t(address.concat('labour time per 100gm'))}
                            <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_labor_time_form_field" />
@@ -327,11 +321,13 @@ export default function ConfigTunnel({
                            onBlur={e => handleErrors(e, 'laboutTime')}
                         />
                         <Form.Select
+                           name="time"
+                           id="time"
                            options={[
                               { id: 0, title: t('units.hours') },
                               { id: 1, title: t('units.minutes') },
                            ]}
-                           defaultValue={laborUnit}
+                           value={laborUnit}
                            onChange={e => setLaborUnit(e.target.value)}
                         />
                      </Form.TextSelect>
@@ -387,12 +383,13 @@ export default function ConfigTunnel({
                            onBlur={e => handleErrors(e, 'shelfLife')}
                         />
                         <Form.Select
+                           id="unit"
                            name="unit"
                            options={[
                               { id: 0, title: t('units.hours') },
                               { id: 1, title: t('units.minutes') },
                            ]}
-                           defaultValue={shelfLifeUnit}
+                           value={shelfLifeUnit}
                            onChange={e => setShelfLifeUnit(e.target.value)}
                         />
                      </Form.TextSelect>
