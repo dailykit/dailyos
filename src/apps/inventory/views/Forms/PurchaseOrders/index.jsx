@@ -14,7 +14,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { ErrorState } from '../../../../../shared/components'
+import { ErrorState, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { ItemCard, Separator, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -132,7 +132,11 @@ export default function PurchaseOrderForm() {
                   <Flex container alignItems="flex-end">
                      <Form.Group>
                         <Form.Label htmlFor="quantity" title="quantity">
-                           {t(address.concat('enter order quantity'))}
+                           <Flex container alignItems="center">
+                              {t(address.concat('enter order quantity'))}
+
+                              <Tooltip identifier="purchase_order_form_order_quantity" />
+                           </Flex>
                         </Form.Label>
 
                         <Form.Number
