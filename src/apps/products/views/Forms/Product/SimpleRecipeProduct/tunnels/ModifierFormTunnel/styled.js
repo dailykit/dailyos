@@ -5,6 +5,7 @@ export const CategoryWrapper = styled.div`
    box-shadow: 0px 0px 5px 1px #ececec;
    padding: 16px;
    position: relative;
+   border-radius: 2px;
 `
 
 export const OptionWrapper = styled.div`
@@ -12,6 +13,7 @@ export const OptionWrapper = styled.div`
    border: 1px solid #ececec;
    padding: 8px;
    position: relative;
+   border-radius: 2px;
 `
 
 export const Action = styled.div`
@@ -52,4 +54,5 @@ export const OptionBottom = styled.div`
 
 export const ImageContainer = styled.div`
    position: relative;
+   border-radius: 2px;
 `

@@ -1,41 +1,42 @@
 import React from 'react'
-import { toast } from 'react-toastify'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   TunnelHeader,
-   useSingleList,
-   Loader,
+   Filler,
    List,
    ListItem,
-   ListSearch,
    ListOptions,
+   ListSearch,
+   TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
-import { TunnelBody } from '../styled'
+import { toast } from 'react-toastify'
+import {
+   ErrorBoundary,
+   InlineLoader,
+} from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
    MODIFIERS,
    UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
 } from '../../../../../../graphql'
-import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { TunnelBody } from '../styled'
 
 const ModifierTemplatesTunnel = ({ close }) => {
    const {
       modifiersState: { meta },
    } = React.useContext(ModifiersContext)
 
-   const [saving, setSaving] = React.useState(false)
-   const [search, setSearch] = React.useState('')
-   const [listing, setListing] = React.useState([])
-   const [list, current, selectOption] = useSingleList(listing)
-
    // Subscription
-   const { loading, error } = useSubscription(MODIFIERS, {
-      onSubscriptionData: data => {
-         setListing([...data.subscriptionData.data.modifiers])
-      },
-   })
+   const { data: { modifiers = [] } = {}, loading, error } = useSubscription(
+      MODIFIERS
+   )
+
+   const [search, setSearch] = React.useState('')
+   const [list, current, selectOption] = useSingleList(modifiers)
 
    // Mutation
-   const [updateSimpleRecipeProductOption] = useMutation(
+   const [updateInventoryProductOption, { loading: inFlight }] = useMutation(
       UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION,
       {
          onCompleted: () => {
@@ -44,41 +45,45 @@ const ModifierTemplatesTunnel = ({ close }) => {
             close(1)
          },
          onError: error => {
-            toast.error('Error')
-            console.log(error)
+            toast.error('Something went wrong!')
+            logger(error)
          },
       }
    )
 
    const save = () => {
-      try {
-         if (saving) return
-         setSaving(true)
-         updateSimpleRecipeProductOption({
-            variables: {
-               id: meta.optionId,
-               set: {
-                  modifierId: current.id,
-               },
+      if (inFlight) return
+      updateInventoryProductOption({
+         variables: {
+            id: meta.optionId,
+            set: {
+               modifierId: current.id,
             },
-         })
-      } catch (error) {
-         console.log(error)
-      } finally {
-         setSaving(false)
-      }
+         },
+      })
    }
+
+   React.useEffect(() => {
+      if (current.id) {
+         save()
+      }
+   }, [current.id])
+
+   if (loading) return <InlineLoader />
+   if (!loading && error) return <ErrorBoundary rootRoute="/apps/products" />
 
    return (
       <>
          <TunnelHeader
             title="Choose Modifier Template"
             close={() => close(6)}
-            right={{ action: save, title: saving ? 'Saving...' : 'Save' }}
          />
          <TunnelBody>
-            {[loading, error].some(loading => loading) ? (
-               <Loader />
+            {!modifiers.length ? (
+               <Filler
+                  message="No modifiers found! To start, please add some."
+                  height="500px"
+               />
             ) : (
                <List>
                   {Object.keys(current).length > 0 ? (

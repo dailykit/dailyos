@@ -2,6 +2,7 @@ import React from 'react'
 import { TunnelHeader, Flex } from '@dailykit/ui'
 import { AssetUploader } from '../../../../../../../../shared/components'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { TunnelBody } from '../styled'
 
 const ModifierPhotoTunnel = ({ close }) => {
    const {
@@ -11,9 +12,9 @@ const ModifierPhotoTunnel = ({ close }) => {
 
    const addImage = image => {
       modifiersDispatch({
-         type: 'EDIT_CATEGORY_OPTION',
+         type: 'OPTION_VALUE',
          payload: {
-            label: 'image',
+            field: 'image',
             index: meta.selectedCategoryIndex,
             optionIndex: meta.selectedOptionIndex,
             value: image.url,
@@ -25,12 +26,12 @@ const ModifierPhotoTunnel = ({ close }) => {
    return (
       <>
          <TunnelHeader title="Select Photo" close={() => close(5)} />
-         <Flex padding="0 14px">
+         <TunnelBody>
             <AssetUploader
                onAssetUpload={url => addImage(url)}
                onImageSelect={image => addImage(image)}
             />
-         </Flex>
+         </TunnelBody>
       </>
    )
 }
