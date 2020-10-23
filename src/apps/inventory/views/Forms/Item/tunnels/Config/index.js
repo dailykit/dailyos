@@ -15,12 +15,12 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
    NutritionTunnel,
    Tooltip,
 } from '../../../../../../../shared/components'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
-import EditIcon from '../../../../../../recipe/assets/icons/Edit'
 import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
 import { BULK_ITEM_UPDATED } from '../../../../../constants/successMessages'
 import { VALUE_SHOULD_BE_NUMBER } from '../../../../../constants/validationMessages'
