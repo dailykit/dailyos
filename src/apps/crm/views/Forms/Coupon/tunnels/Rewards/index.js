@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Text, TunnelHeader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
@@ -7,16 +7,16 @@ import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import CouponContext from '../../../../../context/Coupon/CouponForm'
 
 export default function RewardTypeTunnel({
-   state,
    closeTunnel,
    tunnels,
    openRewardTunnel,
    getRewardId,
 }) {
    const { addTab } = useTabs()
-
+   const context = useContext(CouponContext)
    const [types, setTypes] = useState([])
    // Subscription
    const { loading, error } = useSubscription(REWARD_TYPE, {
@@ -52,7 +52,7 @@ export default function RewardTypeTunnel({
       createReward({
          variables: {
             rewardType: type,
-            couponId: state?.id,
+            couponId: context.state?.id,
          },
       })
    }

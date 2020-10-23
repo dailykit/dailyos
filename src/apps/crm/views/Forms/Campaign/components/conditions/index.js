@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { ButtonTile, useTunnel, Text, TextButton, Flex } from '@dailykit/ui'
@@ -7,7 +7,9 @@ import Conditions from '../../../../../../../shared/components/Conditions'
 import { Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer } from './styled'
-const ConditionComp = ({ state }) => {
+import CampaignContext from '../../../../../context/Campaign/CampaignForm'
+const ConditionComp = () => {
+   const context = useContext(CampaignContext)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Mutation
@@ -27,7 +29,7 @@ const ConditionComp = ({ state }) => {
    const saveInfo = conditionId => {
       updateCoupon({
          variables: {
-            id: state.id,
+            id: context.state.id,
             set: {
                conditionId,
             },
@@ -37,13 +39,13 @@ const ConditionComp = ({ state }) => {
    return (
       <>
          <Conditions
-            id={state.conditionId}
+            id={context.state.conditionId}
             onSave={id => saveInfo(id)}
             tunnels={tunnels}
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
          />
-         {state.conditionId ? (
+         {context.state.conditionId ? (
             <StyledContainer>
                <Flex
                   container

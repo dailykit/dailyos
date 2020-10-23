@@ -23,6 +23,7 @@ import {
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import { InlineLoader } from '../../../../../shared/components'
+import CouponContext from '../../../context/Coupon/CouponForm'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -147,77 +148,82 @@ const CouponForm = () => {
 
    if (loading) return <InlineLoader />
    return (
-      <StyledWrapper>
-         <InputWrapper>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               padding="0 0 16px 0"
-            >
-               <Form.Group>
-                  <Form.Label htmlFor="name" title="Coupon Code ">
-                     Coupon Code*
-                  </Form.Label>
-                  <Form.Text
-                     id="couponCode"
-                     name="couponCode"
-                     value={codeTitle.value}
-                     placeholder="Enter the Coupon Code "
-                     onBlur={onBlur}
-                     onChange={e =>
-                        setCodeTitle({
-                           ...codeTitle,
-                           value: e.target.value,
-                        })
-                     }
-                  />
-                  {codeTitle.meta.isTouched &&
-                     !codeTitle.meta.isValid &&
-                     codeTitle.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-               <Form.Group>
-                  <Form.Toggle
-                     name="coupon_active"
-                     onChange={updatetoggle}
-                     value={toggle}
-                  >
-                     Active
-                  </Form.Toggle>
-               </Form.Group>
-            </Flex>
-         </InputWrapper>
-         <StyledDiv>
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  <HorizontalTab>Details</HorizontalTab>
-                  <HorizontalTab>Brand</HorizontalTab>
-                  <HorizontalTab>Insights</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     <StyledComp>
-                        <DetailsComp state={state} />
-                        <ConditionComp state={state} />
-                        <RewardComp
-                           state={state}
-                           updateCheckbox={updateCheckbox}
-                           checkbox={checkbox}
-                        />
-                     </StyledComp>
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <BrandCoupons state={state} />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     Insights Content coming soon!!
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
-         </StyledDiv>
-      </StyledWrapper>
+      <CouponContext.Provider
+         value={{
+            state,
+            checkbox,
+            updateCheckbox: updateCheckbox,
+            toggle,
+         }}
+      >
+         <StyledWrapper>
+            <InputWrapper>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="0 0 16px 0"
+               >
+                  <Form.Group>
+                     <Form.Label htmlFor="name" title="Coupon Code ">
+                        Coupon Code*
+                     </Form.Label>
+                     <Form.Text
+                        id="couponCode"
+                        name="couponCode"
+                        value={codeTitle.value}
+                        placeholder="Enter the Coupon Code "
+                        onBlur={onBlur}
+                        onChange={e =>
+                           setCodeTitle({
+                              ...codeTitle,
+                              value: e.target.value,
+                           })
+                        }
+                     />
+                     {codeTitle.meta.isTouched &&
+                        !codeTitle.meta.isValid &&
+                        codeTitle.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Form.Group>
+                     <Form.Toggle
+                        name="coupon_active"
+                        onChange={updatetoggle}
+                        value={toggle}
+                     >
+                        Active
+                     </Form.Toggle>
+                  </Form.Group>
+               </Flex>
+            </InputWrapper>
+            <StyledDiv>
+               <HorizontalTabs>
+                  <HorizontalTabList>
+                     <HorizontalTab>Details</HorizontalTab>
+                     <HorizontalTab>Brand</HorizontalTab>
+                     <HorizontalTab>Insights</HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <StyledComp>
+                           <DetailsComp />
+                           <ConditionComp />
+                           <RewardComp />
+                        </StyledComp>
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <BrandCoupons />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        Insights Content coming soon!!
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            </StyledDiv>
+         </StyledWrapper>
+      </CouponContext.Provider>
    )
 }
 

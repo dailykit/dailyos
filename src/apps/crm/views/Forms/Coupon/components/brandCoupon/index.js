@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
@@ -8,10 +8,11 @@ import { StyledHeader, StyledWrapper } from './styled'
 import options from '../../../../tableOptions'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import CouponContext from '../../../../../context/Coupon/CouponForm'
 
-const BrandCoupon = ({ state }) => {
+const BrandCoupon = () => {
    const tableRef = useRef()
-
+   const context = useContext(CouponContext)
    // Subscription
    const {
       loading: listloading,
@@ -53,7 +54,7 @@ const BrandCoupon = ({ state }) => {
          title: 'Coupon Available',
          formatter: reactFormatter(
             <ToggleCoupon
-               couponId={state.id}
+               couponId={context.state.id}
                onChange={object => upsertBrandCoupon({ variables: { object } })}
             />
          ),
