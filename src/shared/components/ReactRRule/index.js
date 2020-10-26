@@ -10,8 +10,8 @@ const Component = ({ value, onChange }) => {
       freq: 1,
       dtstart: '',
       until: '',
-      count: 30,
-      interval: 1,
+      count: '',
+      interval: '1',
       wkst: 0,
       byweekday: [],
       bymonth: [],
@@ -202,7 +202,7 @@ const Component = ({ value, onChange }) => {
                <Form.Number
                   id="count"
                   name="count"
-                  onChange={e => setState({ ...state, count: +e.target.value })}
+                  onChange={e => setState({ ...state, count: e.target.value })}
                   value={state.count}
                   placeholder="Enter count"
                />
@@ -219,7 +219,7 @@ const Component = ({ value, onChange }) => {
                   id="interval"
                   name="interval"
                   onChange={e =>
-                     setState({ ...state, interval: +e.target.value })
+                     setState({ ...state, interval: e.target.value })
                   }
                   value={state.interval}
                   placeholder="Enter interval"

@@ -41,7 +41,12 @@ const ProductsTunnel = ({ state, close }) => {
    ] = useLazyQuery(SIMPLE_RECIPE_PRODUCTS, {
       variables: {
          where: {
-            isPublished: { _eq: true },
+            _and: [
+               { isPublished: { _eq: true } },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {
@@ -62,7 +67,12 @@ const ProductsTunnel = ({ state, close }) => {
    ] = useLazyQuery(INVENTORY_PRODUCTS, {
       variables: {
          where: {
-            isPublished: { _eq: true },
+            _and: [
+               { isPublished: { _eq: true } },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {

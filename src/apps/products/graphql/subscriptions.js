@@ -298,8 +298,11 @@ export const S_ACCOMPANIMENT_TYPES = gql`
 `
 
 export const S_SIMPLE_RECIPE_PRODUCTS = gql`
-   subscription {
-      simpleRecipeProducts {
+   subscription SimpleRecipeProducts {
+      simpleRecipeProducts(
+         order_by: { created_at: desc }
+         where: { isArchived: { _eq: false } }
+      ) {
          id
          name
          isValid
@@ -330,7 +333,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             name
             image
          }
-         simpleRecipeProductOptions {
+         simpleRecipeProductOptions(order_by: { created_at: desc }) {
             id
             isActive
             price
@@ -362,8 +365,8 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
 `
 
 export const S_INVENTORY_PRODUCTS = gql`
-   subscription {
-      inventoryProducts {
+   subscription InventoryProducts {
+      inventoryProducts(where: { isArchived: { _eq: false } }) {
          id
          name
          isValid
@@ -409,7 +412,10 @@ export const S_INVENTORY_PRODUCT = gql`
                }
             }
          }
-         inventoryProductOptions {
+         inventoryProductOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { created_at: desc }
+         ) {
             id
             label
             price
@@ -437,7 +443,10 @@ export const S_INVENTORY_PRODUCT = gql`
 
 export const S_CUSTOMIZABLE_PRODUCTS = gql`
    subscription {
-      customizableProducts {
+      customizableProducts(
+         where: { isArchived: { _eq: false } }
+         order_by: { created_at: desc }
+      ) {
          id
          name
          isValid
@@ -458,13 +467,19 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          tags
          assets
          isPopupAllowed
-         customizableProductOptions {
+         customizableProductOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { created_at: desc }
+         ) {
             id
             inventoryProduct {
                id
                name
                assets
-               inventoryProductOptions {
+               inventoryProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   label
                   price
@@ -475,7 +490,10 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
                id
                name
                assets
-               simpleRecipeProductOptions {
+               simpleRecipeProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   isActive
                   price
@@ -492,7 +510,10 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
 
 export const S_COMBO_PRODUCTS = gql`
    subscription {
-      comboProducts {
+      comboProducts(
+         where: { isArchived: { _eq: false } }
+         order_by: { created_at: desc }
+      ) {
          id
          name
          isValid
@@ -516,7 +537,10 @@ export const S_COMBO_PRODUCT = gql`
          isPublished
          assets
          isPopupAllowed
-         comboProductComponents {
+         comboProductComponents(
+            where: { isArchived: { _eq: false } }
+            order_by: { created_at: desc }
+         ) {
             id
             label
             customizableProduct {
@@ -528,7 +552,10 @@ export const S_COMBO_PRODUCT = gql`
                id
                name
                assets
-               inventoryProductOptions {
+               inventoryProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   label
                   price
@@ -539,7 +566,10 @@ export const S_COMBO_PRODUCT = gql`
                id
                name
                assets
-               simpleRecipeProductOptions {
+               simpleRecipeProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   isActive
                   price

@@ -1,28 +1,27 @@
 import React from 'react'
 
-// third party imports
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { IconButton, Loader, Spacer, TextButton } from '@dailykit/ui'
 
-// shared dir imports
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { logger } from '../../../../../../../shared/utils'
 
-// graphql imports
 import {
    DELETE_INVENTORY_PRODUCTS,
    S_INVENTORY_PRODUCTS,
 } from '../../../../../graphql'
 
-// context imports
 import { useTabs } from '../../../../../context'
 
-// local imports
 import tableOptions from '../../../tableOption'
 import { useTooltip } from '../../../../../../../shared/providers'
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -38,11 +37,6 @@ const InventoryProducts = () => {
       loading,
       error,
    } = useSubscription(S_INVENTORY_PRODUCTS)
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    const [deleteProducts] = useMutation(DELETE_INVENTORY_PRODUCTS, {
       onCompleted: () => {
@@ -107,7 +101,11 @@ const InventoryProducts = () => {
       },
    ]
 
-   if (loading) return <Loader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Inventory Products!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <>
@@ -118,12 +116,16 @@ const InventoryProducts = () => {
             Clear Filters
          </TextButton>
          <Spacer size="16px" />
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={inventoryProducts}
-            options={tableOptions}
-         />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={inventoryProducts}
+               options={tableOptions}
+            />
+         )}
       </>
    )
 }

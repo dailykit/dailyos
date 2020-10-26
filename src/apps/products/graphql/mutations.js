@@ -249,7 +249,10 @@ export const CREATE_INVENTORY_PRODUCT = gql`
 
 export const DELETE_INVENTORY_PRODUCTS = gql`
    mutation DeleteInventoryProducts($ids: [Int!]!) {
-      deleteInventoryProduct(where: { id: { _in: $ids } }) {
+      updateInventoryProduct(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -297,7 +300,10 @@ export const UPDATE_INVENTORY_PRODUCT_OPTION = gql`
 
 export const DELETE_INVENTORY_PRODUCT_OPTION = gql`
    mutation DeleteInventoryProductOption($id: Int_comparison_exp) {
-      deleteInventoryProductOption(where: { id: $id }) {
+      updateInventoryProductOption(
+         where: { id: $id }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -320,7 +326,10 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
 
 export const DELETE_SIMPLE_RECIPE_PRODUCTS = gql`
    mutation DeleteSimpleRecipeProducts($ids: [Int!]!) {
-      deleteSimpleRecipeProduct(where: { id: { _in: $ids } }) {
+      updateSimpleRecipeProduct(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -368,7 +377,10 @@ export const UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION = gql`
 
 export const DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
    mutation DeleteSimpleRecipeProductOptions($ids: [Int!]!) {
-      deleteSimpleRecipeProductOption(where: { id: { _in: $ids } }) {
+      updateSimpleRecipeProductOption(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -391,7 +403,10 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
 
 export const DELETE_CUSTOMIZABLE_PRODUCTS = gql`
    mutation DeleteCustomizableProducts($ids: [Int!]!) {
-      deleteCustomizableProduct(where: { id: { _in: $ids } }) {
+      updateCustomizableProduct(
+         where: { id: { _in: $ids } }
+         set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -426,7 +441,10 @@ export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
 
 export const DELETE_CUSTOMIZABLE_PRODUCT_OPTION = gql`
    mutation DeleteCustomizableProductOption($id: Int) {
-      deleteCustomizableProductOption(where: { id: { _eq: $id } }) {
+      updateCustomizableProductOption(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -449,7 +467,10 @@ export const CREATE_COMBO_PRODUCT = gql`
 
 export const DELETE_COMBO_PRODUCTS = gql`
    mutation DeleteComboProducts($ids: [Int!]!) {
-      deleteComboProduct(where: { id: { _in: $ids } }) {
+      updateComboProduct(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -497,7 +518,10 @@ export const UPDATE_COMBO_PRODUCT_COMPONENT = gql`
 
 export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
    mutation DeleteComboProductComponent($id: Int!) {
-      deleteComboProductComponent(where: { id: { _eq: $id } }) {
+      updateComboProductComponent(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }

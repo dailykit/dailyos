@@ -1,11 +1,15 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Loader, Spacer, Text } from '@dailykit/ui'
+import { Flex, Form, Spacer, Text } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../../assets/icons'
 import { useTabs } from '../../../../context'
@@ -60,11 +64,6 @@ export default function CustomizableProduct() {
          })
       },
    })
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_CUSTOMIZABLE_PRODUCT, {
@@ -134,7 +133,12 @@ export default function CustomizableProduct() {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Failed to fetch Customizable Product!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <CustomizableProductContext.Provider
@@ -202,7 +206,12 @@ export default function CustomizableProduct() {
                </Form.Toggle>
             </Flex>
          </Flex>
-         <Flex as="main" padding="32px" style={{ background: '#f3f3f3' }}>
+         <Flex
+            as="main"
+            padding="32px"
+            minHeight="calc(100vh - 130px)"
+            style={{ background: '#f3f3f3' }}
+         >
             <Flex as="section" container>
                <Flex flex="2">
                   <Description state={state} />

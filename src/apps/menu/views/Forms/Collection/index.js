@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
-   ErrorBoundary,
+   ErrorState,
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
@@ -67,11 +67,6 @@ const CollectionForm = () => {
       },
    })
 
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
-
    // Mutations
    const [updateCollection] = useMutation(UPDATE_COLLECTION, {
       onCompleted: () => {
@@ -114,7 +109,11 @@ const CollectionForm = () => {
       })
    }
 
-   if (!loading && error) return <ErrorBoundary />
+   if (!loading && error) {
+      toast.error('Failed to fetch Collection!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <>

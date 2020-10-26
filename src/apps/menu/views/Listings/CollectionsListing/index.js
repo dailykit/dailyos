@@ -1,37 +1,31 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-
-// Components
 import {
-   Flex,
-   TextButton,
    ComboButton,
+   Flex,
+   IconButton,
    Spacer,
    Text,
-   IconButton,
+   TextButton,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { logger, randomSuffix } from '../../../../../shared/utils'
-// Icons
-import { AddIcon, DeleteIcon } from '../../../assets/icons'
-// State
-import { useTabs } from '../../../context'
 import {
-   S_COLLECTIONS,
-   CREATE_COLLECTION,
-   DELETE_COLLECTION,
-} from '../../../graphql'
-// Styled
-import { StyledHeader, StyledWrapper, Flexible } from '../styled'
-import tableOptions from '../tableOption'
-import {
-   ErrorBoundary,
+   ErrorState,
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
+import { logger, randomSuffix } from '../../../../../shared/utils'
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import { useTabs } from '../../../context'
+import {
+   CREATE_COLLECTION,
+   DELETE_COLLECTION,
+   S_COLLECTIONS,
+} from '../../../graphql'
+import tableOptions from '../tableOption'
 
 const address = 'apps.menu.views.listings.collectionslisting.'
 
@@ -146,7 +140,11 @@ const CollectionsListing = () => {
       },
    ]
 
-   if (!loading && error) return <ErrorBoundary rootRoute="/apps/menu" />
+   if (!loading && error) {
+      toast.error('Failed to fetch Collections!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
