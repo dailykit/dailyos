@@ -75,6 +75,7 @@ export const COUPON_DATA = gql`
          id
          code
          isActive
+         isCouponValid
          isRewardMulti
          metaDetails
          visibleConditionId
@@ -89,6 +90,7 @@ export const CAMPAIGN_DATA = gql`
          conditionId
          id
          isActive
+         isCampaignValid
          isRewardMulti
          metaDetails
          campaignType {
