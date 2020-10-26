@@ -35,6 +35,7 @@ export const COUPON_LISTING = gql`
          id
          code
          isActive
+         isCouponValid
       }
    }
 `
@@ -47,6 +48,7 @@ export const CAMPAIGN_LISTING = gql`
          isActive
          isRewardMulti
          metaDetails
+         isCampaignValid
       }
    }
 `
