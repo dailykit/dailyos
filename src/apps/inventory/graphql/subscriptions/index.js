@@ -289,35 +289,6 @@ export const PACKAGING_SUBSCRIPTION = gql`
    }
 `
 
-export const PACKAGINGS_SUBSCRIPTION = gql`
-   subscription Packagings {
-      packagings {
-         id
-         name
-         unitPrice
-         dimensions
-         sku
-         parLevel
-         maxLevel
-         unitQuantity
-         caseQuantity
-         unitPrice
-         isAvailable
-         minOrderValue
-         awaiting
-         onHand
-         committed
-         leadTime
-         type
-         supplier {
-            id
-            name
-            contactPerson
-         }
-      }
-   }
-`
-
 export const PACKAGINGS_LIST_SUBSCRIPTION = gql`
    subscription Packagings {
       packagings {
