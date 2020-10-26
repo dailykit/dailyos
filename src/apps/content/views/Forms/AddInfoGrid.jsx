@@ -1,100 +1,135 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import { useMutation} from '@apollo/react-hooks'
-import { Form, Spacer,TextButton ,Text} from '@dailykit/ui'
-import { StyledWrapper} from '../Listings/styled'
-import { Flex } from '../../../../shared/components'
-import { INSERT_INFO_GRID} from '../../graphql'
-
+import { useMutation } from '@apollo/react-hooks'
+import { Form, Spacer, TextButton, Text } from '@dailykit/ui'
+import { Flex, Tooltip } from '../../../../shared/components'
+import { INSERT_INFO_GRID } from '../../graphql'
 
 export const AddInfoGrid = () => {
+   const [form, setForm] = React.useState({
+      heading: '',
+      subHeading: '',
+      page: '',
+      identifier: '',
+   })
 
+   const [insert_content_informationGrid_one] = useMutation(INSERT_INFO_GRID, {
+      onCompleted: () => toast.success('Created succesfully!'),
+      onError: () => toast.error('Failed to create!'),
+   })
 
-    const [form, setForm] = React.useState({
-        heading: '', 
-        subHeading: '',
-        page:'',
-        identifier:''
-     })
+   const onClick = React.useCallback(() => {
+      if (!form.heading || !form.subHeading || !form.page || !form.identifier)
+         return toast.error('Please provide proper inputs!')
+      insert_content_informationGrid_one({
+         variables: {
+            object: {
+               heading: form.heading,
+               subHeading: form.subHeading,
+               page: form.page,
+               identifier: form.identifier,
+            },
+         },
+      })
+   }, [form.heading, form.subHeading, form.page, form.identifier])
 
-     const [ insert_content_informationGrid_one]  = useMutation(INSERT_INFO_GRID, {
-        onCompleted: () => toast.success('Created succesfully!'),
-        // onError: () => toast.error('Failed to create!'),
-        onError: error => console.log(error),
+   const [page] = React.useState([
+      { id: 1, title: 'Select Page' },
+      { id: 2, title: 'home' },
+      { id: 3, title: 'select-plan' },
+   ])
+   const [identifier] = React.useState([
+      { id: 1, title: 'Select Identifier' },
+      { id: 2, title: 'bottom-01' },
+   ])
 
-     })
-     
-
-    const onClick = React.useCallback(()=> {
-        if(!form.heading || !form.subHeading) return toast.error('Please provide proper inputs!')
-        insert_content_informationGrid_one({
-                 variables : { object : { 
-                    heading : form.heading,
-                    subHeading : form.subHeading, 
-                    page : form.page, 
-                    identifier : form.identifier
-                  }}})},[form.heading,form.subHeading,form.page,form.identifier]   
-     ) 
-
-    return (
-        <StyledWrapper>
-            <div>
-            <Flex padding="30px" >
-            <Spacer size='64x' />
-            <Text as='h1'>Add New Information Grid</Text>
-            <div align='right'>
-                <TextButton type='solid' onClick={onClick}>Save</TextButton>
-            </div>
-            <Spacer size='20px' />
-            <Form.Group>
-            <Form.Label htmlFor='heading' title='heading'>Heading*</Form.Label>
+   return (
+      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            height="72px"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">Add New Information Grid</Text>
+               <Tooltip identifier="recipes_list_heading" />
+            </Flex>
+         </Flex>
+         <Spacer size="64x" />
+         <div align="right">
+            <TextButton type="solid" onClick={onClick}>
+               Save
+            </TextButton>
+         </div>
+         <Spacer size="20px" />
+         <Form.Group>
+            <Form.Label htmlFor="heading" title="heading">
+               Heading*
+            </Form.Label>
             <Form.Text
-                id='heading'
-                name="heading"
-                value={form.heading}
-                onChange={e => setForm({
-                    ...form , heading:e.target.value})}
-                placeholder="Enter Heading..."
+               id="heading"
+               name="heading"
+               value={form.heading}
+               onChange={e =>
+                  setForm({
+                     ...form,
+                     heading: e.target.value,
+                  })
+               }
+               placeholder="Enter Heading..."
             />
-            </Form.Group>
-            <Spacer size='32px' />
-            <Form.Group>
+         </Form.Group>
+         <Spacer size="32px" />
+         <Form.Group>
             <Form.Label>Sub Heading*</Form.Label>
             <Form.TextArea
-                id='subHeading'
-                name="subHeading"
-                value={form.subHeading}
-                onChange={e => setForm({
-                    ...form, subHeading:e.target.value})}
-                placeholder="Enter Sub Heading..."
+               id="subHeading"
+               name="subHeading"
+               value={form.subHeading}
+               onChange={e =>
+                  setForm({
+                     ...form,
+                     subHeading: e.target.value,
+                  })
+               }
+               placeholder="Enter Sub Heading..."
             />
-            </Form.Group>
-            <Spacer size='32px' />
-            <Form.Group>
+         </Form.Group>
+         <Spacer size="32px" />
+         <Form.Group>
             <Form.Label>Page*</Form.Label>
-            <Form.Text
-                id='page'
-                name="page"
-                value={form.page}
-                onChange={e => setForm({
-                    ...form, page:e.target.value})}
-                placeholder="Enter page option..."
+            <Form.Select
+               id="page"
+               name="page"
+               options={page}
+               onChange={e =>
+                  setForm({
+                     ...form,
+                     page: e.target.value,
+                  })
+               }
+               placeholder="Enter page option..."
+               defaultValue={page[1]}
             />
-            </Form.Group>
-            <Spacer size='32px' />
-            <Form.Group>
+         </Form.Group>
+         <Spacer size="32px" />
+         <Form.Group>
             <Form.Label>Identifier*</Form.Label>
-            <Form.Text
-                id='identifier'
-                name="identifier"
-                value={form.identifier}
-                onChange={e => setForm({
-                    ...form, identifier:e.target.value})}
-                placeholder="Enter identifier..."
+            <Form.Select
+               id="identifier"
+               name="identifier"
+               options={identifier}
+               onChange={e =>
+                  setForm({
+                     ...form,
+                     identifier: e.target.value,
+                  })
+               }
+               placeholder="Enter identifier..."
+               defaultValue={identifier[1]}
             />
-            </Form.Group>
-            </Flex>
-            </div>
-      </StyledWrapper>
-    )
+         </Form.Group>
+      </Flex>
+   )
 }

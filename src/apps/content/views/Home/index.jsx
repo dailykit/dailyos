@@ -6,7 +6,8 @@ import { useTabs } from '../../context'
 import { StyledCardList, StyledHome } from './styled'
 
 export const Home = () => {
-   const { addTab } = useTabs()
+   
+const { addTab } = useTabs()
 const { loading, data : { content_informationGrid_aggregate = {} } = {} } = useSubscription(INFO_COUNT)
 
    return (

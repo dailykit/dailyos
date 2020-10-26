@@ -1,21 +1,2 @@
-import { INFORMATION_GRID, 
-    FAQS, 
-    INFO_GRID_ONE ,
-    UPDATE_INFO_GRID, 
-    FAQ_ONE, 
-    UPDATE_INFO_FAQ, 
-    INSERT_INFO_FAQ, 
-    INSERT_INFO_GRID,
-    INFO_COUNT
-} from './queries'
-
-export { INFORMATION_GRID, 
-    FAQS, 
-    INFO_GRID_ONE ,
-    UPDATE_INFO_GRID, 
-    FAQ_ONE , 
-    UPDATE_INFO_FAQ,
-    INSERT_INFO_FAQ,
-    INSERT_INFO_GRID,
-    INFO_COUNT
-}
+export * from './queries'
+export * from './mutations'

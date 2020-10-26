@@ -12,51 +12,55 @@ import {
    PlusIcon,
    useTunnel,
    Tunnel,
-   Tunnels
+   Tunnels,
+   Flex,
 } from '@dailykit/ui'
 
 import { InformationGrid } from './InformationGrid'
 import { FAQs } from './FAQs'
-import {InformationList} from './InformationList'
-
-import { StyledWrapper,StyledHeader } from '../styled'
+import { InformationList } from './InformationList'
+import { Tooltip } from '../../../../../shared/components'
+import { StyledWrapper } from '../styled'
 
 export const Blocks = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    return (
-      <>
-      <Tunnels tunnels={tunnels}>
+      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            height="72px"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">Blocks</Text>
+               <Tooltip identifier="blocks_list_heading" />
+            </Flex>
+            <IconButton type="solid" onClick={() => openTunnel(1)}>
+               <PlusIcon />
+            </IconButton>
+         </Flex>
+         <Spacer size="20px" />
+         <HorizontalTabs>
+            <HorizontalTabList>
+               <HorizontalTab>Information Grid</HorizontalTab>
+               <HorizontalTab>FAQS</HorizontalTab>
+            </HorizontalTabList>
+            <HorizontalTabPanels>
+               <HorizontalTabPanel>
+                  <InformationGrid />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <FAQs />
+               </HorizontalTabPanel>
+            </HorizontalTabPanels>
+         </HorizontalTabs>
+         <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <InformationList closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-      <StyledWrapper>
-         <div>
-            <Spacer size="20px" />
-            <StyledHeader>
-            <Text as="h1">Blocks</Text>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
-                  <PlusIcon/>
-               </IconButton>
-            </StyledHeader>
-            <Spacer size="20px" />
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  <HorizontalTab>Information Grid</HorizontalTab>
-                  <HorizontalTab>FAQS</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     <InformationGrid />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <FAQs />
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
-         </div>
-      </StyledWrapper>
-      </>
+      </Flex>
    )
 }

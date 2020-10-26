@@ -18,15 +18,15 @@ const keycloak = new Keycloak({
 })
 
 const ContentApp = () => (
-      <AuthProvider keycloak={keycloak}>
+      //<AuthProvider keycloak={keycloak}>
       <TooltipProvider app="Content App">
-         <AccessProvider app="Content App">
+         {/* <AccessProvider app="Content App"> */}
          <TabProvider>
             <App />
          </TabProvider>
-         </AccessProvider>
+         {/* </AccessProvider> */}
          </TooltipProvider>
-         </AuthProvider>
+         //</AuthProvider>
 )
 
 export default ContentApp

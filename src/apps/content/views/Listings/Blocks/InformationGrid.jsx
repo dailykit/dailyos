@@ -1,16 +1,16 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import { IconButton } from '@dailykit/ui'
 import { InlineLoader } from '../../../../../shared/components'
 import tableOptions from '../tableOption'
 import { INFORMATION_GRID } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { EditIcon } from '../../../../../shared/assets/icons'
+import { useTooltip } from '../../../../../shared/providers'
 
 export const InformationGrid = () => {
    const { tab, addTab } = useTabs()
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
 
    const {
       loading,
@@ -24,10 +24,6 @@ export const InformationGrid = () => {
       }
    }, [tab, addTab])
 
-   const edit = block => {
-      addTab(block?.heading  || 'N/A', `/content/blocks/grid/${block.id}`)
-      }
-
    const columns = React.useMemo(
       () => [
          {
@@ -35,18 +31,31 @@ export const InformationGrid = () => {
             field: 'heading',
             headerSort: true,
             headerFilter: true,
+            cellClick: (e, cell) => {
+               const { id } = cell._cell.row.data
+               addTab('Grid Info', `/content/blocks/grid/${id}`)
+            },
+            headerTooltip: function (column) {
+               const identifier = 'grid_listing_heading_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            cssClass: 'colHover',
          },
          {
             title: 'Sub Heading',
             field: 'subHeading',
             headerSort: true,
             headerFilter: true,
-         },
-         {
-            title: 'Actions',
-            hozAlign: 'center',
-            headerSort: false,
-            formatter: reactFormatter(<EditBrand edit={edit} />),
+            headerTooltip: function (column) {
+               const identifier = 'grid_listing_subheading_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
       ],
       []
@@ -61,13 +70,5 @@ export const InformationGrid = () => {
          data={content_informationGrid}
          options={tableOptions}
       />
-   )
-}
-
-const EditBrand = ({ cell, edit }) => {
-   return (
-      <IconButton type="outline" size="sm" onClick={() => edit(cell.getData())}>
-         <EditIcon color="rgb(40, 193, 247)" />
-      </IconButton>
    )
 }

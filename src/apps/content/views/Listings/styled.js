@@ -3,8 +3,8 @@ import styled from 'styled-components'
 export const StyledWrapper = styled.div`
    > div {
       margin: 0 auto;
-      max-width: 980px;
-      width: calc(100vw - 40px);
+      max-width: 1000px;
+      width: calc(100vw - 30px);
    }
 `
 

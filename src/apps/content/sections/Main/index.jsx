@@ -22,10 +22,10 @@ export default function Main() {
             <Route path="/content/blocks/grid/:id">
                <InformationGrid/>
             </Route>
-            <Route path="/content/blocks/grid-form" exact>
+            <Route path="/content/blocks/grid-form/:id" >
                <AddInfoGrid/>
             </Route>
-            <Route path="/content/blocks/faq-form" exact>
+            <Route path="/content/blocks/faq-form/:id" >
                <AddFAQ/>
             </Route>
          </Switch>
