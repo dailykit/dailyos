@@ -78,7 +78,7 @@ function HistoryTable({ bulkItemId }) {
 
    if (error) {
       logger(error)
-      return <ErrorState />
+      return <ErrorState height="400px" />
    }
 
    if (loading) return <InlineLoader />
@@ -121,7 +121,7 @@ function HistoryTable({ bulkItemId }) {
          headerFilter: false,
          headerSort: false,
          headerTooltip: col => {
-            const identifier = 'bulk_item_history_output_status'
+            const identifier = 'bulk_item_history_status'
             return tooltip(identifier)?.description || col.getDefinition().title
          },
       },
