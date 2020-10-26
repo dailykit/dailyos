@@ -8,6 +8,7 @@ import {
    useSingleList,
    TunnelHeader,
    Filler,
+   ListHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -18,7 +19,10 @@ import {
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.simplerecipeproduct.tunnels.recipetunnel.'
@@ -141,6 +145,9 @@ export default function RecipeTunnel({ state, close }) {
          <TunnelHeader
             title={t(address.concat('select a recipe'))}
             close={() => close(1)}
+            tooltip={
+               <Tooltip identifier="simple_recipe_product_recipe_tunnel" />
+            }
          />
          <TunnelBody>
             {loading ? (
@@ -159,6 +166,7 @@ export default function RecipeTunnel({ state, close }) {
                               )}
                            />
                         )}
+                        <ListHeader type="SSL1" label="Recipes" />
                         <ListOptions>
                            {list
                               .filter(option =>

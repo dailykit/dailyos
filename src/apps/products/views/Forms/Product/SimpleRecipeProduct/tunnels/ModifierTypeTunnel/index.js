@@ -2,6 +2,7 @@ import React from 'react'
 import { TunnelHeader, Text } from '@dailykit/ui'
 import { TunnelBody, SolidTile } from '../styled'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const ModifierTypeTunnel = ({ open, close }) => {
    const { modifiersDispatch } = React.useContext(ModifiersContext)
@@ -19,7 +20,11 @@ const ModifierTypeTunnel = ({ open, close }) => {
 
    return (
       <>
-         <TunnelHeader title="Choose Option Type" close={() => close(3)} />
+         <TunnelHeader
+            title="Choose Option Type"
+            close={() => close(3)}
+            tooltip={<Tooltip identifier="modifier_option_type_tunnel" />}
+         />
          <TunnelBody>
             <SolidTile onClick={() => select('inventoryProductOption')}>
                <Text as="h1">Inventory Product</Text>

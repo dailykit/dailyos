@@ -3,6 +3,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -13,7 +14,10 @@ import {
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import {
    S_ACCOMPANIMENT_TYPES,
@@ -85,6 +89,7 @@ const RecommendationTypeTunnel = ({ state, close }) => {
                   : t(address.concat('save')),
             }}
             close={() => close(1)}
+            tooltip={<Tooltip identifier="recommendation_type_tunnel" />}
          />
          <TunnelBody>
             {loading ? (
@@ -114,6 +119,10 @@ const RecommendationTypeTunnel = ({ state, close }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader
+                           type="MSL1"
+                           label="Recommendation Categories"
+                        />
                         <ListOptions>
                            {list
                               .filter(option =>

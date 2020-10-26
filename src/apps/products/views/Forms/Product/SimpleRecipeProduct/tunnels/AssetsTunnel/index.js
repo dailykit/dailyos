@@ -2,7 +2,10 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import { TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
-import { AssetUploader } from '../../../../../../../../shared/components'
+import {
+   AssetUploader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
 import { logger } from '../../../../../../../../shared/utils'
 import { TunnelBody } from '../styled'
@@ -35,7 +38,13 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Photo" close={() => closeTunnel(1)} />
+         <TunnelHeader
+            title="Select Photo"
+            close={() => closeTunnel(1)}
+            tooltip={
+               <Tooltip identifier="simple_recipe_product_assets_tunnel" />
+            }
+         />
          <TunnelBody>
             <AssetUploader
                onAssetUpload={url => addImage(url)}

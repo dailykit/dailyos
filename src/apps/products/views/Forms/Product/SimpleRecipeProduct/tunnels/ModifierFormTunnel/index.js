@@ -9,6 +9,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../assets/icons'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
@@ -217,6 +218,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                action: save,
                title: saving ? 'Saving...' : 'Save',
             }}
+            tooltip={<Tooltip identifier="add_modifier_tunnel" />}
          />
          <TunnelBody>
             <Form.Group>
