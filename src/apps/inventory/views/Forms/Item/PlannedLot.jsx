@@ -172,7 +172,7 @@ function SachetHistories({ sachetId }) {
    if (loading) return <InlineLoader />
 
    if (!sachetItemHistories.length)
-      return <Filler message={NO_SACHET_HISTORIES} />
+      return <Filler message={NO_SACHET_HISTORIES} height="400px" />
 
    const columns = [
       {
