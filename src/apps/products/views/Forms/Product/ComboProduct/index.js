@@ -1,11 +1,15 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Loader, Spacer, Text } from '@dailykit/ui'
+import { Flex, Form, Spacer, Text } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../../assets/icons'
 import { useTabs } from '../../../../context'
@@ -56,11 +60,6 @@ export default function ComboProduct() {
          })
       },
    })
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    // Mutations
    const [updateProduct] = useMutation(UPDATE_COMBO_PRODUCT, {
@@ -130,7 +129,12 @@ export default function ComboProduct() {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Combo Product!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <ComboProductContext.Provider value={{ productState, productDispatch }}>

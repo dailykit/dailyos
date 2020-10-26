@@ -476,7 +476,10 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
                id
                name
                assets
-               inventoryProductOptions {
+               inventoryProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   label
                   price
@@ -487,7 +490,10 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
                id
                name
                assets
-               simpleRecipeProductOptions {
+               simpleRecipeProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   isActive
                   price
@@ -504,7 +510,10 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
 
 export const S_COMBO_PRODUCTS = gql`
    subscription {
-      comboProducts {
+      comboProducts(
+         where: { isArchived: { _eq: false } }
+         order_by: { created_at: desc }
+      ) {
          id
          name
          isValid
@@ -528,7 +537,10 @@ export const S_COMBO_PRODUCT = gql`
          isPublished
          assets
          isPopupAllowed
-         comboProductComponents {
+         comboProductComponents(
+            where: { isArchived: { _eq: false } }
+            order_by: { created_at: desc }
+         ) {
             id
             label
             customizableProduct {
@@ -540,7 +552,10 @@ export const S_COMBO_PRODUCT = gql`
                id
                name
                assets
-               inventoryProductOptions {
+               inventoryProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   label
                   price
@@ -551,7 +566,10 @@ export const S_COMBO_PRODUCT = gql`
                id
                name
                assets
-               simpleRecipeProductOptions {
+               simpleRecipeProductOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   isActive
                   price

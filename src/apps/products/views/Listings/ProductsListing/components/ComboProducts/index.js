@@ -1,25 +1,19 @@
 import React from 'react'
-
-// third party imports
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { IconButton, Spacer, Tag, TextButton } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { IconButton, Loader, Spacer, Tag, TextButton } from '@dailykit/ui'
-
-// shared dir imports
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
-import { logger } from '../../../../../../../shared/utils'
-
-// graphql imports
-import { DELETE_COMBO_PRODUCTS, S_COMBO_PRODUCTS } from '../../../../../graphql'
-
-// context imports
-import { useTabs } from '../../../../../context/tabs'
-
-// local imports
-import tableOptions from '../../../tableOption'
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
 import { useTooltip } from '../../../../../../../shared/providers'
+import { logger } from '../../../../../../../shared/utils'
+import { useTabs } from '../../../../../context/tabs'
+import { DELETE_COMBO_PRODUCTS, S_COMBO_PRODUCTS } from '../../../../../graphql'
+import tableOptions from '../../../tableOption'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -35,11 +29,6 @@ const ComboProducts = () => {
       loading,
       error,
    } = useSubscription(S_COMBO_PRODUCTS)
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    const [deleteProducts] = useMutation(DELETE_COMBO_PRODUCTS, {
       onCompleted: () => {
@@ -110,7 +99,11 @@ const ComboProducts = () => {
       },
    ]
 
-   if (loading) return <Loader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Combo Products!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <>
@@ -121,12 +114,16 @@ const ComboProducts = () => {
             Clear Filters
          </TextButton>
          <Spacer size="16px" />
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={comboProducts}
-            options={tableOptions}
-         />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={comboProducts}
+               options={tableOptions}
+            />
+         )}
       </>
    )
 }

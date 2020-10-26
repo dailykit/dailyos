@@ -36,8 +36,14 @@ export default function RecipeTunnel({ state, close }) {
    const { loading } = useQuery(SIMPLE_RECIPES, {
       variables: {
          where: {
-            isPublished: { _eq: true },
-            isArchived: { _eq: false },
+            _and: [
+               {
+                  isPublished: { _eq: true },
+               },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {

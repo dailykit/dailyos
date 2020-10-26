@@ -135,7 +135,7 @@ export default function CustomizableProduct() {
 
    if (loading) return <InlineLoader />
    if (error) {
-      toast.error('Something went wrong!')
+      toast.error('Failed to fetch Customizable Product!')
       logger(error)
       return <ErrorState />
    }

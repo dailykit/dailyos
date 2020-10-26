@@ -467,7 +467,10 @@ export const CREATE_COMBO_PRODUCT = gql`
 
 export const DELETE_COMBO_PRODUCTS = gql`
    mutation DeleteComboProducts($ids: [Int!]!) {
-      deleteComboProduct(where: { id: { _in: $ids } }) {
+      updateComboProduct(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -515,7 +518,10 @@ export const UPDATE_COMBO_PRODUCT_COMPONENT = gql`
 
 export const DELETE_COMBO_PRODUCT_COMPONENT = gql`
    mutation DeleteComboProductComponent($id: Int!) {
-      deleteComboProductComponent(where: { id: { _eq: $id } }) {
+      updateComboProductComponent(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
