@@ -1,28 +1,22 @@
 import React from 'react'
-
-// third party imports
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { IconButton, Spacer, TextButton } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { IconButton, Loader, Spacer, TextButton } from '@dailykit/ui'
-
-// shared dir imports
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
+import { useTooltip } from '../../../../../../../shared/providers'
 import { logger } from '../../../../../../../shared/utils'
-
-// graphql imports
+import { useTabs } from '../../../../../context'
 import {
    DELETE_SIMPLE_RECIPE_PRODUCTS,
    S_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../../graphql'
-
-// context imports
-import { useTabs } from '../../../../../context'
-
-// local imports
 import tableOptions from '../../../tableOption'
-import { useTooltip } from '../../../../../../../shared/providers'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -38,11 +32,6 @@ const InventoryProducts = () => {
       loading,
       error,
    } = useSubscription(S_SIMPLE_RECIPE_PRODUCTS)
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    const [deleteProducts] = useMutation(DELETE_SIMPLE_RECIPE_PRODUCTS, {
       onCompleted: () => {
@@ -112,7 +101,11 @@ const InventoryProducts = () => {
       },
    ]
 
-   if (loading) return <Loader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Simple Recipe Products!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <>
@@ -123,12 +116,16 @@ const InventoryProducts = () => {
             Clear Filters
          </TextButton>
          <Spacer size="16px" />
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={simpleRecipeProducts}
-            options={tableOptions}
-         />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={simpleRecipeProducts}
+               options={tableOptions}
+            />
+         )}
       </>
    )
 }

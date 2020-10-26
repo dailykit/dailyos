@@ -298,8 +298,11 @@ export const S_ACCOMPANIMENT_TYPES = gql`
 `
 
 export const S_SIMPLE_RECIPE_PRODUCTS = gql`
-   subscription {
-      simpleRecipeProducts {
+   subscription SimpleRecipeProducts {
+      simpleRecipeProducts(
+         order_by: { created_at: desc }
+         where: { isArchived: { _eq: false } }
+      ) {
          id
          name
          isValid
@@ -330,7 +333,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             name
             image
          }
-         simpleRecipeProductOptions {
+         simpleRecipeProductOptions(order_by: { created_at: desc }) {
             id
             isActive
             price

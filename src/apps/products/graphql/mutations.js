@@ -320,7 +320,10 @@ export const CREATE_SIMPLE_RECIPE_PRODUCT = gql`
 
 export const DELETE_SIMPLE_RECIPE_PRODUCTS = gql`
    mutation DeleteSimpleRecipeProducts($ids: [Int!]!) {
-      deleteSimpleRecipeProduct(where: { id: { _in: $ids } }) {
+      updateSimpleRecipeProduct(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -368,7 +371,10 @@ export const UPDATE_SIMPLE_RECIPE_PRODUCT_OPTION = gql`
 
 export const DELETE_SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
    mutation DeleteSimpleRecipeProductOptions($ids: [Int!]!) {
-      deleteSimpleRecipeProductOption(where: { id: { _in: $ids } }) {
+      updateSimpleRecipeProductOption(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
