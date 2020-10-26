@@ -17,6 +17,7 @@ import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
 import validator from '../../../validators'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.comboproduct.tunnels.itemstunnel.'
@@ -83,6 +84,7 @@ export default function ItemTunnel({ state, close }) {
                   : t(address.concat('save')),
             }}
             close={() => close(1)}
+            tooltip={<Tooltip identifier="combo_product_items_tunnel" />}
          />
          <TunnelBody>
             <Text as="h3">
