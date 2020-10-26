@@ -403,7 +403,10 @@ export const CREATE_CUSTOMIZABLE_PRODUCT = gql`
 
 export const DELETE_CUSTOMIZABLE_PRODUCTS = gql`
    mutation DeleteCustomizableProducts($ids: [Int!]!) {
-      deleteCustomizableProduct(where: { id: { _in: $ids } }) {
+      updateCustomizableProduct(
+         where: { id: { _in: $ids } }
+         set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -438,7 +441,10 @@ export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
 
 export const DELETE_CUSTOMIZABLE_PRODUCT_OPTION = gql`
    mutation DeleteCustomizableProductOption($id: Int) {
-      deleteCustomizableProductOption(where: { id: { _eq: $id } }) {
+      updateCustomizableProductOption(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }

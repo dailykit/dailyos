@@ -443,7 +443,10 @@ export const S_INVENTORY_PRODUCT = gql`
 
 export const S_CUSTOMIZABLE_PRODUCTS = gql`
    subscription {
-      customizableProducts {
+      customizableProducts(
+         where: { isArchived: { _eq: false } }
+         order_by: { created_at: desc }
+      ) {
          id
          name
          isValid
@@ -464,7 +467,10 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          tags
          assets
          isPopupAllowed
-         customizableProductOptions {
+         customizableProductOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { created_at: desc }
+         ) {
             id
             inventoryProduct {
                id
