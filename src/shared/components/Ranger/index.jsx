@@ -6,7 +6,7 @@ import { convertRange } from '../../utils/convertRange'
 
 /**
  * A react component for rendering ranged values.
- * @param {{min: number, max: number, value: number, minLabel: string, maxLabel: string, label: string, unit?: string}} props
+ * @param {{min: number, max: number, value: number, minLabel: string, maxLabel: string, label: string, unit?: string, style?: any}} props
  */
 export const Ranger = ({
    min,
@@ -16,13 +16,14 @@ export const Ranger = ({
    maxLabel,
    unit,
    label,
+   style,
 }) => {
    // convert from range [min..max] to range [0..90], 10% is taken.
    const greenWidth = convertRange(min, max, value, 0, 90)
 
    return (
       <>
-         <StyledProgress>
+         <StyledProgress style={style}>
             <StyledProgressBar width={10} color="#FF5A52" role="progressbar">
                {greenWidth <= 0 ? (
                   <Content warn={greenWidth <= 0}>
@@ -48,7 +49,7 @@ export const Ranger = ({
                ) : null}
             </StyledProgressBar>
          </StyledProgress>
-         <Flex container justifyContent="space-between">
+         <Flex width="100%" container justifyContent="space-between">
             <Text as="p">
                {minLabel}: {min || 'N/A'}
             </Text>
