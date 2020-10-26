@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { useTabs } from '../../../context'
 import options from '../../tableOptions'
+import { useTooltip } from '../../../../../shared/providers'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 import { REFERRAL_LISTING } from '../../../graphql'
@@ -12,6 +13,7 @@ import { Tooltip, InlineLoader } from '../../../../../shared/components'
 
 const ReferralTable = () => {
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
    const tableRef = useRef()
    const { id } = useParams()
    const [referralList, setReferralList] = useState([])
@@ -54,8 +56,24 @@ const ReferralTable = () => {
          field: 'invitation',
          headerFilter: true,
          hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'referral_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
-      { title: 'Email Address', field: 'email', hozAlign: 'left' },
+      {
+         title: 'Email Address',
+         field: 'email',
+         hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'referral_listing_email_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Phone Number',
          field: 'phone',
@@ -64,9 +82,26 @@ const ReferralTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'referral_listing_phone_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 150,
       },
-      { title: 'Status', field: 'status', hozAlign: 'left', width: 100 },
+      {
+         title: 'Status',
+         field: 'status',
+         hozAlign: 'left',
+         width: 100,
+         headerTooltip: function (column) {
+            const identifier = 'referral_listing_status_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
    ]
 
    const rowClick = (e, row) => {

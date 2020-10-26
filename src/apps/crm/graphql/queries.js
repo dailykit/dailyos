@@ -110,6 +110,32 @@ export const REFERRAL_LISTING = gql`
    }
 `
 
+export const WALLET_LISTING = gql`
+   query WALLET_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         wallet {
+            walletTransactions_aggregate {
+               aggregate {
+                  count
+               }
+               nodes {
+                  created_at
+                  id
+                  orderCart {
+                     orderId
+                  }
+                  type
+                  amount
+                  wallet {
+                     balanceAmount: amount
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
 export const ORDER = gql`
    query ORDER($orderId: oid!) {
       order(id: $orderId) {
