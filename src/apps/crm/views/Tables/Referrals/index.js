@@ -1,13 +1,53 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { useParams } from 'react-router-dom'
+import { useQuery } from '@apollo/react-hooks'
 import { useTabs } from '../../../context'
 import options from '../../tableOptions'
-import { Tooltip } from '../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
+import { REFERRAL_LISTING } from '../../../graphql'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 
 const ReferralTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
+   const { id } = useParams()
+   const [referralList, setReferralList] = useState([])
+   const [referralCount, setReferralCount] = useState(0)
+
+   // Query
+   const { loading: listloading } = useQuery(REFERRAL_LISTING, {
+      variables: {
+         keycloakId: id,
+      },
+      onCompleted: ({
+         customer: {
+            customerReferralDetails: { customerReferrals_aggregate = {} } = {},
+         } = {},
+      }) => {
+         console.log(customerReferrals_aggregate)
+         const result = customerReferrals_aggregate?.nodes.map(referral => {
+            return {
+               invitation: `${
+                  referral?.customer?.platform_customer?.firstName || ''
+               } ${referral?.customer?.platform_customer?.lastName || 'N/A'}`,
+               email: referral?.customer?.platform_customer?.email || 'N/A',
+               phone:
+                  referral?.customer?.platform_customer?.phoneNumber || 'N/A',
+               status: referral?.referralStatus || 'N/A',
+            }
+         })
+         setReferralList(result)
+         setReferralCount(customerReferrals_aggregate?.aggregate?.count || 0)
+      },
+      onError: error => {
+         toast.error('Something went wrong !')
+         logger(error)
+      },
+   })
+
    const columns = [
       {
          title: 'Invitation Sent To',
@@ -28,42 +68,25 @@ const ReferralTable = () => {
       },
       { title: 'Status', field: 'status', hozAlign: 'left', width: 100 },
    ]
-   const data = [
-      {
-         invitation: "Joesheu D'souza",
-         email: 'johseu@gmail.com',
-         phone: '+1 676 343 2333',
-         status: 'PENDING',
-      },
-      {
-         invitation: "Joesheu D'souza",
-         email: 'johseu@gmail.com',
-         phone: '+1 676 343 2333',
-         status: 'PENDING',
-      },
-      {
-         invitation: "Joesheu D'souza",
-         email: 'johseu@gmail.com',
-         phone: '+1 676 343 2333',
-         status: 'PENDING',
-      },
-   ]
+
    const rowClick = (e, row) => {
       const { id, name } = row._row.data
 
       const param = '/crm/customers/'.concat(name)
       addTab(name, param)
    }
+
+   if (listloading) return <InlineLoader />
    return (
       <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
          <Flex container height="80px" padding="16px" alignItems="center">
-            <Text as="title">Referrals(3)</Text>
+            <Text as="title">Referrals({referralCount})</Text>
             <Tooltip identifier="referral_list_heading" />
          </Flex>
 
          <ReactTabulator
             columns={columns}
-            data={data}
+            data={referralList}
             rowClick={rowClick}
             ref={tableRef}
             options={{

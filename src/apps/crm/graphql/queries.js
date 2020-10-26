@@ -84,6 +84,32 @@ export const ORDERS_LISTING = gql`
    }
 `
 
+export const REFERRAL_LISTING = gql`
+   query REFERRAL_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         customerReferralDetails {
+            customerReferrals_aggregate {
+               aggregate {
+                  count
+               }
+               nodes {
+                  keycloakId
+                  customer {
+                     platform_customer {
+                        firstName
+                        lastName
+                        phoneNumber
+                        email
+                     }
+                  }
+                  referralStatus
+               }
+            }
+         }
+      }
+   }
+`
+
 export const ORDER = gql`
    query ORDER($orderId: oid!) {
       order(id: $orderId) {
