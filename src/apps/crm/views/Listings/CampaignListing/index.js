@@ -45,6 +45,7 @@ const CampaignListing = () => {
                name: campaign.metaDetails.title,
                type: campaign.type,
                active: campaign.isActive,
+               isvalid: campaign.isCampaignValid.status,
             }
          })
          setCampaign(result)
@@ -87,13 +88,18 @@ const CampaignListing = () => {
       }
    }, [addTab, tab])
 
-   const toggleHandler = (toggle, id) => {
-      updateCampaignActive({
-         variables: {
-            campaignId: id,
-            isActive: toggle,
-         },
-      })
+   const toggleHandler = (toggle, id, isvalid) => {
+      const val = !toggle
+      if (val && !isvalid) {
+         toast.error('Campaign should be valid!')
+      } else {
+         updateCampaignActive({
+            variables: {
+               campaignId: id,
+               isActive: val,
+            },
+         })
+      }
    }
 
    const DeleteButton = () => {
@@ -110,7 +116,9 @@ const CampaignListing = () => {
          <Form.Group>
             <Form.Toggle
                name="campaign_active"
-               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               onChange={() =>
+                  toggleHandler(rowData.active, rowData.id, rowData.isvalid)
+               }
                value={rowData.active}
             />
          </Form.Group>

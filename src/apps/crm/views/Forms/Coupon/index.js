@@ -8,6 +8,8 @@ import {
    HorizontalTabPanel,
    HorizontalTabPanels,
    Form,
+   Spacer,
+   Text,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -23,6 +25,7 @@ import {
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import { InlineLoader } from '../../../../../shared/components'
+import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CouponContext from '../../../context/Coupon/CouponForm'
 
 const CouponForm = () => {
@@ -90,28 +93,29 @@ const CouponForm = () => {
    })
 
    const updatetoggle = () => {
-      if (toggle || !toggle) {
+      const val = !toggle
+      if (val && !state.isCouponValid.status) {
+         toast.error('Coupon should be valid!')
+      } else {
          updateCoupon({
             variables: {
                id: couponId,
                set: {
-                  isActive: !toggle,
+                  isActive: val,
                },
             },
          })
       }
    }
    const updateCheckbox = () => {
-      if (checkbox || !checkbox) {
-         updateCoupon({
-            variables: {
-               id: couponId,
-               set: {
-                  isRewardMulti: !checkbox,
-               },
+      updateCoupon({
+         variables: {
+            id: couponId,
+            set: {
+               isRewardMulti: !checkbox,
             },
-         })
-      }
+         },
+      })
    }
 
    React.useEffect(() => {
@@ -187,15 +191,27 @@ const CouponForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Form.Group>
+                  <Flex container alignItems="center" height="100%">
+                     {state.isCouponValid?.status ? (
+                        <>
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p">All good!</Text>
+                        </>
+                     ) : (
+                        <>
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isCouponValid?.error}</Text>
+                        </>
+                     )}
+                     <Spacer xAxis size="16px" />
                      <Form.Toggle
                         name="coupon_active"
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        Active
+                        Publish
                      </Form.Toggle>
-                  </Form.Group>
+                  </Flex>
                </Flex>
             </InputWrapper>
             <StyledDiv>

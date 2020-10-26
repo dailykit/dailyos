@@ -44,6 +44,7 @@ const CouponListing = () => {
                amount: 'N/A',
                active: coupon.isActive,
                duration: 'N/A',
+               isvalid: coupon.isCouponValid.status,
             }
          })
          setCoupons(result)
@@ -87,13 +88,18 @@ const CouponListing = () => {
       }
    }, [addTab, tab])
 
-   const toggleHandler = (toggle, id) => {
-      updateCouponActive({
-         variables: {
-            couponId: id,
-            isActive: toggle,
-         },
-      })
+   const toggleHandler = (toggle, id, isvalid) => {
+      const val = !toggle
+      if (val && !isvalid) {
+         toast.error('Coupon should be valid!')
+      } else {
+         updateCouponActive({
+            variables: {
+               couponId: id,
+               isActive: val,
+            },
+         })
+      }
    }
 
    const ToggleButton = ({ cell }) => {
@@ -102,7 +108,9 @@ const CouponListing = () => {
          <Form.Group>
             <Form.Toggle
                name="coupon_active"
-               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               onChange={() =>
+                  toggleHandler(rowData.active, rowData.id, rowData.isvalid)
+               }
                value={rowData.active}
             />
          </Form.Group>

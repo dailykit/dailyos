@@ -1,39 +1,32 @@
 import React from 'react'
-
-// third party imports
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
 import {
    ComboButton,
    Flex,
    IconButton,
-   Loader,
    Spacer,
    Text,
    TextButton,
 } from '@dailykit/ui'
-
-// shared dir imports
-import { Tooltip } from '../../../../../shared/components'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
-
-// graphql imports
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import { useTabs } from '../../../context'
 import {
    CREATE_SIMPLE_RECIPE,
    DELETE_SIMPLE_RECIPES,
    S_RECIPES,
 } from '../../../graphql'
-
-// context imports
-import { useTabs } from '../../../context'
-
-// local imports
-import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
-import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
@@ -47,11 +40,6 @@ const RecipesListing = () => {
       data: { simpleRecipes: recipes = [] } = {},
       error,
    } = useSubscription(S_RECIPES)
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: input => {
@@ -102,7 +90,11 @@ const RecipesListing = () => {
       }
    }
 
-   if (loading) return <Loader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Recipes!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
@@ -119,12 +111,16 @@ const RecipesListing = () => {
                <Tooltip identifier="recipes_list_heading" />
             </Flex>
          </Flex>
-         <DataTable
-            data={recipes}
-            addTab={addTab}
-            deleteRecipeHandler={deleteRecipeHandler}
-            createRecipeHandler={createRecipeHandler}
-         />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <DataTable
+               data={recipes}
+               addTab={addTab}
+               deleteRecipeHandler={deleteRecipeHandler}
+               createRecipeHandler={createRecipeHandler}
+            />
+         )}
       </Flex>
    )
 }
