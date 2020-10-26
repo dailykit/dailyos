@@ -12,7 +12,7 @@ export const COLLECTIONS_COUNT = gql`
 
 export const S_COLLECTIONS = gql`
    subscription Collections {
-      collections: onDemand_collectionDetails {
+      collections: onDemand_collectionDetails(order_by: { created_at: desc }) {
          id
          name
          rrule(path: "text")
