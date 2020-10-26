@@ -1,40 +1,33 @@
 import React from 'react'
-
-// third party imports
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
 import {
    ComboButton,
    Flex,
    IconButton,
-   Loader,
    Spacer,
    Text,
    TextButton,
 } from '@dailykit/ui'
 import * as moment from 'moment'
-
-// shared dir imports
-import { Tooltip } from '../../../../../shared/components'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
-
-// graphql imports
+import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import { useTabs } from '../../../context'
 import {
    CREATE_INGREDIENT,
    DELETE_INGREDIENTS,
    S_INGREDIENTS,
 } from '../../../graphql'
-
-// context imports
-import { useTabs } from '../../../context'
-
-// local imports
-import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import Count from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
-import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.products.views.listings.ingredientslisting.'
 
@@ -45,11 +38,6 @@ const IngredientsListing = () => {
    const { loading, data: { ingredients = [] } = {}, error } = useSubscription(
       S_INGREDIENTS
    )
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    // Mutations
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
@@ -100,7 +88,11 @@ const IngredientsListing = () => {
       }
    }
 
-   if (loading) return <Loader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Ingredients!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <Flex maxWidth="1280px" margin="0 auto" width="calc(100vw - 64px)">
@@ -115,12 +107,16 @@ const IngredientsListing = () => {
                <Tooltip identifier="ingredients_list_heading" />
             </Flex>
          </Flex>
-         <DataTable
-            data={ingredients}
-            addTab={addTab}
-            deleteIngredientHandler={deleteIngredientHandler}
-            createIngredientHandler={createIngredientHandler}
-         />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <DataTable
+               data={ingredients}
+               addTab={addTab}
+               deleteIngredientHandler={deleteIngredientHandler}
+               createIngredientHandler={createIngredientHandler}
+            />
+         )}
       </Flex>
    )
 }

@@ -24,7 +24,12 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
       PROCESSINGS,
       {
          variables: {
-            where: { ingredientId: { _eq: recipeState.newIngredient?.id } },
+            where: {
+               _and: [
+                  { ingredientId: { _eq: recipeState.newIngredient?.id } },
+                  { isArchived: { _eq: false } },
+               ],
+            },
          },
          onError: error => {
             toast.error('Something went wrong!')

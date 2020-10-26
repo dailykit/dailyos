@@ -64,7 +64,7 @@ const Sachets = ({ state, openNutritionTunnel }) => {
    const remove = sachet => {
       if (
          window.confirm(
-            `Do you want to delete sachet - ${sachet.quantity}  ${sachet.unit}}?`
+            `Do you want to delete sachet - ${sachet.quantity}  ${sachet.unit}?`
          )
       ) {
          deleteSachet({

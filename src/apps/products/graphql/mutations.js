@@ -13,7 +13,10 @@ export const CREATE_INGREDIENT = gql`
 
 export const DELETE_INGREDIENTS = gql`
    mutation DeleteIngredients($ids: [Int!]!) {
-      deleteIngredient(where: { id: { _in: $ids } }) {
+      updateIngredient(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -59,7 +62,10 @@ export const UPDATE_PROCESSING = gql`
 
 export const DELETE_PROCESSING = gql`
    mutation DeleteProcessing($id: Int!) {
-      deleteIngredientProcessing(where: { id: { _eq: $id } }) {
+      updateIngredientProcessing(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -105,7 +111,10 @@ export const UPDATE_MODE = gql`
 
 export const DELETE_SACHET = gql`
    mutation DeleteSachet($id: Int!) {
-      deleteIngredientSachet(where: { id: { _eq: $id } }) {
+      updateIngredientSachet(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -125,7 +134,10 @@ export const CREATE_SIMPLE_RECIPE = gql`
 `
 export const DELETE_SIMPLE_RECIPES = gql`
    mutation DeleteRecipes($ids: [Int!]!) {
-      deleteSimpleRecipe(where: { id: { _in: $ids } }) {
+      updateSimpleRecipe(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -147,7 +159,10 @@ export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
 
 export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    mutation DeleteSimpleRecipeYield($id: Int!) {
-      deleteSimpleRecipeYield(where: { id: { _eq: $id } }) {
+      updateSimpleRecipeYield(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -192,11 +207,12 @@ export const DELETE_SIMPLE_RECIPE_YIELD_SACHETS = gql`
       $sachetIds: [Int!]!
       $servingIds: [Int!]!
    ) {
-      deleteSimpleRecipeSachet(
+      updateSimpleRecipeSachet(
          where: {
             ingredientSachetId: { _in: $sachetIds }
             simpleRecipeYield: { id: { _in: $servingIds } }
          }
+         _set: { isArchived: true }
       ) {
          returning {
             ingredientSachetId

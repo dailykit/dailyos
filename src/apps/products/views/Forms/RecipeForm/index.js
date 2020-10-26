@@ -1,31 +1,32 @@
 import React from 'react'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Flex, Form, Spacer, Text } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
-import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { Loader, Text, Toggle, Flex, Form, Spacer } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { useTabs } from '../../../context'
 import {
-   state as initialState,
-   reducers,
    RecipeContext,
+   reducers,
+   state as initialState,
 } from '../../../context/recipe'
-
-import { StyledWrapper, InputWrapper, MasterSettings } from '../styled'
-
+import { S_RECIPE, UPDATE_RECIPE } from '../../../graphql'
 import {
    Information,
-   Procedures,
-   Servings,
    Ingredients,
    Photo,
+   Procedures,
    RecipeCard,
+   Servings,
 } from './components'
-import { UPDATE_RECIPE, S_RECIPE } from '../../../graphql'
-import { logger } from '../../../../../shared/utils'
 import validator from './validators'
-import { Tooltip } from '../../../../../shared/components'
 
 const RecipeForm = () => {
    // Context
@@ -49,7 +50,7 @@ const RecipeForm = () => {
    })
 
    // Subscription
-   const { loading } = useSubscription(S_RECIPE, {
+   const { loading, error } = useSubscription(S_RECIPE, {
       variables: {
          id: recipeId,
       },
@@ -120,7 +121,12 @@ const RecipeForm = () => {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Recipe!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
