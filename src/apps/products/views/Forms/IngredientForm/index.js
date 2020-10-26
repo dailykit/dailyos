@@ -15,7 +15,11 @@ import {
 import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
-import { Tooltip } from '../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -61,11 +65,6 @@ const IngredientForm = () => {
          })
       },
    })
-
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
 
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
@@ -146,7 +145,12 @@ const IngredientForm = () => {
       }
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
+   if (!loading && error) {
+      toast.error('Failed to fetch Ingredient!')
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <IngredientContext.Provider

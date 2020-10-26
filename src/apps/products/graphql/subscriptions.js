@@ -55,12 +55,18 @@ export const S_INGREDIENT = gql`
          image
          isValid
          isPublished
-         ingredientProcessings(order_by: { created_at: desc }) {
+         ingredientProcessings(
+            order_by: { created_at: desc }
+            where: { isArchived: { _eq: false } }
+         ) {
             id
             processingName
             nutritionalInfo
             cost
-            ingredientSachets(order_by: { createdAt: desc }) {
+            ingredientSachets(
+               order_by: { createdAt: desc }
+               where: { isArchived: { _eq: false } }
+            ) {
                id
                tracking
                unit
@@ -117,7 +123,7 @@ export const S_INGREDIENT = gql`
                }
             }
          }
-         ingredientSachets {
+         ingredientSachets(where: { isArchived: { _eq: false } }) {
             id
          }
       }

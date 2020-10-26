@@ -62,7 +62,10 @@ export const UPDATE_PROCESSING = gql`
 
 export const DELETE_PROCESSING = gql`
    mutation DeleteProcessing($id: Int!) {
-      deleteIngredientProcessing(where: { id: { _eq: $id } }) {
+      updateIngredientProcessing(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -108,7 +111,10 @@ export const UPDATE_MODE = gql`
 
 export const DELETE_SACHET = gql`
    mutation DeleteSachet($id: Int!) {
-      deleteIngredientSachet(where: { id: { _eq: $id } }) {
+      updateIngredientSachet(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
