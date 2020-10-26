@@ -29,6 +29,7 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
       variables: {
          where: {
             isPublished: { _eq: true },
+            isArchived: { _eq: false },
          },
       },
       onCompleted: data => {

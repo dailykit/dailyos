@@ -29,10 +29,17 @@ const SachetTunnel = ({ closeTunnel }) => {
    const { loading } = useQuery(SACHETS, {
       variables: {
          where: {
-            ingredientId: { _eq: recipeState.edit?.id },
-            ingredientProcessingId: {
-               _eq: recipeState.edit?.ingredientProcessing?.id,
-            },
+            _and: [
+               { ingredientId: { _eq: recipeState.edit?.id } },
+               {
+                  ingredientProcessingId: {
+                     _eq: recipeState.edit?.ingredientProcessing?.id,
+                  },
+               },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {

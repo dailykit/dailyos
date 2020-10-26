@@ -132,7 +132,7 @@ export const S_INGREDIENT = gql`
 
 export const RECIPES_COUNT = gql`
    subscription RecipesCount {
-      simpleRecipesAggregate {
+      simpleRecipesAggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }
@@ -142,14 +142,17 @@ export const RECIPES_COUNT = gql`
 
 export const S_RECIPES = gql`
    subscription SimpleRecipes {
-      simpleRecipes {
+      simpleRecipes(
+         order_by: { created_at: asc }
+         where: { isArchived: { _eq: false } }
+      ) {
          id
          name
          author
          cookingTime
          isValid
          isPublished
-         simpleRecipeYields {
+         simpleRecipeYields(where: { isArchived: { _eq: false } }) {
             id
          }
       }
@@ -172,12 +175,15 @@ export const S_RECIPE = gql`
          utensils
          procedures
          ingredients
-         simpleRecipeYields {
+         simpleRecipeYields(
+            where: { isArchived: { _eq: false } }
+            order_by: { yield: asc }
+         ) {
             id
             yield
             cost
             nutritionalInfo
-            ingredientSachets {
+            ingredientSachets(where: { isArchived: { _eq: false } }) {
                isVisible
                slipName
                ingredientSachet {

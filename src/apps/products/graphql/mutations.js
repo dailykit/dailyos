@@ -134,7 +134,10 @@ export const CREATE_SIMPLE_RECIPE = gql`
 `
 export const DELETE_SIMPLE_RECIPES = gql`
    mutation DeleteRecipes($ids: [Int!]!) {
-      deleteSimpleRecipe(where: { id: { _in: $ids } }) {
+      updateSimpleRecipe(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -156,7 +159,10 @@ export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
 
 export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    mutation DeleteSimpleRecipeYield($id: Int!) {
-      deleteSimpleRecipeYield(where: { id: { _eq: $id } }) {
+      updateSimpleRecipeYield(
+         where: { id: { _eq: $id } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -201,11 +207,12 @@ export const DELETE_SIMPLE_RECIPE_YIELD_SACHETS = gql`
       $sachetIds: [Int!]!
       $servingIds: [Int!]!
    ) {
-      deleteSimpleRecipeSachet(
+      updateSimpleRecipeSachet(
          where: {
             ingredientSachetId: { _in: $sachetIds }
             simpleRecipeYield: { id: { _in: $servingIds } }
          }
+         _set: { isArchived: true }
       ) {
          returning {
             ingredientSachetId
