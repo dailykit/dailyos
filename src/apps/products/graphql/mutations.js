@@ -249,7 +249,10 @@ export const CREATE_INVENTORY_PRODUCT = gql`
 
 export const DELETE_INVENTORY_PRODUCTS = gql`
    mutation DeleteInventoryProducts($ids: [Int!]!) {
-      deleteInventoryProduct(where: { id: { _in: $ids } }) {
+      updateInventoryProduct(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }
@@ -297,7 +300,10 @@ export const UPDATE_INVENTORY_PRODUCT_OPTION = gql`
 
 export const DELETE_INVENTORY_PRODUCT_OPTION = gql`
    mutation DeleteInventoryProductOption($id: Int_comparison_exp) {
-      deleteInventoryProductOption(where: { id: $id }) {
+      updateInventoryProductOption(
+         where: { id: $id }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }

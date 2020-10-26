@@ -48,7 +48,7 @@ export const SACHETS = gql`
 
 export const SACHET_ITEMS = gql`
    query {
-      sachetItems {
+      sachetItems(where: { isArchived: { _eq: false } }) {
          id
          unitSize
          unit
@@ -67,7 +67,7 @@ export const SACHET_ITEMS = gql`
 
 export const BULK_ITEMS = gql`
    query BulkItems {
-      bulkItems {
+      bulkItems(where: { isArchived: { _eq: false } }) {
          id
          unit
          processingName
@@ -82,7 +82,7 @@ export const BULK_ITEMS = gql`
 
 export const SUPPLIER_ITEMS = gql`
    query SupplierItems {
-      supplierItems {
+      supplierItems(where: { isArchived: { _eq: false } }) {
          id
          name
          title: name
@@ -130,7 +130,7 @@ export const SIMPLE_RECIPES = gql`
          name
          title: name
          isValid
-         simpleRecipeYields {
+         simpleRecipeYields(where: { isArchived: { _eq: false } }) {
             id
             yield
          }

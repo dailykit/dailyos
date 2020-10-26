@@ -365,8 +365,8 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
 `
 
 export const S_INVENTORY_PRODUCTS = gql`
-   subscription {
-      inventoryProducts {
+   subscription InventoryProducts {
+      inventoryProducts(where: { isArchived: { _eq: false } }) {
          id
          name
          isValid
@@ -412,7 +412,10 @@ export const S_INVENTORY_PRODUCT = gql`
                }
             }
          }
-         inventoryProductOptions {
+         inventoryProductOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { created_at: desc }
+         ) {
             id
             label
             price

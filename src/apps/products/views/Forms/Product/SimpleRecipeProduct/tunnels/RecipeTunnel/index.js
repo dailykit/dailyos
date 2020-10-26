@@ -34,6 +34,12 @@ export default function RecipeTunnel({ state, close }) {
 
    // Subscription for fetching recipes
    const { loading } = useQuery(SIMPLE_RECIPES, {
+      variables: {
+         where: {
+            isPublished: { _eq: true },
+            isArchived: { _eq: false },
+         },
+      },
       onCompleted: data => {
          const { simpleRecipes } = data
          const updatedRecipes = simpleRecipes.filter(
