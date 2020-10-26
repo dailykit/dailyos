@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Flex, Text } from '@dailykit/ui'
 
 import { convertRange } from '../../utils/convertRange'
 
@@ -49,10 +50,10 @@ export const Ranger = ({
          </StyledProgress>
          <Flex container justifyContent="space-between">
             <Text as="p">
-               {minLabel}: {min}
+               {minLabel}: {min || 'N/A'}
             </Text>
             <Text as="p">
-               {maxLabel}: {max}
+               {maxLabel}: {max || 'N/A'}
             </Text>
          </Flex>
       </>
@@ -78,10 +79,12 @@ const Content = styled.div`
    color: #fff;
    background-color: ${({ warn }) => (warn ? '#ff5a52' : '#53c22b')};
    text-align: left;
-   min-width: 100px;
+   min-width: 115px;
    position: absolute;
    right: 0%;
+   left: ${({ warn }) => (warn ? '0' : null)};
    bottom: 270%;
+   z-index: 3;
    p {
       margin: 0;
       margin-bottom: 4px;
@@ -99,12 +102,13 @@ const Content = styled.div`
       content: '';
       width: 20px;
       height: 20px;
-      background-color: #53c22b;
+      background-color: ${({ warn }) => (warn ? '#ff5a52' : '#53c22b')};
       position: absolute;
       bottom: -4px;
-      right: 16px;
       transform: rotate(45deg);
       border-radius: 4px;
       z-index: -1;
+      right: 0;
+      right: ${({ warn }) => (warn ? '91px' : '3px')};
    }
 `
