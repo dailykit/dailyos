@@ -42,7 +42,14 @@ const ProductsTunnel = ({ closeTunnel }) => {
    ] = useLazyQuery(SIMPLE_RECIPE_PRODUCTS, {
       variables: {
          where: {
-            isPublished: { _eq: true },
+            _and: [
+               {
+                  isPublished: { _eq: true },
+               },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {
@@ -63,7 +70,14 @@ const ProductsTunnel = ({ closeTunnel }) => {
    ] = useLazyQuery(INVENTORY_PRODUCTS, {
       variables: {
          where: {
-            isPublished: { _eq: true },
+            _and: [
+               {
+                  isPublished: { _eq: true },
+               },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {
@@ -84,7 +98,14 @@ const ProductsTunnel = ({ closeTunnel }) => {
    ] = useLazyQuery(CUSTOMIZABLE_PRODUCTS, {
       variables: {
          where: {
-            isPublished: { _eq: true },
+            _and: [
+               {
+                  isPublished: { _eq: true },
+               },
+               {
+                  isArchived: { _eq: false },
+               },
+            ],
          },
       },
       onCompleted: data => {
@@ -104,7 +125,14 @@ const ProductsTunnel = ({ closeTunnel }) => {
       {
          variables: {
             where: {
-               isPublished: { _eq: true },
+               _and: [
+                  {
+                     isPublished: { _eq: true },
+                  },
+                  {
+                     isArchived: { _eq: false },
+                  },
+               ],
             },
          },
          onCompleted: data => {
