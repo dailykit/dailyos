@@ -13,7 +13,10 @@ export const CREATE_INGREDIENT = gql`
 
 export const DELETE_INGREDIENTS = gql`
    mutation DeleteIngredients($ids: [Int!]!) {
-      deleteIngredient(where: { id: { _in: $ids } }) {
+      updateIngredient(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
          returning {
             id
          }

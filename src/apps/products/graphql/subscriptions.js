@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const INGREDIENTS_COUNT = gql`
    subscription IngredientsCount {
-      ingredientsAggregate {
+      ingredientsAggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }
@@ -12,7 +12,10 @@ export const INGREDIENTS_COUNT = gql`
 
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
-      ingredients(order_by: { createdAt: desc }) {
+      ingredients(
+         order_by: { createdAt: desc }
+         where: { isArchived: { _eq: false } }
+      ) {
          id
          name
          category
