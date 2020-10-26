@@ -165,7 +165,6 @@ function SachetHistories({ sachetId }) {
    const { tooltip } = useTooltip()
 
    if (error) {
-      console.log(error)
       logger(error)
       return <ErrorState height="400px" />
    }
