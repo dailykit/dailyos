@@ -18,7 +18,10 @@ import {
    S_ACCOMPANIMENT_TYPES,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
@@ -85,6 +88,7 @@ const RecommendationTypeTunnel = ({ state, close }) => {
                   : t(address.concat('save')),
             }}
             close={() => close(1)}
+            tooltip={<Tooltip identifier="recommendation_type_tunnel" />}
          />
          <TunnelBody>
             {loading ? (

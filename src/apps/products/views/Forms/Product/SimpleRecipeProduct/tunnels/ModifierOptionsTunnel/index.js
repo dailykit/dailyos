@@ -45,12 +45,10 @@ const ModifierOptionsTunnel = ({ close }) => {
    ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
       variables: {
          where: {
-            inventoryProduct: {
-               _and: [
-                  { isPublished: { _eq: true } },
-                  { isArchived: { _eq: false } },
-               ],
-            },
+            _and: [
+               { inventoryProduct: { isPublished: { _eq: true } } },
+               { isArchived: { _eq: false } },
+            ],
          },
       },
       onCompleted: data => {
@@ -73,12 +71,10 @@ const ModifierOptionsTunnel = ({ close }) => {
    ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
       variables: {
          where: {
-            simpleRecipeProduct: {
-               _and: [
-                  { isPublished: { _eq: true } },
-                  { isArchived: { _eq: false } },
-               ],
-            },
+            _and: [
+               { simpleRecipeProduct: { isPublished: { _eq: true } } },
+               { isArchived: { _eq: false } },
+            ],
          },
       },
       onCompleted: data => {
