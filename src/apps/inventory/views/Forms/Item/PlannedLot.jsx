@@ -1,3 +1,5 @@
+import { useSubscription } from '@apollo/react-hooks'
+import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import {
    Filler,
    Flex,
@@ -17,13 +19,20 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AddIcon, ChevronRight } from '../../../../../shared/assets/icons'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { Ranger } from '../../../../../shared/components/Ranger'
+import { logger } from '../../../../../shared/utils/errorLog'
 import { DataCard } from '../../../components'
 import {
    NO_BULK_ITEMS,
    NO_SACHET_ITEMS,
 } from '../../../constants/emptyMessages'
+import { NO_SACHET_HISTORIES } from '../../../constants/infoMessages'
+import { SACHET_ITEM_HISTORIES } from '../../../graphql'
 import { ConfigureSachetTunnel } from './tunnels'
+import tableOptions from '../../Listings/tableOption'
+import { useTooltip } from '../../../../../shared/providers'
+import { dateFmt } from '../../../../../shared/utils/dateFmt'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -144,7 +153,77 @@ function PlannedLotStats({ sachet }) {
 }
 
 function SachetHistories({ sachetId }) {
-   return <h1>TODO: replace this with history table</h1>
+   const {
+      data: { sachetItemHistories = [] } = {},
+      error,
+      loading,
+   } = useSubscription(SACHET_ITEM_HISTORIES, {
+      variables: {
+         sachetId,
+      },
+   })
+   const { tooltip } = useTooltip()
+
+   if (error) {
+      console.log(error)
+      logger(error)
+      return <ErrorState height="400px" />
+   }
+
+   if (loading) return <InlineLoader />
+
+   if (!sachetItemHistories.length)
+      return <Filler message={NO_SACHET_HISTORIES} />
+
+   const columns = [
+      {
+         title: 'Input bulk Item',
+         field: 'sachetWorkOrder.bulkItem.processingName',
+         headerFilter: true,
+         // cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'sachet_item_history_input_bulk_item'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+      {
+         title: 'Output Quantity',
+         field: 'sachetWorkOrder.outputQuantity',
+         headerFilter: false,
+         headerTooltip: col => {
+            const identifier = 'sachet_item_history_output_quantity'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+      {
+         title: 'Scheduled on',
+         field: 'sachetWorkOrder.scheduledOn',
+         headerFilter: false,
+         formatter: reactFormatter(<ShowDate />),
+         headerTooltip: col => {
+            const identifier = 'sachet_item_history_scheduledOn'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+      {
+         title: 'Status',
+         field: 'status',
+         headerFilter: false,
+         headerSort: false,
+         headerTooltip: col => {
+            const identifier = 'sachet_item_history_status'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+   ]
+
+   return (
+      <ReactTabulator
+         data={sachetItemHistories}
+         columns={columns}
+         options={tableOptions}
+      />
+   )
 }
 
 function BreadCrumb({ setShowHistory }) {
@@ -164,4 +243,11 @@ function BreadCrumb({ setShowHistory }) {
          <Text as="h3">History</Text>
       </Flex>
    )
+}
+
+function ShowDate({ cell }) {
+   const date = cell.getData().sachetWorkOrder?.scheduledOn
+
+   if (date) return dateFmt.format(new Date(date))
+   return 'N/A'
 }

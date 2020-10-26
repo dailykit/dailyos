@@ -16,3 +16,4 @@ export const NO_PROCESSING =
    'No processing exists or you may have added all the processings in this item.'
 
 export const NO_HISTORY = 'No history is available for this bulk item.'
+export const NO_SACHET_HISTORIES = 'No history is availabe for this sachet'

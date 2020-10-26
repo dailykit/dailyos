@@ -696,7 +696,6 @@ export const BULK_ITEM_HISTORIES = gql`
    subscription BulkItemHistories($bulkItemId: Int!) {
       bulkItemHistories(where: { bulkItemId: { _eq: $bulkItemId } }) {
          id
-         quantity
          unit
          status
          bulkWorkOrder {
@@ -708,6 +707,24 @@ export const BULK_ITEM_HISTORIES = gql`
             }
             outputQuantity
          }
+      }
+   }
+`
+
+export const SACHET_ITEM_HISTORIES = gql`
+   subscription SachetItemHistories($sachetId: Int!) {
+      sachetItemHistories(where: { sachetItemId: { _eq: $sachetId } }) {
+         id
+         sachetWorkOrder {
+            id
+            scheduledOn
+            outputQuantity
+            bulkItem {
+               id
+               processingName
+            }
+         }
+         status
       }
    }
 `
