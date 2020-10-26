@@ -111,6 +111,7 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
                unitSize
                parLevel
                committed
+               maxLevel
             }
          }
          unit
@@ -152,6 +153,7 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
                unitSize
                parLevel
                committed
+               maxLevel
             }
          }
       }

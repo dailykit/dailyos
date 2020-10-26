@@ -27,7 +27,7 @@ export default function RealTimeView({ proc }) {
          {showHistory && <BreadCrumb setShowHistory={setShowHistory} />}
 
          {showHistory ? (
-            <HistoryTable proc={proc} />
+            <HistoryTable bulkItemId={proc.id} />
          ) : (
             <Flex margin="64px 48px 0 0">
                <Ranger
@@ -64,14 +64,14 @@ export default function RealTimeView({ proc }) {
    )
 }
 
-function HistoryTable({ proc }) {
+function HistoryTable({ bulkItemId }) {
    const {
       data: { bulkItemHistories = [] } = {},
       loading,
       error,
    } = useSubscription(BULK_ITEM_HISTORIES, {
       variables: {
-         bulkItemId: proc.id,
+         bulkItemId,
       },
    })
    const { tooltip } = useTooltip()
