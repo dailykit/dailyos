@@ -14,6 +14,7 @@ import { logger } from '../../../../../../../shared/utils'
 import { CREATE_SIMPLE_RECIPE_YIELDS } from '../../../../../graphql'
 import validator from '../../validators'
 import { TunnelBody } from '../styled'
+import { Tooltip } from '../../../../../../../shared/components'
 
 const ServingsTunnel = ({ state, closeTunnel }) => {
    // State
@@ -110,6 +111,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
             title="Add Servings"
             right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="servings_tunnel" />}
          />
          <TunnelBody>
             {servings.map((serving, i) => (

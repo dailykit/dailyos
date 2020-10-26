@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -10,7 +11,7 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
 import { PROCESSINGS, UPDATE_RECIPE } from '../../../../../graphql'
@@ -85,7 +86,11 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Processing" close={() => closeTunnel(2)} />
+         <TunnelHeader
+            title="Select Processing"
+            close={() => closeTunnel(2)}
+            tooltip={<Tooltip identifier="processings_tunnel" />}
+         />
          <TunnelBody>
             {loading ? (
                <InlineLoader />
@@ -101,6 +106,7 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
                               placeholder="type what you’re looking for..."
                            />
                         )}
+                        <ListHeader type="SSL1" label="Processings" />
                         <ListOptions>
                            {list
                               .filter(option =>

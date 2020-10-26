@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -10,7 +11,7 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
 import {
@@ -112,7 +113,11 @@ const SachetTunnel = ({ closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Sachet" close={() => closeTunnel(3)} />
+         <TunnelHeader
+            title="Select Sachet"
+            close={() => closeTunnel(3)}
+            tooltip={<Tooltip identifier="sachets_tunnel" />}
+         />
          <TunnelBody>
             {loading ? (
                <InlineLoader />
@@ -128,6 +133,7 @@ const SachetTunnel = ({ closeTunnel }) => {
                               placeholder="type what you’re looking for..."
                            />
                         )}
+                        <ListHeader type="SSL1" label="Sachets" />
                         <ListOptions>
                            {list
                               .filter(option =>
