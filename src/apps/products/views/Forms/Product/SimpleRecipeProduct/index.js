@@ -217,7 +217,12 @@ export default function SimpleRecipeProduct() {
                   </Form.Toggle>
                </Flex>
             </Flex>
-            <Flex as="main" padding="32px" style={{ background: '#f3f3f3' }}>
+            <Flex
+               as="main"
+               padding="32px"
+               minHeight="calc(100vh - 130px)"
+               style={{ background: '#f3f3f3' }}
+            >
                <Flex as="section" container>
                   <Flex flex="2">
                      <Description state={state} />
