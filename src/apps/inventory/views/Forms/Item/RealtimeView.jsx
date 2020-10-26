@@ -1,9 +1,18 @@
-import { Flex, Spacer, Text } from '@dailykit/ui'
+import { useSubscription } from '@apollo/react-hooks'
+import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { ChevronRight } from '../../../../../shared/assets/icons'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { Ranger } from '../../../../../shared/components/Ranger'
+import { logger } from '../../../../../shared/utils/errorLog'
 import { DataCard } from '../../../components'
+import { BULK_ITEM_HISTORIES } from '../../../graphql'
+import tableOptions from '../../Listings/tableOption'
+import { useTooltip } from '../../../../../shared/providers'
+import { dateFmt } from '../../../../../shared/utils/dateFmt'
+import { NO_HISTORY } from '../../../constants/infoMessages'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -14,12 +23,13 @@ export default function RealTimeView({ proc }) {
    if (!proc) return null
 
    return (
-      <Flex margin="64px 48px 0 0">
+      <>
          {showHistory && <BreadCrumb setShowHistory={setShowHistory} />}
+
          {showHistory ? (
             <HistoryTable proc={proc} />
          ) : (
-            <>
+            <Flex margin="64px 48px 0 0">
                <Ranger
                   label="On hand qty"
                   max={proc.maxLevel}
@@ -48,19 +58,87 @@ export default function RealTimeView({ proc }) {
                      action={() => setShowHistory(true)}
                   />
                </Flex>
-            </>
+            </Flex>
          )}
-      </Flex>
+      </>
    )
 }
 
-function HistoryTable() {
-   return <h1>TODO: get data and show table here: bulkItemHistories</h1>
+function HistoryTable({ proc }) {
+   const {
+      data: { bulkItemHistories = [] } = {},
+      loading,
+      error,
+   } = useSubscription(BULK_ITEM_HISTORIES, {
+      variables: {
+         bulkItemId: proc.id,
+      },
+   })
+   const { tooltip } = useTooltip()
+
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (loading) return <InlineLoader />
+   if (!bulkItemHistories.length)
+      return <Filler message={NO_HISTORY} height="400px" />
+
+   const columns = [
+      {
+         title: 'Output item',
+         field: 'bulkWorkOrder.outputBulkItem.processingName',
+         headerFilter: true,
+         // cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'bulk_item_history_output_bulkItem'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+      {
+         title: 'Output Quantity',
+         field: 'bulkWorkOrder.outputQuantity',
+         headerFilter: false,
+         headerTooltip: col => {
+            const identifier = 'bulk_item_history_output_quantity'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+      {
+         title: 'Scheduled on',
+         field: 'bulkWorkOrder.scheduledOn',
+         headerFilter: false,
+         formatter: reactFormatter(<ShowDate />),
+         headerTooltip: col => {
+            const identifier = 'bulk_item_history_scheduledOn'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+      {
+         title: 'Status',
+         field: 'status',
+         headerFilter: false,
+         headerSort: false,
+         headerTooltip: col => {
+            const identifier = 'bulk_item_history_output_status'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
+   ]
+
+   return (
+      <ReactTabulator
+         data={bulkItemHistories}
+         columns={columns}
+         options={tableOptions}
+      />
+   )
 }
 
 function BreadCrumb({ setShowHistory }) {
    return (
-      <Flex container>
+      <Flex container margin="0 0 16px 0">
          <Text
             as="h3"
             style={{ color: '#00A7E1' }}
@@ -75,4 +153,11 @@ function BreadCrumb({ setShowHistory }) {
          <Text as="h3">History</Text>
       </Flex>
    )
+}
+
+function ShowDate({ cell }) {
+   const date = cell.getData().bulkWorkOrder?.scheduledOn
+
+   if (date) return dateFmt.format(new Date(date))
+   return 'N/A'
 }

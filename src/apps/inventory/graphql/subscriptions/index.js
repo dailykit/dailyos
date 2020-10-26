@@ -690,3 +690,22 @@ export const SUPPLIER_ITEM_LISTINGS = gql`
       }
    }
 `
+export const BULK_ITEM_HISTORIES = gql`
+   subscription BulkItemHistories($bulkItemId: Int!) {
+      bulkItemHistories(where: { bulkItemId: { _eq: $bulkItemId } }) {
+         id
+         quantity
+         unit
+         status
+         bulkWorkOrder {
+            id
+            scheduledOn
+            outputBulkItem {
+               id
+               processingName
+            }
+            outputQuantity
+         }
+      }
+   }
+`
