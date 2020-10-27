@@ -120,7 +120,7 @@ export const useInsights = (
          options: {
             ...insight.defaultOptions,
             // merge variableOptions and schemaVariables, schemaVariables will overwrite any filter values in variableOptions
-            ...merge(variableOptions, schemaVariables),
+            ...merge(variableOptions, schemaVariables, options.where),
          },
          limit: options.limit,
          orderBy: options.order,

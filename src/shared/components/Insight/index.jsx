@@ -20,6 +20,7 @@ export default function Insight({
    includeTable = true,
    includeChart = false,
    identifier = '',
+   where = {},
    limit,
    order,
    variables = {},
@@ -44,6 +45,7 @@ export default function Insight({
    } = useInsights(identifier, {
       includeTableData: includeTable,
       includeChartData: includeChart,
+      where,
       limit,
       order,
       variables,
