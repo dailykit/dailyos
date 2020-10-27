@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { StyledCard, ViewTab } from './styled'
 
-const StyleCard = ({ active, heading, click }) => {
+const StyleCard = ({ active, heading, click, data }) => {
    return (
       <StyledCard active={active === heading}>
          <Flex container justifyContent="space-between" padding="16px">
@@ -12,7 +12,7 @@ const StyleCard = ({ active, heading, click }) => {
          <Flex container padding="16px" className="cardContent">
             <Flex container flexDirection="column">
                <Text as="p">Total Wallet Amount</Text>
-               <Text as="p">N/A</Text>
+               <Text as="p">${data.amount}</Text>
             </Flex>
          </Flex>
       </StyledCard>
