@@ -51,6 +51,7 @@ export default function Packagings() {
          title: 'Name',
          field: 'packagingName',
          headerFilter: true,
+         cssClass: 'RowClick',
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'packagings_listings_table_name'
