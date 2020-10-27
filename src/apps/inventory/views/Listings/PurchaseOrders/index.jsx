@@ -67,6 +67,7 @@ export default function PurchaseOrders() {
          headerFilter: true,
          width: 200,
          cellClick: openForm,
+         cssClass: 'RowClick',
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_status'
             return tooltip(identifier)?.description || col.getDefinition().title
