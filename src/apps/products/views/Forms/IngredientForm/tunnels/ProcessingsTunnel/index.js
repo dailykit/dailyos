@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -12,7 +13,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import {
    CREATE_PROCESSINGS,
@@ -69,6 +70,7 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
             title="Add Processings"
             right={{ action: add, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="add_processings_tunnel" />}
          />
          <TunnelBody>
             {loading ? (
@@ -96,6 +98,10 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader
+                           type="MSL1"
+                           label="Master Processing Names"
+                        />
                         <ListOptions>
                            {list
                               .filter(option =>

@@ -8,6 +8,7 @@ import {
    useSingleList,
    TunnelHeader,
    Filler,
+   ListHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -19,7 +20,10 @@ import {
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
@@ -121,6 +125,7 @@ export default function ItemTunnel({ state, close }) {
          <TunnelHeader
             title={t(address.concat('select an item'))}
             close={() => close(2)}
+            tooltip={<Tooltip identifier="inventory_product_item_tunnel" />}
          />
          <TunnelBody>
             {sachetItemsLoading || supplierItemsLoading ? (
@@ -139,6 +144,7 @@ export default function ItemTunnel({ state, close }) {
                               )}
                            />
                         )}
+                        <ListHeader type="SSL1" label="Items" />
                         <ListOptions>
                            {list
                               .filter(option =>

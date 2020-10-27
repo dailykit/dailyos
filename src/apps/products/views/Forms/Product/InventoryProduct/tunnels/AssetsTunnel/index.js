@@ -3,7 +3,10 @@ import { useMutation } from '@apollo/react-hooks'
 import { TunnelHeader } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { AssetUploader } from '../../../../../../../../shared/components'
+import {
+   AssetUploader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { UPDATE_INVENTORY_PRODUCT } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
@@ -42,6 +45,7 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
          <TunnelHeader
             title={t(address.concat('select photo'))}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="inventory_product_assets_tunnel" />}
          />
          <TunnelBody>
             <AssetUploader

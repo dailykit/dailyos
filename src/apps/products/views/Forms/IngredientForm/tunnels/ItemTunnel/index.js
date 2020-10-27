@@ -3,6 +3,7 @@ import { useLazyQuery } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -10,7 +11,7 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { BULK_ITEMS, SACHET_ITEMS } from '../../../../../graphql'
@@ -92,7 +93,11 @@ const ItemTunnel = ({ closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Item" close={() => closeTunnel(2)} />
+         <TunnelHeader
+            title="Select Item"
+            close={() => closeTunnel(2)}
+            tooltip={<Tooltip identifier="sachet_item_tunnel" />}
+         />
          <TunnelBody>
             {bulkItemsLoading || supplierItemsLoading ? (
                <InlineLoader />
@@ -108,6 +113,14 @@ const ItemTunnel = ({ closeTunnel }) => {
                               placeholder="type what you’re looking for..."
                            />
                         )}
+                        <ListHeader
+                           type="SSL1"
+                           label={
+                              ingredientState.currentMode === 'realTime'
+                                 ? 'Bulk Items'
+                                 : 'Sachet Items'
+                           }
+                        />
                         <ListOptions>
                            {list
                               .filter(option =>

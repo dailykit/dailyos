@@ -15,6 +15,7 @@ import { RecipeContext } from '../../../../../context/recipe'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { ImageContainer, PhotoTileWrapper } from './styled'
+import { Tooltip } from '../../../../../../../shared/components'
 
 const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
    const { recipeState, recipeDispatch } = React.useContext(RecipeContext)
@@ -68,6 +69,7 @@ const ProceduresTunnel = ({ state, openTunnel, closeTunnel }) => {
             title="Add Cooking Steps"
             right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="cooking_steps_tunnel" />}
          />
          <TunnelBody>
             {recipeState.procedures?.map((procedure, index) => (

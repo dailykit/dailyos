@@ -10,7 +10,10 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { OperationConfig } from '../../../../../../../shared/components'
+import {
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -104,6 +107,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
             title="Edit Mode"
             right={{ action: save, title: inFlight ? 'Saving...' : 'Save' }}
             close={close}
+            tooltip={<Tooltip identifier="edit_mode_tunnel" />}
          />
          <TunnelBody>
             <StyledTable cellSpacing={0}>

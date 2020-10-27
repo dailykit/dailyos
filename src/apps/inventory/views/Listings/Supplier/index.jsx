@@ -98,6 +98,7 @@ export default function SupplierListing() {
          title: 'Name',
          field: 'name',
          headerFilter: true,
+         cssClass: 'RowClick',
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'suppliers_listings_supplier_name'

@@ -111,6 +111,7 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
                unitSize
                parLevel
                committed
+               maxLevel
             }
          }
          unit
@@ -152,6 +153,7 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
                unitSize
                parLevel
                committed
+               maxLevel
             }
          }
       }
@@ -283,35 +285,6 @@ export const PACKAGING_SUBSCRIPTION = gql`
          awaiting
          committed
          consumed
-      }
-   }
-`
-
-export const PACKAGINGS_SUBSCRIPTION = gql`
-   subscription Packagings {
-      packagings {
-         id
-         name
-         unitPrice
-         dimensions
-         sku
-         parLevel
-         maxLevel
-         unitQuantity
-         caseQuantity
-         unitPrice
-         isAvailable
-         minOrderValue
-         awaiting
-         onHand
-         committed
-         leadTime
-         type
-         supplier {
-            id
-            name
-            contactPerson
-         }
       }
    }
 `
@@ -687,6 +660,42 @@ export const SUPPLIER_ITEM_LISTINGS = gql`
                count
             }
          }
+      }
+   }
+`
+export const BULK_ITEM_HISTORIES = gql`
+   subscription BulkItemHistories($bulkItemId: Int!) {
+      bulkItemHistories(where: { bulkItemId: { _eq: $bulkItemId } }) {
+         id
+         unit
+         status
+         bulkWorkOrder {
+            id
+            scheduledOn
+            outputBulkItem {
+               id
+               processingName
+            }
+            outputQuantity
+         }
+      }
+   }
+`
+
+export const SACHET_ITEM_HISTORIES = gql`
+   subscription SachetItemHistories($sachetId: Int!) {
+      sachetItemHistories(where: { sachetItemId: { _eq: $sachetId } }) {
+         id
+         sachetWorkOrder {
+            id
+            scheduledOn
+            outputQuantity
+            bulkItem {
+               id
+               processingName
+            }
+         }
+         status
       }
    }
 `

@@ -3,6 +3,7 @@ import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -11,7 +12,10 @@ import {
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
    CUSTOMIZABLE_PRODUCTS,
@@ -173,6 +177,7 @@ const ProductsTunnel = ({ close }) => {
          <TunnelHeader
             title={t(address.concat('select product to add'))}
             close={() => close(3)}
+            tooltip={<Tooltip identifier="combo_product_products_tunnel" />}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading ||
@@ -193,6 +198,7 @@ const ProductsTunnel = ({ close }) => {
                               )}
                            />
                         )}
+                        <ListHeader type="MSL1" label="Products" />
                         <ListOptions>
                            {list
                               .filter(option =>

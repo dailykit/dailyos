@@ -1,7 +1,8 @@
 import React from 'react'
-import { TunnelHeader, Flex } from '@dailykit/ui'
-import { AssetUploader } from '../../../../../../../shared/components'
+import { TunnelHeader } from '@dailykit/ui'
+import { AssetUploader, Tooltip } from '../../../../../../../shared/components'
 import { RecipeContext } from '../../../../../context/recipe'
+import { TunnelBody } from '../styled'
 
 const StepPhotoTunnel = ({ closeTunnel }) => {
    const { recipeState, recipeDispatch } = React.useContext(RecipeContext)
@@ -23,13 +24,17 @@ const StepPhotoTunnel = ({ closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Photo" close={() => closeTunnel(2)} />
-         <Flex padding="0 14px">
+         <TunnelHeader
+            title="Select Photo"
+            close={() => closeTunnel(2)}
+            tooltip={<Tooltip identifier="cooking_step_photo_tunnel" />}
+         />
+         <TunnelBody>
             <AssetUploader
                onAssetUpload={url => addImage(url)}
                onImageSelect={image => addImage(image)}
             />
-         </Flex>
+         </TunnelBody>
       </>
    )
 }

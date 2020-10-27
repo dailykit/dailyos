@@ -12,6 +12,7 @@ import {
    CREATE_INVENTORY_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../../graphql'
+import { Tooltip } from '../../../../../../../shared/components'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -107,6 +108,9 @@ export default function ProductTypeTunnel({ close }) {
          <TunnelHeader
             title={t(address.concat('select type of product'))}
             close={() => close(1)}
+            tooltip={
+               <Tooltip identifier="products_listing_products_type_tunnel" />
+            }
          />
          <TunnelBody>
             <SolidTile onClick={() => createProduct('inventory')}>

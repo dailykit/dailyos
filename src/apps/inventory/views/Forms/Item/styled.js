@@ -146,7 +146,6 @@ export const StyledGrid = styled.div`
                line-height: 23px;
                color: #555b6e;
                display: flex;
-               justify-content: space-between;
             }
          }
       }

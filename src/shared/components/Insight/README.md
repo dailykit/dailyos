@@ -188,6 +188,81 @@ Paste below code:
 
 ---
 
+## Schema Variables
+
+This feature lets the query writer define the variables in the schemaVariables (JSONB).
+
+The value for these variables come from the `variables` prop in `<Insights />`.
+The `variables` prop takes an object where the key is the variable name (without `$`). The value must be of the type specified in the graphql schema.
+
+### Example
+
+graphql query:
+
+```graphql
+query OrderInsight($options: order_order_bool_exp, $includeSource: Boolean!) {
+   ordersAggregate(where: $options) {
+      aggregate {
+         avg {
+            averageAmountPaid: amountPaid
+         }
+         count(columns: id)
+         sum {
+            totalAmountPaid: amountPaid
+            discount
+            deliveryPrice
+            tip
+         }
+      }
+      nodes {
+         id
+         amountPaid
+         source @include(if: $includeSource)
+         created_at
+         deliveryPrice
+      }
+   }
+}
+```
+
+As the `where` argument is using values from `$options` variable, there is no way to pass other custom values to change the query response.
+
+In, add the below code in the `schemaVariables` field for this row in insights table:
+
+```json
+{
+   "amountPaid": {
+      "_lte": "$amountVar"
+   }
+}
+```
+
+> Remember to wrap the variables in `""` to make it a valid json.
+
+Now we can pass the value for this variable in the `<Insight />` component.
+
+```javascript
+<Insight
+   identifier="<identifier name>"
+   includeChart
+   variables={{
+      amountVar: 3,
+   }}
+/>
+```
+
+> use amountVar not \$amountVar for the variable name.
+
+Only the variables defined in the schemaVariables will be picked from this variables object. So, you cannot pass the contents of the `where` prop in `variables`.
+
+For explicit use the `where` prop is available in the `<Insight />` component.
+
+The precedence of dfferent objects for the `where` query argument is now:
+
+`where` prop > `variables` prop > filter options
+
+---
+
 ## Insight props
 
 | Name           | Description                                                                                                                                                                                                                                                  | Default | Required |

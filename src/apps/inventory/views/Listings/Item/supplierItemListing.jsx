@@ -37,6 +37,7 @@ export default function SupplierItemsListings({ tableRef }) {
          headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         cssClass: 'RowClick',
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'items_listings_item_name'

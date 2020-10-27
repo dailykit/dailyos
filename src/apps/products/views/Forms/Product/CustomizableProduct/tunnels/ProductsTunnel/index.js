@@ -3,6 +3,7 @@ import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -13,7 +14,10 @@ import {
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
@@ -144,6 +148,9 @@ const ProductsTunnel = ({ state, close }) => {
                title: inFlight ? 'Adding...' : 'Add',
             }}
             close={() => close(2)}
+            tooltip={
+               <Tooltip identifier="customizable_product_products_tunnel" />
+            }
          />
          <TunnelBody>
             {simpleRecipeProductsLoading || inventoryProductsLoading ? (
@@ -173,6 +180,7 @@ const ProductsTunnel = ({ state, close }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader type="MSL1" label="Products" />
                         <ListOptions>
                            {list
                               .filter(option =>
