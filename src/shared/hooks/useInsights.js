@@ -1,8 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { useState } from 'react'
-import { buildOptions, transformer } from '../utils/insight_utils'
 import { merge } from 'lodash'
+import { useState } from 'react'
+import {
+   buildOptions,
+   buildOptionVariables,
+   transformer,
+} from '../utils/insight_utils'
+import { isObject } from '../utils/isObject'
 
 function onError(error) {
    console.log(error)
@@ -69,6 +74,7 @@ export const useInsights = (
             id: null,
             filters: null,
             defaultOptions: {},
+            schemaVariables: null,
             config: {},
          },
       } = {},
@@ -87,13 +93,34 @@ export const useInsights = (
       gqlQuery = buildQuery(insight.query)
    }
 
+   let tempFillers = null
+
+   // flatten schema variable till keys starting with _
+   if (insight.schemaVariables)
+      tempFillers = buildOptions(insight.schemaVariables)
+
+   // loop through the tempFillers and replace values starting with $ with the corresponding values in the options.variables object
+   if (tempFillers && isObject(tempFillers))
+      for (const key in tempFillers) {
+         for (const subKey in tempFillers[key]) {
+            if (`${tempFillers[key][subKey] || ''}`.startsWith('$')) {
+               const tempKey = tempFillers[key][subKey].slice(1)
+               tempFillers[key][subKey] = options.variables[tempKey]
+            }
+         }
+      }
+
+   //  unflatten the tempFillers to pass in the query
+   const schemaVariables = buildOptionVariables(tempFillers || {})
+
    const { loading } = useQuery(gqlQuery, {
       onError,
       variables: {
          ...variableSwitches,
          options: {
             ...insight.defaultOptions,
-            ...merge(variableOptions, options.where),
+            // merge variableOptions and schemaVariables, schemaVariables will overwrite any filter values in variableOptions
+            ...merge(variableOptions, schemaVariables),
          },
          limit: options.limit,
          orderBy: options.order,
@@ -156,6 +183,7 @@ export const GET_INSIGHT = gql`
          filters
          config
          defaultOptions
+         schemaVariables
          query
          switches
          charts {

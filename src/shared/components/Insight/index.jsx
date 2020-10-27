@@ -14,15 +14,15 @@ import { tableConfig } from './tableConfig'
 
 /**
  *
- * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}}} props
+ * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}, variables: {}}} props
  */
 export default function Insight({
    includeTable = true,
    includeChart = false,
    identifier = '',
-   where = {},
    limit,
    order,
+   variables = {},
 }) {
    const [isDiff, setIsDiff] = useState(false)
 
@@ -44,9 +44,9 @@ export default function Insight({
    } = useInsights(identifier, {
       includeTableData: includeTable,
       includeChartData: includeChart,
-      where,
       limit,
       order,
+      variables,
    })
 
    return (
