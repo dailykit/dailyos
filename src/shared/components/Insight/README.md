@@ -257,6 +257,10 @@ Only the variables defined in the schemaVariables will be picked from this varia
 
 For explicit use the `where` prop is available in the `<Insight />` component.
 
+The precedence of dfferent objects for the `where` query argument is now:
+
+`where` prop > `variables` prop > filter options
+
 ---
 
 ## Insight props
