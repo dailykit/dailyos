@@ -11,6 +11,7 @@ import {
    Text,
    HelperText,
 } from '@dailykit/ui'
+import { Tooltip } from '../Tooltip'
 
 const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
    const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -119,6 +120,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                title={title || 'Add Nutrition'}
                right={{ action: save, title: 'Save' }}
                close={() => closeTunnel(1)}
+               tooltip={<Tooltip identifier="nutrition_tunnel" />}
             />
             <Flex
                padding="16px"

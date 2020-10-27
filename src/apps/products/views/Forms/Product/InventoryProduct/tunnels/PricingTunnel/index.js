@@ -150,6 +150,9 @@ const PricingTunnel = ({ state, close }) => {
                   : t(address.concat('save')),
             }}
             close={() => close(1)}
+            tooltip={
+               <Tooltip identifier="inventory_product_option_pricing_tunnel" />
+            }
          />
          <TunnelBody>
             <Flex container alignItems="start">

@@ -7,13 +7,14 @@ import {
    useSingleList,
    TunnelHeader,
    Filler,
+   ListHeader,
 } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { RecipeContext } from '../../../../../context/recipe'
 import { TunnelBody } from '../styled'
 import { INGREDIENTS } from '../../../../../graphql'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 
 const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
@@ -56,7 +57,11 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Ingredient" close={() => closeTunnel(1)} />
+         <TunnelHeader
+            title="Select Ingredient"
+            close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="ingredients_tunnel" />}
+         />
          <TunnelBody>
             {loading ? (
                <InlineLoader />
@@ -72,6 +77,7 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
                               placeholder="type what you’re looking for..."
                            />
                         )}
+                        <ListHeader type="SSL1" label="Ingredients" />
                         <ListOptions>
                            {list
                               .filter(option =>

@@ -7,6 +7,7 @@ import { logger } from '../../../../../../../../shared/utils'
 import { UPDATE_CUSTOMIZABLE_PRODUCT } from '../../../../../../graphql'
 import validator from '../../../validators'
 import { TunnelBody } from '../styled'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.customizableproduct.tunnels.descriptiontunnel.'
@@ -76,6 +77,9 @@ const DescriptionTunnel = ({ state, close }) => {
                   : t(address.concat('save')),
             }}
             close={() => close(1)}
+            tooltip={
+               <Tooltip identifier="customizable_product_description_tunnel" />
+            }
          />
          <TunnelBody>
             <Form.Group>

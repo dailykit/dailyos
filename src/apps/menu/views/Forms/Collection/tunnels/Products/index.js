@@ -9,6 +9,7 @@ import {
    useMultiList,
    TunnelHeader,
    Filler,
+   ListHeader,
 } from '@dailykit/ui'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +23,7 @@ import {
    CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
 } from '../../../../../graphql'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 
 const address = 'apps.menu.views.forms.collection.tunnels.products.'
@@ -219,6 +220,7 @@ const ProductsTunnel = ({ closeTunnel }) => {
             )}
             right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(2)}
+            tooltip={<Tooltip identifier="collections_products_tunnel" />}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading ||
@@ -251,6 +253,7 @@ const ProductsTunnel = ({ closeTunnel }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader type="MSL1" label="Products" />
                         <ListOptions>
                            {list
                               .filter(option =>

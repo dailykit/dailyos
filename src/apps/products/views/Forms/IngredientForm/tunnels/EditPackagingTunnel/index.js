@@ -3,6 +3,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -10,7 +11,7 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { FETCH_PACKAGINGS } from '../../../../../graphql'
@@ -49,7 +50,11 @@ const EditPackagingTunnel = ({ closeTunnel }) => {
 
    return (
       <>
-         <TunnelHeader title="Select Packaging" close={() => closeTunnel(4)} />
+         <TunnelHeader
+            title="Select Packaging"
+            close={() => closeTunnel(4)}
+            tooltip={<Tooltip identifier="packaging_tunnel" />}
+         />
          <TunnelBody>
             {loading ? (
                <InlineLoader />
@@ -65,6 +70,7 @@ const EditPackagingTunnel = ({ closeTunnel }) => {
                               placeholder="type what you’re looking for..."
                            />
                         )}
+                        <ListHeader type="SSL1" label="Packaging Names" />
                         <ListOptions>
                            {list
                               .filter(option =>

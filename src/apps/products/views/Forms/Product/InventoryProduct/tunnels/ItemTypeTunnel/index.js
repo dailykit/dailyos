@@ -3,6 +3,7 @@ import { Text, TunnelHeader } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import { SolidTile, TunnelBody } from '../styled'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.inventoryproduct.tunnels.itemtypetunnel.'
@@ -21,6 +22,9 @@ const ItemsTypeTunnel = ({ close, open }) => {
          <TunnelHeader
             title={t(address.concat('select item type'))}
             close={() => close(1)}
+            tooltip={
+               <Tooltip identifier="inventory_product_item_type_tunnel" />
+            }
          />
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>

@@ -215,6 +215,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
             title="Add Sachet"
             right={{ action: add, title: inFlight ? 'Adding...' : 'Add' }}
             close={close}
+            tooltip={<Tooltip identifier="add_sachet_tunnel" />}
          />
          <TunnelBody>
             {units.length ? (

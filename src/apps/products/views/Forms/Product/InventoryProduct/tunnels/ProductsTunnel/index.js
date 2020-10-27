@@ -10,6 +10,7 @@ import {
    useMultiList,
    TunnelHeader,
    Filler,
+   ListHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -20,7 +21,10 @@ import {
    INVENTORY_PRODUCTS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 
 const address =
@@ -153,6 +157,7 @@ const ProductsTunnel = ({ state, close }) => {
                title: busy ? 'Adding...' : 'Add',
             }}
             close={() => close(2)}
+            tooltip={<Tooltip identifier="recommendation_products_tunnel" />}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading || inventoryProductsLoading ? (
@@ -182,6 +187,7 @@ const ProductsTunnel = ({ state, close }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader type="MSL1" label="Products" />
                         <ListOptions>
                            {list
                               .filter(option =>

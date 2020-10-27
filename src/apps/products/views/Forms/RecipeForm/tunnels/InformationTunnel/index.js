@@ -139,6 +139,7 @@ const InformationTunnel = ({ state, closeTunnel }) => {
                title: inFlight ? 'Saving...' : 'Save',
             }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="basic_information_tunnel" />}
          />
          <TunnelBody>
             {loading ? (

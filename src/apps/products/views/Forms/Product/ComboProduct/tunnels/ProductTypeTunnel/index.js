@@ -3,6 +3,7 @@ import { Text, TunnelHeader } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import { SolidTile, TunnelBody } from '../styled'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.comboproduct.tunnels.producttypetunnel.'
@@ -27,6 +28,9 @@ const ProductTypeTunnel = ({ close, open }) => {
          <TunnelHeader
             title={t(address.concat('select product type'))}
             close={() => close(2)}
+            tooltip={
+               <Tooltip identifier="combo_product_products_type_tunnel" />
+            }
          />
          <TunnelBody>
             <SolidTile onClick={() => select('inventory')}>

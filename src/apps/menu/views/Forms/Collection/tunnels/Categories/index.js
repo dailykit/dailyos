@@ -9,6 +9,7 @@ import {
    useMultiList,
    TunnelHeader,
    Filler,
+   ListHeader,
 } from '@dailykit/ui'
 
 import { TunnelBody } from '../styled'
@@ -19,7 +20,7 @@ import {
 } from '../../../../../graphql'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 
 const CategoriesTunnel = ({ closeTunnel, state }) => {
    const {
@@ -75,6 +76,7 @@ const CategoriesTunnel = ({ closeTunnel, state }) => {
             title="Add Categories"
             right={{ action: save, title: inFlight ? 'Adding...' : 'Add' }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="collections_categories_tunnel" />}
          />
          <TunnelBody>
             {loading ? (
@@ -102,6 +104,10 @@ const CategoriesTunnel = ({ closeTunnel, state }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader
+                           type="MSL1"
+                           label="Master Product Categories"
+                        />
                         <ListOptions>
                            {list
                               .filter(option =>

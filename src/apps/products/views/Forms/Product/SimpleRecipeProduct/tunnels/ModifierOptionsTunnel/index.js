@@ -3,6 +3,7 @@ import { useLazyQuery } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -10,7 +11,10 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
@@ -40,7 +44,12 @@ const ModifierOptionsTunnel = ({ close }) => {
       { loading: inventoryProductsLoading },
    ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
       variables: {
-         where: { inventoryProduct: { isPublished: { _eq: true } } },
+         where: {
+            _and: [
+               { inventoryProduct: { isPublished: { _eq: true } } },
+               { isArchived: { _eq: false } },
+            ],
+         },
       },
       onCompleted: data => {
          const updatedOptions = data.inventoryProductOptions.map(item => ({
@@ -61,7 +70,12 @@ const ModifierOptionsTunnel = ({ close }) => {
       { loading: simpleRecipeProductsLoading },
    ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
       variables: {
-         where: { simpleRecipeProduct: { isPublished: { _eq: true } } },
+         where: {
+            _and: [
+               { simpleRecipeProduct: { isPublished: { _eq: true } } },
+               { isArchived: { _eq: false } },
+            ],
+         },
       },
       onCompleted: data => {
          const updatedOptions = data.simpleRecipeProductOptions.map(item => ({
@@ -241,7 +255,11 @@ const ModifierOptionsTunnel = ({ close }) => {
 
    return (
       <>
-         <TunnelHeader title="Choose Option" close={() => close(4)} />
+         <TunnelHeader
+            title="Choose Option"
+            close={() => close(4)}
+            tooltip={<Tooltip identifier="modifiers_options_tunnel" />}
+         />
          <TunnelBody>
             {[
                inventoryProductsLoading,
@@ -263,6 +281,10 @@ const ModifierOptionsTunnel = ({ close }) => {
                               placeholder="type what you’re looking for..."
                            />
                         )}
+                        <ListHeader
+                           type="SSL1"
+                           label="Products Options/Items"
+                        />
                         <ListOptions>
                            {list
                               .filter(option =>

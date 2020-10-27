@@ -3,6 +3,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -13,6 +14,7 @@ import { toast } from 'react-toastify'
 import {
    ErrorBoundary,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
@@ -77,6 +79,7 @@ const ModifierTemplatesTunnel = ({ close }) => {
          <TunnelHeader
             title="Choose Modifier Template"
             close={() => close(6)}
+            tooltip={<Tooltip identifier="modifier_templates_tunnel" />}
          />
          <TunnelBody>
             {!modifiers.length ? (
@@ -94,6 +97,7 @@ const ModifierTemplatesTunnel = ({ close }) => {
                         placeholder="type what you’re looking for..."
                      />
                   )}
+                  <ListHeader type="SSL1" label="Modifier Templates" />
                   <ListOptions>
                      {list
                         .filter(option =>

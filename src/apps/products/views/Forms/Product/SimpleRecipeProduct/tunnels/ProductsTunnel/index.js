@@ -2,6 +2,7 @@ import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -13,7 +14,10 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import {
@@ -153,6 +157,7 @@ const ProductsTunnel = ({ state, close }) => {
                title: busy ? 'Adding...' : 'Add',
             }}
             close={() => close(2)}
+            tooltip={<Tooltip identifier="recommendation_products_tunnel" />}
          />
          <TunnelBody>
             {simpleRecipeProductsLoading || inventoryProductsLoading ? (
@@ -182,6 +187,7 @@ const ProductsTunnel = ({ state, close }) => {
                               ))}
                            </TagGroup>
                         )}
+                        <ListHeader type="MSL1" label="Products" />
                         <ListOptions>
                            {list
                               .filter(option =>
