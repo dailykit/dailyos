@@ -10,19 +10,22 @@ import {
    SUBSCRIPTION_PLAN,
    ISTEST,
    CUSTOMER_ISTEST,
+   WALLET_N_REFERRAL,
+   SIGNUP_COUNT,
+   LOYALTYPOINT_COUNT,
 } from '../../../graphql'
 import {
    OrdersTable,
    ReferralTable,
    WalletTable,
+   LoyaltyPointsTable,
    SubscriptionTable,
 } from '../../Tables'
 import {
    StyledWrapper,
-   StyledContainer,
    StyledSideBar,
-   StyledMainBar,
    StyledTable,
+   FlexContainer,
 } from './styled'
 import {
    CustomerCard,
@@ -32,6 +35,7 @@ import {
    ReferralCard,
    SubscriptionCard,
    WalletCard,
+   LoyaltyCard,
    SubscriptionInfoCard,
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
@@ -45,6 +49,24 @@ const CustomerRelation = ({ match }) => {
    const history = useHistory()
    const { data: customerIsTest, loading: customerloading } = useSubscription(
       CUSTOMER_ISTEST,
+      {
+         variables: { keycloakId: match.params.id },
+      }
+   )
+   const {
+      data: walletNreferral,
+      loading: walletNreferralLoading,
+   } = useSubscription(WALLET_N_REFERRAL, {
+      variables: { keycloakId: match.params.id },
+   })
+   const { data: loyaltyPoint, loading: loyaltyPointLoading } = useSubscription(
+      LOYALTYPOINT_COUNT,
+      {
+         variables: { keycloakId: match.params.id },
+      }
+   )
+   const { data: signUpCount, loading: signUpLoading } = useSubscription(
+      SIGNUP_COUNT,
       {
          variables: { keycloakId: match.params.id },
       }
@@ -131,6 +153,8 @@ const CustomerRelation = ({ match }) => {
       table = <ReferralTable />
    } else if (tab?.data?.activeCard === 'Wallet') {
       table = <WalletTable />
+   } else if (tab?.data?.activeCard === 'LoyaltyPoints') {
+      table = <LoyaltyPointsTable />
    } else if (tab?.data?.activeCard === 'Subscriber') {
       table = (
          <SubscriptionTable
@@ -139,7 +163,15 @@ const CustomerRelation = ({ match }) => {
          />
       )
    }
-   if (listLoading || list_Loading || list__Loading || customerloading) {
+   if (
+      listLoading ||
+      list_Loading ||
+      list__Loading ||
+      customerloading ||
+      walletNreferralLoading ||
+      signUpLoading ||
+      loyaltyPointLoading
+   ) {
       return <InlineLoader />
    }
    return (
@@ -172,11 +204,7 @@ const CustomerRelation = ({ match }) => {
                />
             </StyledSideBar>
             <Flex container width="80%" flexDirection="column">
-               <Flex
-                  container
-                  justifyContent="space-between"
-                  margin="0 16px 16px 0"
-               >
+               <FlexContainer>
                   <OrderCard
                      data={customerData?.customer?.orders_aggregate?.aggregate}
                      click={() => setActiveCard('Orders')}
@@ -184,6 +212,14 @@ const CustomerRelation = ({ match }) => {
                      heading="Orders"
                   />
                   <ReferralCard
+                     referralCount={
+                        walletNreferral?.customer?.customerReferralDetails
+                           ?.customerReferrals_aggregate?.aggregate?.count || 0
+                     }
+                     signUpCount={
+                        signUpCount?.customer?.customerReferralDetails
+                           ?.customerReferrals_aggregate?.aggregate?.count || 0
+                     }
                      click={() => setActiveCard('Referrals')}
                      active={tab.data.activeCard}
                      heading="Referrals"
@@ -195,11 +231,18 @@ const CustomerRelation = ({ match }) => {
                      heading="Subscriber"
                   />
                   <WalletCard
+                     data={walletNreferral?.customer?.wallet}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"
                   />
-               </Flex>
+                  <LoyaltyCard
+                     data={loyaltyPoint?.customer?.loyaltyPoint}
+                     click={() => setActiveCard('LoyaltyPoints')}
+                     active={tab.data.activeCard}
+                     heading="LoyaltyPoints"
+                  />
+               </FlexContainer>
                <StyledTable>{table}</StyledTable>
             </Flex>
          </Flex>

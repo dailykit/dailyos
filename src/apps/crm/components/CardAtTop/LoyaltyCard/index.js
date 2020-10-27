@@ -6,13 +6,13 @@ const StyleCard = ({ active, heading, click, data }) => {
    return (
       <StyledCard active={active === heading}>
          <Flex container justifyContent="space-between" padding="16px">
-            <Text as="p">Wallet</Text>
+            <Text as="p">Loyalty Points</Text>
             <ViewTab onClick={click}>view</ViewTab>
          </Flex>
          <Flex container padding="16px" className="cardContent">
             <Flex container flexDirection="column">
-               <Text as="p">Total Wallet Amount</Text>
-               <Text as="p">${data.amount}</Text>
+               <Text as="p">Total Points</Text>
+               <Text as="p">{data?.points || 0}</Text>
             </Flex>
          </Flex>
       </StyledCard>

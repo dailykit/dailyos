@@ -114,6 +114,7 @@ export const WALLET_LISTING = gql`
    query WALLET_LISTING($keycloakId: String!) {
       customer(keycloakId: $keycloakId) {
          wallet {
+            amount
             walletTransactions_aggregate {
                aggregate {
                   count
@@ -128,6 +129,33 @@ export const WALLET_LISTING = gql`
                   amount
                   wallet {
                      balanceAmount: amount
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
+export const LOYALTYPOINTS_LISTING = gql`
+   query LOYALTYPOINTS_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         loyaltyPoint {
+            points
+            loyaltyPointTransactions_aggregate {
+               aggregate {
+                  count
+               }
+               nodes {
+                  created_at
+                  id
+                  type
+                  points
+                  orderCart {
+                     orderId
+                  }
+                  loyaltyPoint {
+                     balanceAmount: points
                   }
                }
             }

@@ -176,3 +176,44 @@ export const BRAND_CAMPAIGNS = gql`
       }
    }
 `
+export const WALLET_N_REFERRAL = gql`
+   subscription WALLET_N_REFERRAL($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         wallet {
+            amount
+         }
+         customerReferralDetails {
+            customerReferrals_aggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      }
+   }
+`
+
+export const LOYALTYPOINT_COUNT = gql`
+   subscription LOYALTYPOINT_COUNT($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         loyaltyPoint {
+            points
+         }
+      }
+   }
+`
+export const SIGNUP_COUNT = gql`
+   subscription SIGNUP_COUNT($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         customerReferralDetails {
+            customerReferrals_aggregate(
+               where: { signupStatus: { _eq: "COMPLETE" } }
+            ) {
+               aggregate {
+                  count
+               }
+            }
+         }
+      }
+   }
+`

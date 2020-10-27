@@ -8,38 +8,47 @@ import options from '../../tableOptions'
 import { useTooltip } from '../../../../../shared/providers'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
-import { WALLET_LISTING } from '../../../graphql'
+import { LOYALTYPOINTS_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 
-const WalletTable = () => {
+const LoyaltyPointTable = () => {
    const { addTab } = useTabs()
    const tableRef = useRef()
    const { tooltip } = useTooltip()
    const { id } = useParams()
-   const [walletTxn, setWalletTxn] = useState([])
+   const [loyaltyPointTxn, setLoyaltyPointTxn] = useState([])
    const [txnCount, setTxnCount] = useState(0)
 
    // Query
-   const { loading: listloading } = useQuery(WALLET_LISTING, {
+   const { loading: listloading } = useQuery(LOYALTYPOINTS_LISTING, {
       variables: {
          keycloakId: id,
       },
       onCompleted: ({
-         customer: { wallet: { walletTransactions_aggregate = {} } = {} } = {},
+         customer: {
+            loyaltyPoint: { loyaltyPointTransactions_aggregate = {} } = {},
+         } = {},
       }) => {
-         console.log(walletTransactions_aggregate)
-         const result = walletTransactions_aggregate?.nodes.map(wallet => {
-            return {
-               date: wallet?.created_at || 'N/A',
-               reference: wallet?.id || 'N/A',
-               oid: wallet?.orderCart?.orderId || 'N/A',
-               debit: wallet.type === 'DEBIT' ? `$${wallet?.amount}` : '$0',
-               credit: wallet.type === 'CREDIT' ? `$${wallet?.amount}` : '$0',
-               balance: wallet?.wallet?.balanceAmount || 'N/A',
+         const result = loyaltyPointTransactions_aggregate?.nodes.map(
+            loyaltyPnt => {
+               return {
+                  date: loyaltyPnt?.created_at || 'N/A',
+                  reference: loyaltyPnt?.id || 'N/A',
+                  oid: loyaltyPnt?.orderCart?.orderId || 'N/A',
+                  debit:
+                     loyaltyPnt.type === 'DEBIT'
+                        ? `$${loyaltyPnt?.points}`
+                        : '$0',
+                  credit:
+                     loyaltyPnt.type === 'CREDIT'
+                        ? `$${loyaltyPnt?.points}`
+                        : '$0',
+                  balance: loyaltyPnt?.loyaltyPoint?.balanceAmount || 'N/A',
+               }
             }
-         })
-         setWalletTxn(result)
-         setTxnCount(walletTransactions_aggregate?.aggregate?.count || 0)
+         )
+         setLoyaltyPointTxn(result)
+         setTxnCount(loyaltyPointTransactions_aggregate?.aggregate?.count || 0)
       },
       onError: error => {
          toast.error('Something went wrong !')
@@ -58,7 +67,7 @@ const WalletTable = () => {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_txnDate_column'
+            const identifier = 'loyaltyPoints_listing_txnDate_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -73,7 +82,7 @@ const WalletTable = () => {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_referenceId_column'
+            const identifier = 'loyaltyPoints_listing_referenceId_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -88,7 +97,7 @@ const WalletTable = () => {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_oid_column'
+            const identifier = 'loyaltyPoints_listing_oid_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -104,7 +113,7 @@ const WalletTable = () => {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_debit_column'
+            const identifier = 'loyatlyPoints_listing_debit_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -120,7 +129,7 @@ const WalletTable = () => {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_credit_column'
+            const identifier = 'loyaltyPoints_listing_credit_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -136,7 +145,7 @@ const WalletTable = () => {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_balance_column'
+            const identifier = 'loyaltyPoints_listing_balance_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -150,20 +159,20 @@ const WalletTable = () => {
    return (
       <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
          <Flex container height="80px" padding="16px" alignItems="center">
-            <Text as="title">Wallet Transactions({txnCount})</Text>
-            <Tooltip identifier="wallet_list_heading" />
+            <Text as="title">Loyalty Points Transactions({txnCount})</Text>
+            <Tooltip identifier="loyaltyPoints_list_heading" />
          </Flex>
          <ReactTabulator
             columns={columns}
-            data={walletTxn}
+            data={loyaltyPointTxn}
             ref={tableRef}
             options={{
                ...options,
-               placeholder: 'No Wallet Data Available Yet !',
+               placeholder: 'No Loyalty Points Data Available Yet !',
             }}
          />
       </Flex>
    )
 }
 
-export default WalletTable
+export default LoyaltyPointTable

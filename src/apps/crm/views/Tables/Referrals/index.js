@@ -104,13 +104,6 @@ const ReferralTable = () => {
       },
    ]
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-
-      const param = '/crm/customers/'.concat(name)
-      addTab(name, param)
-   }
-
    if (listloading) return <InlineLoader />
    return (
       <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
@@ -122,7 +115,6 @@ const ReferralTable = () => {
          <ReactTabulator
             columns={columns}
             data={referralList}
-            rowClick={rowClick}
             ref={tableRef}
             options={{
                ...options,
