@@ -111,7 +111,7 @@ export const useInsights = (
    //  unflatten the tempFillers to pass in the query
    const schemaVariables = buildOptionVariables(tempFillers || {})
 
-   const { loading, error: insightError } = useQuery(gqlQuery, {
+   const { error: insightError } = useQuery(gqlQuery, {
       variables: {
          ...variableSwitches,
          options: {
@@ -153,7 +153,7 @@ export const useInsights = (
    }
 
    const result = {
-      loading: loading || insightLoading,
+      loading: insightLoading,
       error: insightError || insightLoadError,
       empty,
       newTableData,
