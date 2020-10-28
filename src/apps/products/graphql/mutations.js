@@ -405,7 +405,7 @@ export const DELETE_CUSTOMIZABLE_PRODUCTS = gql`
    mutation DeleteCustomizableProducts($ids: [Int!]!) {
       updateCustomizableProduct(
          where: { id: { _in: $ids } }
-         set: { isArchived: true }
+         _set: { isArchived: true }
       ) {
          returning {
             id

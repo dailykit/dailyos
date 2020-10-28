@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { StyledCard, ViewTab } from './styled'
-const StyleCard = ({ active, heading, click }) => {
+const StyleCard = ({ active, heading, click, referralCount, signUpCount }) => {
    return (
       <StyledCard active={active === heading}>
          <Flex container justifyContent="space-between" padding="16px">
@@ -16,11 +16,11 @@ const StyleCard = ({ active, heading, click }) => {
          >
             <Flex container flexDirection="column">
                <Text as="p">Referrals Sent</Text>
-               <Text as="p">N/A</Text>
+               <Text as="p">{referralCount}</Text>
             </Flex>
             <Flex container flexDirection="column">
                <Text as="p">Total Signup</Text>
-               <Text as="p">N/A</Text>
+               <Text as="p">{signUpCount}</Text>
             </Flex>
          </Flex>
       </StyledCard>

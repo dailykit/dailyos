@@ -79,6 +79,7 @@ export default function WorkOrders() {
          headerFilter: true,
          width: 150,
          cellClick: openForm,
+         cssClass: 'RowClick',
          headerTooltip: col => {
             const identifier = 'work-orders_listings_table_status'
             return tooltip(identifier)?.description || col.getDefinition().title

@@ -37,6 +37,7 @@ export default function BulkItemsListings({ tableRef }) {
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 150,
+         cssClass: 'RowClick',
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'items_listings_bulk_item_processingName'

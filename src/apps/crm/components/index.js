@@ -10,6 +10,7 @@ import {
    ReferralCard,
    SubscriptionCard,
    WalletCard,
+   LoyaltyCard,
 } from './CardAtTop'
 
 export {
@@ -24,4 +25,5 @@ export {
    ReferralCard,
    SubscriptionCard,
    WalletCard,
+   LoyaltyCard,
 }
