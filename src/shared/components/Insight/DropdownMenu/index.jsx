@@ -42,7 +42,7 @@ export const DropdownItem = ({
    return (
       <StyledItem onClick={onClick} style={{ width }}>
          {leftIcon}
-         <div style={{ margin: '0 8px' }}>{children}</div>
+         <div style={{ margin: '0 8px', width: '100%' }}>{children}</div>
          {rightIcon}
       </StyledItem>
    )

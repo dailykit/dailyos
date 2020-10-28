@@ -1,18 +1,17 @@
-import React, { useState } from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { Filler, Flex, Form } from '@dailykit/ui'
+import React, { useState } from 'react'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import styled from 'styled-components'
-import { Filler, Flex, Toggle } from '@dailykit/ui'
-
-import '../../styled/tableStyles.css'
 import { useInsights } from '../../hooks/useInsights'
-import { Counter } from './Counter'
+import '../../styled/tableStyles.css'
+import { ErrorState } from '../ErrorState'
+import { InlineLoader } from '../InlineLoader'
 import Chart from './Chart'
+import { Counter } from './Counter'
 import Option from './Option'
 import { tableConfig } from './tableConfig'
-import { InlineLoader } from '../InlineLoader'
-import { ErrorState } from '../ErrorState'
 
 /**
  *
@@ -70,11 +69,13 @@ export default function Insight({
                   marginBottom: '1rem',
                }}
             >
-               <Toggle
-                  checked={isDiff}
-                  setChecked={setIsDiff}
-                  label="Compare"
-               />
+               <Form.Toggle
+                  value={isDiff}
+                  onChange={() => setIsDiff(v => !v)}
+                  name="compare"
+               >
+                  Compare
+               </Form.Toggle>
 
                <Option
                   options={options}
