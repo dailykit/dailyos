@@ -164,6 +164,9 @@ export default function RewardDetailsunnel({
                      title: loading ? 'Saving...' : 'Save',
                   }}
                   close={() => closeFunc()}
+                  tooltip={
+                     <Tooltip identifier="coupon_rewardDetails_tunnelHeader" />
+                  }
                />
                <TunnelBody>
                   {conditionId ? (
@@ -237,7 +240,10 @@ export default function RewardDetailsunnel({
                               htmlFor="number"
                               title="absoluteRewardValue"
                            >
-                              Reward Value
+                              <Flex container alignItems="center">
+                                 Reward Value
+                                 <Tooltip identifier="coupon_absolute_reward_value" />
+                              </Flex>
                            </Form.Label>
                            <Form.Number
                               id="absoluteRewardVal"
@@ -259,7 +265,10 @@ export default function RewardDetailsunnel({
                                  htmlFor="number"
                                  title="MaxRewardValue"
                               >
-                                 Maximum Reward Value
+                                 <Flex container alignItems="center">
+                                    Maximum Reward Value
+                                    <Tooltip identifier="coupon_max_reward_value" />
+                                 </Flex>
                               </Form.Label>
                               <Form.Number
                                  id="MaxRewardValue"
@@ -284,12 +293,15 @@ export default function RewardDetailsunnel({
                                  htmlFor="number"
                                  title="PercentRewardValue"
                               >
-                                 Reward Percentage
+                                 <Flex container alignItems="center">
+                                    Reward Percentage
+                                    <Tooltip identifier="coupon_percentage_reward_value" />
+                                 </Flex>
                               </Form.Label>
                               <Form.Number
                                  id="PercentRewardValue"
                                  name="PercentRewardValue"
-                                 placeholder="Enter percentage value of reward  "
+                                 placeholder="Enter percentage value of reward"
                                  value={rewardValue?.value?.percentage}
                                  onChange={e =>
                                     setRewardValue({

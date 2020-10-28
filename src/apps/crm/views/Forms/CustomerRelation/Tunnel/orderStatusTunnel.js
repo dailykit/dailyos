@@ -5,7 +5,7 @@ import { useTabs } from '../../../../context'
 import { STATUS } from '../../../../graphql'
 import { TunnelHeaderContainer, StyledDiv } from './styled'
 import { logger } from '../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { toast } from 'react-toastify'
 
 const OrderStatus = ({ tunnels, closeTunnel }) => {
@@ -23,7 +23,13 @@ const OrderStatus = ({ tunnels, closeTunnel }) => {
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
-            <TunnelHeader title="Order Status" close={() => closeTunnel(1)} />
+            <TunnelHeader
+               title="Order Status"
+               close={() => closeTunnel(1)}
+               tooltip={
+                  <Tooltip identifier="customer_order_status_tunnelHeader" />
+               }
+            />
             <TunnelHeaderContainer>
                <StyledDiv>
                   <Text as="h2">

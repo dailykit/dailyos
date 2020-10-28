@@ -13,7 +13,16 @@ import AssetTunnel from './asset'
 import { Tooltip } from '../Tooltip'
 import { DeleteIcon } from '../../assets/icons'
 
-const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
+const BasicInfo = ({
+   data,
+   onSave,
+   openTunnel,
+   closeTunnel,
+   tunnels,
+   titleIdentifier,
+   descriptionIndentifier,
+   headerIdentifier,
+}) => {
    const [info, setInfo] = useState(data || {})
    const afterSave = info => {
       onSave(info)
@@ -34,11 +43,15 @@ const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
                      title: 'Save',
                   }}
                   close={() => closeTunnel(1)}
+                  tooltip={<Tooltip identifier={headerIdentifier} />}
                />
                <TunnelBody>
                   <Form.Group>
                      <Form.Label htmlFor="text" title="title">
-                        Title
+                        <Flex container alignItems="center">
+                           Title
+                           <Tooltip identifier={titleIdentifier} />
+                        </Flex>
                      </Form.Label>
                      <Form.Text
                         id="title"
@@ -53,7 +66,10 @@ const BasicInfo = ({ data, onSave, openTunnel, closeTunnel, tunnels }) => {
                   <Spacer size="32px" />
                   <Form.Group>
                      <Form.Label htmlFor="textarea" title="description">
-                        Description
+                        <Flex container alignItems="center">
+                           Description
+                           <Tooltip identifier={descriptionIndentifier} />
+                        </Flex>
                      </Form.Label>
                      <Form.TextArea
                         id="description"

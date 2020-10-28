@@ -14,18 +14,19 @@ import { Tooltip } from '../../../../shared/components'
 const ContactInfoCard = ({
    bgColor,
    margin,
+   smallText,
    defaultTag,
    onClick,
    linkedTo,
-   smallText,
    cardData,
    billingAddDisplay,
+   identifier,
 }) => (
    <PaymentCard bgColor={bgColor} margin={margin}>
       <CardInfo2>
          <Flex container alignItems="center">
             <Text as="p">Payment Card{defaultTag}</Text>
-            <Tooltip identifier="payment_card_info" />
+            <Tooltip identifier={identifier} />
          </Flex>
       </CardInfo2>
       <CardInfo>
@@ -43,6 +44,7 @@ const ContactInfoCard = ({
             {`${cardData?.expMonth || 'N'}/${cardData?.expYear || 'A'}`}
          </Text>
          <SmallText onClick={onClick}>{linkedTo}</SmallText>
+         {smallText && <SmallText onClick={onClick}>{smallText}</SmallText>}
       </CardInfo2>
       <BillingAddress display={billingAddDisplay}>
          <Text as="p">Billing Address</Text>

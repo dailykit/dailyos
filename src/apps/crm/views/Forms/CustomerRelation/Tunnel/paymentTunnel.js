@@ -5,7 +5,7 @@ import { ALL_DATA } from '../../../../graphql'
 import { PaymentCard } from '../../../../components'
 import { TunnelHeaderContainer } from './styled'
 import { logger } from '../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { toast } from 'react-toastify'
 
 const TunnelVision = ({ id, tunnels, closeTunnel }) => {
@@ -28,6 +28,9 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
                      ?.stripePaymentMethods?.length || 'N/A'
                })`}
                close={() => closeTunnel(1)}
+               tooltip={
+                  <Tooltip identifier="customer_paymentCard_list_tunnelHeader" />
+               }
             />
             <TunnelHeaderContainer>
                {allCards?.customer?.platform_customers[0]?.stripePaymentMethods?.map(

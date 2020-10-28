@@ -22,11 +22,14 @@ export const StyledComp = styled.div`
 export const StyledDiv = styled.div`
    padding: 0;
    background-color: #ffffff;
-   .glXFlP {
+   .styleTab {
       margin-bottom: 16px;
-      padding: 0 32px;
+      padding-left: 32px;
    }
-   .flarUQ {
+   #tabs--1--panel--0 {
+      padding: 0;
+   }
+   #tabs--1--panel--1 {
       padding: 0;
    }
 `

@@ -66,8 +66,8 @@ export default function RewardTypeTunnel({
                   <TunnelHeader
                      title="Select Type of Reward"
                      close={() => closeTunnel(1)}
+                     tooltip={<Tooltip identifier="coupon_reward_type" />}
                   />
-                  <Tooltip identifier="coupon_reward_type" />
                </Flex>
                <TunnelBody>
                   {types.map(type => {

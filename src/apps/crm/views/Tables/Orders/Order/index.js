@@ -155,7 +155,10 @@ const OrderInfo = () => {
    if (orderData?.order?.driverInfo !== null) {
       deliveryAgent = (
          <>
-            <Text as="subtitle">Delivery Assign To:</Text>
+            <Flex container alignItems="center">
+               <Text as="subtitle">Delivery Assign To:</Text>
+               <Tooltip identifier="customer_order_delivery_agent" />
+            </Flex>
             <Card>
                <Avatar
                   withName
@@ -265,6 +268,7 @@ const OrderInfo = () => {
                   defaultTag="(Used for this order)"
                   onClick={() => openTunnel1(1)}
                   smallText="Check Payment Status"
+                  identifier="payment_card_info"
                />
                {deliveryInfoCard}
             </StyledSideBar>

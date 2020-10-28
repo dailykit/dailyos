@@ -180,7 +180,7 @@ const CustomerRelation = ({ match }) => {
             <StyledSideBar>
                <CustomerCard
                   customer={customerData?.customer}
-                  walletAmount="N/A"
+                  walletAmount={walletNreferral?.customer?.wallet?.amount || 0}
                   toggle={customerIsTest?.customer?.isTest}
                   toggleHandler={() =>
                      toggleHandler(!customerIsTest?.customer?.isTest)
@@ -201,6 +201,7 @@ const CustomerRelation = ({ match }) => {
                         ?.defaultStripePaymentMethod || 'N/A'
                   }
                   billingAddDisplay="none"
+                  identifier="default_payment_card_info"
                />
             </StyledSideBar>
             <Flex container width="80%" flexDirection="column">
