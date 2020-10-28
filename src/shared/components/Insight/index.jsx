@@ -72,7 +72,7 @@ export default function Insight({
                <Form.Toggle
                   value={isDiff}
                   onChange={() => setIsDiff(v => !v)}
-                  name="compare"
+                  name={`compare-${identifier}`}
                >
                   Compare
                </Form.Toggle>
