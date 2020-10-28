@@ -68,6 +68,7 @@ const OrdersTable = ({ id }) => {
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
+         width: 150,
       },
       {
          title: 'Products',
@@ -143,6 +144,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 150,
       },
       {
          title: 'Ordered On',

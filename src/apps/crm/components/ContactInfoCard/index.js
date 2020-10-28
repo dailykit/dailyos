@@ -23,7 +23,6 @@ const ContactInfoCard = ({
             <Text as="p">Contact Details{defaultTag1}</Text>
             <Tooltip identifier="contact_info" />
          </Flex>
-         <SmallText onClick={onClick}>view all address</SmallText>
       </StyledHeading>
       <ContactInfo>
          <Text as="p">{customerData?.email || 'N/A'}</Text>
@@ -38,6 +37,7 @@ const ContactInfoCard = ({
          <Text as="p">
             {concatAddress(customerData?.defaultCustomerAddress || 'N/A')}
          </Text>
+         <SmallText onClick={onClick}>view all address</SmallText>
       </CustomerAddress>
    </ContactCard>
 )

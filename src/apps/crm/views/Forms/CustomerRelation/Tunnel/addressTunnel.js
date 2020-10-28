@@ -1,11 +1,11 @@
 import React from 'react'
-import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
+import { Tunnels, Tunnel, TunnelHeader, Text, Toggle } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { ALL_DATA } from '../../../../graphql'
 import { concatAddress } from '../../../../Utils'
 import { TunnelHeaderContainer, CustomerAddress } from './styled'
 import { logger } from '../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { toast } from 'react-toastify'
 
 const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
@@ -29,6 +29,9 @@ const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
                      ?.length || 'N/A'
                })`}
                close={() => closeTunnel(1)}
+               tooltip={
+                  <Tooltip identifier="customer_address_list_tunnelHeader" />
+               }
             />
             <TunnelHeaderContainer>
                {allAddress?.customer?.platform_customers[0]?.customerAddresses?.map(
