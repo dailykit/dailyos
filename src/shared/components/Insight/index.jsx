@@ -3,7 +3,7 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import styled from 'styled-components'
-import { Flex, Toggle } from '@dailykit/ui'
+import { Filler, Flex, Toggle } from '@dailykit/ui'
 
 import '../../styled/tableStyles.css'
 import { useInsights } from '../../hooks/useInsights'
@@ -11,6 +11,8 @@ import { Counter } from './Counter'
 import Chart from './Chart'
 import Option from './Option'
 import { tableConfig } from './tableConfig'
+import { InlineLoader } from '../InlineLoader'
+import { ErrorState } from '../ErrorState'
 
 /**
  *
@@ -42,6 +44,9 @@ export default function Insight({
       oldAggregates,
       newAggregates,
       config,
+      loading,
+      error,
+      empty,
    } = useInsights(identifier, {
       includeTableData: includeTable,
       includeChartData: includeChart,
@@ -50,6 +55,10 @@ export default function Insight({
       order,
       variables,
    })
+
+   if (loading) return <InlineLoader />
+   if (error) return <ErrorState />
+   if (empty) return <Filler />
 
    return (
       <>
@@ -172,7 +181,7 @@ function CounterBar({ aggregates }) {
 
 const StyledContainer = styled.div`
    position: relative;
-   width: 95vw;
+   width: 100%;
    margin: 1rem auto;
    padding: 1rem 2rem;
    background: #ffffff;
