@@ -23,7 +23,7 @@ import {
    BrandCampaign,
 } from './components'
 import { logger } from '../../../../../shared/utils'
-import { InlineLoader } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CampaignContext from '../../../context/Campaign/CampaignForm'
 
@@ -174,9 +174,12 @@ const CampaignForm = () => {
                   padding="0 0 16px 0"
                >
                   <Form.Group>
-                     <Form.Label htmlFor="name" title="Campaign Name">
-                        Campaign Name*
-                     </Form.Label>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label htmlFor="name" title="Campaign Name">
+                           Campaign Name*
+                        </Form.Label>
+                        <Tooltip identifier="campaign_info" />
+                     </Flex>
                      <Form.Text
                         id="campaignName"
                         name="campaignName"
@@ -214,7 +217,10 @@ const CampaignForm = () => {
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        Publish
+                        <Flex container alignItems="center">
+                           Publish
+                           <Tooltip identifier="campaign_publish_info" />
+                        </Flex>
                      </Form.Toggle>
                   </Flex>
                </Flex>
@@ -222,11 +228,13 @@ const CampaignForm = () => {
 
             <StyledDiv>
                <HorizontalTabs>
-                  <HorizontalTabList>
-                     <HorizontalTab>Details</HorizontalTab>
-                     <HorizontalTab>Brand</HorizontalTab>
-                     <HorizontalTab>Insights</HorizontalTab>
-                  </HorizontalTabList>
+                  <div className="styleTab">
+                     <HorizontalTabList>
+                        <HorizontalTab>Details</HorizontalTab>
+                        <HorizontalTab>Brand</HorizontalTab>
+                        <HorizontalTab>Insights</HorizontalTab>
+                     </HorizontalTabList>
+                  </div>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
                         <StyledComp>

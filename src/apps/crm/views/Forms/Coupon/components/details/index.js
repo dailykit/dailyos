@@ -45,6 +45,9 @@ const Details = () => {
             openTunnel={openTunnel}
             tunnels={tunnels}
             onSave={info => saveInfo(info)}
+            titleIdentifier="coupon_details_title"
+            descriptionIndentifier="coupon_details_description"
+            headerIdentifier="coupon_details_tunnelHeader"
          />
          {context.state?.metaDetails?.title ||
          context.state?.metaDetails?.description ||

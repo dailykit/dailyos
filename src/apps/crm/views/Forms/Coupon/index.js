@@ -24,7 +24,7 @@ import {
    BrandCoupons,
 } from './components'
 import { logger } from '../../../../../shared/utils'
-import { InlineLoader } from '../../../../../shared/components'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CouponContext from '../../../context/Coupon/CouponForm'
 
@@ -169,9 +169,12 @@ const CouponForm = () => {
                   padding="0 0 16px 0"
                >
                   <Form.Group>
-                     <Form.Label htmlFor="name" title="Coupon Code ">
-                        Coupon Code*
-                     </Form.Label>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label htmlFor="name" title="Coupon Code">
+                           Coupon Code*
+                        </Form.Label>
+                        <Tooltip identifier="coupon_code_info" />
+                     </Flex>
                      <Form.Text
                         id="couponCode"
                         name="couponCode"
@@ -209,18 +212,23 @@ const CouponForm = () => {
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        Publish
+                        <Flex container alignItems="center">
+                           Publish
+                           <Tooltip identifier="coupon_publish_info" />
+                        </Flex>
                      </Form.Toggle>
                   </Flex>
                </Flex>
             </InputWrapper>
             <StyledDiv>
                <HorizontalTabs>
-                  <HorizontalTabList>
-                     <HorizontalTab>Details</HorizontalTab>
-                     <HorizontalTab>Brand</HorizontalTab>
-                     <HorizontalTab>Insights</HorizontalTab>
-                  </HorizontalTabList>
+                  <div className="styleTab">
+                     <HorizontalTabList>
+                        <HorizontalTab>Details</HorizontalTab>
+                        <HorizontalTab>Brand</HorizontalTab>
+                        <HorizontalTab>Insights</HorizontalTab>
+                     </HorizontalTabList>
+                  </div>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
                         <StyledComp>

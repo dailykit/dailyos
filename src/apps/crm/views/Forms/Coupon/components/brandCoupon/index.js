@@ -71,7 +71,7 @@ const BrandCoupon = () => {
 
    return (
       <StyledWrapper>
-         <Flex container height="80px" alignItems="center" padding="6px">
+         <Flex container alignItems="center" padding="6px">
             <Text as="h2">Brands</Text>
             <Tooltip identifier="brand_coupon_list_heading" />
          </Flex>
