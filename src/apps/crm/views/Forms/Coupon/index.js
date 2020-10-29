@@ -24,7 +24,11 @@ import {
    BrandCoupons,
 } from './components'
 import { logger } from '../../../../../shared/utils'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CouponContext from '../../../context/Coupon/CouponForm'
 
@@ -241,7 +245,11 @@ const CouponForm = () => {
                         <BrandCoupons />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        Insights Content coming soon!!
+                        <InsightDashboard
+                           appTitle="CRM App"
+                           moduleTitle="Coupon Page"
+                           variables={{ couponId: couponId }}
+                        />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>
