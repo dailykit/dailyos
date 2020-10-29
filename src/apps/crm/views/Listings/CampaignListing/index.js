@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
 import {
    Text,
    ButtonGroup,
    IconButton,
    PlusIcon,
-   Loader,
    Tunnels,
    Tunnel,
    useTunnel,
@@ -31,6 +31,7 @@ import CampaignTypeTunnel from './Tunnel'
 import options from '../../tableOptions'
 
 const CampaignListing = () => {
+   const location = useLocation()
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [campaign, setCampaign] = useState(undefined)
@@ -84,7 +85,7 @@ const CampaignListing = () => {
 
    useEffect(() => {
       if (!tab) {
-         addTab('Campaign', '/crm/campaign')
+         addTab('Campaign', location.pathname)
       }
    }, [addTab, tab])
 
@@ -144,7 +145,7 @@ const CampaignListing = () => {
 
    const rowClick = (e, cell) => {
       const { id, name } = cell._cell.row.data
-      const param = `/crm/campaign/${id}`
+      const param = `${location.pathname}/${id}`
       const tabTitle = name
       addTab(tabTitle, param)
    }

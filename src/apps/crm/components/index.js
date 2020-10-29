@@ -5,6 +5,7 @@ import ContactInfoCard from './ContactInfoCard'
 import PaymentCard from './PaymentCard'
 import StyledCard from './CardAtTop/OrderCard'
 import SubscriptionInfoCard from './SubscriptionInfoCard'
+import BrandListing from './BrandListing'
 import {
    OrderCard,
    ReferralCard,
@@ -26,4 +27,5 @@ export {
    SubscriptionCard,
    WalletCard,
    LoyaltyCard,
+   BrandListing,
 }

@@ -1,10 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 import { Text, Loader, Flex, IconButton } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
+import { useLocation } from 'react-router-dom'
 import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
+import BrandContext from '../../../context/Brand'
 import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
@@ -19,6 +21,8 @@ import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 
 const CustomerListing = () => {
+   const location = useLocation()
+   const [context, setContext] = useContext(BrandContext)
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
@@ -27,6 +31,9 @@ const CustomerListing = () => {
    const [revenue, setRevenue] = useState(0)
    // Subscription
    const { loading, error1 } = useSubscription(TOTAL_REVENUE, {
+      variables: {
+         brandId: context,
+      },
       onSubscriptionData: data => {
          setRevenue(
             data?.subscriptionData?.data?.ordersAggregate?.aggregate?.sum
@@ -35,6 +42,9 @@ const CustomerListing = () => {
       },
    })
    const { customerCountLoading, error2 } = useSubscription(CUSTOMERS_COUNT, {
+      variables: {
+         brandId: context,
+      },
       onSubscriptionData: data => {
          setCustomerCount(
             data?.subscriptionData?.data?.customers_aggregate?.aggregate
@@ -60,6 +70,9 @@ const CustomerListing = () => {
 
    // Query
    const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
+      variables: {
+         brandId: context,
+      },
       onCompleted: ({ customers = {} }) => {
          const result = customers.map(customer => {
             return {
@@ -89,7 +102,7 @@ const CustomerListing = () => {
 
    useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Customers', location.pathname)
       }
    }, [addTab, tab])
 
@@ -112,7 +125,7 @@ const CustomerListing = () => {
 
    const rowClick = (e, cell) => {
       const { keycloakId, name } = cell._cell.row.data
-      const param = '/crm/customers/'.concat(keycloakId)
+      const param = `${location.pathname}/${keycloakId}`
       addTab(name, param)
    }
 
