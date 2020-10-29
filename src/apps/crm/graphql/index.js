@@ -17,6 +17,7 @@ import {
    WALLET_N_REFERRAL,
    SIGNUP_COUNT,
    LOYALTYPOINT_COUNT,
+   BRAND_LISTING,
 } from './subscriptions'
 import {
    CUSTOMERS_LISTING,
@@ -99,4 +100,5 @@ export {
    WALLET_N_REFERRAL,
    SIGNUP_COUNT,
    LOYALTYPOINT_COUNT,
+   BRAND_LISTING,
 }

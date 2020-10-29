@@ -1,8 +1,13 @@
 import gql from 'graphql-tag'
 
 export const CUSTOMERS_LISTING = gql`
-   query CUSTOMER_LISTING {
-      customers(where: { isArchived: { _eq: false } }) {
+   query CUSTOMER_LISTING($brandId: Int!) {
+      customers(
+         where: {
+            isArchived: { _eq: false }
+            brandCustomers: { brand: { id: { _eq: $brandId } } }
+         }
+      ) {
          keycloakId
          source
          platform_customer {

@@ -11,6 +11,9 @@ import {
    StyledHeading,
 } from './styled'
 
+//Component
+import { BrandListing } from '../../components'
+
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { addTab } = useTabs()
 
@@ -29,13 +32,17 @@ const Sidebar = ({ visible, toggleSidebar }) => {
                Customers
             </StyledListItem>
             <StyledListItem
-               onClick={() =>
-                  addTabHandler('Referral Plans', '/crm/referral-plans')
-               }
+               onClick={() => addTabHandler('Coupons', '/crm/coupons')}
             >
-               Referral Plan
+               Coupons
+            </StyledListItem>
+            <StyledListItem
+               onClick={() => addTabHandler('Campaign', '/crm/campaign')}
+            >
+               Campaign
             </StyledListItem>
          </StyledList>
+         <BrandListing />
       </StyledSidebar>
    )
 }
