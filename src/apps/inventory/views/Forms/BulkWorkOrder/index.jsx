@@ -5,7 +5,6 @@ import {
    Flex,
    Form,
    IconButton,
-   Input,
    Loader,
    Text,
    TextButton,
@@ -380,7 +379,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                   {t(address.concat('enter output quantity'))}
                </Form.Label>
 
-               <Input
+               <Form.Number
                   id="output"
                   name="output"
                   value={outputQuantity}
