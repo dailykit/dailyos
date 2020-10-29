@@ -23,7 +23,11 @@ import {
    BrandCampaign,
 } from './components'
 import { logger } from '../../../../../shared/utils'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CampaignContext from '../../../context/Campaign/CampaignForm'
 
@@ -247,7 +251,11 @@ const CampaignForm = () => {
                         <BrandCampaign />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        Insights Content coming soon!!
+                        <InsightDashboard
+                           appTitle="CRM App"
+                           moduleTitle="Campaign Page"
+                           variables={{ campaignId: campaignId }}
+                        />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>

@@ -40,7 +40,10 @@ import {
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
 import { logger } from '../../../../../shared/utils'
-import { InlineLoader } from '../../../../../shared/components'
+import {
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
 
 const CustomerRelation = ({ match }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -244,7 +247,14 @@ const CustomerRelation = ({ match }) => {
                      heading="LoyaltyPoints"
                   />
                </FlexContainer>
-               <StyledTable>{table}</StyledTable>
+               <StyledTable>
+                  {table}
+                  <InsightDashboard
+                     appTitle="CRM App"
+                     moduleTitle="Customer Page"
+                     variables={{ keycloakId: match.params.id }}
+                  />
+               </StyledTable>
             </Flex>
          </Flex>
 
