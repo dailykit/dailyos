@@ -1,5 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
@@ -12,8 +13,11 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { ErrorState } from '../../../../../../../shared/components'
 import { InlineLoader } from '../../../../../../../shared/components/InlineLoader'
+import { logger } from '../../../../../../../shared/utils'
 import { ERROR_ADDING_ALLERGENS } from '../../../../../constants/errorMessages'
+import { NO_ALLERGENS } from '../../../../../constants/infoMessages'
 import { ALLERGENS_ADDED } from '../../../../../constants/successMessages'
 import {
    MASTER_ALLERGENS_SUBSCRIPTION,
@@ -30,6 +34,7 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
    const {
       loading: allergensLoading,
       data: { masterAllergens = [] } = {},
+      error,
    } = useSubscription(MASTER_ALLERGENS_SUBSCRIPTION)
 
    const [udpateBulkItem, { loading }] = useMutation(UPDATE_BULK_ITEM, {
@@ -38,7 +43,7 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
          close()
       },
       onError: error => {
-         console.log(error)
+         logger(error)
          toast.error(ERROR_ADDING_ALLERGENS)
          close()
       },
@@ -58,6 +63,10 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
    }
 
    if (allergensLoading || loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
 
    return (
       <>
@@ -68,44 +77,48 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
          />
 
          <TunnelBody>
-            <List>
-               <ListSearch
-                  onChange={value => setSearch(value)}
-                  placeholder={t(
-                     address.concat("type what you're looking for")
+            {list.length ? (
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  {selected.length > 0 && (
+                     <TagGroup style={{ margin: '8px 0' }}>
+                        {selected.map(option => (
+                           <Tag
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                           >
+                              {option.title}
+                           </Tag>
+                        ))}
+                     </TagGroup>
                   )}
-               />
-               {selected.length > 0 && (
-                  <TagGroup style={{ margin: '8px 0' }}>
-                     {selected.map(option => (
-                        <Tag
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                        >
-                           {option.title}
-                        </Tag>
-                     ))}
-                  </TagGroup>
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="MSL1"
-                           key={option.id}
-                           title={option.title}
-                           onClick={() => selectOption('id', option.id)}
-                           isActive={selected.find(
-                              item => item.id === option.id
-                           )}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="MSL1"
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                              isActive={selected.find(
+                                 item => item.id === option.id
+                              )}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_ALLERGENS} />
+            )}
          </TunnelBody>
       </>
    )
