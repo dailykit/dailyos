@@ -112,7 +112,7 @@ export default function ItemForm() {
          if (formState.bulkItemAsShippedId) {
             toast.info(BULK_ITEM_CREATED)
             openConfigTunnel(1)
-         } else
+         } else {
             updateSupplierItem({
                variables: {
                   id: formState.id,
@@ -121,6 +121,9 @@ export default function ItemForm() {
                   },
                },
             })
+
+            openConfigTunnel(1)
+         }
       },
       onError: error => {
          logger(error)
