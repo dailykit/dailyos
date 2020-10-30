@@ -3,15 +3,14 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { TextButton, Text, HelperText, Form, Flex } from '@dailykit/ui'
 
 import validate from './validator'
 import { USERS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Section, StyledTemp } from './styled'
 import { initialState, reducers } from './store'
-import { StyledWrapper, StyledHeader } from '../styled'
 import { InlineLoader } from '../../../../../shared/components'
-import { TextButton, Text, HelperText, Form } from '@dailykit/ui'
 
 const UserForm = () => {
    const params = useParams()
@@ -118,15 +117,22 @@ const UserForm = () => {
 
    if (loading) return <InlineLoader />
    return (
-      <StyledWrapper>
-         <StyledHeader>
+      <Flex>
+         <Flex
+            container
+            as="header"
+            height="80px"
+            margin="0 auto"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="h2">User Details</Text>
             {isValid && (
                <TextButton type="solid" onClick={() => createUser()}>
                   Save
                </TextButton>
             )}
-         </StyledHeader>
+         </Flex>
          <div>
             <Section>
                <Form.Group>
@@ -231,7 +237,7 @@ const UserForm = () => {
                />
             </StyledTemp>
          </div>
-      </StyledWrapper>
+      </Flex>
    )
 }
 
