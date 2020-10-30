@@ -21,6 +21,7 @@ import {
 import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
+import { useLocation } from 'react-router-dom'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
@@ -28,6 +29,7 @@ import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 
 const CouponListing = () => {
+   const location = useLocation()
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [coupons, setCoupons] = useState(undefined)
@@ -84,7 +86,7 @@ const CouponListing = () => {
 
    useEffect(() => {
       if (!tab) {
-         addTab('Coupons', '/crm/coupons')
+         addTab('Coupons', location.pathname)
       }
    }, [addTab, tab])
 
@@ -153,7 +155,7 @@ const CouponListing = () => {
 
    const rowClick = (e, cell) => {
       const { id, code } = cell._cell.row.data
-      const param = `/crm/coupons/${id}`
+      const param = `${location.pathname}/${id}`
       const tabTitle = code
       addTab(tabTitle, param)
    }

@@ -1,8 +1,13 @@
 import gql from 'graphql-tag'
 
 export const CUSTOMERS_COUNT = gql`
-   subscription CustomerCount {
-      customers_aggregate(where: { isArchived: { _eq: false } }) {
+   subscription CustomerCount($brandId: Int!) {
+      customers_aggregate(
+         where: {
+            isArchived: { _eq: false }
+            brandCustomers: { brand: { id: { _eq: $brandId } } }
+         }
+      ) {
          aggregate {
             count
          }
@@ -10,8 +15,15 @@ export const CUSTOMERS_COUNT = gql`
    }
 `
 export const TOTAL_REVENUE = gql`
-   subscription totalRevenue {
-      ordersAggregate(where: { customer: { isArchived: { _eq: false } } }) {
+   subscription totalRevenue($brandId: Int!) {
+      ordersAggregate(
+         where: {
+            customer: {
+               isArchived: { _eq: false }
+               brandCustomers: { brand: { id: { _eq: $brandId } } }
+            }
+         }
+      ) {
          aggregate {
             sum {
                amountPaid
@@ -214,6 +226,19 @@ export const SIGNUP_COUNT = gql`
                }
             }
          }
+      }
+   }
+`
+
+export const BRAND_LISTING = gql`
+   subscription BRAND_LISTING {
+      brands(where: { isPublished: { _eq: true } }) {
+         id
+         domain
+         title
+         isDefault
+         subscriptionRequested
+         onDemandRequested
       }
    }
 `

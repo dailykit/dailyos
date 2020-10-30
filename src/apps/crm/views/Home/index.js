@@ -1,16 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { DashboardTile, SearchBox, Text } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-
+import BrandContext from '../../context/Brand'
 // State
 import { useTabs } from '../../context'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
 import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
 
 const Home = () => {
+   const [context, setContext] = useContext(BrandContext)
+   console.log(context)
    const { addTab } = useTabs()
    // const { t } = useTranslation()
-   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
+   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT, {
+      variables: {
+         brandId: context,
+      },
+   })
    const { data: couponTotal } = useSubscription(COUPON_TOTAL)
    const { data: campaignTotal } = useSubscription(CAMPAIGN_TOTAL)
 
@@ -24,21 +30,17 @@ const Home = () => {
          <StyledCardList>
             <DashboardTile
                title="Customers"
-               count={
-                  customersCount?.customers_aggregate.aggregate.count || '...'
-               }
+               count={customersCount?.customers_aggregate.aggregate.count || 0}
                onClick={() => addTab('Customers', '/crm/customers')}
             />
             <DashboardTile
-               title="Coupons"
-               count={couponTotal?.couponsAggregate?.aggregate?.count || '...'}
+               title="All Coupons"
+               count={couponTotal?.couponsAggregate?.aggregate?.count || 0}
                onClick={() => addTab('Coupons', '/crm/coupons')}
             />
             <DashboardTile
-               title="Campaigns"
-               count={
-                  campaignTotal?.campaignsAggregate?.aggregate?.count || '...'
-               }
+               title="All Campaign"
+               count={campaignTotal?.campaignsAggregate?.aggregate?.count || 0}
                onClick={() => addTab('Campaign', '/crm/campaign')}
             />
          </StyledCardList>
