@@ -1,23 +1,24 @@
+import { useSubscription } from '@apollo/react-hooks'
 import {
-   IconButton,
-   Text,
-   Tunnels,
-   Tunnel,
-   useTunnel,
    ButtonTile,
+   Flex,
+   IconButton,
+   Spacer,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
-import styled from 'styled-components'
-import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-
-import EditIcon from '../../../../../recipe/assets/icons/Edit'
-import { FlexContainer, Flexible, ShadowCard } from '../../styled'
-import AdditionalInfo from '../AdditionalInfo'
-
-import { OtherProperties, PackagingMaterial } from '../Tunnels'
+import styled from 'styled-components'
+import { EditIcon } from '../../../../../../shared/assets/icons'
+import { logger } from '../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { PACKAGING_SPECS_SUBSCRIPTION } from '../../../../graphql'
-
+import { ShadowCard } from '../../styled'
+import AdditionalInfo from '../AdditionalInfo'
+import { OtherProperties, PackagingMaterial } from '../Tunnels'
 import renderIcon from './renderIcon'
 
 // Props<{state: Packaging}>
@@ -36,18 +37,20 @@ export default function PackagingInformation({ state }) {
 
    const {
       data: { packaging: { packagingSpecification: spec = {} } = {} } = {},
+      error,
    } = useSubscription(PACKAGING_SPECS_SUBSCRIPTION, {
       variables: { id: state.id },
-      onError: error => {
-         console.log(error)
-         toast.error(error.message)
-      },
    })
+
+   if (error) {
+      logger(error)
+      toast.error(GENERAL_ERROR_MESSAGE)
+   }
 
    return (
       <>
          <Tunnels tunnels={otherPropertiesTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }} size="sm">
                <OtherProperties
                   state={spec}
                   close={closeOtherPropertiesTunnel}
@@ -56,102 +59,93 @@ export default function PackagingInformation({ state }) {
          </Tunnels>
 
          <Tunnels tunnels={packagingMaterial}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1} style={{ overflowY: 'auto' }} size="sm">
                <PackagingMaterial state={spec} close={closePackagingMaterial} />
             </Tunnel>
          </Tunnels>
 
-         <FlexContainer style={{ padding: '0 30px', margin: '0 20px' }}>
-            <Flexible width="2">
+         <Flex container>
+            <Flex flex={2}>
                <AdditionalInfo id={state.id} />
-            </Flexible>
-            <span style={{ width: '20px' }} />
-            <Flexible width="3">
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex flex={3}>
                <ShadowCard style={{ flexDirection: 'column' }}>
-                  <div style={{ margin: '20px 0' }}>
-                     <FlexContainer style={{ alignItems: 'center' }}>
-                        <Text as="title">Packaging Material</Text>
-                        {spec.packagingMaterial ? (
-                           <IconButton
-                              type="ghost"
-                              onClick={() => openPackagingMaterial(1)}
-                           >
-                              <EditIcon color="#555B6E" />
-                           </IconButton>
-                        ) : null}
-                     </FlexContainer>
-                     <br />
+                  <Spacer size="16px" />
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Text as="title">Packaging Material</Text>
                      {spec.packagingMaterial ? (
-                        <Content>
-                           <div
-                              style={{
-                                 padding: '10px 80px',
-                                 backgroundColor: '#ededed',
-                                 borderRadius: '4px',
-                              }}
-                           >
-                              {spec.packagingMaterial}
-                           </div>
-                        </Content>
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text="Select Packaging Material"
-                           onClick={() => openPackagingMaterial(1)}
-                           style={{ margin: '20px 0' }}
-                        />
-                     )}
-                  </div>
-
-                  <div style={{ margin: '20px 0' }}>
-                     <FlexContainer style={{ alignItems: 'center' }}>
-                        <Text as="title">Other Properties</Text>
                         <IconButton
-                           type="ghost"
-                           onClick={() => openOtherPropertiesTunnel(1)}
+                           type="outline"
+                           onClick={() => openPackagingMaterial(1)}
                         >
-                           <EditIcon color="#555B6E" />
+                           <EditIcon />
                         </IconButton>
-                     </FlexContainer>
-                     <br />
-                     <Content>
-                        <Stats>
-                           {renderIcon(spec.recycled)}
-                           <h4>Recyled</h4>
-                        </Stats>
-                        <Stats>
-                           {renderIcon(spec.compressibility)}
-                           <h4>Compressable</h4>
-                        </Stats>
-                     </Content>
+                     ) : null}
+                  </Flex>
+                  <Spacer size="16px" />
 
-                     <Content>
-                        <div>
-                           <h4>
-                              Opacity:{' '}
-                              <b>{spec.opacity ? spec.opacity : 'N/A'}</b>
-                           </h4>
-                        </div>
-                     </Content>
-                  </div>
+                  {spec.packagingMaterial ? (
+                     <Text as="h3">{spec.packagingMaterial}</Text>
+                  ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text="Select Packaging Material"
+                        onClick={() => openPackagingMaterial(1)}
+                        style={{ margin: '20px 0' }}
+                     />
+                  )}
+                  <Spacer size="16px" />
+
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Text as="title">Other Properties</Text>
+                     <IconButton
+                        type="outline"
+                        onClick={() => openOtherPropertiesTunnel(1)}
+                     >
+                        <EditIcon />
+                     </IconButton>
+                  </Flex>
+                  <Spacer size="16px" />
+                  <Content>
+                     <Flex container alignItems="center">
+                        {renderIcon(spec.recycled)}
+                        <h4>Recyled</h4>
+                     </Flex>
+                     <Flex container alignItems="center">
+                        {renderIcon(spec.compressibility)}
+                        <h4>Compressable</h4>
+                     </Flex>
+                  </Content>
+                  <Spacer size="16px" />
+
+                  <Content>
+                     <h4>
+                        Opacity: <b>{spec.opacity ? spec.opacity : 'N/A'}</b>
+                     </h4>
+                  </Content>
+                  <Spacer size="16px" />
                </ShadowCard>
-            </Flexible>
-         </FlexContainer>
+            </Flex>
+         </Flex>
       </>
    )
 }
 
-const Stats = styled(FlexContainer)`
-   align-items: center;
-`
-
-const Content = styled(FlexContainer)`
+const Content = styled.div`
+   display: flex;
    width: 70%;
    justify-content: space-between;
    align-items: center;
-
-   margin: 10px 0;
 
    h4 {
       font-weight: 500;

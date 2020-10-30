@@ -1,11 +1,12 @@
 import React from 'react'
+import { Spacer } from '@dailykit/ui'
 
-export default function Spacer() {
+export default function Separator() {
    return (
       <>
-         <br />
+         <Spacer size="16px" />
          <hr style={{ border: '1px solid #E4E4E4' }} />
-         <br />
+         <Spacer size="16px" />
       </>
    )
 }

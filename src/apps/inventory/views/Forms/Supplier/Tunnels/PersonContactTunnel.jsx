@@ -2,7 +2,6 @@ import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Form,
-   Loader,
    Text,
    Tunnel,
    TunnelHeader,
@@ -14,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { toast } from 'react-toastify'
+import { InlineLoader } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { Camera } from '../../../../assets/icons'
 import { TunnelContainer } from '../../../../components'
@@ -72,7 +72,7 @@ export default function PersonContactTunnel({ close, formState }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

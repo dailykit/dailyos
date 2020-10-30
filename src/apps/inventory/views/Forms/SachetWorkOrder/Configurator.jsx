@@ -1,17 +1,24 @@
-import { ButtonTile, IconButton, Input, Text } from '@dailykit/ui/'
-import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
-
 import {
+   Avatar,
+   ButtonTile,
+   Flex,
+   Form,
+   IconButton,
+   Spacer,
+   Text,
+} from '@dailykit/ui/'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { EditIcon } from '../../../../../shared/assets/icons'
+import { logger } from '../../../../../shared/utils'
+import { ItemCard, Separator } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import {
+   CHANGE_OUTPUT_QUANTITY,
    UPDATE_SACHET_WORK_ORDER,
-   INCREMENT_SACHET_WORK_ORDER,
 } from '../../../graphql'
-
-import AddIcon from '../../../../../shared/assets/icons/Add'
-import { ItemCard, Spacer } from '../../../components'
-import { FlexContainer } from '../styled'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.'
 
@@ -29,94 +36,61 @@ export default function Configurator({
          toast.info('Work Order updated successfully!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
    const [quantity, setQuantity] = useState(state.outputQuantity || 0)
 
-   const [changeQuantity] = useMutation(INCREMENT_SACHET_WORK_ORDER, {
+   const [changeQuantity] = useMutation(CHANGE_OUTPUT_QUANTITY, {
       onCompleted: resp => {
          const { outputQuantity } = resp.updateSachetWorkOrder.returning[0]
-         toast.info('Work Order updated successfully!')
          setQuantity(outputQuantity)
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
-   const [assignedDate, setAssignedDate] = useState(state.scheduleOn || '')
+   const [assignedDate, setAssignedDate] = useState(state.scheduledOn)
 
-   const incrementOutputQuantity = () => {
-      changeQuantity({
-         variables: {
-            id: state.id,
-            inc: {
-               outputQuantity: +1,
-            },
-         },
-      })
-   }
-
-   const decrementOutputQuantity = () => {
-      if (quantity === 1) return toast.error('quantity cannot be negative')
-      changeQuantity({
-         variables: {
-            id: state.id,
-            inc: {
-               outputQuantity: -1,
-            },
-         },
-      })
-   }
+   console.log(assignedDate)
 
    const inputQuantity = state.outputQuantity * +state.outputSachetItem.unitSize
 
    return (
       <>
-         <Spacer />
+         <Separator />
+         <Flex container>
+            <Flex>
+               <Form.Group>
+                  <Form.Label htmlFor="quantity" title="quantity">
+                     Enter Number of Sachets
+                  </Form.Label>
 
-         <Text as="title">{t(address.concat('enter number of sachtes'))}</Text>
-         <br />
-         <FlexContainer
-            style={{ width: '50%', justifyContent: 'space-between' }}
-         >
-            <FlexContainer style={{ width: '35%', alignItems: 'center' }}>
-               <IconButton
-                  disabled={quantity === 1}
-                  onClick={decrementOutputQuantity}
-                  type="ghost"
-               >
-                  <span style={{ color: '#00a7e1', fontWeight: '600' }}>-</span>
-               </IconButton>
-               <span style={{ width: '10px' }} />
-               <Input
-                  type="number"
-                  value={quantity}
-                  name="quantity"
-                  onChange={e => {
-                     setQuantity(e.target.value)
-                  }}
-                  onBlur={e => {
-                     updateSachetWorkOrder({
-                        variables: {
-                           id: state.id,
-                           set: {
-                              outputQuantity: +e.target.value,
+                  <Form.Number
+                     id="quantity"
+                     placeholder="quantity..."
+                     value={quantity}
+                     name="quantity"
+                     onChange={e => setQuantity(e.target.value)}
+                     onBlur={e => {
+                        changeQuantity({
+                           variables: {
+                              id: state.id,
+                              set: {
+                                 outputQuantity: +e.target.value,
+                              },
                            },
-                        },
-                     })
-                  }}
-               />
-               <span style={{ width: '10px' }} />
+                        })
+                     }}
+                  />
+               </Form.Group>
+            </Flex>
 
-               <IconButton onClick={incrementOutputQuantity} type="ghost">
-                  <AddIcon color="#00a7e1" />
-               </IconButton>
-            </FlexContainer>
+            <Spacer xAxis size="16px" />
 
             <div>
                {state.outputQuantity ? (
@@ -124,13 +98,14 @@ export default function Configurator({
                      <Text as="subtitle">
                         {t(address.concat('suggested committed quantity'))}
                      </Text>
+                     <Spacer size="8px" />
                      <Text as="title">{inputQuantity}</Text>
                   </>
                ) : null}
             </div>
-         </FlexContainer>
+         </Flex>
 
-         <br />
+         <Spacer size="8px" />
 
          <Text as="title">{t(address.concat('packaging'))}</Text>
 
@@ -150,7 +125,7 @@ export default function Configurator({
             )}
          </>
 
-         <br />
+         <Spacer size="8px" />
 
          {state.packaging?.name && (
             <>
@@ -175,16 +150,27 @@ export default function Configurator({
             </>
          )}
 
-         <br />
+         <Spacer size="8px" />
 
          <Text as="title">{t(address.concat('user assigned'))}</Text>
 
          <>
             {state.user?.firstName ? (
-               <ItemCard
-                  title={`${state.user.firstName} ${state.user.lastName || ''}`}
-                  edit={() => openUserTunnel(1)}
-               />
+               <Flex
+                  container
+                  margin="16px 0 16px 0"
+                  justifyContent="space-between"
+               >
+                  <Avatar
+                     withName
+                     title={`${state.user.firstName} ${
+                        state.user.lastName || ''
+                     }`}
+                  />
+                  <IconButton onClick={() => openUserTunnel(1)} type="outline">
+                     <EditIcon />
+                  </IconButton>
+               </Flex>
             ) : (
                <ButtonTile
                   noIcon
@@ -195,38 +181,35 @@ export default function Configurator({
             )}
          </>
 
-         <br />
-         <br />
+         <Spacer size="8px" />
+         <Flex container>
+            <Form.Group>
+               <Form.Label htmlFor="scheduledDate" title="scheduledDate">
+                  {t(address.concat('scheduled on'))}
+               </Form.Label>
+               <Form.Date
+                  id="scheduledDate"
+                  name="scheduleDate"
+                  value={new Date(assignedDate)}
+                  onChange={e => {
+                     setAssignedDate(e.target.value)
+                  }}
+                  placeholder="schedule date..."
+                  onBlur={e => {
+                     updateSachetWorkOrder({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              scheduledOn: e.target.value,
+                           },
+                        },
+                     })
+                  }}
+               />
+            </Form.Group>
+         </Flex>
 
-         <Text as="title">{t(address.concat('scheduled on'))}</Text>
-         <br />
-
-         <Input
-            style={{
-               border: 0,
-               borderBottom: '1px solid rgba(0,0,0,0.2)',
-               color: '#555b6e',
-               padding: '5px',
-            }}
-            value={assignedDate}
-            onChange={e => {
-               setAssignedDate(e.target.value)
-            }}
-            type="datetime-local"
-            placeholder={t(address.concat('date (mm/dd/yyyy)'))}
-            onBlur={e => {
-               updateSachetWorkOrder({
-                  variables: {
-                     id: state.id,
-                     set: {
-                        scheduledOn: e.target.value,
-                     },
-                  },
-               })
-            }}
-         />
-
-         <br />
+         <Spacer size="16px" />
 
          <>
             <Text as="title">{t(address.concat('station assigned'))}</Text>
@@ -247,7 +230,7 @@ export default function Configurator({
                />
             )}
          </>
-         <br />
+         <Spacer size="16px" />
       </>
    )
 }

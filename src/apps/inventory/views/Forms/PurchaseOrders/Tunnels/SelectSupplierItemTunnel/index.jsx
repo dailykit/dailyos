@@ -1,19 +1,24 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
+   Flex,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
-   Loader,
    TunnelHeader,
-   Flex,
+   useSingleList,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
+import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils/errorLog'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
+import { NO_SUPPLIER_ITEMS } from '../../../../../constants/infoMessages'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
@@ -29,7 +34,7 @@ export default function AddressTunnel({ close, state }) {
 
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION, {
+   const { loading, error } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.supplierItems
          setData(data)
@@ -38,8 +43,9 @@ export default function AddressTunnel({ close, state }) {
 
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
+         close(1)
       },
       onCompleted: () => {
          toast.success('Supplier Item added!')
@@ -60,7 +66,12 @@ export default function AddressTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (loading) return <InlineLoader />
 
    return (
       <>
@@ -70,33 +81,35 @@ export default function AddressTunnel({ close, state }) {
             right={{ title: 'Save', action: handleSave }}
          />
          <Flex padding="0 16px">
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.name} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.name.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.name}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
-            <br />
-            <br />
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.name} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.name.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.name}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_SUPPLIER_ITEMS} />
+            )}
          </Flex>
       </>
    )

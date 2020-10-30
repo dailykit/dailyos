@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
+import { Text, Flex } from '@dailykit/ui'
 import {
    ContactCard,
    CustomerAddress,
@@ -9,6 +9,7 @@ import {
 } from './styled'
 import { MailIcon, PhoneIcon } from '../../../../shared/assets/icons'
 import { concatAddress } from '../../Utils'
+import { Tooltip } from '../../../../shared/components'
 
 const ContactInfoCard = ({
    defaultTag1,
@@ -18,22 +19,25 @@ const ContactInfoCard = ({
 }) => (
    <ContactCard>
       <StyledHeading>
-         <Text as="subtitle">Contact Details{defaultTag1}</Text>
-         <SmallText onClick={onClick}>view all address</SmallText>
+         <Flex container alignItems="center">
+            <Text as="p">Contact Details{defaultTag1}</Text>
+            <Tooltip identifier="contact_info" />
+         </Flex>
       </StyledHeading>
       <ContactInfo>
-         <Text as="title">{customerData?.email || 'N/A'}</Text>
+         <Text as="p">{customerData?.email || 'N/A'}</Text>
          <MailIcon color="#00a7e1" />
       </ContactInfo>
       <ContactInfo>
-         <Text as="title">{customerData?.phoneNumber || 'N/A'}</Text>
+         <Text as="p">{customerData?.phoneNumber || 'N/A'}</Text>
          <PhoneIcon color="#00a7e1" />
       </ContactInfo>
       <CustomerAddress>
-         <Text as="subtitle">Delivery Address{defaultTag2}</Text>
-         <Text as="title">
+         <Text as="p">Delivery Address{defaultTag2}</Text>
+         <Text as="p">
             {concatAddress(customerData?.defaultCustomerAddress || 'N/A')}
          </Text>
+         <SmallText onClick={onClick}>view all address</SmallText>
       </CustomerAddress>
    </ContactCard>
 )

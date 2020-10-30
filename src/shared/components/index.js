@@ -6,6 +6,7 @@ import HorizontalCard from './HorizontalCard'
 import Conditions from './Conditions'
 import ErrorBoundary from './ErrorBoundary'
 import NutritionTunnel from './NutritionTunnel'
+import InsightDashboard from './InsightDashboard'
 
 export {
    Lang,
@@ -16,6 +17,7 @@ export {
    Conditions,
    ErrorBoundary,
    NutritionTunnel,
+   InsightDashboard,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'
@@ -24,3 +26,4 @@ export * from './DropdownButton'
 export * from './ScrollSection'
 export * from './OperationConfig'
 export * from './Tooltip'
+export * from './ErrorState'

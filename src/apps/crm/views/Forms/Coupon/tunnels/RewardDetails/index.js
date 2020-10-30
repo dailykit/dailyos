@@ -3,14 +3,14 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
    TunnelHeader,
-   Input,
+   Form,
    RadioGroup,
-   Loader,
+   Flex,
    Tunnel,
    Tunnels,
    ButtonTile,
-   useTunnel,
-   IconButton,
+   Spacer,
+   TextButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -22,13 +22,12 @@ import {
 } from './styled'
 import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../shared/components'
 
 export default function RewardDetailsunnel({
-   state,
    closeTunnel,
    tunnels,
-   openTunnel,
    openConditionTunnel,
    conditionId,
    rewardId,
@@ -37,7 +36,14 @@ export default function RewardDetailsunnel({
    closeRewardTypeTunnel,
 }) {
    const { addTab } = useTabs()
-   const [priority, setPriority] = useState(1)
+   const [priority, setPriority] = useState({
+      value: 1,
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [rewardValue, setRewardValue] = useState({
       type: 'absolute',
       value: '',
@@ -48,43 +54,77 @@ export default function RewardDetailsunnel({
       { id: 2, title: 'conditional' },
    ])
 
+   // form validation
+   const validatorFunc = value => {
+      let isValid = true
+      let errors = []
+      if (value <= 0 && value !== '') {
+         isValid = false
+         errors = [...errors, "Priority can't be negative or zero"]
+      }
+      if (value === '') {
+         isValid = false
+         errors = [...errors, 'Please enter priority or valid priority ']
+      }
+      console.log(typeof value)
+      return { isValid, errors }
+   }
+
    // Mutation
-   const [updateReward] = useMutation(UPDATE_REWARD, {
+   const [updateReward, { loading }] = useMutation(UPDATE_REWARD, {
       onCompleted: () => {
          toast.success('Updated!')
          closeTunnel(1)
          closeRewardTypeTunnel(1)
       },
-      onError: () => {
-         toast.error('Failed to update the reward, please try again!')
+      onError: error => {
+         toast.error('Something went wrong')
          closeTunnel(1)
+         logger(error)
       },
    })
 
    // Handlers
    const saveInfo = () => {
-      console.log(rewardId, conditionId, priority, rewardValue)
-      updateReward({
-         variables: {
-            id: rewardId,
-            set: {
-               conditionId,
-               priority,
-               rewardValue,
+      if (validatorFunc(priority.value).isValid) {
+         updateReward({
+            variables: {
+               id: rewardId,
+               set: {
+                  conditionId,
+                  priority: priority.value,
+                  rewardValue,
+               },
             },
-         },
-      })
-      setPriority()
-      setRewardValue({
-         type: 'absolute',
-         value: '',
-      })
-      setRewardValueType('absolute')
-      updateConditionId(null)
+         })
+         setPriority({
+            value: 1,
+            meta: {
+               isValid: false,
+               isTouched: false,
+               errors: [],
+            },
+         })
+         setRewardValue({
+            type: 'absolute',
+            value: '',
+         })
+         setRewardValueType('absolute')
+         updateConditionId(null)
+      } else {
+         toast.error('Please check reward details error !')
+      }
    }
 
    const closeFunc = () => {
-      setPriority()
+      setPriority({
+         value: 1,
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      })
       setRewardValue({
          type: 'absolute',
          value: '',
@@ -94,9 +134,22 @@ export default function RewardDetailsunnel({
       closeTunnel(1)
    }
 
+   //reward priority value validation
+   const onBlur = e => {
+      setPriority({
+         ...priority,
+         meta: {
+            ...priority.meta,
+            isTouched: true,
+            errors: validatorFunc(e.target.value).errors,
+            isValid: validatorFunc(e.target.value).isValid,
+         },
+      })
+   }
+
    useEffect(() => {
-      setPriority(rewardInfo?.priority)
-      setRewardValue(rewardInfo?.rewardValue)
+      setPriority({ ...priority, value: rewardInfo?.priority || 1 })
+      setRewardValue(rewardInfo?.rewardValue || { type: 'absolute', value: '' })
       setRewardValueType(rewardInfo?.rewardValue?.type || 'absolute')
    }, [rewardInfo])
 
@@ -106,21 +159,35 @@ export default function RewardDetailsunnel({
             <Tunnel layer={1}>
                <TunnelHeader
                   title="Add Reward Details"
-                  right={{ action: () => saveInfo(), title: 'Save' }}
+                  right={{
+                     action: () => saveInfo(),
+                     title: loading ? 'Saving...' : 'Save',
+                  }}
                   close={() => closeFunc()}
+                  tooltip={
+                     <Tooltip identifier="coupon_rewardDetails_tunnelHeader" />
+                  }
                />
                <TunnelBody>
                   {conditionId ? (
                      <StyledContainer>
-                        <StyledRow>
-                           <Text as="p">View/Edit Conditions</Text>
-                           <IconButton
+                        <Flex
+                           container
+                           justifyContent="space-between"
+                           margin="0 0 16px 0"
+                        >
+                           <Flex container alignItems="flex-end">
+                              <Text as="title">Reward Condition</Text>
+                              <Tooltip identifier="coupon_reward_condition" />
+                           </Flex>
+                           <TextButton
                               type="outline"
+                              size="sm"
                               onClick={() => openConditionTunnel(1)}
                            >
-                              <EditIcon />
-                           </IconButton>
-                        </StyledRow>
+                              View/Edit
+                           </TextButton>
+                        </Flex>
                      </StyledContainer>
                   ) : (
                      <ButtonTile
@@ -131,30 +198,57 @@ export default function RewardDetailsunnel({
                         onClick={() => openConditionTunnel(1)}
                      />
                   )}
-                  <InputWrap>
-                     <Input
-                        type="number"
-                        label="Priority"
-                        value={priority}
-                        onChange={e => setPriority(e.target.value)}
+                  <Form.Group>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label htmlFor="number" title="priority">
+                           Priority
+                        </Form.Label>
+                        <Tooltip identifier="coupon_reward_priority" />
+                     </Flex>
+                     <Form.Number
+                        id="priority"
+                        name="priority"
+                        value={priority.value}
+                        placeholder="Enter Priority "
+                        onBlur={onBlur}
+                        onChange={e =>
+                           setPriority({ ...priority, value: e.target.value })
+                        }
                      />
-                  </InputWrap>
+                     {priority.meta.isTouched &&
+                        !priority.meta.isValid &&
+                        priority.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Spacer size="24px" />
                   <InputWrap>
-                     <Wrap>
-                        <Text as="title">Add Reward Value</Text>
-                     </Wrap>
-                     <Wrap>
-                        <RadioGroup
-                           options={options}
-                           active={rewardValueType === 'absolute' ? 1 : 2}
-                           onChange={option => setRewardValueType(option.title)}
-                        />
-                     </Wrap>
+                     <Flex container alignItems="flex-end">
+                        <Text as="title">Reward Value Type</Text>
+                        <Tooltip identifier="coupon_reward_value_type" />
+                     </Flex>
+                     <Spacer size="24px" />
+                     <RadioGroup
+                        options={options}
+                        active={rewardValueType === 'absolute' ? 1 : 2}
+                        onChange={option => setRewardValueType(option.title)}
+                     />
+                     <Spacer size="24px" />
                      {rewardValueType === 'absolute' ? (
-                        <Wrap>
-                           <Input
-                              type="number"
-                              label="Reward Value"
+                        <Form.Group>
+                           <Form.Label
+                              htmlFor="number"
+                              title="absoluteRewardValue"
+                           >
+                              <Flex container alignItems="center">
+                                 Reward Value
+                                 <Tooltip identifier="coupon_absolute_reward_value" />
+                              </Flex>
+                           </Form.Label>
+                           <Form.Number
+                              id="absoluteRewardVal"
+                              name="absoluteRewardVal"
+                              placeholder="Enter Reward Value "
                               value={rewardValue?.value || null}
                               onChange={e =>
                                  setRewardValue({
@@ -163,17 +257,27 @@ export default function RewardDetailsunnel({
                                  })
                               }
                            />
-                        </Wrap>
+                        </Form.Group>
                      ) : (
                         <InputWrap>
-                           <Wrap>
-                              <Input
-                                 type="number"
-                                 label="Maximum Reward Value"
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor="number"
+                                 title="MaxRewardValue"
+                              >
+                                 <Flex container alignItems="center">
+                                    Maximum Reward Value
+                                    <Tooltip identifier="coupon_max_reward_value" />
+                                 </Flex>
+                              </Form.Label>
+                              <Form.Number
+                                 id="MaxRewardValue"
+                                 name="MaxRewardValue"
+                                 placeholder="Enter maximum value of reward  "
                                  value={rewardValue?.value?.max}
                                  onChange={e =>
                                     setRewardValue({
-                                       // ...rewardValue,
+                                       ...rewardValue,
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue?.value,
@@ -182,15 +286,26 @@ export default function RewardDetailsunnel({
                                     })
                                  }
                               />
-                           </Wrap>
-                           <Wrap>
-                              <Input
-                                 type="number"
-                                 label="Reward In Percentage"
+                           </Form.Group>
+                           <Spacer size="24px" />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor="number"
+                                 title="PercentRewardValue"
+                              >
+                                 <Flex container alignItems="center">
+                                    Reward Percentage
+                                    <Tooltip identifier="coupon_percentage_reward_value" />
+                                 </Flex>
+                              </Form.Label>
+                              <Form.Number
+                                 id="PercentRewardValue"
+                                 name="PercentRewardValue"
+                                 placeholder="Enter percentage value of reward"
                                  value={rewardValue?.value?.percentage}
                                  onChange={e =>
                                     setRewardValue({
-                                       // ...rewardValue,
+                                       ...rewardValue,
                                        type: rewardValueType,
                                        value: {
                                           ...rewardValue.value,
@@ -199,7 +314,7 @@ export default function RewardDetailsunnel({
                                     })
                                  }
                               />
-                           </Wrap>
+                           </Form.Group>
                         </InputWrap>
                      )}
                   </InputWrap>

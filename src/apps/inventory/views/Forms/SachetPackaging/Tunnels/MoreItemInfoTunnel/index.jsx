@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Loader, TunnelHeader } from '@dailykit/ui'
+import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../../components'
-import { FlexContainer, StyledSelect } from '../../../styled'
-import { PaddedInputGroup } from './styled'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
+import { StyledInputGroup } from '../../../Item/tunnels/styled'
 
 export default function MoreItemInfoTunnel({ close, state }) {
    const [unitQuantity, setUnitQuantity] = useState(state.unitQuantity || '')
@@ -24,8 +25,8 @@ export default function MoreItemInfoTunnel({ close, state }) {
          toast.info('updated successfully!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(2)
       },
    })
@@ -45,7 +46,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
@@ -55,77 +56,92 @@ export default function MoreItemInfoTunnel({ close, state }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <PaddedInputGroup>
-               <div style={{ width: '70%' }}>
-                  <Input
-                     type="number"
-                     label="Unit qty (in pieces)"
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="unitQty" title="unitQuantity">
+                     Unit qty (in pieces)
+                  </Form.Label>
+                  <Form.Number
+                     id="unitQty"
+                     placeholder="Unit qty (in pieces)"
                      name="unitQty"
                      value={unitQuantity}
                      onChange={e => setUnitQuantity(e.target.value)}
                   />
-               </div>
-
-               <span style={{ width: '40px' }} />
-               <FlexContainer style={{ alignItems: 'flex-end' }}>
-                  <div style={{ marginRight: '5px', marginBottom: '5px' }}>
-                     $
-                  </div>
-                  <Input
-                     type="number"
-                     label="Unit Price"
+               </Form.Group>
+               <Form.Group>
+                  <Form.Label htmlFor="unitPrice" title="unitPrice">
+                     Unit Price
+                  </Form.Label>
+                  <Form.Number
+                     id="unitPrice"
+                     placeholder="Unit Price"
                      name="unitPrice"
                      value={unitPrice}
                      onChange={e => setUnitPrice(e.target.value)}
                   />
-               </FlexContainer>
-            </PaddedInputGroup>
-            <br />
+               </Form.Group>
+            </StyledInputGroup>
 
-            <PaddedInputGroup>
-               <div style={{ width: '70%' }}>
-                  <Input
-                     type="number"
-                     label="Case qty (in pieces)"
+            <Spacer size="16px" />
+
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="caseQty" title="caseQty">
+                     Case qty (in pieces)
+                  </Form.Label>
+                  <Form.Number
+                     id="caseQty"
+                     placeholder="Case qty (in pieces)"
                      name="caseQty"
                      value={caseQuantity}
                      onChange={e => setCaseQuantity(e.target.value)}
                   />
-               </div>
+               </Form.Group>
 
-               <span style={{ width: '90px' }} />
+               <Form.Group>
+                  <Form.Label htmlFor="unitPrice" title="unitPrice">
+                     Min. value order (in case)
+                  </Form.Label>
+                  <Form.Number
+                     id="unitPrice"
+                     placeholder="Min. value order (in case)"
+                     name="unitPrice"
+                     value={minOrderValue}
+                     onChange={e => setMinOrderValue(e.target.value)}
+                  />
+               </Form.Group>
+            </StyledInputGroup>
 
-               <Input
-                  type="number"
-                  label="Min. value order (in case)"
-                  name="unitPrice"
-                  value={minOrderValue}
-                  onChange={e => setMinOrderValue(e.target.value)}
-               />
-            </PaddedInputGroup>
+            <Spacer size="16px" />
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="leadTime" title="leadTime">
+                     Lead time
+                  </Form.Label>
 
-            <br />
+                  <Form.TextSelect>
+                     <Form.Number
+                        id="leadTime"
+                        placeholder="Lead time"
+                        name="leadTime"
+                        value={leadTime}
+                        onChange={e => setLeadTime(e.target.value)}
+                     />
 
-            <PaddedInputGroup
-               style={{ justifyContent: 'flex-start', width: '40%' }}
-            >
-               <Input
-                  type="number"
-                  label="Lead time"
-                  name="leadTime"
-                  value={leadTime}
-                  onChange={e => setLeadTime(e.target.value)}
-               />
-
-               <StyledSelect
-                  name="unit"
-                  defaultValue={leadTimeUnit}
-                  onChange={e => setLeadTimeUnit(e.target.value)}
-               >
-                  <option value="days">Days</option>
-                  <option value="hours">Hours</option>
-               </StyledSelect>
-            </PaddedInputGroup>
+                     <Form.Select
+                        id="unit"
+                        name="unit"
+                        defaultValue={leadTimeUnit}
+                        onChange={e => setLeadTimeUnit(e.target.value)}
+                        options={[
+                           { id: 1, title: 'days' },
+                           { id: 2, title: 'hours' },
+                        ]}
+                     />
+                  </Form.TextSelect>
+               </Form.Group>
+            </StyledInputGroup>
          </TunnelContainer>
       </>
    )

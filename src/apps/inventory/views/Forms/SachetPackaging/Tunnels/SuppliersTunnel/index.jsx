@@ -1,21 +1,28 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    Loader,
    TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
 import React from 'react'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-
 import { useTranslation } from 'react-i18next'
-import { TunnelContainer } from '../../../../../components'
+import { toast } from 'react-toastify'
 import {
-   UPDATE_PACKAGING,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import { TunnelContainer } from '../../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
+import { NO_SUPPLIERS } from '../../../../../constants/infoMessages'
+import {
    SUPPLIERS_SUBSCRIPTION,
+   UPDATE_PACKAGING,
 } from '../../../../../graphql'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
@@ -26,7 +33,7 @@ export default function SuppliersTunnel({ close, state }) {
    const [data, setData] = React.useState([])
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
+   const { loading, error } = useSubscription(SUPPLIERS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const newSuppliers = input.subscriptionData.data.suppliers.map(sup => {
             const firstName = sup.contactPerson?.firstName || ''
@@ -49,8 +56,8 @@ export default function SuppliersTunnel({ close, state }) {
 
    const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
       onError: error => {
-         console.log(error)
-         toast.error('Error! Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
       onCompleted: () => {
          close(1)
@@ -69,7 +76,11 @@ export default function SuppliersTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+   if (loading) return <InlineLoader />
 
    return (
       <>
@@ -79,40 +90,44 @@ export default function SuppliersTunnel({ close, state }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem
-                     type="SSL22"
-                     content={{
-                        supplier: current.supplier,
-                        contact: current.contact,
-                     }}
-                  />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.supplier.title.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL22"
-                           key={option.id}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                           content={{
-                              supplier: option.supplier,
-                              contact: option.contact,
-                           }}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem
+                        type="SSL22"
+                        content={{
+                           supplier: current.supplier,
+                           contact: current.contact,
+                        }}
+                     />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.supplier.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL22"
+                              key={option.id}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                              content={{
+                                 supplier: option.supplier,
+                                 contact: option.contact,
+                              }}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_SUPPLIERS} />
+            )}
          </TunnelContainer>
       </>
    )

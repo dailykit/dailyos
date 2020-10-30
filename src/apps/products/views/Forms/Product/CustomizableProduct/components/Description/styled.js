@@ -1,0 +1,11 @@
+import styled from 'styled-components'
+
+export const StyledContainer = styled.div`
+   position: relative;
+`
+
+export const StyledAction = styled.div`
+   position: absolute;
+   right: 0px;
+   top: 0px;
+`

@@ -1,8 +1,13 @@
 import gql from 'graphql-tag'
 
 export const CUSTOMERS_LISTING = gql`
-   query CUSTOMER_LISTING {
-      customers {
+   query CUSTOMER_LISTING($brandId: Int!) {
+      customers(
+         where: {
+            isArchived: { _eq: false }
+            brandCustomers: { brand: { id: { _eq: $brandId } } }
+         }
+      ) {
          keycloakId
          source
          platform_customer {
@@ -78,6 +83,86 @@ export const ORDERS_LISTING = gql`
          orders_aggregate {
             aggregate {
                count
+            }
+         }
+      }
+   }
+`
+
+export const REFERRAL_LISTING = gql`
+   query REFERRAL_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         customerReferralDetails {
+            customerReferrals_aggregate {
+               aggregate {
+                  count
+               }
+               nodes {
+                  keycloakId
+                  customer {
+                     platform_customer {
+                        firstName
+                        lastName
+                        phoneNumber
+                        email
+                     }
+                  }
+                  referralStatus
+               }
+            }
+         }
+      }
+   }
+`
+
+export const WALLET_LISTING = gql`
+   query WALLET_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         wallet {
+            amount
+            walletTransactions_aggregate {
+               aggregate {
+                  count
+               }
+               nodes {
+                  created_at
+                  id
+                  orderCart {
+                     orderId
+                  }
+                  type
+                  amount
+                  wallet {
+                     balanceAmount: amount
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
+export const LOYALTYPOINTS_LISTING = gql`
+   query LOYALTYPOINTS_LISTING($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         loyaltyPoint {
+            points
+            loyaltyPointTransactions_aggregate {
+               aggregate {
+                  count
+               }
+               nodes {
+                  created_at
+                  id
+                  type
+                  points
+                  orderCart {
+                     orderId
+                  }
+                  loyaltyPoint {
+                     balanceAmount: points
+                  }
+               }
             }
          }
       }

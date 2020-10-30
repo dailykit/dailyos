@@ -14,7 +14,7 @@ import { tableConfig } from './tableConfig'
 
 /**
  *
- * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}}} props
+ * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}, variables: {}}} props
  */
 export default function Insight({
    includeTable = true,
@@ -23,6 +23,7 @@ export default function Insight({
    where = {},
    limit,
    order,
+   variables = {},
 }) {
    const [isDiff, setIsDiff] = useState(false)
 
@@ -40,12 +41,14 @@ export default function Insight({
       newData,
       oldAggregates,
       newAggregates,
+      config,
    } = useInsights(identifier, {
       includeTableData: includeTable,
       includeChartData: includeChart,
       where,
       limit,
       order,
+      variables,
    })
 
    return (
@@ -85,7 +88,7 @@ export default function Insight({
                {isDiff ? <CounterBar aggregates={newAggregates} /> : null}
                <CounterBar aggregates={oldAggregates} />
             </div>
-            {includeChart ? (
+            {(config && config.includeChart) || includeChart ? (
                <HeroCharts
                   allowedCharts={allowedCharts}
                   oldData={oldData}
@@ -95,7 +98,7 @@ export default function Insight({
             ) : null}
 
             <StyledGrid isDiff={isDiff}>
-               {includeChart ? (
+               {(config && config.includeChart) || includeChart ? (
                   <FlexCharts
                      allowedCharts={allowedCharts}
                      oldData={oldData}
@@ -104,23 +107,23 @@ export default function Insight({
                   />
                ) : null}
             </StyledGrid>
-            <Flex container>
-               {isDiff ? (
-                  <ReactTabulator
-                     columns={[]}
-                     options={tableConfig}
-                     data={newTableData.length ? newTableData : oldTableData}
-                  />
-               ) : null}
+            {(config && config.includeTable) || includeTable ? (
+               <Flex container>
+                  {isDiff ? (
+                     <ReactTabulator
+                        columns={[]}
+                        options={tableConfig}
+                        data={newTableData.length ? newTableData : oldTableData}
+                     />
+                  ) : null}
 
-               {includeTable && (
                   <ReactTabulator
                      columns={[]}
                      options={tableConfig}
                      data={oldTableData}
                   />
-               )}
-            </Flex>
+               </Flex>
+            ) : null}
          </StyledContainer>
       </>
    )

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Text, Avatar, useTunnel } from '@dailykit/ui'
+import { Text, Avatar, useTunnel, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
@@ -26,15 +26,25 @@ import {
    CardInfo,
    Heading,
 } from './styled'
+import { toast } from 'react-toastify'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
+import { useTooltip } from '../../../../../../shared/providers'
+import { logger } from '../../../../../../shared/utils'
+import options from '../../../tableOptions'
 
 const OrderInfo = () => {
    const { dispatch, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { data: orderData } = useQuery(ORDER, {
+   const { data: orderData, loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -49,7 +59,18 @@ const OrderInfo = () => {
    }
 
    const columns = [
-      { title: 'Products', field: 'products', hozAlign: 'left', width: 300 },
+      {
+         title: 'Products',
+         field: 'products',
+         hozAlign: 'left',
+         width: 300,
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Servings',
          field: 'servings',
@@ -57,6 +78,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_serving_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },
@@ -68,6 +95,12 @@ const OrderInfo = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_discount_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 100,
       },
       {
@@ -77,6 +110,12 @@ const OrderInfo = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'subscription_product_listing_price_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },
@@ -145,7 +184,7 @@ const OrderInfo = () => {
             {deliveryAgent}
          </SideCard>
       )
-
+   if (loading) return <InlineLoader />
    return (
       <StyledWrapper>
          <Heading>
@@ -164,7 +203,10 @@ const OrderInfo = () => {
                Check Order Status
             </SmallText>
          </Heading>
-         <Text as="h1">Order Id: #{tab.data.oid}</Text>
+         <Flex container margin="0 0 0 6px" height="80px" alignItems="center">
+            <Text as="h1">Order Id: #{tab.data.oid}</Text>
+            <Tooltip identifier="product_list_heading" />
+         </Flex>
          <StyledContainer>
             <StyledMainBar>
                <StyledDiv>
@@ -185,7 +227,10 @@ const OrderInfo = () => {
                      columns={columns}
                      data={data}
                      ref={tableRef}
-                     options={options}
+                     options={{
+                        ...options,
+                        placeholder: 'No Products Available Yet !',
+                     }}
                   />
                   <CardInfo>
                      <Text as="title">Total</Text>
@@ -239,16 +284,3 @@ const OrderInfo = () => {
 }
 
 export default OrderInfo
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

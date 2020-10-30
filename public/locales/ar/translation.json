@@ -1,7 +1,7 @@
 {
    "inventory": "Inventory",
-   "recipe": "Recipe",
-   "online store": "Online Store",
+   "products": "Products",
+   "menu": "Menu",
    "settings": "Settings",
    "units": {
       "gm": "gm",
@@ -311,7 +311,7 @@
             }
          }
       },
-      "recipe": {
+      "products": {
          "components": {
             "menu": {},
             "processings": {
@@ -442,7 +442,7 @@
                }
             },
             "home": {
-               "recipe app": "Recipe App",
+               "products": "Products App",
                "recipes": "Recipes",
                "ingredients": "Ingredients"
             },
@@ -479,7 +479,7 @@
             }
          }
       },
-      "online_store": {
+      "menu": {
          "components": {
             "formheading": {},
             "tabs": {
@@ -880,7 +880,7 @@
                }
             },
             "home": {
-               "seller app": "Seller App",
+               "menu": "Menu App",
                "products": "Products",
                "10 created so far": "10 created so far",
                "all active": "All active",

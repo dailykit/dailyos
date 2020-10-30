@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { Loader, useTunnel } from '@dailykit/ui'
+import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
 import {
@@ -10,19 +10,22 @@ import {
    SUBSCRIPTION_PLAN,
    ISTEST,
    CUSTOMER_ISTEST,
+   WALLET_N_REFERRAL,
+   SIGNUP_COUNT,
+   LOYALTYPOINT_COUNT,
 } from '../../../graphql'
 import {
    OrdersTable,
    ReferralTable,
    WalletTable,
+   LoyaltyPointsTable,
    SubscriptionTable,
 } from '../../Tables'
 import {
    StyledWrapper,
-   StyledContainer,
    StyledSideBar,
-   StyledMainBar,
    StyledTable,
+   FlexContainer,
 } from './styled'
 import {
    CustomerCard,
@@ -32,9 +35,15 @@ import {
    ReferralCard,
    SubscriptionCard,
    WalletCard,
+   LoyaltyCard,
    SubscriptionInfoCard,
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
+import { logger } from '../../../../../shared/utils'
+import {
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
 
 const CustomerRelation = ({ match }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -47,11 +56,33 @@ const CustomerRelation = ({ match }) => {
          variables: { keycloakId: match.params.id },
       }
    )
+   const {
+      data: walletNreferral,
+      loading: walletNreferralLoading,
+   } = useSubscription(WALLET_N_REFERRAL, {
+      variables: { keycloakId: match.params.id },
+   })
+   const { data: loyaltyPoint, loading: loyaltyPointLoading } = useSubscription(
+      LOYALTYPOINT_COUNT,
+      {
+         variables: { keycloakId: match.params.id },
+      }
+   )
+   const { data: signUpCount, loading: signUpLoading } = useSubscription(
+      SIGNUP_COUNT,
+      {
+         variables: { keycloakId: match.params.id },
+      }
+   )
    const { loading: listLoading, data: customerData } = useQuery(
       CUSTOMER_DATA,
       {
          variables: {
             keycloakId: match.params.id,
+         },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
          },
       }
    )
@@ -61,6 +92,10 @@ const CustomerRelation = ({ match }) => {
          variables: {
             keycloakId: match.params.id,
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
       }
    )
    const { loading: list__Loading, data: subscriptionPlan } = useQuery(
@@ -69,6 +104,10 @@ const CustomerRelation = ({ match }) => {
          variables: {
             keycloakId: match.params.id,
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
       }
    )
    const [updateIsTest] = useMutation(ISTEST, {
@@ -76,7 +115,8 @@ const CustomerRelation = ({ match }) => {
          toast.info('Information updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -116,6 +156,8 @@ const CustomerRelation = ({ match }) => {
       table = <ReferralTable />
    } else if (tab?.data?.activeCard === 'Wallet') {
       table = <WalletTable />
+   } else if (tab?.data?.activeCard === 'LoyaltyPoints') {
+      table = <LoyaltyPointsTable />
    } else if (tab?.data?.activeCard === 'Subscriber') {
       table = (
          <SubscriptionTable
@@ -124,17 +166,24 @@ const CustomerRelation = ({ match }) => {
          />
       )
    }
-   if (listLoading) return <Loader />
-   if (list_Loading) return <Loader />
-   if (list__Loading) return <Loader />
-   if (customerloading) return <Loader />
+   if (
+      listLoading ||
+      list_Loading ||
+      list__Loading ||
+      customerloading ||
+      walletNreferralLoading ||
+      signUpLoading ||
+      loyaltyPointLoading
+   ) {
+      return <InlineLoader />
+   }
    return (
       <StyledWrapper>
-         <StyledContainer>
+         <Flex container>
             <StyledSideBar>
                <CustomerCard
                   customer={customerData?.customer}
-                  walletAmount="N/A"
+                  walletAmount={walletNreferral?.customer?.wallet?.amount || 0}
                   toggle={customerIsTest?.customer?.isTest}
                   toggleHandler={() =>
                      toggleHandler(!customerIsTest?.customer?.isTest)
@@ -155,10 +204,11 @@ const CustomerRelation = ({ match }) => {
                         ?.defaultStripePaymentMethod || 'N/A'
                   }
                   billingAddDisplay="none"
+                  identifier="default_payment_card_info"
                />
             </StyledSideBar>
-            <StyledMainBar>
-               <StyledContainer>
+            <Flex container width="80%" flexDirection="column">
+               <FlexContainer>
                   <OrderCard
                      data={customerData?.customer?.orders_aggregate?.aggregate}
                      click={() => setActiveCard('Orders')}
@@ -166,6 +216,14 @@ const CustomerRelation = ({ match }) => {
                      heading="Orders"
                   />
                   <ReferralCard
+                     referralCount={
+                        walletNreferral?.customer?.customerReferralDetails
+                           ?.customerReferrals_aggregate?.aggregate?.count || 0
+                     }
+                     signUpCount={
+                        signUpCount?.customer?.customerReferralDetails
+                           ?.customerReferrals_aggregate?.aggregate?.count || 0
+                     }
                      click={() => setActiveCard('Referrals')}
                      active={tab.data.activeCard}
                      heading="Referrals"
@@ -177,14 +235,28 @@ const CustomerRelation = ({ match }) => {
                      heading="Subscriber"
                   />
                   <WalletCard
+                     data={walletNreferral?.customer?.wallet}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"
                   />
-               </StyledContainer>
-               <StyledTable>{table}</StyledTable>
-            </StyledMainBar>
-         </StyledContainer>
+                  <LoyaltyCard
+                     data={loyaltyPoint?.customer?.loyaltyPoint}
+                     click={() => setActiveCard('LoyaltyPoints')}
+                     active={tab.data.activeCard}
+                     heading="LoyaltyPoints"
+                  />
+               </FlexContainer>
+               <StyledTable>
+                  {table}
+                  <InsightDashboard
+                     appTitle="CRM App"
+                     moduleTitle="Customer Page"
+                     variables={{ keycloakId: match.params.id }}
+                  />
+               </StyledTable>
+            </Flex>
+         </Flex>
 
          <PaymentTunnel
             tunnels={tunnels}

@@ -46,6 +46,7 @@ export const Tooltip = ({
                   View Docs
                </a>
             )}
+            {identifier}
          </ReactTooltip>
       </Styles.Tooltip>
    )

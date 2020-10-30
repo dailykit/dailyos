@@ -1,24 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, TunnelHeader, Loader, Tunnel, Tunnels } from '@dailykit/ui'
+import { Text, TunnelHeader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, REWARD_TYPE } from '../../../../../graphql'
-import RewardDetailsTunnel from '../RewardDetails'
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import CouponContext from '../../../../../context/Coupon/CouponForm'
 
 export default function RewardTypeTunnel({
-   state,
    closeTunnel,
    tunnels,
    openRewardTunnel,
    getRewardId,
 }) {
    const { addTab } = useTabs()
-
+   const context = useContext(CouponContext)
    const [types, setTypes] = useState([])
    // Subscription
-   const { data: rewardType, loading } = useSubscription(REWARD_TYPE, {
+   const { loading, error } = useSubscription(REWARD_TYPE, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.crm_rewardType.map(type => {
             return {
@@ -29,6 +30,10 @@ export default function RewardTypeTunnel({
          setTypes(result)
       },
    })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    //Mutation
    const [createReward] = useMutation(CREATE_REWARD, {
@@ -38,7 +43,8 @@ export default function RewardTypeTunnel({
          toast.success('Reward created!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -46,20 +52,23 @@ export default function RewardTypeTunnel({
       createReward({
          variables: {
             rewardType: type,
-            couponId: state?.id,
+            couponId: context.state?.id,
          },
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
    return (
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <TunnelHeader
-                  title="Select Type of Reward"
-                  close={() => closeTunnel(1)}
-               />
+               <Flex container alignItems="center">
+                  <TunnelHeader
+                     title="Select Type of Reward"
+                     close={() => closeTunnel(1)}
+                     tooltip={<Tooltip identifier="coupon_reward_type" />}
+                  />
+               </Flex>
                <TunnelBody>
                   {types.map(type => {
                      return (

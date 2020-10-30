@@ -1,36 +1,40 @@
+import { useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
-   IconButton,
+   ComboButton,
+   Flex,
+   Loader,
+   Spacer,
+   Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   Text,
-   Loader,
-   TextButton,
 } from '@dailykit/ui'
+import moment from 'moment'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useSubscription } from '@apollo/react-hooks'
-import moment from 'moment'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
-
+import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
 import { AddIcon } from '../../../assets/icons'
-import { StyledHeader, StyledWrapper } from '../styled'
-import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { useTabs } from '../../../context'
 import {
    BULK_WORK_ORDERS_SUBSCRIPTION,
    SACHET_WORK_ORDERS_SUBSCRIPTION,
 } from '../../../graphql'
+import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
-import { FlexContainer } from '../../Forms/styled'
-import { useTabs } from '../../../context'
+import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function WorkOrders() {
@@ -38,19 +42,27 @@ export default function WorkOrders() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const tableRef = React.useRef()
    const { addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const {
       data: bulkWorkOrdersData,
       loading: bulkWorkOrderLoading,
-   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION, { onError })
+      error: bulkError,
+   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION)
 
    const {
       data: sachetWorkOrdersData,
       loading: sachetWorkOrderLoading,
-   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION, { onError })
+      error: sachetError,
+   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION)
 
-   const rowClick = (e, row) => {
-      const { id, type, name } = row._row.data
+   if (bulkError || sachetError) {
+      onError(bulkError || sachetError)
+      return
+   }
+
+   const openForm = (_, cell) => {
+      const { id, type, name } = cell.getData()
       const altName = `Work Order-${uuid().substring(30)}`
 
       if (type === 'bulk') {
@@ -61,7 +73,18 @@ export default function WorkOrders() {
    }
 
    const columns = [
-      { title: 'Status', field: 'status', headerFilter: true, width: 150 },
+      {
+         title: 'Status',
+         field: 'status',
+         headerFilter: true,
+         width: 150,
+         cellClick: openForm,
+         cssClass: 'RowClick',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_status'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
       {
          title: 'Scheduled On',
          field: 'scheduledOn',
@@ -70,6 +93,10 @@ export default function WorkOrders() {
          hozAlign: 'left',
          headerHozAlign: 'left',
          width: 150,
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_scheduledOn'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'User Assigned',
@@ -78,6 +105,10 @@ export default function WorkOrders() {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_user_assigned'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Station Assigned',
@@ -86,6 +117,10 @@ export default function WorkOrders() {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_station_assigned'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Type',
@@ -94,6 +129,10 @@ export default function WorkOrders() {
          headerFilter: false,
          hozAlign: 'left',
          headerHozAlign: 'left',
+         headerTooltip: col => {
+            const identifier = 'work-orders_listings_table_order_type'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
    ]
 
@@ -122,42 +161,48 @@ export default function WorkOrders() {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <WorkOrderTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <StyledHeader>
-               <Text as="h1">{t(address.concat('work orders'))}</Text>
-               <FlexContainer>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
+               <Flex container alignItems="center">
+                  <Text as="h1">{t(address.concat('work orders'))}</Text>
+                  <Tooltip identifier="work-orders_listings_header_title" />
+               </Flex>
+               <Flex container>
                   <TextButton
                      type="outline"
                      onClick={() => tableRef.current.table.clearHeaderFilter()}
                   >
                      Clear Filters
                   </TextButton>
-                  <span style={{ width: '10px' }} />
-                  <IconButton
+                  <Spacer xAxis size="10px" />
+                  <ComboButton
                      type="solid"
                      onClick={() => {
                         openTunnel(1)
                      }}
                   >
                      <AddIcon color="#fff" size={24} />
-                  </IconButton>
-               </FlexContainer>
-            </StyledHeader>
+                     Create Work Order
+                  </ComboButton>
+               </Flex>
+            </Flex>
 
-            <br />
-            <div style={{ width: '90%', margin: '0 auto' }}>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={data}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <Spacer size="16px" />
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={data}
+               options={tableOptions}
+            />
          </StyledWrapper>
       </>
    )

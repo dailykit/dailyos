@@ -99,6 +99,18 @@ const MasterList = () => {
             addTab('Units', '/settings/master-lists/units')
          },
       },
+      {
+         listName: 'Product Categories',
+         length:
+            productCategories?.productCategoriesAggregate.aggregate.count ||
+            '...',
+         _click() {
+            addTab(
+               'Product Categories',
+               '/settings/master-lists/product-categories'
+            )
+         },
+      },
    ]
 
    React.useEffect(() => {

@@ -1,9 +1,12 @@
 import React from 'react'
-import { Tunnels, Tunnel, TunnelHeader, Loader, Text } from '@dailykit/ui'
+import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useTabs } from '../../../../context'
 import { STATUS } from '../../../../graphql'
 import { TunnelHeaderContainer, StyledDiv } from './styled'
+import { logger } from '../../../../../../shared/utils'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
+import { toast } from 'react-toastify'
 
 const PaymentStatus = ({ tunnels, closeTunnel }) => {
    const { tab } = useTabs()
@@ -11,12 +14,22 @@ const PaymentStatus = ({ tunnels, closeTunnel }) => {
       variables: {
          oid: tab.data.oid,
       },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
+      },
    })
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
-            <TunnelHeader title="Payment Status" close={() => closeTunnel(1)} />
+            <TunnelHeader
+               title="Payment Status"
+               close={() => closeTunnel(1)}
+               tooltip={
+                  <Tooltip identifier="customer_payment_status_tunnelHeader" />
+               }
+            />
             <TunnelHeaderContainer>
                <StyledDiv>
                   <Text as="h2">

@@ -1,20 +1,20 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
-import { StyledCard, CardHeading, CardContent, ViewTab } from './styled'
+import { Text, Flex } from '@dailykit/ui'
+import { StyledCard, ViewTab } from './styled'
 
-const StyleCard = ({ active, heading, click }) => {
+const StyleCard = ({ active, heading, click, data }) => {
    return (
       <StyledCard active={active === heading}>
-         <CardHeading>
-            <Text as="subtitle">Wallet</Text>
+         <Flex container justifyContent="space-between" padding="16px">
+            <Text as="p">Wallet</Text>
             <ViewTab onClick={click}>view</ViewTab>
-         </CardHeading>
-         <CardContent>
-            <span>
-               <Text as="subtitle">Total Wallet Amount</Text>
-               <Text as="title">N/A</Text>
-            </span>
-         </CardContent>
+         </Flex>
+         <Flex container padding="16px" className="cardContent">
+            <Flex container flexDirection="column">
+               <Text as="p">Total Wallet Amount</Text>
+               <Text as="p">${data.amount}</Text>
+            </Flex>
+         </Flex>
       </StyledCard>
    )
 }

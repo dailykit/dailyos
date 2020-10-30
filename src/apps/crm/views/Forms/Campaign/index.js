@@ -1,28 +1,20 @@
 import React, { useState } from 'react'
 import {
-   Toggle,
-   Input,
-   Loader,
-   Text,
+   Flex,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   Form,
+   Spacer,
+   Text,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import {
-   StyledHeader,
-   StyledWrapper,
-   CenterDiv,
-   InputWrapper,
-   StyledRow,
-   StyledComp,
-   StyledDiv,
-} from './styled'
+import { StyledWrapper, InputWrapper, StyledComp, StyledDiv } from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import {
    ConditionComp,
@@ -30,61 +22,90 @@ import {
    RewardComp,
    BrandCampaign,
 } from './components'
+import { logger } from '../../../../../shared/utils'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
+import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
+import CampaignContext from '../../../context/Campaign/CampaignForm'
 
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
    const { id: campaignId } = useParams()
-   const [campaignTitle, setCampaignTitle] = useState('')
+   const [campaignTitle, setCampaignTitle] = useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [type, setType] = useState('')
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+
+   // form validation
+   const validateCampaignName = value => {
+      const text = value.trim()
+      console.log(`text ${text.length}`)
+      let isValid = true
+      let errors = []
+      if (text.length < 2) {
+         isValid = false
+         errors = [...errors, 'Must have atleast two letters.']
+      }
+      console.log(isValid)
+      return { isValid, errors }
+   }
+
    // Subscription
-   const { loading } = useSubscription(CAMPAIGN_DATA, {
+   const { loading, error } = useSubscription(CAMPAIGN_DATA, {
       variables: {
          id: campaignId,
       },
-      onSubscriptionData: data => {
-         setState(data.subscriptionData.data.campaign)
-         setCampaignTitle(data.subscriptionData.data.campaign.metaDetails.title)
-         setType(data.subscriptionData.data.campaign.type)
-         setToggle(data.subscriptionData.data.campaign.isActive)
-         setTabTitle(data.subscriptionData.data.campaign.metaDetails.title)
-         setCheckbox(data.subscriptionData.data.campaign.isRewardMulti)
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         setState(data?.campaign || {})
+         setCampaignTitle({
+            ...campaignTitle,
+            value: data?.campaign?.metaDetails?.title || '',
+         })
+         setType(data?.campaign?.type || '')
+         setToggle(data?.campaign?.isActive || false)
+         setTabTitle(data?.campaign?.metaDetails?.title || 'N/A')
+         setCheckbox(data?.campaign?.isRewardMulti || false)
       },
    })
+
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    // Mutation
    const [updateCoupon] = useMutation(UPDATE_CAMPAIGN, {
       onCompleted: () => {
          toast.success('Updated!')
-         setTabTitle(campaignTitle)
+         setTabTitle(campaignTitle.value)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
-   const updateCampaignTitle = () => {
-      if (campaignTitle) {
-         updateCoupon({
-            variables: {
-               id: campaignId,
-               set: {
-                  metaDetails: { ...state.metaDetails, title: campaignTitle },
-               },
-            },
-         })
-      }
-   }
    const updatetoggle = () => {
-      if (toggle || !toggle) {
+      const val = !toggle
+      if (val && !state.isCampaignValid.status) {
+         toast.error('Campaign should be valid!')
+      } else {
          updateCoupon({
             variables: {
                id: campaignId,
                set: {
-                  isActive: !toggle,
+                  isActive: val,
                },
             },
          })
@@ -92,12 +113,39 @@ const CampaignForm = () => {
    }
 
    const updateCheckbox = () => {
-      if (checkbox || !checkbox) {
+      updateCoupon({
+         variables: {
+            id: campaignId,
+            set: {
+               isRewardMulti: !checkbox,
+            },
+         },
+      })
+   }
+
+   //campaign name validation & update name handler
+   const onBlur = e => {
+      setCampaignTitle({
+         ...campaignTitle,
+         meta: {
+            ...campaignTitle.meta,
+            isTouched: true,
+            errors: validateCampaignName(e.target.value).errors,
+            isValid: validateCampaignName(e.target.value).isValid,
+         },
+      })
+      if (
+         validateCampaignName(e.target.value).isValid &&
+         validateCampaignName(e.target.value).errors.length === 0
+      ) {
          updateCoupon({
             variables: {
                id: campaignId,
                set: {
-                  isRewardMulti: !checkbox,
+                  metaDetails: {
+                     ...state.metaDetails,
+                     title: e.target.value,
+                  },
                },
             },
          })
@@ -110,52 +158,110 @@ const CampaignForm = () => {
       }
    }, [addTab, tab])
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
    return (
-      <StyledWrapper>
-         <StyledHeader gridCol="15fr 2fr">
+      <CampaignContext.Provider
+         value={{
+            state,
+            campaignType: type,
+            toggle,
+            checkbox,
+            updateCheckbox: updateCheckbox,
+         }}
+      >
+         <StyledWrapper>
             <InputWrapper>
-               <Input
-                  type="text"
-                  label="Campaign Name"
-                  name="code"
-                  value={campaignTitle}
-                  onChange={e => setCampaignTitle(e.target.value)}
-                  onBlur={updateCampaignTitle}
-               />
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="0 0 16px 0"
+               >
+                  <Form.Group>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label htmlFor="name" title="Campaign Name">
+                           Campaign Name*
+                        </Form.Label>
+                        <Tooltip identifier="campaign_info" />
+                     </Flex>
+                     <Form.Text
+                        id="campaignName"
+                        name="campaignName"
+                        value={campaignTitle.value}
+                        placeholder="Enter the campaign Name"
+                        onBlur={onBlur}
+                        onChange={e =>
+                           setCampaignTitle({
+                              ...campaignTitle,
+                              value: e.target.value,
+                           })
+                        }
+                     />
+                     {campaignTitle.meta.isTouched &&
+                        !campaignTitle.meta.isValid &&
+                        campaignTitle.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Flex container alignItems="center" height="100%">
+                     {state.isCampaignValid?.status ? (
+                        <>
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p">All good!</Text>
+                        </>
+                     ) : (
+                        <>
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isCampaignValid?.error}</Text>
+                        </>
+                     )}
+                     <Spacer xAxis size="16px" />
+                     <Form.Toggle
+                        name="campaign_active"
+                        onChange={updatetoggle}
+                        value={toggle}
+                     >
+                        <Flex container alignItems="center">
+                           Publish
+                           <Tooltip identifier="campaign_publish_info" />
+                        </Flex>
+                     </Form.Toggle>
+                  </Flex>
+               </Flex>
             </InputWrapper>
-            <Toggle checked={toggle} setChecked={updatetoggle} />
-         </StyledHeader>
 
-         <StyledDiv>
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  <HorizontalTab>Details</HorizontalTab>
-                  <HorizontalTab>Brand</HorizontalTab>
-                  <HorizontalTab>Insights</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     <StyledComp>
-                        <DetailsComp state={state} campaignType={type} />
-                        <ConditionComp state={state} />
-                        <RewardComp
-                           state={state}
-                           checkbox={checkbox}
-                           updateCheckbox={updateCheckbox}
+            <StyledDiv>
+               <HorizontalTabs>
+                  <div className="styleTab">
+                     <HorizontalTabList>
+                        <HorizontalTab>Details</HorizontalTab>
+                        <HorizontalTab>Brand</HorizontalTab>
+                        <HorizontalTab>Insights</HorizontalTab>
+                     </HorizontalTabList>
+                  </div>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <StyledComp>
+                           <DetailsComp />
+                           <ConditionComp />
+                           <RewardComp />
+                        </StyledComp>
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <BrandCampaign />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <InsightDashboard
+                           appTitle="CRM App"
+                           moduleTitle="Campaign Page"
+                           variables={{ campaignId: campaignId }}
                         />
-                     </StyledComp>
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <BrandCampaign state={state} />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     Insights Content coming soon!!
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
-         </StyledDiv>
-      </StyledWrapper>
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            </StyledDiv>
+         </StyledWrapper>
+      </CampaignContext.Provider>
    )
 }
 

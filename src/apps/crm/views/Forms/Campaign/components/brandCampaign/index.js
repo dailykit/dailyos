@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-import {
-   Text,
-   ButtonGroup,
-   IconButton,
-   PlusIcon,
-   Toggle,
-   Loader,
-} from '@dailykit/ui'
+import { Text, Flex, Form } from '@dailykit/ui'
 import { BRAND_CAMPAIGNS, UPSERT_BRAND_CAMPAIGN } from '../../../../../graphql'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
+import options from '../../../../tableOptions'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import CampaignContext from '../../../../../context/Campaign/CampaignForm'
 
-const BrandCampaign = ({ state }) => {
+const BrandCampaign = () => {
    const tableRef = useRef()
-
+   const context = useContext(CampaignContext)
    // Subscription
    const {
       loading: listloading,
@@ -23,14 +20,19 @@ const BrandCampaign = ({ state }) => {
       data: { brands = [] } = {},
    } = useSubscription(BRAND_CAMPAIGNS)
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    const [upsertBrandCampaign] = useMutation(UPSERT_BRAND_CAMPAIGN, {
       onCompleted: data => {
          console.log(data)
          toast.success('Updated!')
       },
       onError: error => {
-         console.log(error)
-         toast.error(error.message)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -52,7 +54,7 @@ const BrandCampaign = ({ state }) => {
          title: 'Campaign Available',
          formatter: reactFormatter(
             <ToggleCampaign
-               campaignId={state.id}
+               campaignId={context.state.id}
                onChange={object =>
                   upsertBrandCampaign({ variables: { object } })
                }
@@ -67,27 +69,14 @@ const BrandCampaign = ({ state }) => {
       },
    ]
 
-   const options = {
-      cellVertAlign: 'middle',
-      layout: 'fitColumns',
-      autoResize: true,
-      maxHeight: '420px',
-      resizableColumns: false,
-      virtualDomBuffer: 80,
-      placeholder: 'No Data Available',
-      persistence: true,
-      persistenceMode: 'cookie',
-      pagination: 'local',
-      paginationSize: 10,
-   }
-
-   if (listloading) return <Loader />
+   if (listloading) return <InlineLoader />
 
    return (
       <StyledWrapper>
-         <div style={{ padding: '6px' }}>
+         <Flex container alignItems="center" padding="6px">
             <Text as="h2">Brands</Text>
-         </div>
+            <Tooltip identifier="brand_campaign_list_heading" />
+         </Flex>
          {error ? (
             <Text as="p">Could not load brands</Text>
          ) : (
@@ -95,7 +84,10 @@ const BrandCampaign = ({ state }) => {
                ref={tableRef}
                columns={columns}
                data={brands}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Brand Campaigns Data Available Yet !',
+               }}
             />
          )}
       </StyledWrapper>
@@ -108,8 +100,8 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
    const brand = useRef(cell.getData())
    const [active, setActive] = useState(false)
 
-   const toggleHandler = value => {
-      console.log(value)
+   const toggleHandler = () => {
+      const value = !active
       onChange({
          campaignId,
          brandId: brand.current.id,
@@ -126,5 +118,13 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
       setActive(isActive)
    }, [brand.current])
 
-   return <Toggle checked={active} setChecked={val => toggleHandler(val)} />
+   return (
+      <Form.Group>
+         <Form.Toggle
+            name="brand_campaign_active"
+            onChange={toggleHandler}
+            value={active}
+         />
+      </Form.Group>
+   )
 }
