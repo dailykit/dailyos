@@ -34,6 +34,7 @@ import {
    SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
+import { validators } from '../../../utils/validators'
 import ProcessingView from './ProcessingView'
 import {
    StyledGrid,
@@ -53,7 +54,14 @@ const address = 'apps.inventory.views.forms.item.'
 export default function ItemForm() {
    const { t } = useTranslation()
    const [formState, setFormState] = React.useState({})
-   const [itemName, setItemName] = React.useState('')
+   const [itemName, setItemName] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
    const { id } = useParams()
    const { setTabTitle } = useTabs()
 
@@ -75,7 +83,7 @@ export default function ItemForm() {
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
 
-            setItemName(data.name)
+            setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
          },
       }
@@ -118,6 +126,27 @@ export default function ItemForm() {
          toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
+
+   const updateItemName = e => {
+      const { isValid, errors } = validators.name(e.target.value, 'item name')
+
+      if (isValid)
+         updateSupplierItem({
+            variables: {
+               id: formState.id,
+               object: { name: itemName.value },
+            },
+         })
+
+      setItemName({
+         value: formState.name,
+         meta: {
+            isValid,
+            errors,
+            isTouched: true,
+         },
+      })
+   }
 
    if (itemDetailLoading) return <Loader />
 
@@ -192,23 +221,25 @@ export default function ItemForm() {
                                     id="itemName"
                                     name="itemName"
                                     placeholder="Supplier Item Name..."
-                                    value={itemName}
-                                    onChange={e => setItemName(e.target.value)}
-                                    onBlur={() => {
-                                       if (!itemName.length) {
-                                          toast.error("Name can't be empty")
-                                          return setItemName(formState.name)
-                                       }
-
-                                       if (itemName !== formState.name)
-                                          updateSupplierItem({
-                                             variables: {
-                                                id: formState.id,
-                                                object: { name: itemName },
-                                             },
-                                          })
-                                    }}
+                                    value={itemName.value}
+                                    onChange={e =>
+                                       setItemName({
+                                          value: e.target.value,
+                                          meta: { ...itemName.meta },
+                                       })
+                                    }
+                                    onBlur={updateItemName}
+                                    hasError={
+                                       itemName.meta.isTouched &&
+                                       !itemName.meta.isValid
+                                    }
                                  />
+                                 {itemName.meta.isTouched &&
+                                    !itemName.meta.isValid && (
+                                       <Form.Error>
+                                          {itemName.meta.errors[0]}
+                                       </Form.Error>
+                                    )}
                               </Form.Group>
                               <span>sku: {formState.sku || 'N/A'}</span>
                            </div>

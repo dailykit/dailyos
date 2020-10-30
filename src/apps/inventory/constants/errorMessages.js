@@ -11,3 +11,8 @@ export const ERROR_UPDATING_BULK_ITEM =
    'Error updating bulk item as shipped. Please try again'
 
 export const ERROR_ADDING_ALLERGENS = 'Error adding allergens!'
+
+export const ERROR_UPDATING_ITEM_INFORMATION =
+   'Error adding item information. Please try again'
+
+export const FORM_VALIDATION_ERROR = 'inavlid form values'
