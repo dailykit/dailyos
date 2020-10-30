@@ -1,3 +1,5 @@
+// TODO: handle unit error handling
+
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -21,6 +23,7 @@ import {
    Tooltip,
 } from '../../../../../../../shared/components'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
+import { logger } from '../../../../../../../shared/utils'
 import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
 import { BULK_ITEM_UPDATED } from '../../../../../constants/successMessages'
 import {
@@ -118,7 +121,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          toast.success(BULK_ITEM_UPDATED)
       },
       onError: error => {
-         console.log(error)
+         logger(error)
          toast.error(ERROR_UPDATING_BULK_ITEM)
          close(1)
       },
@@ -282,7 +285,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                               e.target.value
                            )
                            setMaxValue({
-                              value: e.target.vaue,
+                              value: e.target.value,
                               meta: { isValid, isTouched: true, errors },
                            })
                         }}
