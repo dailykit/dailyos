@@ -23,12 +23,12 @@ import {
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import { ERROR_UPDATING_BULK_ITEM } from '../../../../../constants/errorMessages'
 import { BULK_ITEM_UPDATED } from '../../../../../constants/successMessages'
-import { VALUE_SHOULD_BE_NUMBER } from '../../../../../constants/validationMessages'
 import {
    NUTRITION_INFO,
    UNITS_SUBSCRIPTION,
    UPDATE_BULK_ITEM,
 } from '../../../../../graphql'
+import { validators } from '../../../../../utils/validators'
 import AllergensTunnel from '../Allergens'
 import {
    Highlight,
@@ -44,23 +44,52 @@ const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
 export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
    const { t } = useTranslation()
-
-   const [errors, setErrors] = useState([])
-
    const [units, setUnits] = useState([])
-   const [parLevel, setParLevel] = useState(bulkItem?.parLevel || 0)
-   const [maxValue, setMaxValue] = useState(bulkItem?.maxLevel || '')
-   const [unit, setUnit] = useState(bulkItem?.unit)
-   const [laborTime, setLaborTime] = useState(bulkItem?.labor?.value || '')
-   const [laborUnit, setLaborUnit] = useState(bulkItem?.labor?.unit || 'hours')
-   const [yieldPercentage, setYieldPercentage] = useState(
-      bulkItem?.yield?.value || ''
-   )
-   const [shelfLife, setShelfLife] = useState(bulkItem?.shelfLife?.value || '')
-   const [shelfLifeUnit, setShelfLifeUnit] = useState(
-      bulkItem?.shelfLife?.unit || 'hours'
-   )
-   const [bulkDensity, setBulkDensity] = useState(bulkItem?.bulkDensity || '')
+
+   const [parLevel, setParLevel] = useState({
+      value: bulkItem?.parLevel || '',
+      meta: { isValid: !!bulkItem?.parLevel, isTouched: false, errors: [] },
+   })
+   const [maxValue, setMaxValue] = useState({
+      value: bulkItem?.maxLevel || '',
+      meta: { isValid: !!bulkItem?.maxLevel, isTouched: false, errors: [] },
+   })
+   const [unit, setUnit] = useState({
+      value: bulkItem?.unit,
+      meta: { isValid: !!bulkItem?.unit, isTouched: false, errors: [] },
+   })
+   const [laborTime, setLaborTime] = useState({
+      value: bulkItem?.labor?.value || '',
+      meta: { isValid: !!bulkItem?.labor?.value, isTouched: false, errors: [] },
+   })
+   const [laborUnit, setLaborUnit] = useState({
+      value: bulkItem?.labor?.unit || '',
+      meta: { isValid: !!bulkItem?.labor?.unit, isTouched: false, errors: [] },
+   })
+   const [yieldPercentage, setYieldPercentage] = useState({
+      value: bulkItem?.yield?.value || '',
+      meta: { isValid: !!bulkItem?.yield?.value, isTouched: false, errors: [] },
+   })
+   const [shelfLife, setShelfLife] = useState({
+      value: bulkItem?.shelfLife?.value || '',
+      meta: {
+         isValid: !!bulkItem?.shelfLife?.value,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [shelfLifeUnit, setShelfLifeUnit] = useState({
+      value: bulkItem?.shelfLife?.unit,
+      meta: {
+         isValid: !!bulkItem?.shelfLife?.unit,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [bulkDensity, setBulkDensity] = useState({
+      value: bulkItem?.bulkDensity || '',
+      meta: { isValid: !!bulkItem?.bulkDensity, isTouched: false, errors: [] },
+   })
 
    useSubscription(UNITS_SUBSCRIPTION, {
       onSubscriptionData: input => {
@@ -95,27 +124,52 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
       },
    })
 
-   const handleSave = () => {
-      if (!parLevel || !maxValue)
-         return toast.error('Please fill the form properly')
+   const checkValidation = () => {
+      if (!parLevel.value || !parLevel.meta.isValid)
+         return 'invalid par level value'
+      if (!maxValue.value || !maxValue.meta.isValid)
+         return 'invalid max. inventory level value'
+      if (!unit.value) return 'unit is required'
+      return true
+   }
 
-      const allergens = bulkItem.allergens
-      udpateBulkItem({
-         variables: {
-            id: id || bulkItem.id,
-            object: {
-               unit: unit || units[0]?.title, // string
-               yield: { value: yieldPercentage },
-               shelfLife: { unit: shelfLifeUnit, value: shelfLife },
-               parLevel: +parLevel,
-               maxLevel: +maxValue,
-               labor: { value: laborTime, unit: laborUnit },
-               bulkDensity: +bulkDensity,
-               allergens: allergens?.length ? allergens : [],
+   const handleSave = () => {
+      const validationMessage = checkValidation()
+      console.log(unit, laborUnit, shelfLifeUnit)
+
+      if (!validationMessage.length) {
+         const allergens = bulkItem.allergens
+         udpateBulkItem({
+            variables: {
+               id: id || bulkItem.id,
+               object: {
+                  unit: unit.value, // string
+                  yield: {
+                     value: yieldPercentage.meta.isValid
+                        ? yieldPercentage.value
+                        : '',
+                  },
+                  shelfLife: {
+                     unit: shelfLifeUnit.meta.value ? shelfLifeUnit.value : '',
+                     value: shelfLife.meta.isValid ? shelfLife.value : '',
+                  },
+                  parLevel: +parLevel.value,
+                  maxLevel: +maxValue.value,
+                  labor: {
+                     value: laborTime.meta.isValid ? laborTime.value : '',
+                     unit: laborUnit.value ? laborUnit.value : '',
+                  },
+                  bulkDensity: bulkDensity.meta.isValid
+                     ? +bulkDensity.value
+                     : null,
+                  allergens: allergens?.length ? allergens : [],
+               },
             },
-         },
-      })
-      close(1)
+         })
+         close(1)
+      } else {
+         toast.error(validationMessage)
+      }
    }
 
    const handleNutriData = data => {
@@ -127,27 +181,6 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
             },
          },
       })
-   }
-
-   const handleErrors = (e, location) => {
-      const value = parseFloat(e.target.value)
-      if (!value) {
-         const alreadyExist = errors.filter(err => err.location === location)
-            .length
-
-         if (!alreadyExist) {
-            setErrors([
-               ...errors,
-               {
-                  location,
-                  message: VALUE_SHOULD_BE_NUMBER,
-               },
-            ])
-         }
-      } else {
-         const newErrors = errors.filter(err => err.location !== location)
-         setErrors(newErrors)
-      }
    }
 
    if (loading) return <InlineLoader />
@@ -182,7 +215,10 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          <TunnelHeader
             title={t(address.concat('configure processing'))}
             close={() => close(1)}
-            right={{ title: t(address.concat('save')), action: handleSave }}
+            right={{
+               title: loading ? 'Saving...' : t(address.concat('save')),
+               action: handleSave,
+            }}
          />
 
          <TunnelBody>
@@ -191,7 +227,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                   <Form.Group>
                      <Form.Label title="parLevel" htmlFor="parLevel">
                         <Flex container alignItems="center">
-                           {t(address.concat('set par level'))}
+                           {t(address.concat('set par level'))}*
                            <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_parLevel_formfield" />
                         </Flex>
                      </Form.Label>
@@ -199,18 +235,26 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                         id="parLevel"
                         placeholder="Par Level..."
                         name="par level"
-                        value={parLevel}
-                        onChange={e => setParLevel(e.target.value)}
-                        onBlur={e => handleErrors(e, 'parLevel')}
+                        value={parLevel.value}
+                        onChange={e =>
+                           setParLevel({
+                              value: e.target.value,
+                              meta: { ...parLevel.meta },
+                           })
+                        }
+                        onBlur={e => {
+                           const { errors, isValid } = validators.quantity(
+                              e.target.value
+                           )
+                           setParLevel({
+                              value: e.target.value,
+                              meta: { isValid, errors, isTouched: true },
+                           })
+                        }}
                      />
-
-                     {errors
-                        .filter(err => err?.location === 'parLevel')
-                        .map(error => (
-                           <Form.Error key={error.location}>
-                              {error.message}
-                           </Form.Error>
-                        ))}
+                     {parLevel.meta.isTouched && !parLevel.meta.isValid && (
+                        <Form.Error>{parLevel.meta.errors[0]}</Form.Error>
+                     )}
                   </Form.Group>
                   <Form.Group>
                      <Form.Label
@@ -218,7 +262,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                         htmlFor="maxInventoryLevel"
                      >
                         <Flex container alignItems="center">
-                           {t(address.concat('max inventory level'))}
+                           {t(address.concat('max inventory level'))}*
                            <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_maxLevel_formfield" />
                         </Flex>
                      </Form.Label>
@@ -226,17 +270,26 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                         id="maxInventoryLevel"
                         name="max inventory level"
                         placeholder="Max Inventory Level"
-                        value={maxValue}
-                        onChange={e => setMaxValue(e.target.value)}
-                        onBlur={e => handleErrors(e, 'maxInventoryLevel')}
+                        value={maxValue.value}
+                        onChange={e =>
+                           setMaxValue({
+                              value: e.target.value,
+                              meta: { ...maxValue.meta },
+                           })
+                        }
+                        onBlur={e => {
+                           const { errors, isValid } = validators.quantity(
+                              e.target.value
+                           )
+                           setMaxValue({
+                              value: e.target.vaue,
+                              meta: { isValid, isTouched: true, errors },
+                           })
+                        }}
                      />
-                     {errors
-                        .filter(err => err?.location === 'maxInventoryLevel')
-                        .map(error => (
-                           <Form.Error key={error.location}>
-                              {error.message}
-                           </Form.Error>
-                        ))}
+                     {maxValue.meta.isTouched && !maxValue.meta.isValid && (
+                        <Form.Error>{maxValue.meta.errors[0]}</Form.Error>
+                     )}
                   </Form.Group>
                </StyledInputGroup>
             </StyledRow>
@@ -246,16 +299,21 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                   <Form.Group>
                      <Form.Label htmlFor="units" title="SelectUnit">
                         <Flex container alignItems="center">
-                           Select Unit
+                           Select Unit*
                            <Tooltip identifier="supplier_item_form_add_bulk_item_tunnel_select_unit_formselect" />
                         </Flex>
                      </Form.Label>
                      <Form.Select
                         name="units"
                         id="units"
-                        options={units}
-                        value={unit}
-                        onChange={e => setUnit(e.target.value)}
+                        options={[{ id: 0, title: 'Select unit' }, ...units]}
+                        value={unit.value}
+                        onChange={e =>
+                           setUnit({
+                              value: e.target.value,
+                              meta: { ...unit.meta },
+                           })
+                        }
                      />
                   </Form.Group>
                </StyledInputGroup>
@@ -316,28 +374,37 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                            id="labourTime"
                            name="labor time"
                            placeholder="Labour Time"
-                           value={laborTime}
-                           onChange={e => setLaborTime(e.target.value)}
-                           onBlur={e => handleErrors(e, 'laboutTime')}
+                           value={laborTime.value}
+                           onChange={e =>
+                              setLaborTime({
+                                 value: e.target.value,
+                                 meta: { ...laborTime.meta },
+                              })
+                           }
+                           onBlur={e => {
+                              const { errors, isValid } = validators.quantity(
+                                 e.target.value
+                              )
+                              setLaborTime({
+                                 value: e.target.value,
+                                 meta: { isValid, errors, isTouched: true },
+                              })
+                           }}
                         />
                         <Form.Select
                            name="time"
                            id="time"
                            options={[
-                              { id: 0, title: t('units.hours') },
-                              { id: 1, title: t('units.minutes') },
+                              { id: 1, title: t('units.hours') },
+                              { id: 2, title: t('units.minutes') },
                            ]}
-                           value={laborUnit}
+                           value={laborUnit.value}
                            onChange={e => setLaborUnit(e.target.value)}
                         />
                      </Form.TextSelect>
-                     {errors
-                        .filter(err => err?.location === 'labourTime')
-                        .map(error => (
-                           <Form.Error key={error.location}>
-                              {error.message}
-                           </Form.Error>
-                        ))}
+                     {laborTime.meta.isTouched && !laborTime.meta.isValid && (
+                        <Form.Error>{laborTime.meta.errors[0]}</Form.Error>
+                     )}
                   </Form.Group>
                   <Form.Group>
                      <Form.Label title="percentageYield" htmlFor="yield">
@@ -350,17 +417,29 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                         id="yield"
                         name="yield"
                         placeholder="Yield (in %)"
-                        value={yieldPercentage}
-                        onChange={e => setYieldPercentage(e.target.value)}
-                        onBlur={e => handleErrors(e, 'yield')}
+                        value={yieldPercentage.value}
+                        onChange={e =>
+                           setYieldPercentage({
+                              value: e.target.value,
+                              meta: { ...yieldPercentage.meta },
+                           })
+                        }
+                        onBlur={e => {
+                           const { errors, isValid } = validators.quantity(
+                              e.target.value
+                           )
+                           setYieldPercentage({
+                              value: e.target.value,
+                              meta: { isValid, errors, isTouched: true },
+                           })
+                        }}
                      />
-                     {errors
-                        .filter(err => err?.location === 'yield')
-                        .map(error => (
-                           <Form.Error key={error.location}>
-                              {error.message}
+                     {yieldPercentage.meta.isTouched &&
+                        !yieldPercentage.meta.isValid && (
+                           <Form.Error>
+                              {yieldPercentage.meta.errors[0]}
                            </Form.Error>
-                        ))}
+                        )}
                   </Form.Group>
                </StyledInputGroup>
             </StyledRow>
@@ -378,28 +457,37 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                            id="shelfLife"
                            name="shelf life"
                            placeholder="Shelf Life"
-                           value={shelfLife}
-                           onChange={e => setShelfLife(e.target.value)}
-                           onBlur={e => handleErrors(e, 'shelfLife')}
+                           value={shelfLife.value}
+                           onChange={e =>
+                              setShelfLife({
+                                 value: e.target.value,
+                                 meta: { ...shelfLife.meta },
+                              })
+                           }
+                           onBlur={e => {
+                              const { errors, isValid } = validators.quantity(
+                                 e.target.value
+                              )
+                              setShelfLife({
+                                 value: e.target.value,
+                                 meta: { errors, isValid, isTouched: true },
+                              })
+                           }}
                         />
                         <Form.Select
                            id="unit"
                            name="unit"
                            options={[
-                              { id: 0, title: t('units.hours') },
-                              { id: 1, title: t('units.minutes') },
+                              { id: 1, title: t('units.hours') },
+                              { id: 2, title: t('units.minutes') },
                            ]}
                            value={shelfLifeUnit}
                            onChange={e => setShelfLifeUnit(e.target.value)}
                         />
                      </Form.TextSelect>
-                     {errors
-                        .filter(err => err?.location === 'shelfLife')
-                        .map(error => (
-                           <Form.Error key={error.location}>
-                              {error.message}
-                           </Form.Error>
-                        ))}
+                     {shelfLife.meta.isTouched && !shelfLife.meta.isValid && (
+                        <Form.Error>{shelfLife.meta.errors[0]}</Form.Error>
+                     )}
                   </Form.Group>
                   <Form.Group>
                      <Form.Label title="Bulk Density" htmlFor="bulkDensity">
@@ -413,17 +501,27 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                         type="number"
                         name="bulk density"
                         placeholder="Bulk Density"
-                        value={bulkDensity}
-                        onChange={e => setBulkDensity(e.target.value)}
-                        onblur={e => handleErrors(e, 'bulkDensity')}
+                        value={bulkDensity.value}
+                        onChange={e =>
+                           setBulkDensity({
+                              value: e.target.value,
+                              meta: { ...bulkDensity.meta },
+                           })
+                        }
+                        onblur={e => {
+                           const { errors, isValid } = validators.quantity(
+                              e.target.value
+                           )
+                           setBulkDensity({
+                              value: e.target.value,
+                              meta: { errors, isValid, isTouched: true },
+                           })
+                        }}
                      />
-                     {errors
-                        .filter(err => err?.location === 'bulkDensity')
-                        .map(error => (
-                           <Form.Error key={error.location}>
-                              {error.message}
-                           </Form.Error>
-                        ))}
+                     {bulkDensity.meta.isTouched &&
+                        !!bulkDensity.meta.isValid && (
+                           <Form.Error>{bulkDensity.meta.errors[0]}</Form.Error>
+                        )}
                   </Form.Group>
                </StyledInputGroup>
             </StyledRow>
