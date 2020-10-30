@@ -5,6 +5,8 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
    Text,
+   IconButton,
+   PlusIcon,
    TextButton,
    Tag,
    Tunnels,
@@ -26,6 +28,7 @@ import {
    SectionTabPanel,
    Filler,
    Spacer,
+   SectionTabsListHeader,
 } from '@dailykit/ui'
 
 import { STATIONS } from '../../../../../graphql'
@@ -80,13 +83,15 @@ export const Scales = ({ station }) => {
       <>
          <SectionTabs onChange={index => setTabIndex(index)}>
             <SectionTabList>
-               <TextButton
-                  type="outline"
-                  style={{ marginBottom: 8 }}
-                  onClick={() => setIsOpen(true)}
-               >
-                  Add Scale
-               </TextButton>
+               <SectionTabsListHeader>
+                  <Flex container alignItems="center">
+                     <Text as="title">Scales</Text>
+                     <Tooltip identifier="station_section_scales_heading" />
+                  </Flex>
+                  <IconButton type="outline" onClick={() => setIsOpen(true)}>
+                     <PlusIcon />
+                  </IconButton>
+               </SectionTabsListHeader>
                {station.scale.nodes.map((node, index) => (
                   <SectionTab key={node.deviceNum}>
                      <Spacer size="14px" />
@@ -182,6 +187,7 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
       onSubscriptionData: ({
          subscriptionData: { data: { scales = [] } = {} } = {},
       }) => {
+         console.log('AddPrinterTunnel -> scales', scales)
          if (!isEmpty(scales)) {
             setScales(
                scales.map(({ deviceNum, deviceName, computer }) => ({
@@ -236,7 +242,7 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
                }
             />
             <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
-               {!isLoading && <InlineLoader />}
+               {isLoading && <InlineLoader />}
                {!isLoading && error && <ErrorState />}
                {!isLoading && list.length > 0 && (
                   <List>

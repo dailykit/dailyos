@@ -103,9 +103,12 @@ const StationForm = () => {
             style={{ borderBottom: '1px solid #f3f3f3' }}
          >
             <Form.Group>
-               <Form.Label htmlFor="title" title="title">
-                  Title*
-               </Form.Label>
+               <Flex container alignItems="center">
+                  <Form.Label htmlFor="title" title="title">
+                     Title*
+                  </Form.Label>
+                  <Tooltip identifier="form_station_field_title" />
+               </Flex>
                <Form.Text
                   id="title"
                   name="title"
