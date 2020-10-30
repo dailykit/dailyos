@@ -309,6 +309,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                      <Form.Select
                         name="units"
                         id="units"
+                        // FIXME: change this...
                         options={[{ id: 0, title: 'Select unit' }, ...units]}
                         value={unit.value}
                         onChange={e =>

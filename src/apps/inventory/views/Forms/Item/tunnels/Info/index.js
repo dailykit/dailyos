@@ -58,7 +58,7 @@ export default function InfoTunnel({ close, formState }) {
       },
    })
    const [leadTimeUnit, setLeadTimeUnit] = useState({
-      value: formState.leadTime?.unit || 'days',
+      value: formState.leadTime?.unit || '',
       meta: { isValid: !!formState.leadTime?.unit, errors: [] },
    })
 
@@ -88,12 +88,11 @@ export default function InfoTunnel({ close, formState }) {
       if (!sku.value || !sku.meta.isValid) return 'invalid sku'
       if (!unitSize.value || !unitSize.meta.isValid)
          return 'invalid unit quantity'
-      if (!unit.value || !unit.meta.isValid) return 'unit is required'
+      if (!unit.value) return 'unit is required'
       if (!unitPrice.value || !unitPrice.meta.isValid)
          return 'invalid unit price'
       if (!leadTime.value || !leadTime.meta.isValid) return 'invalid lead time'
-      if (!leadTimeUnit.value || !leadTimeUnit.meta.isValid)
-         return 'lead time unit is required'
+      if (!leadTimeUnit.value) return 'lead time unit is required'
 
       return true
    }
