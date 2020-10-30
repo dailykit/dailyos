@@ -320,7 +320,8 @@ export default function InfoTunnel({ close, formState }) {
                      <Form.Group>
                         <Form.Label title="unit price" htmlFor="unitPrice">
                            <Flex container alignItems="center">
-                              {t(address.concat('unit price'))}*
+                              {t(address.concat('unit price'))} (in{' '}
+                              {process.env.REACT_APP_CURRENCY})*
                               <Tooltip identifier="supplieritem_form_item_unit_pric_form_field" />
                            </Flex>
                         </Form.Label>
