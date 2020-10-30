@@ -97,7 +97,7 @@ export default function ItemForm() {
       },
       onCompleted: () => {
          toast.info('Supplier Item updated!')
-         setTabTitle(itemName)
+         setTabTitle(itemName.value)
       },
    })
 
@@ -273,7 +273,7 @@ export default function ItemForm() {
                         <div>
                            {/* prettier-ignore */}
                            <Text as="h3">
-                              {formState.unitSize + ' ' +formState.unit}
+                              {(formState.unitSize || 'N/A') + ' ' + (formState.unit || '')}
                            </Text>
                         </div>
                      </div>
@@ -318,7 +318,7 @@ export default function ItemForm() {
                         <div>
                            {/* prettier-ignore */}
                            <Text as="h3">
-                              {formState.prices?.length ? currencyFmt(+formState.prices[0]?.unitPrice?.value) : null}
+                              {formState.prices?.length ? currencyFmt(+formState.prices[0]?.unitPrice?.value) : 'N/A'}
                            </Text>
                         </div>
                      </div>
