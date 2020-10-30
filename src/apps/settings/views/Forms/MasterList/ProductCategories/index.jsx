@@ -15,10 +15,7 @@ import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
-import {
-   DELETE_PRODUCT_CATEGORY,
-   PRODUCT_CATEGORIES,
-} from '../../../../graphql'
+import { MASTER } from '../../../../graphql'
 import tableOptions from '../../../Listings/tableOption'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
 import { Add } from './tunnels'
@@ -32,10 +29,12 @@ const ProductCategoriesForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(PRODUCT_CATEGORIES)
+   const { loading, data, error } = useSubscription(
+      MASTER.PRODUCT_CATEGORY.LIST
+   )
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_PRODUCT_CATEGORY, {
+   const [deleteElement] = useMutation(MASTER.PRODUCT_CATEGORY.DELETE, {
       onCompleted: () => {
          toast.success('Deleted!')
       },

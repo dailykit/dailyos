@@ -619,6 +619,42 @@ export const MASTER = {
          }
       `,
    },
+   PRODUCT_CATEGORY: {
+      LIST: gql`
+         subscription productCategories {
+            productCategories {
+               name
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription productCategoriesAggregate {
+            productCategoriesAggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      `,
+      CREATE: gql`
+         mutation insertProductCategory(
+            $object: master_productCategory_insert_input = {}
+         ) {
+            insertProductCategory(object: $object) {
+               name
+            }
+         }
+      `,
+      DELETE: gql`
+         mutation deleteProductCategory(
+            $where: master_productCategory_bool_exp!
+         ) {
+            deleteProductCategory(where: $where) {
+               affected_rows
+            }
+         }
+      `,
+   },
 }
 
 export const DEVICES = {

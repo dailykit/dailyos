@@ -1,12 +1,13 @@
 import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import { logger } from '../../../../../../../../shared/utils'
-import { CREATE_PRODUCT_CATEGORY } from '../../../../../../graphql'
-import validator from '../../../../validators'
+
 import { TunnelBody } from '../styled'
+import validator from '../../../../validators'
+import { MASTER } from '../../../../../../graphql'
+import { logger } from '../../../../../../../../shared/utils'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 
@@ -33,7 +34,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
 
    // Mutation
    const [addCategory, { loading: inFlight }] = useMutation(
-      CREATE_PRODUCT_CATEGORY,
+      MASTER.PRODUCT_CATEGORY.CREATE,
       {
          onCompleted: () => {
             toast.success('Product category added!')
