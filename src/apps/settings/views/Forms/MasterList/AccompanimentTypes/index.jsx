@@ -13,10 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import {
-   ACCOMPANIMENT_TYPES,
-   DELETE_ACCOMPANIMENT_TYPES,
-} from '../../../../graphql'
+import { MASTER } from '../../../../graphql'
 import tableOptions from '../../../Listings/tableOption'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
 import { AddTypesTunnel } from './tunnels'
@@ -30,10 +27,10 @@ const AccompanimentTypesForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(ACCOMPANIMENT_TYPES)
+   const { loading, data, error } = useSubscription(MASTER.ACCOMPANIMENTS.LIST)
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_ACCOMPANIMENT_TYPES, {
+   const [deleteElement] = useMutation(MASTER.ACCOMPANIMENTS.DELETE, {
       onCompleted: () => {
          toast.success('Deleted!')
       },

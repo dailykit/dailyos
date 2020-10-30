@@ -13,7 +13,7 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import { DELETE_UNITS, UNITS } from '../../../../graphql'
+import { MASTER } from '../../../../graphql'
 import tableOptions from '../../../Listings/tableOption'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
 import { AddTypesTunnel } from './tunnels'
@@ -26,10 +26,10 @@ const UnitsForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(UNITS)
+   const { loading, data, error } = useSubscription(MASTER.UNITS.LIST)
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_UNITS, {
+   const [deleteElement] = useMutation(MASTER.UNITS.DELETE, {
       onCompleted: () => {
          toast.success('Deleted!')
       },

@@ -15,7 +15,7 @@ import {
 } from '@dailykit/ui'
 
 import { useTabs } from '../../../context'
-import { APPS } from '../../../graphql/subscriptions'
+import { APPS } from '../../../graphql'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { InlineLoader } from '../../../../../shared/components'
 
@@ -24,7 +24,7 @@ const address = 'apps.settings.views.listings.appslisting.'
 const AppsListing = () => {
    const { t } = useTranslation()
    const { tab, addTab } = useTabs()
-   const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
+   const { loading, data: { apps = [] } = {} } = useSubscription(APPS.LIST)
 
    React.useEffect(() => {
       if (!tab) {

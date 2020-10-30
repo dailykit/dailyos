@@ -1,48 +1,48 @@
-import { useSubscription } from '@apollo/react-hooks'
-import { Text } from '@dailykit/ui'
 import React from 'react'
+import { Text, Flex } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
+import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 
-import { useTabs } from '../../../context'
-import {
-   ACCOMPANIMENT_TYPES,
-   ALLERGENS,
-   CUISINES,
-   PROCESSINGS,
-   UNITS_COUNT,
-   PRODUCT_CATEGORIES_COUNT,
-} from '../../../graphql'
-import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
+import { MASTER } from '../../../graphql'
+import { useTabs } from '../../../context'
+import { Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 
 const address = 'apps.settings.views.listings.masterlist.'
 
 const MasterList = () => {
    const { t } = useTranslation()
-   const history = useHistory()
-   const { tabs, addTab } = useTabs()
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
+   const { tab, addTab } = useTabs()
 
    // subscription
-   const { data: accompaniments } = useSubscription(ACCOMPANIMENT_TYPES)
-   const { data: processings } = useSubscription(PROCESSINGS)
-   const { data: allergens } = useSubscription(ALLERGENS)
-   const { data: cuisines } = useSubscription(CUISINES)
-   const { data: units } = useSubscription(UNITS_COUNT)
-   const { data: productCategories } = useSubscription(PRODUCT_CATEGORIES_COUNT)
+   const { data: accompaniments } = useSubscription(MASTER.ACCOMPANIMENTS.LIST)
+   const { data: processings } = useSubscription(MASTER.PROCESSINGS.LIST)
+   const { data: allergens } = useSubscription(MASTER.ALLERGENS.LIST)
+   const { data: cuisines } = useSubscription(MASTER.CUISINES.LIST)
+   const { data: units } = useSubscription(MASTER.UNITS.AGGREGATE)
 
-   const rowClick = (e, row) => {
-      const { _click } = row._row.data
+   const rowClick = (e, cell) => {
+      const { _click } = cell.getData()
       _click()
    }
 
    const columns = [
       {
-         title: t(address.concat('list name')),
+         title: 'Name',
          field: 'listName',
          headerFilter: true,
+         cssClass: 'cell',
+         cellClick: (e, cell) => rowClick(e, cell),
+         headerTooltip: column => {
+            const identifier = 'master_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: t(address.concat('total inputs')),
@@ -51,6 +51,12 @@ const MasterList = () => {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: column => {
+            const identifier = 'master_listing_column_total_inputs'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ]
 
@@ -108,26 +114,33 @@ const MasterList = () => {
    ]
 
    React.useEffect(() => {
-      const tab =
-         tabs.find(item => item.path === `/settings/master-lists`) || {}
-      if (!Object.prototype.hasOwnProperty.call(tab, 'path')) {
-         history.push('/settings')
+      if (!tab) {
+         addTab('Master Lists', '/settings/master-lists')
       }
-   }, [history, tabs])
+   }, [tab, addTab])
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <Text as="h2">{t(address.concat('master lists'))}</Text>
-         </StyledHeader>
+      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+         <Flex
+            container
+            as="header"
+            height="72px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex as="section" container alignItems="center">
+               <Text as="h2">{t(address.concat('master lists'))}</Text>
+               <Tooltip identifier="station_listing_heading" />
+            </Flex>
+         </Flex>
          <ReactTabulator
+            data={data}
             ref={tableRef}
             columns={columns}
-            data={data}
             rowClick={rowClick}
             options={tableOptions}
          />
-      </StyledWrapper>
+      </Flex>
    )
 }
 

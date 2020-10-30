@@ -11,8 +11,8 @@
    border-bottom: 1px solid #d8d8d8;
 }
 
-.tabulator-row:hover {
-   background: #f3f3f3;
+.tabulator-cell.cell {
+   height: 48px !important;
 }
 
 .center-text {
@@ -27,4 +27,12 @@
    border: 1px solid #d8d8d8;
    border-radius: 2px;
    margin-top: 5px;
+}
+
+.cell {
+   cursor: pointer;
+}
+
+.cell:hover {
+   background: #e5e5e5;
 }

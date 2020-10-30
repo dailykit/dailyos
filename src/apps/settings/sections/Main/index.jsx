@@ -16,7 +16,7 @@ import {
    StationForm,
    MasterList,
 } from '../../views'
-import { Flex } from '../../../../shared/components'
+import { ErrorBoundary, Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
 
 const Main = () => {
@@ -111,7 +111,7 @@ export default Main
 const AccessCheck = ({ title, children, message }) => {
    const { canAccessRoute, accessPermission } = useAccess()
    return canAccessRoute(title) ? (
-      children
+      <ErrorBoundary rootRoute="/apps/settings">{children}</ErrorBoundary>
    ) : (
       <Flex container height="100%" alignItems="center" justifyContent="center">
          <Text as="title">
