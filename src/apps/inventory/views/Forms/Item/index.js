@@ -24,6 +24,7 @@ import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../shared/assets/icons'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import { Tooltip } from '../../../../../shared/components'
+import { currencyFmt } from '../../../../../shared/utils'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -272,10 +273,7 @@ export default function ItemForm() {
                         <div>
                            {/* prettier-ignore */}
                            <Text as="h3">
-                              {formState.unitSize + formState.unit}
-                              {formState.prices?.length
-                                 ? ` ($ ${+formState.prices[0]?.unitPrice?.value})`
-                                 : null}
+                              {formState.unitSize + ' ' +formState.unit}
                            </Text>
                         </div>
                      </div>
@@ -302,6 +300,25 @@ export default function ItemForm() {
                               ) : (
                                  'N/A'
                               )}
+                           </Text>
+                        </div>
+                     </div>
+                  </div>
+                  <div>
+                     <div>{/* add icon here for unit price */}</div>
+                     <div>
+                        <span>
+                           <Text as="h4">
+                              <Flex container alignItems="center">
+                                 Unit Price
+                                 <Tooltip identifier="supplieritem_form_unitPrice" />
+                              </Flex>
+                           </Text>
+                        </span>
+                        <div>
+                           {/* prettier-ignore */}
+                           <Text as="h3">
+                              {formState.prices?.length ? currencyFmt(+formState.prices[0]?.unitPrice?.value) : null}
                            </Text>
                         </div>
                      </div>
