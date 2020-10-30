@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
@@ -36,6 +37,7 @@ import {
    Tooltip,
    InlineLoader,
    ErrorBoundary,
+   ErrorState,
 } from '../../../../../../../shared/components'
 
 export const LabelPrinters = ({ station }) => {
@@ -60,17 +62,6 @@ export const LabelPrinters = ({ station }) => {
       onError: error => {
          logger(error)
          toast.error('Failed to set printer as default!')
-      },
-   })
-
-   const {
-      loading,
-      error,
-      data: { labelPrinters = [] } = {},
-   } = useSubscription(STATIONS.LABEL_PRINTERS.LIST, {
-      variables: {
-         type: 'LABEL_PRINTER',
-         stationId: station.id,
       },
    })
 
@@ -186,15 +177,6 @@ export const LabelPrinters = ({ station }) => {
                   isOpen={isOpen}
                   station={station.id}
                   setIsOpen={setIsOpen}
-                  error={error}
-                  loading={loading}
-                  printers={labelPrinters.map(
-                     ({ printNodeId, name, computer }) => ({
-                        id: printNodeId,
-                        title: name,
-                        description: `${computer.name} | ${computer.hostname}`,
-                     })
-                  )}
                />
             </ErrorBoundary>
          )}
@@ -202,20 +184,43 @@ export const LabelPrinters = ({ station }) => {
    )
 }
 
-const AddPrinterTunnel = ({
-   isOpen,
-   setIsOpen,
-   station,
-   loading,
-   error,
-   printers,
-}) => {
+const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
    const [search, setSearch] = React.useState('')
+   const [printers, setPrinters] = React.useState([])
+   const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
    const [create] = useMutation(STATIONS.LABEL_PRINTERS.CREATE, {
-      onCompleted: () => setIsOpen(false),
+      onCompleted: () => {
+         setIsOpen(false)
+         toast.success('Successfully assigned the label printer!')
+      },
+      onError: () => {
+         setIsOpen(false)
+         toast.error('Failed to assign the label printer!')
+      },
+   })
+
+   const { loading, error } = useSubscription(STATIONS.LABEL_PRINTERS.LIST, {
+      variables: {
+         type: 'LABEL_PRINTER',
+         stationId: station,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { labelPrinters = [] } = {} } = {},
+      }) => {
+         if (!isEmpty(labelPrinters)) {
+            setPrinters(
+               labelPrinters.map(({ printNodeId, name, computer }) => ({
+                  id: printNodeId,
+                  title: name,
+                  description: `${computer.name} | ${computer.hostname}`,
+               }))
+            )
+         }
+         setIsLoading(false)
+      },
    })
 
    React.useEffect(() => {
@@ -225,6 +230,11 @@ const AddPrinterTunnel = ({
          closeTunnel(1)
       }
    }, [isOpen])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch label printers!')
+      logger(error)
+   }
 
    const insert = () => {
       create({
@@ -249,61 +259,54 @@ const AddPrinterTunnel = ({
                }
             />
             <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
-               {loading ? (
-                  <InlineLoader />
-               ) : (
-                  <>
-                     {list.length > 0 ? (
-                        <List>
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder="type what you’re looking for..."
-                           />
-                           {selected.length > 0 && (
-                              <TagGroup style={{ margin: '8px 0' }}>
-                                 {selected.map(option => (
-                                    <Tag
-                                       key={option.id}
-                                       title={option.title}
-                                       onClick={() =>
-                                          selectOption('id', option.id)
-                                       }
-                                    >
-                                       {option.title}
-                                    </Tag>
-                                 ))}
-                              </TagGroup>
-                           )}
-                           <ListOptions>
-                              {list
-                                 .filter(option =>
-                                    option.title.toLowerCase().includes(search)
-                                 )
-                                 .map(option => (
-                                    <ListItem
-                                       type="MSL2"
-                                       key={option.id}
-                                       content={{
-                                          title: option.title,
-                                          description: option.description,
-                                       }}
-                                       onClick={() =>
-                                          selectOption('id', option.id)
-                                       }
-                                       isActive={selected.find(
-                                          item => item.id === option.id
-                                       )}
-                                    />
-                                 ))}
-                           </ListOptions>
-                        </List>
-                     ) : (
-                        <Filler
-                           height="500px"
-                           message="No printers available to add to station."
-                        />
+               {isLoading && <InlineLoader />}
+               {!isLoading && error && <ErrorState />}
+               {!isLoading && list.length > 0 && (
+                  <List>
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                     {selected.length > 0 && (
+                        <TagGroup style={{ margin: '8px 0' }}>
+                           {selected.map(option => (
+                              <Tag
+                                 key={option.id}
+                                 title={option.title}
+                                 onClick={() => selectOption('id', option.id)}
+                              >
+                                 {option.title}
+                              </Tag>
+                           ))}
+                        </TagGroup>
                      )}
-                  </>
+                     <ListOptions>
+                        {list
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="MSL2"
+                                 key={option.id}
+                                 content={{
+                                    title: option.title,
+                                    description: option.description,
+                                 }}
+                                 onClick={() => selectOption('id', option.id)}
+                                 isActive={selected.find(
+                                    item => item.id === option.id
+                                 )}
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
+               )}
+               {!isLoading && list.length === 0 && (
+                  <Filler
+                     height="500px"
+                     message="No printers available to add to station."
+                  />
                )}
             </Flex>
          </Tunnel>

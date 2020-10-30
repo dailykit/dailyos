@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
@@ -33,6 +34,7 @@ import {
    Tooltip,
    InlineLoader,
    ErrorBoundary,
+   ErrorState,
 } from '../../../../../../../shared/components'
 
 export const Scales = ({ station }) => {
@@ -52,13 +54,6 @@ export const Scales = ({ station }) => {
          toast.error('Failed to unassigned the scale!')
       },
    })
-
-   const { loading, error, data: { scales = [] } = {} } = useSubscription(
-      STATIONS.SCALES.LIST,
-      {
-         variables: { stationId: station.id },
-      }
-   )
 
    const updateStatus = (num, name, id, status) => {
       update({
@@ -157,13 +152,6 @@ export const Scales = ({ station }) => {
                   isOpen={isOpen}
                   station={station.id}
                   setIsOpen={setIsOpen}
-                  error={error}
-                  loading={loading}
-                  scales={scales.map(({ deviceNum, deviceName, computer }) => ({
-                     title: deviceName,
-                     description: `${computer.name} | ${computer.hostname}`,
-                     id: `${deviceNum}-${deviceName}-${computer.printNodeId}`,
-                  }))}
                />
             </ErrorBoundary>
          )}
@@ -171,19 +159,41 @@ export const Scales = ({ station }) => {
    )
 }
 
-const AddPrinterTunnel = ({
-   isOpen,
-   setIsOpen,
-   station,
-   loading,
-   error,
-   scales,
-}) => {
+const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
+   const [scales, setScales] = React.useState([])
    const [search, setSearch] = React.useState('')
+   const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(scales)
 
-   const [create] = useMutation(STATIONS.SCALES.CREATE)
+   const [create] = useMutation(STATIONS.SCALES.CREATE, {
+      onCompleted: () => {
+         setIsOpen(false)
+         toast.success('Successfully assigned the scale!')
+      },
+      onError: () => {
+         setIsOpen(false)
+         toast.error('Failed to assign the scale!')
+      },
+   })
+
+   const { loading, error } = useSubscription(STATIONS.SCALES.LIST, {
+      variables: { stationId: station },
+      onSubscriptionData: ({
+         subscriptionData: { data: { scales = [] } = {} } = {},
+      }) => {
+         if (!isEmpty(scales)) {
+            setScales(
+               scales.map(({ deviceNum, deviceName, computer }) => ({
+                  title: deviceName,
+                  description: `${computer.name} | ${computer.hostname}`,
+                  id: `${deviceNum}-${deviceName}-${computer.printNodeId}`,
+               }))
+            )
+         }
+         setIsLoading(false)
+      },
+   })
 
    React.useEffect(() => {
       if (isOpen) {
@@ -226,61 +236,54 @@ const AddPrinterTunnel = ({
                }
             />
             <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
-               {loading ? (
-                  <InlineLoader />
-               ) : (
-                  <>
-                     {list.length > 0 ? (
-                        <List>
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder="type what you’re looking for..."
-                           />
-                           {selected.length > 0 && (
-                              <TagGroup style={{ margin: '8px 0' }}>
-                                 {selected.map(option => (
-                                    <Tag
-                                       key={option.id}
-                                       title={option.title}
-                                       onClick={() =>
-                                          selectOption('id', option.id)
-                                       }
-                                    >
-                                       {option.title}
-                                    </Tag>
-                                 ))}
-                              </TagGroup>
-                           )}
-                           <ListOptions>
-                              {list
-                                 .filter(option =>
-                                    option.title.toLowerCase().includes(search)
-                                 )
-                                 .map(option => (
-                                    <ListItem
-                                       type="MSL2"
-                                       key={option.id}
-                                       content={{
-                                          title: option.title,
-                                          description: option.description,
-                                       }}
-                                       onClick={() =>
-                                          selectOption('id', option.id)
-                                       }
-                                       isActive={selected.find(
-                                          item => item.id === option.id
-                                       )}
-                                    />
-                                 ))}
-                           </ListOptions>
-                        </List>
-                     ) : (
-                        <Filler
-                           height="500px"
-                           message="No scales available to add to station."
-                        />
+               {!isLoading && <InlineLoader />}
+               {!isLoading && error && <ErrorState />}
+               {!isLoading && list.length > 0 && (
+                  <List>
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                     {selected.length > 0 && (
+                        <TagGroup style={{ margin: '8px 0' }}>
+                           {selected.map(option => (
+                              <Tag
+                                 key={option.id}
+                                 title={option.title}
+                                 onClick={() => selectOption('id', option.id)}
+                              >
+                                 {option.title}
+                              </Tag>
+                           ))}
+                        </TagGroup>
                      )}
-                  </>
+                     <ListOptions>
+                        {list
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="MSL2"
+                                 key={option.id}
+                                 content={{
+                                    title: option.title,
+                                    description: option.description,
+                                 }}
+                                 onClick={() => selectOption('id', option.id)}
+                                 isActive={selected.find(
+                                    item => item.id === option.id
+                                 )}
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
+               )}
+               {!isLoading && list.length === 0 && (
+                  <Filler
+                     height="500px"
+                     message="No scales available to add to station."
+                  />
                )}
             </Flex>
          </Tunnel>
