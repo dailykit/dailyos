@@ -10,7 +10,7 @@ import { USERS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Section, StyledTemp } from './styled'
 import { initialState, reducers } from './store'
-import { InlineLoader } from '../../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const UserForm = () => {
    const params = useParams()
@@ -117,7 +117,7 @@ const UserForm = () => {
 
    if (loading) return <InlineLoader />
    return (
-      <Flex>
+      <Flex padding="0 32px">
          <Flex
             container
             as="header"
@@ -126,7 +126,10 @@ const UserForm = () => {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Text as="h2">User Details</Text>
+            <Flex container alignItems="center">
+               <Text as="h2">User Details</Text>
+               <Tooltip identifier="form_user_heading" />
+            </Flex>
             {isValid && (
                <TextButton type="solid" onClick={() => createUser()}>
                   Save
@@ -136,9 +139,12 @@ const UserForm = () => {
          <div>
             <Section>
                <Form.Group>
-                  <Form.Label htmlFor="firstName" title="firstName">
-                     First Name*
-                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="firstName" title="firstName">
+                        First Name*
+                     </Form.Label>
+                     <Tooltip identifier="form_user_field_firstname" />
+                  </Flex>
                   <Form.Text
                      id="firstName"
                      name="firstName"
@@ -158,9 +164,12 @@ const UserForm = () => {
                      ))}
                </Form.Group>
                <Form.Group>
-                  <Form.Label htmlFor="lastName" title="lastName">
-                     Last Name*
-                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="lastName" title="lastName">
+                        Last Name*
+                     </Form.Label>
+                     <Tooltip identifier="form_user_field_lastname" />
+                  </Flex>
                   <Form.Text
                      id="lastName"
                      name="lastName"
@@ -182,9 +191,12 @@ const UserForm = () => {
             </Section>
             <Section>
                <Form.Group>
-                  <Form.Label htmlFor="email" title="email">
-                     Email*
-                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="email" title="email">
+                        Email*
+                     </Form.Label>
+                     <Tooltip identifier="form_user_field_email" />
+                  </Flex>
                   <Form.Text
                      id="email"
                      name="email"
@@ -205,9 +217,12 @@ const UserForm = () => {
                </Form.Group>
 
                <Form.Group>
-                  <Form.Label htmlFor="phoneNo" title="phoneNo">
-                     Phone Number*
-                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="phoneNo" title="phoneNo">
+                        Phone Number*
+                     </Form.Label>
+                     <Tooltip identifier="form_user_field_phoneNo" />
+                  </Flex>
                   <Form.Text
                      id="phoneNo"
                      name="phoneNo"
