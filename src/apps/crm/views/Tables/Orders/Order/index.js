@@ -43,7 +43,7 @@ const OrderInfo = () => {
    const { data: orderData, loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
-         brandId: context,
+         brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
          const result = brand_Orders[0]?.orderCart?.cartInfo?.products.map(

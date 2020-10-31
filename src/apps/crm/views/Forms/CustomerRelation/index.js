@@ -56,25 +56,25 @@ const CustomerRelation = ({ match }) => {
       data: { customers = [] } = {},
       loading: customerloading,
    } = useSubscription(CUSTOMER_ISTEST, {
-      variables: { keycloakId: match.params.id, brandId: context },
+      variables: { keycloakId: match.params.id, brandId: context.brandId },
    })
    const {
       data: { brand: { brand_customers: walletNreferral = [] } = {} } = {},
       loading: walletNreferralLoading,
    } = useSubscription(WALLET_N_REFERRAL, {
-      variables: { keycloakId: match.params.id, brandId: context },
+      variables: { keycloakId: match.params.id, brandId: context.brandId },
    })
    const { data, loading: loyaltyPointLoading } = useSubscription(
       LOYALTYPOINT_COUNT,
       {
-         variables: { keycloakId: match.params.id, brandId: context },
+         variables: { keycloakId: match.params.id, brandId: context.brandId },
       }
    )
    const {
       data: { brand: { brand_customers: signUpCount = [] } = {} } = {},
       loading: signUpLoading,
    } = useSubscription(SIGNUP_COUNT, {
-      variables: { keycloakId: match.params.id, brandId: context },
+      variables: { keycloakId: match.params.id, brandId: context.brandId },
    })
    const {
       loading: listLoading,
@@ -82,7 +82,7 @@ const CustomerRelation = ({ match }) => {
    } = useQuery(CUSTOMER_DATA, {
       variables: {
          keycloakId: match.params.id,
-         brandId: context,
+         brandId: context.brandId,
       },
       onError: error => {
          toast.error('Something went wrong4')
@@ -95,7 +95,7 @@ const CustomerRelation = ({ match }) => {
    } = useQuery(SUBSCRIPTION, {
       variables: {
          keycloakId: match.params.id,
-         brandId: context,
+         brandId: context.brandId,
       },
       onError: error => {
          toast.error('Something went wrong1')
@@ -108,7 +108,7 @@ const CustomerRelation = ({ match }) => {
    } = useQuery(SUBSCRIPTION_PLAN, {
       variables: {
          keycloakId: match.params.id,
-         brandId: context,
+         brandId: context.brandId,
       },
       onError: error => {
          toast.error('Something went wrong2')

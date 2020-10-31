@@ -1,5 +1,3 @@
 import React from 'react'
 
-export default React.createContext({
-   brandId: 0,
-})
+export default React.createContext()

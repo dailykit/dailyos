@@ -25,7 +25,7 @@ const LoyaltyPointTable = () => {
    const { loading: listloading } = useQuery(LOYALTYPOINTS_LISTING, {
       variables: {
          keycloakId: id,
-         brandId: context,
+         brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
          const result = brand_customers[0]?.customer?.loyaltyPoint?.loyaltyPointTransactions_aggregate?.nodes.map(

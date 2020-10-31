@@ -17,7 +17,7 @@ const TunnelVision = ({ id, tunnels, closeTunnel }) => {
    } = useQuery(ALL_DATA, {
       variables: {
          keycloakId: id,
-         brandId: context,
+         brandId: context.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')

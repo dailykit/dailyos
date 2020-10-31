@@ -26,7 +26,7 @@ const SubscriptionTable = ({ id, sid }) => {
       variables: {
          keycloakId: id,
          sid,
-         brandId: context,
+         brandId: context.brandId,
       },
       onCompleted: ({ subscriptionOccurencesAggregate = {} }) => {
          let action = ''

@@ -25,7 +25,7 @@ const WalletTable = () => {
    const { loading: listloading } = useQuery(WALLET_LISTING, {
       variables: {
          keycloakId: id,
-         brandId: context,
+         brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
          const result = brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate?.nodes.map(

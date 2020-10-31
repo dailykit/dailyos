@@ -18,7 +18,7 @@ const PaymentStatus = ({ tunnels, closeTunnel }) => {
    } = useQuery(STATUS, {
       variables: {
          oid: tab.data.oid,
-         brandId: context,
+         brandId: context.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')

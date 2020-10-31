@@ -32,7 +32,7 @@ const CustomerListing = () => {
    // Subscription
    const { loading, error1 } = useSubscription(TOTAL_REVENUE, {
       variables: {
-         brandId: context,
+         brandId: context.brandId,
       },
       onSubscriptionData: data => {
          setRevenue(
@@ -43,7 +43,7 @@ const CustomerListing = () => {
    })
    const { customerCountLoading, error2 } = useSubscription(CUSTOMERS_COUNT, {
       variables: {
-         brandId: context,
+         brandId: context.brandId,
       },
       onSubscriptionData: data => {
          setCustomerCount(
@@ -71,7 +71,7 @@ const CustomerListing = () => {
    // Query
    const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
       variables: {
-         brandId: context,
+         brandId: context.brandId,
       },
       onCompleted: ({ customers = {} }) => {
          const result = customers.map(customer => {
