@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useContext, useRef } from 'react'
 import { Text, Avatar, useTunnel, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
@@ -27,12 +27,13 @@ import {
    SmallText,
    Card,
    CardInfo,
-   Heading,
 } from './styled'
 import options from '../../../tableOptions'
 import { logger } from '../../../../../../shared/utils'
+import BrandContext from '../../../../context/Brand'
 
 const OrderInfo = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -42,20 +43,23 @@ const OrderInfo = () => {
    const { data: orderData, loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
+         brandId: context,
       },
-      onCompleted: ({ order = {} }) => {
-         const result = order?.orderCart?.cartInfo?.products.map(product => {
-            return {
-               products: product?.name || 'N/A',
-               servings: product?.quantity || 'N/A',
-               discount: product.discount || 'N/A',
-               discountedPrice: product?.totalPrice || 'N/A',
+      onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
+         const result = brand_Orders[0]?.orderCart?.cartInfo?.products.map(
+            product => {
+               return {
+                  products: product?.name || 'N/A',
+                  servings: product?.quantity || 'N/A',
+                  discount: product.discount || 'N/A',
+                  discountedPrice: product?.totalPrice || 'N/A',
+               }
             }
-         })
+         )
          setProducts(result)
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong order')
          logger(error)
       },
    })

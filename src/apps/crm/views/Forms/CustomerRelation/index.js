@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTunnel, Flex } from '@dailykit/ui'
@@ -40,82 +40,87 @@ import {
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
 import { logger } from '../../../../../shared/utils'
+import BrandContext from '../../../context/Brand'
 import {
    InlineLoader,
    InsightDashboard,
 } from '../../../../../shared/components'
 
 const CustomerRelation = ({ match }) => {
+   const [context, setContext] = useContext(BrandContext)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { dispatch, tab } = useTabs()
+   const { dispatch, tab, setTitle: setTabTitle } = useTabs()
    const history = useHistory()
-   const { data: customerIsTest, loading: customerloading } = useSubscription(
-      CUSTOMER_ISTEST,
+   const {
+      data: { customers = [] } = {},
+      loading: customerloading,
+   } = useSubscription(CUSTOMER_ISTEST, {
+      variables: { keycloakId: match.params.id, brandId: context },
+   })
+   const {
+      data: { brand: { brand_customers: walletNreferral = [] } = {} } = {},
+      loading: walletNreferralLoading,
+   } = useSubscription(WALLET_N_REFERRAL, {
+      variables: { keycloakId: match.params.id, brandId: context },
+   })
+   const { data, loading: loyaltyPointLoading } = useSubscription(
+      LOYALTYPOINT_COUNT,
       {
-         variables: { keycloakId: match.params.id },
+         variables: { keycloakId: match.params.id, brandId: context },
       }
    )
    const {
-      data: walletNreferral,
-      loading: walletNreferralLoading,
-   } = useSubscription(WALLET_N_REFERRAL, {
-      variables: { keycloakId: match.params.id },
+      data: { brand: { brand_customers: signUpCount = [] } = {} } = {},
+      loading: signUpLoading,
+   } = useSubscription(SIGNUP_COUNT, {
+      variables: { keycloakId: match.params.id, brandId: context },
    })
-   const { data: loyaltyPoint, loading: loyaltyPointLoading } = useSubscription(
-      LOYALTYPOINT_COUNT,
-      {
-         variables: { keycloakId: match.params.id },
-      }
-   )
-   const { data: signUpCount, loading: signUpLoading } = useSubscription(
-      SIGNUP_COUNT,
-      {
-         variables: { keycloakId: match.params.id },
-      }
-   )
-   const { loading: listLoading, data: customerData } = useQuery(
-      CUSTOMER_DATA,
-      {
-         variables: {
-            keycloakId: match.params.id,
-         },
-         onError: error => {
-            toast.error('Something went wrong')
-            logger(error)
-         },
-      }
-   )
-   const { loading: list_Loading, data: subscriptionData } = useQuery(
-      SUBSCRIPTION,
-      {
-         variables: {
-            keycloakId: match.params.id,
-         },
-         onError: error => {
-            toast.error('Something went wrong')
-            logger(error)
-         },
-      }
-   )
-   const { loading: list__Loading, data: subscriptionPlan } = useQuery(
-      SUBSCRIPTION_PLAN,
-      {
-         variables: {
-            keycloakId: match.params.id,
-         },
-         onError: error => {
-            toast.error('Something went wrong')
-            logger(error)
-         },
-      }
-   )
+   const {
+      loading: listLoading,
+      data: { brand: { brand_customers: customerData = [] } = {} } = {},
+   } = useQuery(CUSTOMER_DATA, {
+      variables: {
+         keycloakId: match.params.id,
+         brandId: context,
+      },
+      onError: error => {
+         toast.error('Something went wrong4')
+         logger(error)
+      },
+   })
+   const {
+      loading: list_Loading,
+      data: { brand: { brand_customers: subscriptionData = [] } = {} } = {},
+   } = useQuery(SUBSCRIPTION, {
+      variables: {
+         keycloakId: match.params.id,
+         brandId: context,
+      },
+      onError: error => {
+         toast.error('Something went wrong1')
+         logger(error)
+      },
+   })
+   const {
+      loading: list__Loading,
+      data: { brand: { brand_customers: subscriptionPlan = [] } = {} } = {},
+   } = useQuery(SUBSCRIPTION_PLAN, {
+      variables: {
+         keycloakId: match.params.id,
+         brandId: context,
+      },
+      onError: error => {
+         toast.error('Something went wrong2')
+         logger(error)
+      },
+   })
    const [updateIsTest] = useMutation(ISTEST, {
       onCompleted: () => {
          toast.info('Information updated!')
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong3')
          logger(error)
       },
    })
@@ -162,7 +167,7 @@ const CustomerRelation = ({ match }) => {
       table = (
          <SubscriptionTable
             id={match.params.id}
-            sid={subscriptionData?.customer?.subscriptionId || ''}
+            sid={subscriptionData[0]?.customer?.subscriptionId || ''}
          />
       )
    }
@@ -182,17 +187,19 @@ const CustomerRelation = ({ match }) => {
          <Flex container>
             <StyledSideBar>
                <CustomerCard
-                  customer={customerData?.customer}
-                  walletAmount={walletNreferral?.customer?.wallet?.amount || 0}
-                  toggle={customerIsTest?.customer?.isTest}
-                  toggleHandler={() =>
-                     toggleHandler(!customerIsTest?.customer?.isTest)
+                  customer={customerData[0]?.customer}
+                  walletAmount={
+                     walletNreferral[0]?.customer?.wallet?.amount || 0
                   }
+                  toggle={customers[0]?.isTest}
+                  toggleHandler={() => toggleHandler(!customers[0]?.isTest)}
                />
-               <SubscriptionInfoCard planData={subscriptionPlan?.customer} />
+               <SubscriptionInfoCard
+                  planData={subscriptionPlan[0]?.customer || {}}
+               />
                <ContactInfoCard
                   defaultTag2="(Default)"
-                  customerData={customerData?.customer?.platform_customer}
+                  customerData={customerData[0]?.customer?.platform_customer}
                   onClick={() => openTunnel1(1)}
                />
                <PaymentCard
@@ -200,7 +207,7 @@ const CustomerRelation = ({ match }) => {
                   linkedTo="view all cards"
                   onClick={() => openTunnel(1)}
                   cardData={
-                     customerData?.customer?.platform_customer
+                     customerData[0]?.customer?.platform_customer
                         ?.defaultStripePaymentMethod || 'N/A'
                   }
                   billingAddDisplay="none"
@@ -210,18 +217,20 @@ const CustomerRelation = ({ match }) => {
             <Flex container width="80%" flexDirection="column">
                <FlexContainer>
                   <OrderCard
-                     data={customerData?.customer?.orders_aggregate?.aggregate}
+                     data={
+                        customerData[0]?.customer?.orders_aggregate?.aggregate
+                     }
                      click={() => setActiveCard('Orders')}
                      active={tab.data.activeCard}
                      heading="Orders"
                   />
                   <ReferralCard
                      referralCount={
-                        walletNreferral?.customer?.customerReferralDetails
+                        walletNreferral[0]?.customer?.customerReferralDetails
                            ?.customerReferrals_aggregate?.aggregate?.count || 0
                      }
                      signUpCount={
-                        signUpCount?.customer?.customerReferralDetails
+                        signUpCount[0]?.customer?.customerReferralDetails
                            ?.customerReferrals_aggregate?.aggregate?.count || 0
                      }
                      click={() => setActiveCard('Referrals')}
@@ -229,19 +238,21 @@ const CustomerRelation = ({ match }) => {
                      heading="Referrals"
                   />
                   <SubscriptionCard
-                     data={subscriptionData?.customer}
+                     data={subscriptionData[0]?.customer}
                      click={() => setActiveCard('Subscriber')}
                      active={tab.data.activeCard}
                      heading="Subscriber"
                   />
                   <WalletCard
-                     data={walletNreferral?.customer?.wallet}
+                     data={walletNreferral[0]?.customer?.wallet}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"
                   />
                   <LoyaltyCard
-                     data={loyaltyPoint?.customer?.loyaltyPoint}
+                     data={
+                        data.brand.brand_customers[0]?.customer?.loyaltyPoint
+                     }
                      click={() => setActiveCard('LoyaltyPoints')}
                      active={tab.data.activeCard}
                      heading="LoyaltyPoints"

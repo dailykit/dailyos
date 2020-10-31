@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
@@ -11,19 +11,22 @@ import { useTooltip } from '../../../../../shared/providers'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
+import BrandContext from '../../../context/Brand'
 
 const OrdersTable = ({ id }) => {
+   const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [orders, setOrders] = useState([])
    const tableRef = useRef(null)
    const history = useHistory()
-   const { loading: listLoading, data: ordersList } = useQuery(ORDERS_LISTING, {
+   const { loading: listLoading } = useQuery(ORDERS_LISTING, {
       variables: {
          keycloakId: id,
+         brandId: context,
       },
-      onCompleted: ({ customer = {} }) => {
-         const result = customer.orders.map(order => {
+      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
+         const result = brand_customers[0]?.customer?.orders.map(order => {
             return {
                id: order?.id,
                products: order?.products?.length || '0',
@@ -38,7 +41,7 @@ const OrdersTable = ({ id }) => {
          setOrders(result)
       },
       onError: error => {
-         toast.error('Something went wrong !')
+         toast.error('Something went wrong Orders !')
          logger(error)
       },
    })
@@ -208,7 +211,7 @@ const OrdersTable = ({ id }) => {
                <Flex container alignItems="center">
                   <Text as="title">
                      Orders(
-                     {orders.length})
+                     {orders?.length || 0})
                   </Text>
                   <Tooltip identifier="order_list_heading" />
                </Flex>

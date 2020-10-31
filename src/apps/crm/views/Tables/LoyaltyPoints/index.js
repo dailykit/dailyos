@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useParams } from 'react-router-dom'
@@ -10,8 +10,10 @@ import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 import { LOYALTYPOINTS_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import BrandContext from '../../../context/Brand'
 
 const LoyaltyPointTable = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    const tableRef = useRef()
    const { tooltip } = useTooltip()
@@ -23,13 +25,10 @@ const LoyaltyPointTable = () => {
    const { loading: listloading } = useQuery(LOYALTYPOINTS_LISTING, {
       variables: {
          keycloakId: id,
+         brandId: context,
       },
-      onCompleted: ({
-         customer: {
-            loyaltyPoint: { loyaltyPointTransactions_aggregate = {} } = {},
-         } = {},
-      }) => {
-         const result = loyaltyPointTransactions_aggregate?.nodes.map(
+      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
+         const result = brand_customers[0]?.customer?.loyaltyPoint?.loyaltyPointTransactions_aggregate?.nodes.map(
             loyaltyPnt => {
                return {
                   date: loyaltyPnt?.created_at || 'N/A',
@@ -48,10 +47,13 @@ const LoyaltyPointTable = () => {
             }
          )
          setLoyaltyPointTxn(result)
-         setTxnCount(loyaltyPointTransactions_aggregate?.aggregate?.count || 0)
+         setTxnCount(
+            brand_customers[0]?.customer?.loyaltyPoint
+               ?.loyaltyPointTransactions_aggregate?.aggregate?.count || 0
+         )
       },
       onError: error => {
-         toast.error('Something went wrong !')
+         toast.error('Something went wrong LoyaltyPointCard !')
          logger(error)
       },
    })
@@ -162,15 +164,17 @@ const LoyaltyPointTable = () => {
             <Text as="title">Loyalty Points Transactions({txnCount})</Text>
             <Tooltip identifier="loyaltyPoints_list_heading" />
          </Flex>
-         <ReactTabulator
-            columns={columns}
-            data={loyaltyPointTxn}
-            ref={tableRef}
-            options={{
-               ...options,
-               placeholder: 'No Loyalty Points Data Available Yet !',
-            }}
-         />
+         {Boolean(loyaltyPointTxn) && (
+            <ReactTabulator
+               columns={columns}
+               data={loyaltyPointTxn}
+               ref={tableRef}
+               options={{
+                  ...options,
+                  placeholder: 'No Loyalty Points Data Available Yet !',
+               }}
+            />
+         )}
       </Flex>
    )
 }

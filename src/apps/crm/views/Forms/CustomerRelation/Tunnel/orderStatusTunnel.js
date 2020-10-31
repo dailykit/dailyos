@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useTabs } from '../../../../context'
@@ -7,12 +7,18 @@ import { TunnelHeaderContainer, StyledDiv } from './styled'
 import { logger } from '../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { toast } from 'react-toastify'
+import BrandContext from '../../../../context/Brand'
 
 const OrderStatus = ({ tunnels, closeTunnel }) => {
+   const [context, setContext] = useContext(BrandContext)
    const { tab } = useTabs()
-   const { loading: listLoading, data: statusData } = useQuery(STATUS, {
+   const {
+      loading: listLoading,
+      data: { brand: { brand_Orders: statusData = [] } = {} } = {},
+   } = useQuery(STATUS, {
       variables: {
          oid: tab.data.oid,
+         brandId: context,
       },
       onError: error => {
          toast.error('Something went wrong')
@@ -33,12 +39,12 @@ const OrderStatus = ({ tunnels, closeTunnel }) => {
             <TunnelHeaderContainer>
                <StyledDiv>
                   <Text as="h2">
-                     {`Order Id: ${statusData?.order?.id || 'N/A'}`}
+                     {`Order Id: ${statusData[0]?.id || 'N/A'}`}
                   </Text>
                </StyledDiv>
                <StyledDiv>
                   <Text as="h2">
-                     {`Status: ${statusData?.order?.orderStatus || 'N/A'}`}
+                     {`Status: ${statusData[0]?.orderStatus || 'N/A'}`}
                   </Text>
                </StyledDiv>
             </TunnelHeaderContainer>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
@@ -13,8 +13,10 @@ import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
+import BrandContext from '../../../context/Brand'
 
 const SubscriptionTable = ({ id, sid }) => {
+   const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const history = useHistory()
@@ -24,6 +26,7 @@ const SubscriptionTable = ({ id, sid }) => {
       variables: {
          keycloakId: id,
          sid,
+         brandId: context,
       },
       onCompleted: ({ subscriptionOccurencesAggregate = {} }) => {
          let action = ''
@@ -62,7 +65,7 @@ const SubscriptionTable = ({ id, sid }) => {
          setOccurences(result)
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong subscriptionOrders')
          logger(error)
       },
    })
@@ -234,15 +237,17 @@ const SubscriptionTable = ({ id, sid }) => {
                      </Text>
                      <Tooltip identifier="order_list_heading" />
                   </Flex>
-                  <ReactTabulator
-                     columns={columns}
-                     data={occurences}
-                     options={{
-                        ...options,
-                        placeholder: 'No Occurences Available Yet !',
-                     }}
-                     ref={tableRef}
-                  />
+                  {Boolean(occurences) && (
+                     <ReactTabulator
+                        columns={columns}
+                        data={occurences}
+                        options={{
+                           ...options,
+                           placeholder: 'No Occurences Available Yet !',
+                        }}
+                        ref={tableRef}
+                     />
+                  )}
                </>
             )}
          </Flex>
