@@ -1,12 +1,17 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
+   Text,
+   PlusIcon,
+   IconButton,
    TextButton,
    Tag,
    Tunnels,
    Tunnel,
    useTunnel,
+   Flex,
    ListItem,
    List,
    ListOptions,
@@ -15,36 +20,51 @@ import {
    useMultiList,
    ButtonGroup,
    TunnelHeader,
-} from '@dailykit/ui'
-
-import {
    SectionTabs,
    SectionTabList,
    SectionTab,
    SectionTabPanels,
    SectionTabPanel,
-   Loader,
-} from '../../../../../components'
+   SectionTabsListHeader,
+   Spacer,
+   Filler,
+} from '@dailykit/ui'
 
-import { Header } from './styled'
-import { TunnelMain, StyledInfo } from '../../styled'
-
-import { KOT_PRINTERS } from '../../../../../graphql/subscriptions'
+import { STATIONS } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
 import {
-   CREATE_STATION_KOT_PRINTER,
-   UPDATE_STATION_KOT_PRINTER,
-   DELETE_STATION_KOT_PRINTER,
-   UPDATE_STATION_DEFAULT_KOT_PRINTER,
-} from '../../../../../graphql/mutations'
+   Tooltip,
+   InlineLoader,
+   ErrorBoundary,
+} from '../../../../../../../shared/components'
 
 export const KotPrinters = ({ station }) => {
+   const [tabIndex, setTabIndex] = React.useState(0)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_STATION_KOT_PRINTER)
-   const [remove] = useMutation(DELETE_STATION_KOT_PRINTER)
-   const [updateDefault] = useMutation(UPDATE_STATION_DEFAULT_KOT_PRINTER)
+   const [update] = useMutation(STATIONS.KOT_PRINTERS.UPDATE, {
+      onCompleted: () => toast.success('Successfully updated kot printer!'),
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the kot printer!')
+      },
+   })
+   const [remove] = useMutation(STATIONS.KOT_PRINTERS.DELETE, {
+      onCompleted: () => toast.success('Successfully unassigned kot printer!'),
+      onError: error => {
+         logger(error)
+         toast.error('Failed to unassign the kot printer!')
+      },
+   })
+   const [updateDefault] = useMutation(STATIONS.UPDATE, {
+      onCompleted: () => toast.success('Selected printer is now default!'),
+      onError: error => {
+         logger(error)
+         toast.error('Failed to set printer as default!')
+      },
+   })
 
    const { loading, error, data: { kotPrinters = [] } = {} } = useSubscription(
-      KOT_PRINTERS,
+      STATIONS.KOT_PRINTERS.LIST,
       {
          variables: {
             type: 'KOT_PRINTER',
@@ -74,30 +94,44 @@ export const KotPrinters = ({ station }) => {
 
    return (
       <>
-         <SectionTabs>
+         <SectionTabs onChange={index => setTabIndex(index)}>
             <SectionTabList>
-               <TextButton
-                  type="outline"
-                  style={{ marginBottom: 8 }}
-                  onClick={() => setIsOpen(true)}
-               >
-                  Add Printer
-               </TextButton>
-               {station.kotPrinter.nodes.map(node => (
-                  <SectionTab
-                     key={node.kotPrinter.printNodeId}
-                     title={node.kotPrinter.name}
-                  />
+               <SectionTabsListHeader>
+                  <Flex container alignItems="center">
+                     <Text as="title">KOT Printers</Text>
+                     <Tooltip identifier="station_section_kot_printers_heading" />
+                  </Flex>
+                  <IconButton type="outline" onClick={() => setIsOpen(true)}>
+                     <PlusIcon />
+                  </IconButton>
+               </SectionTabsListHeader>
+               {station.kotPrinter.nodes.map((node, index) => (
+                  <SectionTab key={node.kotPrinter.printNodeId}>
+                     <Spacer size="14px" />
+                     <Text
+                        as="h3"
+                        style={{ ...(index === tabIndex && { color: '#fff' }) }}
+                     >
+                        {node.kotPrinter.name}
+                     </Text>
+                     <Spacer size="14px" />
+                  </SectionTab>
                ))}
             </SectionTabList>
             <SectionTabPanels>
                {station.kotPrinter.nodes.map(node => (
                   <SectionTabPanel key={node.kotPrinter.printNodeId}>
-                     <Header>
-                        <div>
-                           <h2>{node.kotPrinter.name}</h2>
+                     <Flex
+                        as="main"
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Flex as="section" container alignItems="center">
+                           <Text as="h2">{node.kotPrinter.name}</Text>
+                           <Spacer size="16px" xAxis />
                            {node.active && <Tag>Active</Tag>}
-                        </div>
+                        </Flex>
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
@@ -117,9 +151,11 @@ export const KotPrinters = ({ station }) => {
                                  onClick={() =>
                                     updateDefault({
                                        variables: {
-                                          id: station.id,
-                                          defaultKotPrinterId:
-                                             node.kotPrinter.printNodeId,
+                                          pk_columns: { id: station.id },
+                                          _set: {
+                                             defaultKotPrinterId:
+                                                node.kotPrinter.printNodeId,
+                                          },
                                        },
                                     })
                                  }
@@ -138,24 +174,28 @@ export const KotPrinters = ({ station }) => {
                               Unassign
                            </TextButton>
                         </ButtonGroup>
-                     </Header>
+                     </Flex>
                   </SectionTabPanel>
                ))}
             </SectionTabPanels>
          </SectionTabs>
          {isOpen && (
-            <AddPrinterTunnel
-               isOpen={isOpen}
-               station={station.id}
-               setIsOpen={setIsOpen}
-               error={error}
-               loading={loading}
-               printers={kotPrinters.map(({ printNodeId, name, computer }) => ({
-                  id: printNodeId,
-                  title: name,
-                  description: `${computer.name} | ${computer.hostname}`,
-               }))}
-            />
+            <ErrorBoundary rootRoute="/apps/settings">
+               <AddPrinterTunnel
+                  isOpen={isOpen}
+                  station={station.id}
+                  setIsOpen={setIsOpen}
+                  error={error}
+                  loading={loading}
+                  printers={kotPrinters.map(
+                     ({ printNodeId, name, computer }) => ({
+                        id: printNodeId,
+                        title: name,
+                        description: `${computer.name} | ${computer.hostname}`,
+                     })
+                  )}
+               />
+            </ErrorBoundary>
          )}
       </>
    )
@@ -173,8 +213,11 @@ const AddPrinterTunnel = ({
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(CREATE_STATION_KOT_PRINTER, {
-      onCompleted: () => setIsOpen(false),
+   const [create] = useMutation(STATIONS.KOT_PRINTERS.CREATE, {
+      onCompleted: () => {
+         setIsOpen(false)
+         toast.success('Successfully assigned the kot printer!')
+      },
    })
 
    React.useEffect(() => {
@@ -184,6 +227,11 @@ const AddPrinterTunnel = ({
          closeTunnel(1)
       }
    }, [isOpen])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch kot printers!')
+      logger(error)
+   }
 
    const insert = () => {
       create({
@@ -202,57 +250,70 @@ const AddPrinterTunnel = ({
          <Tunnel layer={1} size="sm">
             <TunnelHeader
                title="Add Printer"
-               right={selected.length > 0 && { action: insert, title: 'Save' }}
                close={() => setIsOpen(false)}
+               right={selected.length > 0 && { action: insert, title: 'Save' }}
+               tooltip={
+                  <Tooltip identifier="station_section_kot_printer_tunnel_add" />
+               }
             />
-            <TunnelMain>
-               {loading && <Loader />}
-               {error && <div>{error.message}</div>}
-               {list.length > 0 && (
-                  <List>
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
-                     />
-                     {selected.length > 0 && (
-                        <TagGroup style={{ margin: '8px 0' }}>
-                           {selected.map(option => (
-                              <Tag
-                                 key={option.id}
-                                 title={option.title}
-                                 onClick={() => selectOption('id', option.id)}
-                              >
-                                 {option.title}
-                              </Tag>
-                           ))}
-                        </TagGroup>
+            <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
+               {loading ? (
+                  <InlineLoader />
+               ) : (
+                  <>
+                     {list.length > 0 ? (
+                        <List>
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder="type what you’re looking for..."
+                           />
+                           {selected.length > 0 && (
+                              <TagGroup style={{ margin: '8px 0' }}>
+                                 {selected.map(option => (
+                                    <Tag
+                                       key={option.id}
+                                       title={option.title}
+                                       onClick={() =>
+                                          selectOption('id', option.id)
+                                       }
+                                    >
+                                       {option.title}
+                                    </Tag>
+                                 ))}
+                              </TagGroup>
+                           )}
+                           <ListOptions>
+                              {list
+                                 .filter(option =>
+                                    option.title.toLowerCase().includes(search)
+                                 )
+                                 .map(option => (
+                                    <ListItem
+                                       type="MSL2"
+                                       key={option.id}
+                                       content={{
+                                          title: option.title,
+                                          description: option.description,
+                                       }}
+                                       onClick={() =>
+                                          selectOption('id', option.id)
+                                       }
+                                       isActive={selected.find(
+                                          item => item.id === option.id
+                                       )}
+                                    />
+                                 ))}
+                           </ListOptions>
+                        </List>
+                     ) : (
+                        <Filler
+                           height="500px"
+                           message="No printers available to add to station."
+                        />
                      )}
-                     <ListOptions>
-                        {list
-                           .filter(option =>
-                              option.title.toLowerCase().includes(search)
-                           )
-                           .map(option => (
-                              <ListItem
-                                 type="MSL2"
-                                 key={option.id}
-                                 content={{
-                                    title: option.title,
-                                    description: option.description,
-                                 }}
-                                 onClick={() => selectOption('id', option.id)}
-                                 isActive={selected.find(
-                                    item => item.id === option.id
-                                 )}
-                              />
-                           ))}
-                     </ListOptions>
-                  </List>
+                  </>
                )}
-               {list.length === 0 && (
-                  <StyledInfo>No printers available!</StyledInfo>
-               )}
-            </TunnelMain>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )

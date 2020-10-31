@@ -7,7 +7,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTabs } from '../../../context'
 import { Section, StyledTemp } from './styled'
 import { initialState, reducers } from './store'
-import { USER, UPDATE_USER } from '../../../graphql'
+import { USERS } from '../../../graphql'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { InlineLoader } from '../../../../../shared/components'
 import { TextButton, Input, Text, HelperText } from '@dailykit/ui'
@@ -17,7 +17,7 @@ const UserForm = () => {
    const { tab, addTab } = useTabs()
    const [isValid, setIsValid] = React.useState(false)
    const [state, dispatch] = React.useReducer(reducers, initialState)
-   const [updateUser] = useMutation(UPDATE_USER, {
+   const [updateUser] = useMutation(USERS.UPDATE, {
       onCompleted: () => {
          toast.success('Updated user successfully!')
       },
@@ -28,7 +28,7 @@ const UserForm = () => {
    const {
       loading,
       data: { settings_user_by_pk: user = {} } = {},
-   } = useSubscription(USER, {
+   } = useSubscription(USERS.USER, {
       variables: { id: params.id },
    })
 

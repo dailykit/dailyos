@@ -14,7 +14,7 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import { DELETE_PROCESSINGS, PROCESSINGS } from '../../../../graphql'
+import { MASTER } from '../../../../graphql'
 import tableOptions from '../../../Listings/tableOption'
 import { Card, Layout, Listing, ListingHeader } from '../styled'
 // Tunnels
@@ -28,10 +28,10 @@ const ProcessingsForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(PROCESSINGS)
+   const { loading, data, error } = useSubscription(MASTER.PROCESSINGS.LIST)
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_PROCESSINGS, {
+   const [deleteElement] = useMutation(MASTER.PROCESSINGS.DELETE, {
       onCompleted: () => {
          toast.success('Deleted!')
       },

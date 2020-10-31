@@ -9,7 +9,7 @@ import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
 // Styles
 import { TunnelBody } from '../styled'
 
-import { CREATE_PROCESSINGS } from '../../../../../../graphql'
+import { MASTER } from '../../../../../../graphql'
 
 const address = 'apps.settings.views.forms.processings.tunnels.addnew.'
 
@@ -20,7 +20,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_PROCESSINGS, {
+   const [addType] = useMutation(MASTER.PROCESSINGS.CREATE, {
       onCompleted: () => {
          toast.success('Processings added.')
          closeTunnel(1)

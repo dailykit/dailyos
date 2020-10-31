@@ -1,65 +1,78 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
 import { toast } from 'react-toastify'
-import { useHistory } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { ComboButton, Text, Flex, IconButton } from '@dailykit/ui'
 
-// Components
-import { IconButton, Text, Loader } from '@dailykit/ui'
-
-// State
-import { useTabs } from '../../../context'
-
-import { STATIONS, DELETE_STATION, UPSERT_STATION } from '../../../graphql'
-
-// Styled
-import { StyledWrapper, StyledHeader } from '../styled'
-
-// Icons
-import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
 import tableOptions from '../tableOption'
+import { useTabs } from '../../../context'
+import { STATIONS } from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
+import { useTooltip } from '../../../../../shared/providers'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
 
 const StationsListing = () => {
-   const history = useHistory()
-   const { tab, addTab } = useTabs()
+   const { tooltip } = useTooltip()
    const tableRef = React.useRef()
-   const { error, loading, data: { stations } = {} } = useSubscription(STATIONS)
-   const [create] = useMutation(UPSERT_STATION, {
+   const { tab, addTab } = useTabs()
+   const { error, loading, data: { stations = {} } = {} } = useSubscription(
+      STATIONS.LIST
+   )
+   const [create] = useMutation(STATIONS.CREATE, {
       onCompleted: ({ insertStation = {} }) => {
          addTab(insertStation.name, `/settings/stations/${insertStation.id}`)
       },
+      onError: error => {
+         toast.success('Failed to create the station!')
+         logger(error)
+      },
    })
-   const [remove] = useMutation(DELETE_STATION, {
+   const [remove] = useMutation(STATIONS.DELETE, {
       onCompleted: () => {
          toast.success('Successfully deleted the station!')
       },
-      onError: () => {
+      onError: error => {
          toast.success('Failed to delete the station!')
+         logger(error)
       },
    })
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/settings/stations/${id}`)
+   const rowClick = (e, cell) => {
+      const { id = null, name = '' } = cell.getData() || {}
+      if (id) {
+         addTab(name, `/settings/stations/${id}`)
+      }
+   }
+
+   if (!loading && error) {
+      toast.error('Failed to load the stations.')
+      logger(error)
    }
 
    const columns = [
-      { title: 'Station Name', field: 'name', headerFilter: true },
       {
+         title: 'Name',
+         field: 'name',
+         headerFilter: true,
+         cssClass: 'cell',
+         cellClick: (e, cell) => rowClick(e, cell),
+         headerTooltip: column => {
+            const identifier = 'station_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         width: 150,
          title: 'Actions',
          headerFilter: false,
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            const { id } = cell._cell.row.data
-            remove({ variables: { id } })
-         },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
-         width: 150,
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
 
@@ -67,13 +80,22 @@ const StationsListing = () => {
       if (!tab) {
          addTab('Stations', `/settings/stations`)
       }
-   }, [history, tab, addTab])
+   }, [tab, addTab])
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <Text as="h2">Stations</Text>
-            <IconButton
+      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+         <Flex
+            container
+            as="header"
+            height="72px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex as="section" container alignItems="center">
+               <Text as="h2">Stations ({stations?.aggregate?.count || 0})</Text>
+               <Tooltip identifier="station_listing_heading" />
+            </Flex>
+            <ComboButton
                type="solid"
                onClick={() =>
                   create({
@@ -86,22 +108,40 @@ const StationsListing = () => {
                }
             >
                <AddIcon color="#fff" size={24} />
-            </IconButton>
-         </StyledHeader>
-         {loading && <Loader />}
-         {error && <div>{error.message}</div>}
-         {stations?.length === 0 && <div>No stations yet!</div>}
-         {stations?.length && (
+               Create Station
+            </ComboButton>
+         </Flex>
+         {loading ? (
+            <InlineLoader />
+         ) : (
             <ReactTabulator
                ref={tableRef}
                columns={columns}
-               data={stations}
-               rowClick={rowClick}
-               options={tableOptions}
+               data={stations.nodes}
+               options={{
+                  ...tableOptions,
+                  placeholder:
+                     'No stations available yet, start by creating one.',
+               }}
             />
          )}
-      </StyledWrapper>
+      </Flex>
    )
 }
 
 export default StationsListing
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { id = null, name = '' } = cell._cell.row.data
+      if (window.confirm(`Are your sure you want to delete ${name} station?`)) {
+         remove({ variables: { id } })
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
+}

@@ -9,7 +9,7 @@ import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
 // Styles
 import { TunnelBody } from '../styled'
 
-import { CREATE_ALLERGENS } from '../../../../../../graphql'
+import { MASTER } from '../../../../../../graphql'
 
 const address = 'apps.settings.views.forms.allergens.tunnels.addnew.'
 
@@ -20,7 +20,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_ALLERGENS, {
+   const [addType] = useMutation(MASTER.ALLERGENS.CREATE, {
       onCompleted: () => {
          toast.success('Allergens added.')
          closeTunnel(1)

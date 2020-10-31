@@ -9,7 +9,7 @@ import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
 // Styles
 import { TunnelBody } from '../styled'
 
-import { CREATE_UNITS } from '../../../../../../graphql'
+import { MASTER } from '../../../../../../graphql'
 
 const address = 'apps.settings.views.forms.units.tunnels.addnew.'
 
@@ -20,7 +20,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_UNITS, {
+   const [addType] = useMutation(MASTER.UNITS.CREATE, {
       onCompleted: () => {
          toast.success('Units added.')
          closeTunnel(1)
