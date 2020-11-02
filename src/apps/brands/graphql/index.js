@@ -12,7 +12,7 @@ export const BRANDS = {
    `,
    LIST: gql`
       subscription brands {
-         brands: brandsAggregate {
+         brands: brandsAggregate(where: { isArchived: { _eq: false } }) {
             aggregate {
                count(columns: id)
             }

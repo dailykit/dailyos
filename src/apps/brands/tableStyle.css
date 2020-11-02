@@ -11,8 +11,8 @@
    border-bottom: 1px solid #d8d8d8;
 }
 
-.tabulator-row:hover {
-   background: #f3f3f3;
+.rowClick:hover {
+   background: #e5e5e5;
 }
 
 .center-text {

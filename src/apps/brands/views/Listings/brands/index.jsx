@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
-   Input,
+   Form,
    Spacer,
    PlusIcon,
    IconButton,
@@ -18,7 +18,7 @@ import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import tableOptions from '../../../tableOption'
 import { StyledWrapper, StyledHeader } from '../styled'
-import { EditIcon } from '../../../../../shared/assets/icons'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Flex, Tooltip } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 
@@ -42,6 +42,17 @@ export const Brands = () => {
       onError: () =>
          toast.success('Failed to create the brand, please try again!'),
    })
+
+   const [deleteBrand] = useMutation(BRANDS.UPDATE_BRAND, {
+      onCompleted: () => {
+         toast.success('Brand deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { error, loading, data: { brands = {} } = {} } = useSubscription(
       BRANDS.LIST
@@ -53,11 +64,28 @@ export const Brands = () => {
       }
    }, [tab, addTab])
 
-   const edit = brand => {
+   const cellClick = brand => {
       addTab(
          brand?.title || brand?.domain || 'N/A',
          `/brands/brands/${brand.id}`
       )
+   }
+
+   // Handler
+   const deleteHandler = (e, brand) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete Brand - ${brand.title}?`
+         )
+      ) {
+         deleteBrand({
+            variables: {
+               id: brand.id,
+               _set: { isArchived: true },
+            },
+         })
+      }
    }
 
    const columns = React.useMemo(
@@ -74,6 +102,10 @@ export const Brands = () => {
                   tooltip(identifier)?.description ||
                   column.getDefinition().title
                )
+            },
+            cssClass: 'rowClick',
+            cellClick: (e, cell) => {
+               cellClick(cell.getData())
             },
          },
          {
@@ -110,13 +142,17 @@ export const Brands = () => {
             hozAlign: 'center',
             headerSort: false,
             headerHozAlign: 'center',
-            formatter: reactFormatter(<EditBrand edit={edit} />),
+            formatter: reactFormatter(<DeleteBrand />),
             headerTooltip: function (column) {
                const identifier = 'brands_listing_actions_column'
                return (
                   tooltip(identifier)?.description ||
                   column.getDefinition().title
                )
+            },
+            cellClick: (e, cell) => {
+               e.stopPropagation()
+               deleteHandler(e, cell._cell.row.data)
             },
          },
       ],
@@ -169,28 +205,37 @@ export const Brands = () => {
             </>
          )}
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="sm">
+            <Tunnel layer={1} size="md">
                <TunnelHeader
                   title="Add Brand"
                   right={{ action: save, title: 'Save' }}
                   close={() => closeTunnel(1)}
+                  tooltip={<Tooltip identifier="create_brand_tunnelHeader" />}
                />
                <Flex padding="16px">
-                  <Input
-                     type="text"
-                     label="Title"
-                     name="title"
-                     value={form.title}
-                     onChange={e => handleChange(e)}
-                  />
+                  <Form.Group>
+                     <Form.Label htmlFor="title" title="title">
+                        Title
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
+                        name="title"
+                        value={form.title}
+                        onChange={e => handleChange(e)}
+                     />
+                  </Form.Group>
                   <Spacer size="24px" />
-                  <Input
-                     type="text"
-                     label="Domain"
-                     name="domain"
-                     value={form.domain}
-                     onChange={e => handleChange(e)}
-                  />
+                  <Form.Group>
+                     <Form.Label htmlFor="domain" title="domain">
+                        Domain
+                     </Form.Label>
+                     <Form.Text
+                        id="domain"
+                        name="domain"
+                        value={form.domain}
+                        onChange={e => handleChange(e)}
+                     />
+                  </Form.Group>
                </Flex>
             </Tunnel>
          </Tunnels>
@@ -198,10 +243,10 @@ export const Brands = () => {
    )
 }
 
-const EditBrand = ({ cell, edit }) => {
+const DeleteBrand = ({ cell, edit }) => {
    return (
-      <IconButton type="outline" size="sm" onClick={() => edit(cell.getData())}>
-         <EditIcon color="rgb(40, 193, 247)" />
+      <IconButton type="ghost" size="sm">
+         <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
 }
