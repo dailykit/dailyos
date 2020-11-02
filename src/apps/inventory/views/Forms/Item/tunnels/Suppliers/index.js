@@ -63,7 +63,7 @@ export default function SupplierTunnel({ close, formState }) {
       },
       onError: error => {
          // toast and log error
-         console.log(error)
+         logger(error)
          toast.info('Error adding the supplier. Please try again')
          close(1)
       },

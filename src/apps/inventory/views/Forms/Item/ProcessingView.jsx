@@ -67,13 +67,13 @@ export default function ProcessingView({ proc = {}, isDefault }) {
             <HorizontalTabList>
                <HorizontalTab>
                   <Flex container alignItems="center">
-                     {t(address.concat('real-time'))}
+                     Bulk
                      <Tooltip identifier="supplier_item_form_realtime_panel" />
                   </Flex>
                </HorizontalTab>
                <HorizontalTab>
                   <Flex container alignItems="center">
-                     {t(address.concat('planned-lot'))}
+                     Sachets
                      <Tooltip identifier="supplier_item_form_planned-lot_panel" />
                   </Flex>
                </HorizontalTab>

@@ -102,6 +102,7 @@ const Options = styled.div`
    position: absolute;
    left: 0;
    top: 110%;
+   z-index: 2;
 
    animation: fadeIn 0.2s ease-in;
 

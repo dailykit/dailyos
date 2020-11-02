@@ -64,7 +64,7 @@ export default function ItemListing() {
       <StyledWrapper>
          <StyledTableHeader>
             <Flex container alignItems="center">
-               <Text as="title">Supplier Items</Text>
+               <Text as="h2">Supplier Items</Text>
                <Tooltip identifier="items_listings_header_title" />
             </Flex>
             <StyledTableActions>

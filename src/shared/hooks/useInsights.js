@@ -9,10 +9,6 @@ import {
 } from '../utils/insight_utils'
 import { isObject } from '../utils/isObject'
 
-function onError(error) {
-   console.log(error)
-}
-
 // prettier-ignore
 const buildQuery = query => gql`${query}`
 
@@ -64,6 +60,7 @@ export const useInsights = (
    const [newAggregates, setNewAggregates] = useState({})
    const [oldTableData, setOldTableData] = useState([])
    const [newTableData, setNewTableData] = useState([])
+   const [empty, setEmpty] = useState(false)
 
    const {
       data: {
@@ -78,8 +75,9 @@ export const useInsights = (
             config: {},
          },
       } = {},
+      loading: insightLoading,
+      error: insightLoadError,
    } = useQuery(GET_INSIGHT, {
-      onError,
       variables: {
          identifier,
       },
@@ -113,8 +111,7 @@ export const useInsights = (
    //  unflatten the tempFillers to pass in the query
    const schemaVariables = buildOptionVariables(tempFillers || {})
 
-   const { loading } = useQuery(gqlQuery, {
-      onError,
+   const { error: insightError } = useQuery(gqlQuery, {
       variables: {
          ...variableSwitches,
          options: {
@@ -136,6 +133,7 @@ export const useInsights = (
          }
          if (options.includeTableData || options.includeChartData) {
             const tableData = transformer(data, nodeKey)
+            if (!tableData.length) return setEmpty(true)
 
             if (isNewOption) {
                setNewTableData(tableData)
@@ -155,7 +153,9 @@ export const useInsights = (
    }
 
    const result = {
-      loading,
+      loading: insightLoading,
+      error: insightError || insightLoadError,
+      empty,
       newTableData,
       oldTableData,
       switches: variableSwitches,
