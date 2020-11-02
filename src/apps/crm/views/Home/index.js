@@ -9,12 +9,11 @@ import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
 
 const Home = () => {
    const [context, setContext] = useContext(BrandContext)
-   console.log(context)
    const { addTab } = useTabs()
    // const { t } = useTranslation()
    const { data: customersCount } = useSubscription(CUSTOMERS_COUNT, {
       variables: {
-         brandId: context,
+         brandId: context.brandId,
       },
    })
    const { data: couponTotal } = useSubscription(COUPON_TOTAL)

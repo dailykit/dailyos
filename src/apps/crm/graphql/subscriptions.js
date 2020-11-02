@@ -34,8 +34,13 @@ export const TOTAL_REVENUE = gql`
 `
 
 export const CUSTOMER_ISTEST = gql`
-   subscription CUSTOMER_ISTEST($keycloakId: String!) {
-      customer(keycloakId: $keycloakId) {
+   subscription CUSTOMER_ISTEST($keycloakId: String!, $brandId: Int!) {
+      customers(
+         where: {
+            keycloakId: { _eq: $keycloakId }
+            brandCustomers: { brandId: { _eq: $brandId } }
+         }
+      ) {
          isTest
       }
    }
@@ -189,15 +194,19 @@ export const BRAND_CAMPAIGNS = gql`
    }
 `
 export const WALLET_N_REFERRAL = gql`
-   subscription WALLET_N_REFERRAL($keycloakId: String!) {
-      customer(keycloakId: $keycloakId) {
-         wallet {
-            amount
-         }
-         customerReferralDetails {
-            customerReferrals_aggregate {
-               aggregate {
-                  count
+   subscription WALLET_N_REFERRAL($keycloakId: String!, $brandId: Int!) {
+      brand(id: $brandId) {
+         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            customer {
+               wallet {
+                  amount
+               }
+               customerReferralDetails {
+                  customerReferrals_aggregate {
+                     aggregate {
+                        count
+                     }
+                  }
                }
             }
          }
@@ -206,23 +215,31 @@ export const WALLET_N_REFERRAL = gql`
 `
 
 export const LOYALTYPOINT_COUNT = gql`
-   subscription LOYALTYPOINT_COUNT($keycloakId: String!) {
-      customer(keycloakId: $keycloakId) {
-         loyaltyPoint {
-            points
+   subscription LOYALTYPOINT_COUNT($keycloakId: String!, $brandId: Int!) {
+      brand(id: $brandId) {
+         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            customer {
+               loyaltyPoint {
+                  points
+               }
+            }
          }
       }
    }
 `
 export const SIGNUP_COUNT = gql`
-   subscription SIGNUP_COUNT($keycloakId: String!) {
-      customer(keycloakId: $keycloakId) {
-         customerReferralDetails {
-            customerReferrals_aggregate(
-               where: { signupStatus: { _eq: "COMPLETE" } }
-            ) {
-               aggregate {
-                  count
+   subscription SIGNUP_COUNT($keycloakId: String!, $brandId: Int!) {
+      brand(id: $brandId) {
+         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            customer {
+               customerReferralDetails {
+                  customerReferrals_aggregate(
+                     where: { signupStatus: { _eq: "COMPLETE" } }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
                }
             }
          }

@@ -12,7 +12,7 @@ const StyleCard = ({ active, heading, click, data }) => {
          <Flex container padding="16px" className="cardContent">
             <Flex container flexDirection="column">
                <Text as="p">Total Wallet Amount</Text>
-               <Text as="p">${data.amount}</Text>
+               <Text as="p">${data?.amount || 0}</Text>
             </Flex>
          </Flex>
       </StyledCard>

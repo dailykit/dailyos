@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useParams } from 'react-router-dom'
@@ -10,8 +10,10 @@ import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 import { REFERRAL_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import BrandContext from '../../../context/Brand'
 
 const ReferralTable = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef()
@@ -23,29 +25,33 @@ const ReferralTable = () => {
    const { loading: listloading } = useQuery(REFERRAL_LISTING, {
       variables: {
          keycloakId: id,
+         brandId: context.brandId,
       },
-      onCompleted: ({
-         customer: {
-            customerReferralDetails: { customerReferrals_aggregate = {} } = {},
-         } = {},
-      }) => {
-         console.log(customerReferrals_aggregate)
-         const result = customerReferrals_aggregate?.nodes.map(referral => {
-            return {
-               invitation: `${
-                  referral?.customer?.platform_customer?.firstName || ''
-               } ${referral?.customer?.platform_customer?.lastName || 'N/A'}`,
-               email: referral?.customer?.platform_customer?.email || 'N/A',
-               phone:
-                  referral?.customer?.platform_customer?.phoneNumber || 'N/A',
-               status: referral?.referralStatus || 'N/A',
+      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
+         const result = brand_customers[0]?.customer?.customerReferralDetails?.customerReferrals_aggregate?.nodes.map(
+            referral => {
+               return {
+                  invitation: `${
+                     referral?.customer?.platform_customer?.firstName || ''
+                  } ${
+                     referral?.customer?.platform_customer?.lastName || 'N/A'
+                  }`,
+                  email: referral?.customer?.platform_customer?.email || 'N/A',
+                  phone:
+                     referral?.customer?.platform_customer?.phoneNumber ||
+                     'N/A',
+                  status: referral?.referralStatus || 'N/A',
+               }
             }
-         })
+         )
          setReferralList(result)
-         setReferralCount(customerReferrals_aggregate?.aggregate?.count || 0)
+         setReferralCount(
+            brand_customers[0]?.customer?.customerReferralDetails
+               ?.customerReferrals_aggregate?.aggregate?.count || 0
+         )
       },
       onError: error => {
-         toast.error('Something went wrong !')
+         toast.error('Something went wrong referral !')
          logger(error)
       },
    })
@@ -111,16 +117,17 @@ const ReferralTable = () => {
             <Text as="title">Referrals({referralCount})</Text>
             <Tooltip identifier="referral_list_heading" />
          </Flex>
-
-         <ReactTabulator
-            columns={columns}
-            data={referralList}
-            ref={tableRef}
-            options={{
-               ...options,
-               placeholder: 'No Referrals Available Yet !',
-            }}
-         />
+         {Boolean(referralList) && (
+            <ReactTabulator
+               columns={columns}
+               data={referralList}
+               ref={tableRef}
+               options={{
+                  ...options,
+                  placeholder: 'No Referrals Available Yet !',
+               }}
+            />
+         )}
       </Flex>
    )
 }

@@ -15,7 +15,7 @@ import { StyledWrapper } from '../../styled'
 
 const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
-   const [context, setContext] = React.useState({ brandId: 0 })
+   const [context, setContext] = React.useState({ brandId: 0, brandName: '' })
    return (
       <StyledWrapper>
          <BrandContext.Provider value={[context, setContext]}>

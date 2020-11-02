@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useParams } from 'react-router-dom'
@@ -10,8 +10,10 @@ import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 import { WALLET_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import BrandContext from '../../../context/Brand'
 
 const WalletTable = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    const tableRef = useRef()
    const { tooltip } = useTooltip()
@@ -23,26 +25,30 @@ const WalletTable = () => {
    const { loading: listloading } = useQuery(WALLET_LISTING, {
       variables: {
          keycloakId: id,
+         brandId: context.brandId,
       },
-      onCompleted: ({
-         customer: { wallet: { walletTransactions_aggregate = {} } = {} } = {},
-      }) => {
-         console.log(walletTransactions_aggregate)
-         const result = walletTransactions_aggregate?.nodes.map(wallet => {
-            return {
-               date: wallet?.created_at || 'N/A',
-               reference: wallet?.id || 'N/A',
-               oid: wallet?.orderCart?.orderId || 'N/A',
-               debit: wallet.type === 'DEBIT' ? `$${wallet?.amount}` : '$0',
-               credit: wallet.type === 'CREDIT' ? `$${wallet?.amount}` : '$0',
-               balance: wallet?.wallet?.balanceAmount || 'N/A',
+      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
+         const result = brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate?.nodes.map(
+            wallet => {
+               return {
+                  date: wallet?.created_at || 'N/A',
+                  reference: wallet?.id || 'N/A',
+                  oid: wallet?.orderCart?.orderId || 'N/A',
+                  debit: wallet?.type === 'DEBIT' ? `$${wallet?.amount}` : '$0',
+                  credit:
+                     wallet?.type === 'CREDIT' ? `$${wallet?.amount}` : '$0',
+                  balance: wallet?.wallet?.balanceAmount || 'N/A',
+               }
             }
-         })
+         )
          setWalletTxn(result)
-         setTxnCount(walletTransactions_aggregate?.aggregate?.count || 0)
+         setTxnCount(
+            brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate
+               ?.aggregate?.count || 0
+         )
       },
       onError: error => {
-         toast.error('Something went wrong !')
+         toast.error('Something went wrong wallet!')
          logger(error)
       },
    })
@@ -153,15 +159,17 @@ const WalletTable = () => {
             <Text as="title">Wallet Transactions({txnCount})</Text>
             <Tooltip identifier="wallet_list_heading" />
          </Flex>
-         <ReactTabulator
-            columns={columns}
-            data={walletTxn}
-            ref={tableRef}
-            options={{
-               ...options,
-               placeholder: 'No Wallet Data Available Yet !',
-            }}
-         />
+         {Boolean(walletTxn) && (
+            <ReactTabulator
+               columns={columns}
+               data={walletTxn}
+               ref={tableRef}
+               options={{
+                  ...options,
+                  placeholder: 'No Wallet Data Available Yet !',
+               }}
+            />
+         )}
       </Flex>
    )
 }

@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { useLocation, useHistory } from 'react-router-dom'
 import { BRAND_LISTING } from '../../graphql'
 import { logger } from '../../../../shared/utils'
 import { InlineLoader } from '../../../../shared/components'
@@ -9,8 +8,6 @@ import BrandContext from '../../context/Brand'
 // Styled
 import { StyledList, StyledListItem, StyledHeading } from './styled'
 export default function BrandListing() {
-   const history = useHistory()
-   const location = useLocation()
    const [context, setContext] = useContext(BrandContext)
    const [brandList, setBrandList] = useState([])
    const [viewingFor, setViewingFor] = useState('')
@@ -21,15 +18,15 @@ export default function BrandListing() {
          result.map(brand => {
             if (brand.isDefault) {
                setViewingFor(brand.id)
-               setContext(brand.id)
+               setContext({ brandId: brand.id, brandName: brand.title })
             }
          })
       },
    })
 
-   const brandHandler = brandId => {
+   const brandHandler = (brandId, title) => {
       setViewingFor(brandId)
-      setContext(brandId)
+      setContext({ brandId: brandId, brandName: title })
    }
 
    if (error) {
@@ -46,7 +43,7 @@ export default function BrandListing() {
                   <StyledListItem
                      key={brand.id}
                      default={brand.id === viewingFor}
-                     onClick={() => brandHandler(brand.id)}
+                     onClick={() => brandHandler(brand.id, brand.title)}
                   >
                      {brand.title}
                   </StyledListItem>
