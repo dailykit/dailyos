@@ -12,11 +12,11 @@ import {
    AvatarGroup,
    Avatar,
    Text,
+   Flex,
 } from '@dailykit/ui'
 
 import { useTabs } from '../../../context'
 import { APPS } from '../../../graphql'
-import { StyledWrapper, StyledHeader } from '../styled'
 import { InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.settings.views.listings.appslisting.'
@@ -32,23 +32,18 @@ const AppsListing = () => {
       }
    }, [tab, addTab])
 
-   if (loading)
-      return (
-         <StyledWrapper>
-            <div>
-               <StyledHeader>
-                  <Text as="h2">{t(address.concat('apps'))}</Text>
-               </StyledHeader>
-               <InlineLoader />
-            </div>
-         </StyledWrapper>
-      )
    return (
-      <StyledWrapper>
+      <Flex>
          <div>
-            <StyledHeader>
+            <Flex
+               container
+               as="header"
+               height="80px"
+               alignItems="center"
+               justifyContent="space-between"
+            >
                <Text as="h2">{t(address.concat('apps'))}</Text>
-            </StyledHeader>
+            </Flex>
             <Table>
                <TableHead>
                   <TableRow>
@@ -87,7 +82,7 @@ const AppsListing = () => {
                </TableBody>
             </Table>
          </div>
-      </StyledWrapper>
+      </Flex>
    )
 }
 

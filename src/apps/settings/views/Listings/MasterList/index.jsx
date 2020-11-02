@@ -24,6 +24,9 @@ const MasterList = () => {
    const { data: allergens } = useSubscription(MASTER.ALLERGENS.LIST)
    const { data: cuisines } = useSubscription(MASTER.CUISINES.LIST)
    const { data: units } = useSubscription(MASTER.UNITS.AGGREGATE)
+   const { data: productCategories } = useSubscription(
+      MASTER.PRODUCT_CATEGORY.AGGREGATE
+   )
 
    const rowClick = (e, cell) => {
       const { _click } = cell.getData()

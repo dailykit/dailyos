@@ -1,19 +1,35 @@
 export const initialState = {
    firstName: {
       value: '',
-      error: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
    },
    lastName: {
       value: '',
-      error: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
    },
    email: {
       value: '',
-      error: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
    },
    phoneNo: {
       value: '',
-      error: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
    },
 }
 
@@ -27,20 +43,12 @@ export const reducers = (state, { type, payload }) => {
                value: payload.value,
             },
          }
-      case 'SET_FIELD_ERROR':
+      case 'SET_ERRORS':
          return {
             ...state,
             [payload.field]: {
                ...state[payload.field],
-               error: payload,
-            },
-         }
-      case 'CLEAR_FIELD_ERROR':
-         return {
-            ...state,
-            [payload.field]: {
-               ...state[payload.field],
-               error: '',
+               meta: payload.value,
             },
          }
       default:

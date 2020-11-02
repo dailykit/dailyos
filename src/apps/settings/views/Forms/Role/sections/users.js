@@ -1,6 +1,7 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { isEmpty, uniqBy } from 'lodash'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 
 // Components
@@ -14,10 +15,17 @@ import {
    TunnelHeader,
    TagGroup,
    Tag,
+   Flex,
+   Filler,
 } from '@dailykit/ui'
 
 import { ROLES } from '../../../../graphql'
-import { InlineLoader, Flex } from '../../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 
 export const Users = ({ users }) => {
    return (
@@ -38,7 +46,8 @@ export const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
    const params = useParams()
    const [users, setUsers] = React.useState([])
    const [search, setSearch] = React.useState('')
-   const { loading } = useQuery(ROLES.USERS, {
+   const [isLoading, setIsLoading] = React.useState(true)
+   const { error, loading } = useQuery(ROLES.USERS, {
       variables: {
          roleId: {
             _eq: params.id,
@@ -54,9 +63,16 @@ export const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
                }))
             )
          }
+         setIsLoading(false)
       },
    })
    const [list, selected, selectOption] = useMultiList(users)
+
+   if (!loading && error) {
+      toast.error('Failed to fetch users')
+      logger(error)
+      setIsLoading(false)
+   }
 
    const save = () => {
       closeTunnel(1)
@@ -72,13 +88,14 @@ export const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
       <>
          <TunnelHeader
             title="Add Apps"
-            right={{ action: save, title: 'Save' }}
             close={() => closeTunnel(1)}
+            right={{ action: save, title: 'Save' }}
+            tooltip={<Tooltip identifier="form_role_tunnel_users_heading" />}
          />
          <Flex padding="16px">
-            {loading ? (
-               <InlineLoader />
-            ) : (
+            {isLoading && <InlineLoader />}
+            {!isLoading && error && <ErrorState />}
+            {!isLoading && list.length > 0 && (
                <List>
                   <ListSearch
                      onChange={value => setSearch(value)}
@@ -118,6 +135,9 @@ export const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
                         ))}
                   </ListOptions>
                </List>
+            )}
+            {!isLoading && list.length === 0 && (
+               <Filler message="No users yet!" />
             )}
          </Flex>
       </>
