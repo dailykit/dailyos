@@ -22,7 +22,7 @@ import { useTabs } from '../../../context'
 import { SACHET_WORK_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
 
-export default function SachetWorkOrders({ tableRef }) {
+export default function SachetWorkOrders() {
    const {
       data: { sachetWorkOrders = [] } = {},
       loading,
@@ -124,7 +124,6 @@ export default function SachetWorkOrders({ tableRef }) {
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={sachetWorkOrders.filter(
                         col => col.status === 'COMPLETED'
@@ -134,7 +133,6 @@ export default function SachetWorkOrders({ tableRef }) {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={sachetWorkOrders.filter(
                         col => col.status === 'PENDING'
@@ -144,7 +142,6 @@ export default function SachetWorkOrders({ tableRef }) {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={sachetWorkOrders.filter(
                         col => col.status === 'CANCELLED'
@@ -154,7 +151,6 @@ export default function SachetWorkOrders({ tableRef }) {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={sachetWorkOrders.filter(
                         col => col.status === 'UNPUBLISHED'

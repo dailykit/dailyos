@@ -22,7 +22,7 @@ import { useTabs } from '../../../context'
 import { BULK_WORK_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
 
-export default function BulkWorkOrders({ tableRef }) {
+export default function BulkWorkOrders() {
    const {
       data: { bulkWorkOrders = [] } = {},
       loading,
@@ -124,7 +124,6 @@ export default function BulkWorkOrders({ tableRef }) {
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={bulkWorkOrders.filter(
                         col => col.status === 'COMPLETED'
@@ -134,17 +133,6 @@ export default function BulkWorkOrders({ tableRef }) {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
-                     columns={columns}
-                     data={bulkWorkOrders.filter(
-                        col => col.status === 'PENDING'
-                     )}
-                     options={tableOptions}
-                  />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={bulkWorkOrders.filter(
                         col => col.status === 'CANCELLED'
@@ -154,7 +142,6 @@ export default function BulkWorkOrders({ tableRef }) {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReactTabulator
-                     ref={tableRef}
                      columns={columns}
                      data={bulkWorkOrders.filter(
                         col => col.status === 'UNPUBLISHED'

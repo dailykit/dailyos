@@ -23,7 +23,6 @@ const address = 'apps.inventory.views.listings.workorders.'
 export default function WorkOrders() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const tableRef = React.useRef()
 
    const [view, setView] = useState('Bulk')
 
@@ -42,17 +41,10 @@ export default function WorkOrders() {
                padding="16px 0"
             >
                <Flex container alignItems="center">
-                  <Text as="h1">{t(address.concat('work orders'))}</Text>
+                  <Text as="h2">{t(address.concat('work orders'))}</Text>
                   <Tooltip identifier="work-orders_listings_header_title" />
                </Flex>
                <Flex container>
-                  <TextButton
-                     type="outline"
-                     onClick={() => tableRef.current.table.clearHeaderFilter()}
-                  >
-                     Clear Filters
-                  </TextButton>
-                  <Spacer xAxis size="10px" />
                   <ComboButton
                      type="solid"
                      onClick={() => {
@@ -75,11 +67,7 @@ export default function WorkOrders() {
             />
             <Spacer size="16px" />
 
-            {view === 'Bulk' ? (
-               <BulkWorkOrders tableRef={tableRef} />
-            ) : (
-               <SachetWorkOrders tableRef={tableRef} />
-            )}
+            {view === 'Bulk' ? <BulkWorkOrders /> : <SachetWorkOrders />}
          </StyledWrapper>
       </>
    )
