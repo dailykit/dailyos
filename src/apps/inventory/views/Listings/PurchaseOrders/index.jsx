@@ -26,8 +26,6 @@ export default function PurchaseOrders() {
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   const tableRef = React.useRef()
-
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -38,7 +36,7 @@ export default function PurchaseOrders() {
          <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
             <Flex container alignItems="center" justifyContent="space-between">
                <Flex container alignItems="center">
-                  <Text as="title">{t(address.concat('purchase orders'))}</Text>
+                  <Text as="h2">{t(address.concat('purchase orders'))}</Text>
                   <Tooltip identifier="purchase-orders_listings_header_title" />
                </Flex>
                <Flex
@@ -47,13 +45,6 @@ export default function PurchaseOrders() {
                   justifyContent="space-between"
                   padding="16px 0"
                >
-                  <TextButton
-                     type="outline"
-                     onClick={() => tableRef.current.table.clearHeaderFilter()}
-                  >
-                     Clear Filters
-                  </TextButton>
-                  <Spacer xAxis size="10px" />
                   <ComboButton type="solid" onClick={() => openTunnel(1)}>
                      <AddIcon color="#fff" size={24} />
                      Create Purchase Order
@@ -74,9 +65,9 @@ export default function PurchaseOrders() {
             <Spacer size="16px" />
 
             {view === 'Supplier Items' ? (
-               <ItemPurchaseOrders tableRef={tableRef} />
+               <ItemPurchaseOrders />
             ) : (
-               <PackagingPurchaseOrders tableRef={tableRef} />
+               <PackagingPurchaseOrders />
             )}
          </Flex>
       </>
