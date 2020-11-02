@@ -2,7 +2,7 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { Text, Spacer, Toggle } from '@dailykit/ui'
+import { Text, Spacer, Form } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
@@ -180,15 +180,16 @@ export const OnDemandCollections = () => {
             <InlineLoader />
          ) : (
             <>
-               {collections?.aggregate?.count > 0 ? (
+               {collections?.aggregate?.count > 0 && (
                   <ReactTabulator
                      ref={tableRef}
                      columns={columns}
-                     options={tableOptions}
+                     options={{
+                        ...tableOptions,
+                        placeholder: 'No Collection Available Yet !',
+                     }}
                      data={collections?.nodes || []}
                   />
-               ) : (
-                  <span>No Collections yet!</span>
                )}
             </>
          )}
@@ -208,5 +209,11 @@ const ToggleStatus = ({ update, cell }) => {
       }
    }, [checked])
 
-   return <Toggle checked={checked} setChecked={setChecked} />
+   return (
+      <Form.Toggle
+         name="brandOnDemand"
+         onChange={() => setChecked(!checked)}
+         value={checked}
+      />
+   )
 }
