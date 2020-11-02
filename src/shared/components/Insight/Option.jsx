@@ -1,16 +1,21 @@
-import { Checkbox, Input, TextButton, Flex, Tag } from '@dailykit/ui'
+import {
+   Checkbox,
+   Flex,
+   Form,
+   Spacer,
+   Tag,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
 import React, { useState } from 'react'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-
 import { LeftIcon } from '../../assets/icons'
 import '../../styled/datepicker.css'
-import { isObject } from '../../utils/isObject'
 import { checkDateField } from '../../utils/checkDateField'
+import { dateFmt } from '../../utils/dateFmt'
+import { buildOptionVariables } from '../../utils/insight_utils'
+import { isObject } from '../../utils/isObject'
 import { optionsMap } from '../../utils/optionsMap'
 import { fromMixed } from '../../utils/textTransform'
-import { buildOptionVariables } from '../../utils/insight_utils'
-import { dateFmt } from '../../utils/dateFmt'
 import { Dropdown, DropdownItem } from './DropdownMenu'
 import Filters from './Filters/Filters'
 
@@ -144,53 +149,92 @@ export default function Option({
                   <>
                      {isDiff ? (
                         <>
-                           <DatePicker
-                              selected={
-                                 newOptionsState[submenu]?.[option] || ''
-                              }
-                              onSelect={date => {
-                                 setFilterable(true)
-                                 handleChange(date, option, true)
-                              }}
-                           />
-                           <span style={{ width: '10px' }} />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={submenu + option}
+                                 title="dffDateInput"
+                              >
+                                 {renderOptionName(option, submenu)}
+                              </Form.Label>
+                              <Form.Date
+                                 id={submenu + option}
+                                 name={renderOptionName(option, submenu)}
+                                 value={
+                                    newOptionsState[submenu]?.[option] || ''
+                                 }
+                                 onChange={e => {
+                                    setFilterable(true)
+                                    handleChange(e.target.value, option, true)
+                                 }}
+                              />
+                           </Form.Group>
+                           <Spacer xAxis size="10px" />
                         </>
                      ) : null}
-                     <DatePicker
-                        selected={optionsState[submenu]?.[option] || ''}
-                        onSelect={date => {
-                           setFilterable(true)
-                           handleChange(date, option, false)
-                        }}
-                     />
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor={submenu + option}
+                           title="dateInput"
+                        >
+                           {renderOptionName(option, submenu)}
+                        </Form.Label>
+                        <Form.Date
+                           id={submenu + option}
+                           name={renderOptionName(option, submenu)}
+                           value={optionsState[submenu]?.[option] || ''}
+                           onChange={e => {
+                              setFilterable(true)
+                              handleChange(e.target.value, option, false)
+                           }}
+                        />
+                     </Form.Group>
                   </>
                ) : (
                   <>
                      {isDiff ? (
                         <>
-                           <Input
-                              label={renderOptionName(option, submenu)}
-                              type="text"
-                              value={newOptionsState[submenu]?.[option] || ''}
-                              onChange={e => {
-                                 setFilterable(true)
-                                 handleChange(e.target.value, option, true)
-                              }}
-                              name={option}
-                           />
-                           <span style={{ width: '10px' }} />
+                           <Form.Group>
+                              <Form.Label
+                                 title="diffInput"
+                                 htmlFor={submenu + option}
+                              >
+                                 {renderOptionName(option, submenu)}
+                              </Form.Label>
+
+                              <Form.Text
+                                 id={submenu + option}
+                                 value={
+                                    newOptionsState[submenu]?.[option] || ''
+                                 }
+                                 onChange={e => {
+                                    setFilterable(true)
+                                    handleChange(e.target.value, option, true)
+                                 }}
+                                 name={option}
+                                 placeholder={renderOptionName(option, submenu)}
+                              />
+                           </Form.Group>
+                           <Spacer xAxis size="10px" />
                         </>
                      ) : null}
-                     <Input
-                        label={renderOptionName(option, submenu)}
-                        type="text"
-                        value={optionsState[submenu]?.[option] || ''}
-                        onChange={e => {
-                           setFilterable(true)
-                           handleChange(e.target.value, option, false)
-                        }}
-                        name={option}
-                     />
+                     <Form.Group>
+                        <Form.Label
+                           htmlFor={submenu + option}
+                           title="filterInput"
+                        >
+                           {renderOptionName(option, submenu)}
+                        </Form.Label>
+                        <Form.Text
+                           id={submenu + option}
+                           value={optionsState[submenu]?.[option] || ''}
+                           onChange={e => {
+                              setFilterable(true)
+                              handleChange(e.target.value, option, false)
+                           }}
+                           name={option}
+                           placeholder={renderOptionName(option, submenu)}
+                        />
+                     </Form.Group>
                   </>
                )}
             </Flex>
@@ -212,7 +256,7 @@ export default function Option({
                   handleReset={handleReset}
                   isDiff={isDiff}
                />
-               <span style={{ width: '1rem' }} />
+               <Spacer xAxis size="16px" />
                <Dropdown
                   title="More Filters"
                   withIcon
@@ -236,7 +280,7 @@ export default function Option({
                </Dropdown>
                {showColumnToggle ? (
                   <>
-                     <span style={{ width: '1rem' }} />
+                     <Spacer xAxis size="16px" />
                      <Switches
                         switches={switches}
                         updateSwitches={updateSwitches}
@@ -247,6 +291,7 @@ export default function Option({
             <AppliedFilters
                currentNewOptions={currentNewOptions}
                currentOptions={currentOptions}
+               isDiff={isDiff}
             />
          </>
       )
@@ -264,7 +309,7 @@ export default function Option({
                handleReset={handleReset}
                isDiff={isDiff}
             />
-            <span style={{ width: '1rem' }} />
+            <Spacer xAxis size="16px" />
             <Dropdown
                title="More Filters"
                withIcon
@@ -277,6 +322,14 @@ export default function Option({
                   leftIcon={<LeftIcon color="#888d9d" />}
                   width={isDiff ? '400px' : null}
                />
+               {isDiff ? (
+                  <DropdownItem>
+                     <Flex container justifyContent="space-between">
+                        <Text as="h4">New Filters</Text>
+                        <Text as="h4">Base Filters</Text>
+                     </Flex>
+                  </DropdownItem>
+               ) : null}
                {isObject(options[submenu]) &&
                   Object.keys(options[submenu]).map(option => {
                      return (
@@ -293,7 +346,7 @@ export default function Option({
             </Dropdown>
             {showColumnToggle ? (
                <>
-                  <span style={{ width: '1rem' }} />
+                  <Spacer xAxis size="16px" />
                   <Switches
                      switches={switches}
                      updateSwitches={updateSwitches}
@@ -304,6 +357,7 @@ export default function Option({
          <AppliedFilters
             currentNewOptions={currentNewOptions}
             currentOptions={currentOptions}
+            isDiff={isDiff}
          />
       </>
    )
@@ -326,6 +380,8 @@ function Switches({ switches, updateSwitches }) {
       )
    }
 
+   if (!Object.keys(switches).length) return null
+
    return (
       <Dropdown
          show={show}
@@ -341,75 +397,79 @@ function Switches({ switches, updateSwitches }) {
    )
 }
 
-const AppliedFilters = React.memo(({ currentNewOptions, currentOptions }) => {
-   return (
-      <div
-         style={{
-            marginTop: '0.6rem',
-            gridColumn: '1 / 3',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            columnGap: '2rem',
-         }}
-      >
-         {Object.keys(currentNewOptions).length ? (
-            <Flex>
-               {Object.keys(currentNewOptions).map(option => {
-                  if (!checkDateField(option))
+const AppliedFilters = React.memo(
+   ({ currentNewOptions, currentOptions, isDiff }) => {
+      return (
+         <div
+            style={{
+               marginTop: '0.6rem',
+               gridColumn: '1 / 3',
+               display: 'grid',
+               gridTemplateColumns: '1fr 1fr',
+               columnGap: '2rem',
+            }}
+         >
+            {isDiff && Object.keys(currentNewOptions).length ? (
+               <Flex>
+                  {Object.keys(currentNewOptions).map(option => {
+                     if (!checkDateField(option))
+                        return Object.keys(currentNewOptions[option]).map(
+                           (key, i) => {
+                              if (currentNewOptions[option][key])
+                                 return (
+                                    <Tag color="primary" key={option + i}>
+                                       {fromMixed(option)}: {optionsMap[key]}{' '}
+                                       {currentNewOptions[option][key]}
+                                    </Tag>
+                                 )
+                           }
+                        )
+
                      return Object.keys(currentNewOptions[option]).map(
                         (key, i) => {
                            if (currentNewOptions[option][key])
                               return (
                                  <Tag color="primary" key={option + i}>
+                                    {optionsMap[option][key]}{' '}
+                                    {dateFmt.format(
+                                       new Date(currentNewOptions[option][key])
+                                    )}
+                                 </Tag>
+                              )
+                        }
+                     )
+                  })}
+               </Flex>
+            ) : null}
+            <Flex>
+               {Object.keys(currentOptions).map(option => {
+                  if (!checkDateField(option))
+                     return Object.keys(currentOptions[option]).map(
+                        (key, i) => {
+                           if (currentOptions[option][key])
+                              return (
+                                 <Tag color="primary" key={option + i}>
                                     {fromMixed(option)}: {optionsMap[key]}{' '}
-                                    {currentNewOptions[option][key]}
+                                    {currentOptions[option][key]}
                                  </Tag>
                               )
                         }
                      )
 
-                  return Object.keys(currentNewOptions[option]).map(
-                     (key, i) => {
-                        if (currentNewOptions[option][key])
-                           return (
-                              <Tag color="primary" key={option + i}>
-                                 {optionsMap[option][key]}{' '}
-                                 {dateFmt.format(
-                                    new Date(currentNewOptions[option][key])
-                                 )}
-                              </Tag>
-                           )
-                     }
-                  )
-               })}
-            </Flex>
-         ) : null}
-         <Flex>
-            {Object.keys(currentOptions).map(option => {
-               if (!checkDateField(option))
                   return Object.keys(currentOptions[option]).map((key, i) => {
                      if (currentOptions[option][key])
                         return (
                            <Tag color="primary" key={option + i}>
-                              {fromMixed(option)}: {optionsMap[key]}{' '}
-                              {currentOptions[option][key]}
+                              {optionsMap[option][key]}{' '}
+                              {dateFmt.format(
+                                 new Date(currentOptions[option][key])
+                              )}
                            </Tag>
                         )
                   })
-
-               return Object.keys(currentOptions[option]).map((key, i) => {
-                  if (currentOptions[option][key])
-                     return (
-                        <Tag color="primary" key={option + i}>
-                           {optionsMap[option][key]}{' '}
-                           {dateFmt.format(
-                              new Date(currentOptions[option][key])
-                           )}
-                        </Tag>
-                     )
-               })
-            })}
-         </Flex>
-      </div>
-   )
-})
+               })}
+            </Flex>
+         </div>
+      )
+   }
+)
