@@ -8,7 +8,11 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../../tableOption'
 import { BRANDS, COLLECTIONS } from '../../../../../graphql'
-import { Flex, InlineLoader } from '../../../../../../../shared/components'
+import {
+   Flex,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../shared/components'
 import { useTooltip } from '../../../../../../../shared/providers'
 import { logger } from '../../../../../../../shared/utils'
 
@@ -174,7 +178,12 @@ export const OnDemandCollections = () => {
 
    return (
       <Flex padding="16px">
-         <Text as="h2">Collections ({collections?.aggregate?.count || 0})</Text>
+         <Flex container alignItems="center">
+            <Text as="h2">
+               Collections ({collections?.aggregate?.count || 0})
+            </Text>
+            <Tooltip identifier="brands_collection_listing_heading" />
+         </Flex>
          <Spacer size="24px" />
          {loading ? (
             <InlineLoader />

@@ -8,7 +8,11 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../../tableOption'
 import { BRANDS, PLANS } from '../../../../../graphql'
-import { Flex, InlineLoader } from '../../../../../../../shared/components'
+import {
+   Flex,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../shared/components'
 import { useTooltip } from '../../../../../../../shared/providers'
 import { logger } from '../../../../../../../shared/utils'
 
@@ -111,9 +115,12 @@ export const SubscriptionPlans = () => {
 
    return (
       <Flex padding="16px">
-         <Text as="h2">
-            Subscription Plans ({plans?.aggregate?.count || 0})
-         </Text>
+         <Flex container alignItems="center">
+            <Text as="h2">
+               Subscription Plans ({plans?.aggregate?.count || 0})
+            </Text>
+            <Tooltip identifier="brands_subscriptionPlans_listing_heading" />
+         </Flex>
          <Spacer size="24px" />
          {loading ? (
             <InlineLoader />
