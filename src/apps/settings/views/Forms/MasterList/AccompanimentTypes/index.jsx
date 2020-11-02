@@ -1,28 +1,38 @@
+import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    ComboButton,
-   IconButton,
-   Loader,
    Text,
    Tunnel,
    Tunnels,
    useTunnel,
+   Flex,
+   IconButton,
 } from '@dailykit/ui'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { toast } from 'react-toastify'
-import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import { MASTER } from '../../../../graphql'
-import tableOptions from '../../../Listings/tableOption'
-import { Card, Layout, Listing, ListingHeader } from '../styled'
+
 import { AddTypesTunnel } from './tunnels'
+import { MASTER } from '../../../../graphql'
+import { useTabs } from '../../../../context'
+import { logger } from '../../../../../../shared/utils'
+import tableOptions from '../../../Listings/tableOption'
+import { useTooltip } from '../../../../../../shared/providers'
+import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../shared/components'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
 const AccompanimentTypesForm = () => {
    const { t } = useTranslation()
+   const { tab, addTab } = useTabs()
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
@@ -32,24 +42,29 @@ const AccompanimentTypesForm = () => {
    // Mutation
    const [deleteElement] = useMutation(MASTER.ACCOMPANIMENTS.DELETE, {
       onCompleted: () => {
-         toast.success('Deleted!')
+         toast.success('Successfully deleted the accompaniment!')
       },
-      onError: err => {
-         console.log(err)
-         toast.error('Error')
+      onError: error => {
+         toast.error('Failed to delete the accompaniment')
+         logger(error)
       },
    })
 
-   // Handlers
-   const deleteHandler = (e, el) => {
-      e.stopPropagation()
-      if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
-         deleteElement({
-            variables: {
-               ids: [el.id],
-            },
-         })
+   React.useEffect(() => {
+      if (!tab) {
+         addTab(
+            'Accompaniment Types',
+            `/settings/master-lists/accompaniment-types`
+         )
       }
+   }, [tab, addTab])
+
+   const remove = id => {
+      deleteElement({
+         variables: {
+            ids: [id],
+         },
+      })
    }
 
    const columns = [
@@ -57,6 +72,12 @@ const AccompanimentTypesForm = () => {
          title: t(address.concat('type')),
          field: 'name',
          headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_accompaniment_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Actions',
@@ -64,61 +85,68 @@ const AccompanimentTypesForm = () => {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            const { id, name } = cell._cell.row.data
-            deleteHandler(e, { id, name })
-         },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
 
-   if (error) {
-      console.log(error)
+   if (loading) return <InlineLoader />
+   if (!loading && error) {
+      logger(error)
+      toast.error('Failed to fetch accompaniments!')
+      return <ErrorState />
    }
-   if (loading) return <Loader />
-
    return (
-      <>
+      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+         <Flex
+            as="header"
+            container
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">
+                  {t(address.concat('accompaniment types'))} (
+                  {data.accompaniments.length || 0})
+               </Text>
+               <Tooltip identifier="listing_accompaniments_heading" />
+            </Flex>
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
+               <AddIcon size={24} /> Create Accompaniment Type
+            </ComboButton>
+         </Flex>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data.accompaniments}
+            options={tableOptions}
+         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <AddTypesTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Layout>
-            <Card>
-               <div>
-                  <Text as="title">
-                     {t(address.concat('accompaniment types'))}
-                  </Text>
-               </div>
-               <div>
-                  <Text as="title">{data.accompaniments.length}</Text>
-                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                     <AddIcon color="#00A7E1" size={24} />
-                  </IconButton>
-               </div>
-            </Card>
-            <Listing>
-               <ListingHeader>
-                  <Text as="p">
-                     {t(address.concat('accompaniment types'))} (
-                     {data.accompaniments.length})
-                  </Text>
-                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                     <AddIcon size={24} /> Create Accompaniment Type
-                  </ComboButton>
-               </ListingHeader>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={data.accompaniments}
-                  options={tableOptions}
-               />
-            </Listing>
-         </Layout>
-      </>
+      </Flex>
    )
 }
 
 export default AccompanimentTypesForm
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { id = null, name = '' } = cell.getData()
+      if (
+         window.confirm(
+            `Are your sure you want to delete ${name} accompaniment?`
+         )
+      ) {
+         remove(id)
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
+}

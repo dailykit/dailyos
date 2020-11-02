@@ -1,4 +1,6 @@
 import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
@@ -8,54 +10,65 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Flex,
 } from '@dailykit/ui'
-import { ErrorBoundary } from '@sentry/react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import { InlineLoader } from '../../../../../../shared/components'
-import { logger } from '../../../../../../shared/utils'
-import {
-   DELETE_PRODUCT_CATEGORY,
-   PRODUCT_CATEGORIES,
-} from '../../../../graphql'
-import tableOptions from '../../../Listings/tableOption'
-import { Card, Layout, Listing, ListingHeader } from '../styled'
+
 import { Add } from './tunnels'
+import { MASTER } from '../../../../graphql'
+import { useTabs } from '../../../../context'
+import { logger } from '../../../../../../shared/utils'
+import tableOptions from '../../../Listings/tableOption'
+import { useTooltip } from '../../../../../../shared/providers'
+import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../shared/components'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.'
 
 const ProductCategoriesForm = () => {
    const { t } = useTranslation()
+   const { tooltip } = useTooltip()
    const tableRef = React.useRef()
+   const { tab, addTab } = useTabs()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(PRODUCT_CATEGORIES)
+   const { loading, data, error } = useSubscription(
+      MASTER.PRODUCT_CATEGORY.LIST
+   )
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_PRODUCT_CATEGORY, {
+   const [deleteElement] = useMutation(MASTER.PRODUCT_CATEGORY.DELETE, {
       onCompleted: () => {
-         toast.success('Deleted!')
+         toast.success('Successfully deleted the product category!')
       },
       onError: error => {
-         toast.error('Something went wrong!')
+         toast.error('Failed to delete the product category')
          logger(error)
       },
    })
 
-   // Handlers
-   const deleteHandler = el => {
-      if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
-         deleteElement({
-            variables: {
-               where: {
-                  name: { _eq: el.name },
-               },
-            },
-         })
+   React.useEffect(() => {
+      if (!tab) {
+         addTab(
+            'Product Categories',
+            `/settings/master-lists/product-categories`
+         )
       }
+   }, [tab, addTab])
+
+   const remove = name => {
+      deleteElement({
+         variables: {
+            where: {
+               name: { _eq: name },
+            },
+         },
+      })
    }
 
    const columns = [
@@ -63,6 +76,12 @@ const ProductCategoriesForm = () => {
          title: t(address.concat('type')),
          field: 'name',
          headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_product_categories_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Actions',
@@ -70,63 +89,66 @@ const ProductCategoriesForm = () => {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         formatter: reactFormatter(<DeleteCategory onDelete={deleteHandler} />),
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
 
-   if (!loading && error) return <ErrorBoundary rootRoute="/apps/settings" />
-
+   if (loading) return <InlineLoader />
+   if (!loading && error) {
+      logger(error)
+      toast.error('Failed to fetch product categories!')
+      return <ErrorState />
+   }
    return (
-      <>
+      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+         <Flex
+            as="header"
+            container
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">
+                  Product Categories ({data.productCategories.length})
+               </Text>
+               <Tooltip identifier="listing_product_categories_heading" />
+            </Flex>
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
+               <AddIcon size={24} /> Create Product Category
+            </ComboButton>
+         </Flex>
+         <ReactTabulator
+            ref={tableRef}
+            columns={columns}
+            data={data.productCategories}
+            options={tableOptions}
+         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <Add closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         {loading ? (
-            <InlineLoader />
-         ) : (
-            <Layout>
-               <Card>
-                  <div>
-                     <Text as="title">Product Categories</Text>
-                  </div>
-                  <div>
-                     <Text as="title">{data.productCategories.length}</Text>
-                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                        <AddIcon color="#00A7E1" size={24} />
-                     </IconButton>
-                  </div>
-               </Card>
-               <Listing>
-                  <ListingHeader>
-                     <Text as="p">
-                        Product Categories ({data.productCategories.length})
-                     </Text>
-                     <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                        <AddIcon size={24} /> Create Product Category
-                     </ComboButton>
-                  </ListingHeader>
-                  <ReactTabulator
-                     ref={tableRef}
-                     columns={columns}
-                     data={data.productCategories}
-                     options={tableOptions}
-                  />
-               </Listing>
-            </Layout>
-         )}
-      </>
+      </Flex>
    )
 }
 
 export default ProductCategoriesForm
 
-function DeleteCategory({ cell, onDelete }) {
-   const category = cell.getData()
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { name = '' } = cell.getData()
+      if (
+         window.confirm(
+            `Are your sure you want to delete product category - ${name} ?`
+         )
+      ) {
+         remove(name)
+      }
+   }
 
    return (
-      <IconButton type="ghost" onClick={() => onDelete(category)}>
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )

@@ -1,12 +1,13 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../../../../shared/utils'
-import { CREATE_PRODUCT_CATEGORY } from '../../../../../../graphql'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
+import { Form, Spacer, TunnelHeader, Flex } from '@dailykit/ui'
+
 import validator from '../../../../validators'
-import { TunnelBody } from '../styled'
+import { MASTER } from '../../../../../../graphql'
+import { logger } from '../../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 
@@ -33,14 +34,14 @@ const AddTypesTunnel = ({ closeTunnel }) => {
 
    // Mutation
    const [addCategory, { loading: inFlight }] = useMutation(
-      CREATE_PRODUCT_CATEGORY,
+      MASTER.PRODUCT_CATEGORY.CREATE,
       {
          onCompleted: () => {
             toast.success('Product category added!')
             closeTunnel(1)
          },
          onError: error => {
-            toast.error('Error')
+            toast.error('Failed to add product category!')
             logger(error)
          },
       }
@@ -75,8 +76,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                   : t(address.concat('add')),
             }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="tunnel_product_category_heading" />}
          />
-         <TunnelBody>
+         <Flex padding="16px">
             <Form.Group>
                <Form.Label htmlFor="name" title="name">
                   Name*
@@ -129,7 +131,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                      <Form.Error key={index}>{error}</Form.Error>
                   ))}
             </Form.Group>
-         </TunnelBody>
+         </Flex>
       </>
    )
 }
