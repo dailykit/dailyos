@@ -200,10 +200,13 @@ export const SACHET_WORK_ORDERS_SUBSCRIPTION = gql`
 `
 
 export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
-   subscription PurchaseOrderItems {
-      purchaseOrderItems {
+   subscription PurchaseOrderItems($type: String!) {
+      purchaseOrderItems(where: { type: { _eq: $type } }) {
          id
          type
+         created_at
+         orderQuantity
+         unit
          supplierItem {
             id
             name
@@ -211,7 +214,7 @@ export const PURCHASE_ORDERS_SUBSCRIPTION = gql`
          status
          packaging {
             id
-            packagingName: name
+            name
          }
       }
    }

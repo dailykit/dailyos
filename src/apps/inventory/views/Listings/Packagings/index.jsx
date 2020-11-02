@@ -151,7 +151,7 @@ export default function Packagings() {
                padding="16px 0"
             >
                <Flex container alignItems="center">
-                  <Text as="title">Packagings</Text>
+                  <Text as="h2">Packagings</Text>
                   <Tooltip identifier="packagings_listings_header_title" />
                </Flex>
                <Flex container>

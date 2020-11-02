@@ -6,6 +6,7 @@ import {
    IconButton,
    Loader,
    Spacer,
+   Text,
    TextButton,
 } from '@dailykit/ui'
 import React from 'react'
@@ -155,7 +156,7 @@ export default function SupplierListing() {
                padding="16px 0"
             >
                <Flex container>
-                  <h1>{t(address.concat('suppliers'))}</h1>
+                  <Text as="h2">{t(address.concat('suppliers'))}</Text>
                   <Tooltip identifier="suppliers_listings_heading" />
                </Flex>
                <Flex
