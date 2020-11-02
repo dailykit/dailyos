@@ -6,6 +6,7 @@ import {
    Form,
    Spacer,
    PlusIcon,
+   ComboButton,
    IconButton,
    Tunnel,
    Tunnels,
@@ -21,6 +22,7 @@ import { StyledWrapper, StyledHeader } from '../styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Flex, Tooltip } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
@@ -30,7 +32,7 @@ export const Brands = () => {
       title: '',
       domain: '',
    })
-   const [create] = useMutation(BRANDS.CREATE_BRAND, {
+   const [create, { loading }] = useMutation(BRANDS.CREATE_BRAND, {
       onCompleted: () => {
          setForm({
             title: '',
@@ -54,9 +56,11 @@ export const Brands = () => {
    })
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const { error, loading, data: { brands = {} } = {} } = useSubscription(
-      BRANDS.LIST
-   )
+   const {
+      error,
+      loading: listLoading,
+      data: { brands = {} } = {},
+   } = useSubscription(BRANDS.LIST)
 
    React.useEffect(() => {
       if (!tab) {
@@ -177,7 +181,11 @@ export const Brands = () => {
       setForm(form => ({ ...form, [name]: value }))
    }
 
-   if (error) return <div>Something went wrong, please refresh!</div>
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+   if (listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <StyledHeader>
@@ -185,9 +193,11 @@ export const Brands = () => {
                <Text as="h2">Brands ({brands?.aggregate?.count || 0})</Text>
                <Tooltip identifier="brands_listing_heading" />
             </Flex>
-            <IconButton type="solid" onClick={() => openTunnel(1)}>
+
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
                <PlusIcon />
-            </IconButton>
+               Create Brand
+            </ComboButton>
          </StyledHeader>
          {loading ? (
             <InlineLoader />
@@ -208,7 +218,10 @@ export const Brands = () => {
             <Tunnel layer={1} size="md">
                <TunnelHeader
                   title="Add Brand"
-                  right={{ action: save, title: 'Save' }}
+                  right={{
+                     action: save,
+                     title: loading ? 'Saving...' : 'Save',
+                  }}
                   close={() => closeTunnel(1)}
                   tooltip={<Tooltip identifier="create_brand_tunnelHeader" />}
                />
