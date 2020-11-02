@@ -3,10 +3,10 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
+import { Input, TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const AppTitle = ({ update }) => {
    const params = useParams()
@@ -47,10 +47,21 @@ export const AppTitle = ({ update }) => {
 
    return (
       <div id="App Title">
-         <Text as="h3">App Title</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">App Title</Text>
+            <Tooltip identifier="app_title_info" />
+         </Flex>
          <Spacer size="4px" />
          <Flex container alignItems="center">
-            <Input
+            <Form.Text
+               id="name"
+               name="name"
+               placeholder="Enter app title"
+               value={title}
+               onChange={e => setTitle(e.target.value)}
+            />
+            <Spacer size="8px" xAxis />
+            {/* <Input
                type="text"
                label=""
                name="name"
@@ -58,8 +69,8 @@ export const AppTitle = ({ update }) => {
                style={{ width: '240px' }}
                placeholder="Enter app title"
                onChange={e => setTitle(e.target.value)}
-            />
-            <TextButton size="sm" type="outline" onClick={updateSetting}>
+            /> */}
+            <TextButton size="lg" type="outline" onClick={updateSetting}>
                Update
             </TextButton>
          </Flex>

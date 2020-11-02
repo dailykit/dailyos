@@ -13,6 +13,7 @@ import {
    Tunnel,
    useTunnel,
    TunnelHeader,
+   Form,
 } from '@dailykit/ui'
 
 import { ImageContainer } from '../styled'
@@ -21,6 +22,7 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    Flex,
    AssetUploader,
+   Tooltip,
 } from '../../../../../../../../../shared/components'
 
 export const Brand = ({ update }) => {
@@ -104,26 +106,27 @@ export const Brand = ({ update }) => {
       <div id="theme-brand">
          <Flex>
             <Flex>
-               <Text as="h3">Name</Text>
+               <Flex container alignItems="flex-start">
+                  <Text as="h3">Name</Text>
+                  <Tooltip identifier="brand_subscription_name_info" />
+               </Flex>
                <Spacer size="4px" />
-               <Input
-                  label=""
-                  type="text"
+               <Form.Text
+                  id="name"
                   name="name"
                   value={form.name}
-                  style={{ width: '240px' }}
                   placeholder="Enter brand name"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
             </Flex>
             <Spacer size="24px" />
             <Flex>
-               <Text as="h3">Meta Description</Text>
+               <Flex container alignItems="flex-start">
+                  <Text as="h3">Meta Description</Text>
+                  <Tooltip identifier="brand_metaDescription_info" />
+               </Flex>
                <Spacer size="4px" />
-               <Input
-                  label=""
-                  rows="3"
-                  type="textarea"
+               <Form.TextArea
                   name="metaDescription"
                   value={form.metaDescription}
                   onChange={e => handleChange(e.target.name, e.target.value)}

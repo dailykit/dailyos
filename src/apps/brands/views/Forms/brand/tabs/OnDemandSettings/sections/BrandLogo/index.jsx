@@ -19,6 +19,7 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    AssetUploader,
    Flex,
+   Tooltip,
 } from '../../../../../../../../../shared/components'
 
 export const BrandLogo = ({ update }) => {
@@ -63,7 +64,10 @@ export const BrandLogo = ({ update }) => {
 
    return (
       <div id="Brand Logo">
-         <Text as="h3">Logo</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Logo</Text>
+            <Tooltip identifier="brand_logo_info" />
+         </Flex>
          <Spacer size="16px" />
          {url ? (
             <ImageContainer width="120px" height="120px">

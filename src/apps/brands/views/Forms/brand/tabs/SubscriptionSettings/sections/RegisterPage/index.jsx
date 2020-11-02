@@ -20,6 +20,7 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    Flex,
    AssetUploader,
+   Tooltip,
 } from '../../../../../../../../../shared/components'
 
 export const RegisterPage = ({ update }) => {
@@ -87,9 +88,15 @@ export const RegisterPage = ({ update }) => {
 
    return (
       <div id="register-background">
-         <Text as="h3">Register Page Background</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Register Page Background</Text>
+            <Tooltip identifier="brand_registerPage_info" />
+         </Flex>
          <Spacer size="24px" />
-         <Text as="p">Background Color</Text>
+         <Flex container alignItems="center">
+            <Text as="p">Background Color</Text>
+            <Tooltip identifier="brand_registerPage_background_info" />
+         </Flex>
          <Spacer size="8px" />
          <input
             type="color"

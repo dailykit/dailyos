@@ -2,10 +2,10 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
+import { Form, TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const PrimaryLabels = ({ update }) => {
    const params = useParams()
@@ -97,76 +97,127 @@ export const PrimaryLabels = ({ update }) => {
       <div id="primary-labels">
          <Flex>
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  name="login"
-                  label="Login Label"
-                  value={form.login}
-                  style={{ width: '240px' }}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Login Label
+                        <Tooltip identifier="brand_login_label_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="login"
+                     name="login"
+                     value={form.login}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+
                <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  name="logout"
-                  label="Logout Label"
-                  value={form.logout}
-                  style={{ width: '240px' }}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Logout Label
+                        <Tooltip identifier="brand_logout_label_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="logout"
+                     name="logout"
+                     value={form.logout}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
             </Flex>
             <Spacer size="24px" />
-            <Input
-               type="text"
-               name="signup"
-               value={form.signup}
-               label="Sign Up Label"
-               style={{ width: '240px' }}
-               onChange={e => handleChange(e.target.name, e.target.value)}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="label" title="label">
+                  <Flex container alignItems="center">
+                     Sign Up Label
+                     <Tooltip identifier="brand_signup_label_info" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="signup"
+                  name="signup"
+                  value={form.signup}
+                  onChange={e => handleChange(e.target.name, e.target.value)}
+               />
+            </Form.Group>
+
             <Spacer size="24px" />
-            <Text as="h3">Item Label</Text>
+            <Flex container alignItems="center">
+               <Text as="h3">Item Label</Text>
+               <Tooltip identifier="brand_item_label_info" />
+            </Flex>
             <Spacer size="16px" />
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  label="Plural Label"
-                  name="itemLabelPlural"
-                  value={form.itemLabelPlural}
-                  style={{ width: '240px' }}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Plural Label
+                        <Tooltip identifier="brand_itemLabelPlural_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="itemLabelPlural"
+                     name="itemLabelPlural"
+                     value={form.itemLabelPlural}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+
                <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  label="Singular Label"
-                  name="itemLabelSingular"
-                  style={{ width: '240px' }}
-                  value={form.itemLabelSingular}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Singular Label
+                        <Tooltip identifier="brand_itemLabelSingular_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="itemLabelSingular"
+                     name="itemLabelSingular"
+                     value={form.itemLabelSingular}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
             </Flex>
             <Spacer size="24px" />
-            <Text as="h3">Yield Label</Text>
+            <Flex container alignItems="center">
+               <Text as="h3">Yield Label</Text>
+               <Tooltip identifier="brand_yield_label_info" />
+            </Flex>
             <Spacer size="16px" />
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  label="Plural Label"
-                  name="yieldLabelPlural"
-                  style={{ width: '240px' }}
-                  value={form.yieldLabelPlural}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Plural Label
+                        <Tooltip identifier="brand_yieldLabelPlural_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="yieldLabelPlural"
+                     name="yieldLabelPlural"
+                     value={form.yieldLabelPlural}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
                <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  label="Singular Label"
-                  name="yieldLabelSingular"
-                  style={{ width: '240px' }}
-                  value={form.yieldLabelSingular}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Singular Label
+                        <Tooltip identifier="brand_yieldLabelSingular_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="yieldLabelSingular"
+                     name="yieldLabelSingular"
+                     value={form.yieldLabelSingular}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
             </Flex>
             <Spacer size="16px" />
             <TextButton size="sm" type="outline" onClick={updateSetting}>

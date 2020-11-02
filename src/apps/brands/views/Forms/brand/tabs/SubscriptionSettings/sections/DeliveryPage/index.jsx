@@ -20,6 +20,7 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    Flex,
    AssetUploader,
+   Tooltip,
 } from '../../../../../../../../../shared/components'
 
 export const DeliveryPage = ({ update }) => {
@@ -87,9 +88,15 @@ export const DeliveryPage = ({ update }) => {
 
    return (
       <div id="select-delivery-background">
-         <Text as="h3">Delivery Page Background</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Delivery Page Background</Text>
+            <Tooltip identifier="brand_deliveryBackground_info" />
+         </Flex>
          <Spacer size="24px" />
-         <Text as="p">Background Color</Text>
+         <Flex container alignItems="center">
+            <Text as="p">Background Color</Text>
+            <Tooltip identifier="brand_deliveryBackground_color_info" />
+         </Flex>
          <Spacer size="8px" />
          <input
             type="color"

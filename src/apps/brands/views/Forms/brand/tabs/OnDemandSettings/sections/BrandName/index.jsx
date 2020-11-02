@@ -3,10 +3,10 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
+import { Input, TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const BrandName = ({ update }) => {
    const params = useParams()
@@ -47,19 +47,21 @@ export const BrandName = ({ update }) => {
 
    return (
       <div id="Brand Name">
-         <Text as="h3">Name</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Name</Text>
+            <Tooltip identifier="brand_name_info" />
+         </Flex>
          <Spacer size="4px" />
          <Flex container alignItems="center">
-            <Input
-               type="text"
-               label=""
+            <Form.Text
+               id="name"
                name="name"
                value={name}
-               style={{ width: '240px' }}
                placeholder="Enter brand name"
                onChange={e => setName(e.target.value)}
             />
-            <TextButton size="sm" type="outline" onClick={updateSetting}>
+            <Spacer size="8px" xAxis />
+            <TextButton size="lg" type="outline" onClick={updateSetting}>
                Update
             </TextButton>
          </Flex>

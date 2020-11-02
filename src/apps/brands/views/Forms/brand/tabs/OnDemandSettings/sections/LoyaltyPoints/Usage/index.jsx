@@ -2,10 +2,10 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Input } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../../shared/components'
 
 const LoyaltyPointsUsage = ({ update }) => {
    const params = useParams()
@@ -52,18 +52,30 @@ const LoyaltyPointsUsage = ({ update }) => {
 
    return (
       <div id="Loyalty Points Availability">
-         <Text as="h3">Loyalty Points Usage</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Loyalty Points Usage</Text>
+            <Tooltip identifier="brand_loyaltyPnts_usage_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container alignItems="center">
-               $
-               <Input
-                  type="number"
-                  label="Conversion Rate"
-                  value={conversionRate}
-                  onChange={e => setConversionRate(+e.target.value)}
-                  style={{ maxWidth: 200, marginLeft: 8 }}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="rate" title="rate">
+                     <Flex container alignItems="center">
+                        Conversion Rate
+                        <Tooltip identifier="brand_loyaltyPnts_conversionRate_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <p>$</p>
+                     <Form.Stepper
+                        id="conversionRate"
+                        name="conversionRate"
+                        value={conversionRate}
+                        onChange={e => setConversionRate(+e.target.value)}
+                     />
+                  </Flex>
+               </Form.Group>
             </Flex>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
@@ -72,24 +84,43 @@ const LoyaltyPointsUsage = ({ update }) => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container alignItems="center">
-               <Input
-                  type="number"
-                  label="Percent of Total Cart Amount"
-                  value={percentage}
-                  onChange={e => setPercentage(+e.target.value)}
-                  style={{ maxWidth: 200, marginRight: 8 }}
-               />
-               %
+               <Form.Group>
+                  <Form.Label htmlFor="percentage" title="percentage">
+                     <Flex container alignItems="center">
+                        Percent of Total Cart Amount
+                        <Tooltip identifier="brand_loyaltyPnts_cartPercentage_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Stepper
+                        id="percentage"
+                        name="percentage"
+                        value={percentage}
+                        onChange={e => setPercentage(+e.target.value)}
+                     />
+                     <p>%</p>
+                  </Flex>
+               </Form.Group>
             </Flex>
+            <Spacer size="12px" xAxis />
             <Flex container alignItems="center">
-               $
-               <Input
-                  type="number"
-                  label="Max Amount"
-                  value={max}
-                  onChange={e => setMax(+e.target.value)}
-                  style={{ maxWidth: 200, marginLeft: 8 }}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="maxAmount" title="maxAmount">
+                     <Flex container alignItems="center">
+                        Max Amount
+                        <Tooltip identifier="brand_loyaltyPnts_maxAmount_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <p>$</p>
+                     <Form.Stepper
+                        id="maxAmount"
+                        name="maxAmount"
+                        value={max}
+                        onChange={e => setMax(+e.target.value)}
+                     />
+                  </Flex>
+               </Form.Group>
             </Flex>
          </Flex>
       </div>

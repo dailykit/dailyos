@@ -20,6 +20,7 @@ import { DeleteIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    AssetUploader,
    Flex,
+   Tooltip,
 } from '../../../../../../../../../shared/components'
 
 export const Slides = ({ update }) => {
@@ -68,7 +69,10 @@ export const Slides = ({ update }) => {
 
    return (
       <div id="Slides">
-         <Text as="h3">Slides</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Slides</Text>
+            <Tooltip identifier="brand_slides_info" />
+         </Flex>
          <Spacer size="16px" />
          <ButtonTile
             type="primary"

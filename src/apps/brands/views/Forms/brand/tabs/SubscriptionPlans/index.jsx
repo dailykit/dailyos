@@ -9,16 +9,22 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import tableOptions from '../../../../../tableOption'
 import { BRANDS, PLANS } from '../../../../../graphql'
 import { Flex, InlineLoader } from '../../../../../../../shared/components'
+import { useTooltip } from '../../../../../../../shared/providers'
+import { logger } from '../../../../../../../shared/utils'
 
 export const SubscriptionPlans = () => {
+   const { tooltip } = useTooltip()
    const params = useParams()
    const tableRef = React.useRef()
    const [plans, setPlans] = React.useState({})
    const [updateBrandCollection] = useMutation(BRANDS.UPSERT_BRAND_TITLE, {
       onCompleted: () => toast.success('Successfully updated!'),
-      onError: () => toast.error('Failed to update, please try again!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
    })
-   const { loading } = useSubscription(PLANS.LIST, {
+   const { loading, error } = useSubscription(PLANS.LIST, {
       variables: {
          brandId: {
             _eq: params.id,
@@ -36,6 +42,11 @@ export const SubscriptionPlans = () => {
          setPlans({ ...titles, nodes: titles.nodes.map(transform) })
       },
    })
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    const toggleStatus = ({ id, isActive }) => {
       updateBrandCollection({
@@ -55,6 +66,13 @@ export const SubscriptionPlans = () => {
             title: 'Title',
             field: 'title',
             headerFilter: true,
+            headerTooltip: function (column) {
+               const identifier = 'subscriptionPlans_listing_title_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             headerFilter: true,
@@ -63,6 +81,13 @@ export const SubscriptionPlans = () => {
             hozAlign: 'right',
             headerHozAlign: 'right',
             width: 200,
+            headerTooltip: function (column) {
+               const identifier = 'subscriptionPlans_listing_totalBrand_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Published',
@@ -72,6 +97,13 @@ export const SubscriptionPlans = () => {
             headerSort: false,
             formatter: reactFormatter(<ToggleStatus update={toggleStatus} />),
             width: 150,
+            headerTooltip: function (column) {
+               const identifier = 'subscriptionPlans_listing_published_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
       ],
       [toggleStatus]

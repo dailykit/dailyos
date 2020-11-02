@@ -19,6 +19,7 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    Flex,
    AssetUploader,
+   Tooltip,
 } from '../../../../../../../../../shared/components'
 
 export const Favicon = ({ update }) => {
@@ -63,7 +64,10 @@ export const Favicon = ({ update }) => {
 
    return (
       <div id="Favicon">
-         <Text as="h3">Fav Icon</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Fav Icon</Text>
+            <Tooltip identifier="brand_favicon_info" />
+         </Flex>
          <Spacer size="16px" />
          {url ? (
             <ImageContainer width="120px" height="120px">

@@ -9,16 +9,22 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import tableOptions from '../../../../../tableOption'
 import { BRANDS, COLLECTIONS } from '../../../../../graphql'
 import { Flex, InlineLoader } from '../../../../../../../shared/components'
+import { useTooltip } from '../../../../../../../shared/providers'
+import { logger } from '../../../../../../../shared/utils'
 
 export const OnDemandCollections = () => {
+   const { tooltip } = useTooltip()
    const params = useParams()
    const tableRef = React.useRef()
    const [collections, setCollections] = React.useState({})
    const [updateBrandCollection] = useMutation(BRANDS.UPSERT_BRAND_COLLECTION, {
       onCompleted: () => toast.success('Successfully updated!'),
-      onError: () => toast.error('Failed to update, please try again!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
    })
-   const { loading } = useSubscription(COLLECTIONS.LIST, {
+   const { loading, error } = useSubscription(COLLECTIONS.LIST, {
       variables: {
          brandId: {
             _eq: params.id,
@@ -40,6 +46,11 @@ export const OnDemandCollections = () => {
       },
    })
 
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
    const toggleStatus = ({ id, isActive }) => {
       updateBrandCollection({
          variables: {
@@ -58,18 +69,46 @@ export const OnDemandCollections = () => {
             title: 'Name',
             field: 'name',
             headerFilter: true,
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_name_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Start Time',
             field: 'startTime',
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_startTime_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'End Time',
             field: 'endTime',
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_endTime_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Availability',
             field: 'rrule',
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_availability_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             headerFilter: true,
@@ -77,6 +116,13 @@ export const OnDemandCollections = () => {
             field: 'details.categoriesCount',
             hozAlign: 'right',
             headerHozAlign: 'right',
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_categories_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             headerFilter: true,
@@ -84,6 +130,13 @@ export const OnDemandCollections = () => {
             field: 'details.productsCount',
             hozAlign: 'right',
             headerHozAlign: 'right',
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_products_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             headerFilter: true,
@@ -91,6 +144,13 @@ export const OnDemandCollections = () => {
             field: 'totalBrands',
             hozAlign: 'right',
             headerHozAlign: 'right',
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_brands_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Published',
@@ -100,6 +160,13 @@ export const OnDemandCollections = () => {
             headerSort: false,
             formatter: reactFormatter(<ToggleStatus update={toggleStatus} />),
             width: 100,
+            headerTooltip: function (column) {
+               const identifier = 'collections_listing_published_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
       ],
       [toggleStatus]

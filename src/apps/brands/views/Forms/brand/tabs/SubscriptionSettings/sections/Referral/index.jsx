@@ -2,10 +2,10 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const Referral = ({ update }) => {
    const params = useParams()
@@ -44,14 +44,22 @@ export const Referral = ({ update }) => {
 
    return (
       <div id="Referral">
-         <Text as="h3">Referral Availablility</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Referral Availablility</Text>
+            <Tooltip identifier="brand_referral_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
-            <Toggle
-               label="Available"
-               checked={isAvailable}
-               setChecked={setIsAvailable}
-            />
+            <Form.Toggle
+               name="available"
+               value={isAvailable}
+               onChange={() => setIsAvailable(!isAvailable)}
+            >
+               <Flex container alignItems="center">
+                  Available
+                  <Tooltip identifier="brand_referral_available_info" />
+               </Flex>
+            </Form.Toggle>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
             </TextButton>

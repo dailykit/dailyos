@@ -19,9 +19,11 @@ import { useTabs } from '../../../context'
 import tableOptions from '../../../tableOption'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { EditIcon } from '../../../../../shared/assets/icons'
-import { InlineLoader, Flex } from '../../../../../shared/components'
+import { InlineLoader, Flex, Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
 
 export const Brands = () => {
+   const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const [form, setForm] = React.useState({
@@ -66,6 +68,13 @@ export const Brands = () => {
             headerSort: true,
             headerFilter: true,
             formatter: cell => cell.getData().title || 'N/A',
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_brand_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Domain',
@@ -73,6 +82,13 @@ export const Brands = () => {
             headerSort: true,
             headerFilter: true,
             formatter: cell => cell.getData().domain || 'N/A',
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_domain_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Published',
@@ -81,6 +97,13 @@ export const Brands = () => {
             headerHozAlign: 'center',
             field: 'isPublished',
             formatter: 'tickCross',
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_publish_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Actions',
@@ -88,6 +111,13 @@ export const Brands = () => {
             headerSort: false,
             headerHozAlign: 'center',
             formatter: reactFormatter(<EditBrand edit={edit} />),
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_actions_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
       ],
       []
@@ -115,7 +145,10 @@ export const Brands = () => {
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">Brands ({brands?.aggregate?.count || 0})</Text>
+            <Flex container alignItems="center">
+               <Text as="h2">Brands ({brands?.aggregate?.count || 0})</Text>
+               <Tooltip identifier="brands_listing_heading" />
+            </Flex>
             <IconButton type="solid" onClick={() => openTunnel(1)}>
                <PlusIcon />
             </IconButton>
@@ -124,16 +157,15 @@ export const Brands = () => {
             <InlineLoader />
          ) : (
             <>
-               {brands?.aggregate?.count > 0 ? (
-                  <ReactTabulator
-                     ref={tableRef}
-                     columns={columns}
-                     data={brands?.nodes || []}
-                     options={tableOptions}
-                  />
-               ) : (
-                  <span>No Brands yet!</span>
-               )}
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={brands?.nodes || []}
+                  options={{
+                     ...tableOptions,
+                     placeholder: 'No Brands Available Yet !',
+                  }}
+               />
             </>
          )}
          <Tunnels tunnels={tunnels}>

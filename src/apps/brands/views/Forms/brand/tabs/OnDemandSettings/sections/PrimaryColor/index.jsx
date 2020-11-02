@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const PrimaryColor = ({ update }) => {
    const params = useParams()
@@ -44,7 +44,10 @@ export const PrimaryColor = ({ update }) => {
 
    return (
       <div id="Primary Color">
-         <Text as="h3">Primary Color</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Primary Color</Text>
+            <Tooltip identifier="brand_primaryColor_info" />
+         </Flex>
          <Spacer size="4px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <input

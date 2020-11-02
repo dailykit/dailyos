@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const ThemeColor = ({ update }) => {
    const params = useParams()
@@ -66,7 +66,10 @@ export const ThemeColor = ({ update }) => {
       <div id="Contact">
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex>
-               <Text as="h3">Accent</Text>
+               <Flex container alignItems="center">
+                  <Text as="h3">Accent</Text>
+                  <Tooltip identifier="brand_theme_accent_info" />
+               </Flex>
                <Spacer size="4px" />
                <input
                   type="color"
@@ -77,7 +80,10 @@ export const ThemeColor = ({ update }) => {
             </Flex>
             <Spacer size="24px" xAxis />
             <Flex>
-               <Text as="h3">Highlight</Text>
+               <Flex container alignItems="center">
+                  <Text as="h3">Highlight</Text>
+                  <Tooltip identifier="brand_theme_highlight_info" />
+               </Flex>
                <Spacer size="4px" />
                <input
                   type="color"

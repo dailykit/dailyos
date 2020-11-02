@@ -2,10 +2,10 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const Pickup = ({ update }) => {
    const params = useParams()
@@ -44,14 +44,22 @@ export const Pickup = ({ update }) => {
 
    return (
       <div id="Pickup Availability">
-         <Text as="h3">Pick Up</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Pick Up</Text>
+            <Tooltip identifier="brand_pickup_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
-            <Toggle
-               checked={isAvailable}
-               setChecked={setIsAvailable}
-               label="Available"
-            />
+            <Form.Toggle
+               name="available"
+               value={isAvailable}
+               onChange={() => setIsAvailable(!isAvailable)}
+            >
+               <Flex container alignItems="center">
+                  Available
+                  <Tooltip identifier="brand_pickup_available_info" />
+               </Flex>
+            </Form.Toggle>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
             </TextButton>

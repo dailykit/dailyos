@@ -13,7 +13,7 @@ import {
 
 import { AddressTunnel } from '../../../../Tunnels'
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const Address = ({ update }) => {
    const params = useParams()
@@ -50,7 +50,10 @@ export const Address = ({ update }) => {
 
    return (
       <div id="Location">
-         <Text as="h3">Location</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Location</Text>
+            <Tooltip identifier="brand_address_info" />
+         </Flex>
          <Spacer size="16px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="p">{normalizeAddress(address)}</Text>

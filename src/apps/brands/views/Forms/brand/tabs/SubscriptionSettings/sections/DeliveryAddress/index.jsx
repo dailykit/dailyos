@@ -2,8 +2,8 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, Text, TextButton, Spacer } from '@dailykit/ui'
-
+import { Form, Text, TextButton, Spacer } from '@dailykit/ui'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 import { BRANDS } from '../../../../../../../graphql'
 
 export const DeliveryAddress = ({ update }) => {
@@ -63,25 +63,40 @@ export const DeliveryAddress = ({ update }) => {
 
    return (
       <div id="address">
-         <Text as="h3">Delivery Address Details</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Delivery Address Details</Text>
+            <Tooltip identifier="brand_deliveryAddress_info" />
+         </Flex>
          <Spacer size="24px" />
-         <Input
-            type="text"
-            name="title"
-            label="Title"
-            value={form.title}
-            style={{ width: '240px' }}
-            onChange={e => handleChange(e.target.name, e.target.value)}
-         />
+         <Form.Group>
+            <Form.Label htmlFor="title" title="title">
+               <Flex container alignItems="center">
+                  Title
+                  <Tooltip identifier="brand_deliveryAddress_title_info" />
+               </Flex>
+            </Form.Label>
+            <Form.Text
+               id="title"
+               name="title"
+               value={form.title}
+               onChange={e => handleChange(e.target.name, e.target.value)}
+            />
+         </Form.Group>
          <Spacer size="24px" />
-         <Input
-            rows="3"
-            type="textarea"
-            name="description"
-            label="Description"
-            value={form.description}
-            onChange={e => handleChange(e.target.name, e.target.value)}
-         />
+         <Form.Group>
+            <Form.Label htmlFor="title" title="title">
+               <Flex container alignItems="center">
+                  Description
+                  <Tooltip identifier="brand_deliveryAddress_description_info" />
+               </Flex>
+            </Form.Label>
+            <Form.TextArea
+               id="description"
+               name="description"
+               value={form.description}
+               onChange={e => handleChange(e.target.name, e.target.value)}
+            />
+         </Form.Group>
          <Spacer size="16px" />
          <TextButton size="sm" type="outline" onClick={updateSetting}>
             Update

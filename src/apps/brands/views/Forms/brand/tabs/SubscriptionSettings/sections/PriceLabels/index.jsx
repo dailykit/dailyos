@@ -2,10 +2,10 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Toggle, Spacer } from '@dailykit/ui'
+import { Form, TextButton, Text, Toggle, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../../../../shared/components'
 
 export const PriceLabels = ({ update }) => {
    const params = useParams()
@@ -97,61 +97,107 @@ export const PriceLabels = ({ update }) => {
    return (
       <div id="priceDisplay">
          <Flex>
-            <Text as="h3">Plan Labels</Text>
-            <Spacer size="16px" />
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  label="Prefix"
-                  name="pricePerPlanPrefix"
-                  value={form.pricePerPlanPrefix}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
-               <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  label="Suffix"
-                  name="pricePerPlanSuffix"
-                  value={form.pricePerPlanSuffix}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Text as="h3">Plan Labels</Text>
+               <Tooltip identifier="brand_price_plan_label_info" />
             </Flex>
             <Spacer size="16px" />
-            <Toggle
-               label="Visibility"
-               checked={form.pricePerPlanIsVisible}
-               setChecked={value =>
-                  handleChange('pricePerPlanIsVisible', value)
+            <Flex container alignItems="center">
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Prefix
+                        <Tooltip identifier="brand_pricePerPlanPrefix_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="pricePerPlanPrefix"
+                     name="pricePerPlanPrefix"
+                     value={form.pricePerPlanPrefix}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+
+               <Spacer size="16px" xAxis />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Suffix
+                        <Tooltip identifier="brand_pricePerPlanSuffix_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="pricePerPlanSuffix"
+                     name="pricePerPlanSuffix"
+                     value={form.pricePerPlanSuffix}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+            </Flex>
+            <Spacer size="16px" />
+            <Form.Toggle
+               id="pricePerPlanIsVisible"
+               name="pricePerPlanIsVisible"
+               value={form.pricePerPlanIsVisible}
+               onChange={() =>
+                  handleChange(
+                     'pricePerPlanIsVisible',
+                     !form.pricePerPlanIsVisible
+                  )
                }
             />
+
             <Spacer size="24px" />
-            <Text as="h3">Plan Labels</Text>
-            <Spacer size="16px" />
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  label="Prefix"
-                  name="pricePerServingPrefix"
-                  value={form.pricePerServingPrefix}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
-               <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  label="Suffix"
-                  name="pricePerServingSuffix"
-                  value={form.pricePerServingSuffix}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Text as="h3">Plan Labels</Text>
+               <Tooltip identifier="brand_serving_plan_label_info" />
             </Flex>
             <Spacer size="16px" />
-            <Toggle
-               label="Visibility"
-               checked={form.pricePerServingIsVisible}
-               setChecked={value =>
-                  handleChange('pricePerServingIsVisible', value)
+            <Flex container alignItems="center">
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Prefix
+                        <Tooltip identifier="brand_pricePerServingPrefix_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="pricePerServingPrefix"
+                     name="pricePerServingPrefix"
+                     value={form.pricePerServingPrefix}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+
+               <Spacer size="16px" xAxis />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Suffix
+                        <Tooltip identifier="brand_pricePerServingSuffix_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="pricePerServingSuffix"
+                     name="pricePerServingSuffix"
+                     value={form.pricePerServingSuffix}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+            </Flex>
+            <Spacer size="16px" />
+            <Form.Toggle
+               id="pricePerServingIsVisible"
+               name="pricePerServingIsVisible"
+               value={form.pricePerServingIsVisible}
+               onChange={() =>
+                  handleChange(
+                     'pricePerServingIsVisible',
+                     !form.pricePerServingIsVisible
+                  )
                }
             />
+
             <Spacer size="16px" />
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
