@@ -1,8 +1,20 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import {
+   Flex,
+   HorizontalTab,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+   HorizontalTabs,
+} from '@dailykit/ui'
 import React from 'react'
 import { v4 as uuid } from 'uuid'
-import { ErrorState, InlineLoader } from '../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { dateFmt } from '../../../../../shared/utils/dateFmt'
@@ -45,15 +57,6 @@ export default function BulkWorkOrders({ tableRef }) {
          },
       },
       {
-         title: 'Status',
-         field: 'status',
-         headerFilter: false,
-         headerTooltip: col => {
-            const identifier = 'work-orders_listings_table_status'
-            return tooltip(identifier)?.description || col.getDefinition().title
-         },
-      },
-      {
          title: 'Scheduled On',
          field: 'scheduledOn',
          headerFilter: false,
@@ -90,12 +93,78 @@ export default function BulkWorkOrders({ tableRef }) {
    ]
 
    return (
-      <ReactTabulator
-         ref={tableRef}
-         columns={columns}
-         data={bulkWorkOrders}
-         options={tableOptions}
-      />
+      <>
+         <HorizontalTabs>
+            <HorizontalTabList>
+               <HorizontalTab>
+                  <Flex container alignItems="center">
+                     COMPLETED
+                     <Tooltip identifier="work-orders-listings_COMPLETED_tab" />
+                  </Flex>
+               </HorizontalTab>
+               <HorizontalTab>
+                  <Flex container alignItems="center">
+                     PENDING
+                     <Tooltip identifier="work-orders-listings_PENDING_tab" />
+                  </Flex>
+               </HorizontalTab>
+               <HorizontalTab>
+                  <Flex container alignItems="center">
+                     CANCELLED
+                     <Tooltip identifier="work-orders-listings_CANCELLED_tab" />
+                  </Flex>
+               </HorizontalTab>
+               <HorizontalTab>
+                  <Flex container alignItems="center">
+                     UNPUBLISHED
+                     <Tooltip identifier="work-orders-listings_UNPUBLISHED_tab" />
+                  </Flex>
+               </HorizontalTab>
+            </HorizontalTabList>
+            <HorizontalTabPanels>
+               <HorizontalTabPanel>
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={bulkWorkOrders.filter(
+                        col => col.status === 'COMPLETED'
+                     )}
+                     options={tableOptions}
+                  />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={bulkWorkOrders.filter(
+                        col => col.status === 'PENDING'
+                     )}
+                     options={tableOptions}
+                  />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={bulkWorkOrders.filter(
+                        col => col.status === 'CANCELLED'
+                     )}
+                     options={tableOptions}
+                  />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={bulkWorkOrders.filter(
+                        col => col.status === 'UNPUBLISHED'
+                     )}
+                     options={tableOptions}
+                  />
+               </HorizontalTabPanel>
+            </HorizontalTabPanels>
+         </HorizontalTabs>
+      </>
    )
 }
 
