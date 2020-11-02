@@ -6,13 +6,18 @@ import { useSubscription } from '@apollo/react-hooks'
 import { Input, TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const BrandName = ({ update }) => {
    const params = useParams()
    const [name, setName] = React.useState('')
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Brand Name' },
          type: { _eq: 'brand' },
@@ -44,6 +49,12 @@ export const BrandName = ({ update }) => {
       if (!name.trim()) return toast.error('Brand name must be provided')
       update({ id: settingId, value: { name } })
    }, [name, settingId])
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    return (
       <div id="Brand Name">

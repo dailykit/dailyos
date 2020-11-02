@@ -46,11 +46,6 @@ export const SubscriptionSettings = () => {
       data: { subscriptionSettings = [] } = {},
    } = useSubscription(BRANDS.SUBSCRIPTION_SETTINGS_TYPES)
 
-   if (error) {
-      toast.error('Somthing went wrong!')
-      logger(error)
-   }
-
    React.useEffect(() => {
       if (!loading && !isEmpty(subscriptionSettings)) {
          const grouped = groupBy(subscriptionSettings, 'type')
@@ -72,6 +67,11 @@ export const SubscriptionSettings = () => {
             },
          },
       })
+   }
+
+   if (error) {
+      toast.error('Somthing went wrong!')
+      logger(error)
    }
 
    return (

@@ -5,7 +5,13 @@ import { useSubscription } from '@apollo/react-hooks'
 import { Form, TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const StepsLabel = ({ update }) => {
    const params = useParams()
@@ -16,7 +22,7 @@ export const StepsLabel = ({ update }) => {
       selectDelivery: '',
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'steps-labels' },
          type: { _eq: 'conventions' },
@@ -73,6 +79,12 @@ export const StepsLabel = ({ update }) => {
    const handleChange = (name, value) => {
       setForm(form => ({ ...form, [name]: value }))
    }
+
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
 
    return (
       <div id="steps-labels">

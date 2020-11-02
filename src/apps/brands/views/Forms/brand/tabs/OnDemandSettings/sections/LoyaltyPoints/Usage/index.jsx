@@ -5,7 +5,13 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../../shared/utils'
 
 const LoyaltyPointsUsage = ({ update }) => {
    const params = useParams()
@@ -13,7 +19,7 @@ const LoyaltyPointsUsage = ({ update }) => {
    const [conversionRate, setConversionRate] = React.useState(1)
    const [percentage, setPercentage] = React.useState(1)
    const [max, setMax] = React.useState(1)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Loyalty Points Usage' },
          type: { _eq: 'rewards' },
@@ -49,6 +55,12 @@ const LoyaltyPointsUsage = ({ update }) => {
    const updateSetting = React.useCallback(() => {
       update({ id: settingId, value: { conversionRate, percentage, max } })
    }, [conversionRate, percentage, max, settingId])
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    return (
       <div id="Loyalty Points Availability">

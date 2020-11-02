@@ -21,7 +21,10 @@ import {
    Flex,
    AssetUploader,
    Tooltip,
+   InlineLoader,
 } from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const DeliveryPage = ({ update }) => {
    const params = useParams()
@@ -31,7 +34,7 @@ export const DeliveryPage = ({ update }) => {
       backgroundImage: '',
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'select-delivery-background' },
          type: { _eq: 'Select-Delivery' },
@@ -85,6 +88,12 @@ export const DeliveryPage = ({ update }) => {
       setForm(form => ({ ...form, [name]: value }))
       closeTunnel(1)
    }
+
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
 
    return (
       <div id="select-delivery-background">

@@ -5,7 +5,13 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const ThemeColor = ({ update }) => {
    const params = useParams()
@@ -14,7 +20,7 @@ export const ThemeColor = ({ update }) => {
       highlight: '#38a169',
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'theme-color' },
          type: { _eq: 'Visual' },
@@ -61,6 +67,12 @@ export const ThemeColor = ({ update }) => {
    const handleChange = (name, value) => {
       setForm(form => ({ ...form, [name]: value }))
    }
+
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
 
    return (
       <div id="Contact">

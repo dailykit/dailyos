@@ -5,14 +5,20 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Toggle, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Payments = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isStoreLive, setIsStoreLive] = React.useState(false)
    const [isStripeConfigured, setIsStripeConfigured] = React.useState(false)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Store Live' },
          type: { _eq: 'availability' },
@@ -45,6 +51,12 @@ export const Payments = ({ update }) => {
    const updateSetting = React.useCallback(() => {
       update({ id: settingId, value: { isStoreLive, isStripeConfigured } })
    }, [isStoreLive, isStripeConfigured, settingId])
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    return (
       <div id="Store Live">

@@ -13,7 +13,13 @@ import {
 
 import { AddressTunnel } from '../../../../Tunnels'
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 export const Address = ({ update }) => {
    const params = useParams()
@@ -21,7 +27,7 @@ export const Address = ({ update }) => {
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'Location' },
          type: { _eq: 'availability' },
@@ -47,6 +53,12 @@ export const Address = ({ update }) => {
          }
       },
    })
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    return (
       <div id="Location">

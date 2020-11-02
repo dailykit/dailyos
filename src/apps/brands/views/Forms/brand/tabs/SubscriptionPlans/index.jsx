@@ -43,11 +43,6 @@ export const SubscriptionPlans = () => {
       },
    })
 
-   if (error) {
-      toast.error('Something went wrong!')
-      logger(error)
-   }
-
    const toggleStatus = ({ id, isActive }) => {
       updateBrandCollection({
          variables: {
@@ -108,6 +103,11 @@ export const SubscriptionPlans = () => {
       ],
       [toggleStatus]
    )
+
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    return (
       <Flex padding="16px">

@@ -5,7 +5,13 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Toggle, Input, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Store = ({ update }) => {
    const params = useParams()
@@ -14,7 +20,7 @@ export const Store = ({ update }) => {
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
    const [message, setMessage] = React.useState('')
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Store Availability' },
          type: { _eq: 'availability' },
@@ -61,6 +67,12 @@ export const Store = ({ update }) => {
          },
       })
    }, [isOpen, from, to, message, settingId])
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    return (
       <div id="Store Availability">

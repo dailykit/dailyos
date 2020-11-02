@@ -3,16 +3,21 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer, Form } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const AppTitle = ({ update }) => {
    const params = useParams()
    const [title, setTitle] = React.useState('')
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'App Title' },
          type: { _eq: 'visual' },
@@ -45,6 +50,12 @@ export const AppTitle = ({ update }) => {
       update({ id: settingId, value: { title } })
    }, [title, settingId])
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="App Title">
          <Flex container alignItems="flex-start">
@@ -61,15 +72,6 @@ export const AppTitle = ({ update }) => {
                onChange={e => setTitle(e.target.value)}
             />
             <Spacer size="8px" xAxis />
-            {/* <Input
-               type="text"
-               label=""
-               name="name"
-               value={title}
-               style={{ width: '240px' }}
-               placeholder="Enter app title"
-               onChange={e => setTitle(e.target.value)}
-            /> */}
             <TextButton size="lg" type="outline" onClick={updateSetting}>
                Update
             </TextButton>

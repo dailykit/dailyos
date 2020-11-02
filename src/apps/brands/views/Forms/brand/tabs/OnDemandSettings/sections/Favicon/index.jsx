@@ -20,7 +20,10 @@ import {
    Flex,
    AssetUploader,
    Tooltip,
+   InlineLoader,
 } from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Favicon = ({ update }) => {
    const params = useParams()
@@ -28,7 +31,7 @@ export const Favicon = ({ update }) => {
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Favicon' },
          type: { _eq: 'visual' },
@@ -54,6 +57,12 @@ export const Favicon = ({ update }) => {
          }
       },
    })
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    const updateSetting = (data = {}) => {
       if ('url' in data) {

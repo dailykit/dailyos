@@ -5,13 +5,19 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex, Tooltip } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Wallet = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isAvailable, setIsAvailable] = React.useState(false)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'Wallet' },
          type: { _eq: 'rewards' },
@@ -41,6 +47,12 @@ export const Wallet = ({ update }) => {
    const updateSetting = React.useCallback(() => {
       update({ id: settingId, value: { isAvailable } })
    }, [isAvailable, settingId])
+
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
 
    return (
       <div id="Wallet">
