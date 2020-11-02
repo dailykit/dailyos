@@ -56,8 +56,6 @@ export default function Configurator({
 
    const [assignedDate, setAssignedDate] = useState(state.scheduledOn)
 
-   console.log(assignedDate)
-
    const inputQuantity = state.outputQuantity * +state.outputSachetItem.unitSize
 
    return (
@@ -190,7 +188,7 @@ export default function Configurator({
                <Form.Date
                   id="scheduledDate"
                   name="scheduleDate"
-                  value={new Date(assignedDate)}
+                  value={assignedDate}
                   onChange={e => {
                      setAssignedDate(e.target.value)
                   }}

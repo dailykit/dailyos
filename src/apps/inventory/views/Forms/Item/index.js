@@ -24,6 +24,7 @@ import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../shared/assets/icons'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import { Tooltip } from '../../../../../shared/components'
+import { currencyFmt } from '../../../../../shared/utils'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
@@ -34,6 +35,7 @@ import {
    SUPPLIER_ITEM_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
+import { validators } from '../../../utils/validators'
 import ProcessingView from './ProcessingView'
 import {
    StyledGrid,
@@ -53,7 +55,14 @@ const address = 'apps.inventory.views.forms.item.'
 export default function ItemForm() {
    const { t } = useTranslation()
    const [formState, setFormState] = React.useState({})
-   const [itemName, setItemName] = React.useState('')
+   const [itemName, setItemName] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
    const { id } = useParams()
    const { setTabTitle } = useTabs()
 
@@ -75,7 +84,7 @@ export default function ItemForm() {
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
 
-            setItemName(data.name)
+            setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
          },
       }
@@ -88,7 +97,7 @@ export default function ItemForm() {
       },
       onCompleted: () => {
          toast.info('Supplier Item updated!')
-         setTabTitle(itemName)
+         setTabTitle(itemName.value)
       },
    })
 
@@ -103,7 +112,7 @@ export default function ItemForm() {
          if (formState.bulkItemAsShippedId) {
             toast.info(BULK_ITEM_CREATED)
             openConfigTunnel(1)
-         } else
+         } else {
             updateSupplierItem({
                variables: {
                   id: formState.id,
@@ -112,12 +121,36 @@ export default function ItemForm() {
                   },
                },
             })
+
+            openConfigTunnel(1)
+         }
       },
       onError: error => {
          logger(error)
          toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
+
+   const updateItemName = e => {
+      const { isValid, errors } = validators.name(e.target.value, 'item name')
+
+      if (isValid)
+         updateSupplierItem({
+            variables: {
+               id: formState.id,
+               object: { name: itemName.value },
+            },
+         })
+
+      setItemName({
+         value: formState.name,
+         meta: {
+            isValid,
+            errors,
+            isTouched: true,
+         },
+      })
+   }
 
    if (itemDetailLoading) return <Loader />
 
@@ -192,23 +225,25 @@ export default function ItemForm() {
                                     id="itemName"
                                     name="itemName"
                                     placeholder="Supplier Item Name..."
-                                    value={itemName}
-                                    onChange={e => setItemName(e.target.value)}
-                                    onBlur={() => {
-                                       if (!itemName.length) {
-                                          toast.error("Name can't be empty")
-                                          return setItemName(formState.name)
-                                       }
-
-                                       if (itemName !== formState.name)
-                                          updateSupplierItem({
-                                             variables: {
-                                                id: formState.id,
-                                                object: { name: itemName },
-                                             },
-                                          })
-                                    }}
+                                    value={itemName.value}
+                                    onChange={e =>
+                                       setItemName({
+                                          value: e.target.value,
+                                          meta: { ...itemName.meta },
+                                       })
+                                    }
+                                    onBlur={updateItemName}
+                                    hasError={
+                                       itemName.meta.isTouched &&
+                                       !itemName.meta.isValid
+                                    }
                                  />
+                                 {itemName.meta.isTouched &&
+                                    !itemName.meta.isValid && (
+                                       <Form.Error>
+                                          {itemName.meta.errors[0]}
+                                       </Form.Error>
+                                    )}
                               </Form.Group>
                               <span>sku: {formState.sku || 'N/A'}</span>
                            </div>
@@ -241,10 +276,7 @@ export default function ItemForm() {
                         <div>
                            {/* prettier-ignore */}
                            <Text as="h3">
-                              {formState.unitSize + formState.unit}
-                              {formState.prices?.length
-                                 ? ` ($ ${+formState.prices[0]?.unitPrice?.value})`
-                                 : null}
+                              {(formState.unitSize || 'N/A') + ' ' + (formState.unit || '')}
                            </Text>
                         </div>
                      </div>
@@ -271,6 +303,25 @@ export default function ItemForm() {
                               ) : (
                                  'N/A'
                               )}
+                           </Text>
+                        </div>
+                     </div>
+                  </div>
+                  <div>
+                     <div>{/* add icon here for unit price */}</div>
+                     <div>
+                        <span>
+                           <Text as="h4">
+                              <Flex container alignItems="center">
+                                 Unit Price
+                                 <Tooltip identifier="supplieritem_form_unitPrice" />
+                              </Flex>
+                           </Text>
+                        </span>
+                        <div>
+                           {/* prettier-ignore */}
+                           <Text as="h3">
+                              {formState.prices?.length ? currencyFmt(+formState.prices[0]?.unitPrice?.value) : 'N/A'}
                            </Text>
                         </div>
                      </div>

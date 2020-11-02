@@ -115,7 +115,7 @@ export const StyledGrid = styled.div`
    width: 100%;
    display: grid;
    padding: 0 20px;
-   grid-template-columns: repeat(2, 1fr);
+   grid-template-columns: repeat(3, 1fr);
    height: 96px;
    border-bottom: 1px solid #dddddd;
    border-top: 1px solid #dddddd;

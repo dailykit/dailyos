@@ -17,3 +17,5 @@ export const NO_PROCESSING =
 
 export const NO_HISTORY = 'No history is available for this bulk item.'
 export const NO_SACHET_HISTORIES = 'No history is availabe for this sachet'
+
+export const NO_ALLERGENS = 'No allergens found.'
