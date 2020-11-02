@@ -6,6 +6,7 @@ import {
    Loader,
    Spacer,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -58,7 +59,7 @@ export default function PurchaseOrderForm() {
       },
    })
 
-   const editable = state.status === 'PENDING'
+   const editable = ['PENDING', 'UNPUBLISHED'].includes(state.status)
 
    const checkForm = () => {
       if (!state.supplierItem?.id) {
@@ -78,12 +79,8 @@ export default function PurchaseOrderForm() {
 
       if (isValid) {
          updatePurchaseOrder({ variables: { id: state.id, set: { status } } })
-      } else {
-         // state.status is the old status
-         updatePurchaseOrder({
-            variables: { id: state.id, set: { status: state.status } },
-         })
       }
+      // TODO: show error message
    }
 
    if (error) {
@@ -109,7 +106,19 @@ export default function PurchaseOrderForm() {
             >
                <Text as="h1">{t(address.concat('purchase order'))}</Text>
 
-               <StatusSwitch currentStatus={state.status} onSave={saveStatus} />
+               {state.status === 'UNPUBLISHED' ? (
+                  <TextButton
+                     type="solid"
+                     onClick={() => saveStatus('PENDING')}
+                  >
+                     Publish
+                  </TextButton>
+               ) : (
+                  <StatusSwitch
+                     currentStatus={state.status}
+                     onSave={saveStatus}
+                  />
+               )}
             </Flex>
 
             <Text as="title">{t(address.concat('supplier item'))}</Text>
