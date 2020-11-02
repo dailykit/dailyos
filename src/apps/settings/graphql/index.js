@@ -638,7 +638,7 @@ export const MASTER = {
       `,
       CREATE: gql`
          mutation insertProductCategory(
-            $object: master_productCategory_insert_input = {}
+            $object: master_productCategory_insert_input!
          ) {
             insertProductCategory(object: $object) {
                name

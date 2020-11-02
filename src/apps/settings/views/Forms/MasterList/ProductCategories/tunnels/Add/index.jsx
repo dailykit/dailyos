@@ -2,12 +2,12 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
-import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import { Form, Spacer, TunnelHeader, Flex } from '@dailykit/ui'
 
-import { TunnelBody } from '../styled'
 import validator from '../../../../validators'
 import { MASTER } from '../../../../../../graphql'
 import { logger } from '../../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 
@@ -41,7 +41,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
             closeTunnel(1)
          },
          onError: error => {
-            toast.error('Error')
+            toast.error('Failed to add product category!')
             logger(error)
          },
       }
@@ -76,8 +76,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                   : t(address.concat('add')),
             }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="tunnel_product_category_heading" />}
          />
-         <TunnelBody>
+         <Flex padding="16px">
             <Form.Group>
                <Form.Label htmlFor="name" title="name">
                   Name*
@@ -130,7 +131,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                      <Form.Error key={index}>{error}</Form.Error>
                   ))}
             </Form.Group>
-         </TunnelBody>
+         </Flex>
       </>
    )
 }
