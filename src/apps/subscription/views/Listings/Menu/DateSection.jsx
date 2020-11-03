@@ -5,6 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { useMenu } from './state'
 import { OCCURRENCES_DATES } from '../../../graphql'
+import { Tooltip } from '../../../../../shared/components'
 
 const DateSection = () => {
    const { state, dispatch } = useMenu()
@@ -20,6 +21,7 @@ const DateSection = () => {
       <aside>
          <Flex container height="48px" alignItems="center">
             <Text as="h2">Date</Text>
+            <Tooltip identifier="listing_menu_section_date_heading" />
          </Flex>
          <DatePicker
             inline

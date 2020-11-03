@@ -1,18 +1,19 @@
 import React from 'react'
+import { DashboardTile, Text, Flex } from '@dailykit/ui'
 
-import { DashboardTile, Text } from '@dailykit/ui'
-
-// State
 import { useTabs } from '../../context'
-
 import { StyledHome, StyledCardList } from './styled'
+import { Tooltip } from '../../../../shared/components'
 
 export const Home = () => {
    const { addTab } = useTabs()
 
    return (
       <StyledHome>
-         <Text as="h1">Subscription App</Text>
+         <Flex container alignItems="center">
+            <Text as="h1">Subscription App</Text>
+            <Tooltip identifier="app_subscription_heading" />
+         </Flex>
          <StyledCardList>
             <DashboardTile
                title="Menu"
