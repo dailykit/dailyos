@@ -6,6 +6,7 @@ import {
    Loader,
    Spacer,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -22,6 +23,7 @@ import {
    PURCHASE_ORDER_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
+import { validators } from '../../../utils/validators'
 import { StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 
@@ -37,7 +39,10 @@ export default function PurchaseOrderForm() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { id } = useParams()
 
-   const [orderQuantity, setOrderQuantity] = useState(0)
+   const [orderQuantity, setOrderQuantity] = useState({
+      value: '',
+      meta: { isValid: false, isTouched: false, errors: [] },
+   })
 
    const {
       data: { purchaseOrderItem: state = {} } = {},
@@ -46,9 +51,12 @@ export default function PurchaseOrderForm() {
    } = useSubscription(PURCHASE_ORDER_SUBSCRIPTION, {
       variables: { id },
       onSubscriptionData: data => {
-         setOrderQuantity(
-            data.subscriptionData.data?.purchaseOrderItem.orderQuantity
-         )
+         const { orderQuantity } = data.subscriptionData.data?.purchaseOrderItem
+         const { isValid, errors } = validators.quantity(orderQuantity)
+         setOrderQuantity({
+            value: orderQuantity,
+            meta: { isValid, errors, ...orderQuantity.meta },
+         })
       },
    })
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
@@ -58,15 +66,15 @@ export default function PurchaseOrderForm() {
       },
    })
 
-   const editable = state.status === 'PENDING'
+   const editable = ['PENDING', 'UNPUBLISHED'].includes(state.status)
 
    const checkForm = () => {
       if (!state.supplierItem?.id) {
          toast.error('No Supplier Item selecetd!')
          return false
       }
-      if (editable && !orderQuantity) {
-         toast.error('Please provide order quantity!')
+      if (editable && (!orderQuantity.value || !orderQuantity.meta.isValid)) {
+         toast.error('invalid order quantity!')
          return false
       }
 
@@ -78,10 +86,24 @@ export default function PurchaseOrderForm() {
 
       if (isValid) {
          updatePurchaseOrder({ variables: { id: state.id, set: { status } } })
-      } else {
-         // state.status is the old status
+      }
+   }
+
+   const handleOnBlur = e => {
+      const { isValid, errors } = validators.quantity(e.target.value)
+      setOrderQuantity({
+         value: e.target.value,
+         meta: { isTouched: true, isValid, errors },
+      })
+
+      if (isValid) {
          updatePurchaseOrder({
-            variables: { id: state.id, set: { status: state.status } },
+            variables: {
+               id: state.id,
+               set: {
+                  orderQuantity: +e.target.value,
+               },
+            },
          })
       }
    }
@@ -109,7 +131,19 @@ export default function PurchaseOrderForm() {
             >
                <Text as="h1">{t(address.concat('purchase order'))}</Text>
 
-               <StatusSwitch currentStatus={state.status} onSave={saveStatus} />
+               {state.status === 'UNPUBLISHED' ? (
+                  <TextButton
+                     type="solid"
+                     onClick={() => saveStatus('PENDING')}
+                  >
+                     Publish
+                  </TextButton>
+               ) : (
+                  <StatusSwitch
+                     currentStatus={state.status}
+                     onSave={saveStatus}
+                  />
+               )}
             </Flex>
 
             <Text as="title">{t(address.concat('supplier item'))}</Text>
@@ -143,24 +177,24 @@ export default function PurchaseOrderForm() {
                            id="quantity"
                            name="quantity"
                            hasWriteAccess={editable}
-                           value={orderQuantity}
+                           value={orderQuantity.value}
                            placeholder={t(
                               address.concat('enter order quantity')
                            )}
                            onChange={e => {
-                              setOrderQuantity(e.target.value)
-                           }}
-                           onBlur={e => {
-                              updatePurchaseOrder({
-                                 variables: {
-                                    id: state.id,
-                                    set: {
-                                       orderQuantity: +e.target.value || 0,
-                                    },
-                                 },
+                              setOrderQuantity({
+                                 value: e.target.value,
+                                 meta: { ...orderQuantity.meta },
                               })
                            }}
+                           onBlur={handleOnBlur}
                         />
+                        {orderQuantity.meta.isTouched &&
+                           !orderQuantity.meta.isValid && (
+                              <Form.Error>
+                                 {orderQuantity.meta.errors[0]}
+                              </Form.Error>
+                           )}
                      </Form.Group>
 
                      <Spacer xAxis size="8px" />
