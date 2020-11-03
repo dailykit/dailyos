@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
+import { isEmpty, set } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
@@ -13,7 +13,7 @@ import {
    HorizontalTabPanel,
    HorizontalTabPanels,
 } from '@dailykit/ui'
-
+import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
@@ -29,7 +29,14 @@ import {
 export const Brand = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
-   const [title, setTitle] = React.useState('')
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [update] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => toast.success('Successfully updated brand!'),
       onError: error => {
@@ -46,7 +53,14 @@ export const Brand = () => {
          onSubscriptionData: ({
             subscriptionData: { data: { brand = {} } = {} } = {},
          }) => {
-            setTitle(brand?.title || '')
+            setTitle({
+               value: brand?.title || '',
+               meta: {
+                  isValid: brand?.title ? true : false,
+                  isTouched: false,
+                  errors: [],
+               },
+            })
             setTabTitle(brand?.title || '')
          },
       }
@@ -61,15 +75,28 @@ export const Brand = () => {
       }
    }, [tab, addTab, loading, brand])
 
-   const updateTitle = title => {
-      update({
-         variables: {
-            id: params.id,
-            _set: {
-               title,
-            },
+   const updateTitle = e => {
+      setTitle({
+         ...title,
+         meta: {
+            ...title.meta,
+            isTouched: true,
+            errors: validator.name(e.target.value).errors,
+            isValid: validator.name(e.target.value).isValid,
          },
       })
+      if (validator.name(e.target.value).isValid) {
+         update({
+            variables: {
+               id: params.id,
+               _set: {
+                  title: title.value,
+               },
+            },
+         })
+      } else {
+         toast.error('Brand Title must be provided')
+      }
    }
 
    if (loading) return <InlineLoader />
@@ -97,11 +124,18 @@ export const Brand = () => {
                      id="title"
                      name="title"
                      placeholder="Enter the brand title"
-                     value={title}
+                     value={title.value}
                      disabled={brand?.isDefault}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={e => updateTitle(e.target.value)}
+                     onChange={e =>
+                        setTitle({ ...title, value: e.target.value })
+                     }
+                     onBlur={e => updateTitle(e)}
                   />
+                  {title.meta.isTouched &&
+                     !title.meta.isValid &&
+                     title.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
                </Form.Group>
 
                <Spacer size="24px" xAxis />

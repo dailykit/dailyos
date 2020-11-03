@@ -14,7 +14,7 @@ import {
    TunnelHeader,
 } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-
+import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import tableOptions from '../../../tableOption'
@@ -29,14 +29,42 @@ export const Brands = () => {
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const [form, setForm] = React.useState({
-      title: '',
-      domain: '',
+      title: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
+      domain: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
    })
    const [create, { loading }] = useMutation(BRANDS.CREATE_BRAND, {
       onCompleted: () => {
          setForm({
-            title: '',
-            domain: '',
+            title: {
+               value: '',
+               meta: {
+                  isValid: false,
+                  isTouched: false,
+                  errors: [],
+               },
+            },
+            domain: {
+               value: '',
+               meta: {
+                  isValid: false,
+                  isTouched: false,
+                  errors: [],
+               },
+            },
          })
          closeTunnel(1)
          toast.success('Successfully created the brand!')
@@ -164,11 +192,12 @@ export const Brands = () => {
    )
 
    const save = () => {
-      if (form.title && form.domain) {
+      if (form.title.meta.isValid && form.domain.meta.isValid) {
          return create({
             variables: {
                object: {
-                  ...form,
+                  title: form.title.value,
+                  domain: form.domain.value,
                },
             },
          })
@@ -178,7 +207,76 @@ export const Brands = () => {
 
    const handleChange = e => {
       const { name, value } = e.target
-      setForm(form => ({ ...form, [name]: value }))
+      if (name === 'title') {
+         setForm({
+            ...form,
+            title: {
+               ...form.title,
+               value: value,
+            },
+         })
+      } else {
+         setForm({
+            ...form,
+            domain: {
+               ...form.domain,
+               value: value,
+            },
+         })
+      }
+   }
+
+   const onBlur = e => {
+      const { name, value } = e.target
+      if (name === 'title') {
+         setForm({
+            ...form,
+            title: {
+               ...form.title,
+               meta: {
+                  ...form.title.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            },
+         })
+      } else {
+         setForm({
+            ...form,
+            domain: {
+               ...form.domain,
+               meta: {
+                  ...form.domain.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            },
+         })
+      }
+   }
+
+   const close = () => {
+      setForm({
+         title: {
+            value: '',
+            meta: {
+               isValid: false,
+               isTouched: false,
+               errors: [],
+            },
+         },
+         domain: {
+            value: '',
+            meta: {
+               isValid: false,
+               isTouched: false,
+               errors: [],
+            },
+         },
+      })
+      closeTunnel(1)
    }
 
    if (error) {
@@ -222,7 +320,7 @@ export const Brands = () => {
                      action: save,
                      title: loading ? 'Saving...' : 'Save',
                   }}
-                  close={() => closeTunnel(1)}
+                  close={close}
                   tooltip={<Tooltip identifier="create_brand_tunnelHeader" />}
                />
                <Flex padding="16px">
@@ -236,9 +334,15 @@ export const Brands = () => {
                      <Form.Text
                         id="title"
                         name="title"
-                        value={form.title}
+                        value={form.title.value}
                         onChange={e => handleChange(e)}
+                        onBlur={e => onBlur(e, 'title')}
                      />
+                     {form.title.meta.isTouched &&
+                        !form.title.meta.isValid &&
+                        form.title.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
                   </Form.Group>
                   <Spacer size="24px" />
                   <Form.Group>
@@ -251,9 +355,15 @@ export const Brands = () => {
                      <Form.Text
                         id="domain"
                         name="domain"
-                        value={form.domain}
+                        value={form.domain.value}
                         onChange={e => handleChange(e)}
+                        onBlur={e => onBlur(e, 'domain')}
                      />
+                     {form.domain.meta.isTouched &&
+                        !form.domain.meta.isValid &&
+                        form.domain.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
                   </Form.Group>
                </Flex>
             </Tunnel>

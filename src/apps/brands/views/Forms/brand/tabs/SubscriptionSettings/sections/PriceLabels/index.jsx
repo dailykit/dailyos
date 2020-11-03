@@ -3,7 +3,7 @@ import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { Form, TextButton, Text, Toggle, Spacer } from '@dailykit/ui'
-
+import validator from '../../../../../../validator'
 import { BRANDS } from '../../../../../../../graphql'
 import {
    Flex,
@@ -16,11 +16,39 @@ import { logger } from '../../../../../../../../../shared/utils'
 export const PriceLabels = ({ update }) => {
    const params = useParams()
    const [form, setForm] = React.useState({
-      pricePerPlanPrefix: '',
-      pricePerPlanSuffix: '',
+      pricePerPlanPrefix: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
+      pricePerPlanSuffix: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
       pricePerPlanIsVisible: false,
-      pricePerServingPrefix: '',
-      pricePerServingSuffix: '',
+      pricePerServingPrefix: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
+      pricePerServingSuffix: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
       pricePerServingIsVisible: false,
    })
    const [settingId, setSettingId] = React.useState(null)
@@ -49,22 +77,48 @@ export const PriceLabels = ({ update }) => {
                   ...form,
                   ...(brand.value?.pricePerPlan && {
                      ...(brand.value?.pricePerPlan?.prefix && {
-                        pricePerPlanPrefix: brand.value.pricePerPlan.prefix,
+                        pricePerPlanPrefix: {
+                           value: brand.value.pricePerPlan.prefix,
+                           meta: {
+                              isValid: true,
+                              isTouched: false,
+                              errors: [],
+                           },
+                        },
                      }),
                      ...(brand.value?.pricePerPlan?.suffix && {
-                        pricePerPlanSuffix: brand.value.pricePerPlan.suffix,
+                        pricePerPlanSuffix: {
+                           value: brand.value.pricePerPlan.suffix,
+                           meta: {
+                              isValid: true,
+                              isTouched: false,
+                              errors: [],
+                           },
+                        },
                      }),
                      ...(brand.value?.pricePerPlan?.isVisible && {
                         pricePerPlanIsVisible:
                            brand.value.pricePerPlan.isVisible,
                      }),
                      ...(brand.value?.pricePerServing?.prefix && {
-                        pricePerServingPrefix:
-                           brand.value.pricePerServing.prefix,
+                        pricePerServingPrefix: {
+                           value: brand.value.pricePerServing.prefix,
+                           meta: {
+                              isValid: true,
+                              isTouched: false,
+                              errors: [],
+                           },
+                        },
                      }),
                      ...(brand.value?.pricePerServing?.suffix && {
-                        pricePerServingSuffix:
-                           brand.value.pricePerServing.suffix,
+                        pricePerServingSuffix: {
+                           value: brand.value.pricePerServing.suffix,
+                           meta: {
+                              isValid: true,
+                              isTouched: false,
+                              errors: [],
+                           },
+                        },
                      }),
                      ...(brand.value?.pricePerServing?.isVisible && {
                         pricePerServingIsVisible:
@@ -79,25 +133,126 @@ export const PriceLabels = ({ update }) => {
 
    const updateSetting = React.useCallback(() => {
       if (!settingId) return
-      update({
-         id: settingId,
-         value: {
-            pricePerPlan: {
-               prefix: form.pricePerPlanPrefix,
-               suffix: form.pricePerPlanSuffix,
-               isVisible: form.pricePerPlanIsVisible,
+      if (
+         form.pricePerPlanPrefix.meta.isValid &&
+         form.pricePerPlanSuffix.meta.isValid &&
+         form.pricePerServingPrefix.meta.isValid &&
+         form.pricePerServingSuffix.meta.isValid
+      ) {
+         update({
+            id: settingId,
+            value: {
+               pricePerPlan: {
+                  prefix: form.pricePerPlanPrefix.value,
+                  suffix: form.pricePerPlanSuffix.value,
+                  isVisible: form.pricePerPlanIsVisible,
+               },
+               pricePerServing: {
+                  prefix: form.pricePerServingPrefix.value,
+                  suffix: form.pricePerServingSuffix.value,
+                  isVisible: form.pricePerServingIsVisible,
+               },
             },
-            pricePerServing: {
-               prefix: form.pricePerServingPrefix,
-               suffix: form.pricePerServingSuffix,
-               isVisible: form.pricePerServingIsVisible,
-            },
-         },
-      })
+         })
+      } else {
+         toast.error('Price Labels must be provided')
+      }
    }, [form, settingId, update])
 
-   const handleChange = (name, value) => {
-      setForm(form => ({ ...form, [name]: value }))
+   const handleChange = e => {
+      const { name, value } = e.target
+      switch (name) {
+         case 'pricePerPlanPrefix':
+            return setForm({
+               ...form,
+               pricePerPlanPrefix: {
+                  ...form.pricePerPlanPrefix,
+                  value: value,
+               },
+            })
+         case 'pricePerPlanSuffix':
+            return setForm({
+               ...form,
+               pricePerPlanSuffix: {
+                  ...form.pricePerPlanSuffix,
+                  value: value,
+               },
+            })
+         case 'pricePerServingPrefix':
+            return setForm({
+               ...form,
+               pricePerServingPrefix: {
+                  ...form.pricePerServingPrefix,
+                  value: value,
+               },
+            })
+         case 'pricePerServingSuffix':
+            return setForm({
+               ...form,
+               pricePerServingSuffix: {
+                  ...form.pricePerServingSuffix,
+                  value: value,
+               },
+            })
+      }
+   }
+
+   const onBlur = e => {
+      const { name, value } = e.target
+      switch (name) {
+         case 'pricePerPlanPrefix':
+            return setForm({
+               ...form,
+               pricePerPlanPrefix: {
+                  ...form.pricePerPlanPrefix,
+                  meta: {
+                     ...form.pricePerPlanPrefix.meta,
+                     isTouched: true,
+                     errors: validator.text(value).errors,
+                     isValid: validator.text(value).isValid,
+                  },
+               },
+            })
+         case 'pricePerPlanSuffix':
+            return setForm({
+               ...form,
+               pricePerPlanSuffix: {
+                  ...form.pricePerPlanSuffix,
+                  meta: {
+                     ...form.pricePerPlanSuffix.meta,
+                     isTouched: true,
+                     errors: validator.text(value).errors,
+                     isValid: validator.text(value).isValid,
+                  },
+               },
+            })
+         case 'pricePerServingPrefix':
+            return setForm({
+               ...form,
+               pricePerServingPrefix: {
+                  ...form.pricePerServingPrefix,
+                  meta: {
+                     ...form.pricePerServingPrefix.meta,
+                     isTouched: true,
+                     errors: validator.text(value).errors,
+                     isValid: validator.text(value).isValid,
+                  },
+               },
+            })
+         case 'pricePerServingSuffix':
+            return setForm({
+               ...form,
+               pricePerServingSuffix: {
+                  ...form.pricePerServingSuffix,
+                  meta: {
+                     ...form.pricePerServingSuffix.meta,
+                     isTouched: true,
+                     errors: validator.text(value).errors,
+                     isValid: validator.text(value).isValid,
+                  },
+               },
+            })
+      }
    }
 
    if (error) {
@@ -125,9 +280,15 @@ export const PriceLabels = ({ update }) => {
                   <Form.Text
                      id="pricePerPlanPrefix"
                      name="pricePerPlanPrefix"
-                     value={form.pricePerPlanPrefix}
-                     onChange={e => handleChange(e.target.name, e.target.value)}
+                     value={form.pricePerPlanPrefix.value}
+                     onChange={e => handleChange(e)}
+                     onBlur={onBlur}
                   />
+                  {form.pricePerPlanPrefix.meta.isTouched &&
+                     !form.pricePerPlanPrefix.meta.isValid &&
+                     form.pricePerPlanPrefix.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
                </Form.Group>
 
                <Spacer size="16px" xAxis />
@@ -141,9 +302,15 @@ export const PriceLabels = ({ update }) => {
                   <Form.Text
                      id="pricePerPlanSuffix"
                      name="pricePerPlanSuffix"
-                     value={form.pricePerPlanSuffix}
-                     onChange={e => handleChange(e.target.name, e.target.value)}
+                     value={form.pricePerPlanSuffix.value}
+                     onChange={e => handleChange(e)}
+                     onBlur={onBlur}
                   />
+                  {form.pricePerPlanSuffix.meta.isTouched &&
+                     !form.pricePerPlanSuffix.meta.isValid &&
+                     form.pricePerPlanSuffix.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
                </Form.Group>
             </Flex>
             <Spacer size="16px" />
@@ -176,9 +343,17 @@ export const PriceLabels = ({ update }) => {
                   <Form.Text
                      id="pricePerServingPrefix"
                      name="pricePerServingPrefix"
-                     value={form.pricePerServingPrefix}
-                     onChange={e => handleChange(e.target.name, e.target.value)}
+                     value={form.pricePerServingPrefix.value}
+                     onChange={e => handleChange(e)}
+                     onBlur={onBlur}
                   />
+                  {form.pricePerServingPrefix.meta.isTouched &&
+                     !form.pricePerServingPrefix.meta.isValid &&
+                     form.pricePerServingPrefix.meta.errors.map(
+                        (error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        )
+                     )}
                </Form.Group>
 
                <Spacer size="16px" xAxis />
@@ -192,9 +367,17 @@ export const PriceLabels = ({ update }) => {
                   <Form.Text
                      id="pricePerServingSuffix"
                      name="pricePerServingSuffix"
-                     value={form.pricePerServingSuffix}
-                     onChange={e => handleChange(e.target.name, e.target.value)}
+                     value={form.pricePerServingSuffix.value}
+                     onChange={e => handleChange(e)}
+                     onBlur={onBlur}
                   />
+                  {form.pricePerServingSuffix.meta.isTouched &&
+                     !form.pricePerServingSuffix.meta.isValid &&
+                     form.pricePerServingSuffix.meta.errors.map(
+                        (error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        )
+                     )}
                </Form.Group>
             </Flex>
             <Spacer size="16px" />

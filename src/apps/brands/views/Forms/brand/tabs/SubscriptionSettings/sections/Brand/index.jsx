@@ -15,7 +15,7 @@ import {
    TunnelHeader,
    Form,
 } from '@dailykit/ui'
-
+import validator from '../../../../../../validator'
 import { ImageContainer } from '../styled'
 import { BRANDS } from '../../../../../../../graphql'
 import { EditIcon } from '../../../../../../../../../shared/assets/icons'
@@ -32,11 +32,25 @@ export const Brand = ({ update }) => {
    const params = useParams()
    const [form, setForm] = React.useState({
       url: '',
-      name: '',
+      name: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
       favicon: '',
       logoMark: '',
       wordMark: '',
-      metaDescription: '',
+      metaDescription: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
    })
    const [current, setCurrent] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -64,10 +78,28 @@ export const Brand = ({ update }) => {
             if (!isNull(brand) && !isEmpty(brand)) {
                setForm(form => ({
                   ...form,
-                  ...(brand.value?.name && { name: brand.value.name }),
+                  ...(brand.value?.name && {
+                     name: {
+                        ...form.name,
+                        value: brand.value.name,
+                        meta: {
+                           isValid: true,
+                           isTouched: false,
+                           errors: [],
+                        },
+                     },
+                  }),
                   ...(brand.value?.favicon && { favicon: brand.value.favicon }),
                   ...(brand.value?.metaDescription && {
-                     metaDescription: brand.value.metaDescription,
+                     metaDescription: {
+                        ...form.metaDescription,
+                        value: brand.value.metaDescription,
+                        meta: {
+                           isValid: true,
+                           isTouched: false,
+                           errors: [],
+                        },
+                     },
                   }),
                   ...(brand.value?.logo?.url && { url: brand.value.logo.url }),
                   ...(brand.value?.logo?.wordMark && {
@@ -84,25 +116,78 @@ export const Brand = ({ update }) => {
 
    const updateSetting = React.useCallback(() => {
       if (!settingId) return
-      update({
-         id: settingId,
-         value: {
-            name: form.name,
-            favicon: form.favicon,
-            metaDescription: form.metaDescription,
-            logo: {
-               url: form.url,
-               logoMark: form.logoMark,
-               wordMark: form.wordMark,
+      if (form.name.meta.isValid && form.metaDescription.meta.isValid) {
+         update({
+            id: settingId,
+            value: {
+               name: form.name.value,
+               favicon: form.favicon,
+               metaDescription: form.metaDescription.value,
+               logo: {
+                  url: form.url,
+                  logoMark: form.logoMark,
+                  wordMark: form.wordMark,
+               },
             },
-         },
-      })
+         })
+      } else {
+         toast.error('Brand Details must be provided')
+      }
    }, [form, settingId, update])
 
-   const handleChange = (name, value) => {
-      setForm(form => ({ ...form, [name]: value }))
+   const handleChange = e => {
+      const { name, value } = e.target
+      if (name === 'name') {
+         setForm({
+            ...form,
+            name: {
+               ...form.name,
+               value: value,
+            },
+         })
+      } else {
+         setForm({
+            ...form,
+            metaDescription: {
+               ...form.metaDescription,
+               value: value,
+            },
+         })
+      }
+
       closeTunnel(1)
       setCurrent(null)
+   }
+
+   const onBlur = e => {
+      const { name, value } = e.target
+      if (name === 'name') {
+         setForm({
+            ...form,
+            name: {
+               ...form.name,
+               meta: {
+                  ...form.name.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            },
+         })
+      } else {
+         setForm({
+            ...form,
+            metaDescription: {
+               ...form.metaDescription,
+               meta: {
+                  ...form.metaDescription.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            },
+         })
+      }
    }
 
    if (error) {
@@ -120,13 +205,21 @@ export const Brand = ({ update }) => {
                   <Tooltip identifier="brand_subscription_name_info" />
                </Flex>
                <Spacer size="4px" />
-               <Form.Text
-                  id="name"
-                  name="name"
-                  value={form.name}
-                  placeholder="Enter brand name"
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Text
+                     id="name"
+                     name="name"
+                     value={form.name.value}
+                     placeholder="Enter brand name"
+                     onChange={e => handleChange(e)}
+                     onBlur={onBlur}
+                  />
+                  {form.name.meta.isTouched &&
+                     !form.name.meta.isValid &&
+                     form.name.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
             </Flex>
             <Spacer size="24px" />
             <Flex>
@@ -135,12 +228,20 @@ export const Brand = ({ update }) => {
                   <Tooltip identifier="brand_metaDescription_info" />
                </Flex>
                <Spacer size="4px" />
-               <Form.TextArea
-                  name="metaDescription"
-                  value={form.metaDescription}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-                  placeholder="Enter meta description for your brand"
-               />
+               <Form.Group>
+                  <Form.TextArea
+                     name="metaDescription"
+                     value={form.metaDescription.value}
+                     onChange={e => handleChange(e)}
+                     placeholder="Enter meta description for your brand"
+                     onBlur={onBlur}
+                  />
+                  {form.metaDescription.meta.isTouched &&
+                     !form.metaDescription.meta.isValid &&
+                     form.metaDescription.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
             </Flex>
             <Spacer size="24px" />
             <Flex container alignItems="center">
