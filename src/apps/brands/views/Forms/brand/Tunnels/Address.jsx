@@ -76,7 +76,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                         <Flex>
                            <Form.Group>
                               <Form.Label htmlFor="search" title="search">
-                                 Search on Google
+                                 <Flex container alignItems="center">
+                                    Search on Google
+                                    <Tooltip identifier="brand_address_googleSearch" />
+                                 </Flex>
                               </Form.Label>
                               <Form.Text id="search" name="search" {...props} />
                            </Form.Group>
@@ -90,7 +93,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                   <Flex margin="24px 0">
                      <Form.Group>
                         <Form.Label htmlFor="line1" title="line1">
-                           Line 1
+                           <Flex container alignItems="center">
+                              Line 1
+                              <Tooltip identifier="brand_address_line1" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="line1"
@@ -108,7 +114,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
 
                      <Form.Group>
                         <Form.Label htmlFor="line2" title="line2">
-                           Line 2
+                           <Flex container alignItems="center">
+                              Line 2
+                              <Tooltip identifier="brand_address_line2" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="line2"
@@ -127,7 +136,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                   <Flex container alignItems="center" margin="0 0 24px 0">
                      <Form.Group>
                         <Form.Label htmlFor="city" title="city">
-                           City
+                           <Flex container alignItems="center">
+                              City
+                              <Tooltip identifier="brand_address_city" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="city"
@@ -145,7 +157,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                      <Spacer size="16px" xAxis />
                      <Form.Group>
                         <Form.Label htmlFor="state" title="state">
-                           State
+                           <Flex container alignItems="center">
+                              State
+                              <Tooltip identifier="brand_address_state" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="state"
@@ -163,7 +178,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                   <Flex container alignItems="center" margin="0 0 24px 0">
                      <Form.Group>
                         <Form.Label htmlFor="country" title="country">
-                           Country
+                           <Flex container alignItems="center">
+                              Country
+                              <Tooltip identifier="brand_address_country" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="country"
@@ -181,7 +199,10 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                      <Spacer size="16px" xAxis />
                      <Form.Group>
                         <Form.Label htmlFor="zipcode" title="zipcode">
-                           ZIP
+                           <Flex container alignItems="center">
+                              ZIP
+                              <Tooltip identifier="brand_address_zip" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="zipcode"

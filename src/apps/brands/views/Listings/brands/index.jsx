@@ -228,7 +228,10 @@ export const Brands = () => {
                <Flex padding="16px">
                   <Form.Group>
                      <Form.Label htmlFor="title" title="title">
-                        Title
+                        <Flex container alignItems="center">
+                           Title
+                           <Tooltip identifier="brand_title_info" />
+                        </Flex>
                      </Form.Label>
                      <Form.Text
                         id="title"
@@ -240,7 +243,10 @@ export const Brands = () => {
                   <Spacer size="24px" />
                   <Form.Group>
                      <Form.Label htmlFor="domain" title="domain">
-                        Domain
+                        <Flex container alignItems="center">
+                           Domain
+                           <Tooltip identifier="brand_domain_info" />
+                        </Flex>
                      </Form.Label>
                      <Form.Text
                         id="domain"

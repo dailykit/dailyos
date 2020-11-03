@@ -144,7 +144,10 @@ export const PlanMetaDetails = ({ update }) => {
                      )
                   }
                >
-                  Show plan description
+                  <Flex container alignItems="center">
+                     Show plan description
+                     <Tooltip identifier="brand_subscription_TitleDescription_info" />
+                  </Flex>
                </Form.Toggle>
 
                <Spacer size="16px" />
@@ -159,7 +162,10 @@ export const PlanMetaDetails = ({ update }) => {
                      )
                   }
                >
-                  Show plan thumbnail
+                  <Flex container alignItems="center">
+                     Show plan thumbnail
+                     <Tooltip identifier="brand_subscription_TitleThumbnail_info" />
+                  </Flex>
                </Form.Toggle>
             </Flex>
             <Spacer size="24px" />
@@ -180,7 +186,10 @@ export const PlanMetaDetails = ({ update }) => {
                      )
                   }
                >
-                  Show total
+                  <Flex container alignItems="center">
+                     Show total
+                     <Tooltip identifier="brand_subscription_ItemCountTotal_info" />
+                  </Flex>
                </Form.Toggle>
 
                <Spacer size="16px" />
@@ -195,7 +204,10 @@ export const PlanMetaDetails = ({ update }) => {
                      )
                   }
                >
-                  Show per serving
+                  <Flex container alignItems="center">
+                     Show per serving
+                     <Tooltip identifier="brand_subscription_itemCount_PerServing_info" />
+                  </Flex>
                </Form.Toggle>
             </Flex>
             <Spacer size="24px" />
