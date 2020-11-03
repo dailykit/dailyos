@@ -24,6 +24,7 @@ import {
    UPDATE_PURCHASE_ORDER,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
+import { validators } from '../../../utils/validators'
 import { StyledWrapper } from '../styled'
 import PackagingTunnel from './PackagingTunnel'
 
@@ -36,7 +37,10 @@ function onError(error) {
 
 export default function PackagingPurchaseOrderForm() {
    const { t } = useTranslation()
-   const [orderQuantity, setOrderQuantity] = useState(0)
+   const [orderQuantity, setOrderQuantity] = useState({
+      value: '',
+      meta: { isTouched: false, isValid: false, errors: [] },
+   })
    const { id } = useParams()
 
    const {
@@ -47,7 +51,11 @@ export default function PackagingPurchaseOrderForm() {
       variables: { id },
       onSubscriptionData: data => {
          const { orderQuantity } = data.subscriptionData.data.purchaseOrderItem
-         setOrderQuantity(orderQuantity)
+         const { isValid, errors } = validators.quantity(orderQuantity)
+         setOrderQuantity({
+            value: orderQuantity,
+            meta: { isValid, errors, ...orderQuantity.meta },
+         })
       },
    })
 
@@ -56,16 +64,31 @@ export default function PackagingPurchaseOrderForm() {
       onCompleted: () => toast.success('Status updated.'),
    })
 
-   const saveStatus = async status => {
-      updatePurchaseOrderItem({
-         variables: {
-            id: item.id,
-            status,
-         },
-      })
+   const checkIsValid = () => {
+      if (!item.packaging?.packagingName) return 'Please select a packaging.'
+      if (!orderQuantity.meta.isValid) return 'invalid order quantity.'
+
+      return true
    }
 
-   const handleSubmit = async () => {}
+   const saveStatus = async status => {
+      const isValid = checkIsValid()
+
+      if (!isValid.length)
+         updatePurchaseOrderItem({
+            variables: {
+               id: item.id,
+               status,
+            },
+         })
+      else toast.error(isValid)
+   }
+
+   const handlePublish = () => {
+      const isValid = checkIsValid()
+      if (!isValid.length) saveStatus('PENDING')
+      else toast.error(isValid)
+   }
 
    if (error) {
       onError(error)
@@ -85,14 +108,14 @@ export default function PackagingPurchaseOrderForm() {
             >
                <Text as="h1">{t(address.concat('purchase order'))}</Text>
 
-               {item.status ? (
+               {item.status !== 'UNPUBLISHED' ? (
                   <StatusSwitch
                      currentStatus={item.status}
                      onSave={saveStatus}
                   />
                ) : (
-                  <TextButton onClick={handleSubmit} type="solid">
-                     {t(address.concat('submit'))}
+                  <TextButton onClick={handlePublish} type="solid">
+                     Publish
                   </TextButton>
                )}
             </Flex>
@@ -124,6 +147,8 @@ function Content({ item, orderQuantity, setOrderQuantity }) {
       })
    }
 
+   const editable = ['PENDING', 'UNPUBLISHED'].includes(item.status)
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -152,12 +177,35 @@ function Content({ item, orderQuantity, setOrderQuantity }) {
                      <Form.Number
                         id="quantity"
                         name="quantity"
-                        hasWriteAccess={item.status === 'PENDING'}
+                        hasWriteAccess={editable}
                         placeholder={t(address.concat('enter order quantity'))}
-                        value={orderQuantity}
-                        onChange={e => setOrderQuantity(e.target.value)}
-                        onBlur={e => updateOrderQuantity(e.target.value)}
+                        value={orderQuantity.value}
+                        onChange={e =>
+                           setOrderQuantity({
+                              value: e.target.value,
+                              meta: { ...orderQuantity.meta },
+                           })
+                        }
+                        onBlur={e => {
+                           const { isValid, errors } = validators.quantity(
+                              e.target.value
+                           )
+                           setOrderQuantity({
+                              value: e.target.value,
+                              meta: { isValid, errors, isTouched: true },
+                           })
+
+                           if (isValid) {
+                              updateOrderQuantity(e.target.value)
+                           }
+                        }}
                      />
+                     {orderQuantity.meta.isTouched &&
+                        !orderQuantity.meta.isValid && (
+                           <Form.Error>
+                              {orderQuantity.meta.errors[0]}
+                           </Form.Error>
+                        )}
                   </Form.Group>
                   <Spacer xAxis size="8px" />
                   <Text as="title">in {item.unit || 'pieces'}</Text>
