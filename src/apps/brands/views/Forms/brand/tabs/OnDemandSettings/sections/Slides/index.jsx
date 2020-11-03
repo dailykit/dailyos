@@ -20,7 +20,11 @@ import { DeleteIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    AssetUploader,
    Flex,
+   Tooltip,
+   InlineLoader,
 } from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Slides = ({ update }) => {
    const params = useParams()
@@ -28,7 +32,7 @@ export const Slides = ({ update }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [settingId, setSettingId] = React.useState(null)
 
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Slides' },
          type: { _eq: 'visual' },
@@ -66,9 +70,18 @@ export const Slides = ({ update }) => {
       closeTunnel(1)
    }
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Slides">
-         <Text as="h3">Slides</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Slides</Text>
+            <Tooltip identifier="brand_slides_info" />
+         </Flex>
          <Spacer size="16px" />
          <ButtonTile
             type="primary"

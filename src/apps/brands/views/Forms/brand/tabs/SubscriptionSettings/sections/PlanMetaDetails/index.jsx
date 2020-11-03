@@ -2,10 +2,16 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
+import { Form, TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const PlanMetaDetails = ({ update }) => {
    const params = useParams()
@@ -18,7 +24,7 @@ export const PlanMetaDetails = ({ update }) => {
       subscriptionItemCountPerServing: false,
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'subscription-metadetails' },
          type: { _eq: 'Select-Plan' },
@@ -101,66 +107,125 @@ export const PlanMetaDetails = ({ update }) => {
       setForm(form => ({ ...form, [name]: value }))
    }
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
+
    return (
       <div id="subscription-metadetails">
          <Flex>
-            <Input
-               type="text"
-               name="selectButtonLabel"
-               label="Select Button Label"
-               style={{ width: '240px' }}
-               value={form.selectButtonLabel}
-               onChange={e => handleChange(e.target.name, e.target.value)}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="label" title="label">
+                  <Flex container alignItems="center">
+                     Select Button Label
+                     <Tooltip identifier="brand_selectButtonLabel_info" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="selectButtonLabel"
+                  name="selectButtonLabel"
+                  value={form.selectButtonLabel}
+                  onChange={e => handleChange(e.target.name, e.target.value)}
+               />
+            </Form.Group>
+
             <Spacer size="24px" />
             <Flex>
-               <Text as="h3">Plan Title</Text>
-               <Spacer size="16px" />
-               <Toggle
-                  label="Show plan description"
-                  checked={form.subscriptionTitleDescription}
-                  setChecked={value =>
-                     handleChange('subscriptionTitleDescription', value)
+               <Form.Toggle
+                  id="subscriptionTitleDescription"
+                  name="subscriptionTitleDescription"
+                  value={form.subscriptionTitleDescription}
+                  onChange={() =>
+                     handleChange(
+                        'subscriptionTitleDescription',
+                        !form.subscriptionTitleDescription
+                     )
                   }
-               />
+               >
+                  <Flex container alignItems="center">
+                     Show plan description
+                     <Tooltip identifier="brand_subscription_TitleDescription_info" />
+                  </Flex>
+               </Form.Toggle>
+
                <Spacer size="16px" />
-               <Toggle
-                  label="Show plan thumbnail"
-                  checked={form.subscriptionTitleThumbnail}
-                  setChecked={value =>
-                     handleChange('subscriptionTitleThumbnail', value)
+               <Form.Toggle
+                  id="subscriptionTitleThumbnail"
+                  name="subscriptionTitleThumbnail"
+                  value={form.subscriptionTitleThumbnail}
+                  onChange={() =>
+                     handleChange(
+                        'subscriptionTitleThumbnail',
+                        !form.subscriptionTitleThumbnail
+                     )
                   }
-               />
+               >
+                  <Flex container alignItems="center">
+                     Show plan thumbnail
+                     <Tooltip identifier="brand_subscription_TitleThumbnail_info" />
+                  </Flex>
+               </Form.Toggle>
             </Flex>
             <Spacer size="24px" />
             <Flex>
-               <Text as="h3">Plan Item Counts</Text>
+               <Flex container alignItems="center">
+                  <Text as="h3">Plan Item Counts</Text>
+                  <Tooltip identifier="brand_itemCount_label_info" />
+               </Flex>
                <Spacer size="16px" />
-               <Toggle
-                  label="Show total"
-                  checked={form.subscriptionItemCountTotal}
-                  setChecked={value =>
-                     handleChange('subscriptionItemCountTotal', value)
+               <Form.Toggle
+                  id="subscriptionItemCountTotal"
+                  name="subscriptionItemCountTotal"
+                  value={form.subscriptionItemCountTotal}
+                  onChange={() =>
+                     handleChange(
+                        'subscriptionItemCountTotal',
+                        !form.subscriptionItemCountTotal
+                     )
                   }
-               />
+               >
+                  <Flex container alignItems="center">
+                     Show total
+                     <Tooltip identifier="brand_subscription_ItemCountTotal_info" />
+                  </Flex>
+               </Form.Toggle>
+
                <Spacer size="16px" />
-               <Toggle
-                  label="Show per serving"
-                  checked={form.subscriptionItemCountPerServing}
-                  setChecked={value =>
-                     handleChange('subscriptionItemCountPerServing', value)
+               <Form.Toggle
+                  id="subscriptionItemCountPerServing"
+                  name="subscriptionItemCountPerServing"
+                  value={form.subscriptionItemCountPerServing}
+                  onChange={() =>
+                     handleChange(
+                        'subscriptionItemCountPerServing',
+                        !form.subscriptionItemCountPerServing
+                     )
                   }
-               />
+               >
+                  <Flex container alignItems="center">
+                     Show per serving
+                     <Tooltip identifier="brand_subscription_itemCount_PerServing_info" />
+                  </Flex>
+               </Form.Toggle>
             </Flex>
             <Spacer size="24px" />
-            <Input
-               rows="3"
-               type="textarea"
-               label="Yield Information"
-               name="subscriptionYieldInformation"
-               value={form.subscriptionYieldInformation}
-               onChange={e => handleChange(e.target.name, e.target.value)}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="label" title="label">
+                  <Flex container alignItems="center">
+                     Yield Information
+                     <Tooltip identifier="brand_subscriptionYieldInformation_info" />
+                  </Flex>
+               </Form.Label>
+               <Form.TextArea
+                  id="subscriptionYieldInformation"
+                  name="subscriptionYieldInformation"
+                  value={form.subscriptionYieldInformation}
+                  onChange={e => handleChange(e.target.name, e.target.value)}
+               />
+            </Form.Group>
+
             <Spacer size="16px" />
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update

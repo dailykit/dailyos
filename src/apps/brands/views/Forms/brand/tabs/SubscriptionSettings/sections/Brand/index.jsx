@@ -13,6 +13,7 @@ import {
    Tunnel,
    useTunnel,
    TunnelHeader,
+   Form,
 } from '@dailykit/ui'
 
 import { ImageContainer } from '../styled'
@@ -21,7 +22,11 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    Flex,
    AssetUploader,
+   Tooltip,
+   InlineLoader,
 } from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Brand = ({ update }) => {
    const params = useParams()
@@ -36,7 +41,7 @@ export const Brand = ({ update }) => {
    const [current, setCurrent] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'theme-brand' },
          type: { _eq: 'brand' },
@@ -100,30 +105,37 @@ export const Brand = ({ update }) => {
       setCurrent(null)
    }
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
+
    return (
       <div id="theme-brand">
          <Flex>
             <Flex>
-               <Text as="h3">Name</Text>
+               <Flex container alignItems="flex-start">
+                  <Text as="h3">Name</Text>
+                  <Tooltip identifier="brand_subscription_name_info" />
+               </Flex>
                <Spacer size="4px" />
-               <Input
-                  label=""
-                  type="text"
+               <Form.Text
+                  id="name"
                   name="name"
                   value={form.name}
-                  style={{ width: '240px' }}
                   placeholder="Enter brand name"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
             </Flex>
             <Spacer size="24px" />
             <Flex>
-               <Text as="h3">Meta Description</Text>
+               <Flex container alignItems="flex-start">
+                  <Text as="h3">Meta Description</Text>
+                  <Tooltip identifier="brand_metaDescription_info" />
+               </Flex>
                <Spacer size="4px" />
-               <Input
-                  label=""
-                  rows="3"
-                  type="textarea"
+               <Form.TextArea
                   name="metaDescription"
                   value={form.metaDescription}
                   onChange={e => handleChange(e.target.name, e.target.value)}

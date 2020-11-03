@@ -13,7 +13,13 @@ import {
 
 import { AddressTunnel } from '../../../../Tunnels'
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Address = ({ update }) => {
    const params = useParams()
@@ -21,7 +27,7 @@ export const Address = ({ update }) => {
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Location' },
          type: { _eq: 'availability' },
@@ -48,9 +54,18 @@ export const Address = ({ update }) => {
       },
    })
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Location">
-         <Text as="h3">Location</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Location</Text>
+            <Tooltip identifier="brand_address_info" />
+         </Flex>
          <Spacer size="16px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="p">{normalizeAddress(address)}</Text>

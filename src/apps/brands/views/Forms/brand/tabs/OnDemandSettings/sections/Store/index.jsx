@@ -2,10 +2,16 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle, Input } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Toggle, Input, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Store = ({ update }) => {
    const params = useParams()
@@ -14,7 +20,7 @@ export const Store = ({ update }) => {
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
    const [message, setMessage] = React.useState('')
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Store Availability' },
          type: { _eq: 'availability' },
@@ -62,44 +68,79 @@ export const Store = ({ update }) => {
       })
    }, [isOpen, from, to, message, settingId])
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Store Availability">
-         <Text as="h3">Store Availability</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Store Availability</Text>
+            <Tooltip identifier="brand_store_availability_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="start" justifyContent="space-between">
             <Flex>
-               <Toggle label="Open" checked={isOpen} setChecked={setIsOpen} />
+               <Form.Toggle
+                  name="open"
+                  value={isOpen}
+                  onChange={() => setIsOpen(!isOpen)}
+               >
+                  <Flex container alignItems="center">
+                     Open
+                     <Tooltip identifier="brand_store_open_info" />
+                  </Flex>
+               </Form.Toggle>
                <Spacer size="16px" />
                <Flex container alignItems="center">
                   <Flex>
-                     <Text as="p">From</Text>
-                     <input
-                        type="time"
-                        value={from}
-                        onChange={e => setFrom(e.target.value)}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="time" title="time">
+                           <Flex container alignItems="center">
+                              From
+                              <Tooltip identifier="brand_store_open_from_info" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Time
+                           id="fromTime"
+                           name="fromTime"
+                           onChange={e => setFrom(e.target.value)}
+                           value={from}
+                        />
+                     </Form.Group>
                   </Flex>
                   <Spacer size="24px" xAxis />
                   <Flex>
-                     <Text as="p">To</Text>
-                     <input
-                        type="time"
-                        value={to}
-                        onChange={e => setTo(e.target.value)}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="time" title="time">
+                           <Flex container alignItems="center">
+                              To
+                              <Tooltip identifier="brand_store_open_to_info" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Time
+                           id="toTime"
+                           name="toTime"
+                           value={to}
+                           onChange={e => setTo(e.target.value)}
+                        />
+                     </Form.Group>
                   </Flex>
                </Flex>
                <Spacer size="16px" />
-               <section>
-                  <Text as="p">Text to show when store's closed</Text>
-                  <Input
-                     type="text"
+               <Form.Group>
+                  <Form.Label htmlFor="time" title="time">
+                     Text to show when store's closed
+                  </Form.Label>
+                  <Form.Text
                      value={message}
                      name="shut-message"
                      onChange={e => setMessage(e.target.value)}
                      placeholder="Enter the closed store message"
                   />
-               </section>
+               </Form.Group>
             </Flex>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update

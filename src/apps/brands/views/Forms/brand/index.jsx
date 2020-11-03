@@ -5,10 +5,8 @@ import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
-   Input,
    Spacer,
-   Toggle,
-   TextButton,
+   Form,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
@@ -19,7 +17,8 @@ import {
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
-import { Flex, InlineLoader } from '../../../../../shared/components'
+import { Flex, InlineLoader, Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import {
    OnDemandSettings,
    OnDemandCollections,
@@ -33,7 +32,10 @@ export const Brand = () => {
    const [title, setTitle] = React.useState('')
    const [update] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => toast.success('Successfully updated brand!'),
-      onError: () => toast.error('Failed to update brand!'),
+      onError: error => {
+         toast.error('Failed to update brand!')
+         logger(error)
+      },
    })
    const { error, loading, data: { brand = {} } = {} } = useSubscription(
       BRANDS.BRAND,
@@ -60,7 +62,6 @@ export const Brand = () => {
    }, [tab, addTab, loading, brand])
 
    const updateTitle = title => {
-      if (!title) return
       update({
          variables: {
             id: params.id,
@@ -72,7 +73,10 @@ export const Brand = () => {
    }
 
    if (loading) return <InlineLoader />
-   if (error) return <span>Something went wrong, please refresh the page!</span>
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
    return (
       <Wrapper>
          <Flex
@@ -82,32 +86,51 @@ export const Brand = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <section>
-                  <Input
-                     type="text"
-                     label="Title"
+               <Form.Group>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label htmlFor="name" title="Brand title">
+                        Title*
+                     </Form.Label>
+                     <Tooltip identifier="brand_title_info" />
+                  </Flex>
+                  <Form.Text
+                     id="title"
                      name="title"
+                     placeholder="Enter the brand title"
                      value={title}
                      disabled={brand?.isDefault}
                      onChange={e => setTitle(e.target.value)}
-                     onBlur={e => updateTitle('title', e.target.value)}
+                     onBlur={e => updateTitle(e.target.value)}
                   />
-               </section>
+               </Form.Group>
+
                <Spacer size="24px" xAxis />
                <section>
-                  <Label>Domain</Label>
+                  <Flex container alignItems="center">
+                     <Label>Domain</Label>
+                     <Tooltip identifier="brand_domain_info" />
+                  </Flex>
                   <Text as="h3">{brand?.domain}</Text>
                </section>
             </Flex>
-            <Toggle
-               label="Publish"
-               checked={brand?.isPublished}
-               setChecked={value =>
+
+            <Form.Toggle
+               name="Publish"
+               value={brand?.isPublished}
+               onChange={() =>
                   update({
-                     variables: { id: params.id, _set: { isPublished: value } },
+                     variables: {
+                        id: params.id,
+                        _set: { isPublished: !brand?.isPublished || false },
+                     },
                   })
                }
-            />
+            >
+               <Flex container alignItems="center">
+                  Publish
+                  <Tooltip identifier="brands_publish_info" />
+               </Flex>
+            </Form.Toggle>
          </Flex>
          <Spacer size="24px" />
          <HorizontalTabs>

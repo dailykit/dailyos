@@ -2,10 +2,16 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
+import { Form, TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const StepsLabel = ({ update }) => {
    const params = useParams()
@@ -16,7 +22,7 @@ export const StepsLabel = ({ update }) => {
       selectDelivery: '',
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'steps-labels' },
          type: { _eq: 'conventions' },
@@ -74,47 +80,78 @@ export const StepsLabel = ({ update }) => {
       setForm(form => ({ ...form, [name]: value }))
    }
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
+
    return (
       <div id="steps-labels">
          <Flex>
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  name="checkout"
-                  label="Checkout Label"
-                  value={form.checkout}
-                  style={{ width: '240px' }}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Checkout Label
+                        <Tooltip identifier="brand_checkout_label_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="checkout"
+                     name="checkout"
+                     value={form.checkout}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
                <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  name="register"
-                  label="Register Label"
-                  value={form.register}
-                  style={{ width: '240px' }}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Register Label
+                        <Tooltip identifier="brand_register_label_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="register"
+                     name="register"
+                     value={form.register}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
             </Flex>
             <Spacer size="24px" />
             <Flex container alignItems="center">
-               <Input
-                  type="text"
-                  name="selectMenu"
-                  value={form.selectMenu}
-                  label="Select Menu Label"
-                  style={{ width: '240px' }}
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Select Menu Label
+                        <Tooltip identifier="brand_selectMenu_label_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="selectMenu"
+                     name="selectMenu"
+                     value={form.selectMenu}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
+
                <Spacer size="16px" xAxis />
-               <Input
-                  type="text"
-                  name="selectDelivery"
-                  value={form.selectDelivery}
-                  style={{ width: '240px' }}
-                  label="Select Delivery Label"
-                  onChange={e => handleChange(e.target.name, e.target.value)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="label" title="label">
+                     <Flex container alignItems="center">
+                        Select Delivery Label
+                        <Tooltip identifier="brand_delivery_label_info" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="selectDelivery"
+                     name="selectDelivery"
+                     value={form.selectDelivery}
+                     onChange={e => handleChange(e.target.name, e.target.value)}
+                  />
+               </Form.Group>
             </Flex>
             <Spacer size="16px" />
             <TextButton size="sm" type="outline" onClick={updateSetting}>

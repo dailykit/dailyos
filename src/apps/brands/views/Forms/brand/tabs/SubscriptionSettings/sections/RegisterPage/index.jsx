@@ -20,7 +20,11 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    Flex,
    AssetUploader,
+   Tooltip,
+   InlineLoader,
 } from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const RegisterPage = ({ update }) => {
    const params = useParams()
@@ -30,7 +34,7 @@ export const RegisterPage = ({ update }) => {
       backgroundImage: '',
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'register-background' },
          type: { _eq: 'Register' },
@@ -85,11 +89,23 @@ export const RegisterPage = ({ update }) => {
       closeTunnel(1)
    }
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
+
    return (
       <div id="register-background">
-         <Text as="h3">Register Page Background</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Register Page Background</Text>
+            <Tooltip identifier="brand_registerPage_info" />
+         </Flex>
          <Spacer size="24px" />
-         <Text as="p">Background Color</Text>
+         <Flex container alignItems="center">
+            <Text as="p">Background Color</Text>
+            <Tooltip identifier="brand_registerPage_background_info" />
+         </Flex>
          <Spacer size="8px" />
          <input
             type="color"

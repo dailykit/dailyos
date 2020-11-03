@@ -3,9 +3,10 @@ import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
-   Input,
+   Form,
    Spacer,
    PlusIcon,
+   ComboButton,
    IconButton,
    Tunnel,
    Tunnels,
@@ -18,17 +19,20 @@ import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import tableOptions from '../../../tableOption'
 import { StyledWrapper, StyledHeader } from '../styled'
-import { EditIcon } from '../../../../../shared/assets/icons'
-import { InlineLoader, Flex } from '../../../../../shared/components'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { InlineLoader, Flex, Tooltip } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
 
 export const Brands = () => {
+   const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const [form, setForm] = React.useState({
       title: '',
       domain: '',
    })
-   const [create] = useMutation(BRANDS.CREATE_BRAND, {
+   const [create, { loading }] = useMutation(BRANDS.CREATE_BRAND, {
       onCompleted: () => {
          setForm({
             title: '',
@@ -40,10 +44,23 @@ export const Brands = () => {
       onError: () =>
          toast.success('Failed to create the brand, please try again!'),
    })
+
+   const [deleteBrand] = useMutation(BRANDS.UPDATE_BRAND, {
+      onCompleted: () => {
+         toast.success('Brand deleted!')
+      },
+      onError: error => {
+         console.log(error)
+         toast.error('Could not delete!')
+      },
+   })
+
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const { error, loading, data: { brands = {} } = {} } = useSubscription(
-      BRANDS.LIST
-   )
+   const {
+      error,
+      loading: listLoading,
+      data: { brands = {} } = {},
+   } = useSubscription(BRANDS.LIST)
 
    React.useEffect(() => {
       if (!tab) {
@@ -51,11 +68,28 @@ export const Brands = () => {
       }
    }, [tab, addTab])
 
-   const edit = brand => {
+   const cellClick = brand => {
       addTab(
          brand?.title || brand?.domain || 'N/A',
          `/brands/brands/${brand.id}`
       )
+   }
+
+   // Handler
+   const deleteHandler = (e, brand) => {
+      e.stopPropagation()
+      if (
+         window.confirm(
+            `Are you sure you want to delete Brand - ${brand.title}?`
+         )
+      ) {
+         deleteBrand({
+            variables: {
+               id: brand.id,
+               _set: { isArchived: true },
+            },
+         })
+      }
    }
 
    const columns = React.useMemo(
@@ -66,6 +100,17 @@ export const Brands = () => {
             headerSort: true,
             headerFilter: true,
             formatter: cell => cell.getData().title || 'N/A',
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_brand_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            cssClass: 'rowClick',
+            cellClick: (e, cell) => {
+               cellClick(cell.getData())
+            },
          },
          {
             title: 'Domain',
@@ -73,6 +118,13 @@ export const Brands = () => {
             headerSort: true,
             headerFilter: true,
             formatter: cell => cell.getData().domain || 'N/A',
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_domain_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Published',
@@ -81,13 +133,31 @@ export const Brands = () => {
             headerHozAlign: 'center',
             field: 'isPublished',
             formatter: 'tickCross',
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_publish_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Actions',
             hozAlign: 'center',
             headerSort: false,
             headerHozAlign: 'center',
-            formatter: reactFormatter(<EditBrand edit={edit} />),
+            formatter: reactFormatter(<DeleteBrand />),
+            headerTooltip: function (column) {
+               const identifier = 'brands_listing_actions_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            cellClick: (e, cell) => {
+               e.stopPropagation()
+               deleteHandler(e, cell._cell.row.data)
+            },
          },
       ],
       []
@@ -111,54 +181,80 @@ export const Brands = () => {
       setForm(form => ({ ...form, [name]: value }))
    }
 
-   if (error) return <div>Something went wrong, please refresh!</div>
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+   if (listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
          <StyledHeader>
-            <Text as="h2">Brands ({brands?.aggregate?.count || 0})</Text>
-            <IconButton type="solid" onClick={() => openTunnel(1)}>
+            <Flex container alignItems="center">
+               <Text as="h2">Brands ({brands?.aggregate?.count || 0})</Text>
+               <Tooltip identifier="brands_listing_heading" />
+            </Flex>
+
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
                <PlusIcon />
-            </IconButton>
+               Create Brand
+            </ComboButton>
          </StyledHeader>
          {loading ? (
             <InlineLoader />
          ) : (
             <>
-               {brands?.aggregate?.count > 0 ? (
-                  <ReactTabulator
-                     ref={tableRef}
-                     columns={columns}
-                     data={brands?.nodes || []}
-                     options={tableOptions}
-                  />
-               ) : (
-                  <span>No Brands yet!</span>
-               )}
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={brands?.nodes || []}
+                  options={{
+                     ...tableOptions,
+                     placeholder: 'No Brands Available Yet !',
+                  }}
+               />
             </>
          )}
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="sm">
+            <Tunnel layer={1} size="md">
                <TunnelHeader
                   title="Add Brand"
-                  right={{ action: save, title: 'Save' }}
+                  right={{
+                     action: save,
+                     title: loading ? 'Saving...' : 'Save',
+                  }}
                   close={() => closeTunnel(1)}
+                  tooltip={<Tooltip identifier="create_brand_tunnelHeader" />}
                />
                <Flex padding="16px">
-                  <Input
-                     type="text"
-                     label="Title"
-                     name="title"
-                     value={form.title}
-                     onChange={e => handleChange(e)}
-                  />
+                  <Form.Group>
+                     <Form.Label htmlFor="title" title="title">
+                        <Flex container alignItems="center">
+                           Title
+                           <Tooltip identifier="brand_title_info" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
+                        name="title"
+                        value={form.title}
+                        onChange={e => handleChange(e)}
+                     />
+                  </Form.Group>
                   <Spacer size="24px" />
-                  <Input
-                     type="text"
-                     label="Domain"
-                     name="domain"
-                     value={form.domain}
-                     onChange={e => handleChange(e)}
-                  />
+                  <Form.Group>
+                     <Form.Label htmlFor="domain" title="domain">
+                        <Flex container alignItems="center">
+                           Domain
+                           <Tooltip identifier="brand_domain_info" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Text
+                        id="domain"
+                        name="domain"
+                        value={form.domain}
+                        onChange={e => handleChange(e)}
+                     />
+                  </Form.Group>
                </Flex>
             </Tunnel>
          </Tunnels>
@@ -166,10 +262,10 @@ export const Brands = () => {
    )
 }
 
-const EditBrand = ({ cell, edit }) => {
+const DeleteBrand = ({ cell, edit }) => {
    return (
-      <IconButton type="outline" size="sm" onClick={() => edit(cell.getData())}>
-         <EditIcon color="rgb(40, 193, 247)" />
+      <IconButton type="ghost" size="sm">
+         <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
 }

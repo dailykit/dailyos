@@ -2,17 +2,23 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Toggle, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Payments = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isStoreLive, setIsStoreLive] = React.useState(false)
    const [isStripeConfigured, setIsStripeConfigured] = React.useState(false)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Store Live' },
          type: { _eq: 'availability' },
@@ -46,22 +52,42 @@ export const Payments = ({ update }) => {
       update({ id: settingId, value: { isStoreLive, isStripeConfigured } })
    }, [isStoreLive, isStripeConfigured, settingId])
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Store Live">
-         <Text as="h3">Payments</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Payments</Text>
+            <Tooltip identifier="brand_payments_info" />
+         </Flex>
          <Spacer size="4px" />
          <Flex container alignItems="center" justifyContent="space-between">
-            <Toggle
+            <Form.Toggle
+               name="stripe"
                isDisabled
-               setChecked={() => {}}
-               label="Stripe Configured"
-               checked={isStripeConfigured}
-            />
-            <Toggle
-               checked={isStoreLive}
-               setChecked={setIsStoreLive}
-               label="Accept Live Payments"
-            />
+               value={isStripeConfigured}
+               onChange={() => {}}
+            >
+               <Flex container alignItems="center">
+                  Stripe Configured
+                  <Tooltip identifier="brand_payments_stripeConfig_info" />
+               </Flex>
+            </Form.Toggle>
+            <Form.Toggle
+               name="livePayment"
+               value={isStoreLive}
+               onChange={() => setIsStoreLive(!isStoreLive)}
+            >
+               <Flex container alignItems="center">
+                  Accept Live Payments
+                  <Tooltip identifier="brand_payments_livePayment_info" />
+               </Flex>
+            </Form.Toggle>
+
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
             </TextButton>

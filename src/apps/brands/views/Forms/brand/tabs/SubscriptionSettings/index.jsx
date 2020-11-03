@@ -7,6 +7,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { BRANDS } from '../../../../../graphql'
 import { ScrollSection } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import {
    Brand,
    Contact,
@@ -35,11 +36,13 @@ export const SubscriptionSettings = () => {
          toast.success('Successfully updated!')
       },
       onError: error => {
-         toast.error(error.message)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
    const {
       loading,
+      error,
       data: { subscriptionSettings = [] } = {},
    } = useSubscription(BRANDS.SUBSCRIPTION_SETTINGS_TYPES)
 
@@ -64,6 +67,11 @@ export const SubscriptionSettings = () => {
             },
          },
       })
+   }
+
+   if (error) {
+      toast.error('Somthing went wrong!')
+      logger(error)
    }
 
    return (

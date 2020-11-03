@@ -5,13 +5,19 @@ import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const PrimaryColor = ({ update }) => {
    const params = useParams()
    const [color, setColor] = React.useState('#3fa4ff')
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Primary Color' },
          type: { _eq: 'visual' },
@@ -42,9 +48,18 @@ export const PrimaryColor = ({ update }) => {
       update({ id: settingId, value: { color } })
    }, [color, settingId])
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Primary Color">
-         <Text as="h3">Primary Color</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Primary Color</Text>
+            <Tooltip identifier="brand_primaryColor_info" />
+         </Flex>
          <Spacer size="4px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <input

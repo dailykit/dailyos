@@ -2,10 +2,16 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer } from '@dailykit/ui'
+import { Form, TextButton, Text, Spacer } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Contact = ({ update }) => {
    const params = useParams()
@@ -14,7 +20,7 @@ export const Contact = ({ update }) => {
       phoneNo: '',
    })
    const [settingId, setSettingId] = React.useState(null)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'Contact' },
          type: { _eq: 'brand' },
@@ -60,32 +66,40 @@ export const Contact = ({ update }) => {
       setForm(form => ({ ...form, [name]: value }))
    }
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
+
    return (
       <div id="Contact">
          <Flex>
             <Flex>
-               <Text as="h3">Email</Text>
+               <Flex container alignItems="flex-start">
+                  <Text as="h3">Email</Text>
+                  <Tooltip identifier="brand_contact_email_info" />
+               </Flex>
                <Spacer size="4px" />
-               <Input
-                  label=""
-                  type="text"
+               <Form.Text
+                  id="email"
                   name="email"
                   value={form.email}
-                  style={{ width: '240px' }}
                   placeholder="Enter email"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
             </Flex>
             <Spacer size="24px" />
             <Flex>
-               <Text as="h3">Phone No.</Text>
+               <Flex container alignItems="flex-start">
+                  <Text as="h3">Phone No.</Text>
+                  <Tooltip identifier="brand_contact_phone_info" />
+               </Flex>
                <Spacer size="4px" />
-               <Input
-                  label=""
-                  type="text"
+               <Form.Number
+                  id="phoneNo"
                   name="phoneNo"
                   value={form.phoneNo}
-                  style={{ width: '240px' }}
                   placeholder="Enter phone no."
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
