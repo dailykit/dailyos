@@ -249,16 +249,20 @@ export default function SachetWorkOrder() {
                         {state.isPublished ? (
                            <ItemCard
                               title={state.bulkItem?.processingName}
-                              onHand={state.bulkItem?.onHand}
-                              shelfLife={state.bulkItem?.shelfLife?.value}
+                              onHand={`${state.bulkItem?.onHand} ${state.bulkItem?.unit}`}
+                              shelfLife={`${state.bulkItem?.shelfLife?.value} ${
+                                 state.bulkItem?.shelfLife?.unit || ''
+                              }`}
                               isBulk
                            />
                         ) : (
                            <ItemCard
                               title={state.bulkItem?.processingName}
-                              onHand={state.bulkItem?.onHand}
+                              onHand={`${state.bulkItem?.onHand} ${state.bulkItem?.unit}`}
                               isBulk
-                              shelfLife={state.bulkItem?.shelfLife?.value}
+                              shelfLife={`${state.bulkItem?.shelfLife?.value} ${
+                                 state.bulkItem?.shelfLife?.unit || ''
+                              }`}
                               edit={() => openInputBulkItemTunnel(1)}
                            />
                         )}
@@ -286,15 +290,15 @@ export default function SachetWorkOrder() {
                         {state.isPublished ? (
                            <ItemCard
                               title={`${state.outputSachetItem.unitSize} ${state.outputSachetItem.unit}`}
-                              onHand={state.outputSachetItem.onHand}
-                              par={state.outputSachetItem.parLevel}
+                              onHand={`${state.outputSachetItem.onHand} ${state.outputSachetItem.unit}`}
+                              par={`${state.outputSachetItem.parLevel} ${state.bulkItem?.unit}`}
                               isBulk
                            />
                         ) : (
                            <ItemCard
                               title={`${state.outputSachetItem.unitSize} ${state.outputSachetItem.unit}`}
-                              onHand={state.outputSachetItem.onHand}
-                              par={state.outputSachetItem.parLevel}
+                              onHand={`${state.outputSachetItem.onHand} ${state.outputSachetItem.unit}`}
+                              par={`${state.outputSachetItem.parLevel} ${state.bulkItem?.unit}`}
                               isBulk
                               edit={() => {
                                  openOutputSachetItemTunnel(1)

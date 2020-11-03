@@ -459,6 +459,7 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             yield
             processingName
             onHand
+            unit
             shelfLife
          }
          supplierItem {
@@ -470,6 +471,7 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             id
             processingName
             onHand
+            unit
             shelfLife
          }
       }
@@ -516,6 +518,7 @@ export const SACHET_WORK_ORDER_SUBSCRIPTION = gql`
             id
             processingName
             onHand
+            unit
             shelfLife
             supplierItem {
                id
