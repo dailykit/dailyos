@@ -1,8 +1,8 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
-import { Filler, Loader } from '@dailykit/ui'
+import { Filler } from '@dailykit/ui'
 import React from 'react'
-import { ErrorState } from '../../../../../shared/components'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers/tooltip'
 import { logger } from '../../../../../shared/utils/index'
 import { NO_SUPPLIER_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
@@ -64,7 +64,7 @@ export default function SupplierItemsListings({ tableRef }) {
       },
    ]
 
-   if (itemsLoading) return <Loader />
+   if (itemsLoading) return <InlineLoader />
    if (supplierItems.length)
       return (
          <>
