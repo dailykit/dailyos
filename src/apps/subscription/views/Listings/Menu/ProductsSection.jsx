@@ -1,13 +1,14 @@
 import React from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { isEmpty } from 'lodash'
 import styled, { css } from 'styled-components'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
    Text,
+   Form,
    Flex,
-   Input,
    Tunnel,
-   Toggle,
+   Spacer,
    Tunnels,
    Dropdown,
    useTunnel,
@@ -22,15 +23,20 @@ import {
 
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
-import { InlineLoader } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../shared/components'
 import {
    PRODUCT_CATEGORIES,
    INSERT_OCCURENCE_PRODUCTS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
 } from '../../../graphql'
-import { isEmpty } from 'lodash'
 
 const ProductsSection = () => {
+   const { tooltip } = useTooltip()
    const { state, dispatch } = useMenu()
    const mealKitTableRef = React.useRef()
    const readyToEatTableRef = React.useRef()
@@ -41,6 +47,12 @@ const ProductsSection = () => {
          headerFilter: true,
          field: 'recipeProduct.name',
          headerFilterPlaceholder: 'Search products...',
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Serving',
@@ -48,11 +60,23 @@ const ProductsSection = () => {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 100,
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_serving'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Author',
          headerFilter: true,
          field: 'recipeYield.recipe.author',
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_author'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ]
 
@@ -83,6 +107,10 @@ const ProductsSection = () => {
       return isValid
    }
 
+   const isValid =
+      !isEmpty(state.plans.selected) &&
+      !isEmpty(state.products.selected) &&
+      state.products.selected.length === state.plans.selected[0].item?.count
    return (
       <Wrapper>
          <Flex
@@ -91,17 +119,19 @@ const ProductsSection = () => {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Text as="h2">Products</Text>
-            {!isEmpty(state.plans.selected) &&
-               !isEmpty(state.products.selected) && (
-                  <TextButton
-                     type="outline"
-                     size="sm"
-                     onClick={() => openTunnel(1)}
-                  >
-                     Continue
-                  </TextButton>
-               )}
+            <Flex container alignItems="center">
+               <Text as="h2">Products</Text>
+               <Tooltip identifier="listing_menu_section_products_heading" />
+            </Flex>
+            {isValid && (
+               <TextButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => openTunnel(1)}
+               >
+                  Continue
+               </TextButton>
+            )}
          </Flex>
          <HorizontalTabs>
             <HorizontalTabList>
@@ -110,20 +140,28 @@ const ProductsSection = () => {
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel style={{ padding: '14px 0' }}>
-                  <ReadyToEats
-                     columns={columns}
-                     readyToEatTableRef={readyToEatTableRef}
-                     handleRowSelection={handleRowSelection}
-                     handleRowValidation={handleRowValidation}
-                  />
+                  {isEmpty(state.plans.selected) ? (
+                     <Text as="h3">Select a plan to start</Text>
+                  ) : (
+                     <ReadyToEats
+                        columns={columns}
+                        readyToEatTableRef={readyToEatTableRef}
+                        handleRowSelection={handleRowSelection}
+                        handleRowValidation={handleRowValidation}
+                     />
+                  )}
                </HorizontalTabPanel>
                <HorizontalTabPanel style={{ padding: '14px 0' }}>
-                  <MealKits
-                     columns={columns}
-                     mealKitTableRef={mealKitTableRef}
-                     handleRowSelection={handleRowSelection}
-                     handleRowValidation={handleRowValidation}
-                  />
+                  {isEmpty(state.plans.selected) ? (
+                     <Text as="h3">Select a plan to start</Text>
+                  ) : (
+                     <MealKits
+                        columns={columns}
+                        mealKitTableRef={mealKitTableRef}
+                        handleRowSelection={handleRowSelection}
+                        handleRowValidation={handleRowValidation}
+                     />
+                  )}
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
@@ -146,7 +184,7 @@ const MealKits = ({
    handleRowSelection,
    handleRowValidation,
 }) => {
-   const { loading, data: { productOptions = {} } = {} } = useQuery(
+   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
       SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
          variables: {
@@ -158,22 +196,24 @@ const MealKits = ({
    )
 
    if (loading) return <InlineLoader />
+   if (error)
+      return (
+         <ErrorState message="Could not fetch meal kits, please try again!" />
+      )
    return (
-      <div>
-         <ReactTabulator
-            columns={columns}
-            ref={mealKitTableRef}
-            rowSelected={handleRowSelection}
-            data={productOptions.nodes || []}
-            rowDeselected={handleRowSelection}
-            selectableCheck={handleRowValidation}
-            options={{
-               ...tableOptions,
-               selectable: true,
-               groupBy: 'recipeProduct.name',
-            }}
-         />
-      </div>
+      <ReactTabulator
+         columns={columns}
+         ref={mealKitTableRef}
+         rowSelected={handleRowSelection}
+         data={productOptions.nodes || []}
+         rowDeselected={handleRowSelection}
+         selectableCheck={handleRowValidation}
+         options={{
+            ...tableOptions,
+            selectable: true,
+            groupBy: 'recipeProduct.name',
+         }}
+      />
    )
 }
 
@@ -183,7 +223,7 @@ const ReadyToEats = ({
    readyToEatTableRef,
    handleRowValidation,
 }) => {
-   const { loading, data: { productOptions = {} } = {} } = useQuery(
+   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
       SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
          variables: {
@@ -195,22 +235,24 @@ const ReadyToEats = ({
    )
 
    if (loading) return <InlineLoader />
+   if (error)
+      return (
+         <ErrorState message="Could not fetch ready to eat products, please try again!" />
+      )
    return (
-      <div>
-         <ReactTabulator
-            columns={columns}
-            ref={readyToEatTableRef}
-            rowSelected={handleRowSelection}
-            data={productOptions.nodes || []}
-            rowDeselected={handleRowSelection}
-            selectableCheck={handleRowValidation}
-            options={{
-               ...tableOptions,
-               selectable: true,
-               groupBy: 'recipeProduct.name',
-            }}
-         />
-      </div>
+      <ReactTabulator
+         columns={columns}
+         ref={readyToEatTableRef}
+         rowSelected={handleRowSelection}
+         data={productOptions.nodes || []}
+         rowDeselected={handleRowSelection}
+         selectableCheck={handleRowValidation}
+         options={{
+            ...tableOptions,
+            selectable: true,
+            groupBy: 'recipeProduct.name',
+         }}
+      />
    )
 }
 
@@ -239,8 +281,10 @@ const SaveTunnel = ({
          })
          closeTunnel(1)
          dispatch({ type: 'CLEAR_STATE' })
-         const mealKitRows = mealKitTableRef.current.table.getSelectedRows()
-         const readyToEatRows = readyToEatTableRef.current.table.getSelectedRows()
+         const mealKitRows =
+            mealKitTableRef?.current?.table?.getSelectedRows() || []
+         const readyToEatRows =
+            readyToEatTableRef?.current?.table?.getSelectedRows() || []
          mealKitRows.forEach(row => row.deselect())
          readyToEatRows.forEach(row => row.deselect())
          localStorage.removeItem('serving_size')
@@ -293,27 +337,39 @@ const SaveTunnel = ({
             />
             <Main>
                <Spacer size="24px" />
-               <Input
-                  type="text"
-                  name="addonLabel"
-                  label="Add On Label"
-                  value={form.addonLabel}
-                  onChange={e => handleChange(e)}
-               />
-               <Spacer size="20px" />
-               <Input
-                  type="text"
-                  name="addonPrice"
-                  label="Add On Price"
-                  value={form.addonPrice}
-                  onChange={e => handleChange(e)}
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="addonLabel" title="addonLabel">
+                     Add On Label*
+                  </Form.Label>
+                  <Form.Text
+                     id="addonLabel"
+                     name="addonLabel"
+                     onChange={handleChange}
+                     value={form.addonLabel}
+                     placeholder="Enter the add on label"
+                  />
+               </Form.Group>
                <Spacer size="24px" />
-               <Toggle
-                  checked={checked}
-                  setChecked={setChecked}
-                  label="Can be added multiple times in cart?"
-               />
+               <Form.Group>
+                  <Form.Label htmlFor="addonPrice" title="addonPrice">
+                     Add On Price*
+                  </Form.Label>
+                  <Form.Text
+                     id="addonPrice"
+                     name="addonPrice"
+                     onChange={handleChange}
+                     value={form.addonPrice}
+                     placeholder="Enter the add on price"
+                  />
+               </Form.Group>
+               <Spacer size="24px" />
+               <Form.Toggle
+                  name="is_multi"
+                  value={checked}
+                  onChange={() => setChecked(!checked)}
+               >
+                  Can be added multiple times in cart?
+               </Form.Toggle>
                <Spacer size="24px" />
                <Dropdown
                   type="single"
@@ -335,9 +391,3 @@ const Wrapper = styled.main`
 const Main = styled.main`
    padding: 0 24px;
 `
-
-const Spacer = styled.div(
-   ({ size }) => css`
-      height: ${size};
-   `
-)
