@@ -334,13 +334,17 @@ const SaveTunnel = ({
                title="Occurence Products"
                close={() => closeTunnel(1)}
                right={{ action: () => save(), title: 'Save' }}
+               tooltip={<Tooltip identifier="listing_menu_tunnel_heading" />}
             />
             <Main>
                <Spacer size="24px" />
                <Form.Group>
-                  <Form.Label htmlFor="addonLabel" title="addonLabel">
-                     Add On Label*
-                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="addonLabel" title="addonLabel">
+                        Add On Label*
+                     </Form.Label>
+                     <Tooltip identifier="listing_menu_tunnel_field_addonlabel" />
+                  </Flex>
                   <Form.Text
                      id="addonLabel"
                      name="addonLabel"
@@ -351,9 +355,12 @@ const SaveTunnel = ({
                </Form.Group>
                <Spacer size="24px" />
                <Form.Group>
-                  <Form.Label htmlFor="addonPrice" title="addonPrice">
-                     Add On Price*
-                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="addonPrice" title="addonPrice">
+                        Add On Price*
+                     </Form.Label>
+                     <Tooltip identifier="listing_menu_tunnel_field_addonprice" />
+                  </Flex>
                   <Form.Text
                      id="addonPrice"
                      name="addonPrice"
@@ -363,13 +370,16 @@ const SaveTunnel = ({
                   />
                </Form.Group>
                <Spacer size="24px" />
-               <Form.Toggle
-                  name="is_multi"
-                  value={checked}
-                  onChange={() => setChecked(!checked)}
-               >
-                  Can be added multiple times in cart?
-               </Form.Toggle>
+               <Flex container alignItems="center">
+                  <Form.Toggle
+                     name="is_multi"
+                     value={checked}
+                     onChange={() => setChecked(!checked)}
+                  >
+                     Can be added multiple times in cart?
+                  </Form.Toggle>
+                  <Tooltip identifier="listing_menu_tunnel_field_is_multi" />
+               </Flex>
                <Spacer size="24px" />
                <Dropdown
                   type="single"

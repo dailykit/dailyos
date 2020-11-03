@@ -8,9 +8,18 @@ const initialState = {
       title: '',
       isActive: false,
       defaultServing: { id: null },
+      meta: { errors: [], isValid: false, isTouched: false },
    },
-   serving: { isActive: true, size: '', isDefault: false },
-   item: { count: '', price: '' },
+   serving: {
+      size: '',
+      isActive: true,
+      isDefault: false,
+      meta: { errors: [], isValid: false, isTouched: false },
+   },
+   item: {
+      count: '',
+      price: '',
+   },
    subscription: { id: null },
 }
 

@@ -4,9 +4,9 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Tag,
    Text,
-   Input,
+   Form,
    Tunnel,
-   Toggle,
+   Spacer,
    Tunnels,
    PlusIcon,
    useTunnel,
@@ -23,8 +23,15 @@ import {
 import { usePlan } from '../state'
 import ItemCount from './ItemCount'
 import { ItemCountsSection } from '../styled'
-import { Spacer, Stack } from '../../../../styled'
-import { Flex, InlineLoader } from '../../../../../../shared/components'
+import { Stack } from '../../../../styled'
+import { logger } from '../../../../../../shared/utils'
+import {
+   Flex,
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+   ErrorBoundary,
+} from '../../../../../../shared/components'
 import {
    EditIcon,
    TickIcon,
@@ -41,22 +48,26 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
-   const { loading, data: { serving = {} } = {} } = useSubscription(SERVING, {
-      variables: { id },
-      onSubscriptionData: ({
-         subscriptionData: { data: { serving = {} } = {} } = {},
-      }) => {
-         dispatch({
-            type: 'SET_SERVING',
-            payload: {
-               id: serving.id,
-               size: serving.size,
-               isActive: serving.isActive,
-               isDefault: state.title.defaultServing.id === serving.id,
-            },
-         })
-      },
-   })
+   const { error, loading, data: { serving = {} } = {} } = useSubscription(
+      SERVING,
+      {
+         variables: { id },
+         onSubscriptionData: ({
+            subscriptionData: { data: { serving = {} } = {} } = {},
+         }) => {
+            console.log('serving', Number(serving.size))
+            dispatch({
+               type: 'SET_SERVING',
+               payload: {
+                  id: serving.id,
+                  size: Number(serving.size),
+                  isActive: serving.isActive,
+                  isDefault: state.title.defaultServing.id === serving.id,
+               },
+            })
+         },
+      }
+   )
 
    React.useEffect(() => {
       return () => {
@@ -106,26 +117,32 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       }
    }, [loading, serving, state.title.id, upsertServing])
 
-   const toggleIsActive = value => {
-      if (serving.isValid) {
-         return upsertServing({
-            variables: {
-               object: {
-                  isActive: value,
-                  id: state.serving.id,
-                  subscriptionTitleId: state.title.id,
-                  servingSize: Number(state.serving.size),
-               },
-            },
+   const toggleIsActive = () => {
+      if (!state.serving.isActive && !serving.isValid) {
+         toast.error('Can not be published without any active item counts!', {
+            position: 'top-center',
          })
+         return
       }
-      toast.error('Can not be published without any active item counts!', {
-         position: 'top-center',
+
+      return upsertServing({
+         variables: {
+            object: {
+               id: state.serving.id,
+               isActive: !state.serving.isActive,
+               subscriptionTitleId: state.title.id,
+               servingSize: Number(state.serving.size),
+            },
+         },
       })
-      return
    }
 
    if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Failed to fetch item counts!')
+      logger(error)
+      return <ErrorState message="Failed to fetch item counts!" />
+   }
    return (
       <>
          <Flex
@@ -156,11 +173,16 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                   </Flex>
                )}
                <Spacer size="24px" xAxis />
-               <Toggle
-                  label="Publish"
-                  checked={state.serving.isActive}
-                  setChecked={value => toggleIsActive(value)}
-               />
+               <Flex container alignItems="center">
+                  <Form.Toggle
+                     name="publish_serving"
+                     onChange={toggleIsActive}
+                     value={state.serving.isActive}
+                  >
+                     Publish
+                  </Form.Toggle>
+                  <Tooltip identifier="form_subscription_section_serving_publish" />
+               </Flex>
                <Spacer size="16px" xAxis />
                <IconButton type="outline" onClick={() => editServing()}>
                   <EditIcon />
@@ -170,7 +192,10 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
          <hr style={{ border: '1px solid #ededed' }} />
          <Spacer size="16px" />
          <Flex container alignItems="center" justifyContent="space-between">
-            <Text as="title">Items Counts</Text>
+            <Flex container alignItems="center">
+               <Text as="title">Items Counts</Text>
+               <Tooltip identifier="form_subscription_section_item_count_heading" />
+            </Flex>
             <IconButton type="outline" onClick={addItemCount}>
                <PlusIcon />
             </IconButton>
@@ -208,7 +233,9 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                </Stack>
             )}
          </ItemCountsSection>
-         <ItemCountTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+         <ErrorBoundary rootRoute="/subscription/subscriptions">
+            <ItemCountTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+         </ErrorBoundary>
       </>
    )
 }
@@ -224,6 +251,11 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
             type: 'SET_ITEM',
             payload: { id: null, price: '', count: '' },
          })
+         toast.success('Successfully created the item count!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Successfully created the item count!')
       },
    })
 
@@ -247,38 +279,57 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                title="Add Item Count"
                close={() => closeTunnel(1)}
                right={{ action: () => save(), title: 'Save' }}
+               tooltip={
+                  <Tooltip identifier="form_subscription_tunnel_item_create" />
+               }
             />
-            <main style={{ padding: 16 }}>
-               <Input
-                  type="text"
-                  name="count"
-                  label="Count"
-                  value={state.item.count}
-                  onChange={e =>
-                     dispatch({
-                        type: 'SET_ITEM',
-                        payload: {
-                           count: e.target.value,
-                        },
-                     })
-                  }
-               />
+            <Flex padding="16px">
+               <Form.Group>
+                  <Form.Label htmlFor="count" title="count">
+                     <Flex container alignItems="center">
+                        Item Count*
+                        <Tooltip identifier="form_subscription_tunnel_item_field_count" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Number
+                     id="count"
+                     name="count"
+                     onChange={e =>
+                        dispatch({
+                           type: 'SET_ITEM',
+                           payload: {
+                              count: Number(e.target.value) || '',
+                           },
+                        })
+                     }
+                     value={state.item.count}
+                     placeholder="Enter the item count"
+                  />
+               </Form.Group>
                <Spacer size="16px" />
-               <Input
-                  type="text"
-                  name="price"
-                  label="Price"
-                  value={state.item.price}
-                  onChange={e =>
-                     dispatch({
-                        type: 'SET_ITEM',
-                        payload: {
-                           price: e.target.value,
-                        },
-                     })
-                  }
-               />
-            </main>
+               <Form.Group>
+                  <Form.Label htmlFor="price" title="price">
+                     <Flex container alignItems="center">
+                        Price*
+                        <Tooltip identifier="form_subscription_tunnel_item_field_price" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Number
+                     id="price"
+                     name="price"
+                     onChange={e =>
+                        dispatch({
+                           type: 'SET_ITEM',
+                           payload: {
+                              price: Number(e.target.value) || '',
+                           },
+                        })
+                     }
+                     value={state.item.price}
+                     placeholder="Enter the item price"
+                  />
+               </Form.Group>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )
