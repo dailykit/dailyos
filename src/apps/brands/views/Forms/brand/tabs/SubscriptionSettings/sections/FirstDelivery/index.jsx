@@ -3,7 +3,7 @@ import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { Form, Text, TextButton, Spacer } from '@dailykit/ui'
-
+import validator from '../../../../../../validator'
 import { BRANDS } from '../../../../../../../graphql'
 import {
    Flex,
@@ -16,8 +16,22 @@ import { logger } from '../../../../../../../../../shared/utils'
 export const FirstDelivery = ({ update }) => {
    const params = useParams()
    const [form, setForm] = React.useState({
-      title: '',
-      description: '',
+      title: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
+      description: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      },
    })
    const [settingId, setSettingId] = React.useState(null)
    const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
@@ -43,9 +57,25 @@ export const FirstDelivery = ({ update }) => {
             if (!isNull(brand) && !isEmpty(brand)) {
                setForm(form => ({
                   ...form,
-                  ...(brand.value?.title && { title: brand.value.title }),
+                  ...(brand.value?.title && {
+                     title: {
+                        value: brand.value.title,
+                        meta: {
+                           isValid: true,
+                           isTouched: false,
+                           errors: [],
+                        },
+                     },
+                  }),
                   ...(brand.value?.description && {
-                     description: brand.value.description,
+                     description: {
+                        value: brand.value.description,
+                        meta: {
+                           isValid: true,
+                           isTouched: false,
+                           errors: [],
+                        },
+                     },
                   }),
                }))
             }
@@ -55,17 +85,68 @@ export const FirstDelivery = ({ update }) => {
 
    const updateSetting = React.useCallback(() => {
       if (!settingId) return
-      update({
-         id: settingId,
-         value: {
-            title: form.title,
-            description: form.description,
-         },
-      })
+      if (form.title.meta.isValid && form.description.meta.isValid) {
+         update({
+            id: settingId,
+            value: {
+               title: form.title.value,
+               description: form.description.value,
+            },
+         })
+      } else {
+         toast.error('Delivery Date Details must be provided')
+      }
    }, [form, settingId, update])
 
-   const handleChange = (name, value) => {
-      setForm(form => ({ ...form, [name]: value }))
+   const handleChange = e => {
+      const { name, value } = e.target
+      if (name === 'title') {
+         setForm({
+            ...form,
+            title: {
+               ...form.title,
+               value: value,
+            },
+         })
+      } else {
+         setForm({
+            ...form,
+            description: {
+               ...form.description,
+               value: value,
+            },
+         })
+      }
+   }
+   const onBlur = e => {
+      const { name, value } = e.target
+      if (name === 'title') {
+         setForm({
+            ...form,
+            title: {
+               ...form.title,
+               meta: {
+                  ...form.title.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            },
+         })
+      } else {
+         setForm({
+            ...form,
+            description: {
+               ...form.description,
+               meta: {
+                  ...form.description.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            },
+         })
+      }
    }
 
    if (error) {
@@ -91,9 +172,15 @@ export const FirstDelivery = ({ update }) => {
             <Form.Text
                id="title"
                name="title"
-               value={form.title}
-               onChange={e => handleChange(e.target.name, e.target.value)}
+               value={form.title.value}
+               onChange={e => handleChange(e)}
+               onBlur={onBlur}
             />
+            {form.title.meta.isTouched &&
+               !form.title.meta.isValid &&
+               form.title.meta.errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
          </Form.Group>
          <Spacer size="24px" />
          <Form.Group>
@@ -106,9 +193,15 @@ export const FirstDelivery = ({ update }) => {
             <Form.TextArea
                id="description"
                name="description"
-               value={form.description}
-               onChange={e => handleChange(e.target.name, e.target.value)}
+               value={form.description.value}
+               onChange={e => handleChange(e)}
+               onBlur={onBlur}
             />
+            {form.description.meta.isTouched &&
+               !form.description.meta.isValid &&
+               form.description.meta.errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
          </Form.Group>
 
          <Spacer size="16px" />
