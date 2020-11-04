@@ -1,95 +1,4 @@
 import styled, { css } from 'styled-components'
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
-
-export const Wrapper = styled.div`
-   height: 100%;
-   padding: 24px;
-   margin: 0 auto;
-   > section {
-      height: inherit;
-   }
-`
-
-export const StyledTabs = styled(Tabs)(
-   () => css`
-      height: inherit;
-      margin-top: 16px;
-   `
-)
-
-export const StyledTabList = styled(TabList)(
-   () => css`
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      [data-selected] {
-         border-bottom: 2px solid #2cb2e6;
-      }
-   `
-)
-
-export const StyledTab = styled(Tab)(
-   () => css`
-      border: none;
-      height: 32px;
-      font-size: 18px;
-      margin-right: 14px;
-      background: #ffffff;
-      :focus {
-         outline: none;
-         border-bottom: 2px solid #2cb2e6;
-      }
-   `
-)
-
-export const StyledTabPanels = styled(TabPanels)(
-   () => css`
-      height: inherit;
-   `
-)
-
-export const StyledTabPanel = styled(TabPanel)(
-   () => css`
-      height: inherit;
-      :focus {
-         outline: none;
-      }
-   `
-)
-
-export const Header = styled.header(
-   () => css`
-      display: flex;
-      margin-bottom: 24px;
-      align-items: center;
-      h3 {
-         span {
-            color: #9aa5ab;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 0.6px;
-            text-transform: uppercase;
-         }
-         font-size: 14px;
-         font-weight: 400;
-      }
-      > section {
-         flex: 1;
-         display: flex;
-         align-items: center;
-         justify-content: space-around;
-         section {
-            display: flex;
-            align-items: center;
-            span:first-child {
-               color: #9aa5ab;
-               font-size: 14px;
-               font-weight: 500;
-               letter-spacing: 0.6px;
-               text-transform: uppercase;
-            }
-         }
-      }
-   `
-)
 
 export const OrderItems = styled.ul(
    () => css`
@@ -121,11 +30,6 @@ export const OrderItem = styled.li(
    `
 )
 
-export const StyledCount = styled.span`
-   color: #555b6e;
-   font-weight: 500;
-`
-
 export const StyledProductTitle = styled.span`
    font-weight: 500;
    font-size: 16px;
@@ -156,11 +60,11 @@ export const ListHead = styled.header(
       grid-gap: 16px;
       line-height: 32px;
       grid-template-columns: repeat(4, 1fr) 48px;
-      span {
+      > div > span:first-child {
          color: #888d9d;
-         padding: 0 14px;
          font-size: 14px;
          font-weight: 400;
+         padding-left: 14px;
       }
    `
 )
@@ -184,14 +88,14 @@ export const ListBodyItem = styled.div(
    ({ isOpen, variant: { isPacked, isAssembled } }) => css`
       overflow: hidden;
       margin-bottom: 4px;
-      border-radius: 2px;
-      background: ${selectBg(isPacked, isAssembled)};
       header {
          height: 48px;
          display: grid;
          grid-gap: 16px;
          line-height: 48px;
+         border-radius: 2px 2px 0 0;
          grid-template-columns: repeat(4, 1fr) 48px;
+         background: ${selectBg(isPacked, isAssembled)};
          span {
             padding: 0 14px;
          }
@@ -214,21 +118,12 @@ export const ListBodyItem = styled.div(
       main {
          padding: 16px;
          grid-gap: 24px;
+         border-radius: 0 0 2px 2px;
+         border-left: 1px solid #e9e9e9;
+         border-right: 1px solid #e9e9e9;
+         border-bottom: 1px solid #e9e9e9;
          display: ${isOpen ? 'grid' : 'none'};
-         border-top: 1px solid rgba(0, 0, 0, 0.2);
          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-         > section {
-            display: flex;
-            flex-direction: column;
-            span:first-child {
-               font-size: 13px;
-               font-weight: 500;
-               padding-bottom: 6px;
-            }
-            span:last-child {
-               font-size: 18px;
-            }
-         }
       }
    `
 )
@@ -269,52 +164,6 @@ export const Legend = styled.div`
          span:first-child {
             background: #79df54;
          }
-      }
-   }
-`
-
-export const StyledPrint = styled.button`
-   width: 28px;
-   height: 28px;
-   display: flex;
-   cursor: pointer;
-   background: #fff;
-   background: white;
-   margin-left: 14px;
-   align-items: center;
-   justify-content: center;
-   border: 1px solid rgba(0, 0, 0, 0.2);
-`
-
-export const StyledButton = styled.button`
-   height: 28px;
-   display: flex;
-   padding: 0 8px;
-   color: #787d91;
-   cursor: pointer;
-   background: #fff;
-   font-weight: 500;
-   margin-left: 14px;
-   background: white;
-   margin-right: 14px;
-   align-items: center;
-   text-transform: uppercase;
-   border: 1px solid rgba(0, 0, 0, 0.2);
-`
-
-export const StyledStatus = styled.div`
-   display: flex;
-   margin-right: 16px;
-   align-items: center;
-   span {
-      :first-child {
-         color: #a7a8a6;
-         display: block;
-         font-size: 14px;
-         font-weight: 500;
-      }
-      :last-child {
-         font-size: 16px;
       }
    }
 `

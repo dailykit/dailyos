@@ -46,7 +46,7 @@ export const Tooltip = ({
                   View Docs
                </a>
             )}
-            {identifier}
+            <p style={{ wordWrap: 'anywhere' }}>{identifier}</p>
          </ReactTooltip>
       </Styles.Tooltip>
    )
