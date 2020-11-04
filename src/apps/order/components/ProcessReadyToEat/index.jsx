@@ -1,9 +1,16 @@
 import React from 'react'
+import { toast } from 'react-toastify'
+import { Flex, Text } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
-import Loader from '../Loader'
 import { useOrder } from '../../context/order'
+import { logger } from '../../../../shared/utils'
 import { FETCH_READYTOEAT, UPDATE_READYTOEAT } from '../../graphql'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../shared/components'
 import {
    Wrapper,
    StyledMode,
@@ -33,7 +40,10 @@ export const ProcessReadyToEat = () => {
       return (
          <Wrapper>
             <StyledMode>
-               <label htmlFor="mode">Mode</label>
+               <Flex container alignItems="center">
+                  <label htmlFor="mode">Mode</label>
+                  <Tooltip identifier="left_panel_mode" />
+               </Flex>
                <select
                   id="mode"
                   name="mode"
@@ -46,21 +56,21 @@ export const ProcessReadyToEat = () => {
                   <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
-            <span>No product selected!</span>
+            <Text as="h3">No product selected!</Text>
          </Wrapper>
       )
    }
-   if (loading || !product)
-      return (
-         <Wrapper>
-            <Loader />
-         </Wrapper>
-      )
-   if (error)
+   if (loading || !product) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch ready to eat product details!')
       return (
          <Wrapper>
             <StyledMode>
-               <label htmlFor="mode">Mode</label>
+               <Flex container alignItems="center">
+                  <label htmlFor="mode">Mode</label>
+                  <Tooltip identifier="left_panel_mode" />
+               </Flex>
                <select
                   id="mode"
                   name="mode"
@@ -73,14 +83,18 @@ export const ProcessReadyToEat = () => {
                   <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
-            <span>{error.message}</span>
+            <ErrorState message="Failed to fetch ready to eat product details!" />
          </Wrapper>
       )
+   }
 
    return (
       <Wrapper>
          <StyledMode>
-            <label htmlFor="mode">Mode</label>
+            <Flex container alignItems="center">
+               <label htmlFor="mode">Mode</label>
+               <Tooltip identifier="left_panel_mode" />
+            </Flex>
             <select
                id="mode"
                name="mode"

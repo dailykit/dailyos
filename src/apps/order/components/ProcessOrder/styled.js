@@ -65,8 +65,6 @@ export const StyledButton = styled.button(
       border: none;
       padding: 0 12px;
       cursor: pointer;
-      margin-top: 16px;
-      margin-right: 16px;
       border-radius: 6px;
       background: #53c22b;
       ${disabled &&
@@ -119,22 +117,18 @@ export const StyledWeigh = styled.section(
 
 export const StyledPackaging = styled.section`
    display: grid;
-   margin-top: 16px;
    grid-template-columns: 1fr 56px;
    grid-template-rows: 32px 24px;
    grid-template-areas:
       'heading image'
       'value image';
-   h3 {
+   aside {
       grid-area: heading;
-      font-size: 18px;
-      color: #555b6e;
-      font-weight: 400;
    }
    span:nth-child(2) {
       grid-area: value;
    }
-   div {
+   section {
       overflow: hidden;
       grid-area: image;
       border-radius: 6px;
@@ -161,13 +155,7 @@ export const StyledHeader = styled.header`
 `
 
 export const StyledSOP = styled.section`
-   margin-top: 16px;
-   h3 {
-      font-size: 18px;
-      font-weight: 400;
-      color: #555b6e;
-   }
-   div {
+   section {
       width: 100%;
       margin-top: 8px;
       overflow: hidden;
@@ -182,27 +170,6 @@ export const StyledSOP = styled.section`
          object-fit: cover;
          position: absolute;
       }
-   }
-`
-
-export const StyledLabelPreview = styled.section`
-   margin-top: 16px;
-   header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-   }
-   h3 {
-      font-size: 18px;
-      font-weight: 400;
-      color: #555b6e;
-   }
-   div {
-      width: 100%;
-      margin-top: 8px;
-      background: #fff;
-      overflow: hidden;
-      border-radius: 6px;
    }
 `
 
