@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
-   Toggle,
    Flex,
    HorizontalTab,
    HorizontalTabs,
@@ -15,7 +14,13 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledWrapper, StyledComp, InputWrapper, StyledDiv } from './styled'
+import {
+   StyledWrapper,
+   StyledComp,
+   InputWrapper,
+   StyledDiv,
+   StyledInsight,
+} from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import {
    ConditionComp,
@@ -29,6 +34,7 @@ import {
    InlineLoader,
    InsightDashboard,
 } from '../../../../../shared/components'
+import moment from 'moment'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CouponContext from '../../../context/Coupon/CouponForm'
 
@@ -46,6 +52,8 @@ const CouponForm = () => {
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+   const today = moment().toISOString()
+   const fromDate = moment().subtract(7, 'days').toISOString()
 
    // form validation
    const validateCouponCode = value => {
@@ -122,7 +130,7 @@ const CouponForm = () => {
       })
    }
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (!tab) {
          addTab('Coupons', '/crm/coupons')
       }
@@ -236,9 +244,28 @@ const CouponForm = () => {
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
                         <StyledComp>
-                           <DetailsComp />
-                           <ConditionComp />
-                           <RewardComp />
+                           <Flex container>
+                              <div className="couponDetails">
+                                 <DetailsComp />
+                                 <ConditionComp />
+                                 <RewardComp />
+                              </div>
+                              <StyledInsight>
+                                 <InsightDashboard
+                                    appTitle="CRM App"
+                                    moduleTitle="Coupon Page"
+                                    where={{
+                                       date: {
+                                          _gte: fromDate,
+                                          _lte: today,
+                                       },
+                                       viewRewardHistories2: {
+                                          couponId: { _eq: couponId },
+                                       },
+                                    }}
+                                 />
+                              </StyledInsight>
+                           </Flex>
                         </StyledComp>
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>

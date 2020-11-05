@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -14,7 +14,13 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledWrapper, InputWrapper, StyledComp, StyledDiv } from './styled'
+import {
+   StyledWrapper,
+   InputWrapper,
+   StyledComp,
+   StyledDiv,
+   StyledInsight,
+} from './styled'
 import { CAMPAIGN_DATA, UPDATE_CAMPAIGN } from '../../../graphql'
 import {
    ConditionComp,
@@ -30,6 +36,7 @@ import {
 } from '../../../../../shared/components'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CampaignContext from '../../../context/Campaign/CampaignForm'
+import moment from 'moment'
 
 const CampaignForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -46,6 +53,8 @@ const CampaignForm = () => {
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+   const today = moment().toISOString()
+   const fromDate = moment().subtract(7, 'days').toISOString()
 
    // form validation
    const validateCampaignName = value => {
@@ -152,7 +161,7 @@ const CampaignForm = () => {
       }
    }
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (!tab) {
          addTab('Campaign', '/crm/campaign')
       }
@@ -242,9 +251,28 @@ const CampaignForm = () => {
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
                         <StyledComp>
-                           <DetailsComp />
-                           <ConditionComp />
-                           <RewardComp />
+                           <Flex container>
+                              <div className="campaignDetails">
+                                 <DetailsComp />
+                                 <ConditionComp />
+                                 <RewardComp />
+                              </div>
+                              <StyledInsight>
+                                 <InsightDashboard
+                                    appTitle="CRM App"
+                                    moduleTitle="Campaign Page"
+                                    where={{
+                                       date: {
+                                          _gte: fromDate,
+                                          _lte: today,
+                                       },
+                                       viewRewardHistories2: {
+                                          campaignId: { _eq: campaignId },
+                                       },
+                                    }}
+                                 />
+                              </StyledInsight>
+                           </Flex>
                         </StyledComp>
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>

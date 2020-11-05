@@ -25,6 +25,7 @@ export default function BrandListing() {
    })
 
    const brandHandler = (brandId, title) => {
+      toast.info(`Showing information for "${title}" brand`)
       setViewingFor(brandId)
       setContext({ brandId: brandId, brandName: title })
    }
