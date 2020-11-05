@@ -1,13 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    ButtonTile,
-   ButtonGroup,
    useTunnel,
-   Loader,
-   Checkbox,
-   Tunnels,
-   Tunnel,
+   Flex,
+   Form,
    Text,
    IconButton,
    ComboButton,
@@ -22,8 +19,13 @@ import {
    REWARD_DATA,
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
-const Rewards = ({ state, checkbox, updateCheckbox }) => {
+import CouponContext from '../../../../../context/Coupon/CouponForm'
+
+const Rewards = () => {
+   const context = useContext(CouponContext)
    const [typeTunnels, openTypeTunnel, closeTypeTunnel] = useTunnel(1)
    const [rewardTunnels, openRewardTunnel, closeRewardTunnel] = useTunnel(1)
    const [
@@ -36,18 +38,20 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
    const [rewardInfoArray, setRewardInfoArray] = useState([])
    const [rewardTunnelInfo, setRewardTunnelInfo] = useState({})
    const [editMode, setEditMode] = useState(false)
+
    // Subscription
-   const { data: rewardData, loading } = useSubscription(
-      REWARD_DATA_BY_COUPON_ID,
-      {
-         variables: {
-            couponId: state.id,
-         },
-         onSubscriptionData: data => {
-            setRewardInfoArray(data.subscriptionData.data.crm_reward)
-         },
-      }
-   )
+   const { loading, error } = useSubscription(REWARD_DATA_BY_COUPON_ID, {
+      variables: {
+         couponId: context.state.id,
+      },
+      onSubscriptionData: data => {
+         setRewardInfoArray(data.subscriptionData.data.crm_reward)
+      },
+   })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    const [fetchReward, { loading: listLoading, data }] = useLazyQuery(
       REWARD_DATA,
@@ -59,6 +63,10 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             setRewardId(data.crm_reward_by_pk.id)
             setEditMode(true)
          },
+         onError: error => {
+            toast.error('Something went wrong')
+            logger(error)
+         },
          fetchPolicy: 'cache-and-network',
       }
    )
@@ -68,8 +76,8 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          toast.success('Reward deleted!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Could not delete!')
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -102,12 +110,11 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
       }
    }
 
-   if (loading || listLoading) return <Loader />
+   if (loading || listLoading) return <InlineLoader />
 
    return (
       <>
          <RewardsTunnel
-            state={state}
             closeTunnel={closeTypeTunnel}
             openTunnel={openTypeTunnel}
             tunnels={typeTunnels}
@@ -118,7 +125,6 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
             closeTunnel={closeRewardTunnel}
             openTunnel={openRewardTunnel}
             tunnels={rewardTunnels}
-            state={state}
             openConditionTunnel={openConditionTunnel}
             conditionId={conditionId}
             rewardId={rewardId}
@@ -136,15 +142,18 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
          {rewardInfoArray.length > 0 ? (
             <StyledContainer>
                <StyledRow>
-                  <Text as="title">Reward Information</Text>
+                  <Flex container alignItems="center">
+                     <Text as="title">Reward Information</Text>
+                     <Tooltip identifier="coupon_reward_info" />
+                  </Flex>
                   {rewardInfoArray.length > 1 && (
-                     <Checkbox
-                        id="label"
-                        checked={checkbox}
-                        onChange={updateCheckbox}
+                     <Form.Checkbox
+                        name="t&c"
+                        value={context.checkbox}
+                        onChange={context.updateCheckbox}
                      >
                         Allow multiple rewards
-                     </Checkbox>
+                     </Form.Checkbox>
                   )}
                </StyledRow>
 
@@ -173,7 +182,7 @@ const Rewards = ({ state, checkbox, updateCheckbox }) => {
                <StyledRow>
                   <ComboButton type="ghost" onClick={() => openTypeTunnel(1)}>
                      Add More Reward
-                     <PlusIcon />
+                     <PlusIcon color="#00a7e1" />
                   </ComboButton>
                </StyledRow>
             </StyledContainer>

@@ -14,7 +14,7 @@
       "import/newline-after-import": "error",
       "import/prefer-default-export": 0,
       "no-case-declarations": 0,
-      "radix": "always",
+      "radix": 0,
       "camelcase": 1,
       "no-alert": 1,
       "no-shadow": 1,

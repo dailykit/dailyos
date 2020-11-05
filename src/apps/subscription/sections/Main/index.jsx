@@ -3,9 +3,9 @@ import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Menu, Subscriptions, Subscription } from '../../views'
-import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
+import { ErrorBoundary, Flex } from '../../../../shared/components'
+import { Home, Menu, Subscriptions, Subscription } from '../../views'
 
 const Main = () => {
    return (
@@ -53,7 +53,7 @@ export default Main
 const AccessCheck = ({ title, children, message }) => {
    const { canAccessRoute, accessPermission } = useAccess()
    return canAccessRoute(title) ? (
-      children
+      <ErrorBoundary rootRoute="/apps/subscription">{children}</ErrorBoundary>
    ) : (
       <Flex container height="100%" alignItems="center" justifyContent="center">
          <Text as="title">

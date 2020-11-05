@@ -1,15 +1,20 @@
 import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
-import { Text, Toggle } from '@dailykit/ui'
+import { Text, Form, Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
 import { SUBSCRIPTION_OCCURENCES } from '../../../graphql'
+import { useTooltip } from '../../../../../shared/providers'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
+
 const PlansSection = () => {
    const tableRef = React.useRef()
    const { state, dispatch } = useMenu()
+   const { tooltip } = useTooltip()
    const {
       loading,
       data: { subscriptionOccurences = {} } = {},
@@ -28,12 +33,24 @@ const PlansSection = () => {
          field: 'subscription.itemCount.serving.size',
          hozAlign: 'right',
          headerHozAlign: 'right',
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_servings'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Title',
          headerFilter: true,
          headerFilterPlaceholder: 'Search titles...',
          field: 'subscription.itemCount.serving.subscriptionTitle.title',
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_title'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Item Count',
@@ -42,18 +59,36 @@ const PlansSection = () => {
          field: 'subscription.itemCount.count',
          hozAlign: 'right',
          headerHozAlign: 'right',
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_item_count'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Cut Off',
          field: 'cutoffTimeStamp',
          formatter: ({ _cell: { value } }) =>
             moment(value).format('MMM DD HH:MM A'),
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_cut_off'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Start Time',
          field: 'startTimeStamp',
          formatter: ({ _cell: { value } }) =>
             moment(value).format('MMM DD HH:MM A'),
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_state_time'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          hozAlign: 'right',
@@ -61,12 +96,24 @@ const PlansSection = () => {
          formatter: reactFormatter(<ProductsCount />),
          hozAlign: 'right',
          headerHozAlign: 'right',
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_products'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Customers',
          field: 'subscription.customers.aggregate.count',
          hozAlign: 'right',
          headerHozAlign: 'right',
+         headerTooltip: column => {
+            const identifier = 'plan_listing_column_customers'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ]
    const handleRowSelection = row => {
@@ -77,6 +124,7 @@ const PlansSection = () => {
             payload: {
                occurence: { id: data.id },
                subscription: { id: data.subscription.id },
+               item: { count: data.subscription.itemCount.count },
                serving: { size: data.subscription.itemCount.serving.size },
             },
          })
@@ -96,16 +144,30 @@ const PlansSection = () => {
    }
    return (
       <Wrapper>
-         <Header>
-            <Text as="h2">Plans</Text>
-            <Toggle
-               label="Add Permanently"
-               checked={state.plans.isPermanent}
-               setChecked={() => dispatch({ type: 'TOGGLE_PERMANENT' })}
-            />
-         </Header>
-         {!state.date && <span>Select a date to view plans.</span>}
-         {!loading && subscriptionOccurences?.aggregate?.count > 0 && (
+         <Flex
+            container
+            height="48px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">Plans</Text>
+               <Tooltip identifier="listing_menu_section_plans_heading" />
+            </Flex>
+            <Flex container alignItems="center">
+               <Form.Toggle
+                  name="add_permanently"
+                  value={state.plans.isPermanent}
+                  onChange={() => dispatch({ type: 'TOGGLE_PERMANENT' })}
+               >
+                  Add Permanently
+               </Form.Toggle>
+               <Tooltip identifier="listing_menu_section_plans_add_permanently" />
+            </Flex>
+         </Flex>
+         {!state.date && <Text as="h3">Select a date to view plans.</Text>}
+         {state.date && loading && <InlineLoader />}
+         {state && !loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
                ref={tableRef}
                columns={columns}
@@ -140,11 +202,7 @@ const ProductsCount = ({ cell: { _cell } }) => {
       </div>
    )
 }
+
 const Wrapper = styled.main`
    padding: 0 16px;
-`
-const Header = styled.header`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
 `

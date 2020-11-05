@@ -1,8 +1,11 @@
+import { useMutation } from '@apollo/react-hooks'
+import { Flex, TunnelHeader } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
-import { TunnelHeader, Loader, Flex } from '@dailykit/ui'
-import { AssetUploader } from '../../../../../../../shared/components'
+import {
+   AssetUploader,
+   InlineLoader,
+} from '../../../../../../../shared/components'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
 
 export default function PhotoTunnel({ close, state }) {
@@ -32,7 +35,7 @@ export default function PhotoTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>

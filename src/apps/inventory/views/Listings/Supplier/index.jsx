@@ -1,23 +1,38 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { IconButton, Loader, TextButton } from '@dailykit/ui'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import {
+   ComboButton,
+   Flex,
+   IconButton,
+   Loader,
+   Spacer,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
-
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
-import { randomSuffix } from '../../../../../shared/utils/index'
+import { Tooltip } from '../../../../../shared/components/Tooltip'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger, randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
-// import { Context } from '../../../context/tabs'
 import {
+   GENERAL_ERROR_MESSAGE,
+   SUPPLIER_CANNOT_BE_DELETED,
+} from '../../../constants/errorMessages'
+import {
+   CONFIRM_DELETE_SUPPLIER,
+   SUPPLIER_DELETED,
+} from '../../../constants/successMessages'
+import { useTabs } from '../../../context'
+import {
+   ALL_SUPPLIERS_SUBSCRIPTION,
    CREATE_SUPPLIER,
    DELETE_SUPPLIER,
-   ALL_SUPPLIERS_SUBSCRIPTION,
 } from '../../../graphql'
-import { StyledHeader, StyledWrapper } from '../styled'
+import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
-import { FlexContainer } from '../../Forms/styled'
-import { useTabs } from '../../../context'
 
 const address = 'apps.inventory.views.listings.supplier.'
 
@@ -25,15 +40,18 @@ export default function SupplierListing() {
    const { t } = useTranslation()
    const { addTab } = useTabs()
 
+   const { tooltip } = useTooltip()
+
    const {
       loading: listLoading,
+      error,
       data: { suppliers = [] } = {},
-   } = useSubscription(ALL_SUPPLIERS_SUBSCRIPTION, {
-      onError: error => {
-         console.log(error)
-         toast.error('Error! Please try reloading the page')
-      },
-   })
+   } = useSubscription(ALL_SUPPLIERS_SUBSCRIPTION)
+
+   if (error) {
+      logger(error)
+      toast.error(GENERAL_ERROR_MESSAGE)
+   }
 
    const [createSupplier] = useMutation(CREATE_SUPPLIER, {
       onCompleted: input => {
@@ -42,20 +60,18 @@ export default function SupplierListing() {
          addTab(supplierData.name, `/inventory/suppliers/${supplierData.id}`)
       },
       onError: error => {
-         console.log(error)
-         toast.error('Something went wrong, try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
 
    const [deleteSupplier] = useMutation(DELETE_SUPPLIER, {
       onCompleted: () => {
-         toast.info('Supplier deleted!')
+         toast.info(SUPPLIER_DELETED)
       },
       onError: error => {
-         console.log(error)
-         toast.error(
-            'Supplier is linked with items, hence can not be removed. To delete the supplier, remove those items first'
-         )
+         logger(error)
+         toast.error(SUPPLIER_CANNOT_BE_DELETED)
       },
    })
 
@@ -73,23 +89,47 @@ export default function SupplierListing() {
 
    const tableRef = React.useRef()
 
+   const openForm = (_, cell) => {
+      const { id, name } = cell.getData()
+      addTab(name, `/inventory/suppliers/${id}`)
+   }
+
    const columns = [
-      { title: 'Name', field: 'name', headerFilter: true },
+      {
+         title: 'Name',
+         field: 'name',
+         headerFilter: true,
+         cssClass: 'RowClick',
+         cellClick: openForm,
+         headerTooltip: col => {
+            const identifier = 'suppliers_listings_supplier_name'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
+      },
       {
          title: 'Person of Contact',
          field: 'contactPerson',
          headerFilter: false,
+         headerSort: false,
          hozAlign: 'left',
          formatter: reactFormatter(<ContactPerson />),
+         headerTooltip: col => {
+            const identifier = 'suppliers_listings_contact_person'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Available',
          field: 'available',
+         headerFilter: false,
          formatter: 'tickCross',
-         headerFilter: true,
          hozAlign: 'center',
          cssClass: 'center-text',
          width: 120,
+         headerTooltip: col => {
+            const identifier = 'suppliers_listings_supplier_availability'
+            return tooltip(identifier)?.description || col.getDefinition().title
+         },
       },
       {
          title: 'Actions',
@@ -97,61 +137,73 @@ export default function SupplierListing() {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            const { id } = cell._cell.row.data
-            deleteSupplier({
-               variables: { id },
-            })
-         },
-         formatter: reactFormatter(<DeleteSupplier />),
+         formatter: reactFormatter(
+            <DeleteSupplier deleteSupplier={deleteSupplier} />
+         ),
          width: 100,
       },
    ]
-
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      addTab(name, `/inventory/suppliers/${id}`)
-   }
 
    if (listLoading) return <Loader />
 
    return (
       <>
          <StyledWrapper>
-            <StyledHeader>
-               <h1>{t(address.concat('suppliers'))}</h1>
-               <FlexContainer>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
+               <Flex container>
+                  <Text as="h2">{t(address.concat('suppliers'))}</Text>
+                  <Tooltip identifier="suppliers_listings_heading" />
+               </Flex>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
                   <TextButton
                      type="outline"
                      onClick={() => tableRef.current.table.clearHeaderFilter()}
                   >
                      Clear Filters
                   </TextButton>
-                  <span style={{ width: '10px' }} />
-                  <IconButton type="solid" onClick={createSupplierHandler}>
-                     <AddIcon color="#fff" size={24} />
-                  </IconButton>
-               </FlexContainer>
-            </StyledHeader>
-            <br />
+                  <Spacer xAxis size="10px" />
+                  <ComboButton type="solid" onClick={createSupplierHandler}>
+                     <AddIcon color="#fff" size={24} /> Add Supplier
+                  </ComboButton>
+               </Flex>
+            </Flex>
 
-            <div style={{ margin: '0 auto', width: '90%' }}>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={suppliers}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <Spacer size="16px" />
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={suppliers}
+               options={tableOptions}
+            />
          </StyledWrapper>
       </>
    )
 }
 
-function DeleteSupplier() {
-   return <DeleteIcon color="#FF5A52" />
+function DeleteSupplier({ deleteSupplier, cell }) {
+   const handleDelete = () => {
+      if (window.confirm(CONFIRM_DELETE_SUPPLIER)) {
+         const { id } = cell.getData()
+         deleteSupplier({
+            variables: { id },
+         })
+      }
+   }
+
+   return (
+      <IconButton type="ghost" onClick={handleDelete}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
 }
 
 function ContactPerson({

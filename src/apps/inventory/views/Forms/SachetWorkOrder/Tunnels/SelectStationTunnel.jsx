@@ -1,18 +1,21 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
-   Loader,
    TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
 import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-
+import { toast } from 'react-toastify'
+import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_STATIONS } from '../../../../constants/infoMessages'
 import {
    STATIONS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
@@ -21,8 +24,8 @@ import {
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
 const onError = error => {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function SelectStationTunnel({ close, state }) {
@@ -33,7 +36,7 @@ export default function SelectStationTunnel({ close, state }) {
 
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(STATIONS_SUBSCRIPTION, {
+   const { loading, error } = useSubscription(STATIONS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.stations
          setData(data)
@@ -61,7 +64,12 @@ export default function SelectStationTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (loading) return <InlineLoader />
 
    return (
       <>
@@ -71,33 +79,37 @@ export default function SelectStationTunnel({ close, state }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.name} />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder={t(
-                        address.concat("type what you're looking for")
-                     )}
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.name.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.name}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.name} />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        )}
+                     />
+                  )}
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.name.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.name}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_STATIONS} />
+            )}
          </TunnelContainer>
       </>
    )

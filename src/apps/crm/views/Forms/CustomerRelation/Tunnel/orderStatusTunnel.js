@@ -1,31 +1,50 @@
-import React from 'react'
-import { Tunnels, Tunnel, TunnelHeader, Loader, Text } from '@dailykit/ui'
+import React, { useContext } from 'react'
+import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useTabs } from '../../../../context'
 import { STATUS } from '../../../../graphql'
 import { TunnelHeaderContainer, StyledDiv } from './styled'
+import { logger } from '../../../../../../shared/utils'
+import { Tooltip, InlineLoader } from '../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import BrandContext from '../../../../context/Brand'
 
 const OrderStatus = ({ tunnels, closeTunnel }) => {
+   const [context, setContext] = useContext(BrandContext)
    const { tab } = useTabs()
-   const { loading: listLoading, data: statusData } = useQuery(STATUS, {
+   const {
+      loading: listLoading,
+      data: { brand: { brand_Orders: statusData = [] } = {} } = {},
+   } = useQuery(STATUS, {
       variables: {
          oid: tab.data.oid,
+         brandId: context.brandId,
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
-   if (listLoading) return <Loader />
+   if (listLoading) return <InlineLoader />
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1}>
-            <TunnelHeader title="Order Status" close={() => closeTunnel(1)} />
+            <TunnelHeader
+               title="Order Status"
+               close={() => closeTunnel(1)}
+               tooltip={
+                  <Tooltip identifier="customer_order_status_tunnelHeader" />
+               }
+            />
             <TunnelHeaderContainer>
                <StyledDiv>
                   <Text as="h2">
-                     {`Order Id: ${statusData?.order?.id || 'N/A'}`}
+                     {`Order Id: ${statusData[0]?.id || 'N/A'}`}
                   </Text>
                </StyledDiv>
                <StyledDiv>
                   <Text as="h2">
-                     {`Status: ${statusData?.order?.orderStatus || 'N/A'}`}
+                     {`Status: ${statusData[0]?.orderStatus || 'N/A'}`}
                   </Text>
                </StyledDiv>
             </TunnelHeaderContainer>

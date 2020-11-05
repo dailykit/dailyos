@@ -9,7 +9,7 @@ import { useTabs } from '../../context'
 
 import { StyledHome, StyledCardList } from './styled'
 
-import { STATIONS_AGGREGATE, USERS_AGGREGATE, ROLES } from '../../graphql'
+import { STATIONS, ROLES, USERS } from '../../graphql'
 
 const address = 'apps.settings.views.home.'
 
@@ -20,7 +20,7 @@ const Home = () => {
       loading: stationsLoading,
       error: stationsError,
       data: { stationsAggregate = {} } = {},
-   } = useSubscription(STATIONS_AGGREGATE)
+   } = useSubscription(STATIONS.AGGREGATE)
    const {
       loading: rolesLoading,
       error: rolesError,
@@ -30,7 +30,7 @@ const Home = () => {
       loading: usersLoading,
       error: usersError,
       data: { settings_user_aggregate = {} } = {},
-   } = useSubscription(USERS_AGGREGATE)
+   } = useSubscription(USERS.AGGREGATE)
 
    if (stationsLoading || usersLoading || rolesLoading) return <Loader />
    if (stationsError) return <div>{stationsError.message}</div>

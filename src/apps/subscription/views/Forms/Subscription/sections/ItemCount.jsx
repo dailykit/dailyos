@@ -6,9 +6,10 @@ import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Text,
+   Form,
    Input,
    Tunnel,
-   Toggle,
+   Spacer,
    Tunnels,
    PlusIcon,
    useTunnel,
@@ -26,13 +27,20 @@ import {
 import { usePlan } from '../state'
 import DeliveryDay from './DeliveryDay'
 import { ItemCountSection } from '../styled'
-import { Spacer, Stack } from '../../../../styled'
+import { Stack } from '../../../../styled'
 import {
    ITEM_COUNT,
    INSERT_SUBSCRIPTION,
    UPSERT_ITEM_COUNT,
 } from '../../../../graphql'
-import { Flex, InlineLoader } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
+import {
+   Flex,
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+   ErrorBoundary,
+} from '../../../../../../shared/components'
 import {
    EditIcon,
    TickIcon,
@@ -43,8 +51,16 @@ const ItemCount = ({ id, openItemTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-   const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT)
-   const { loading, data: { itemCount = {} } = {} } = useSubscription(
+   const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
+      onCompleted: () => {
+         toast.success('Successfully update the item count!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the item count!')
+      },
+   })
+   const { error, loading, data: { itemCount = {} } = {} } = useSubscription(
       ITEM_COUNT,
       {
          variables: { id },
@@ -78,27 +94,32 @@ const ItemCount = ({ id, openItemTunnel }) => {
       }
    }, [dispatch])
 
-   const toggleIsActive = value => {
-      if (itemCount.isValid) {
-         return upsertItemCount({
-            variables: {
-               object: {
-                  isActive: value,
-                  id: state.item.id,
-                  count: state.item.count,
-                  price: state.item.price,
-                  subscriptionServingId: state.serving.id,
-               },
-            },
+   const toggleIsActive = () => {
+      if (!state.item.isActive && !itemCount.isValid) {
+         toast.error('Can not be published without any subscriptions!', {
+            position: 'top-center',
          })
+         return
       }
-      toast.error('Can not be published without any subscriptions!', {
-         position: 'top-center',
+      return upsertItemCount({
+         variables: {
+            object: {
+               id: state.item.id,
+               count: state.item.count,
+               price: state.item.price,
+               isActive: !state.item.isActive,
+               subscriptionServingId: state.serving.id,
+            },
+         },
       })
-      return
    }
 
    if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Failed to fetch item count details!')
+      logger(error)
+      return <ErrorState message="Failed to fetch item count details!" />
+   }
    return (
       <>
          <Flex
@@ -124,11 +145,16 @@ const ItemCount = ({ id, openItemTunnel }) => {
                   </Flex>
                )}
                <Spacer size="24px" xAxis />
-               <Toggle
-                  label="Publish"
-                  checked={state.item.isActive}
-                  setChecked={value => toggleIsActive(value)}
-               />
+               <Flex container alignItems="center">
+                  <Form.Toggle
+                     name="publish_item_count"
+                     onChange={toggleIsActive}
+                     value={state.item.isActive}
+                  >
+                     Publish
+                  </Form.Toggle>
+                  <Tooltip identifier="form_subscription_sectioon_item_count_publish" />
+               </Flex>
                <Spacer size="16px" xAxis />
                <IconButton type="outline" onClick={() => openItemTunnel(1)}>
                   <EditIcon />
@@ -140,7 +166,10 @@ const ItemCount = ({ id, openItemTunnel }) => {
                <SectionTabs onChange={index => setTabIndex(index)}>
                   <SectionTabList>
                      <SectionTabsListHeader>
-                        <Text as="title">Delivery Days</Text>
+                        <Flex container alignItems="center">
+                           <Text as="title">Delivery Days</Text>
+                           <Tooltip identifier="form_subscription_section_delivery_days_heading" />
+                        </Flex>
                         <IconButton
                            type="outline"
                            onClick={() => openTunnel(1)}
@@ -169,12 +198,17 @@ const ItemCount = ({ id, openItemTunnel }) => {
             ) : (
                <Stack py="24px">
                   <ComboButton type="outline" onClick={() => openTunnel(1)}>
-                     <PlusIcon />
+                     <PlusIcon color="#555b6e" />
                      Add Subscription
                   </ComboButton>
                </Stack>
             )}
-            <SubscriptionTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+            <ErrorBoundary rootRoute="/subscription/subscriptions">
+               <SubscriptionTunnel
+                  tunnels={tunnels}
+                  closeTunnel={closeTunnel}
+               />
+            </ErrorBoundary>
          </ItemCountSection>
       </>
    )
@@ -187,6 +221,11 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
    const [insertSubscription] = useMutation(INSERT_SUBSCRIPTION, {
       onCompleted: () => {
          close()
+         toast.success('Successfully created the subscription!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to create the subscription!')
       },
    })
    const [days, setDays] = React.useState({
@@ -257,8 +296,8 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       setForm(data)
    }
 
-   const selectDay = (e, day) => {
-      setDays({ ...days, [day]: e.target.checked })
+   const selectDay = day => {
+      setDays({ ...days, [day]: !days[day] })
    }
 
    const close = () => {
@@ -289,21 +328,23 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
                close={() => close()}
                right={{ action: () => save(), title: 'Save' }}
             />
-            <main style={{ padding: 16 }}>
+            <Flex padding="16px">
                <section>
-                  <Text as="title">Add delivery days</Text>
+                  <Flex container alignItems="center">
+                     <Text as="h3">Add delivery days</Text>
+                     <Tooltip identifier="form_subscription_tunnel_subscription_field_delivery_days" />
+                  </Flex>
                   <Spacer size="16px" />
                   <DeliveryDaysList>
                      {Object.keys(days).map(day => (
                         <li key={day}>
-                           <input
-                              id={day}
+                           <Form.Checkbox
                               name={day}
-                              type="checkbox"
                               value={days[day]}
-                              onChange={e => selectDay(e, day)}
-                           />
-                           <label htmlFor={day}>{day}</label>
+                              onChange={() => selectDay(day)}
+                           >
+                              {day}
+                           </Form.Checkbox>
                         </li>
                      ))}
                   </DeliveryDaysList>
@@ -311,60 +352,88 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
                <Spacer size="48px" />
                <section>
                   <Flex container alignItems="flex-end">
-                     <TimeInput>
-                        <label htmlFor="cutOffTime">Cut Off Time</label>
-                        <input
-                           type="time"
+                     <Form.Group>
+                        <Form.Label htmlFor="cutOffTime" title="cutOffTime">
+                           <Flex container alignItems="center">
+                              Cut Off Time*
+                              <Tooltip identifier="form_subscription_tunnel_subscription_field_cut_off_time" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Time
                            id="cutOffTime"
                            name="cutOffTime"
                            value={form.cutOffTime}
                            onChange={e => handleChange(e)}
                         />
-                     </TimeInput>
+                     </Form.Group>
                      <Spacer size="16px" xAxis />
-                     <Input
-                        type="text"
-                        name="leadTime"
-                        label="Lead Time"
-                        value={form.leadTime}
-                        onChange={e => handleChange(e)}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="leadTime" title="leadTime">
+                           <Flex container alignItems="center">
+                              Lead Time*
+                              <Tooltip identifier="form_subscription_tunnel_subscription_field_lead_time" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="leadTime"
+                           name="leadTime"
+                           value={form.leadTime}
+                           onChange={e => handleChange(e)}
+                           placeholder="Enter the lead time in days"
+                        />
+                     </Form.Group>
                   </Flex>
                   <Spacer size="24px" />
-                  <Input
-                     type="text"
-                     name="startTime"
-                     label="Start Time"
-                     value={form.startTime}
-                     onChange={e => handleChange(e)}
-                  />
+                  <Form.Group>
+                     <Form.Label htmlFor="startTime" title="startTime">
+                        <Flex container alignItems="center">
+                           Start Time*
+                           <Tooltip identifier="form_subscription_tunnel_subscription_field_start_time" />
+                        </Flex>
+                     </Form.Label>
+                     <Form.Text
+                        id="startTime"
+                        name="startTime"
+                        value={form.startTime}
+                        onChange={e => handleChange(e)}
+                        placeholder="Enter the start time in days"
+                     />
+                  </Form.Group>
                   <Spacer size="24px" />
                   <Flex container>
-                     <DateInput>
-                        <label htmlFor="startDate">Start Date</label>
-                        <input
-                           type="date"
+                     <Form.Group>
+                        <Form.Label htmlFor="startDate" title="startDate">
+                           <Flex container alignItems="center">
+                              Start Date*
+                              <Tooltip identifier="form_subscription_tunnel_subscription_field_start_date" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Date
                            id="startDate"
                            name="startDate"
                            value={form.startDate}
                            onChange={e => handleChange(e)}
                         />
-                     </DateInput>
+                     </Form.Group>
                      <Spacer size="16px" xAxis />
-                     <DateInput>
-                        <label htmlFor="endDate">End Date</label>
-                        <input
+                     <Form.Group>
+                        <Form.Label htmlFor="endDate" title="endDate">
+                           <Flex container alignItems="center">
+                              End Date*
+                              <Tooltip identifier="form_subscription_tunnel_subscription_field_end_date" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Date
                            disabled
-                           type="date"
                            id="endDate"
                            name="endDate"
                            value={form.endDate}
                            onChange={e => handleChange(e)}
                         />
-                     </DateInput>
+                     </Form.Group>
                   </Flex>
                </section>
-            </main>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )
@@ -379,52 +448,6 @@ const DeliveryDaysList = styled.ul`
       label {
          margin-left: 12px;
          text-transform: capitalize;
-      }
-   }
-`
-
-const TimeInput = styled.div`
-   width: 180px;
-   position: relative;
-   label {
-      top: -8px;
-      color: #888d9d;
-      font-size: 14px;
-      position: absolute;
-   }
-   input {
-      border: none;
-      height: 40px;
-      width: inherit;
-      font-size: 16px;
-      font-weight: 400;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      :focus {
-         outline: none;
-         border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-      }
-   }
-`
-
-const DateInput = styled.div`
-   width: 180px;
-   position: relative;
-   label {
-      top: -8px;
-      color: #888d9d;
-      font-size: 14px;
-      position: absolute;
-   }
-   input {
-      border: none;
-      height: 40px;
-      width: inherit;
-      font-size: 16px;
-      font-weight: 400;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      :focus {
-         outline: none;
-         border-bottom: 1px solid rgba(0, 0, 0, 0.5);
       }
    }
 `

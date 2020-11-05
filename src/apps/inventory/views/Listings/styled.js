@@ -3,21 +3,13 @@ import styled from 'styled-components'
 export const StyledWrapper = styled.div`
    margin: 0 auto;
    max-width: 1280px;
+   width: calc(100vw - 64px);
    h1 {
       color: #555b6e;
       font-size: 20px;
       font-weight: 500;
       line-height: 23px;
    }
-`
-
-export const StyledHeader = styled.div`
-   height: 80px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   width: 90%;
-   margin: 0 auto;
 `
 
 export const StyledIconGroup = styled.div`
@@ -35,12 +27,11 @@ export const StyledIcon = styled.div`
 `
 
 export const StyledTableHeader = styled.div`
-   height: 40px;
    display: flex;
    align-items: center;
    justify-content: space-between;
-   width: 90%;
    margin: 0 auto;
+   padding: 16px 0;
 `
 
 export const StyledTableActions = styled.div`
@@ -75,7 +66,7 @@ export const OnHandData = styled.span`
    }};
 `
 export const SolidTile = styled.button`
-   width: 70%;
+   width: 100%;
    display: block;
    margin: 0 auto;
    border: 1px solid #cecece;

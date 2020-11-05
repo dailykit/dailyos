@@ -1,32 +1,24 @@
 import React from 'react'
 import _ from 'lodash'
-import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import { Text, Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-import {
-   ButtonGroup,
-   IconButton,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
-   AvatarGroup,
-   Avatar,
-   Text,
-} from '@dailykit/ui'
+import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import { ROLES } from '../../../graphql'
+import tableOptions from '../tableOption'
 import { useTabs } from '../../../context'
-import { StyledWrapper, StyledHeader } from '../styled'
-import { InlineLoader } from '../../../../../shared/components'
-import { EditIcon } from '../../../../../shared/assets/icons'
-
-const address = 'apps.settings.views.listings.roleslisting.'
+import { logger } from '../../../../../shared/utils'
+import { useTooltip } from '../../../../../shared/providers'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const RolesListing = () => {
-   const { t } = useTranslation()
+   const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
    const { tab, addTab } = useTabs()
-   const { loading, data: { roles = [] } = {} } = useSubscription(ROLES.LIST)
+   const { loading, error, data: { roles = [] } = {} } = useSubscription(
+      ROLES.LIST
+   )
 
    React.useEffect(() => {
       if (!tab) {
@@ -34,62 +26,72 @@ const RolesListing = () => {
       }
    }, [tab, addTab])
 
-   const editRole = (id, role) => {
-      addTab(role, `/settings/roles/${id}`)
+   if (!loading && error) {
+      toast.error('Failed to load the users.')
+      logger(error)
    }
 
-   if (loading) return <InlineLoader />
+   const rowClick = (e, cell) => {
+      const { id = null, title = '' } = cell.getData() || {}
+      if (id) {
+         addTab(title, `/settings/roles/${id}`)
+      }
+   }
+
+   const columns = [
+      {
+         title: 'Title',
+         field: 'title',
+         headerFilter: true,
+         cssClass: 'cell',
+         cellClick: (e, cell) => rowClick(e, cell),
+         headerTooltip: column => {
+            const identifier = 'role_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Apps',
+         field: 'apps.aggregate.count',
+         headerTooltip: column => {
+            const identifier = 'role_listing_column_apps'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+   ]
+
    return (
-      <StyledWrapper>
-         <div>
-            <StyledHeader>
-               <Text as="h2">{t(address.concat('roles'))}</Text>
-            </StyledHeader>
-            <Table>
-               <TableHead>
-                  <TableRow>
-                     <TableCell>{t(address.concat('roles'))}</TableCell>
-                     <TableCell>Users</TableCell>
-                     <TableCell align="right">
-                        {t(address.concat('actions'))}
-                     </TableCell>
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {_.isEmpty(roles) ? (
-                     <span>No roles</span>
-                  ) : (
-                     roles.map(row => (
-                        <TableRow key={row.id}>
-                           <TableCell>{row.title}</TableCell>
-                           <TableCell>
-                              <AvatarGroup>
-                                 {row.apps.map(({ app }) => (
-                                    <Avatar
-                                       url=""
-                                       key={app.id}
-                                       title={app.title}
-                                    />
-                                 ))}
-                              </AvatarGroup>
-                           </TableCell>
-                           <TableCell align="right">
-                              <ButtonGroup align="right">
-                                 <IconButton
-                                    type="outline"
-                                    onClick={() => editRole(row.id, row.title)}
-                                 >
-                                    <EditIcon />
-                                 </IconButton>
-                              </ButtonGroup>
-                           </TableCell>
-                        </TableRow>
-                     ))
-                  )}
-               </TableBody>
-            </Table>
-         </div>
-      </StyledWrapper>
+      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+         <Flex
+            container
+            as="header"
+            height="72px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex as="section" container alignItems="center">
+               <Text as="h2">Roles ({roles?.aggregate?.count || 0})</Text>
+               <Tooltip identifier="roles_list_heading" />
+            </Flex>
+         </Flex>
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <ReactTabulator
+               ref={tableRef}
+               columns={columns}
+               data={roles.nodes}
+               options={{
+                  ...tableOptions,
+                  placeholder: 'No roles available yet.',
+               }}
+            />
+         )}
+      </Flex>
    )
 }
 

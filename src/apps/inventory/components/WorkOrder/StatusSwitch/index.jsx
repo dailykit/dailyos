@@ -12,14 +12,11 @@ export default function StatusSwitch({ currentStatus, onSave }) {
    }
 
    return (
-      <div style={{ position: 'absolute', right: 0 }}>
-         <StyledStatusSwitch
-            onClick={() => setShowSwitch(!showSwitch)}
-            currentStatus={status}
-         >
-            {showIcon()} <span style={{ marginLeft: '5px' }}>{status}</span>
-         </StyledStatusSwitch>
-
+      <StyledStatusSwitch
+         onClick={() => setShowSwitch(!showSwitch)}
+         currentStatus={status}
+      >
+         {showIcon()} <span style={{ marginLeft: '5px' }}>{status}</span>
          {showSwitch && (
             <>
                <Options>
@@ -66,12 +63,13 @@ export default function StatusSwitch({ currentStatus, onSave }) {
                </Options>
             </>
          )}
-      </div>
+      </StyledStatusSwitch>
    )
 }
 
 const StyledStatusSwitch = styled.div`
    padding: 20px;
+   position: relative;
    user-select: none;
    width: 12vw;
    margin-left: auto;
@@ -97,15 +95,18 @@ const StyledStatusSwitch = styled.div`
 const Options = styled.div`
    width: 12vw;
    display: flex;
-   position: relative;
    margin-left: auto;
    flex-direction: column;
    align-items: center;
    justify-content: space-between;
+   position: absolute;
+   left: 0;
+   top: 110%;
+   z-index: 2;
 
-   animation: test 0.2s ease-in;
+   animation: fadeIn 0.2s ease-in;
 
-   @keyframes test {
+   @keyframes fadeIn {
       from {
          margin-top: -10px;
          opacity: 0;

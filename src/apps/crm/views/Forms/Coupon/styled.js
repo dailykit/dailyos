@@ -1,22 +1,8 @@
 import styled from 'styled-components'
 
-export const StyledHeader = styled.div`
-   align-items: center;
-   width: 100%;
-   display: grid;
-   background-color: #ffffff;
-   margin-bottom: 0rem;
-   padding: 24px;
-   grid-template-columns: ${props => props.gridCol || '1fr 1fr'};
-   @media (max-width: 780px) {
-      width: 100%;
-   }
-   @media (max-width: 567px) {
-      grid-template-columns: 1fr;
-   }
-`
 export const StyledWrapper = styled.div`
    background-color: #e5e5e5;
+   margin: 0;
    h1 {
       color: #555b6e;
       font-size: 20px;
@@ -26,14 +12,39 @@ export const StyledWrapper = styled.div`
 `
 
 export const InputWrapper = styled.div`
-   width: 250px;
    background-color: #ffffff;
+   padding: 32px 32px 0 32px;
 `
 export const StyledComp = styled.div`
-   padding: 16px 32px;
+   padding: 32px;
    background-color: #e5e5e5;
+   .couponDetails {
+      height: max-content;
+   }
 `
-export const StyledRow = styled.div`
-   display: flex;
-   flex-direction: row;
+export const StyledInsight = styled.div`
+   margin-left: 26px;
+   padding: 16px;
+   background: #fff;
+   width: 100%;
+   height: inherit;
+   max-width: 897.2px;
+   max-height: 620px;
+   overflow: auto;
+   box-sizing: border-box;
+`
+
+export const StyledDiv = styled.div`
+   padding: 0;
+   background-color: #ffffff;
+   .styleTab {
+      margin-bottom: 16px;
+      padding-left: 32px;
+   }
+   #tabs--1--panel--0 {
+      padding: 0;
+   }
+   #tabs--1--panel--1 {
+      padding: 0;
+   }
 `

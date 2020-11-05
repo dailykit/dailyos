@@ -56,16 +56,15 @@ export const UPDATE_SACHET_WORK_ORDER = gql`
    }
 `
 
-export const INCREMENT_SACHET_WORK_ORDER = gql`
-   mutation UpdateSachetWorkOrder(
+export const CHANGE_OUTPUT_QUANTITY = gql`
+   mutation ChangeQuantity(
       $id: Int!
-      $inc: inventory_sachetWorkOrder_inc_input
+      $set: inventory_sachetWorkOrder_set_input
    ) {
-      updateSachetWorkOrder(where: { id: { _eq: $id } }, _inc: $inc) {
+      updateSachetWorkOrder(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             id
             status
-            outputQuantity
          }
       }
    }

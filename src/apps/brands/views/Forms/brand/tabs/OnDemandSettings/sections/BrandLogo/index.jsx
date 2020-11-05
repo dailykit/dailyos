@@ -19,7 +19,11 @@ import { EditIcon } from '../../../../../../../../../shared/assets/icons'
 import {
    AssetUploader,
    Flex,
+   Tooltip,
+   InlineLoader,
 } from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const BrandLogo = ({ update }) => {
    const params = useParams()
@@ -27,7 +31,7 @@ export const BrandLogo = ({ update }) => {
    const [settingId, setSettingId] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Brand Logo' },
          type: { _eq: 'brand' },
@@ -61,9 +65,18 @@ export const BrandLogo = ({ update }) => {
       closeTunnel(1)
    }
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Brand Logo">
-         <Text as="h3">Logo</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Logo</Text>
+            <Tooltip identifier="brand_logo_info" />
+         </Flex>
          <Spacer size="16px" />
          {url ? (
             <ImageContainer width="120px" height="120px">

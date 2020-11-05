@@ -2,23 +2,33 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
-import { Text, Spacer, Toggle } from '@dailykit/ui'
+import { Text, Spacer, Form } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../../tableOption'
 import { BRANDS, PLANS } from '../../../../../graphql'
-import { Flex, InlineLoader } from '../../../../../../../shared/components'
+import {
+   Flex,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../shared/components'
+import { useTooltip } from '../../../../../../../shared/providers'
+import { logger } from '../../../../../../../shared/utils'
 
 export const SubscriptionPlans = () => {
+   const { tooltip } = useTooltip()
    const params = useParams()
    const tableRef = React.useRef()
    const [plans, setPlans] = React.useState({})
    const [updateBrandCollection] = useMutation(BRANDS.UPSERT_BRAND_TITLE, {
       onCompleted: () => toast.success('Successfully updated!'),
-      onError: () => toast.error('Failed to update, please try again!'),
+      onError: error => {
+         toast.error('Failed to update, please try again!')
+         logger(error)
+      },
    })
-   const { loading } = useSubscription(PLANS.LIST, {
+   const { loading, error } = useSubscription(PLANS.LIST, {
       variables: {
          brandId: {
             _eq: params.id,
@@ -55,42 +65,77 @@ export const SubscriptionPlans = () => {
             title: 'Title',
             field: 'title',
             headerFilter: true,
+            headerTooltip: function (column) {
+               const identifier = 'subscriptionPlans_listing_title_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             headerFilter: true,
             title: 'Total Brands',
             field: 'totalBrands',
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            width: 200,
+            headerTooltip: function (column) {
+               const identifier = 'subscriptionPlans_listing_totalBrand_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             title: 'Published',
             field: 'isActive',
             hozAlign: 'center',
+            headerHozAlign: 'center',
             headerSort: false,
             formatter: reactFormatter(<ToggleStatus update={toggleStatus} />),
+            width: 150,
+            headerTooltip: function (column) {
+               const identifier = 'subscriptionPlans_listing_published_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
       ],
       [toggleStatus]
    )
 
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
+
    return (
       <Flex padding="16px">
-         <Text as="h2">
-            Subscription Plans ({plans?.aggregate?.count || 0})
-         </Text>
+         <Flex container alignItems="center">
+            <Text as="h2">
+               Subscription Plans ({plans?.aggregate?.count || 0})
+            </Text>
+            <Tooltip identifier="brands_subscriptionPlans_listing_heading" />
+         </Flex>
          <Spacer size="24px" />
          {loading ? (
             <InlineLoader />
          ) : (
             <>
-               {plans?.aggregate?.count > 0 ? (
+               {plans?.aggregate?.count > 0 && (
                   <ReactTabulator
                      ref={tableRef}
                      columns={columns}
-                     options={tableOptions}
+                     options={{
+                        ...tableOptions,
+                        placeholder: 'No Subscription Plans Available Yet !',
+                     }}
                      data={plans?.nodes || []}
                   />
-               ) : (
-                  <span>No Plans yet!</span>
                )}
             </>
          )}
@@ -110,5 +155,11 @@ const ToggleStatus = ({ update, cell }) => {
       }
    }, [checked, update, cell])
 
-   return <Toggle checked={checked} setChecked={setChecked} />
+   return (
+      <Form.Toggle
+         name="brandSubscription"
+         onChange={() => setChecked(!checked)}
+         value={checked}
+      />
+   )
 }

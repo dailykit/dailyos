@@ -1,12 +1,18 @@
+import {
+   ButtonTile,
+   Flex,
+   Spacer,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import React from 'react'
-import { ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
-
+import { EditIcon } from '../../../../../shared/assets/icons'
+import { Ranger } from '../../../../../shared/components/Ranger'
 import { DataCard } from '../../../components'
-import { FlexContainer, Flexible, ShadowCard } from '../styled'
-import { ImageContainer } from './styled'
-import EditIcon from '../../../../recipe/assets/icons/Edit'
+import { ShadowCard } from '../styled'
 import PackagingInformation from './PackagingInformation'
-
+import { ImageContainer } from './styled'
 import { PhotoTunnel } from './Tunnels'
 
 export default function PackagingStats({ state }) {
@@ -19,8 +25,8 @@ export default function PackagingStats({ state }) {
                <PhotoTunnel state={state} close={closePhotoTunnel} />
             </Tunnel>
          </Tunnels>
-         <FlexContainer style={{ padding: '0 30px', margin: '0 20px' }}>
-            <Flexible width="2">
+         <Flex container>
+            <Flex flex={2}>
                {state.images && state.images.length ? (
                   <ImageContainer>
                      <div>
@@ -45,23 +51,38 @@ export default function PackagingStats({ state }) {
                      onClick={() => openPhotoTunnel(1)}
                   />
                )}
-            </Flexible>
-            <span style={{ width: '20px' }} />
-            <Flexible width="3">
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex flex={3}>
                <ShadowCard>
-                  <DataCard title="Par Level" quantity={state.parLevel} />
-                  <DataCard title="Max. Level" quantity={state.maxLevel} />
-                  <DataCard title="On Hand" quantity={state.onHand} />
-                  <DataCard title="Awaiting" quantity={state.awaiting} />
-
-                  <DataCard title="Committed" quantity={state.committed} />
-
-                  <DataCard title="Consumed" quantity={state.consumed} />
+                  <RangedStat packaging={state} />
+                  <Spacer size="16px" />
+                  <Flex container>
+                     <DataCard title="Awaiting" quantity={state.awaiting} />
+                     <Spacer xAxis size="16px" />
+                     <DataCard title="Committed" quantity={state.committed} />
+                     <Spacer xAxis size="16px" />
+                     <DataCard title="Consumed" quantity={state.consumed} />
+                  </Flex>
                </ShadowCard>
-            </Flexible>
-         </FlexContainer>
-         <br />
+            </Flex>
+         </Flex>
+         <Spacer size="16px" />
          <PackagingInformation state={state} />
       </>
+   )
+}
+
+function RangedStat({ packaging }) {
+   return (
+      <Ranger
+         label="On hand qty"
+         max={packaging.maxLevel}
+         min={packaging.parLevel}
+         maxLabel="Max Inventory qty"
+         minLabel="Par level"
+         value={packaging.onHand}
+         style={{ marginTop: '72px' }}
+      />
    )
 }

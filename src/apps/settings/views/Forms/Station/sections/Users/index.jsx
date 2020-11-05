@@ -1,11 +1,18 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
+   Text,
+   IconButton,
+   PlusIcon,
    TextButton,
    TagGroup,
    Tag,
    List,
+   Flex,
+   Filler,
    ListSearch,
    ListOptions,
    ListItem,
@@ -13,41 +20,42 @@ import {
    Tunnel,
    useTunnel,
    useMultiList,
-   Loader,
+   Spacer,
    ButtonGroup,
    TunnelHeader,
+   SectionTab,
+   SectionTabs,
+   SectionTabList,
+   SectionTabPanel,
+   SectionTabPanels,
+   SectionTabsListHeader,
+   Avatar,
 } from '@dailykit/ui'
 
+import { STATIONS } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
 import {
-   SectionTabs,
-   SectionTab,
-   SectionTabList,
-   SectionTabPanels,
-   SectionTabPanel,
-} from '../../../../../components'
-
-import {
-   USER_BY_STATION,
-   CREATE_STATION_USERS,
-   UPDATE_STATION_USER_STATUS,
-   DELETE_STATION_USER,
-} from '../../../../../graphql'
-
-import { TunnelMain, StyledInfo } from '../../styled'
-
-import { Header } from './styled'
+   Tooltip,
+   InlineLoader,
+   ErrorBoundary,
+   ErrorState,
+} from '../../../../../../../shared/components'
 
 export const Users = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [deleteStationUser] = useMutation(DELETE_STATION_USER)
-   const [updateStationUserStatus] = useMutation(UPDATE_STATION_USER_STATUS)
-   const {
-      error,
-      loading,
-      data: { settings_user: users = [] } = {},
-   } = useSubscription(USER_BY_STATION, {
-      variables: {
-         _eq: station.id,
+   const [tabIndex, setTabIndex] = React.useState(0)
+   const [deleteStationUser] = useMutation(STATIONS.USERS.DELETE, {
+      onCompleted: () => toast.success('Successfully unassigned the user!'),
+      onError: error => {
+         logger(error)
+         toast.error('Failed to unassigned the user!')
+      },
+   })
+   const [updateStationUserStatus] = useMutation(STATIONS.USERS.UPDATE, {
+      onCompleted: () => toast.success('Successfully updated the user status!'),
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the user status!')
       },
    })
 
@@ -72,32 +80,50 @@ export const Users = ({ station }) => {
 
    return (
       <>
-         <SectionTabs>
+         <SectionTabs onChange={index => setTabIndex(index)}>
             <SectionTabList>
-               <TextButton
-                  type="outline"
-                  style={{ marginBottom: 8 }}
-                  onClick={() => setIsOpen(true)}
-               >
-                  Add User
-               </TextButton>
-               {station.user.nodes.map(node => (
-                  <SectionTab
-                     key={node.user.id}
-                     title={`${node.user.firstName} ${node.user.lastName}`}
-                  />
+               <SectionTabsListHeader>
+                  <Flex container alignItems="center">
+                     <Text as="title">Users</Text>
+                     <Tooltip identifier="station_section_user_heading" />
+                  </Flex>
+                  <IconButton type="outline" onClick={() => setIsOpen(true)}>
+                     <PlusIcon />
+                  </IconButton>
+               </SectionTabsListHeader>
+               {station.user.nodes.map((node, index) => (
+                  <SectionTab key={node.user.id}>
+                     <Spacer size="14px" />
+                     <Text
+                        as="h3"
+                        style={{ ...(index === tabIndex && { color: '#fff' }) }}
+                     >
+                        {node.user?.firstName || ''} {node.user?.lastName || ''}
+                     </Text>
+                     <Spacer size="14px" />
+                  </SectionTab>
                ))}
             </SectionTabList>
             <SectionTabPanels>
                {station.user.nodes.map(node => (
                   <SectionTabPanel key={node.user.id}>
-                     <Header>
-                        <div>
-                           <h2>
-                              {node.user.firstName} {node.user.lastName}
-                           </h2>
+                     <Flex
+                        as="main"
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Flex as="section" container alignItems="center">
+                           <Avatar
+                              url=""
+                              withName
+                              title={`${node.user?.firstName || ''} ${
+                                 node.user?.lastName || ''
+                              }`}
+                           />
+                           <Spacer size="24px" xAxis />
                            {node.active && <Tag>Active</Tag>}
-                        </div>
+                        </Flex>
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
@@ -117,46 +143,61 @@ export const Users = ({ station }) => {
                               Unassign
                            </TextButton>
                         </ButtonGroup>
-                     </Header>
+                     </Flex>
                   </SectionTabPanel>
                ))}
             </SectionTabPanels>
          </SectionTabs>
          {isOpen && (
-            <AddUserTunnel
-               error={error}
-               isOpen={isOpen}
-               loading={loading}
-               station={station.id}
-               setIsOpen={setIsOpen}
-               data={users.map(({ id, firstName, lastName, keycloakId }) => ({
-                  id,
-                  keycloakId,
-                  title: `${firstName} ${lastName}`,
-               }))}
-            />
+            <ErrorBoundary rootRoute="/apps/settings">
+               <AddUserTunnel
+                  isOpen={isOpen}
+                  station={station.id}
+                  setIsOpen={setIsOpen}
+               />
+            </ErrorBoundary>
          )}
       </>
    )
 }
 
-const AddUserTunnel = ({
-   isOpen,
-   station,
-   setIsOpen,
-   error,
-   loading,
-   data,
-}) => {
+const AddUserTunnel = ({ isOpen, station, setIsOpen }) => {
+   const [users, setUsers] = React.useState([])
    const [search, setSearch] = React.useState('')
+   const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [createStationUsers] = useMutation(CREATE_STATION_USERS, {
+   const [createStationUsers] = useMutation(STATIONS.USERS.CREATE, {
       onCompleted: () => {
          setIsOpen(false)
+         toast.success('Successfully assigned the user!')
+      },
+      onError: () => {
+         setIsOpen(false)
+         toast.error('Failed to assign the user!')
       },
    })
 
-   const [list, selected, selectOption] = useMultiList(data)
+   const { loading, error } = useSubscription(STATIONS.USERS.LIST, {
+      variables: {
+         _eq: station,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { settings_user: users = [] } = {} } = {},
+      }) => {
+         if (!isEmpty(users)) {
+            setUsers(
+               users.map(({ id, firstName, lastName, keycloakId }) => ({
+                  id,
+                  keycloakId,
+                  title: `${firstName || ''} ${lastName || ''}`,
+               }))
+            )
+         }
+         setIsLoading(false)
+      },
+   })
+
+   const [list, selected, selectOption] = useMultiList(users)
 
    React.useEffect(() => {
       if (isOpen) {
@@ -165,6 +206,11 @@ const AddUserTunnel = ({
          closeTunnel(1)
       }
    }, [isOpen])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch users!')
+      logger(error)
+   }
 
    const handleSubmit = () => {
       createStationUsers({
@@ -177,20 +223,23 @@ const AddUserTunnel = ({
       })
    }
 
-   if (loading) return <Loader />
-   if (error) return <div>{error.message}</div>
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1} size="sm">
             <TunnelHeader
                title="Add User"
+               close={() => setIsOpen(false)}
                right={
                   selected.length > 0 && { action: handleSubmit, title: 'Save' }
                }
-               close={() => setIsOpen(false)}
+               tooltip={
+                  <Tooltip identifier="station_section_user_tunnel_add" />
+               }
             />
-            <TunnelMain>
-               {list.length > 0 && (
+            <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
+               {isLoading && <InlineLoader />}
+               {!isLoading && error && <ErrorState />}
+               {!isLoading && list.length > 0 && (
                   <List>
                      <ListSearch
                         onChange={value => setSearch(value)}
@@ -232,10 +281,13 @@ const AddUserTunnel = ({
                      </ListOptions>
                   </List>
                )}
-               {list.length === 0 && (
-                  <StyledInfo>No users left to add!</StyledInfo>
+               {!isLoading && list.length === 0 && (
+                  <Filler
+                     height="500px"
+                     message="No users available to add to station."
+                  />
                )}
-            </TunnelMain>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )

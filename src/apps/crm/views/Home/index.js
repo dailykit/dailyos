@@ -1,16 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { DashboardTile, SearchBox, Text } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-
+import BrandContext from '../../context/Brand'
 // State
 import { useTabs } from '../../context'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
 import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
 
 const Home = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    // const { t } = useTranslation()
-   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT)
+   const { data: customersCount } = useSubscription(CUSTOMERS_COUNT, {
+      variables: {
+         brandId: context.brandId,
+      },
+   })
    const { data: couponTotal } = useSubscription(COUPON_TOTAL)
    const { data: campaignTotal } = useSubscription(CAMPAIGN_TOTAL)
 
@@ -19,36 +24,22 @@ const Home = () => {
       <StyledHome>
          <StyledHeader>
             <Text as="h1">Customer Relation Manager</Text>
-            <SearchBox
-               placeholder="Search"
-               value={search}
-               onChange={e => setSearch(e.target.value)}
-            />
          </StyledHeader>
 
          <StyledCardList>
             <DashboardTile
                title="Customers"
-               count={
-                  customersCount?.customers_aggregate.aggregate.count || '...'
-               }
+               count={customersCount?.customers_aggregate.aggregate.count || 0}
                onClick={() => addTab('Customers', '/crm/customers')}
             />
             <DashboardTile
-               title="Referral Plans"
-               count={22}
-               onClick={() => addTab('Referral Plans', '/crm/referral-plans')}
-            />
-            <DashboardTile
-               title="Coupons"
-               count={couponTotal?.couponsAggregate?.aggregate?.count || '...'}
+               title="All Coupons"
+               count={couponTotal?.couponsAggregate?.aggregate?.count || 0}
                onClick={() => addTab('Coupons', '/crm/coupons')}
             />
             <DashboardTile
-               title="Campaigns"
-               count={
-                  campaignTotal?.campaignsAggregate?.aggregate?.count || '...'
-               }
+               title="All Campaign"
+               count={campaignTotal?.campaignsAggregate?.aggregate?.count || 0}
                onClick={() => addTab('Campaign', '/crm/campaign')}
             />
          </StyledCardList>

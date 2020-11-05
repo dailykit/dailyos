@@ -1,10 +1,10 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import styled from 'styled-components'
-import { Spacer, Input, TunnelHeader } from '@dailykit/ui'
+import { Spacer, TunnelHeader, Form } from '@dailykit/ui'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 
-import { Flex } from '../../../../../../shared/components'
+import { Flex, Tooltip } from '../../../../../../shared/components'
 import { useScript } from '../../../../../../shared/utils/useScript'
 
 export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
@@ -64,6 +64,7 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
             title="Address"
             right={{ action: updateSetting, title: 'Save' }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="brand_address_tunnelHeader" />}
          />
          <Flex padding="16px">
             <GPlaces>
@@ -73,12 +74,15 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
                      onSelect={data => formatAddress(data)}
                      renderInput={props => (
                         <Flex>
-                           <Input
-                              type="text"
-                              label="Search on Google"
-                              name="search"
-                              {...props}
-                           />
+                           <Form.Group>
+                              <Form.Label htmlFor="search" title="search">
+                                 <Flex container alignItems="center">
+                                    Search on Google
+                                    <Tooltip identifier="brand_address_googleSearch" />
+                                 </Flex>
+                              </Form.Label>
+                              <Form.Text id="search" name="search" {...props} />
+                           </Form.Group>
                         </Flex>
                      )}
                   />
@@ -87,79 +91,131 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
             {!isEmpty(populated) && (
                <>
                   <Flex margin="24px 0">
-                     <Input
-                        type="text"
-                        label="Line 1"
-                        name="line1"
-                        value={populated.line1}
-                        onChange={e =>
-                           setPopulated({ ...populated, line1: e.target.value })
-                        }
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="line1" title="line1">
+                           <Flex container alignItems="center">
+                              Line 1
+                              <Tooltip identifier="brand_address_line1" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="line1"
+                           name="line1"
+                           value={populated.line1}
+                           onChange={e =>
+                              setPopulated({
+                                 ...populated,
+                                 line1: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Group>
                      <Spacer size="24px" />
-                     <Input
-                        type="text"
-                        label="Line 2"
-                        name="line2"
-                        value={populated.line2}
-                        onChange={e =>
-                           setPopulated({ ...populated, line2: e.target.value })
-                        }
-                     />
+
+                     <Form.Group>
+                        <Form.Label htmlFor="line2" title="line2">
+                           <Flex container alignItems="center">
+                              Line 2
+                              <Tooltip identifier="brand_address_line2" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="line2"
+                           name="line2"
+                           value={populated.line2}
+                           onChange={e =>
+                              setPopulated({
+                                 ...populated,
+                                 line2: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Group>
+                     <Spacer size="24px" />
                   </Flex>
                   <Flex container alignItems="center" margin="0 0 24px 0">
-                     <Input
-                        type="text"
-                        label="City"
-                        name="city"
-                        value={populated.city}
-                        onChange={e =>
-                           setPopulated({
-                              ...populated,
-                              city: e.target.value,
-                           })
-                        }
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="city" title="city">
+                           <Flex container alignItems="center">
+                              City
+                              <Tooltip identifier="brand_address_city" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="city"
+                           name="city"
+                           value={populated.city}
+                           onChange={e =>
+                              setPopulated({
+                                 ...populated,
+                                 city: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Group>
+
                      <Spacer size="16px" xAxis />
-                     <Input
-                        type="text"
-                        label="State"
-                        name="state"
-                        value={populated.state}
-                        onChange={e =>
-                           setPopulated({
-                              ...populated,
-                              state: e.target.value,
-                           })
-                        }
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="state" title="state">
+                           <Flex container alignItems="center">
+                              State
+                              <Tooltip identifier="brand_address_state" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="state"
+                           name="state"
+                           value={populated.state}
+                           onChange={e =>
+                              setPopulated({
+                                 ...populated,
+                                 state: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Group>
                   </Flex>
                   <Flex container alignItems="center" margin="0 0 24px 0">
-                     <Input
-                        type="text"
-                        label="Country"
-                        name="country"
-                        value={populated.country}
-                        onChange={e =>
-                           setPopulated({
-                              ...populated,
-                              country: e.target.value,
-                           })
-                        }
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="country" title="country">
+                           <Flex container alignItems="center">
+                              Country
+                              <Tooltip identifier="brand_address_country" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="country"
+                           name="country"
+                           value={populated.country}
+                           onChange={e =>
+                              setPopulated({
+                                 ...populated,
+                                 country: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Group>
+
                      <Spacer size="16px" xAxis />
-                     <Input
-                        type="text"
-                        label="ZIP"
-                        name="zipcode"
-                        value={populated.zipcode}
-                        onChange={e =>
-                           setPopulated({
-                              ...populated,
-                              zipcode: e.target.value,
-                           })
-                        }
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="zipcode" title="zipcode">
+                           <Flex container alignItems="center">
+                              ZIP
+                              <Tooltip identifier="brand_address_zip" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="zipcode"
+                           name="zipcode"
+                           value={populated.zipcode}
+                           onChange={e =>
+                              setPopulated({
+                                 ...populated,
+                                 zipcode: e.target.value,
+                              })
+                           }
+                        />
+                     </Form.Group>
                   </Flex>
                </>
             )}

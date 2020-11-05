@@ -75,7 +75,7 @@ export const useAccess = (route = '') => {
       path => {
          const route = state.routes[path] || []
          const index = route.findIndex(node => node.title === 'ROUTE_READ')
-         return index === -1 ? false : route[index].value
+         return index === -1 ? true : route[index].value
       },
       [state.routes]
    )
@@ -93,7 +93,7 @@ export const useAccess = (route = '') => {
       title => {
          const routes = state.routes[route] || []
          const index = routes.findIndex(node => node.title === title)
-         return index === -1 ? false : routes[index].value
+         return index === -1 ? true : routes[index].value
       },
       [state.routes, route]
    )

@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
-   width: 100%;
+   width: calc(100vw-64px);
+   max-width: 1280px;
+   margin: 0 auto;
    background: #ffffff;
 `
 export const StyledContainer = styled.div`

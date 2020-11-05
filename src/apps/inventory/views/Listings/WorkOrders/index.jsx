@@ -1,201 +1,73 @@
 import {
-   IconButton,
+   ComboButton,
+   Flex,
+   RadioGroup,
+   Spacer,
+   Text,
    Tunnel,
    Tunnels,
    useTunnel,
-   Text,
-   Loader,
-   TextButton,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useSubscription } from '@apollo/react-hooks'
-import moment from 'moment'
-import { toast } from 'react-toastify'
-import { v4 as uuid } from 'uuid'
-
+import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { AddIcon } from '../../../assets/icons'
-import { StyledHeader, StyledWrapper } from '../styled'
+import { StyledWrapper } from '../styled'
+import BulkWorkOrders from './bulk'
+import SachetWorkOrders from './sachet'
 import WorkOrderTypeTunnel from './WorkOrderTypeTunnel'
-import {
-   BULK_WORK_ORDERS_SUBSCRIPTION,
-   SACHET_WORK_ORDERS_SUBSCRIPTION,
-} from '../../../graphql'
-import tableOptions from '../tableOption'
-import { FlexContainer } from '../../Forms/styled'
-import { useTabs } from '../../../context'
 
 const address = 'apps.inventory.views.listings.workorders.'
-
-function onError(error) {
-   console.log(error)
-   toast.error(error.message)
-}
 
 export default function WorkOrders() {
    const { t } = useTranslation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const tableRef = React.useRef()
-   const { addTab } = useTabs()
 
-   const {
-      data: bulkWorkOrdersData,
-      loading: bulkWorkOrderLoading,
-   } = useSubscription(BULK_WORK_ORDERS_SUBSCRIPTION, { onError })
-
-   const {
-      data: sachetWorkOrdersData,
-      loading: sachetWorkOrderLoading,
-   } = useSubscription(SACHET_WORK_ORDERS_SUBSCRIPTION, { onError })
-
-   const rowClick = (e, row) => {
-      const { id, type, name } = row._row.data
-      const altName = `Work Order-${uuid().substring(30)}`
-
-      if (type === 'bulk') {
-         addTab(name || altName, `/inventory/work-orders/bulk/${id}`)
-      } else {
-         addTab(name || altName, `/inventory/work-orders/sachet/${id}`)
-      }
-   }
-
-   const columns = [
-      { title: 'Status', field: 'status', headerFilter: true, width: 150 },
-      {
-         title: 'Scheduled On',
-         field: 'scheduledOn',
-         headerFilter: false,
-         formatter: reactFormatter(<ShowDate />),
-         hozAlign: 'left',
-         headerHozAlign: 'left',
-         width: 150,
-      },
-      {
-         title: 'User Assigned',
-         field: 'user',
-         formatter: reactFormatter(<UserName />),
-         headerFilter: false,
-         hozAlign: 'left',
-         headerHozAlign: 'left',
-      },
-      {
-         title: 'Station Assigned',
-         field: 'station',
-         formatter: reactFormatter(<StationName />),
-         headerFilter: false,
-         hozAlign: 'left',
-         headerHozAlign: 'left',
-      },
-      {
-         title: 'Type',
-         field: 'type',
-         formatter: reactFormatter(<FormatType />),
-         headerFilter: false,
-         hozAlign: 'left',
-         headerHozAlign: 'left',
-      },
-   ]
-
-   if (bulkWorkOrderLoading && sachetWorkOrderLoading) return <Loader />
-
-   let data = []
-
-   if (
-      bulkWorkOrdersData &&
-      bulkWorkOrdersData.bulkWorkOrders &&
-      sachetWorkOrdersData &&
-      sachetWorkOrdersData.sachetWorkOrders
-   ) {
-      data = [
-         ...bulkWorkOrdersData.bulkWorkOrders.map(bulkOrders => ({
-            ...bulkOrders,
-            type: 'bulk',
-         })),
-         ...sachetWorkOrdersData.sachetWorkOrders.map(sachetOrders => ({
-            ...sachetOrders,
-            type: 'sachet',
-         })),
-      ]
-   }
+   const [view, setView] = useState('Bulk')
 
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <WorkOrderTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <StyledHeader>
-               <Text as="h1">{t(address.concat('work orders'))}</Text>
-               <FlexContainer>
-                  <TextButton
-                     type="outline"
-                     onClick={() => tableRef.current.table.clearHeaderFilter()}
-                  >
-                     Clear Filters
-                  </TextButton>
-                  <span style={{ width: '10px' }} />
-                  <IconButton
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
+               <Flex container alignItems="center">
+                  <Text as="h2">{t(address.concat('work orders'))}</Text>
+                  <Tooltip identifier="work-orders_listings_header_title" />
+               </Flex>
+               <Flex container>
+                  <ComboButton
                      type="solid"
                      onClick={() => {
                         openTunnel(1)
                      }}
                   >
                      <AddIcon color="#fff" size={24} />
-                  </IconButton>
-               </FlexContainer>
-            </StyledHeader>
+                     Create Work Order
+                  </ComboButton>
+               </Flex>
+            </Flex>
 
-            <br />
-            <div style={{ width: '90%', margin: '0 auto' }}>
-               <ReactTabulator
-                  ref={tableRef}
-                  columns={columns}
-                  data={data}
-                  rowClick={rowClick}
-                  options={tableOptions}
-               />
-            </div>
+            <RadioGroup
+               options={[
+                  { id: 1, title: 'Bulk' },
+                  { id: 2, title: 'Sachet' },
+               ]}
+               active={1}
+               onChange={option => setView(option.title)}
+            />
+            <Spacer size="16px" />
+
+            {view === 'Bulk' ? <BulkWorkOrders /> : <SachetWorkOrders />}
          </StyledWrapper>
       </>
    )
-}
-
-function ShowDate({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   return <>{moment(value).format('MMM Do YY')}</>
-}
-
-function UserName({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   if (value && value.firstName) return <>{value.firstName}</>
-   return 'NA'
-}
-
-function StationName({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   if (value && value.name) return <>{value.name}</>
-   return 'NA'
-}
-
-function FormatType({
-   cell: {
-      _cell: { value },
-   },
-}) {
-   if (value)
-      return <>{value === 'bulk' ? 'Bulk Work Order' : 'Sachet Work Order'}</>
-
-   return 'NA'
 }

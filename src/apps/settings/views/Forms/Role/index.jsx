@@ -12,13 +12,14 @@ import {
    Tunnel,
    useTunnel,
    Text,
+   Flex,
 } from '@dailykit/ui'
 
 import { ROLES } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { InlineLoader } from '../../../../../shared/components'
+import { Spacer } from '../../../../../shared/styled'
 import { Apps, AppsTunnel, Users, UsersTunnel } from './sections'
-import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const RoleForm = () => {
    const params = useParams()
@@ -106,16 +107,28 @@ const RoleForm = () => {
 
    if (loading) return <InlineLoader />
    return (
-      <StyledWrapper>
-         <StyledHeader>
+      <Flex padding="0 32px">
+         <Flex
+            container
+            as="header"
+            height="80px"
+            margin="0 auto"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="title">{role.title}</Text>
             <TextButton type="solid" onClick={publish}>
                Publish
             </TextButton>
-         </StyledHeader>
-         <StyledSection>
-            <Text as="h2">Apps ({apps.length})</Text>
+         </Flex>
+         <Flex>
+            <Flex container alignItems="center">
+               <Text as="h2">Apps ({apps.length})</Text>
+               <Tooltip identifier="form_role_section_apps_heading" />
+            </Flex>
+            <Spacer size="16px" />
             {apps.length > 0 && <Apps apps={apps} />}
+            <Spacer size="16px" />
             <ButtonTile
                noIcon
                size="sm"
@@ -123,10 +136,16 @@ const RoleForm = () => {
                text="Select and Configure Apps"
                onClick={() => openAppsTunnel(1)}
             />
-         </StyledSection>
-         <StyledSection>
-            <Text as="h2">Users ({users.length})</Text>
+         </Flex>
+         <Spacer size="24px" />
+         <Flex>
+            <Flex container alignItems="center">
+               <Text as="h2">Users ({users.length})</Text>
+               <Tooltip identifier="form_role_section_users_heading" />
+            </Flex>
+            <Spacer size="16px" />
             {users.length > 0 && <Users users={users} />}
+            <Spacer size="16px" />
             <ButtonTile
                noIcon
                size="sm"
@@ -134,7 +153,8 @@ const RoleForm = () => {
                text="Select and Configure Users"
                onClick={() => openUsersTunnel(1)}
             />
-         </StyledSection>
+         </Flex>
+         <Spacer size="24px" />
          <Tunnels tunnels={appsTunnels}>
             <Tunnel layer={1} size="sm">
                <AppsTunnel
@@ -151,7 +171,7 @@ const RoleForm = () => {
                />
             </Tunnel>
          </Tunnels>
-      </StyledWrapper>
+      </Flex>
    )
 }
 

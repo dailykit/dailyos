@@ -1,20 +1,18 @@
 .tabulator-header {
-   color: #888d9d;
    font-size: 14px;
    border-bottom: 2px solid #d8d8d8;
 }
 
 .tabulator-row {
    height: 40px;
-   color: #555b6e;
    font-size: 16px;
    display: flex;
    align-items: center;
    border-bottom: 1px solid #d8d8d8;
 }
 
-.tabulator-row:hover {
-   background: #f3f3f3;
+.rowClick:hover {
+   background: #e5e5e5;
 }
 
 .center-text {

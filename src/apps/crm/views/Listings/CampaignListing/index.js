@@ -2,16 +2,18 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
 import {
    Text,
    ButtonGroup,
    IconButton,
    PlusIcon,
-   Toggle,
-   Loader,
    Tunnels,
    Tunnel,
    useTunnel,
+   Flex,
+   ComboButton,
+   Form,
 } from '@dailykit/ui'
 import {
    CAMPAIGN_LISTING,
@@ -20,17 +22,23 @@ import {
    DELETE_CAMPAIGN,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { StyledHeader, StyledWrapper } from './styled'
+import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { useTooltip } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
+import options from '../../tableOptions'
 
 const CampaignListing = () => {
+   const location = useLocation()
    const { addTab, tab } = useTabs()
+   const { tooltip } = useTooltip()
    const [campaign, setCampaign] = useState(undefined)
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    // Subscription
-   const { loading: listLoading, error } = useSubscription(CAMPAIGN_LISTING, {
+   const { loading: listLoading, error1 } = useSubscription(CAMPAIGN_LISTING, {
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.campaigns.map(campaign => {
             return {
@@ -38,15 +46,21 @@ const CampaignListing = () => {
                name: campaign.metaDetails.title,
                type: campaign.type,
                active: campaign.isActive,
+               isvalid: campaign.isCampaignValid.status,
             }
          })
          setCampaign(result)
       },
    })
-   if (error) {
-      console.log(error)
+
+   const { data: campaignTotal, loading, error2 } = useSubscription(
+      CAMPAIGN_TOTAL
+   )
+
+   if (error1 || error2) {
+      toast.error('Something went wrong !')
+      logger(error1 || error2)
    }
-   const { data: campaignTotal, loading } = useSubscription(CAMPAIGN_TOTAL)
 
    // Mutation
    const [updateCampaignActive] = useMutation(CAMPAIGN_ACTIVE, {
@@ -54,33 +68,10 @@ const CampaignListing = () => {
          toast.info('Coupon Updated!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
-   React.useEffect(() => {
-      if (!tab) {
-         addTab('Campaign', '/crm/campaign')
-      }
-   }, [addTab, tab])
-
-   const toggleHandler = (toggle, id) => {
-      updateCampaignActive({
-         variables: {
-            campaignId: id,
-            isActive: toggle,
-         },
-      })
-   }
-
-   const ToggleButton = ({ cell }) => {
-      const rowData = cell._cell.row.data
-      return (
-         <Toggle
-            checked={rowData.active}
-            setChecked={() => toggleHandler(!rowData.active, rowData.id)}
-         />
-      )
-   }
 
    const [deleteCampaign] = useMutation(DELETE_CAMPAIGN, {
       onCompleted: () => {
@@ -92,12 +83,56 @@ const CampaignListing = () => {
       },
    })
 
+   useEffect(() => {
+      if (!tab) {
+         addTab('Campaign', location.pathname)
+      }
+   }, [addTab, tab])
+
+   const toggleHandler = (toggle, id, isvalid) => {
+      const val = !toggle
+      if (val && !isvalid) {
+         toast.error('Campaign should be valid!')
+      } else {
+         updateCampaignActive({
+            variables: {
+               campaignId: id,
+               isActive: val,
+            },
+         })
+      }
+   }
+
+   const DeleteButton = () => {
+      return (
+         <IconButton type="ghost">
+            <DeleteIcon color="#FF5A52" />
+         </IconButton>
+      )
+   }
+
+   const ToggleButton = ({ cell }) => {
+      const rowData = cell._cell.row.data
+      return (
+         <Form.Group>
+            <Form.Toggle
+               name="campaign_active"
+               onChange={() =>
+                  toggleHandler(rowData.active, rowData.id, rowData.isvalid)
+               }
+               value={rowData.active}
+            />
+         </Form.Group>
+      )
+   }
+
    // Handler
    const deleteHandler = (e, Campaign) => {
+      console.log(Campaign)
       e.stopPropagation()
       if (
          window.confirm(
-            `Are you sure you want to delete Campaign - ${Campaign.type}?`
+            `Are you sure you want to delete Campaign - ${Campaign.name}?`
          )
       ) {
          deleteCampaign({
@@ -108,9 +143,9 @@ const CampaignListing = () => {
       }
    }
 
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
-      const param = `/crm/campaign/${id}`
+   const rowClick = (e, cell) => {
+      const { id, name } = cell._cell.row.data
+      const param = `${location.pathname}/${id}`
       const tabTitle = name
       addTab(tabTitle, param)
    }
@@ -121,6 +156,16 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         cssClass: 'rowClick',
+         cellClick: (e, cell) => {
+            rowClick(e, cell)
+         },
       },
       {
          title: 'Campaign Type',
@@ -128,6 +173,12 @@ const CampaignListing = () => {
          headerFilter: true,
          hozAlign: 'left',
          width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_type_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Active',
@@ -139,6 +190,12 @@ const CampaignListing = () => {
             return '' + cell.getValue()
          },
          width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'campaign_listing_active_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Action',
@@ -147,7 +204,7 @@ const CampaignListing = () => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
-         formatter: reactFormatter(<DeleteIcon color="#555B6E" />),
+         formatter: reactFormatter(<DeleteButton />),
          hozAlign: 'center',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'center'
@@ -156,26 +213,33 @@ const CampaignListing = () => {
          width: 150,
       },
    ]
-   if (listLoading || loading) return <Loader />
+   if (listLoading || loading) return <InlineLoader />
    return (
       <StyledWrapper>
-         <StyledHeader gridCol="10fr  1fr">
-            <Text as="title">
-               Campaign(
-               {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'})
-            </Text>
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container height="80px" alignItems="center">
+               <Text as="title">
+                  Campaign(
+                  {campaignTotal?.campaignsAggregate?.aggregate?.count || '...'}
+                  )
+               </Text>
+               <Tooltip identifier="campaign_list_heading" />
+            </Flex>
             <ButtonGroup>
-               <IconButton type="solid" onClick={() => openTunnel(1)}>
+               <ComboButton type="solid" onClick={() => openTunnel(1)}>
                   <PlusIcon />
-               </IconButton>
+                  Create Campaign
+               </ComboButton>
             </ButtonGroup>
-         </StyledHeader>
+         </Flex>
          {Boolean(campaign) && (
             <ReactTabulator
                columns={columns}
                data={campaign}
-               rowClick={rowClick}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Campaigns Available Yet !',
+               }}
                ref={tableRef}
             />
          )}
@@ -189,16 +253,3 @@ const CampaignListing = () => {
 }
 
 export default CampaignListing
-const options = {
-   cellVertAlign: 'middle',
-   layout: 'fitColumns',
-   autoResize: true,
-   maxHeight: '420px',
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

@@ -21,7 +21,7 @@ export const OperationConfig = ({
    const [labelId, setLabelId] = useState(null)
    const [insertOperationConfig] = useMutation(CREATE_OPERATION_CONFIG, {
       onCompleted: data => {
-         onSelect(data.insertOperationConfig.id)
+         onSelect(data.insertOperationConfig)
          closeTunnel(2)
          closeTunnel(1)
          setStationId(null)

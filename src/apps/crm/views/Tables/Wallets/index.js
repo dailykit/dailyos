@@ -1,21 +1,74 @@
-import React, { useRef } from 'react'
-import { Text } from '@dailykit/ui'
+import React, { useRef, useState, useContext } from 'react'
+import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { useParams } from 'react-router-dom'
 import { useTabs } from '../../../context'
+import { useQuery } from '@apollo/react-hooks'
+import options from '../../tableOptions'
+import { useTooltip } from '../../../../../shared/providers'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
+import { WALLET_LISTING } from '../../../graphql'
+import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import BrandContext from '../../../context/Brand'
+
 const WalletTable = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    const tableRef = useRef()
+   const { tooltip } = useTooltip()
+   const { id } = useParams()
+   const [walletTxn, setWalletTxn] = useState([])
+   const [txnCount, setTxnCount] = useState(0)
+
+   // Query
+   const { loading: listloading } = useQuery(WALLET_LISTING, {
+      variables: {
+         keycloakId: id,
+         brandId: context.brandId,
+      },
+      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
+         const result = brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate?.nodes.map(
+            wallet => {
+               return {
+                  date: wallet?.created_at || 'N/A',
+                  reference: wallet?.id || 'N/A',
+                  oid: wallet?.orderCart?.orderId || 'N/A',
+                  debit: wallet?.type === 'DEBIT' ? `$${wallet?.amount}` : '$0',
+                  credit:
+                     wallet?.type === 'CREDIT' ? `$${wallet?.amount}` : '$0',
+                  balance: wallet?.wallet?.balanceAmount || 'N/A',
+               }
+            }
+         )
+         setWalletTxn(result)
+         setTxnCount(
+            brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate
+               ?.aggregate?.count || 0
+         )
+      },
+      onError: error => {
+         toast.error('Something went wrong wallet!')
+         logger(error)
+      },
+   })
+
    const columns = [
       {
-         title: 'Txn Date',
+         title: 'Transaction Date',
          field: 'date',
          headerFilter: true,
-         hozAlign: 'right',
+         hozAlign: 'left',
          titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'right'
+            cell.getElement().style.textAlign = 'left'
             return '' + cell.getValue()
          },
-         width: 150,
+         headerTooltip: function (column) {
+            const identifier = 'wallet_listing_txnDate_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Reference number',
@@ -25,16 +78,28 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
-         width: 200,
+         headerTooltip: function (column) {
+            const identifier = 'wallet_listing_referenceId_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Order Id',
-         field: 'id',
+         field: 'oid',
          hozAlign: 'right',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'wallet_listing_oid_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         width: 150,
       },
       {
          title: 'Debit',
@@ -43,6 +108,12 @@ const WalletTable = () => {
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'wallet_listing_debit_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
          },
          width: 100,
       },
@@ -54,6 +125,12 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'wallet_listing_credit_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 100,
       },
       {
@@ -64,78 +141,37 @@ const WalletTable = () => {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
+         headerTooltip: function (column) {
+            const identifier = 'wallet_listing_balance_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
          width: 100,
       },
    ]
-   const data = [
-      {
-         date: 'May 9, 2020',
-         reference: '#1345435435',
-         id: '#1354434354',
-         debit: '$2.2',
-         credit: '$1.1',
-         balance: '$8',
-      },
-      {
-         date: 'May 9, 2020',
-         reference: '#1345435435',
-         id: '#1354434354',
-         debit: '$2.2',
-         credit: '$1.1',
-         balance: '$8',
-      },
-      {
-         date: 'May 9, 2020',
-         reference: '#1345435435',
-         id: '#1354434354',
-         debit: '$2.2',
-         credit: '$1.1',
-         balance: '$8',
-      },
-      {
-         date: 'May 9, 2020',
-         reference: '#1345435435',
-         id: '#1354434354',
-         debit: '$2.2',
-         credit: '$1.1',
-         balance: '$8',
-      },
-   ]
-   const rowClick = (e, row) => {
-      const { id, name } = row._row.data
 
-      const param = '/crm/customers/'.concat(name)
-      addTab(name, param)
-   }
+   if (listloading) return <InlineLoader />
+
    return (
-      <React.Fragment>
-         <div style={{ padding: '16px' }}>
-            <Text as="title">Wallet Transactions</Text>
-         </div>
-         <div style={{ overflowX: 'scroll' }}>
+      <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
+         <Flex container height="80px" padding="16px" alignItems="center">
+            <Text as="title">Wallet Transactions({txnCount})</Text>
+            <Tooltip identifier="wallet_list_heading" />
+         </Flex>
+         {Boolean(walletTxn) && (
             <ReactTabulator
                columns={columns}
-               data={data}
-               rowClick={rowClick}
+               data={walletTxn}
                ref={tableRef}
-               options={options}
+               options={{
+                  ...options,
+                  placeholder: 'No Wallet Data Available Yet !',
+               }}
             />
-         </div>
-      </React.Fragment>
+         )}
+      </Flex>
    )
 }
 
 export default WalletTable
-const options = {
-   cellVertAlign: 'middle',
-   maxHeight: '420px',
-   layout: 'fitColumns',
-   autoResize: true,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
-   placeholder: 'No Data Available',
-   persistence: true,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
-}

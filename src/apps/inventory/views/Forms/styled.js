@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledWrapper = styled.div`
    margin: 0 auto;
    max-width: 1280px;
-
+   width: calc(100vw - 64px);
    h1 {
       color: #555b6e;
       font-size: 20px;
@@ -14,14 +14,6 @@ export const StyledWrapper = styled.div`
       width: 980px;
       margin: 0 auto;
    }
-`
-
-export const StyledHeader = styled.div`
-   height: 80px;
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   border-bottom: 1px solid #d8d8d8;
 `
 
 export const StyledForm = styled.div`
@@ -102,10 +94,9 @@ export const FlexContainer = styled.div`
 export const Flexible = styled.div`
    flex: ${({ width }) => width};
 `
-export const ShadowCard = styled(FlexContainer)`
+export const ShadowCard = styled.div`
    padding: 12px 20px;
    border: 1px dashed #f3f3f3;
    box-sizing: border-box;
    box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.13);
-   flex-wrap: wrap;
 `

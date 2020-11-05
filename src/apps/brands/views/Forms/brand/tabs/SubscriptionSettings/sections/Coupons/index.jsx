@@ -2,16 +2,22 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Coupons = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isAvailable, setIsAvailable] = React.useState(false)
-   useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.SUBSCRIPTION_SETTING, {
       variables: {
          identifier: { _eq: 'Coupons' },
          type: { _eq: 'rewards' },
@@ -42,16 +48,30 @@ export const Coupons = ({ update }) => {
       update({ id: settingId, value: { isAvailable } })
    }, [isAvailable, settingId])
 
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+   if (loading) return <InlineLoader />
+
    return (
       <div id="Coupons">
-         <Text as="h3">Coupons Availablility</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Coupons</Text>
+            <Tooltip identifier="brand_coupons_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
-            <Toggle
-               label="Available"
-               checked={isAvailable}
-               setChecked={setIsAvailable}
-            />
+            <Form.Toggle
+               name="available"
+               value={isAvailable}
+               onChange={() => setIsAvailable(!isAvailable)}
+            >
+               <Flex container alignItems="center">
+                  Available
+                  <Tooltip identifier="brand_coupons_available_info" />
+               </Flex>
+            </Form.Toggle>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
             </TextButton>

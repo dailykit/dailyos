@@ -1,26 +1,37 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
-import { useHistory } from 'react-router-dom'
-import { Text, IconButton, PlusIcon } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { Text, ComboButton, PlusIcon, Flex } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { Spacer } from '../../../styled'
 import { useTabs } from '../../../context'
-import { Wrapper, Header } from './styled'
 import options from '../../../tableOption'
-import { InlineLoader } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import { useTooltip } from '../../../../../shared/providers'
 import { TITLES, UPSERT_SUBSCRIPTION_TITLE } from '../../../graphql'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../shared/components'
 
 export const Subscriptions = () => {
-   const history = useHistory()
+   const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
-   const { loading, data: { titles = [] } = {} } = useSubscription(TITLES)
+   const { error, loading, data: { titles = [] } = {} } = useSubscription(
+      TITLES
+   )
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
       onCompleted: ({ upsertSubscriptionTitle = {} }) => {
          const { id, title } = upsertSubscriptionTitle
          addTab(title, `/subscription/subscriptions/${id}`)
+         toast.success('Sucessfully created a subscription!')
+      },
+      onError: error => {
+         toast.error('Failed to create a subscription!')
+         logger(error)
       },
    })
 
@@ -28,7 +39,15 @@ export const Subscriptions = () => {
       if (!tab) {
          addTab('Subscriptions', '/subscription/subscriptions')
       }
-   }, [history, addTab, tab])
+   }, [addTab, tab])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch list of subscriptions!')
+      logger(error)
+      return (
+         <ErrorState message="Failed to fetch the list of subscriptions, please refresh the page!" />
+      )
+   }
 
    const columns = [
       {
@@ -36,6 +55,12 @@ export const Subscriptions = () => {
          field: 'title',
          headerFilter: true,
          headerFilterPlaceholder: 'Search titles...',
+         headerTooltip: column => {
+            const identifier = 'listing_subscription_column_title'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ]
 
@@ -58,18 +83,26 @@ export const Subscriptions = () => {
       })
    }
 
-   if (loading) return <InlineLoader />
    return (
-      <Wrapper>
-         <div>
-            <Spacer size="32px" />
-            <Header>
+      <Flex width="calc(100vw - 64px)" width="1280px" margin="0 auto">
+         <Flex
+            container
+            as="header"
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
                <Text as="title">Subscriptions</Text>
-               <IconButton type="outline" onClick={() => createTab()}>
-                  <PlusIcon />
-               </IconButton>
-            </Header>
-            <Spacer size="16px" />
+               <Tooltip identifier="listing_subscription_heading" />
+            </Flex>
+            <ComboButton type="outline" onClick={() => createTab()}>
+               <PlusIcon />
+               Create Subscription
+            </ComboButton>
+         </Flex>
+         {loading && <InlineLoader />}
+         {!loading && (
             <ReactTabulator
                data={titles}
                ref={tableRef}
@@ -77,7 +110,7 @@ export const Subscriptions = () => {
                options={options}
                rowClick={rowClick}
             />
-         </div>
-      </Wrapper>
+         )}
+      </Flex>
    )
 }

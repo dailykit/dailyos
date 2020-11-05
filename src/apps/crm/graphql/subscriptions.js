@@ -1,8 +1,13 @@
 import gql from 'graphql-tag'
 
 export const CUSTOMERS_COUNT = gql`
-   subscription CustomerCount {
-      customers_aggregate {
+   subscription CustomerCount($brandId: Int!) {
+      customers_aggregate(
+         where: {
+            isArchived: { _eq: false }
+            brandCustomers: { brand: { id: { _eq: $brandId } } }
+         }
+      ) {
          aggregate {
             count
          }
@@ -10,8 +15,15 @@ export const CUSTOMERS_COUNT = gql`
    }
 `
 export const TOTAL_REVENUE = gql`
-   subscription totalRevenue {
-      ordersAggregate {
+   subscription totalRevenue($brandId: Int!) {
+      ordersAggregate(
+         where: {
+            customer: {
+               isArchived: { _eq: false }
+               brandCustomers: { brand: { id: { _eq: $brandId } } }
+            }
+         }
+      ) {
          aggregate {
             sum {
                amountPaid
@@ -22,8 +34,13 @@ export const TOTAL_REVENUE = gql`
 `
 
 export const CUSTOMER_ISTEST = gql`
-   subscription CUSTOMER_ISTEST($keycloakId: String!) {
-      customer(keycloakId: $keycloakId) {
+   subscription CUSTOMER_ISTEST($keycloakId: String!, $brandId: Int!) {
+      customers(
+         where: {
+            keycloakId: { _eq: $keycloakId }
+            brandCustomers: { brandId: { _eq: $brandId } }
+         }
+      ) {
          isTest
       }
    }
@@ -31,29 +48,31 @@ export const CUSTOMER_ISTEST = gql`
 
 export const COUPON_LISTING = gql`
    subscription COUPON_LISTING {
-      coupons {
+      coupons(where: { isArchived: { _eq: false } }) {
          id
          code
          isActive
+         isCouponValid
       }
    }
 `
 export const CAMPAIGN_LISTING = gql`
    subscription CAMPAIGN_LISTING {
-      campaigns {
+      campaigns(where: { isArchived: { _eq: false } }) {
          id
          type
          conditionId
          isActive
          isRewardMulti
          metaDetails
+         isCampaignValid
       }
    }
 `
 
 export const COUPON_TOTAL = gql`
    subscription COUPON_TOTAL {
-      couponsAggregate {
+      couponsAggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }
@@ -62,7 +81,7 @@ export const COUPON_TOTAL = gql`
 `
 export const CAMPAIGN_TOTAL = gql`
    subscription CAMPAIGN_TOTAL {
-      campaignsAggregate {
+      campaignsAggregate(where: { isArchived: { _eq: false } }) {
          aggregate {
             count
          }
@@ -75,6 +94,7 @@ export const COUPON_DATA = gql`
          id
          code
          isActive
+         isCouponValid
          isRewardMulti
          metaDetails
          visibleConditionId
@@ -89,6 +109,7 @@ export const CAMPAIGN_DATA = gql`
          conditionId
          id
          isActive
+         isCampaignValid
          isRewardMulti
          metaDetails
          campaignType {
@@ -169,6 +190,72 @@ export const BRAND_CAMPAIGNS = gql`
             campaignId
             isActive
          }
+      }
+   }
+`
+export const WALLET_N_REFERRAL = gql`
+   subscription WALLET_N_REFERRAL($keycloakId: String!, $brandId: Int!) {
+      brand(id: $brandId) {
+         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            customer {
+               wallet {
+                  amount
+               }
+               customerReferralDetails {
+                  customerReferrals_aggregate {
+                     aggregate {
+                        count
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
+export const LOYALTYPOINT_COUNT = gql`
+   subscription LOYALTYPOINT_COUNT($keycloakId: String!, $brandId: Int!) {
+      brand(id: $brandId) {
+         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            customer {
+               loyaltyPoint {
+                  points
+               }
+            }
+         }
+      }
+   }
+`
+export const SIGNUP_COUNT = gql`
+   subscription SIGNUP_COUNT($keycloakId: String!, $brandId: Int!) {
+      brand(id: $brandId) {
+         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            customer {
+               customerReferralDetails {
+                  customerReferrals_aggregate(
+                     where: { signupStatus: { _eq: "COMPLETE" } }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
+export const BRAND_LISTING = gql`
+   subscription BRAND_LISTING {
+      brands(where: { isPublished: { _eq: true } }) {
+         id
+         domain
+         title
+         isDefault
+         subscriptionRequested
+         onDemandRequested
       }
    }
 `

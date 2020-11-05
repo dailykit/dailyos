@@ -1,19 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import {
-   ButtonTile,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-   IconButton,
-   Text,
-} from '@dailykit/ui'
+import { ButtonTile, Flex, useTunnel, Text, TextButton } from '@dailykit/ui'
 import { UPDATE_COUPON } from '../../../../../graphql'
-import { EditIcon } from '../../../../../../../shared/assets/icons'
 import Conditions from '../../../../../../../shared/components/Conditions'
-import { StyledContainer, StyledRow } from './styled'
-const ConditionComp = ({ state }) => {
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../shared/components'
+import { StyledContainer } from './styled'
+import CouponContext from '../../../../../context/Coupon/CouponForm'
+
+const ConditionComp = () => {
+   const context = useContext(CouponContext)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // Mutation
@@ -22,9 +19,10 @@ const ConditionComp = ({ state }) => {
          toast.success('Updated!')
          closeTunnel(1)
       },
-      onError: () => {
-         toast.error('Error!')
+      onError: error => {
+         toast.error('Something went wrong')
          closeTunnel(1)
+         logger(error)
       },
    })
 
@@ -32,7 +30,7 @@ const ConditionComp = ({ state }) => {
    const saveInfo = conditionId => {
       updateCoupon({
          variables: {
-            id: state.id,
+            id: context.state.id,
             set: {
                visibleConditionId: conditionId,
             },
@@ -42,21 +40,31 @@ const ConditionComp = ({ state }) => {
    return (
       <>
          <Conditions
-            id={state.visibleConditionId}
+            id={context.state.visibleConditionId}
             onSave={id => saveInfo(id)}
             tunnels={tunnels}
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
          />
-         {state.visibleConditionId ? (
+         {context.state.visibleConditionId ? (
             <StyledContainer>
-               <Text as="title">Coupon Condition</Text>
-               <StyledRow>
-                  <Text as="p">View/Edit Conditions</Text>
-                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                     <EditIcon color="#00a7e1" />
-                  </IconButton>
-               </StyledRow>
+               <Flex
+                  container
+                  justifyContent="space-between"
+                  margin="0 0 16px 0"
+               >
+                  <Flex container alignItems="center">
+                     <Text as="title">Coupon Condition</Text>
+                     <Tooltip identifier="coupon_condition" />
+                  </Flex>
+                  <TextButton
+                     type="outline"
+                     size="sm"
+                     onClick={() => openTunnel(1)}
+                  >
+                     View/Edit
+                  </TextButton>
+               </Flex>
             </StyledContainer>
          ) : (
             <ButtonTile

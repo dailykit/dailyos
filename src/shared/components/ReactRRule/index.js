@@ -1,8 +1,7 @@
 import React from 'react'
 import { RRule } from 'rrule'
-import { Checkbox, Text, Input } from '@dailykit/ui'
-
-import { Wrapper, Label, FlexItems, FlexItem, InputGroup } from './styled'
+import { Text, Flex, Spacer, Form } from '@dailykit/ui'
+import { Tooltip } from '../'
 
 import { getUTCDate, getPSQLRule, reversePSQLObject } from './utils'
 
@@ -11,8 +10,8 @@ const Component = ({ value, onChange }) => {
       freq: 1,
       dtstart: '',
       until: '',
-      count: 30,
-      interval: 1,
+      count: '',
+      interval: '1',
       wkst: 0,
       byweekday: [],
       bymonth: [],
@@ -89,346 +88,424 @@ const Component = ({ value, onChange }) => {
    }, [])
 
    return (
-      <Wrapper>
-         <InputGroup>
-            <Text as="subtitle">Repeat</Text>
-            <FlexItems>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="freq"
-                     value={0}
-                     checked={state.freq === 0}
-                     onChange={e =>
-                        setState({ ...state, freq: +e.target.value })
-                     }
-                  />
-                  <span>Yearly</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="freq"
-                     value={1}
-                     checked={state.freq === 1}
-                     onChange={e =>
-                        setState({ ...state, freq: +e.target.value })
-                     }
-                  />
-                  <span>Monthly</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="freq"
-                     value={2}
-                     checked={state.freq === 2}
-                     onChange={e =>
-                        setState({ ...state, freq: +e.target.value })
-                     }
-                  />
-                  <span>Weekly</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="freq"
-                     value={3}
-                     checked={state.freq === 3}
-                     onChange={e =>
-                        setState({ ...state, freq: +e.target.value })
-                     }
-                  />
-                  <span>Daily</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="freq"
-                     value={4}
-                     checked={state.freq === 4}
-                     onChange={e =>
-                        setState({ ...state, freq: +e.target.value })
-                     }
-                  />
-                  <span>Hourly</span>
-               </FlexItem>
-            </FlexItems>
-         </InputGroup>
-         <InputGroup>
-            <Text as="subtitle">Start date</Text>
-            <input
-               type="date"
-               name="dtstart"
-               value={state.dtstart}
-               onChange={e => setState({ ...state, dtstart: e.target.value })}
-            />
-         </InputGroup>
-         <InputGroup>
-            <Text as="subtitle">End date</Text>
-            <input
-               type="date"
-               name="until"
-               value={state.until}
-               onChange={e => setState({ ...state, until: e.target.value })}
-            />
-         </InputGroup>
-         <InputGroup>
-            <Input
-               type="number"
-               label="Count"
-               name="count"
-               max="1000"
-               min="1"
-               value={state.count}
-               onChange={e => setState({ ...state, count: +e.target.value })}
-               style={{ maxWidth: 300 }}
-            />
-         </InputGroup>
-         <InputGroup>
-            <Input
-               type="number"
-               label="Interval"
-               name="interval"
-               min="1"
-               value={state.interval}
-               onChange={e => setState({ ...state, interval: +e.target.value })}
-               style={{ maxWidth: 300 }}
-            />
-         </InputGroup>
-         <InputGroup>
-            <Text as="subtitle">Week starts on</Text>
-            <FlexItems>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={0}
-                     checked={state.wkst === 0}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Monday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={1}
-                     checked={state.wkst === 1}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Tuesday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={2}
-                     checked={state.wkst === 2}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Wednesday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={3}
-                     checked={state.wkst === 3}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Thursday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={4}
-                     checked={state.wkst === 4}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Friday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={5}
-                     checked={state.wkst === 5}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Saturday</span>
-               </FlexItem>
-               <FlexItem>
-                  <input
-                     type="radio"
-                     name="wkst"
-                     value={6}
-                     checked={state.wkst === 6}
-                     onChange={e =>
-                        setState({ ...state, wkst: +e.target.value })
-                     }
-                  />
-                  <span>Sunday</span>
-               </FlexItem>
-            </FlexItems>
-         </InputGroup>
-         <InputGroup>
-            <Text as="subtitle">On every</Text>
-            <FlexItems>
-               <Checkbox
-                  id="byMonday"
-                  checked={state.byweekday.includes('MO')}
-                  onChange={() => toggleByDay('MO')}
-               >
-                  Monday
-               </Checkbox>
-               <Checkbox
-                  id="byTuesday"
-                  checked={state.byweekday.includes('TU')}
-                  onChange={() => toggleByDay('TU')}
-               >
-                  Tuesday
-               </Checkbox>
-               <Checkbox
-                  id="byWednesday"
-                  checked={state.byweekday.includes('WE')}
-                  onChange={() => toggleByDay('WE')}
-               >
-                  Wednesday
-               </Checkbox>
-               <Checkbox
-                  id="byThursday"
-                  checked={state.byweekday.includes('TH')}
-                  onChange={() => toggleByDay('TH')}
-               >
-                  Thursday
-               </Checkbox>
-               <Checkbox
-                  id="byFriday"
-                  checked={state.byweekday.includes('FR')}
-                  onChange={() => toggleByDay('FR')}
-               >
-                  Friday
-               </Checkbox>
-               <Checkbox
-                  id="bySaturday"
-                  checked={state.byweekday.includes('SA')}
-                  onChange={() => toggleByDay('SA')}
-               >
-                  Saturday
-               </Checkbox>
-               <Checkbox
-                  id="bySunday"
-                  checked={state.byweekday.includes('SU')}
-                  onChange={() => toggleByDay('SU')}
-               >
-                  Sunday
-               </Checkbox>
-            </FlexItems>
-         </InputGroup>
-         <InputGroup>
-            <Text as="subtitle">In</Text>
-            <FlexItems>
-               <Checkbox
-                  id="Jan"
-                  checked={state.bymonth.includes(1)}
-                  onChange={() => toggleByMonth(1)}
-               >
-                  January
-               </Checkbox>
-               <Checkbox
-                  id="Feb"
-                  checked={state.bymonth.includes(2)}
-                  onChange={() => toggleByMonth(2)}
-               >
-                  February
-               </Checkbox>
-               <Checkbox
-                  id="Mar"
-                  checked={state.bymonth.includes(3)}
-                  onChange={() => toggleByMonth(3)}
-               >
-                  March
-               </Checkbox>
-               <Checkbox
-                  id="Apr"
-                  checked={state.bymonth.includes(4)}
-                  onChange={() => toggleByMonth(4)}
-               >
-                  April
-               </Checkbox>
-               <Checkbox
-                  id="May"
-                  checked={state.bymonth.includes(5)}
-                  onChange={() => toggleByMonth(5)}
-               >
-                  May
-               </Checkbox>
-               <Checkbox
-                  id="Jun"
-                  checked={state.bymonth.includes(6)}
-                  onChange={() => toggleByMonth(6)}
-               >
-                  June
-               </Checkbox>
-               <Checkbox
-                  id="Jun"
-                  checked={state.bymonth.includes(7)}
-                  onChange={() => toggleByMonth(7)}
-               >
-                  July
-               </Checkbox>
-               <Checkbox
-                  id="Aug"
-                  checked={state.bymonth.includes(8)}
-                  onChange={() => toggleByMonth(8)}
-               >
-                  August
-               </Checkbox>
-               <Checkbox
-                  id="Sep"
-                  checked={state.bymonth.includes(9)}
-                  onChange={() => toggleByMonth(9)}
-               >
-                  September
-               </Checkbox>
-               <Checkbox
-                  id="Sep"
-                  checked={state.bymonth.includes(10)}
-                  onChange={() => toggleByMonth(10)}
-               >
-                  October
-               </Checkbox>
-               <Checkbox
-                  id="Nov"
-                  checked={state.bymonth.includes(11)}
-                  onChange={() => toggleByMonth(11)}
-               >
-                  November
-               </Checkbox>
-               <Checkbox
-                  id="Dec"
-                  checked={state.bymonth.includes(12)}
-                  onChange={() => toggleByMonth(12)}
-               >
-                  December
-               </Checkbox>
-            </FlexItems>
-         </InputGroup>
-      </Wrapper>
+      <>
+         <Text as="subtitle">
+            <Flex container alignItems="center">
+               Repeat
+               <Tooltip identifier="rrule_repeat" />
+            </Flex>
+         </Text>
+         <Flex container>
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="freq"
+                  value={0}
+                  checked={state.freq === 0}
+                  onChange={e => setState({ ...state, freq: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Yearly</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="freq"
+                  value={1}
+                  checked={state.freq === 1}
+                  onChange={e => setState({ ...state, freq: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Monthly</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="freq"
+                  value={2}
+                  checked={state.freq === 2}
+                  onChange={e => setState({ ...state, freq: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Weekly</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="freq"
+                  value={3}
+                  checked={state.freq === 3}
+                  onChange={e => setState({ ...state, freq: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Daily</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="freq"
+                  value={4}
+                  checked={state.freq === 4}
+                  onChange={e => setState({ ...state, freq: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Hourly</Text>
+            </Flex>
+         </Flex>
+         <Spacer size="16px" />
+         <Flex container alignItems="center">
+            <Form.Group>
+               <Form.Label htmlFor="dtstart" title="Start Date">
+                  <Flex container alignItems="center">
+                     Start Date
+                     <Tooltip identifier="rrule_start_date" />
+                  </Flex>
+               </Form.Label>
+               <Form.Date
+                  id="dtstart"
+                  name="dtstart"
+                  onChange={e =>
+                     setState({ ...state, dtstart: e.target.value })
+                  }
+                  value={state.dtstart}
+               />
+            </Form.Group>
+            <Spacer xAxis size="16px" />
+            <Form.Group>
+               <Form.Label htmlFor="until" title="End Date">
+                  <Flex container alignItems="center">
+                     End Date
+                     <Tooltip identifier="rrule_end_date" />
+                  </Flex>
+               </Form.Label>
+               <Form.Date
+                  id="until"
+                  name="until"
+                  onChange={e => setState({ ...state, until: e.target.value })}
+                  value={state.until}
+               />
+            </Form.Group>
+         </Flex>
+         <Spacer size="16px" />
+         <Flex container alignItems="center">
+            <Form.Group>
+               <Form.Label htmlFor="count" title="count">
+                  <Flex container alignItems="center">
+                     Count
+                     <Tooltip identifier="rrule_count" />
+                  </Flex>
+               </Form.Label>
+               <Form.Number
+                  id="count"
+                  name="count"
+                  onChange={e => setState({ ...state, count: e.target.value })}
+                  value={state.count}
+                  placeholder="Enter count"
+               />
+            </Form.Group>
+            <Spacer xAxis size="16px" />
+            <Form.Group>
+               <Form.Label htmlFor="interval" title="interval">
+                  <Flex container alignItems="center">
+                     Interval
+                     <Tooltip identifier="rrule_interval" />
+                  </Flex>
+               </Form.Label>
+               <Form.Number
+                  id="interval"
+                  name="interval"
+                  onChange={e =>
+                     setState({ ...state, interval: e.target.value })
+                  }
+                  value={state.interval}
+                  placeholder="Enter interval"
+               />
+            </Form.Group>
+         </Flex>
+         <Spacer size="16px" />
+         <Text as="subtitle">
+            <Flex container alignItems="center">
+               Week starts on
+               <Tooltip identifier="rrule_wkst" />
+            </Flex>
+         </Text>
+         <Flex container>
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={0}
+                  checked={state.wkst === 0}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Monday</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={1}
+                  checked={state.wkst === 1}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Tuesday</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={2}
+                  checked={state.wkst === 2}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Wednesday</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={3}
+                  checked={state.wkst === 3}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Thursday</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={4}
+                  checked={state.wkst === 4}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Friday</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={5}
+                  checked={state.wkst === 5}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Saturday</Text>
+            </Flex>
+            <Spacer xAxis size="16px" />
+            <Flex container alignItems="center">
+               <input
+                  type="radio"
+                  name="wkst"
+                  value={6}
+                  checked={state.wkst === 6}
+                  onChange={e => setState({ ...state, wkst: +e.target.value })}
+               />
+               <Spacer xAxis size="8px" />
+               <Text as="p">Sunday</Text>
+            </Flex>
+         </Flex>
+         <Spacer size="16px" />
+         <Text as="subtitle">
+            <Flex container alignItems="center">
+               On every
+               <Tooltip identifier="rule_byday" />
+            </Flex>
+         </Text>
+         <Flex container>
+            <Form.Checkbox
+               id="byMonday"
+               name="byMonday"
+               value={state.byweekday.includes('MO')}
+               onChange={() => toggleByDay('MO')}
+            >
+               Monday
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="byTuesday"
+               name="byTuesday"
+               value={state.byweekday.includes('TU')}
+               onChange={() => toggleByDay('TU')}
+            >
+               Tuesday
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="byWednesday"
+               name="byWednesday"
+               value={state.byweekday.includes('WE')}
+               onChange={() => toggleByDay('WE')}
+            >
+               Wednesday
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="byThursday"
+               name="byThursday"
+               value={state.byweekday.includes('TH')}
+               onChange={() => toggleByDay('TH')}
+            >
+               Thursday
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="byFriday"
+               name="byFriday"
+               value={state.byweekday.includes('FR')}
+               onChange={() => toggleByDay('FR')}
+            >
+               Friday
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="bySaturday"
+               name="bySaturday"
+               value={state.byweekday.includes('SA')}
+               onChange={() => toggleByDay('SA')}
+            >
+               Saturday
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="bySunday"
+               name="bySunday"
+               value={state.byweekday.includes('SU')}
+               onChange={() => toggleByDay('SU')}
+            >
+               Sunday
+            </Form.Checkbox>
+         </Flex>
+         <Spacer size="16px" />
+         <Text as="subtitle">
+            <Flex container alignItems="center">
+               In
+               <Tooltip identifier="rrule_bymonth" />
+            </Flex>
+         </Text>
+         <Flex container>
+            <Form.Checkbox
+               id="Jan"
+               name="Jan"
+               value={state.bymonth.includes(1)}
+               onChange={() => toggleByMonth(1)}
+            >
+               January
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Feb"
+               name="Feb"
+               value={state.bymonth.includes(2)}
+               onChange={() => toggleByMonth(2)}
+            >
+               February
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Mar"
+               name="Mar"
+               value={state.bymonth.includes(3)}
+               onChange={() => toggleByMonth(3)}
+            >
+               March
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Apr"
+               name="Apr"
+               value={state.bymonth.includes(4)}
+               onChange={() => toggleByMonth(4)}
+            >
+               April
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="May"
+               name="May"
+               value={state.bymonth.includes(5)}
+               onChange={() => toggleByMonth(5)}
+            >
+               May
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Jun"
+               name="Jun"
+               value={state.bymonth.includes(6)}
+               onChange={() => toggleByMonth(6)}
+            >
+               June
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Jul"
+               name="Jul"
+               value={state.bymonth.includes(7)}
+               onChange={() => toggleByMonth(7)}
+            >
+               July
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Aug"
+               name="Aug"
+               value={state.bymonth.includes(8)}
+               onChange={() => toggleByMonth(8)}
+            >
+               August
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Sep"
+               name="Sep"
+               value={state.bymonth.includes(9)}
+               onChange={() => toggleByMonth(9)}
+            >
+               September
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Oct"
+               name="Oct"
+               value={state.bymonth.includes(10)}
+               onChange={() => toggleByMonth(10)}
+            >
+               October
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Nov"
+               name="Nov"
+               value={state.bymonth.includes(11)}
+               onChange={() => toggleByMonth(11)}
+            >
+               November
+            </Form.Checkbox>
+            <Spacer xAxis size="16px" />
+            <Form.Checkbox
+               id="Dec"
+               name="Dec"
+               value={state.bymonth.includes(12)}
+               onChange={() => toggleByMonth(12)}
+            >
+               December
+            </Form.Checkbox>
+         </Flex>
+      </>
    )
 }
 

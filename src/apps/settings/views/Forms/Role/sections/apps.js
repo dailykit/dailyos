@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { isEmpty, uniqBy } from 'lodash'
 import { useQuery } from '@apollo/react-hooks'
@@ -18,12 +19,19 @@ import {
    TunnelHeader,
    TagGroup,
    Tag,
+   Filler,
 } from '@dailykit/ui'
 
 import { StyledAppItem } from './styled'
 import { ROLES } from '../../../../graphql'
 import { PermissionsTunnel } from './permissions'
-import { InlineLoader, Flex } from '../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
 
 export const Apps = ({ apps }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -61,7 +69,8 @@ export const AppsTunnel = ({ closeTunnel, selectedApps }) => {
    const params = useParams()
    const [apps, setApps] = React.useState([])
    const [search, setSearch] = React.useState('')
-   const { loading } = useQuery(ROLES.APPS, {
+   const [isLoading, setIsLoading] = React.useState(true)
+   const { error, loading } = useQuery(ROLES.APPS, {
       variables: {
          roleId: {
             _eq: params.id,
@@ -71,9 +80,16 @@ export const AppsTunnel = ({ closeTunnel, selectedApps }) => {
          if (!isEmpty(list)) {
             setApps(list.map(node => ({ ...node, icon: '' })))
          }
+         setIsLoading(false)
       },
    })
    const [list, selected, selectOption] = useMultiList(apps)
+
+   if (!loading && error) {
+      toast.error('Failed to fetch users')
+      logger(error)
+      setIsLoading(false)
+   }
 
    const save = () => {
       closeTunnel(1)
@@ -86,13 +102,16 @@ export const AppsTunnel = ({ closeTunnel, selectedApps }) => {
       <>
          <TunnelHeader
             title="Add Apps"
-            right={{ action: save, title: 'Save' }}
             close={() => closeTunnel(1)}
+            right={{ ...(list.length > 0 && { action: save, title: 'Save' }) }}
+            tooltip={
+               <Tooltip identifier="form_role_section_apps_tunnel_heading" />
+            }
          />
          <Flex padding="16px">
-            {loading ? (
-               <InlineLoader />
-            ) : (
+            {isLoading && <InlineLoader />}
+            {!isLoading && error && <ErrorState />}
+            {!isLoading && list.length > 0 && (
                <List>
                   <ListSearch
                      onChange={value => setSearch(value)}
@@ -132,6 +151,9 @@ export const AppsTunnel = ({ closeTunnel, selectedApps }) => {
                         ))}
                   </ListOptions>
                </List>
+            )}
+            {!isLoading && list.length === 0 && (
+               <Filler message="No apps yet!" />
             )}
          </Flex>
       </>

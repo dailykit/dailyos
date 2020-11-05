@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const BRANDS = {
    AGGREGATE: gql`
       subscription brands {
-         brandsAggregate {
+         brandsAggregate(where: { isArchived: { _eq: false } }) {
             aggregate {
                count
             }
@@ -12,7 +12,7 @@ export const BRANDS = {
    `,
    LIST: gql`
       subscription brands {
-         brands: brandsAggregate {
+         brands: brandsAggregate(where: { isArchived: { _eq: false } }) {
             aggregate {
                count(columns: id)
             }
@@ -132,7 +132,7 @@ export const BRANDS = {
       mutation upsertBrandCollection(
          $object: onDemand_brand_collection_insert_input!
       ) {
-         upsertBrandCollection: insert_onDemand_brand_collection_one(
+         upsertBrandCollection: createBrandCollection(
             object: $object
             on_conflict: {
                constraint: shop_collection_pkey

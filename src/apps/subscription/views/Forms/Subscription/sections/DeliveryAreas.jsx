@@ -1,23 +1,29 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
+   Form,
+   Flex,
    Text,
-   Input,
    Tunnel,
    Tunnels,
+   Spacer,
    PlusIcon,
    useTunnel,
-   HelperText,
    IconButton,
    TunnelHeader,
 } from '@dailykit/ui'
 
 import { usePlan } from '../state'
-import { Spacer } from '../../../../styled'
-import { Flex } from '../../../../components'
 import tableOptions from '../../../../tableOption'
-import { InlineLoader } from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
+import { useTooltip } from '../../../../../../shared/providers'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../shared/components'
 import {
    SUBSCRIPTION_ZIPCODES,
    INSERT_SUBSCRIPTION_ZIPCODES,
@@ -25,8 +31,10 @@ import {
 
 const DeliveryAreas = ({ id, setAreasTotal }) => {
    const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const {
+      error,
       loading,
       data: { subscription_zipcodes = [] } = {},
    } = useSubscription(SUBSCRIPTION_ZIPCODES, {
@@ -41,32 +49,58 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
          field: 'zipcode',
          headerFilter: true,
          headerFilterPlaceholder: 'Search zipcodes...',
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_areas_column_fulfillment'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          field: 'deliveryPrice',
          title: 'Delivery Price',
          headerFilter: true,
-         headerFilterPlaceholder: 'Search zipcodes...',
+         headerFilterPlaceholder: 'Search prices...',
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_areas_column_zipcode'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          field: 'isActive',
          title: 'Active',
          formatter: 'tick',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search zipcodes...',
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_areas_column_active'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ]
 
    if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Failed to fetch the list of delivery areas!')
+      logger(error)
+      return (
+         <ErrorState message="Failed to fetch the list of delivery areas!" />
+      )
+   }
    return (
       <>
          <Flex container alignItems="center" justifyContent="space-between">
-            <Text as="title">Delivery Areas</Text>
+            <Flex container alignItems="center">
+               <Text as="h3">Delivery Areas</Text>
+               <Tooltip identifier="form_subscription_section_delivery_day_section_delivery_areas" />
+            </Flex>
             <IconButton type="outline" onClick={() => openTunnel(1)}>
                <PlusIcon />
             </IconButton>
          </Flex>
-         <Spacer size="24px" />
+         <Spacer size="16px" />
          <ReactTabulator
             ref={tableRef}
             columns={columns}
@@ -89,6 +123,11 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
       {
          onCompleted: () => {
             closeTunnel(1)
+            toast.success('Successfully created the delivery areas!')
+         },
+         onError: error => {
+            logger(error)
+            toast.success('Failed to create the delivery areas!')
          },
       }
    )
@@ -114,29 +153,44 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
                title="Add Zipcodes"
                close={() => closeTunnel(1)}
                right={{ action: () => save(), title: 'Save' }}
+               tooltip={
+                  <Tooltip identifier="form_subscription_tunnel_zipcode_heading" />
+               }
             />
-            <main style={{ padding: 16 }}>
-               <Input
-                  rows="5"
-                  type="textarea"
-                  name="zipcodes"
-                  label="Zip Codes"
-                  value={zipcodes}
-                  onChange={e => setZipcodes(e.target.value)}
-               />
-               <HelperText
-                  type="hint"
-                  message="Enter comma seperated zipcodes."
-               />
+            <Flex padding="16px">
+               <Form.Group>
+                  <Form.Label htmlFor="zipcodes" title="zipcodes">
+                     <Flex container alignItems="center">
+                        Zipcodes*
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_zipcode" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.TextArea
+                     id="zipcodes"
+                     name="zipcodes"
+                     value={zipcodes}
+                     placeholder="Enter the zipcodes"
+                     onChange={e => setZipcodes(e.target.value)}
+                  />
+               </Form.Group>
+               <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
                <Spacer size="24px" />
-               <Input
-                  type="text"
-                  name="price"
-                  label="Price"
-                  value={price}
-                  onChange={e => setPrice(e.target.value)}
-               />
-            </main>
+               <Form.Group>
+                  <Form.Label htmlFor="price" title="price">
+                     <Flex container alignItems="center">
+                        Price*
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_price" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="price"
+                     name="price"
+                     value={price}
+                     placeholder="Enter the price"
+                     onChange={e => setPrice(e.target.value)}
+                  />
+               </Form.Group>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )

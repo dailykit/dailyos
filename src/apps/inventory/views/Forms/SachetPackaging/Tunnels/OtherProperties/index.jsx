@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
-import { Input, Toggle, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
+import { Flex, Form, Spacer, Toggle, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-
+import { InlineLoader } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import { Separator, TunnelContainer } from '../../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
-import { TunnelContainer } from '../../../../../components'
 
 function errorHandler(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 // Props<{state: Packaging.packagingSpecification}>
@@ -38,7 +40,7 @@ export default function OtherProperties({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
 
    return (
       <>
@@ -48,31 +50,34 @@ export default function OtherProperties({ close, state }) {
             right={{ title: 'Save', action: handleNext }}
          />
          <TunnelContainer>
-            <div style={{ width: '40%' }}>
-               <div style={{ marginBottom: '30px' }}>
-                  <Toggle
-                     checked={recycled}
-                     label="Recycled"
-                     setChecked={() => setRecycled(!recycled)}
-                  />
-               </div>
-               <div style={{ marginBottom: '30px' }}>
-                  <Toggle
-                     checked={compressibility}
-                     label="Compressable"
-                     setChecked={() => setCompressibility(!compressibility)}
-                  />
-               </div>
+            <Flex margin="0 auto">
+               <Toggle
+                  checked={recycled}
+                  label="Recycled"
+                  setChecked={() => setRecycled(!recycled)}
+               />
+               <Spacer size="16px" />
+               <Toggle
+                  checked={compressibility}
+                  label="Compressable"
+                  setChecked={() => setCompressibility(!compressibility)}
+               />
 
-               <div style={{ marginBottom: '30px' }}>
-                  <Input
-                     type="text"
-                     label="Opacity"
+               <Separator />
+
+               <Form.Group>
+                  <Form.Label htmlFor="opacity" title="opacity">
+                     Opacity
+                  </Form.Label>
+                  <Form.Text
+                     id="opacity"
+                     name="opacity"
+                     placeholder="Opacity"
                      value={opacity}
                      onChange={e => setOpacity(e.target.value)}
                   />
-               </div>
-            </div>
+               </Form.Group>
+            </Flex>
          </TunnelContainer>
       </>
    )

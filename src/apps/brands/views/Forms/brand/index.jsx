@@ -1,25 +1,24 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
+import { isEmpty, set } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
-   Input,
    Spacer,
-   Toggle,
-   TextButton,
+   Form,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
 } from '@dailykit/ui'
-
+import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
-import { Flex, InlineLoader } from '../../../../../shared/components'
+import { Flex, InlineLoader, Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 import {
    OnDemandSettings,
    OnDemandCollections,
@@ -30,10 +29,20 @@ import {
 export const Brand = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
-   const [title, setTitle] = React.useState('')
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [update] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => toast.success('Successfully updated brand!'),
-      onError: () => toast.error('Failed to update brand!'),
+      onError: error => {
+         toast.error('Failed to update brand!')
+         logger(error)
+      },
    })
    const { error, loading, data: { brand = {} } = {} } = useSubscription(
       BRANDS.BRAND,
@@ -44,7 +53,14 @@ export const Brand = () => {
          onSubscriptionData: ({
             subscriptionData: { data: { brand = {} } = {} } = {},
          }) => {
-            setTitle(brand?.title || '')
+            setTitle({
+               value: brand?.title || '',
+               meta: {
+                  isValid: brand?.title ? true : false,
+                  isTouched: false,
+                  errors: [],
+               },
+            })
             setTabTitle(brand?.title || '')
          },
       }
@@ -59,20 +75,35 @@ export const Brand = () => {
       }
    }, [tab, addTab, loading, brand])
 
-   const updateTitle = title => {
-      if (!title) return
-      update({
-         variables: {
-            id: params.id,
-            _set: {
-               title,
-            },
+   const updateTitle = e => {
+      setTitle({
+         ...title,
+         meta: {
+            ...title.meta,
+            isTouched: true,
+            errors: validator.name(e.target.value).errors,
+            isValid: validator.name(e.target.value).isValid,
          },
       })
+      if (validator.name(e.target.value).isValid) {
+         update({
+            variables: {
+               id: params.id,
+               _set: {
+                  title: title.value,
+               },
+            },
+         })
+      } else {
+         toast.error('Brand Title must be provided')
+      }
    }
 
    if (loading) return <InlineLoader />
-   if (error) return <span>Something went wrong, please refresh the page!</span>
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
    return (
       <Wrapper>
          <Flex
@@ -82,32 +113,58 @@ export const Brand = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <section>
-                  <Input
-                     type="text"
-                     label="Title"
+               <Form.Group>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label htmlFor="name" title="Brand title">
+                        Title*
+                     </Form.Label>
+                     <Tooltip identifier="brand_title_info" />
+                  </Flex>
+                  <Form.Text
+                     id="title"
                      name="title"
-                     value={title}
+                     placeholder="Enter the brand title"
+                     value={title.value}
                      disabled={brand?.isDefault}
-                     onChange={e => setTitle(e.target.value)}
-                     onBlur={e => updateTitle('title', e.target.value)}
+                     onChange={e =>
+                        setTitle({ ...title, value: e.target.value })
+                     }
+                     onBlur={e => updateTitle(e)}
                   />
-               </section>
+                  {title.meta.isTouched &&
+                     !title.meta.isValid &&
+                     title.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+
                <Spacer size="24px" xAxis />
                <section>
-                  <Label>Domain</Label>
+                  <Flex container alignItems="center">
+                     <Label>Domain</Label>
+                     <Tooltip identifier="brand_domain_info" />
+                  </Flex>
                   <Text as="h3">{brand?.domain}</Text>
                </section>
             </Flex>
-            <Toggle
-               label="Publish"
-               checked={brand?.isPublished}
-               setChecked={value =>
+
+            <Form.Toggle
+               name="Publish"
+               value={brand?.isPublished}
+               onChange={() =>
                   update({
-                     variables: { id: params.id, _set: { isPublished: value } },
+                     variables: {
+                        id: params.id,
+                        _set: { isPublished: !brand?.isPublished || false },
+                     },
                   })
                }
-            />
+            >
+               <Flex container alignItems="center">
+                  Publish
+                  <Tooltip identifier="brands_publish_info" />
+               </Flex>
+            </Form.Toggle>
          </Flex>
          <Spacer size="24px" />
          <HorizontalTabs>

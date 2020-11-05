@@ -1,26 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Text, TunnelHeader, Loader, Tunnel, Tunnels } from '@dailykit/ui'
+import { Text, TunnelHeader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
 import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, CAMPAIGN_DATA } from '../../../../../graphql'
-import RewardDetailsTunnel from '../RewardDetails'
+import { logger } from '../../../../../../../shared/utils'
+import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import CampaignContext from '../../../../../context/Campaign/CampaignForm'
 
 export default function RewardTypeTunnel({
-   state,
    closeTunnel,
    tunnels,
    openRewardTunnel,
    getRewardId,
 }) {
    const { addTab } = useTabs()
+   const context = useContext(CampaignContext)
 
    const [types, setTypes] = useState([])
    // Subscription
-   const { data: rewardType, loading } = useSubscription(CAMPAIGN_DATA, {
+   const { data: rewardType, loading, error } = useSubscription(CAMPAIGN_DATA, {
       variables: {
-         id: state.id,
+         id: context.state.id,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.campaign.campaignType.rewardTypes.map(
@@ -31,10 +33,13 @@ export default function RewardTypeTunnel({
                }
             }
          )
-         console.log(result)
          setTypes(result)
       },
    })
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    //Mutation
    const [createReward] = useMutation(CREATE_REWARD, {
@@ -44,7 +49,8 @@ export default function RewardTypeTunnel({
          toast.success('Reward created!')
       },
       onError: error => {
-         toast.error(`Error : ${error.message}`)
+         toast.error('Something went wrong')
+         logger(error)
       },
    })
 
@@ -52,20 +58,23 @@ export default function RewardTypeTunnel({
       createReward({
          variables: {
             rewardType: type,
-            campaignId: state?.id,
+            campaignId: context.state?.id,
          },
       })
    }
 
-   if (loading) return <Loader />
+   if (loading) return <InlineLoader />
    return (
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <TunnelHeader
-                  title="Select Type of Reward"
-                  close={() => closeTunnel(1)}
-               />
+               <Flex container alignItems="center">
+                  <TunnelHeader
+                     title="Select Type of Reward"
+                     close={() => closeTunnel(1)}
+                     tooltip={<Tooltip identifier="campaign_reward_type" />}
+                  />
+               </Flex>
                <TunnelBody>
                   {types.map(type => {
                      return (

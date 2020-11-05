@@ -2,19 +2,46 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle, Input } from '@dailykit/ui'
-
+import { TextButton, Text, Spacer, Toggle, Input, Form } from '@dailykit/ui'
+import validator from '../../../../../../validator'
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 export const Store = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [from, setFrom] = React.useState('')
-   const [to, setTo] = React.useState('')
-   const [message, setMessage] = React.useState('')
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const [from, setFrom] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [to, setTo] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [message, setMessage] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Store Availability' },
          type: { _eq: 'availability' },
@@ -38,68 +65,188 @@ export const Store = ({ update }) => {
                setIsOpen(brand.value.isOpen)
             }
             if ('shutMessage' in brand.value) {
-               setMessage(brand.value.shutMessage)
+               setMessage({
+                  value: brand.value.shutMessage,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               })
             }
             if ('from' in brand.value) {
-               setFrom(brand.value.from)
+               setFrom({
+                  value: brand.value.from,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               })
             }
             if ('to' in brand.value) {
-               setTo(brand.value.to)
+               setTo({
+                  value: brand.value.to,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               })
             }
          }
       },
    })
 
    const updateSetting = React.useCallback(() => {
-      update({
-         id: settingId,
-         value: {
-            isOpen,
-            from,
-            to,
-            shutMessage: message,
-         },
-      })
+      if (message.meta.isValid) {
+         update({
+            id: settingId,
+            value: {
+               isOpen,
+               from,
+               to,
+               shutMessage: message,
+            },
+         })
+      } else {
+         toast.error('Store Availability Options must be provided')
+      }
    }, [isOpen, from, to, message, settingId])
+
+   const onBlur = e => {
+      const { name, value } = e.target
+      switch (name) {
+         case 'from':
+            return setFrom({
+               ...from,
+               meta: {
+                  ...from.meta,
+                  isTouched: true,
+                  errors: validator.time(value).errors,
+                  isValid: validator.time(value).isValid,
+               },
+            })
+         case 'to':
+            return setTo({
+               ...to,
+               meta: {
+                  ...to.meta,
+                  isTouched: true,
+                  errors: validator.time(value).errors,
+                  isValid: validator.time(value).isValid,
+               },
+            })
+         case 'shut-message':
+            return setMessage({
+               ...message,
+               meta: {
+                  ...message.meta,
+                  isTouched: true,
+                  errors: validator.text(value).errors,
+                  isValid: validator.text(value).isValid,
+               },
+            })
+      }
+   }
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
 
    return (
       <div id="Store Availability">
-         <Text as="h3">Store Availability</Text>
+         <Flex container alignItems="flex-start">
+            <Text as="h3">Store Availability</Text>
+            <Tooltip identifier="brand_store_availability_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="start" justifyContent="space-between">
             <Flex>
-               <Toggle label="Open" checked={isOpen} setChecked={setIsOpen} />
+               <Form.Toggle
+                  name="open"
+                  value={isOpen}
+                  onChange={() => setIsOpen(!isOpen)}
+               >
+                  <Flex container alignItems="center">
+                     Open
+                     <Tooltip identifier="brand_store_open_info" />
+                  </Flex>
+               </Form.Toggle>
                <Spacer size="16px" />
                <Flex container alignItems="center">
                   <Flex>
-                     <Text as="p">From</Text>
-                     <input
-                        type="time"
-                        value={from}
-                        onChange={e => setFrom(e.target.value)}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="time" title="time">
+                           <Flex container alignItems="center">
+                              From
+                              <Tooltip identifier="brand_store_open_from_info" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Time
+                           id="fromTime"
+                           name="fromTime"
+                           onChange={e =>
+                              setFrom({ ...from, value: e.target.value })
+                           }
+                           value={from.value}
+                           onBlur={onBlur}
+                        />
+                        {from.meta.isTouched &&
+                           !from.meta.isValid &&
+                           from.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
                   </Flex>
                   <Spacer size="24px" xAxis />
                   <Flex>
-                     <Text as="p">To</Text>
-                     <input
-                        type="time"
-                        value={to}
-                        onChange={e => setTo(e.target.value)}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor="time" title="time">
+                           <Flex container alignItems="center">
+                              To
+                              <Tooltip identifier="brand_store_open_to_info" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Time
+                           id="toTime"
+                           name="toTime"
+                           value={to.value}
+                           onChange={e =>
+                              setTo({ ...to, value: e.target.value })
+                           }
+                           onBlur={onBlur}
+                        />
+                        {to.meta.isTouched &&
+                           !to.meta.isValid &&
+                           to.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
                   </Flex>
                </Flex>
                <Spacer size="16px" />
-               <section>
-                  <Text as="p">Text to show when store's closed</Text>
-                  <Input
-                     type="text"
-                     value={message}
+               <Form.Group>
+                  <Form.Label htmlFor="time" title="time">
+                     Text to show when store's closed
+                  </Form.Label>
+                  <Form.Text
+                     value={message.value}
                      name="shut-message"
-                     onChange={e => setMessage(e.target.value)}
+                     onChange={e =>
+                        setMessage({ ...message, value: e.target.value })
+                     }
                      placeholder="Enter the closed store message"
+                     onBlur={onBlur}
                   />
-               </section>
+                  {message.meta.isTouched &&
+                     !message.meta.isValid &&
+                     message.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
             </Flex>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update

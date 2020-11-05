@@ -5,11 +5,13 @@ import ContactInfoCard from './ContactInfoCard'
 import PaymentCard from './PaymentCard'
 import StyledCard from './CardAtTop/OrderCard'
 import SubscriptionInfoCard from './SubscriptionInfoCard'
+import BrandListing from './BrandListing'
 import {
    OrderCard,
    ReferralCard,
    SubscriptionCard,
    WalletCard,
+   LoyaltyCard,
 } from './CardAtTop'
 
 export {
@@ -24,4 +26,6 @@ export {
    ReferralCard,
    SubscriptionCard,
    WalletCard,
+   LoyaltyCard,
+   BrandListing,
 }

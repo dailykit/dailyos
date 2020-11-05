@@ -15,6 +15,7 @@ import ChevronRight from './ChevronRight'
 import UserIcon from './User'
 import CalendarIcon from './Calendar'
 import NewInfoIcon from './NewInfoIcon'
+import ViewIcon from './view'
 
 export {
    AddIcon,
@@ -34,9 +35,11 @@ export {
    UserIcon,
    CalendarIcon,
    NewInfoIcon,
+   ViewIcon,
 }
 
 export * from './Tick'
 export * from './ChevronUp'
 export * from './ChevronDown'
 export * from './Printer'
+export * from './Tooltip'

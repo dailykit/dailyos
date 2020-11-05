@@ -2,10 +2,16 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, Spacer, Toggle } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 
 import { BRANDS } from '../../../../../../../graphql'
-import { Flex } from '../../../../../../../../../shared/components'
+import {
+   Flex,
+   Tooltip,
+   InlineLoader,
+} from '../../../../../../../../../shared/components'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../../shared/utils'
 
 import LoyaltyPointsUsage from './Usage'
 
@@ -13,7 +19,7 @@ export const LoyaltyPoints = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isAvailable, setIsAvailable] = React.useState(false)
-   useSubscription(BRANDS.ONDEMAND_SETTING, {
+   const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
          identifier: { _eq: 'Loyalty Points Availability' },
          type: { _eq: 'rewards' },
@@ -44,16 +50,30 @@ export const LoyaltyPoints = ({ update }) => {
       update({ id: settingId, value: { isAvailable } })
    }, [isAvailable, settingId])
 
+   if (loading) return <InlineLoader />
+   if (error) {
+      toast.error('Something went wrong')
+      logger(error)
+   }
+
    return (
       <div id="Loyalty Points Availability">
-         <Text as="h3">Loyalty Points</Text>
+         <Flex container alignItems="center">
+            <Text as="h3">Loyalty Points</Text>
+            <Tooltip identifier="brand_loyaltyPnts_info" />
+         </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
-            <Toggle
-               checked={isAvailable}
-               setChecked={setIsAvailable}
-               label="Available"
-            />
+            <Form.Toggle
+               name="available"
+               value={isAvailable}
+               onChange={() => setIsAvailable(!isAvailable)}
+            >
+               <Flex container alignItems="center">
+                  Available
+                  <Tooltip identifier="brand_loyaltyPnts_available_info" />
+               </Flex>
+            </Form.Toggle>
             <TextButton size="sm" type="outline" onClick={updateSetting}>
                Update
             </TextButton>

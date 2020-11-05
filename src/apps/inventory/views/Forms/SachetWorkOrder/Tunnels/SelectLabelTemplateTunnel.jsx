@@ -15,12 +15,14 @@ import { useMutation } from '@apollo/react-hooks'
 
 import { TunnelContainer } from '../../../../components'
 import { UPDATE_SACHET_WORK_ORDER } from '../../../../graphql'
+import { logger } from '../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
 const onError = error => {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function SelectLabelTemplateTunnel({ close, state }) {

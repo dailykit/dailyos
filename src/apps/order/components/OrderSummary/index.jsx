@@ -1,15 +1,23 @@
 import React from 'react'
 import moment from 'moment'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { TextButton, ClearIcon, IconButton } from '@dailykit/ui'
 import { useSubscription, useQuery } from '@apollo/react-hooks'
+import {
+   Flex,
+   Text,
+   Spacer,
+   ClearIcon,
+   IconButton,
+   TextButton,
+} from '@dailykit/ui'
 
-import Loader from '../Loader'
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
-import { Flex } from '../../../../shared/components'
+import { Wrapper, FilterSection } from './styled'
+import { logger, currencyFmt } from '../../../../shared/utils'
+import { InlineLoader, ErrorState } from '../../../../shared/components'
 import { ORDER_BY_STATUS, STATION, ALL_ORDERS_AGGREGATE } from '../../graphql'
-import { Wrapper, FilterSection, Spacer } from './styled'
 
 const address = 'apps.order.components.ordersummary.'
 
@@ -40,16 +48,17 @@ export const OrderSummary = () => {
       dispatch({ type: 'CLEAR_STATION_FILTER' })
    }
 
-   if (loading)
-      return (
-         <Wrapper>
-            <Loader />
-         </Wrapper>
-      )
-   if (error) return <Wrapper>{error.message}</Wrapper>
+   if (loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch the order summary!')
+      return <ErrorState message="Failed to fetch the order summary!" />
+   }
    return (
       <Wrapper>
-         <h2>{t(address.concat('quick info'))}</h2>
+         <Spacer size="8px" />
+         <Text as="h4">{t(address.concat('quick info'))}</Text>
+         <Spacer size="8px" />
          <MetricItem
             title="ALL"
             variant="ALL"
@@ -72,13 +81,18 @@ export const OrderSummary = () => {
             ))}
          </ul>
          <Flex container alignItems="center" justifyContent="space-between">
-            <h2>Advanced Filters</h2>
+            <Text as="h4">Advanced Filters</Text>
             <Flex container alignItems="center">
-               <IconButton type="ghost" onClick={() => clearFilters()}>
+               <IconButton
+                  size="sm"
+                  type="ghost"
+                  onClick={() => clearFilters()}
+               >
                   <ClearIcon color="#000" />
                </IconButton>
                <Spacer size="8px" xAxis />
                <TextButton
+                  size="sm"
                   type="outline"
                   onClick={() =>
                      dispatch({
@@ -91,6 +105,7 @@ export const OrderSummary = () => {
                </TextButton>
             </Flex>
          </Flex>
+         <Spacer size="16px" />
          {state.orders.where?.readyByTimestamp &&
             Object.keys(state.orders.where?.readyByTimestamp).length > 0 && (
                <>
@@ -176,9 +191,21 @@ export const OrderSummary = () => {
                   <FilterSection>
                      <h3>Amount</h3>
                      <Flex container alignItems="center" margin="8px 0 0 0">
-                        <span>{state.orders.where?.amountPaid?._gte}</span>
+                        {state.orders.where?.amountPaid?._gte && (
+                           <span>
+                              {currencyFmt(
+                                 state.orders.where?.amountPaid?._gte || 0
+                              )}
+                           </span>
+                        )}
                         <Spacer size="16px" xAxis />
-                        <span>{state.orders.where?.amountPaid?._lte}</span>
+                        {state.orders.where?.amountPaid?._lte && (
+                           <span>
+                              {currencyFmt(
+                                 state.orders.where?.amountPaid?._lte || 0
+                              )}
+                           </span>
+                        )}
                      </Flex>
                   </FilterSection>
                   <Spacer size="16px" />

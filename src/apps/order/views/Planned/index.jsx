@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+   Flex,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
@@ -9,7 +10,6 @@ import {
 
 import { Wrapper } from './styled'
 import { useTabs } from '../../context'
-import { Flex } from '../../../../shared/components'
 import {
    InventorySection,
    ReadyToEatSection,

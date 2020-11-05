@@ -1,9 +1,12 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
-   Input,
+   Flex,
+   Form,
    Loader,
+   Spacer,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -12,20 +15,23 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { ItemCard, Spacer, StatusSwitch } from '../../../components'
-import FormHeading from '../../../components/FormHeading'
+import { ErrorState, Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils/errorLog'
+import { ItemCard, Separator, StatusSwitch } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
    PURCHASE_ORDER_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
-import { FormActions, StyledForm, StyledWrapper } from '../styled'
+import { validators } from '../../../utils/validators'
+import { StyledWrapper } from '../styled'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 
 const address = 'apps.inventory.views.forms.purchaseorders.'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function PurchaseOrderForm() {
@@ -33,18 +39,24 @@ export default function PurchaseOrderForm() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { id } = useParams()
 
-   const [orderQuantity, setOrderQuantity] = useState(0)
+   const [orderQuantity, setOrderQuantity] = useState({
+      value: '',
+      meta: { isValid: false, isTouched: false, errors: [] },
+   })
 
    const {
       data: { purchaseOrderItem: state = {} } = {},
       loading: orderLoading,
+      error,
    } = useSubscription(PURCHASE_ORDER_SUBSCRIPTION, {
       variables: { id },
-      onError,
       onSubscriptionData: data => {
-         setOrderQuantity(
-            data.subscriptionData.data?.purchaseOrderItem.orderQuantity
-         )
+         const { orderQuantity } = data.subscriptionData.data?.purchaseOrderItem
+         const { isValid, errors } = validators.quantity(orderQuantity)
+         setOrderQuantity({
+            value: orderQuantity,
+            meta: { isValid, errors, ...orderQuantity.meta },
+         })
       },
    })
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
@@ -54,15 +66,15 @@ export default function PurchaseOrderForm() {
       },
    })
 
-   const editable = state.status === 'COMPLETED' || state.status === 'CANCELLED'
+   const editable = ['PENDING', 'UNPUBLISHED'].includes(state.status)
 
    const checkForm = () => {
       if (!state.supplierItem?.id) {
          toast.error('No Supplier Item selecetd!')
          return false
       }
-      if (!orderQuantity) {
-         toast.error('Please provide orde quantity!')
+      if (editable && (!orderQuantity.value || !orderQuantity.meta.isValid)) {
+         toast.error('invalid order quantity!')
          return false
       }
 
@@ -74,12 +86,31 @@ export default function PurchaseOrderForm() {
 
       if (isValid) {
          updatePurchaseOrder({ variables: { id: state.id, set: { status } } })
-      } else {
-         // state.status is the old status
+      }
+   }
+
+   const handleOnBlur = e => {
+      const { isValid, errors } = validators.quantity(e.target.value)
+      setOrderQuantity({
+         value: e.target.value,
+         meta: { isTouched: true, isValid, errors },
+      })
+
+      if (isValid) {
          updatePurchaseOrder({
-            variables: { id: state.id, set: { status: state.status } },
+            variables: {
+               id: state.id,
+               set: {
+                  orderQuantity: +e.target.value,
+               },
+            },
          })
       }
+   }
+
+   if (error) {
+      logger(error)
+      return <ErrorState />
    }
 
    if (orderLoading) return <Loader />
@@ -92,99 +123,100 @@ export default function PurchaseOrderForm() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <FormHeading>
-               <div
-                  style={{
-                     width: '30%',
-                  }}
-               >
-                  <Text as="h1">{t(address.concat('purchase order'))}</Text>
-               </div>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
+               <Text as="h1">{t(address.concat('purchase order'))}</Text>
 
-               <FormActions style={{ position: 'relative' }}>
+               {state.status === 'UNPUBLISHED' ? (
+                  <TextButton
+                     type="solid"
+                     onClick={() => saveStatus('PENDING')}
+                  >
+                     Publish
+                  </TextButton>
+               ) : (
                   <StatusSwitch
                      currentStatus={state.status}
                      onSave={saveStatus}
                   />
-               </FormActions>
-            </FormHeading>
-
-            <StyledForm style={{ width: '90%', margin: '0 auto' }}>
-               <Text as="title">{t(address.concat('supplier item'))}</Text>
-               {state.supplierItem?.name ? (
-                  <>
-                     {editable ? (
-                        <ItemCard
-                           title={state.supplierItem.name}
-                           onHand={
-                              state.supplierItem?.bulkItemAsShipped?.onHand
-                           }
-                        />
-                     ) : (
-                        <ItemCard
-                           title={state.supplierItem.name}
-                           onHand={
-                              state.supplierItem?.bulkItemAsShipped?.onHand
-                           }
-                           edit={() => openTunnel(1)}
-                        />
-                     )}
-                     <Spacer />
-
-                     <div
-                        style={{
-                           width: '22%',
-                           display: 'flex',
-                           alignItems: 'flex-end',
-                           justifyContent: 'space-between',
-                        }}
-                     >
-                        <div style={{ width: '60%' }}>
-                           <Input
-                              disabled={editable}
-                              type="number"
-                              placeholder={t(
-                                 address.concat('enter order quantity')
-                              )}
-                              value={orderQuantity}
-                              onChange={e => {
-                                 const value = parseInt(e.target.value)
-                                 if (e.target.value.length === 0)
-                                    setOrderQuantity('')
-                                 if (value) setOrderQuantity(value)
-                              }}
-                              onBlur={e => {
-                                 updatePurchaseOrder({
-                                    variables: {
-                                       id: state.id,
-                                       set: {
-                                          orderQuantity: +e.target.value || 0,
-                                       },
-                                    },
-                                 })
-                              }}
-                           />
-                        </div>
-
-                        <Text as="title">
-                           (in{' '}
-                           {state.supplierItem?.bulkItemAsShipped?.unit ||
-                              state?.unit ||
-                              'N/A'}
-                           )
-                        </Text>
-                     </div>
-                  </>
-               ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat('select supplier item'))}
-                     onClick={() => openTunnel(1)}
-                     style={{ margin: '20px 0' }}
-                  />
                )}
-            </StyledForm>
+            </Flex>
+
+            <Text as="title">{t(address.concat('supplier item'))}</Text>
+            {state.supplierItem?.name ? (
+               <>
+                  {!editable ? (
+                     <ItemCard
+                        title={state.supplierItem.name}
+                        onHand={state.supplierItem?.bulkItemAsShipped?.onHand}
+                     />
+                  ) : (
+                     <ItemCard
+                        title={state.supplierItem.name}
+                        onHand={state.supplierItem?.bulkItemAsShipped?.onHand}
+                        edit={() => openTunnel(1)}
+                     />
+                  )}
+                  <Separator />
+
+                  <Flex container alignItems="flex-end">
+                     <Form.Group>
+                        <Form.Label htmlFor="quantity" title="quantity">
+                           <Flex container alignItems="center">
+                              {t(address.concat('enter order quantity'))}
+
+                              <Tooltip identifier="purchase_order_form_order_quantity" />
+                           </Flex>
+                        </Form.Label>
+
+                        <Form.Number
+                           id="quantity"
+                           name="quantity"
+                           hasWriteAccess={editable}
+                           value={orderQuantity.value}
+                           placeholder={t(
+                              address.concat('enter order quantity')
+                           )}
+                           onChange={e => {
+                              setOrderQuantity({
+                                 value: e.target.value,
+                                 meta: { ...orderQuantity.meta },
+                              })
+                           }}
+                           onBlur={handleOnBlur}
+                        />
+                        {orderQuantity.meta.isTouched &&
+                           !orderQuantity.meta.isValid && (
+                              <Form.Error>
+                                 {orderQuantity.meta.errors[0]}
+                              </Form.Error>
+                           )}
+                     </Form.Group>
+
+                     <Spacer xAxis size="8px" />
+
+                     <Text as="title">
+                        (in{' '}
+                        {state.supplierItem?.bulkItemAsShipped?.unit ||
+                           state?.unit ||
+                           'N/A'}
+                        )
+                     </Text>
+                  </Flex>
+               </>
+            ) : (
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(address.concat('select supplier item'))}
+                  onClick={() => openTunnel(1)}
+                  style={{ margin: '20px 0' }}
+               />
+            )}
          </StyledWrapper>
       </>
    )

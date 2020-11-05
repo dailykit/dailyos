@@ -1,15 +1,16 @@
 import React from 'react'
-import isEmpty from 'lodash/isEmpty'
+import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { useLocation } from 'react-router-dom'
-import { Text, Toggle, TunnelHeader, Dropdown } from '@dailykit/ui'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { Flex, Form, Text, TunnelHeader, Dropdown, Spacer } from '@dailykit/ui'
 
 import { useConfig } from '../../context'
 import { Main, Sidebar, Content } from './styled'
-import { Spacer } from '../../../../shared/styled'
+import { logger } from '../../../../shared/utils'
 import { DEVICES, UPDATE_SETTING } from '../../graphql'
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import { Flex, InlineLoader } from '../../../../shared/components'
+import { InlineLoader, Tooltip } from '../../../../shared/components'
 
 export const ConfigTunnel = () => {
    const { dispatch } = useConfig()
@@ -29,6 +30,7 @@ export const ConfigTunnel = () => {
                title: 'Close',
                action: () => closeTunnel(),
             }}
+            tooltip={<Tooltip identifier="app_order_tunnel_config_heading" />}
          />
          <Main>
             <Sidebar>
@@ -81,7 +83,15 @@ const ScaleSection = () => {
 
 const WeightSimulation = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING)
+   const [update] = useMutation(UPDATE_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
 
    const handleChange = value => {
       update({
@@ -98,11 +108,18 @@ const WeightSimulation = () => {
 
    return (
       <div>
-         <Toggle
-            label="Weight Simulation"
-            setChecked={value => handleChange(value)}
-            checked={state.scale.weight_simulation.value.isActive}
-         />
+         <Form.Toggle
+            name="weight_simulation"
+            value={state.scale.weight_simulation.value.isActive}
+            onChange={() =>
+               handleChange(!state.scale.weight_simulation.value.isActive)
+            }
+         >
+            <Flex container alignItems="center">
+               Weight Simulation
+               <Tooltip identifier="app_order_tunnel_field_weight_simulation" />
+            </Flex>
+         </Form.Toggle>
       </div>
    )
 }
@@ -118,7 +135,15 @@ const PrintSection = () => {
 
 const PrintSimulation = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING)
+   const [update] = useMutation(UPDATE_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
 
    const handleChange = value => {
       update({
@@ -135,11 +160,18 @@ const PrintSimulation = () => {
 
    return (
       <div>
-         <Toggle
-            label="Print Simulation"
-            setChecked={value => handleChange(value)}
-            checked={state.print.print_simulation.value.isActive}
-         />
+         <Form.Toggle
+            name="print_simulation"
+            value={state.print.print_simulation.value.isActive}
+            onChange={() =>
+               handleChange(!state.print.print_simulation.value.isActive)
+            }
+         >
+            <Flex container alignItems="center">
+               Print Simulation
+               <Tooltip identifier="app_order_tunnel_field_print_simulation" />
+            </Flex>
+         </Form.Toggle>
       </div>
    )
 }
@@ -158,7 +190,15 @@ const KotSection = () => {
 
 const GroupByStation = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING)
+   const [update] = useMutation(UPDATE_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
 
    const handleChange = value => {
       update({
@@ -175,18 +215,33 @@ const GroupByStation = () => {
 
    return (
       <div>
-         <Toggle
-            label="Group by stations"
-            setChecked={value => handleChange(value)}
-            checked={state.kot.group_by_station.value.isActive}
-         />
+         <Form.Toggle
+            name="group_by_stations"
+            value={state.kot.group_by_station.value.isActive}
+            onChange={() =>
+               handleChange(!state.kot.group_by_station.value.isActive)
+            }
+         >
+            <Flex container alignItems="center">
+               Group by stations
+               <Tooltip identifier="app_order_tunnel_field_group_by_station" />
+            </Flex>
+         </Form.Toggle>
       </div>
    )
 }
 
 const GroupByProductType = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING)
+   const [update] = useMutation(UPDATE_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
 
    const handleChange = value => {
       update({
@@ -203,18 +258,33 @@ const GroupByProductType = () => {
 
    return (
       <div>
-         <Toggle
-            label="Group by product type"
-            setChecked={value => handleChange(value)}
-            checked={state.kot.group_by_product_type.value.isActive}
-         />
+         <Form.Toggle
+            name="group_by_product_type"
+            value={state.kot.group_by_product_type.value.isActive}
+            onChange={() =>
+               handleChange(!state.kot.group_by_product_type.value.isActive)
+            }
+         >
+            <Flex container alignItems="center">
+               Group by product type
+               <Tooltip identifier="app_order_tunnel_field_group_by_product_type" />
+            </Flex>
+         </Form.Toggle>
       </div>
    )
 }
 
 const PrintAuto = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING)
+   const [update] = useMutation(UPDATE_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
 
    const handleChange = value => {
       update({
@@ -231,18 +301,33 @@ const PrintAuto = () => {
 
    return (
       <div>
-         <Toggle
-            label="Print automatically"
-            setChecked={value => handleChange(value)}
-            checked={state.kot.print_automatically.value.isActive}
-         />
+         <Form.Toggle
+            name="print_automatically"
+            value={state.kot.print_automatically.value.isActive}
+            onChange={() =>
+               handleChange(!state.kot.print_automatically.value.isActive)
+            }
+         >
+            <Flex container alignItems="center">
+               Print automatically
+               <Tooltip identifier="app_order_tunnel_field_print_automatically" />
+            </Flex>
+         </Form.Toggle>
       </div>
    )
 }
 
 const DefaultKOTPrinter = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING)
+   const [update] = useMutation(UPDATE_SETTING, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
    const [printers, setPrinters] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(true)
    const [defaultIndex, setDefaultIndex] = React.useState(null)
@@ -292,7 +377,10 @@ const DefaultKOTPrinter = () => {
    return (
       <div>
          <Flex container alignItems="center">
-            <Title>Default KOT Printer</Title>
+            <Flex container alignItems="center">
+               <Text as="p">Default KOT Printer</Text>
+               <Tooltip identifier="app_order_tunnel_field_print_automatically" />
+            </Flex>
             <Spacer size="48px" xAxis />
             {isLoading ? (
                <InlineLoader />

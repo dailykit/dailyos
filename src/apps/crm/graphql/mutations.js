@@ -103,17 +103,21 @@ export const UPDATE_REWARD = gql`
 
 export const DELETE_COUPON = gql`
    mutation DELETE_COUPON($id: Int!) {
-      deleteCoupon(id: $id) {
+      updateCoupon(pk_columns: { id: $id }, _set: { isArchived: true }) {
          id
+         isArchived
       }
    }
 `
 
 export const DELETE_CAMPAIGN = gql`
    mutation DELETE_CAMPAIGN($campaignId: Int!) {
-      deleteCampaign(id: $campaignId) {
+      updateCampaign(
+         pk_columns: { id: $campaignId }
+         _set: { isArchived: true }
+      ) {
          id
-         type
+         isArchived
       }
    }
 `
@@ -155,6 +159,17 @@ export const UPSERT_BRAND_CAMPAIGN = gql`
          brandId
          campaignId
          isActive
+      }
+   }
+`
+export const CUSTOMER_ARCHIVED = gql`
+   mutation CUSTOMER_ARCHIVED($keycloakId: String!) {
+      updateCustomer(
+         pk_columns: { keycloakId: $keycloakId }
+         _set: { isArchived: true }
+      ) {
+         keycloakId
+         isArchived
       }
    }
 `
