@@ -6,7 +6,7 @@ export const tableConfig = {
    resizableColumns: true,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
    pagination: 'local',
    paginationSize: 10,

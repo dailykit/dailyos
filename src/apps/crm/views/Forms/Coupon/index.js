@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import {
-   Toggle,
    Flex,
    HorizontalTab,
    HorizontalTabs,
@@ -15,7 +14,13 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledWrapper, StyledComp, InputWrapper, StyledDiv } from './styled'
+import {
+   StyledWrapper,
+   StyledComp,
+   InputWrapper,
+   StyledDiv,
+   StyledInsight,
+} from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import {
    ConditionComp,
@@ -29,12 +34,15 @@ import {
    InlineLoader,
    InsightDashboard,
 } from '../../../../../shared/components'
+import moment from 'moment'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CouponContext from '../../../context/Coupon/CouponForm'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
+   const ref = useRef(null)
    const { id: couponId } = useParams()
+   const [height, setHeight] = useState(0)
    const [codeTitle, setCodeTitle] = useState({
       value: '',
       meta: {
@@ -46,6 +54,9 @@ const CouponForm = () => {
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+   const today = moment().toISOString()
+   const fromDate = moment().subtract(7, 'days').toISOString()
+   console.log(today, fromDate)
 
    // form validation
    const validateCouponCode = value => {
@@ -122,11 +133,16 @@ const CouponForm = () => {
       })
    }
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (!tab) {
          addTab('Coupons', '/crm/coupons')
       }
    }, [addTab, tab])
+
+   useLayoutEffect(() => {
+      setHeight(ref?.current?.clientHeight)
+      console.log(ref?.current?.clientHeight, height)
+   })
 
    //coupon code validation & update name handler
    const onBlur = e => {
@@ -236,9 +252,24 @@ const CouponForm = () => {
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
                         <StyledComp>
-                           <DetailsComp />
-                           <ConditionComp />
-                           <RewardComp />
+                           <Flex container>
+                              <div ref={ref} className="couponDetails">
+                                 <DetailsComp />
+                                 <ConditionComp />
+                                 <RewardComp />
+                              </div>
+                              <StyledInsight height={height}>
+                                 <InsightDashboard
+                                    appTitle="CRM App"
+                                    moduleTitle="Coupon Page"
+                                    variables={{
+                                       couponId: couponId,
+                                       today: today,
+                                       fromDate: fromDate,
+                                    }}
+                                 />
+                              </StyledInsight>
+                           </Flex>
                         </StyledComp>
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>

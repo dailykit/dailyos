@@ -18,7 +18,22 @@ export const InputWrapper = styled.div`
 export const StyledComp = styled.div`
    padding: 32px;
    background-color: #e5e5e5;
+   .couponDetails {
+      height: max-content;
+   }
 `
+export const StyledInsight = styled.div`
+   margin-left: 26px;
+   padding: 16px;
+   background: #fff;
+   width: 100%;
+   height: 100%;
+   max-width: 897.2px;
+   max-height: ${props => props.height}px;
+   overflow: auto;
+   box-sizing: border-box;
+`
+
 export const StyledDiv = styled.div`
    padding: 0;
    background-color: #ffffff;

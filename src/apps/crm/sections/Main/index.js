@@ -34,7 +34,7 @@ const Main = () => {
 
          <BrandName>
             <ViewIcon size="24" /> &nbsp;
-            <p>{context.brandName}</p>
+            <p>Showing information for {context.brandName} brand</p>
          </BrandName>
       </main>
    )

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTunnel, Flex } from '@dailykit/ui'
@@ -48,9 +48,10 @@ import {
 
 const CustomerRelation = ({ match }) => {
    const [context, setContext] = useContext(BrandContext)
+   const prevBrandId = useRef(context.brandId)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { dispatch, tab, setTitle: setTabTitle } = useTabs()
+   const { dispatch, tab, setTitle: setTabTitle, closeAllTabs } = useTabs()
    const history = useHistory()
    const {
       data: { customers = [] } = {},
@@ -153,6 +154,10 @@ const CustomerRelation = ({ match }) => {
    useEffect(() => {
       setActiveCard('Orders')
    }, [])
+
+   if (context.brandId !== prevBrandId.current) {
+      closeAllTabs()
+   }
 
    let table = null
    if (tab?.data?.activeCard === 'Orders') {
