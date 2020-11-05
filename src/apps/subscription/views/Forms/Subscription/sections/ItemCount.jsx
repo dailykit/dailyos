@@ -198,7 +198,7 @@ const ItemCount = ({ id, openItemTunnel }) => {
             ) : (
                <Stack py="24px">
                   <ComboButton type="outline" onClick={() => openTunnel(1)}>
-                     <PlusIcon />
+                     <PlusIcon color="#555b6e" />
                      Add Subscription
                   </ComboButton>
                </Stack>
