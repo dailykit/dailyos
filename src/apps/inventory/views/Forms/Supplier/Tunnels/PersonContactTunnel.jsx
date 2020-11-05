@@ -85,6 +85,12 @@ export default function PersonContactTunnel({ close, formState }) {
 
       return true
    }
+   const checkPhoneNumber = value => {
+      if (!value)
+         return { isValid: false, errors: ['phone number is required'] }
+
+      return { isValid: true, errors: [] }
+   }
 
    const handleNext = () => {
       const checkValues = checkForm()
@@ -154,6 +160,12 @@ export default function PersonContactTunnel({ close, formState }) {
                               })
                            }}
                         />
+                        {firstName.meta.isTouched &&
+                           !firstName.meta.isValid && (
+                              <Form.Error>
+                                 {firstName.meta.errors[0]}
+                              </Form.Error>
+                           )}
                      </Form.Group>
                      <Spacer xAxis size="8px" />
                      <Form.Group>
@@ -195,20 +207,37 @@ export default function PersonContactTunnel({ close, formState }) {
 
                   <Spacer size="16px" />
 
-                  <Text as="subtitle">
-                     {t(address.concat('phone number'))}*
-                  </Text>
+                  <Form.Group>
+                     <Form.Label title="phoneNumber" htmlFor="phoneNumber">
+                        {t(address.concat('phone number'))}*
+                     </Form.Label>
 
-                  <PhoneInput
-                     country="us"
-                     value={phoneNumber.value}
-                     onChange={phone =>
-                        setPhoneNumber({
-                           value: phone,
-                           meta: { ...phoneNumber.meta },
-                        })
-                     }
-                  />
+                     <PhoneInput
+                        id="phoneNumber"
+                        country="us"
+                        value={phoneNumber.value}
+                        onChange={phone =>
+                           setPhoneNumber({
+                              value: phone,
+                              meta: { ...phoneNumber.meta },
+                           })
+                        }
+                        onBlur={e => {
+                           const { isValid, errors } = checkPhoneNumber(
+                              e.target.value
+                           )
+                           setPhoneNumber({
+                              ...phoneNumber,
+                              meta: { isValid, errors, isTouched: true },
+                           })
+                        }}
+                     />
+
+                     {phoneNumber.meta.isTouched &&
+                        !phoneNumber.meta.isValid && (
+                           <Form.Error>{phoneNumber.meta.errors[0]}</Form.Error>
+                        )}
+                  </Form.Group>
                </div>
 
                <Flex
