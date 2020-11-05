@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import {
    AssetUploader,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
@@ -32,7 +33,14 @@ export default function LogoTunnel({ close, formState }) {
 
    return (
       <>
-         <TunnelHeader title="Select Photo" close={() => close(1)} />
+         <TunnelHeader
+            title="Select Photo"
+            close={() => close(1)}
+            description="select a photo to use with this supplier"
+            tooltip={
+               <Tooltip identifier="suppliers_form_view_add_logo_tunnel_header" />
+            }
+         />
          <Flex padding="0 14px">
             <AssetUploader
                onAssetUpload={url => addImage(url)}

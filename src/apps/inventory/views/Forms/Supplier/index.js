@@ -241,11 +241,12 @@ export default function SupplierForm() {
                ) : null}
             </Flex>
 
-            {formState.contactPerson?.firstName &&
-            formState.contactPerson?.email ? (
+            {formState.contactPerson?.firstName ? (
                <Avatar
                   withName
-                  title={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
+                  title={`${formState.contactPerson?.firstName} ${
+                     formState.contactPerson?.lastName || ''
+                  }`}
                />
             ) : (
                <ButtonTile

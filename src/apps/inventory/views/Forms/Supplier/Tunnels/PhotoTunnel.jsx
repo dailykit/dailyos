@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import {
    AssetUploader,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
@@ -39,7 +40,14 @@ export default function PhotoTunnel({ close, formState }) {
 
    return (
       <>
-         <TunnelHeader title="Select Image" close={() => close(1)} />
+         <TunnelHeader
+            title="Select Image"
+            close={() => close(1)}
+            description="select a photo for the person of contact"
+            tooltip={
+               <Tooltip identifier="suppliers_form_view_add_personOfContact_photo_tunnel_header" />
+            }
+         />
          <Flex padding="0 14px">
             <AssetUploader
                onAssetUpload={url => addImage(url)}
