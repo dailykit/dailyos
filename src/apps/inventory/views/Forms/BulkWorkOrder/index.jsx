@@ -6,6 +6,7 @@ import {
    Form,
    IconButton,
    Loader,
+   Spacer,
    Text,
    TextButton,
    Tunnel,
@@ -228,7 +229,7 @@ export default function BulkWorkOrderForm() {
                />
             )}
 
-            <br />
+            <Spacer size="16px" />
 
             {state.supplierItem?.name ? (
                <>
@@ -238,15 +239,23 @@ export default function BulkWorkOrderForm() {
                         {state.isPublished ? (
                            <ItemCard
                               title={state.inputBulkItem.processingName}
-                              onHand={state.inputBulkItem.onHand}
-                              shelfLife={state.inputBulkItem.shelfLife?.value}
+                              onHand={`${state.inputBulkItem.onHand} ${
+                                 state.inputBulkItem.unit || ''
+                              }`}
+                              shelfLife={`${
+                                 state.inputBulkItem?.shelfLife?.value
+                              } ${state.inputBulkItem?.shelfLife?.unit || ''}`}
                               isBulk
                            />
                         ) : (
                            <ItemCard
                               title={state.inputBulkItem.processingName}
-                              onHand={state.inputBulkItem.onHand}
-                              shelfLife={state.inputBulkItem.shelfLife?.value}
+                              onHand={`${state.inputBulkItem.onHand} ${
+                                 state.inputBulkItem.unit || ''
+                              }`}
+                              shelfLife={`${
+                                 state.inputBulkItem?.shelfLife?.value
+                              } ${state.inputBulkItem?.shelfLife?.unit || ''}`}
                               edit={() => openInputBulkItemTunnel(1)}
                               isBulk
                            />
@@ -263,7 +272,7 @@ export default function BulkWorkOrderForm() {
                </>
             ) : null}
 
-            <br />
+            <Spacer size="16px" />
 
             {state.supplierItem?.name ? (
                <>
@@ -275,15 +284,23 @@ export default function BulkWorkOrderForm() {
                         {state.isPublished ? (
                            <ItemCard
                               title={state.outputBulkItem.processingName}
-                              onHand={state.outputBulkItem.onHand}
+                              onHand={`${state.outputBulkItem.onHand} ${
+                                 state.outputBulkItem.unit || ''
+                              }`}
                               isBulk
-                              shelfLife={state.outputBulkItem.shelfLife?.value}
+                              shelfLife={`${
+                                 state.outputBulkItem?.shelfLife?.value
+                              } ${state.outputBulkItem?.shelfLife?.unit || ''}`}
                            />
                         ) : (
                            <ItemCard
                               title={state.outputBulkItem.processingName}
-                              onHand={state.outputBulkItem.onHand}
-                              shelfLife={state.outputBulkItem.shelfLife?.value}
+                              onHand={`${state.outputBulkItem.onHand} ${
+                                 state.outputBulkItem.unit || ''
+                              }`}
+                              shelfLife={`${
+                                 state.outputBulkItem?.shelfLife?.value
+                              } ${state.outputBulkItem?.shelfLife?.unit || ''}`}
                               isBulk
                               edit={() => openOutputBulkItemTunnel(1)}
                            />

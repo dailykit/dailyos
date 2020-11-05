@@ -24,11 +24,12 @@ export default function ItemCard({
             {isBulk ? (
                <Flex container>
                   <Text as="subtitle">
-                     {t(address.concat('on hand'))}: {onHand ?? 'N/A'}
+                     {t(address.concat('on hand'))}: {onHand.trim() || 'N/A'}
                   </Text>
                   <Spacer xAxis size="16px" />
                   <Text as="subtitle">
-                     {t(address.concat('shelf life'))}: {shelfLife ?? 'N/A'}
+                     {t(address.concat('shelf life'))}:{' '}
+                     {shelfLife?.trim() || 'N/A'}
                   </Text>
 
                   {available ? (
@@ -36,13 +37,14 @@ export default function ItemCard({
                         {t(address.concat('available'))}: {available}{' '}
                      </Text>
                   ) : null}
-
-                  <>
-                     <Spacer xAxis size="16px" />
-                     <Text as="subtitle">
-                        {t(address.concat('par'))}: {par ?? 'N/A'}
-                     </Text>
-                  </>
+                  {par ? (
+                     <>
+                        <Spacer xAxis size="16px" />
+                        <Text as="subtitle">
+                           {t(address.concat('par'))}: {par.trim() || 'N/A'}
+                        </Text>{' '}
+                     </>
+                  ) : null}
                </Flex>
             ) : null}
          </Flex>
