@@ -3,7 +3,7 @@ import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { InlineLoader, Tooltip } from '../../../../../../shared/components'
+import { Tooltip } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
@@ -102,8 +102,6 @@ export default function AddressTunnel({ close, formState }) {
          toast.error(checkValues)
       }
    }
-
-   if (loading) return <InlineLoader />
 
    return (
       <>
