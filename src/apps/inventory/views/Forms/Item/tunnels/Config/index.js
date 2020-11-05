@@ -138,7 +138,6 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
 
    const handleSave = () => {
       const validationMessage = checkValidation()
-      console.log(unit, laborUnit, shelfLifeUnit)
 
       if (!validationMessage.length) {
          const allergens = bulkItem.allergens
@@ -186,8 +185,6 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
       })
    }
 
-   if (loading) return <InlineLoader />
-
    return (
       <>
          <Tunnels tunnels={allergensTunnel}>
@@ -222,6 +219,10 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                title: loading ? 'Saving...' : t(address.concat('save')),
                action: handleSave,
             }}
+            description="add more information about this bulk item"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_configure_bulkItem_tunnel" />
+            }
          />
 
          <TunnelBody>

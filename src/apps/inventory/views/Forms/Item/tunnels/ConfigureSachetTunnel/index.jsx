@@ -72,14 +72,19 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
       else toast.error(checkIsValid)
    }
 
-   if (loading) return <InlineLoader />
-
    return (
       <>
          <TunnelHeader
             title={t(address.concat('add sachet'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            right={{
+               title: loading ? 'Saving...' : 'Save',
+               action: handleNext,
+            }}
+            description="add sachet items"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_add_sachet_items_tunnel" />
+            }
          />
          <TunnelContainer>
             <StyledInputGroup>

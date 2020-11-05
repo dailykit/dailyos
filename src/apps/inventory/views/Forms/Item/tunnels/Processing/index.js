@@ -2,6 +2,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -13,6 +14,7 @@ import { useTranslation } from 'react-i18next'
 import {
    ErrorState,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils/errorLog'
 import { TunnelContainer } from '../../../../../components'
@@ -45,10 +47,10 @@ export default function ProcessingTunnel({
       }
    )
 
-   const handleNext = () => {
+   const handleSave = option => {
       createBulkItem({
          variables: {
-            processingName: current.title,
+            processingName: option.title,
             itemId: formState.id,
             unit: formState.unit, // string
          },
@@ -66,12 +68,12 @@ export default function ProcessingTunnel({
    return (
       <>
          <TunnelHeader
-            title={t(address.concat('select processing as item shipped'))}
+            title="Select processing"
             close={() => close(1)}
-            right={{
-               title: 'Next',
-               action: handleNext,
-            }}
+            description="select processing to use in this supplier item"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_select_processing_tunnel" />
+            }
          />
          <TunnelContainer>
             {list.length ? (
@@ -86,6 +88,7 @@ export default function ProcessingTunnel({
                         )}
                      />
                   )}
+                  <ListHeader type="SSL1" label="processing" />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -97,7 +100,7 @@ export default function ProcessingTunnel({
                               key={option.id}
                               title={option.title}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                            />
                         ))}
                   </ListOptions>
