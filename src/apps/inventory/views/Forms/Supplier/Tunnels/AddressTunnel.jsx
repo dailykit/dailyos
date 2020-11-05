@@ -114,6 +114,10 @@ export default function AddressTunnel({ close, formState }) {
                title: loading ? 'Saving...' : 'Save',
                action: handleNext,
             }}
+            tooltip={
+               <Tooltip identifier="suppliers_form_view_address_tunnel_header" />
+            }
+            description={`Add address for ${formState.name}`}
          />
 
          <TunnelContainer>
