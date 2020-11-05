@@ -227,7 +227,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             ) : (
                <Stack py="24px">
                   <ComboButton type="outline" onClick={addItemCount}>
-                     <PlusIcon />
+                     <PlusIcon color="#555b6e" />
                      Add Item Count
                   </ComboButton>
                </Stack>

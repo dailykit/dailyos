@@ -3,12 +3,17 @@ import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { IconButton, CloseIcon } from '@dailykit/ui'
+import {
+   Flex,
+   Text,
+   Spacer,
+   IconButton,
+   CloseIcon,
+   TextButton,
+} from '@dailykit/ui'
 
 import { UserIcon } from '../../../assets/icons'
 import { useOrder, useConfig } from '../../../context'
-import { Flex } from '../../../../../shared/components'
-import { StyledButton, StyledLabelPreview } from './styled'
 import {
    OrderItem,
    OrderItems,
@@ -121,25 +126,31 @@ export const ReadyToEats = ({ readytoeats }) => {
             ))}
          </OrderItems>
          <Flex>
-            <StyledButton type="button" onClick={() => print()}>
+            <TextButton size="sm" type="solid" onClick={print}>
                Print label
-            </StyledButton>
+            </TextButton>
+            <Spacer size="8px" />
             {label && (
-               <StyledLabelPreview>
-                  <header>
-                     <h3>Label Preview</h3>
-                     <IconButton type="ghost" onClick={() => setLabel('')}>
-                        <CloseIcon />
+               <>
+                  <Flex
+                     container
+                     as="header"
+                     width="300px"
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Text as="h3">Label Preview</Text>
+                     <IconButton
+                        size="sm"
+                        type="ghost"
+                        onClick={() => setLabel('')}
+                     >
+                        <CloseIcon size={22} />
                      </IconButton>
-                  </header>
-                  <div>
-                     <iframe
-                        src={label}
-                        frameBorder="0"
-                        title="label preview"
-                     />
-                  </div>
-               </StyledLabelPreview>
+                  </Flex>
+                  <Spacer size="8px" />
+                  <iframe src={label} frameBorder="0" title="label preview" />
+               </>
             )}
          </Flex>
       </>

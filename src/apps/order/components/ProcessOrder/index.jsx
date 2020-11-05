@@ -1,16 +1,29 @@
 import React from 'react'
 import _ from 'lodash'
 import axios from 'axios'
-import { TextButton, IconButton, CloseIcon } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
+import {
+   Flex,
+   Spacer,
+   Text,
+   TextButton,
+   IconButton,
+   CloseIcon,
+} from '@dailykit/ui'
 
 import { ScaleIcon } from '../../assets/icons'
+import { logger } from '../../../../shared/utils'
 import { useOrder, useConfig } from '../../context'
-import { InlineLoader } from '../../../../shared/components'
 import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../shared/components'
+import {
+   LABEL_TEMPLATE,
    FETCH_ORDER_SACHET,
    UPDATE_ORDER_SACHET,
-   LABEL_TEMPLATE,
 } from '../../graphql'
 import {
    Wrapper,
@@ -23,7 +36,6 @@ import {
    StyledSOP,
    StyledButton,
    ManualWeight,
-   StyledLabelPreview,
 } from './styled'
 
 export const ProcessOrder = () => {
@@ -39,7 +51,7 @@ export const ProcessOrder = () => {
 
    const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
    const [
-      fetchLabaleTemplate,
+      fetchLabalTemplate,
       { data: { labelTemplate = {} } = {} },
    ] = useLazyQuery(LABEL_TEMPLATE)
 
@@ -53,7 +65,7 @@ export const ProcessOrder = () => {
          if (!_.isEmpty(orderSachet)) {
             setWeight(0)
             setSachet(orderSachet)
-            fetchLabaleTemplate({
+            fetchLabalTemplate({
                variables: {
                   id: Number(orderSachet?.labelTemplateId),
                },
@@ -158,7 +170,10 @@ export const ProcessOrder = () => {
       return (
          <Wrapper>
             <StyledMode>
-               <label htmlFor="mode">Mode</label>
+               <Flex container alignItems="center">
+                  <label htmlFor="mode">Mode</label>
+                  <Tooltip identifier="left_panel_mode" />
+               </Flex>
                <select
                   id="mode"
                   name="mode"
@@ -171,21 +186,21 @@ export const ProcessOrder = () => {
                   <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
-            <span>No product selected!</span>
+            <Text as="h3">No product selected!</Text>
          </Wrapper>
       )
    }
-   if (loading || !sachet)
-      return (
-         <Wrapper>
-            <InlineLoader />
-         </Wrapper>
-      )
-   if (error)
+   if (loading || !sachet) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch sachet details!')
       return (
          <Wrapper>
             <StyledMode>
-               <label htmlFor="mode">Mode</label>
+               <Flex container alignItems="center">
+                  <label htmlFor="mode">Mode</label>
+                  <Tooltip identifier="left_panel_mode" />
+               </Flex>
                <select
                   id="mode"
                   name="mode"
@@ -198,13 +213,17 @@ export const ProcessOrder = () => {
                   <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
-            <span>{error.message}</span>
+            <ErrorState message="Failed to fetch sachet details!" />
          </Wrapper>
       )
+   }
    return (
       <Wrapper>
          <StyledMode>
-            <label htmlFor="mode">Mode</label>
+            <Flex container alignItems="center">
+               <label htmlFor="mode">Mode</label>
+               <Tooltip identifier="left_panel_mode" />
+            </Flex>
             <select
                id="mode"
                name="mode"
@@ -293,26 +312,39 @@ export const ProcessOrder = () => {
                )}
          </StyledMain>
          {labelPreview && (
-            <StyledLabelPreview>
-               <header>
-                  <h3>Label Preview</h3>
-                  <IconButton type="ghost" onClick={() => setLabelPreview('')}>
-                     <CloseIcon />
+            <Flex margin="16px 0">
+               <Flex
+                  container
+                  as="header"
+                  width="300px"
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  <Text as="h3">Label Preview</Text>
+                  <IconButton
+                     size="sm"
+                     type="ghost"
+                     onClick={() => setLabelPreview('')}
+                  >
+                     <CloseIcon size={22} />
                   </IconButton>
-               </header>
-               <div>
-                  <iframe
-                     src={labelPreview}
-                     title="label preview"
-                     frameborder="0"
-                  />
-               </div>
-            </StyledLabelPreview>
+               </Flex>
+               <Spacer size="8px" />
+               <iframe
+                  src={labelPreview}
+                  frameBorder="0"
+                  title="label preview"
+               />
+            </Flex>
          )}
+         <Spacer size="16px" />
          <StyledPackaging>
-            <h3>Packaging</h3>
+            <Flex as="aside" container alignItems="center">
+               <Text as="h3">Packaging</Text>
+               <Tooltip identifier="process_mealkit_section_packaging_heading" />
+            </Flex>
             <span>{sachet?.packging?.name || 'N/A'}</span>
-            <div title={sachet?.packging?.name || 'N/A'}>
+            <section title={sachet?.packging?.name || 'N/A'}>
                {sachet?.packging?.assets?.images[0] && (
                   <img
                      src={sachet?.packging?.assets?.images[0].url}
@@ -320,64 +352,74 @@ export const ProcessOrder = () => {
                      title={sachet?.packging?.name || 'N/A'}
                   />
                )}
-            </div>
+            </section>
          </StyledPackaging>
+         <Spacer size="16px" />
          <StyledSOP>
-            <h3>SOP</h3>
-            <div>
-               {sachet.bulkItemId &&
-                  Object.keys(sachet?.bulkItem?.sop?.images).length > 0 && (
+            <Flex as="aside" container alignItems="center">
+               <Text as="h3">SOP</Text>
+               <Tooltip identifier="process_mealkit_section_sop_heading" />
+            </Flex>
+            <section>
+               {sachet?.bulkItemId &&
+                  Object.keys(sachet?.bulkItem?.sop?.images || {}).length >
+                     0 && (
                      <img
                         src={sachet?.bulkItem?.sop?.images[0].url}
                         alt="SOP"
                      />
                   )}
-               {sachet.sachetItemId &&
-                  Object.keys(sachet?.sachetItem?.bulkItem?.sop?.images)
+               {sachet?.sachetItemId &&
+                  Object.keys(sachet?.sachetItem?.bulkItem?.sop?.images || {})
                      .length > 0 && (
                      <img
                         src={sachet?.sachetItem?.bulkItem?.sop?.images[0].url}
                         alt="SOP"
                      />
                   )}
-            </div>
+            </section>
          </StyledSOP>
-         <StyledButton
-            type="button"
-            disabled={
-               sachet.status === 'PACKED' || Number(weight) !== sachet.quantity
-            }
-            onClick={() =>
-               updateSachet({
-                  variables: {
-                     id: sachet.id,
-                     _set: {
-                        status: 'PACKED',
-                        isLabelled: true,
-                        isPortioned: true,
+         <Spacer size="16px" />
+         <Flex container alignItems="center">
+            <StyledButton
+               type="button"
+               disabled={
+                  sachet.status === 'PACKED' ||
+                  Number(weight) !== sachet.quantity
+               }
+               onClick={() =>
+                  updateSachet({
+                     variables: {
+                        id: sachet.id,
+                        _set: {
+                           status: 'PACKED',
+                           isLabelled: true,
+                           isPortioned: true,
+                        },
                      },
-                  },
-               })
-            }
-         >
-            {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
-         </StyledButton>
-         <StyledButton
-            type="button"
-            disabled={sachet.isAssembled || sachet.status === 'PENDING'}
-            onClick={() =>
-               updateSachet({
-                  variables: {
-                     id: sachet.id,
-                     _set: {
-                        isAssembled: true,
+                  })
+               }
+            >
+               {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
+            </StyledButton>
+            <Spacer size="16px" xAxis />
+            <StyledButton
+               type="button"
+               disabled={sachet.isAssembled || sachet.status === 'PENDING'}
+               onClick={() =>
+                  updateSachet({
+                     variables: {
+                        id: sachet.id,
+                        _set: {
+                           isAssembled: true,
+                        },
                      },
-                  },
-               })
-            }
-         >
-            {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
-         </StyledButton>
+                  })
+               }
+            >
+               {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
+            </StyledButton>
+         </Flex>
       </Wrapper>
    )
 }

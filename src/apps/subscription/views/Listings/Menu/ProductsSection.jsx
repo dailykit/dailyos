@@ -1,6 +1,7 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import styled, { css } from 'styled-components'
+import { toast } from 'react-toastify'
+import styled from 'styled-components'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
@@ -23,6 +24,7 @@ import {
 
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
+import { logger } from '../../../../../shared/utils'
 import { useTooltip } from '../../../../../shared/providers'
 import {
    Tooltip,
@@ -33,6 +35,7 @@ import {
    PRODUCT_CATEGORIES,
    INSERT_OCCURENCE_PRODUCTS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
+   INVENTORY_PRODUCT_OPTIONS,
 } from '../../../graphql'
 
 const ProductsSection = () => {
@@ -40,6 +43,7 @@ const ProductsSection = () => {
    const { state, dispatch } = useMenu()
    const mealKitTableRef = React.useRef()
    const readyToEatTableRef = React.useRef()
+   const inventoryTableRef = React.useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const columns = [
       {
@@ -84,10 +88,21 @@ const ProductsSection = () => {
       const data = row.getData()
 
       if (row.isSelected()) {
+         let productId
+         let type
+         if ('recipeProduct' in data) {
+            type = 'SRP'
+            productId = data.recipeProduct.id
+         }
+         if ('inventoryProduct' in data) {
+            type = 'IP'
+            productId = data.inventoryProduct.id
+         }
          dispatch({
             type: 'SET_PRODUCT',
             payload: {
-               id: data.recipeProduct.id,
+               type,
+               id: productId,
                option: { id: data.id },
             },
          })
@@ -100,11 +115,17 @@ const ProductsSection = () => {
    }
 
    const handleRowValidation = row => {
+      const data = row.getData()
       if (!localStorage.getItem('serving_size')) return true
-      const isValid =
-         row.getData().recipeYield.size ===
-         parseInt(localStorage.getItem('serving_size'), 10)
-      return isValid
+
+      let compareWith
+      if ('recipeProduct' in data) {
+         compareWith = data.recipeYield.size
+      }
+      if ('inventoryProduct' in data) {
+         compareWith = data.quantity
+      }
+      return compareWith === parseInt(localStorage.getItem('serving_size'), 10)
    }
 
    const isValid =
@@ -137,6 +158,7 @@ const ProductsSection = () => {
             <HorizontalTabList>
                <HorizontalTab>Ready To Eats</HorizontalTab>
                <HorizontalTab>Meal Kits</HorizontalTab>
+               <HorizontalTab>Inventory</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel style={{ padding: '14px 0' }}>
@@ -163,6 +185,17 @@ const ProductsSection = () => {
                      />
                   )}
                </HorizontalTabPanel>
+               <HorizontalTabPanel style={{ padding: '14px 0' }}>
+                  {isEmpty(state.plans.selected) ? (
+                     <Text as="h3">Select a plan to start</Text>
+                  ) : (
+                     <Inventory
+                        inventoryTableRef={inventoryTableRef}
+                        handleRowSelection={handleRowSelection}
+                        handleRowValidation={handleRowValidation}
+                     />
+                  )}
+               </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
          <SaveTunnel
@@ -170,6 +203,7 @@ const ProductsSection = () => {
             openTunnel={openTunnel}
             closeTunnel={closeTunnel}
             mealKitTableRef={mealKitTableRef}
+            inventoryTableRef={inventoryTableRef}
             readyToEatTableRef={readyToEatTableRef}
          />
       </Wrapper>
@@ -196,10 +230,11 @@ const MealKits = ({
    )
 
    if (loading) return <InlineLoader />
-   if (error)
-      return (
-         <ErrorState message="Could not fetch meal kits, please try again!" />
-      )
+   if (error) {
+      logger(error)
+      toast.error('Could not fetch meal kit products!')
+      return <ErrorState message="Could not fetch meal kit products!" />
+   }
    return (
       <ReactTabulator
          columns={columns}
@@ -236,9 +271,11 @@ const ReadyToEats = ({
 
    if (loading) return <InlineLoader />
    if (error)
-      return (
-         <ErrorState message="Could not fetch ready to eat products, please try again!" />
-      )
+      if (error) {
+         logger(error)
+         toast.error('Could not fetch ready to eat products!')
+         return <ErrorState message="Could not fetch ready to eat products!" />
+      }
    return (
       <ReactTabulator
          columns={columns}
@@ -256,10 +293,74 @@ const ReadyToEats = ({
    )
 }
 
+const Inventory = ({
+   handleRowSelection,
+   inventoryTableRef,
+   handleRowValidation,
+}) => {
+   const { tooltip } = useTooltip()
+   const {
+      error,
+      loading,
+      data: { inventoryProductOptions = {} } = {},
+   } = useQuery(INVENTORY_PRODUCT_OPTIONS)
+
+   const columns = [
+      {
+         title: 'Product',
+         headerFilter: true,
+         field: 'inventoryProduct.name',
+         headerFilterPlaceholder: 'Search products...',
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         width: 100,
+         title: 'Quantity',
+         field: 'quantity',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_quantity'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+   ]
+
+   if (loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Could not fetch inventory products!')
+      return <ErrorState message="Could not fetch inventory products!" />
+   }
+   return (
+      <ReactTabulator
+         columns={columns}
+         ref={inventoryTableRef}
+         rowSelected={handleRowSelection}
+         rowDeselected={handleRowSelection}
+         selectableCheck={handleRowValidation}
+         data={inventoryProductOptions.nodes || []}
+         options={{
+            ...tableOptions,
+            selectable: true,
+            groupBy: 'inventoryProduct.name',
+         }}
+      />
+   )
+}
+
 const SaveTunnel = ({
    tunnels,
    closeTunnel,
    mealKitTableRef,
+   inventoryTableRef,
    readyToEatTableRef,
 }) => {
    const { state, dispatch } = useMenu()
@@ -285,9 +386,17 @@ const SaveTunnel = ({
             mealKitTableRef?.current?.table?.getSelectedRows() || []
          const readyToEatRows =
             readyToEatTableRef?.current?.table?.getSelectedRows() || []
+         const inventoryRows =
+            inventoryTableRef?.current?.table?.getSelectedRows() || []
          mealKitRows.forEach(row => row.deselect())
          readyToEatRows.forEach(row => row.deselect())
+         inventoryRows.forEach(row => row.deselect())
          localStorage.removeItem('serving_size')
+         toast.success('Successfully added the products to the subscription!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to add the products to the subscription!')
       },
    })
 
@@ -300,13 +409,20 @@ const SaveTunnel = ({
             const result = products.map(product => ({
                isSingleSelect: !checked,
                addonLabel: form.addonLabel,
-               simpleRecipeProductId: product.id,
                addonPrice: Number(form.addonPrice),
                productCategory: form.productCategory,
                ...(state.plans.isPermanent
                   ? { subscriptionId: plan.subscription.id }
                   : { subscriptionOccurenceId: plan.occurence.id }),
-               simpleRecipeProductOptionId: product.option.id,
+               ...(product.type === 'SRP'
+                  ? {
+                       simpleRecipeProductId: product.id,
+                       simpleRecipeProductOptionId: product.option.id,
+                    }
+                  : {
+                       inventoryProductId: product.id,
+                       inventoryProductOptionId: product.option.id,
+                    }),
             }))
             return result
          })
