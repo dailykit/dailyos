@@ -201,14 +201,21 @@ export default function InfoTunnel({ close, formState }) {
       }
    }
 
-   if (loading || unitsLoading) return <InlineLoader />
+   if (unitsLoading) return <InlineLoader />
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('item information'))}
             close={close}
-            right={{ title: 'Save', action: handleSave }}
+            right={{
+               title: loading ? 'Saving...' : 'Save',
+               action: handleSave,
+            }}
+            description="update supplier item information"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_item_information_tunnel" />
+            }
          />
 
          <TunnelBody>

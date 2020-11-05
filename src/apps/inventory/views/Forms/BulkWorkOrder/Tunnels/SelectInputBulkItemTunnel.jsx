@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -11,6 +12,7 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../shared/components'
 import { InlineLoader } from '../../../../../../shared/components/InlineLoader'
 import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
@@ -40,16 +42,19 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
       },
    })
 
-   const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
-      onError: error => {
-         logger(error)
-         toast.error(GENERAL_ERROR_MESSAGE)
-      },
-      onCompleted: () => {
-         toast.success('Input Bulk Item added!')
-         close(1)
-      },
-   })
+   const [updateBulkWorkOrder, { loading: updating }] = useMutation(
+      UPDATE_BULK_WORK_ORDER,
+      {
+         onError: error => {
+            logger(error)
+            toast.error(GENERAL_ERROR_MESSAGE)
+         },
+         onCompleted: () => {
+            toast.success('Input Bulk Item added!')
+            close(1)
+         },
+      }
+   )
 
    if (error) {
       logger(error)
@@ -57,48 +62,40 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
       return null
    }
 
-   const handleSave = () => {
-      if (!current || !current.id) return toast.error('Please select an item.')
-
+   const handleSave = option => {
       updateBulkWorkOrder({
          variables: {
             id: state.id,
             object: {
-               inputBulkItemId: current.id,
+               inputBulkItemId: option.id,
             },
          },
       })
    }
 
-   if (loading) return <InlineLoader />
+   if (loading || updating) return <InlineLoader />
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select input bulk item processing'))}
             close={() => close(1)}
-            right={{ action: handleSave, title: 'Save' }}
+            description="Select input bulk item to use for this work order"
+            tooltip={
+               <Tooltip identifier="bulk-work-order_add_input_bulk_item_tunnel" />
+            }
          />
 
          <TunnelContainer>
             {list.length ? (
                <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem
-                        type="SSL2"
-                        content={{
-                           title: current.processingName,
-                           description: `Shelf Life: ${current.shelfLife} On Hand: ${current.onHand}`,
-                        }}
-                     />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        )}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  <ListHeader type="SSL2" label="bulk item" />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -109,7 +106,7 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
                               type="SSL2"
                               key={option.id}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                               content={{
                                  title: option.processingName,
                                  description: `Shelf Life: ${

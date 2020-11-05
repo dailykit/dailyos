@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -14,6 +15,7 @@ import { toast } from 'react-toastify'
 import {
    ErrorState,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils/errorLog'
 import { TunnelContainer } from '../../../../../components'
@@ -69,8 +71,8 @@ export default function SupplierTunnel({ close, formState }) {
       },
    })
 
-   const handleNext = () => {
-      const { id: supplierId } = current
+   const handleSave = option => {
+      const { id: supplierId } = option
       updateSupplierItem({
          variables: {
             id: formState.id,
@@ -93,7 +95,10 @@ export default function SupplierTunnel({ close, formState }) {
          <TunnelHeader
             title={t(address.concat('select supplier'))}
             close={() => close(1)}
-            right={{ action: handleNext, title: 'Save' }}
+            description="select supplier for this supplier item"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_select_supplier-tunnel" />
+            }
          />
          <TunnelContainer>
             {list.length ? (
@@ -112,6 +117,10 @@ export default function SupplierTunnel({ close, formState }) {
                         placeholder="type what you’re looking for..."
                      />
                   )}
+                  <ListHeader
+                     type="SSL22"
+                     label={{ left: 'Supplier', right: 'Contact person' }}
+                  />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -124,7 +133,7 @@ export default function SupplierTunnel({ close, formState }) {
                               type="SSL22"
                               key={option.id}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                               content={{
                                  supplier: option.supplier,
                                  contact:

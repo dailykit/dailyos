@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -13,7 +14,7 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { ErrorState } from '../../../../../../../shared/components'
+import { ErrorState, Tooltip } from '../../../../../../../shared/components'
 import { InlineLoader } from '../../../../../../../shared/components/InlineLoader'
 import { logger } from '../../../../../../../shared/utils'
 import { ERROR_ADDING_ALLERGENS } from '../../../../../constants/errorMessages'
@@ -27,7 +28,7 @@ import { TunnelBody } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.allergens.'
 
-export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
+export default function AllergensTunnel({ close, bulkItemId }) {
    const { t } = useTranslation()
    const [search, setSearch] = React.useState('')
 
@@ -62,7 +63,7 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
       })
    }
 
-   if (allergensLoading || loading) return <InlineLoader />
+   if (allergensLoading) return <InlineLoader />
    if (error) {
       logger(error)
       return <ErrorState />
@@ -72,8 +73,15 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
       <>
          <TunnelHeader
             title={t(address.concat('add allergens'))}
-            right={{ title: t(address.concat('save')), action: save }}
+            right={{
+               title: loading ? 'Saving...' : t(address.concat('save')),
+               action: save,
+            }}
             close={close}
+            description="select allergens for this bulk item"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_add_allergens_tunnel" />
+            }
          />
 
          <TunnelBody>
@@ -98,6 +106,7 @@ export default function AllergensTunnel({ close, bulkItemId, allergens = [] }) {
                         ))}
                      </TagGroup>
                   )}
+                  <ListHeader type="MSL1" label="allergens" />
                   <ListOptions>
                      {list
                         .filter(option =>
