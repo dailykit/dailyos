@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -105,6 +106,7 @@ export default function AllergensTunnel({ close, bulkItemId }) {
                         ))}
                      </TagGroup>
                   )}
+                  <ListHeader type="MSL1" label="allergens" />
                   <ListOptions>
                      {list
                         .filter(option =>
