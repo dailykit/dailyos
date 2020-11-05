@@ -27,9 +27,9 @@ export const StyledInsight = styled.div`
    padding: 16px;
    background: #fff;
    width: 100%;
-   height: 100%;
+   height: inherit;
    max-width: 897.2px;
-   max-height: ${props => props.height}px;
+   max-height: 620px;
    overflow: auto;
    box-sizing: border-box;
 `

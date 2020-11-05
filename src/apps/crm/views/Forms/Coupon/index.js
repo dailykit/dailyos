@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -40,9 +40,7 @@ import CouponContext from '../../../context/Coupon/CouponForm'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
-   const ref = useRef(null)
    const { id: couponId } = useParams()
-   const [height, setHeight] = useState(0)
    const [codeTitle, setCodeTitle] = useState({
       value: '',
       meta: {
@@ -56,7 +54,6 @@ const CouponForm = () => {
    const [checkbox, setCheckbox] = useState(false)
    const today = moment().toISOString()
    const fromDate = moment().subtract(7, 'days').toISOString()
-   console.log(today, fromDate)
 
    // form validation
    const validateCouponCode = value => {
@@ -138,11 +135,6 @@ const CouponForm = () => {
          addTab('Coupons', '/crm/coupons')
       }
    }, [addTab, tab])
-
-   useLayoutEffect(() => {
-      setHeight(ref?.current?.clientHeight)
-      console.log(ref?.current?.clientHeight, height)
-   })
 
    //coupon code validation & update name handler
    const onBlur = e => {
@@ -253,19 +245,23 @@ const CouponForm = () => {
                      <HorizontalTabPanel>
                         <StyledComp>
                            <Flex container>
-                              <div ref={ref} className="couponDetails">
+                              <div className="couponDetails">
                                  <DetailsComp />
                                  <ConditionComp />
                                  <RewardComp />
                               </div>
-                              <StyledInsight height={height}>
+                              <StyledInsight>
                                  <InsightDashboard
                                     appTitle="CRM App"
                                     moduleTitle="Coupon Page"
-                                    variables={{
-                                       couponId: couponId,
-                                       today: today,
-                                       fromDate: fromDate,
+                                    where={{
+                                       date: {
+                                          _gte: fromDate,
+                                          _lte: today,
+                                       },
+                                       viewRewardHistories2: {
+                                          couponId: { _eq: couponId },
+                                       },
                                     }}
                                  />
                               </StyledInsight>
