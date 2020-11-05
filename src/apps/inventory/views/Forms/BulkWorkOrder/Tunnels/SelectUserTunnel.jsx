@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -11,6 +12,7 @@ import {
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../shared/components'
 import { InlineLoader } from '../../../../../../shared/components/InlineLoader'
 import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
@@ -42,57 +44,58 @@ export default function SelectUserTunnel({ close, state }) {
       },
    })
 
-   const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
-      onError: error => {
-         logger(error)
-         toast.error(GENERAL_ERROR_MESSAGE)
-         close(1)
-      },
-      onCompleted: () => {
-         toast.success('User assigned!')
-         close(1)
-      },
-   })
+   const [updateBulkWorkOrder, { loading: updating }] = useMutation(
+      UPDATE_BULK_WORK_ORDER,
+      {
+         onError: error => {
+            logger(error)
+            toast.error(GENERAL_ERROR_MESSAGE)
+            close(1)
+         },
+         onCompleted: () => {
+            toast.success('User assigned!')
+            close(1)
+         },
+      }
+   )
 
-   const handleNext = () => {
-      if (!current || !current.id) return toast.error('Please select a user.')
-
+   const handleSave = option => {
       updateBulkWorkOrder({
          variables: {
             id: state.id,
             object: {
-               userId: current.id,
+               userId: option.id,
             },
          },
       })
    }
 
+   if (loading || updating) return <InlineLoader />
    if (error) {
       logger(error)
       return toast.error(GENERAL_ERROR_MESSAGE)
    }
-   if (loading) return <InlineLoader />
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select user'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="select user to assign to this work order"
+            tooltip={
+               <Tooltip identifier="bulk-work-order-select-user-tunnel" />
+            }
          />
          <TunnelContainer>
             {list.length ? (
                <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.name} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        )}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  <ListHeader type="SSL1" label="user" />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -104,7 +107,7 @@ export default function SelectUserTunnel({ close, state }) {
                               key={option.id}
                               title={option.name}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                            />
                         ))}
                   </ListOptions>
