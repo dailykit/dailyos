@@ -101,7 +101,7 @@ export default function AddressTunnel({ close }) {
                               key={option.id}
                               title={option.name}
                               isActive={option.id === current.id}
-                              onClick={() => handleSave(option.id)}
+                              onClick={() => handleSave(option)}
                            />
                         ))}
                   </ListOptions>
