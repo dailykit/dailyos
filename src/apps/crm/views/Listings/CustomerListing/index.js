@@ -16,7 +16,7 @@ import {
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 
@@ -159,7 +159,7 @@ const CustomerListing = () => {
          field: 'phone',
          headerFilter: true,
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -199,7 +199,7 @@ const CustomerListing = () => {
          title: 'Referrals Sent',
          field: 'refSent',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -212,11 +212,11 @@ const CustomerListing = () => {
          width: 150,
       },
       {
+         width: 150,
          title: 'Total Paid',
          field: 'paid',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'right'
+         titleFormatter: function (cell) {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
@@ -225,13 +225,13 @@ const CustomerListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         width: 150,
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
       },
       {
          title: 'Total Orders',
          field: 'orders',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -247,7 +247,7 @@ const CustomerListing = () => {
          title: 'Discounts availed',
          field: 'discounts',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -268,7 +268,7 @@ const CustomerListing = () => {
          },
          formatter: reactFormatter(<DeleteButton />),
          hozAlign: 'center',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
@@ -288,7 +288,7 @@ const CustomerListing = () => {
             <HeadingTile title="Total Customers" value={customerCount} />
             <HeadingTile
                title="Total Revenue generated"
-               value={`$ ${revenue}`}
+               value={currencyFmt(revenue)}
             />
          </Flex>
 

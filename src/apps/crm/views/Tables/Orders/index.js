@@ -10,7 +10,7 @@ import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import BrandContext from '../../../context/Brand'
 
 const OrdersTable = ({ id }) => {
@@ -58,7 +58,7 @@ const OrdersTable = ({ id }) => {
          headerFilter: true,
          hozAlign: 'right',
          cssClass: 'rowClick',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -77,7 +77,7 @@ const OrdersTable = ({ id }) => {
          title: 'Products',
          field: 'products',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -93,7 +93,7 @@ const OrdersTable = ({ id }) => {
          title: 'Wallet Used',
          field: 'walletUsed',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -103,13 +103,14 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
       {
          title: 'Discount',
          field: 'discount',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -125,7 +126,7 @@ const OrdersTable = ({ id }) => {
          title: 'Total Paid',
          field: 'amountPaid',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -135,6 +136,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
       {
@@ -153,7 +155,7 @@ const OrdersTable = ({ id }) => {
          title: 'Ordered On',
          field: 'orderedOn',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -169,7 +171,7 @@ const OrdersTable = ({ id }) => {
          title: 'Delivered On',
          field: 'deliveredOn',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
