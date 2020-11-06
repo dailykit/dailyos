@@ -8,24 +8,31 @@ import { TOOLTIPS_BY_APP } from '../graphql'
 const TooltipContext = React.createContext()
 
 const initialState = {
+   name: '',
    tooltips: [],
+   showTooltip: false,
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_TOOLTIPS':
          return { ...state, tooltips: payload }
+      case 'SET_APP':
+         return { ...state, ...payload }
       default:
          return state
    }
 }
 
-export const TooltipProvider = ({ app, children }) => {
+export const TooltipProvider = ({ app: appName, children }) => {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const { loading } = useQuery(TOOLTIPS_BY_APP, {
-      variables: { title: app },
+      variables: { title: appName },
       onCompleted: ({ app = {} }) => {
-         if (!app?.showTooltip) return
+         dispatch({
+            type: 'SET_APP',
+            payload: { name: appName, showTooltip: app.showTooltip },
+         })
          if (!isEmpty(app.tooltips)) {
             const tooltips = {}
 
@@ -53,7 +60,6 @@ export const useTooltip = () => {
       identifier => {
          console.log(identifier)
          if (has(state.tooltips, identifier)) {
-            if (!state.tooltips[identifier].isActive) return {}
             return state.tooltips[identifier]
          }
          return {}
@@ -61,7 +67,5 @@ export const useTooltip = () => {
       [state]
    )
 
-   return {
-      tooltip,
-   }
+   return { state, tooltip }
 }
