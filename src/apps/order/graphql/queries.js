@@ -151,23 +151,30 @@ export const ORDERS = gql`
             isAssembled
             assemblyStatus
             assemblyStation {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             orderSachets {
+               id
                status
                isAssembled
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -178,9 +185,11 @@ export const ORDERS = gql`
             isAssembled
             assemblyStatus
             simpleRecipeProduct {
+               id
                name
             }
             assemblyStation {
+               id
                name
             }
             comboProduct {
@@ -192,10 +201,13 @@ export const ORDERS = gql`
                label
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -205,22 +217,28 @@ export const ORDERS = gql`
             price
             isAssembled
             inventoryProduct {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             assemblyStation {
+               id
                name
             }
             assemblyStatus
             customizableProduct {
+               id
                name
             }
             inventoryProductOption {
+               id
                quantity
                label
             }
