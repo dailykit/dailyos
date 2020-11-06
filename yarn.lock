@@ -1203,17 +1203,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-<<<<<<< HEAD
-"@dailykit/ui@0.8.6":
-  version "0.8.6"
-  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.8.6.tgz#fc5239ca1811c0d06d5b078c49ffbf258f797858"
-  integrity sha512-00LBMoC8CkRUxRhan0mIKUw/t+HR6pcbHMNIk1XPMg1XJ/lTJV5yxPZVeYTcrHtkdomGdggwYBc5H/PwggCG5w==
-=======
-"@dailykit/ui@0.8.7":
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.7.tgz#55b77539d3bf2d15ef4fa78ac340a47c143403e8"
-  integrity sha512-wjh5sHRnDkAFPsqodGjDFdMx12MnKe1+x2LINoi+rtBravW+/Z3mZM2vqDj4qS5f/sxpgYRyEzdO/2s80lHs7g==
->>>>>>> a5e968445ffe3c9d51749b0bb53669926f5113c2
+"@dailykit/ui@0.8.8":
+  version "0.8.8"
+  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.8.tgz#32b6b050ca42e92caf6b217290bf491a9f0e91af"
+  integrity sha512-KlPTQzwbl1ml+CzSTDnO00j+QWPiU0p9K2ohA98WjY4nlWG1RQgr5FYoLmfQaVDMzpAufrf5XaTM1kmGwCP0+Q==
   dependencies:
     concurrently "^5.3.0"
 
