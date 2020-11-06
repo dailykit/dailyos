@@ -114,7 +114,7 @@ export default DeliveryDay
 
 const EditSubscriptionTunnel = ({ tunnels, closeTunnel }) => {
    const { state } = usePlan()
-   const [endDate, setEndDate] = React.useState(null)
+   const [endDate, setEndDate] = React.useState('')
    const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION, {
       onCompleted: () => {
          closeTunnel(1)
@@ -141,7 +141,11 @@ const EditSubscriptionTunnel = ({ tunnels, closeTunnel }) => {
             <TunnelHeader
                title="Edit Subscription"
                close={() => close()}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  disabled: !endDate,
+                  action: () => save(),
+               }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_subscription_field_date" />
                }

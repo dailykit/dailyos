@@ -141,15 +141,14 @@ const ProductsSection = () => {
                <Text as="h2">Products</Text>
                <Tooltip identifier="listing_menu_section_products_heading" />
             </Flex>
-            {isValid && (
-               <TextButton
-                  size="sm"
-                  type="outline"
-                  onClick={() => openTunnel(1)}
-               >
-                  Continue
-               </TextButton>
-            )}
+            <TextButton
+               size="sm"
+               type="outline"
+               disabled={!isValid}
+               onClick={() => openTunnel(1)}
+            >
+               Continue
+            </TextButton>
          </Flex>
          <HorizontalTabs>
             <HorizontalTabList>
@@ -441,7 +440,11 @@ const SaveTunnel = ({
             <TunnelHeader
                title="Occurence Products"
                close={() => closeTunnel(1)}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  action: () => save(),
+                  disabled: !form.productCategory,
+               }}
                tooltip={<Tooltip identifier="listing_menu_tunnel_heading" />}
             />
             <Main>
