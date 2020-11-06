@@ -103,10 +103,10 @@ export const Store = ({ update }) => {
          update({
             id: settingId,
             value: {
-               isOpen,
-               from,
-               to,
-               shutMessage: message,
+               to: to.value,
+               from: from.value,
+               isOpen: isOpen.value,
+               shutMessage: message.value,
             },
          })
       } else {
