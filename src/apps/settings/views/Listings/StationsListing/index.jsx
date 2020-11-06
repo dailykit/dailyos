@@ -20,7 +20,7 @@ const StationsListing = () => {
    const { error, loading, data: { stations = {} } = {} } = useSubscription(
       STATIONS.LIST
    )
-   const [create] = useMutation(STATIONS.CREATE, {
+   const [create, { loading: creatingStation }] = useMutation(STATIONS.CREATE, {
       onCompleted: ({ insertStation = {} }) => {
          addTab(insertStation.name, `/settings/stations/${insertStation.id}`)
       },
@@ -97,6 +97,7 @@ const StationsListing = () => {
             </Flex>
             <ComboButton
                type="solid"
+               isLoading={creatingStation}
                onClick={() =>
                   create({
                      variables: {

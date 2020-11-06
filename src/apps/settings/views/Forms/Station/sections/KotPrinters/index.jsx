@@ -43,27 +43,37 @@ import {
 export const KotPrinters = ({ station }) => {
    const [tabIndex, setTabIndex] = React.useState(0)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(STATIONS.KOT_PRINTERS.UPDATE, {
-      onCompleted: () => toast.success('Successfully updated kot printer!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to update the kot printer!')
-      },
-   })
-   const [remove] = useMutation(STATIONS.KOT_PRINTERS.DELETE, {
-      onCompleted: () => toast.success('Successfully unassigned kot printer!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to unassign the kot printer!')
-      },
-   })
-   const [updateDefault] = useMutation(STATIONS.UPDATE, {
-      onCompleted: () => toast.success('Selected printer is now default!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to set printer as default!')
-      },
-   })
+   const [update, { loading: updatingStatus }] = useMutation(
+      STATIONS.KOT_PRINTERS.UPDATE,
+      {
+         onCompleted: () => toast.success('Successfully updated kot printer!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to update the kot printer!')
+         },
+      }
+   )
+   const [remove, { loading: removingPrinter }] = useMutation(
+      STATIONS.KOT_PRINTERS.DELETE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully unassigned kot printer!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to unassign the kot printer!')
+         },
+      }
+   )
+   const [updateDefault, { loading: makingDefault }] = useMutation(
+      STATIONS.UPDATE,
+      {
+         onCompleted: () => toast.success('Selected printer is now default!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to set printer as default!')
+         },
+      }
+   )
 
    const updateKotPrinterStatus = (id, status) => {
       update({
@@ -127,6 +137,7 @@ export const KotPrinters = ({ station }) => {
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
+                              isLoading={updatingStatus}
                               onClick={() =>
                                  updateKotPrinterStatus(
                                     node.kotPrinter.printNodeId,
@@ -140,6 +151,7 @@ export const KotPrinters = ({ station }) => {
                               node.kotPrinter.printNodeId && (
                               <TextButton
                                  type="outline"
+                                 isLoading={makingDefault}
                                  onClick={() =>
                                     updateDefault({
                                        variables: {
@@ -157,6 +169,7 @@ export const KotPrinters = ({ station }) => {
                            )}
                            <TextButton
                               type="outline"
+                              isLoading={removingPrinter}
                               onClick={() =>
                                  deleteStationKotPrinter(
                                     node.kotPrinter.printNodeId
@@ -191,16 +204,19 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(STATIONS.KOT_PRINTERS.CREATE, {
-      onCompleted: () => {
-         setIsOpen(false)
-         toast.success('Successfully assigned the kot printer!')
-      },
-      onError: () => {
-         setIsOpen(false)
-         toast.error('Failed to assign the kot printer!')
-      },
-   })
+   const [create, { loading: assigningPrinter }] = useMutation(
+      STATIONS.KOT_PRINTERS.CREATE,
+      {
+         onCompleted: () => {
+            setIsOpen(false)
+            toast.success('Successfully assigned the kot printer!')
+         },
+         onError: () => {
+            setIsOpen(false)
+            toast.error('Failed to assign the kot printer!')
+         },
+      }
+   )
 
    const { loading, error } = useSubscription(STATIONS.KOT_PRINTERS.LIST, {
       variables: {
@@ -254,7 +270,12 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
             <TunnelHeader
                title="Add Printer"
                close={() => setIsOpen(false)}
-               right={selected.length > 0 && { action: insert, title: 'Save' }}
+               right={{
+                  action: insert,
+                  title: 'Save',
+                  isLoading: assigningPrinter,
+                  disabled: selected.length === 0,
+               }}
                tooltip={
                   <Tooltip identifier="station_section_kot_printer_tunnel_add" />
                }

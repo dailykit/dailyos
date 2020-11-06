@@ -10,22 +10,29 @@ import { USERS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Section, StyledTemp } from './styled'
 import { initialState, reducers } from './store'
-import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
 
 const UserForm = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const [isValid, setIsValid] = React.useState(false)
    const [state, dispatch] = React.useReducer(reducers, initialState)
-   const [updateUser] = useMutation(USERS.UPDATE, {
+   const [updateUser, { loading: updatingUser }] = useMutation(USERS.UPDATE, {
       onCompleted: () => {
          toast.success('Updated user successfully!')
       },
-      onError: () => {
+      onError: error => {
+         logger(error)
          toast.error('Could not delete user, please try again!')
       },
    })
    const {
+      error,
       loading,
       data: { settings_user_by_pk: user = {} } = {},
    } = useSubscription(USERS.USER, {
@@ -116,6 +123,11 @@ const UserForm = () => {
    }
 
    if (loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch user details!')
+      return <ErrorState message="Failed to fetch user details!" />
+   }
    return (
       <Flex padding="0 32px">
          <Flex
@@ -130,11 +142,14 @@ const UserForm = () => {
                <Text as="h2">User Details</Text>
                <Tooltip identifier="form_user_heading" />
             </Flex>
-            {isValid && (
-               <TextButton type="solid" onClick={() => createUser()}>
-                  Save
-               </TextButton>
-            )}
+            <TextButton
+               type="solid"
+               disabled={!isValid}
+               isLoading={updatingUser}
+               onClick={() => createUser()}
+            >
+               Save
+            </TextButton>
          </Flex>
          <div>
             <Section>
