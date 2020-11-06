@@ -17,6 +17,7 @@ export const Tooltip = ({
    if (!identifier) {
       console.error('Identifier is required!')
    }
+   if (!tooltip(identifier)?.isActive) return null
    return (
       <Styles.Tooltip>
          <a data-tip data-for={identifier}>
