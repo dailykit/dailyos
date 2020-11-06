@@ -172,7 +172,7 @@ const CustomerRelation = ({ match }) => {
       table = (
          <SubscriptionTable
             id={match.params.id}
-            sid={subscriptionData[0]?.customer?.subscriptionId || ''}
+            sid={subscriptionData[0]?.customer?.subscriptionId || null}
          />
       )
    }
