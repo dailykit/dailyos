@@ -122,16 +122,13 @@ const ProductsSection = () => {
       if ('recipeProduct' in data) {
          compareWith = data.recipeYield.size
       }
-      if ('inventoryProduct' in data) {
-         compareWith = data.quantity
-      }
       return compareWith === parseInt(localStorage.getItem('serving_size'), 10)
    }
 
    const isValid =
       !isEmpty(state.plans.selected) &&
       !isEmpty(state.products.selected) &&
-      state.products.selected.length === state.plans.selected[0].item?.count
+      state.products.selected.length > 0
    return (
       <Wrapper>
          <Flex
@@ -192,7 +189,6 @@ const ProductsSection = () => {
                      <Inventory
                         inventoryTableRef={inventoryTableRef}
                         handleRowSelection={handleRowSelection}
-                        handleRowValidation={handleRowValidation}
                      />
                   )}
                </HorizontalTabPanel>
@@ -293,11 +289,7 @@ const ReadyToEats = ({
    )
 }
 
-const Inventory = ({
-   handleRowSelection,
-   inventoryTableRef,
-   handleRowValidation,
-}) => {
+const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
    const {
       error,
@@ -343,9 +335,9 @@ const Inventory = ({
       <ReactTabulator
          columns={columns}
          ref={inventoryTableRef}
+         selectableCheck={() => true}
          rowSelected={handleRowSelection}
          rowDeselected={handleRowSelection}
-         selectableCheck={handleRowValidation}
          data={inventoryProductOptions.nodes || []}
          options={{
             ...tableOptions,
