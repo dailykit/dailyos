@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -11,15 +12,19 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
-import { TunnelContainer } from '../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { NO_SUPPLIER_ITEMS } from '../../../../constants/infoMessages'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../../graphql'
+import { TunnelWrapper } from '../../utils/TunnelWrapper'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
@@ -51,12 +56,11 @@ export default function SelectSupplierTunnel({ close, state }) {
       onError,
    })
 
-   const handleNext = () => {
-      if (!current || !current.id) return toast.error('Select an item first!')
+   const handleSave = option => {
       updateSachetWorkOrder({
          variables: {
             id: state.id,
-            set: { supplierItemId: current.id },
+            set: { supplierItemId: option.id },
          },
       })
    }
@@ -73,21 +77,21 @@ export default function SelectSupplierTunnel({ close, state }) {
          <TunnelHeader
             title={t(address.concat('select supplier item'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="select a supplier item to use in this work order"
+            tooltip={
+               <Tooltip identifier="bulk-work-order_select_supplier_item_tunnel" />
+            }
          />
-         <TunnelContainer>
+         <TunnelWrapper>
             {list.length ? (
                <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.name} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        )}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  <ListHeader type="SSL1" label="supplier item" />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -99,7 +103,7 @@ export default function SelectSupplierTunnel({ close, state }) {
                               key={option.id}
                               title={option.name}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                            />
                         ))}
                   </ListOptions>
@@ -107,7 +111,7 @@ export default function SelectSupplierTunnel({ close, state }) {
             ) : (
                <Filler message={NO_SUPPLIER_ITEMS} />
             )}
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }

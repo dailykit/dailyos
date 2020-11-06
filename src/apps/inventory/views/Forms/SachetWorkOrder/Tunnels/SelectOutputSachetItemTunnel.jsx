@@ -2,6 +2,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -11,15 +12,19 @@ import {
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
-import { TunnelContainer } from '../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { NO_SACHETS } from '../../../../constants/infoMessages'
 import {
    SACHET_ITEMS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../../graphql'
+import { TunnelWrapper } from '../../utils/TunnelWrapper'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
@@ -52,14 +57,12 @@ export default function SelectOutputSachetItemTunnel({ close, state }) {
       onError,
    })
 
-   const handleNext = () => {
-      if (!current || !current.id) return toast.error('Select an item first!')
-
+   const handleSave = option => {
       updateSachetWorkOrder({
          variables: {
             id: state.id,
             set: {
-               outputSachetItemId: current.id,
+               outputSachetItemId: option.id,
             },
          },
       })
@@ -77,27 +80,21 @@ export default function SelectOutputSachetItemTunnel({ close, state }) {
          <TunnelHeader
             title={t(address.concat('select output bulk sachet'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="select output sachet to use in this work order"
+            tooltip={
+               <Tooltip identifier="sachet-work-order_select_output_sachet_item_tunnel" />
+            }
          />
-         <TunnelContainer>
+         <TunnelWrapper>
             {list.length ? (
                <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem
-                        type="SSL2"
-                        content={{
-                           title: `${current.unitSize} ${current.unit}`,
-                           description: `onHand: ${current.onHand} |  Par: ${current.parLevel}`,
-                        }}
-                     />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder={t(
-                           address.concat("type what you're looking for")
-                        )}
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder={t(
+                        address.concat("type what you're looking for")
+                     )}
+                  />
+                  <ListHeader type="SSL2" label="sachet" />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -111,7 +108,7 @@ export default function SelectOutputSachetItemTunnel({ close, state }) {
                               type="SSL2"
                               key={option.id}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                               content={{
                                  title: `${option.unitSize} ${option.unit}`,
                                  description: `onHand: ${option.onHand} |  Par: ${option.parLevel}`,
@@ -123,7 +120,7 @@ export default function SelectOutputSachetItemTunnel({ close, state }) {
             ) : (
                <Filler message={NO_SACHETS} />
             )}
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }
