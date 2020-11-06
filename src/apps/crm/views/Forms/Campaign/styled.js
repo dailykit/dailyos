@@ -20,6 +20,7 @@ export const StyledComp = styled.div`
    background-color: #e5e5e5;
    .campaignDetails {
       height: max-content;
+      width: 100%;
    }
 `
 export const StyledInsight = styled.div`
