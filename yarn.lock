@@ -1205,7 +1205,7 @@
 
 "@dailykit/ui@0.8.8":
   version "0.8.8"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.8.tgz#32b6b050ca42e92caf6b217290bf491a9f0e91af"
+  resolved "https://registry.npmjs.org/@dailykit/ui/-/ui-0.8.8.tgz#32b6b050ca42e92caf6b217290bf491a9f0e91af"
   integrity sha512-KlPTQzwbl1ml+CzSTDnO00j+QWPiU0p9K2ohA98WjY4nlWG1RQgr5FYoLmfQaVDMzpAufrf5XaTM1kmGwCP0+Q==
   dependencies:
     concurrently "^5.3.0"

@@ -1,12 +1,18 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
+import { Filler, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { Spacer } from '../../../styled'
 import { PLANNED } from '../../../graphql'
 import { NewTabIcon } from '../../../assets/icons'
 import { useOrder, useTabs } from '../../../context'
-import { InlineLoader, Flex } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../shared/components'
 import {
    List,
    Label,
@@ -24,22 +30,23 @@ export const InventoryProduct = () => {
    const { state, selectInventory } = useOrder()
    const [current, setCurrent] = React.useState({})
    const [currentPanel, setCurrentPanel] = React.useState(null)
-   const { loading, data: { inventoryProduct = {} } = {} } = useSubscription(
-      PLANNED.INVENTORY_PRODUCT,
-      {
-         variables: {
-            id: params.id,
-            order: state.orders.where,
-         },
-         onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-            const { options } = data.inventoryProduct
-            if (options.length > 0) {
-               const [option] = options
-               setCurrent(option)
-            }
-         },
-      }
-   )
+   const {
+      error,
+      loading,
+      data: { inventoryProduct = {} } = {},
+   } = useSubscription(PLANNED.INVENTORY_PRODUCT, {
+      variables: {
+         id: params.id,
+         order: state.orders.where,
+      },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         const { options } = data.inventoryProduct
+         if (options.length > 0) {
+            const [option] = options
+            setCurrent(option)
+         }
+      },
+   })
 
    React.useEffect(() => {
       if (!loading && !tab) {
@@ -61,17 +68,29 @@ export const InventoryProduct = () => {
    }
 
    if (loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch inventory item details!')
+      return <ErrorState message="Failed to fetch inventory item details!" />
+   }
    return (
       <Wrapper>
          <Flex container alignItems="center">
             <h2 title={inventoryProduct.name}>{inventoryProduct.name}</h2>
-            <h3 title={inventoryProduct.products.aggregate.count}>
-               <label>Total:</label> {inventoryProduct.products.aggregate.count}
-            </h3>
-            <h3 title={inventoryProduct.products.aggregate.sum.quantity}>
-               <label>Quantity:</label>{' '}
-               {inventoryProduct.products.aggregate.sum.quantity}
-            </h3>
+            <Flex container width="180px" alignItems="center">
+               <span title={inventoryProduct.products.aggregate.count}>
+                  Total
+               </span>
+               <Tooltip identifier="app_order_planned_inventory_item_details_total" />
+               : {inventoryProduct.products.aggregate.count}
+            </Flex>
+            <Flex container width="180px" alignItems="center">
+               <span title={inventoryProduct.products.aggregate.sum.quantity}>
+                  Quantity
+               </span>
+               <Tooltip identifier="app_order_planned_inventory_item_details_quantity" />
+               : {inventoryProduct.products.aggregate.sum.quantity}
+            </Flex>
          </Flex>
          <Spacer size="16px" />
          {inventoryProduct.options.length > 0 ? (
@@ -136,7 +155,7 @@ export const InventoryProduct = () => {
                )}
             </>
          ) : (
-            <span>No inventory options</span>
+            <Filler message="No inventory options" />
          )}
       </Wrapper>
    )

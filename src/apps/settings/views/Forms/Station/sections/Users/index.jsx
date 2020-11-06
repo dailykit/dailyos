@@ -44,14 +44,20 @@ import {
 export const Users = ({ station }) => {
    const [isOpen, setIsOpen] = React.useState(false)
    const [tabIndex, setTabIndex] = React.useState(0)
-   const [deleteStationUser] = useMutation(STATIONS.USERS.DELETE, {
-      onCompleted: () => toast.success('Successfully unassigned the user!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to unassigned the user!')
-      },
-   })
-   const [updateStationUserStatus] = useMutation(STATIONS.USERS.UPDATE, {
+   const [deleteStationUser, { loading: unsassigningUser }] = useMutation(
+      STATIONS.USERS.DELETE,
+      {
+         onCompleted: () => toast.success('Successfully unassigned the user!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to unassigned the user!')
+         },
+      }
+   )
+   const [
+      updateStationUserStatus,
+      { loading: updatingUserStatus },
+   ] = useMutation(STATIONS.USERS.UPDATE, {
       onCompleted: () => toast.success('Successfully updated the user status!'),
       onError: error => {
          logger(error)
@@ -98,7 +104,7 @@ export const Users = ({ station }) => {
                         as="h3"
                         style={{ ...(index === tabIndex && { color: '#fff' }) }}
                      >
-                        {node.user?.firstName || ''} {node.user?.lastName || ''}
+                        {node.user?.firstName} {node.user?.lastName}
                      </Text>
                      <Spacer size="14px" />
                   </SectionTab>
@@ -127,6 +133,7 @@ export const Users = ({ station }) => {
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
+                              isLoading={updatingUserStatus}
                               onClick={() =>
                                  updateStatus(
                                     node.user.keycloakId,
@@ -138,6 +145,7 @@ export const Users = ({ station }) => {
                            </TextButton>
                            <TextButton
                               type="outline"
+                              isLoading={unsassigningUser}
                               onClick={() => deleteUser(node.user.keycloakId)}
                            >
                               Unassign
@@ -166,16 +174,19 @@ const AddUserTunnel = ({ isOpen, station, setIsOpen }) => {
    const [search, setSearch] = React.useState('')
    const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [createStationUsers] = useMutation(STATIONS.USERS.CREATE, {
-      onCompleted: () => {
-         setIsOpen(false)
-         toast.success('Successfully assigned the user!')
-      },
-      onError: () => {
-         setIsOpen(false)
-         toast.error('Failed to assign the user!')
-      },
-   })
+   const [createStationUsers, { loading: assigningUser }] = useMutation(
+      STATIONS.USERS.CREATE,
+      {
+         onCompleted: () => {
+            setIsOpen(false)
+            toast.success('Successfully assigned the user!')
+         },
+         onError: () => {
+            setIsOpen(false)
+            toast.error('Failed to assign the user!')
+         },
+      }
+   )
 
    const { loading, error } = useSubscription(STATIONS.USERS.LIST, {
       variables: {
@@ -229,9 +240,12 @@ const AddUserTunnel = ({ isOpen, station, setIsOpen }) => {
             <TunnelHeader
                title="Add User"
                close={() => setIsOpen(false)}
-               right={
-                  selected.length > 0 && { action: handleSubmit, title: 'Save' }
-               }
+               right={{
+                  title: 'Save',
+                  action: handleSubmit,
+                  isLoading: assigningUser,
+                  disabled: selected.length === 0,
+               }}
                tooltip={
                   <Tooltip identifier="station_section_user_tunnel_add" />
                }

@@ -24,6 +24,8 @@ import {
    ProcessReadyToEat,
 } from './components'
 
+import { ErrorBoundary } from '../../shared/components'
+
 const App = () => {
    const { state } = useOrder()
    const { state: configState } = useConfig()
@@ -59,10 +61,12 @@ const App = () => {
 
    return (
       <StyledWrapper position={position}>
-         {state.current_view === 'SUMMARY' && <OrderSummary />}
-         {state.current_view === 'MEALKIT' && <ProcessOrder />}
-         {state.current_view === 'INVENTORY' && <ProcessInventory />}
-         {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
+         <ErrorBoundary rootRoute="/apps/order">
+            {state.current_view === 'SUMMARY' && <OrderSummary />}
+            {state.current_view === 'MEALKIT' && <ProcessOrder />}
+            {state.current_view === 'INVENTORY' && <ProcessInventory />}
+            {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
+         </ErrorBoundary>
          <Router>
             <main>
                <Header
@@ -84,21 +88,27 @@ const App = () => {
                />
             </Portal>
          )}
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer="1" size="md">
-               <DeliveryConfig closeTunnel={closeTunnel} />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={filterTunnels}>
-            <Tunnel layer="1" size="sm">
-               <FilterTunnel />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={configTunnels}>
-            <Tunnel layer="1" size="full">
-               <ConfigTunnel />
-            </Tunnel>
-         </Tunnels>
+         <ErrorBoundary rootRoute="/apps/order">
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer="1" size="md">
+                  <DeliveryConfig closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
+         </ErrorBoundary>
+         <ErrorBoundary rootRoute="/apps/order">
+            <Tunnels tunnels={filterTunnels}>
+               <Tunnel layer="1" size="sm">
+                  <FilterTunnel />
+               </Tunnel>
+            </Tunnels>
+         </ErrorBoundary>
+         <ErrorBoundary rootRoute="/apps/order">
+            <Tunnels tunnels={configTunnels}>
+               <Tunnel layer="1" size="full">
+                  <ConfigTunnel />
+               </Tunnel>
+            </Tunnels>
+         </ErrorBoundary>
       </StyledWrapper>
    )
 }

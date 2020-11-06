@@ -85,6 +85,7 @@ export const useInsights = (
          setVariableOptions(data.insight.defaultOptions || {})
          setVariableSwitches(data.insight.switches || {})
       },
+      fetchPolicy: 'cache-and-network',
    })
 
    if (insight && insight.query) {

@@ -52,6 +52,9 @@ export const StyledInput = styled.input`
    border: none;
    background: none;
    font-size: inherit;
+   &:hover {
+      text-decoration: underline;
+   }
 `
 export const StyledSpan = styled.span`
    padding: 0 30px 16px 6px;

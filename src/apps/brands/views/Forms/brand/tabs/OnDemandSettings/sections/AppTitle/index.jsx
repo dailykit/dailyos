@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
-
+import validator from '../../../../../../validator'
 import { BRANDS } from '../../../../../../../graphql'
 import {
    Flex,
@@ -15,7 +15,14 @@ import { logger } from '../../../../../../../../../shared/utils'
 
 export const AppTitle = ({ update }) => {
    const params = useParams()
-   const [title, setTitle] = React.useState('')
+   const [title, setTitle] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
    const [settingId, setSettingId] = React.useState(null)
    const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
@@ -38,7 +45,14 @@ export const AppTitle = ({ update }) => {
             const { brand, id } = storeSettings[index]
             setSettingId(id)
             if ('title' in brand.value) {
-               setTitle(brand.value.title)
+               setTitle({
+                  value: brand.value.title,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               })
             }
          }
       },
@@ -46,9 +60,21 @@ export const AppTitle = ({ update }) => {
 
    const updateSetting = React.useCallback(() => {
       if (!settingId) return
-      if (!title.trim()) return toast.error('Brand name must be provided')
-      update({ id: settingId, value: { title } })
+      if (!title.meta.isValid) return toast.error('App title must be provided')
+      update({ id: settingId, value: { title: title.value } })
    }, [title, settingId])
+
+   const onBlur = e => {
+      setTitle({
+         ...title,
+         meta: {
+            ...title.meta,
+            isTouched: true,
+            errors: validator.text(e.target.value).errors,
+            isValid: validator.text(e.target.value).isValid,
+         },
+      })
+   }
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -64,13 +90,21 @@ export const AppTitle = ({ update }) => {
          </Flex>
          <Spacer size="4px" />
          <Flex container alignItems="center">
-            <Form.Text
-               id="name"
-               name="name"
-               placeholder="Enter app title"
-               value={title}
-               onChange={e => setTitle(e.target.value)}
-            />
+            <Form.Group>
+               <Form.Text
+                  id="name"
+                  name="name"
+                  placeholder="Enter app title"
+                  value={title.value}
+                  onChange={e => setTitle({ ...title, value: e.target.value })}
+                  onBlur={onBlur}
+               />
+               {title.meta.isTouched &&
+                  !title.meta.isValid &&
+                  title.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
             <Spacer size="8px" xAxis />
             <TextButton size="lg" type="outline" onClick={updateSetting}>
                Update

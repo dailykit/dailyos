@@ -1,9 +1,11 @@
 import React from 'react'
+import { Text, Flex } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 
 import { useOrder } from '../../../context'
 import { ArrowUpIcon, ArrowDownIcon } from '../../../assets/icons'
 import { List, ListHead, ListBody, ListBodyItem } from '../styled'
+import { Tooltip } from '../../../../../shared/components'
 
 const address = 'apps.order.views.order.'
 
@@ -20,11 +22,22 @@ const ProductDetails = ({ product }) => {
    return (
       <List>
          <ListHead>
-            <span>{t(address.concat('ingredients'))}</span>
-            <span>{t(address.concat('supplier item'))}</span>
-            <span>{t(address.concat('processing'))}</span>
-            <span>{t(address.concat('quantity'))}</span>
-            <span />
+            <Flex container alignItems="center">
+               <span>{t(address.concat('ingredients'))}</span>
+               <Tooltip identifier="order_details_mealkit_column_ingredient" />
+            </Flex>
+            <Flex container alignItems="center">
+               <span>{t(address.concat('supplier item'))}</span>
+               <Tooltip identifier="order_details_mealkit_column_supplier_item" />
+            </Flex>
+            <Flex container alignItems="center">
+               <span>{t(address.concat('processing'))}</span>
+               <Tooltip identifier="order_details_mealkit_column_processing" />
+            </Flex>
+            <Flex container alignItems="center">
+               <span>{t(address.concat('quantity'))}</span>
+               <Tooltip identifier="order_details_mealkit_column_quantity" />
+            </Flex>
          </ListHead>
          <ListBody>
             {product?.orderSachets?.map(item => (
@@ -46,7 +59,7 @@ const ProductDetails = ({ product }) => {
                         {(item.sachetItemId &&
                            item?.sachetItem?.bulkItem?.supplierItem?.name) ||
                            ''}
-                        {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
+                        {!item?.bulkItemId && !item?.sachetItemId && 'N/A'}
                      </span>
                      <span>{item.processingName}</span>
                      <span>{item.quantity}</span>
@@ -63,37 +76,56 @@ const ProductDetails = ({ product }) => {
                   </header>
                   <main>
                      <section>
-                        <span>{t(address.concat('sachet id'))}</span>
-                        <span>{item.id}</span>
+                        <Flex container alignItems="center">
+                           <Text as="p">{t(address.concat('sachet id'))}</Text>
+                           <Tooltip identifier="order_details_mealkit_sachet_column_id" />
+                        </Flex>
+                        <Text as="h3">{item.id}</Text>
                      </section>
                      <section>
-                        <span>{t(address.concat('packaging name'))}</span>
-                        <span>{item?.packaging?.name || 'N/A'}</span>
+                        <Flex container alignItems="center">
+                           <Text as="p">
+                              {t(address.concat('packaging name'))}
+                           </Text>
+                           <Tooltip identifier="order_details_mealkit_sachet_column_packaging" />
+                        </Flex>
+                        <Text as="h3">{item?.packaging?.name || 'N/A'}</Text>
                      </section>
                      <section>
-                        <span>SOP</span>
-                        <span>
+                        <Flex container alignItems="center">
+                           <Text as="p">SOP</Text>
+                           <Tooltip identifier="order_details_mealkit_sachet_column_sop" />
+                        </Flex>
+                        <Text as="h3">
                            {(item.bulkItemId && item?.bulkItem?.sop) || ''}
                            {(item.sachetItemId &&
                               item?.sachetItem?.bulkItem?.sop) ||
                               ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
+                        </Text>
                      </section>
                      <section>
-                        <span>{t(address.concat('bulk density'))}</span>
-                        <span>
+                        <Flex container alignItems="center">
+                           <Text as="p">
+                              {t(address.concat('bulk density'))}
+                           </Text>
+                           <Tooltip identifier="order_details_mealkit_sachet_column_bulk_density" />
+                        </Flex>
+                        <Text as="h3">
                            {(item.bulkItemId && item?.bulkItem?.bulkDensity) ||
                               ''}
                            {(item.sachetItemId &&
                               item?.sachetItem?.bulkItem?.bulkDensity) ||
                               ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
+                        </Text>
                      </section>
                      <section>
-                        <span>{t(address.concat('shelf life'))}</span>
-                        <span>
+                        <Flex container alignItems="center">
+                           <Text as="p">{t(address.concat('shelf life'))}</Text>
+                           <Tooltip identifier="order_details_mealkit_sachet_column_shelf_life" />
+                        </Flex>
+                        <Text as="h3">
                            {item.bulkItemId && item?.bulkItem?.shelfLife
                               ? `${item?.bulkItem?.shelfLife.value} ${item?.bulkItem?.shelfLife.unit}`
                               : ''}
@@ -102,18 +134,21 @@ const ProductDetails = ({ product }) => {
                               ? `${item?.sachetItem?.bulkItem?.shelfLife.value} ${item?.sachetItem?.bulkItem?.shelfLife.unit}`
                               : ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
+                        </Text>
                      </section>
                      <section>
-                        <span>{t(address.concat('yield'))}</span>
-                        <span>
+                        <Flex container alignItems="center">
+                           <Text as="p">{t(address.concat('yield'))}</Text>
+                           <Tooltip identifier="order_details_mealkit_sachet_column_yield" />
+                        </Flex>
+                        <Text as="h3">
                            {(item.bulkItemId && item?.bulkItem?.yield?.value) ||
                               ''}
                            {(item.sachetItemId &&
                               item?.sachetItem?.bulkItem?.yield?.value) ||
                               ''}
                            {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
-                        </span>
+                        </Text>
                      </section>
                   </main>
                </ListBodyItem>

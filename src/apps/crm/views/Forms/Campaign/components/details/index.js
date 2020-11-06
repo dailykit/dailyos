@@ -27,14 +27,18 @@ const Details = () => {
 
    // Handlers
    const saveInfo = info => {
-      updateCampaign({
-         variables: {
-            id: context.state.id,
-            set: {
-               metaDetails: info,
+      if (info) {
+         updateCampaign({
+            variables: {
+               id: context.state.id,
+               set: {
+                  metaDetails: info,
+               },
             },
-         },
-      })
+         })
+      } else {
+         toast.error('Basic information must be provided')
+      }
    }
 
    return (

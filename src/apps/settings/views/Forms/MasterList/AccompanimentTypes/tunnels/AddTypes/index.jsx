@@ -13,35 +13,32 @@ const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 const AddTypesTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()
 
-   const [busy, setBusy] = React.useState(false)
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(MASTER.ACCOMPANIMENTS.CREATE, {
-      onCompleted: () => {
-         toast.success('Successfully added accompaniment!')
-         closeTunnel(1)
-      },
-      onError: error => {
-         toast.error('Failed to add accompaniment!')
-         logger(error)
-         setBusy(false)
-      },
-   })
+   const [addType, { loading: addingAccompaniment }] = useMutation(
+      MASTER.ACCOMPANIMENTS.CREATE,
+      {
+         onCompleted: () => {
+            toast.success('Successfully added accompaniment!')
+            closeTunnel(1)
+         },
+         onError: error => {
+            toast.error('Failed to add accompaniment!')
+            logger(error)
+         },
+      }
+   )
 
    // Handlers
    const onChange = (e, i) => {
       const updatedTypes = types
       const value = e.target.value.trim()
-      if (Boolean(value)) {
-         updatedTypes[i] = value
-         setTypes([...updatedTypes])
-      }
+      updatedTypes[i] = value
+      setTypes([...updatedTypes])
    }
    const add = () => {
       try {
-         if (busy) return
-         setBusy(true)
          const objects = types.filter(Boolean).map(type => ({
             name: type,
          }))
@@ -55,7 +52,6 @@ const AddTypesTunnel = ({ closeTunnel }) => {
          })
       } catch (error) {
          toast.error(error.message)
-         setBusy(false)
       }
    }
 
@@ -65,9 +61,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
             title={t(address.concat('add new types'))}
             right={{
                action: add,
-               title: busy
-                  ? t(address.concat('adding'))
-                  : t(address.concat('add')),
+               title: 'Add',
+               isLoading: addingAccompaniment,
+               disabled: types.filter(Boolean).length === 0,
             }}
             close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="tunnel_accompaniment_heading" />}

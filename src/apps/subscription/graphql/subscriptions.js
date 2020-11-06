@@ -236,3 +236,23 @@ export const SUBSCRIPTION = gql`
       }
    }
 `
+
+export const INVENTORY_PRODUCT_OPTIONS = gql`
+   query inventoryProductOptions {
+      inventoryProductOptions: inventoryProductOptionsAggregate(
+         where: { inventoryProduct: { isPublished: { _eq: true } } }
+      ) {
+         aggregate {
+            count
+         }
+         nodes {
+            id
+            inventoryProduct {
+               id
+               name
+            }
+            quantity
+         }
+      }
+   }
+`

@@ -2,7 +2,6 @@ import React from 'react'
 import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
-// Views
 import {
    Home,
    Orders,
@@ -11,121 +10,60 @@ import {
    InventoryProduct,
    ReadyToEatProduct,
 } from '../../views'
-import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
+import { Flex, ErrorBoundary } from '../../../../shared/components'
 
 const Main = () => {
-   const { canAccessRoute, accessPermission } = useAccess()
-
    return (
       <main>
          <Switch>
             <Route path="/apps/order" exact>
-               {canAccessRoute('home') ? (
+               <AccessCheck
+                  title="home"
+                  message="You do not have sufficient permission to access order app."
+               >
                   <Home />
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ', 'home')
-                           ?.fallbackMessage ||
-                           'You do not have sufficient permission to access order app.'}
-                     </Text>
-                  </Flex>
-               )}
+               </AccessCheck>
             </Route>
             <Route path="/apps/order/orders" exact>
-               {canAccessRoute('orders') ? (
+               <AccessCheck
+                  title="orders"
+                  message="You do not have sufficient permission to access orders listing."
+               >
                   <Orders />
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ', 'orders')
-                           ?.fallbackMessage ||
-                           'You do not have sufficient permission to access orders listing.'}
-                     </Text>
-                  </Flex>
-               )}
+               </AccessCheck>
             </Route>
             <Route path="/apps/order/orders/:id" exact>
-               {canAccessRoute('order') ? (
+               <AccessCheck
+                  title="order"
+                  message="You do not have sufficient permission to access order details."
+               >
                   <Order />
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ', 'order')
-                           ?.fallbackMessage ||
-                           'You do not have sufficient permission to access order details.'}
-                     </Text>
-                  </Flex>
-               )}
+               </AccessCheck>
             </Route>
             <Route path="/apps/order/planned" exact>
-               {canAccessRoute('planned') ? (
+               <AccessCheck
+                  title="planned"
+                  message="You do not have sufficient permission to access planned mode."
+               >
                   <Planned />
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ')?.fallbackMessage ||
-                           'You do not have sufficient permission to access planned mode.'}
-                     </Text>
-                  </Flex>
-               )}
+               </AccessCheck>
             </Route>
             <Route path="/apps/order/planned/inventory/:id" exact>
-               {canAccessRoute('planned/inventory') ? (
+               <AccessCheck
+                  title="planned/inventory"
+                  message="You do not have sufficient permission to access planned inventory product."
+               >
                   <InventoryProduct />
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ', 'planned/inventory')
-                           ?.fallbackMessage ||
-                           'You do not have sufficient permission to access planned inventory product.'}
-                     </Text>
-                  </Flex>
-               )}
+               </AccessCheck>
             </Route>
             <Route path="/apps/order/planned/ready-to-eat/:id" exact>
-               {canAccessRoute('planned/ready-to-eat') ? (
+               <AccessCheck
+                  title="planned/ready-to-eat"
+                  message="You do not have sufficient permission to access planned ready to eat product."
+               >
                   <ReadyToEatProduct />
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ', 'planned/ready-to-eat')
-                           ?.fallbackMessage ||
-                           'You do not have sufficient permission to access planned ready to eat product.'}
-                     </Text>
-                  </Flex>
-               )}
+               </AccessCheck>
             </Route>
          </Switch>
       </main>
@@ -133,3 +71,16 @@ const Main = () => {
 }
 
 export default Main
+
+const AccessCheck = ({ title, children, message }) => {
+   const { canAccessRoute, accessPermission } = useAccess()
+   return canAccessRoute(title) ? (
+      <ErrorBoundary rootRoute="/apps/order">{children}</ErrorBoundary>
+   ) : (
+      <Flex container height="100%" alignItems="center" justifyContent="center">
+         <Text as="title">
+            {accessPermission('ROUTE_READ', title)?.fallbackMessage || message}
+         </Text>
+      </Flex>
+   )
+}
