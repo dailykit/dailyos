@@ -263,7 +263,10 @@ export const ProcessOrder = () => {
                </section>
                <section>
                   <span>Quantity</span>
-                  <span>{sachet.quantity}gm</span>
+                  <span>
+                     {sachet.quantity}
+                     {sachet.unit}
+                  </span>
                </section>
             </section>
             <StyledWeigh state={scaleState}>

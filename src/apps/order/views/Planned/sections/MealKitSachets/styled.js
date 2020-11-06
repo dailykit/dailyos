@@ -64,7 +64,7 @@ export const ListBodyItem = styled.div(
       grid-gap: 16px;
       cursor: pointer;
       line-height: 40px;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 100px 1fr;
       border-bottom: 1px solid rgba(128, 128, 128, 0.3);
       background: ${isAssembled ? '#79df54' : '#f9daa8'};
       border-left: ${isActive
@@ -74,6 +74,12 @@ export const ListBodyItem = styled.div(
          padding: 0 14px;
          display: flex;
          align-items: center;
+         :last-child {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+         }
       }
    `
 )

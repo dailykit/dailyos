@@ -301,6 +301,7 @@ export const ORDER = gql`
             }
             orderSachets(where: { packingStationId: $packingStationId }) {
                id
+               unit
                status
                quantity
                isAssembled

@@ -238,16 +238,16 @@ const OrderListItem = ({ containerId, order = {} }) => {
                         </StyledCount>
                      </StyledTab>
                      <StyledTab>
-                        {t(address.concat('inventory'))}{' '}
-                        <StyledCount>{inventories.length || 0}</StyledCount>
-                     </StyledTab>
-                     <StyledTab>
                         {t(address.concat('meal kits'))}{' '}
                         <StyledCount>{mealkits.length || 0}</StyledCount>
                      </StyledTab>
                      <StyledTab>
                         {t(address.concat('ready to eat'))}{' '}
                         <StyledCount>{readytoeats.length}</StyledCount>
+                     </StyledTab>
+                     <StyledTab>
+                        {t(address.concat('inventory'))}{' '}
+                        <StyledCount>{inventories.length || 0}</StyledCount>
                      </StyledTab>
                   </StyledTabList>
                   <StyledTabPanels>
@@ -367,6 +367,37 @@ const OrderListItem = ({ containerId, order = {} }) => {
                            : t(address.concat('no inventories'))}
                      </StyledTabPanel>
                      <StyledTabPanel>
+                        {readytoeats.length > 0
+                           ? readytoeats.map(readytoeat => (
+                                <StyledProductItem key={readytoeat.id}>
+                                   <div>
+                                      <ProductTitle
+                                         data={readytoeat}
+                                         type="READY_TO_EAT"
+                                      />
+                                   </div>
+                                   <StyledServings>
+                                      <span>
+                                         <UserIcon size={16} color="#555B6E" />
+                                      </span>
+                                      <span>
+                                         {
+                                            readytoeat
+                                               ?.simpleRecipeProductOption
+                                               ?.simpleRecipeYield?.yield
+                                               ?.serving
+                                         }
+                                         &nbsp; {t(address.concat('servings'))}
+                                      </span>
+                                   </StyledServings>
+                                   <span>
+                                      {readytoeat?.isAssembled ? 1 : 0} / 1
+                                   </span>
+                                </StyledProductItem>
+                             ))
+                           : t(address.concat('no ready to eat'))}
+                     </StyledTabPanel>
+                     <StyledTabPanel>
                         {mealkits.length > 0
                            ? mealkits.map(mealkit => (
                                 <StyledProductItem key={mealkit.id}>
@@ -406,37 +437,6 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                 </StyledProductItem>
                              ))
                            : t(address.concat('no meal kits'))}
-                     </StyledTabPanel>
-                     <StyledTabPanel>
-                        {readytoeats.length > 0
-                           ? readytoeats.map(readytoeat => (
-                                <StyledProductItem key={readytoeat.id}>
-                                   <div>
-                                      <ProductTitle
-                                         data={readytoeat}
-                                         type="READY_TO_EAT"
-                                      />
-                                   </div>
-                                   <StyledServings>
-                                      <span>
-                                         <UserIcon size={16} color="#555B6E" />
-                                      </span>
-                                      <span>
-                                         {
-                                            readytoeat
-                                               ?.simpleRecipeProductOption
-                                               ?.simpleRecipeYield?.yield
-                                               ?.serving
-                                         }
-                                         &nbsp; {t(address.concat('servings'))}
-                                      </span>
-                                   </StyledServings>
-                                   <span>
-                                      {readytoeat?.isAssembled ? 1 : 0} / 1
-                                   </span>
-                                </StyledProductItem>
-                             ))
-                           : t(address.concat('no ready to eat'))}
                      </StyledTabPanel>
                   </StyledTabPanels>
                </StyledTabs>
