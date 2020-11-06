@@ -6,6 +6,7 @@ import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
+   Form,
    Table,
    TableHead,
    TableBody,
@@ -269,14 +270,14 @@ const PrintTunnel = ({ closeTunnel }) => {
    const [url, setUrl] = React.useState('')
    const [search, setSearch] = React.useState('')
    const [printers, setPrinters] = React.useState([])
-   const [createPrint] = useMutation(PRINT_JOB, {
+   const [createPrint, { loading: isPrinting }] = useMutation(PRINT_JOB, {
       onCompleted: () => {
          closeTunnel(1)
          toast.success('Successfully Printed!')
       },
       onError: error => {
          toast.error('Failed to print!')
-         console.log(error)
+         logger(error)
       },
    })
    const { loading } = useQuery(DEVICES.PRINTERS.ONLINE, {
@@ -306,17 +307,30 @@ const PrintTunnel = ({ closeTunnel }) => {
       <>
          <TunnelHeader
             title="Print PDF"
-            right={{ action: print, title: 'Print' }}
+            right={{
+               action: print,
+               title: 'Print',
+               isLoading: isPrinting,
+               disabled: !Boolean(url) ?? isEmpty(current),
+            }}
             close={() => closeTunnel(1)}
          />
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 105px)">
-            <Input
-               type="text"
-               name="url"
-               value={url}
-               label="PDF Url"
-               onChange={e => setUrl(e.target.value)}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="url" title="url">
+                  <Flex container alignItems="center">
+                     PDF URL*
+                     <Tooltip identifier="app_settings_listing_devices_tunnel_print_field_url" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="url"
+                  name="url"
+                  value={url}
+                  placeholder="Enter the url"
+                  onChange={e => setUrl(e.target.value)}
+               />
+            </Form.Group>
             <Spacer size="24px" />
             <Text as="h3">Select Printer</Text>
             <Spacer size="12px" />

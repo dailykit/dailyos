@@ -19,36 +19,48 @@ import { ROLES } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Spacer } from '../../../../../shared/styled'
 import { Apps, AppsTunnel, Users, UsersTunnel } from './sections'
-import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 
 const RoleForm = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const [apps, setApps] = React.useState([])
    const [users, setUsers] = React.useState([])
-   const [insertApps] = useMutation(ROLES.INSERT_ROLES_APPS, {
-      onCompleted: () => {
-         toast.success('Apps added successfully to the role.')
-      },
-      onError: () => {
-         toast.error('Failed to add apps to the role.')
-      },
-   })
+   const [insertApps, { loading: isSavingApps }] = useMutation(
+      ROLES.INSERT_ROLES_APPS,
+      {
+         onCompleted: () => {
+            toast.success('Apps added successfully to the role.')
+         },
+         onError: () => {
+            toast.error('Failed to add apps to the role.')
+         },
+      }
+   )
    const [insertUsers] = useMutation(ROLES.INSERT_ROLES_USERS, {
       onCompleted: () => {
          toast.success('Users added successfully to the role.')
       },
-      onError: () => {
+      onError: error => {
+         logger(error)
          toast.error('Failed to add users to the role.')
       },
    })
    const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
    const [usersTunnels, openUsersTunnel, closeUsersTunnel] = useTunnel(1)
-   const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
-      variables: {
-         id: params.id,
-      },
-   })
+   const { error, loading, data: { role = {} } = {} } = useSubscription(
+      ROLES.ROLE,
+      {
+         variables: {
+            id: params.id,
+         },
+      }
+   )
 
    React.useEffect(() => {
       if (!loading && !tab && role?.id) {
@@ -105,7 +117,26 @@ const RoleForm = () => {
       }
    }
 
+   const isPublishable = () => {
+      let _apps = differenceBy(apps, role.apps, 'app.id')
+
+      const _users = differenceBy(
+         users,
+         role.users.map(node => ({
+            user: { ...node.user, id: node.user.keycloakId },
+         })),
+         'user.id'
+      )
+
+      return !isEmpty(_apps) || !isEmpty(_users)
+   }
+
    if (loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch role details')
+      return <ErrorState message="Failed to fetch role details" />
+   }
    return (
       <Flex padding="0 32px">
          <Flex
@@ -117,7 +148,12 @@ const RoleForm = () => {
             justifyContent="space-between"
          >
             <Text as="title">{role.title}</Text>
-            <TextButton type="solid" onClick={publish}>
+            <TextButton
+               type="solid"
+               onClick={publish}
+               isLoading={isSavingApps}
+               disabled={!isPublishable()}
+            >
                Publish
             </TextButton>
          </Flex>
