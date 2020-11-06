@@ -62,7 +62,10 @@ const ProductDetails = ({ product }) => {
                         {!item?.bulkItemId && !item?.sachetItemId && 'N/A'}
                      </span>
                      <span>{item.processingName}</span>
-                     <span>{item.quantity}</span>
+                     <span>
+                        {item.quantity}
+                        {item.unit}
+                     </span>
                      <button
                         type="button"
                         onClick={() => selectSachet(item.id)}

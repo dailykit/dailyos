@@ -17,7 +17,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [name, setName] = React.useState({
       value: '',
       meta: {
-         isValid: true,
+         isValid: false,
          isTouched: false,
          errors: [],
       },
@@ -26,14 +26,14 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const [description, setDescription] = React.useState({
       value: '',
       meta: {
-         isValid: true,
+         isValid: false,
          isTouched: false,
          errors: [],
       },
    })
 
    // Mutation
-   const [addCategory, { loading: inFlight }] = useMutation(
+   const [addCategory, { loading: addingCategory }] = useMutation(
       MASTER.PRODUCT_CATEGORY.CREATE,
       {
          onCompleted: () => {
@@ -49,10 +49,6 @@ const AddTypesTunnel = ({ closeTunnel }) => {
 
    // Handlers
    const add = () => {
-      if (inFlight) return
-      if (!name.value || !name.meta.isValid) {
-         return toast.error('Invalid values!')
-      }
       addCategory({
          variables: {
             object: {
@@ -71,9 +67,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
             title="Add Product Category"
             right={{
                action: add,
-               title: inFlight
-                  ? t(address.concat('adding'))
-                  : t(address.concat('add')),
+               title: 'Add',
+               isLoading: addingCategory,
+               disabled: !name.meta.isValid,
             }}
             close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="tunnel_product_category_heading" />}

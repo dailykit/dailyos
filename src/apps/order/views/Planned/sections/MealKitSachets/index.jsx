@@ -124,7 +124,8 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                            {ingredient.processings.nodes.map(processing => (
                               <StyledTab key={processing.id}>
                                  <span>
-                                    {processing.name} (
+                                    {processing.name}
+                                    {/* (
                                     {processing.sachets.nodes.reduce(
                                        (a, b) =>
                                           b.completedOrderSachets.aggregate.sum
@@ -138,7 +139,7 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                                              .quantity + a,
                                        0
                                     )}
-                                    )
+                                    ) */}
                                  </span>{' '}
                                  <span title="Total">
                                     ({processing.sachets.aggregate.count})
@@ -249,7 +250,11 @@ const Sachet = ({ sachet }) => {
                            <NewTabIcon size={14} />
                         </StyledButton>
                      </span>
-                     <span>
+                     <span
+                        title={
+                           sachet.orderMealKitProduct.simpleRecipeProduct.name
+                        }
+                     >
                         {sachet.orderMealKitProduct.simpleRecipeProduct.name}
                      </span>
                   </ListBodyItem>

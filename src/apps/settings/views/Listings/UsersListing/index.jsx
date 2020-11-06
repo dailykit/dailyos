@@ -11,7 +11,11 @@ import { logger } from '../../../../../shared/utils'
 import { USERS } from '../../../graphql'
 import { AddIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
-import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
 
 const UsersListing = () => {
    const tableRef = React.useRef()
@@ -20,7 +24,7 @@ const UsersListing = () => {
    const { loading, error, data: { users = {} } = {} } = useSubscription(
       USERS.LIST
    )
-   const [createUser] = useMutation(USERS.CREATE, {
+   const [createUser, { loading: creatingUser }] = useMutation(USERS.CREATE, {
       onCompleted: ({ insert_settings_user_one = {} }) => {
          const { id, firstName } = insert_settings_user_one
          addTab(firstName, `/settings/users/${id}`)
@@ -119,7 +123,11 @@ const UsersListing = () => {
                <Text as="h2">Users ({users?.aggregate?.count || 0})</Text>
                <Tooltip identifier="user_listing_heading" />
             </Flex>
-            <ComboButton type="solid" onClick={addUser}>
+            <ComboButton
+               type="solid"
+               onClick={addUser}
+               isLoading={creatingUser}
+            >
                <AddIcon color="#fff" size={24} />
                Add User
             </ComboButton>
@@ -127,15 +135,22 @@ const UsersListing = () => {
          {loading ? (
             <InlineLoader />
          ) : (
-            <ReactTabulator
-               ref={tableRef}
-               columns={columns}
-               data={users.nodes}
-               options={{
-                  ...tableOptions,
-                  placeholder: 'No users available yet, start by creating one.',
-               }}
-            />
+            <>
+               {error ? (
+                  <ErrorState message="Failed to load the users." />
+               ) : (
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={users.nodes}
+                     options={{
+                        ...tableOptions,
+                        placeholder:
+                           'No users available yet, start by creating one.',
+                     }}
+                  />
+               )}
+            </>
          )}
       </Flex>
    )

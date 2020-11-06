@@ -144,7 +144,7 @@ const Order = () => {
       kots()
    }, [order])
 
-   if (loading || !order) return <InlineLoader />
+   if (loading) return <InlineLoader />
    if (error) {
       logger(error)
       toast.error('Failed to fetch order details!')
@@ -159,14 +159,14 @@ const Order = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h4">ORD{order.id}</Text>
+               <Text as="h4">ORD{order?.id}</Text>
                <Spacer size="16px" xAxis />
                <IconButton size="sm" type="outline" onClick={print}>
                   <PrintIcon size={16} />
                </IconButton>
                <Spacer size="16px" xAxis />
                {['ONDEMAND_DELIVERY', 'PREORDER_DELIVERY'].includes(
-                  order.fulfillmentType
+                  order?.fulfillmentType
                ) && (
                   <>
                      <TextButton
@@ -175,7 +175,7 @@ const Order = () => {
                         onClick={() =>
                            dispatch({
                               type: 'DELIVERY_PANEL',
-                              payload: { orderId: order.id },
+                              payload: { orderId: order?.id },
                            })
                         }
                      >
@@ -191,7 +191,7 @@ const Order = () => {
                      <Tooltip identifier="order_details_date_ordered_on" />
                   </Flex>
                   <Text as="p">
-                     &nbsp;:&nbsp;{formatDate(order.created_at)}
+                     &nbsp;:&nbsp;{formatDate(order?.created_at)}
                   </Text>
                </Flex>
                <Spacer size="32px" xAxis />
@@ -202,9 +202,9 @@ const Order = () => {
                   </Flex>
                   <Text as="p">
                      &nbsp;:&nbsp;
-                     {order.deliveryInfo?.pickup?.window?.approved?.startsAt
+                     {order?.deliveryInfo?.pickup?.window?.approved?.startsAt
                         ? formatDate(
-                             order.deliveryInfo?.pickup?.window?.approved
+                             order?.deliveryInfo?.pickup?.window?.approved
                                 ?.startsAt
                           )
                         : 'N/A'}
@@ -212,15 +212,15 @@ const Order = () => {
                </Flex>
                <Spacer size="32px" xAxis />
                <Flex as="section" container alignItems="center">
-                  {isPickup(order.fulfillmentType) ? (
+                  {isPickup(order?.fulfillmentType) ? (
                      <TimeSlot
-                        type={order.fulfillmentType}
-                        data={order.deliveryInfo?.pickup}
+                        type={order?.fulfillmentType}
+                        data={order?.deliveryInfo?.pickup}
                      />
                   ) : (
                      <TimeSlot
-                        type={order.fulfillmentType}
-                        data={order.deliveryInfo?.dropoff}
+                        type={order?.fulfillmentType}
+                        data={order?.deliveryInfo?.dropoff}
                      />
                   )}
                </Flex>

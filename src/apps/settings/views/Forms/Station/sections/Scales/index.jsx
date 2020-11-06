@@ -43,20 +43,27 @@ import {
 export const Scales = ({ station }) => {
    const [tabIndex, setTabIndex] = React.useState(0)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(STATIONS.SCALES.UPDATE, {
-      onCompleted: () => toast.success('Successfully update the scale status!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to update the scale status!')
-      },
-   })
-   const [remove] = useMutation(STATIONS.SCALES.DELETE, {
-      onCompleted: () => toast.success('Successfully unassigned the scale!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to unassigned the scale!')
-      },
-   })
+   const [update, { loading: updatingStatus }] = useMutation(
+      STATIONS.SCALES.UPDATE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully update the scale status!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to update the scale status!')
+         },
+      }
+   )
+   const [remove, { loading: removingScale }] = useMutation(
+      STATIONS.SCALES.DELETE,
+      {
+         onCompleted: () => toast.success('Successfully unassigned the scale!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to unassigned the scale!')
+         },
+      }
+   )
 
    const updateStatus = (num, name, id, status) => {
       update({
@@ -122,6 +129,7 @@ export const Scales = ({ station }) => {
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
+                              isLoading={updatingStatus}
                               onClick={() =>
                                  updateStatus(
                                     node.deviceNum,
@@ -135,6 +143,7 @@ export const Scales = ({ station }) => {
                            </TextButton>
                            <TextButton
                               type="outline"
+                              isLoading={removingScale}
                               onClick={() =>
                                  removeStation(
                                     node.deviceNum,
@@ -171,23 +180,25 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(scales)
 
-   const [create] = useMutation(STATIONS.SCALES.CREATE, {
-      onCompleted: () => {
-         setIsOpen(false)
-         toast.success('Successfully assigned the scale!')
-      },
-      onError: () => {
-         setIsOpen(false)
-         toast.error('Failed to assign the scale!')
-      },
-   })
+   const [create, { loading: assigningScale }] = useMutation(
+      STATIONS.SCALES.CREATE,
+      {
+         onCompleted: () => {
+            setIsOpen(false)
+            toast.success('Successfully assigned the scale!')
+         },
+         onError: () => {
+            setIsOpen(false)
+            toast.error('Failed to assign the scale!')
+         },
+      }
+   )
 
    const { loading, error } = useSubscription(STATIONS.SCALES.LIST, {
       variables: { stationId: station },
       onSubscriptionData: ({
          subscriptionData: { data: { scales = [] } = {} } = {},
       }) => {
-         console.log('AddPrinterTunnel -> scales', scales)
          if (!isEmpty(scales)) {
             setScales(
                scales.map(({ deviceNum, deviceName, computer }) => ({
@@ -236,7 +247,12 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
             <TunnelHeader
                title="Add Scales"
                close={() => setIsOpen(false)}
-               right={selected.length > 0 && { action: insert, title: 'Save' }}
+               right={{
+                  action: insert,
+                  title: 'Save',
+                  isLoading: assigningScale,
+                  disabled: selected.length === 0,
+               }}
                tooltip={
                   <Tooltip identifier="station_section_scale_tunnel_add" />
                }

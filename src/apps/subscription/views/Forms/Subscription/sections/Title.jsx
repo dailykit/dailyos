@@ -323,10 +323,9 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                close={() => hideTunnel()}
                title={`${state.serving.id ? 'Edit' : 'Add'} Serving`}
                right={{
-                  ...(state.serving.meta.isValid && {
-                     title: 'Save',
-                     action: () => createServing(),
-                  }),
+                  title: 'Save',
+                  action: () => createServing(),
+                  disabled: !state.serving.meta.isValid,
                }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_serving_create" />

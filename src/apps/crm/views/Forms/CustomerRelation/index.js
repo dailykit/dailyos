@@ -39,7 +39,7 @@ import {
    SubscriptionInfoCard,
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import BrandContext from '../../../context/Brand'
 import {
    InlineLoader,
@@ -193,9 +193,9 @@ const CustomerRelation = ({ match }) => {
             <StyledSideBar>
                <CustomerCard
                   customer={customerData[0]?.customer}
-                  walletAmount={
+                  walletAmount={currencyFmt(
                      walletNreferral[0]?.customer?.wallet?.amount || 0
-                  }
+                  )}
                   toggle={customers[0]?.isTest}
                   toggleHandler={() => toggleHandler(!customers[0]?.isTest)}
                />

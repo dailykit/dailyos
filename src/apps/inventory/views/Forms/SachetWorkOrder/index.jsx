@@ -140,7 +140,7 @@ export default function SachetWorkOrder() {
    return (
       <>
          <Tunnels tunnels={supplierItemTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1}>
                <SelectSupplierItemTunnel
                   close={closeSupplierItemTunnel}
                   state={state}
