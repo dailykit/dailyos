@@ -1,8 +1,8 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
-   Flex,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import {
    ErrorState,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils/errorLog'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
@@ -23,6 +24,7 @@ import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../../../graphql'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 const address =
    'apps.inventory.views.forms.purchaseorders.tunnels.selectsupplieritemtunnel.'
@@ -53,14 +55,14 @@ export default function AddressTunnel({ close, state }) {
       },
    })
 
-   const handleSave = () => {
+   const handleSave = option => {
       updatePurchaseOrder({
          variables: {
             id: state.id,
             set: {
-               supplierItemId: current.id,
-               bulkItemId: current.bulkItemAsShippedId,
-               supplierId: current.supplier?.id,
+               supplierItemId: option.id,
+               bulkItemId: option.bulkItemAsShippedId,
+               supplierId: option.supplier?.id,
             },
          },
       })
@@ -78,19 +80,19 @@ export default function AddressTunnel({ close, state }) {
          <TunnelHeader
             title={t(address.concat('select supplier item'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleSave }}
+            description="select a supplier item to use in this purchase order"
+            tooltip={
+               <Tooltip identifier="purchase-order_select_supplier_item_tunnel" />
+            }
          />
-         <Flex padding="0 16px">
+         <TunnelWrapper>
             {list.length ? (
                <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem type="SSL1" title={current.name} />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder="type what you’re looking for..."
+                  />
+                  <ListHeader type="SSL1" label="supplier item" />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -102,7 +104,7 @@ export default function AddressTunnel({ close, state }) {
                               key={option.id}
                               title={option.name}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option.id)}
                            />
                         ))}
                   </ListOptions>
@@ -110,7 +112,7 @@ export default function AddressTunnel({ close, state }) {
             ) : (
                <Filler message={NO_SUPPLIER_ITEMS} />
             )}
-         </Flex>
+         </TunnelWrapper>
       </>
    )
 }
