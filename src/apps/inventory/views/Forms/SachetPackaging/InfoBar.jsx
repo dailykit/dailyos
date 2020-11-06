@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { TextButton } from '@dailykit/ui'
 import styled from 'styled-components'
 
+import { currencyFmt } from '../../../../../shared/utils'
 import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
 
 const address = 'apps.inventory.views.forms.item.'
@@ -36,7 +37,9 @@ export default function InfoBar({ open, state }) {
                <span>{t(address.concat('unit qty'))}</span>
                <div>
                   <span>{state.unitQuantity || 'N/A'}</span>
-                  {state.unitPrice ? <span>${state.unitPrice}</span> : null}
+                  {state.unitPrice ? (
+                     <span>{currencyFmt(Number(state.unitPrice) || 0)}</span>
+                  ) : null}
                </div>
             </div>
          </div>
@@ -49,7 +52,11 @@ export default function InfoBar({ open, state }) {
                <div>
                   <span>{state.caseQuantity || 'N/A'}</span>
                   {state.unitPrice && state.caseQuantity ? (
-                     <span>${+state.unitPrice * +state.caseQuantity}</span>
+                     <span>
+                        {currencyFmt(
+                           Number(+state.unitPrice * +state.caseQuantity) || 0
+                        )}
+                     </span>
                   ) : null}
                </div>
             </div>
@@ -63,7 +70,11 @@ export default function InfoBar({ open, state }) {
                <div>
                   <span>{state.minOrderValue}</span>
                   {state.unitPrice && state.minOrderValue ? (
-                     <span>${+state.unitPrice * +state.minOrderValue}</span>
+                     <span>
+                        {currencyFmt(
+                           Number(+state.unitPrice * +state.minOrderValue) || 0
+                        )}
+                     </span>
                   ) : null}
                </div>
             </div>

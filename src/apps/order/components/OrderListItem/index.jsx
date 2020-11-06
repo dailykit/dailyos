@@ -45,6 +45,7 @@ import pickUpIcon from '../../assets/svgs/pickup.png'
 import { formatDate } from '../../utils'
 
 import { useTabs, useOrder } from '../../context'
+import { currencyFmt } from '../../../../shared/utils'
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
 
 const address = 'apps.order.components.orderlistitem.'
@@ -140,7 +141,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
             <ListBodyItem isOpen={currentPanel === 'billing'}>
                <header>
                   <span style={{ fontSize: 15, fontWeight: 500 }}>
-                     Amount Paid: {rest.amountPaid}
+                     Amount Paid: {currencyFmt(Number(rest.amountPaid) || 0)}
                   </span>
                   <ToggleButton
                      type="billing"

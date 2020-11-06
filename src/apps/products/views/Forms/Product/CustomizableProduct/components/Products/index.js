@@ -1,4 +1,6 @@
 import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -14,39 +16,23 @@ import {
    IconButton,
    PlusIcon,
    SectionTab,
-   Avatar,
-   ClearIcon,
    SectionTabPanels,
    SectionTabPanel,
    Flex,
 } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
-import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
+
+import { ItemInfo, StyledTable } from './styled'
 import { useTabs } from '../../../../../../context'
+import { ProductTypeTunnel, ProductsTunnel } from '../../tunnels'
+import { Tooltip } from '../../../../../../../../shared/components'
+import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
+import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
    DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
    UPDATE_CUSTOMIZABLE_PRODUCT,
 } from '../../../../../../graphql'
 // styles
-import {
-   StyledAction,
-   StyledDefault,
-   StyledLayout,
-   StyledLink,
-   StyledListing,
-   StyledListingTile,
-   StyledPanel,
-   StyledTab,
-   StyledTable,
-   StyledTabs,
-   StyledTabView,
-   ItemInfo,
-} from './styled'
-import { ProductTypeTunnel, ProductsTunnel } from '../../tunnels'
-import { logger } from '../../../../../../../../shared/utils'
-import { Tooltip } from '../../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.customizableproduct.components.products.'
@@ -248,22 +234,31 @@ const Products = ({ state }) => {
                                                       .serving
                                                 }
                                              </td>
-                                             <td>${op.price[0].value} </td>
+                                             <td>
+                                                {currencyFmt(
+                                                   Number(op.price[0].value) ||
+                                                      0
+                                                )}{' '}
+                                             </td>
                                              <td>{op.price[0].discount} %</td>
                                              <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      op.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      op.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         op.price[0].discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
+                                                {currencyFmt(
+                                                   Number(
+                                                      (
+                                                         parseFloat(
+                                                            op.price[0].value
+                                                         ) -
+                                                         parseFloat(
+                                                            op.price[0].value
+                                                         ) *
+                                                            (parseFloat(
+                                                               op.price[0]
+                                                                  .discount
+                                                            ) /
+                                                               100)
+                                                      ).toFixed(2)
+                                                   ) || 0
+                                                )}
                                              </td>
                                           </tr>
                                        ))}

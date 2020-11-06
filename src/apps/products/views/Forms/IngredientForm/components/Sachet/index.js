@@ -5,20 +5,19 @@ import {
    Checkbox,
    IconButton,
    Text,
-   TextButton,
-   useTunnel,
    Form,
    Flex,
    Spacer,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
-import { IngredientContext } from '../../../../../context/ingredient'
-import { UPDATE_MODE } from '../../../../../graphql'
-import { Container, Grid } from '../styled'
+
 import { StyledTable } from './styled'
+import { Container, Grid } from '../styled'
+import { UPDATE_MODE } from '../../../../../graphql'
+import { IngredientContext } from '../../../../../context/ingredient'
+import { currencyFmt, logger } from '../../../../../../../shared/utils'
+import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { Nutrition, Tooltip } from '../../../../../../../shared/components'
-import { logger } from '../../../../../../../shared/utils'
 
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -227,7 +226,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                         {mode.sachetItem &&
                            `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`}
                      </td>
-                     <td>${mode.cost.toFixed(2)}</td>
+                     <td>{currencyFmt(Number(mode.cost.toFixed(2)) || 0)}</td>
                      <td>
                         {mode.accuracy
                            ? `Atleast ${mode.accuracy} %`
@@ -257,7 +256,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                <Text as="subtitle"> Cost </Text>
                <Tooltip identifier="sachet_cost" />
             </Flex>
-            <Text as="p">${sachet.cost}</Text>
+            <Text as="p">{currencyFmt(Number(sachet.cost) || 0)}</Text>
          </Container>
          <Container top="32">
             <Flex container maxWidth="200px">

@@ -62,7 +62,6 @@ export const OrderSummary = () => {
          <MetricItem
             title="ALL"
             variant="ALL"
-            currency="usd"
             count={orders?.aggregate?.count}
             amount={orders?.aggregate?.sum?.amount}
             average={orders?.aggregate?.avg?.amountPaid}
@@ -71,7 +70,6 @@ export const OrderSummary = () => {
             {orderByStatus.map(({ value, orders }) => (
                <MetricItem
                   key={value}
-                  currency="usd"
                   variant={value}
                   count={orders.aggregate.count}
                   title={value.split('_').join(' ')}

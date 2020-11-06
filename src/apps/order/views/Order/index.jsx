@@ -229,7 +229,18 @@ const Order = () => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="h3">
-               0 / {inventories.length + mealkits.length + readytoeats.length}
+               {inventories.filter(node => node.isAssembled).length +
+                  mealkits.filter(node => node.isAssembled).length +
+                  readytoeats.filter(node => node.isAssembled).length}{' '}
+               /{' '}
+               {inventories.filter(node => node.assemblyStatus === 'COMPLETED')
+                  .length +
+                  mealkits.filter(node => node.assemblyStatus === 'COMPLETED')
+                     .length +
+                  readytoeats.filter(
+                     node => node.assemblyStatus === 'COMPLETED'
+                  ).length}{' '}
+               / {inventories.length + mealkits.length + readytoeats.length}
                &nbsp;{t(address.concat('items'))}
             </Text>
             <Flex width="240px">

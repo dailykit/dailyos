@@ -28,7 +28,7 @@ import {
    OperationConfig,
    Tooltip,
 } from '../../../../../../../../shared/components'
-import { logger } from '../../../../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
@@ -402,38 +402,53 @@ export default function Recipe({ state }) {
                                              </td>
                                              <td>
                                                 {option.cost
-                                                   ? `$${
-                                                        option.cost +
-                                                        (option.cost *
-                                                           foodCostPercent.lowerLimit) /
-                                                           100
-                                                     } - $${
-                                                        option.cost +
-                                                        (option.cost *
-                                                           foodCostPercent.upperLimit) /
-                                                           100
-                                                     }`
+                                                   ? `${currencyFmt(
+                                                        Number(
+                                                           option.cost +
+                                                              (option.cost *
+                                                                 foodCostPercent.lowerLimit) /
+                                                                 100
+                                                        ) || 0
+                                                     )} - ${currencyFmt(
+                                                        Number(
+                                                           option.cost +
+                                                              (option.cost *
+                                                                 foodCostPercent.upperLimit) /
+                                                                 100
+                                                        ) || 0
+                                                     )}`
                                                    : '-'}
                                              </td>
-                                             <td>${option.price[0].value} </td>
                                              <td>
-                                                {option.price[0].discount} %
+                                                {currencyFmt(
+                                                   Number(
+                                                      option.price[0].value
+                                                   ) || 0
+                                                )}
                                              </td>
                                              <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         option.price[0]
-                                                            .discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
+                                                {option.price[0].discount}%
+                                             </td>
+                                             <td>
+                                                {currencyFmt(
+                                                   Number(
+                                                      (
+                                                         parseFloat(
+                                                            option.price[0]
+                                                               .value
+                                                         ) -
+                                                         parseFloat(
+                                                            option.price[0]
+                                                               .value
+                                                         ) *
+                                                            (parseFloat(
+                                                               option.price[0]
+                                                                  .discount
+                                                            ) /
+                                                               100)
+                                                      ).toFixed(2)
+                                                   ) || 0
+                                                )}
                                              </td>
                                              <td>
                                                 {option.modifier?.name ? (

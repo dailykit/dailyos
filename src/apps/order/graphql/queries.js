@@ -296,6 +296,7 @@ export const ORDER = gql`
             simpleRecipeProductOption {
                id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -310,6 +311,7 @@ export const ORDER = gql`
                ingredientName
                processingName
                packaging {
+                  id
                   name
                }
                sachetItemId
@@ -324,6 +326,7 @@ export const ORDER = gql`
                      bulkDensity
                      supplierItemId
                      supplierItem {
+                        id
                         name
                      }
                   }
@@ -337,6 +340,7 @@ export const ORDER = gql`
                   bulkDensity
                   supplierItemId
                   supplierItem {
+                     id
                      name
                   }
                }
@@ -374,6 +378,7 @@ export const ORDER = gql`
             simpleRecipeProductOption {
                id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -408,6 +413,7 @@ export const ORDER = gql`
             }
             inventoryProductOptionId
             inventoryProductOption {
+               id
                quantity
                label
             }
@@ -494,6 +500,7 @@ export const FETCH_ORDER_SACHET = gql`
          processingName
          labelTemplateId
          packingStationId
+         packagingId
          packaging {
             name
          }

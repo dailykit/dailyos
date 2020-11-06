@@ -1,9 +1,10 @@
 import React from 'react'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
+   Form,
    Flex,
    Spacer,
    Text,
@@ -35,7 +36,6 @@ import {
    StyledPackaging,
    StyledSOP,
    StyledButton,
-   ManualWeight,
 } from './styled'
 
 export const ProcessOrder = () => {
@@ -165,6 +165,17 @@ export const ProcessOrder = () => {
       }
       return () => clearTimeout(timer)
    }, [weight, sachet, print])
+
+   const hasSOP = () => {
+      if (!sachet) return false
+      if (!sachet?.bulkItemId || !sachet?.sachetItemId) return false
+      if (
+         isEmpty(sachet?.bulkItem?.sop?.images || {}) ||
+         isEmpty(sachet?.sachetItem?.bulkItem?.sop?.images || {})
+      )
+         return false
+      return true
+   }
 
    if (_.isNull(mealkit.sachet_id)) {
       return (
@@ -298,20 +309,24 @@ export const ProcessOrder = () => {
             </StyledWeigh>
             {sachet.status !== 'PACKED' &&
                state.scale.weight_simulation.value.isActive && (
-                  <ManualWeight>
-                     <input
-                        type="number"
-                        value={weight}
-                        placeholder="Enter weight"
-                        onChange={e => setWeight(Number(e.target.value))}
-                     />
+                  <Flex container alignItems="center">
+                     <Form.Group>
+                        <Form.Stepper
+                           id="weight"
+                           name="weight"
+                           value={weight || ''}
+                           placeholder="Enter the weight"
+                           onChange={value => setWeight(value || 0)}
+                        />
+                     </Form.Group>
+                     <Spacer size="8px" xAxis />
                      <TextButton
                         type="outline"
                         onClick={() => setWeight(sachet.quantity)}
                      >
-                        Match Amount
+                        Match
                      </TextButton>
-                  </ManualWeight>
+                  </Flex>
                )}
          </StyledMain>
          {labelPreview && (
@@ -341,55 +356,63 @@ export const ProcessOrder = () => {
             </Flex>
          )}
          <Spacer size="16px" />
-         <StyledPackaging>
-            <Flex as="aside" container alignItems="center">
-               <Text as="h3">Packaging</Text>
-               <Tooltip identifier="process_mealkit_section_packaging_heading" />
-            </Flex>
-            <span>{sachet?.packging?.name || 'N/A'}</span>
-            <section title={sachet?.packging?.name || 'N/A'}>
-               {sachet?.packging?.assets?.images[0] && (
-                  <img
-                     src={sachet?.packging?.assets?.images[0].url}
-                     alt={sachet?.packging?.name || 'N/A'}
-                     title={sachet?.packging?.name || 'N/A'}
-                  />
-               )}
-            </section>
-         </StyledPackaging>
-         <Spacer size="16px" />
-         <StyledSOP>
-            <Flex as="aside" container alignItems="center">
-               <Text as="h3">SOP</Text>
-               <Tooltip identifier="process_mealkit_section_sop_heading" />
-            </Flex>
-            <section>
-               {sachet?.bulkItemId &&
-                  Object.keys(sachet?.bulkItem?.sop?.images || {}).length >
-                     0 && (
-                     <img
-                        src={sachet?.bulkItem?.sop?.images[0].url}
-                        alt="SOP"
-                     />
-                  )}
-               {sachet?.sachetItemId &&
-                  Object.keys(sachet?.sachetItem?.bulkItem?.sop?.images || {})
-                     .length > 0 && (
-                     <img
-                        src={sachet?.sachetItem?.bulkItem?.sop?.images[0].url}
-                        alt="SOP"
-                     />
-                  )}
-            </section>
-         </StyledSOP>
-         <Spacer size="16px" />
+         {sachet?.packagingId && (
+            <>
+               <StyledPackaging>
+                  <Flex as="aside" container alignItems="center">
+                     <Text as="h3">Packaging</Text>
+                     <Tooltip identifier="process_mealkit_section_packaging_heading" />
+                  </Flex>
+                  <span>{sachet?.packging?.name || 'N/A'}</span>
+                  <section title={sachet?.packging?.name || 'N/A'}>
+                     {sachet?.packging?.assets?.images[0] && (
+                        <img
+                           src={sachet?.packging?.assets?.images[0].url}
+                           alt={sachet?.packging?.name || 'N/A'}
+                           title={sachet?.packging?.name || 'N/A'}
+                        />
+                     )}
+                  </section>
+               </StyledPackaging>
+               <Spacer size="16px" />
+            </>
+         )}
+         {hasSOP() && (
+            <>
+               <StyledSOP>
+                  <Flex as="aside" container alignItems="center">
+                     <Text as="h3">SOP</Text>
+                     <Tooltip identifier="process_mealkit_section_sop_heading" />
+                  </Flex>
+                  <section>
+                     {sachet?.bulkItemId &&
+                        !isEmpty(sachet?.bulkItem?.sop?.images || {}) && (
+                           <img
+                              src={sachet?.bulkItem?.sop?.images[0].url}
+                              alt="SOP"
+                           />
+                        )}
+                     {sachet?.sachetItemId &&
+                        !isEmpty(
+                           sachet?.sachetItem?.bulkItem?.sop?.images || {}
+                        ) && (
+                           <img
+                              src={
+                                 sachet?.sachetItem?.bulkItem?.sop?.images[0]
+                                    .url
+                              }
+                              alt="SOP"
+                           />
+                        )}
+                  </section>
+               </StyledSOP>
+               <Spacer size="16px" />
+            </>
+         )}
          <Flex container alignItems="center">
             <StyledButton
                type="button"
-               disabled={
-                  sachet.status === 'PACKED' ||
-                  Number(weight) !== sachet.quantity
-               }
+               disabled={sachet.status === 'PACKED'}
                onClick={() =>
                   updateSachet({
                      variables: {

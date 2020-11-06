@@ -172,23 +172,3 @@ export const StyledSOP = styled.section`
       }
    }
 `
-
-export const ManualWeight = styled.section`
-   display: flex;
-   margin-top: 16px;
-   align-items: center;
-   justify-content: space-between;
-   input {
-      width: 180px;
-      height: 32px;
-      padding: 0 8px;
-      margin-right: 8px;
-      border-radius: 2px;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-   }
-   button {
-      height: 32px;
-      padding: 0 8px;
-      font-size: 14px;
-   }
-`

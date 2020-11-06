@@ -56,6 +56,19 @@ export const UPDATE_READYTOEAT = gql`
    }
 `
 
+export const UPDATE_MEALKIT = gql`
+   mutation updateOrderMealKitProduct(
+      $id: Int!
+      $_set: order_orderMealKitProduct_set_input!
+   ) {
+      updateOrderMealKitProduct(pk_columns: { id: $id }, _set: $_set) {
+         id
+         isAssembled
+         assemblyStatus
+      }
+   }
+`
+
 export const UPDATE_SETTING = gql`
    mutation update_settings_appSettings(
       $app: String_comparison_exp!

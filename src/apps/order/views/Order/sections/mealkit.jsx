@@ -3,6 +3,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
@@ -14,6 +15,8 @@ import {
 
 import { useConfig } from '../../../context'
 import { UserIcon } from '../../../assets/icons'
+import { UPDATE_MEALKIT } from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
 import ProductDetails from './MealKitProductDetails'
 import {
    Legend,
@@ -30,6 +33,15 @@ export const MealKits = ({ mealkits }) => {
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
+   const [update] = useMutation(UPDATE_MEALKIT, {
+      onCompleted: () => {
+         toast.success('Successfully updated the product!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to update the product!')
+      },
+   })
 
    React.useEffect(() => {
       if (mealkits.length > 0) {
@@ -133,11 +145,49 @@ export const MealKits = ({ mealkits }) => {
                </OrderItem>
             ))}
          </OrderItems>
-         <Flex>
+         <Flex container alignItems="center">
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
             </TextButton>
-            <Spacer size="8px" />
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.assemblyStatus === 'COMPLETED'}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Packed
+            </TextButton>
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.isAssembled}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           isAssembled: true,
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Assembled
+            </TextButton>
+         </Flex>
+         <Spacer size="8px" />
+         <Flex>
             {label && (
                <>
                   <Flex
