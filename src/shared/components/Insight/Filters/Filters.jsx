@@ -224,7 +224,7 @@ function Filter({
       <>
          <Spacer xAxis size="16px" />
          <Dropdown
-            title={fromMixed(filter)}
+            title={fromMixed(filter.split('  ')[1])}
             withIcon
             show={show}
             setShow={setShow}
