@@ -115,11 +115,8 @@ export const useInsights = (
    const { error: insightError } = useQuery(gqlQuery, {
       variables: {
          ...variableSwitches,
-         options: {
-            ...insight.defaultOptions,
-            // merge variableOptions and schemaVariables, schemaVariables will overwrite any filter values in variableOptions
-            ...merge(variableOptions, schemaVariables, options.where),
-         },
+         // merge variableOptions and schemaVariables, schemaVariables will overwrite any filter values in variableOptions
+         ...merge(variableOptions, schemaVariables, options.where),
          limit: options.limit,
          orderBy: options.order,
       },
