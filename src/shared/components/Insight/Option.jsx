@@ -35,7 +35,7 @@ export default function Option({
    isDiff,
 }) {
    const [submenu, setSubmenu] = useState('main')
-   const [optionsState, setOptionsState] = useState(state)
+   const [optionsState, setOptionsState] = useState({})
    const [newOptionsState, setNewOptionsState] = useState({})
    const [currentOptions, setCurrentOptions] = useState({})
    const [currentNewOptions, setCurrentNewOptions] = useState({})
@@ -54,6 +54,7 @@ export default function Option({
       const newOptions = isNewOption
          ? buildOptionVariables(newOptionsState)
          : buildOptionVariables(optionsState)
+
       updateOptions(isNewOption)(newOptions)
       setShow(false)
 
@@ -271,7 +272,7 @@ export default function Option({
                            onClick={() => setDropdownView(option)}
                            key={option}
                         >
-                           {fromMixed(option)}
+                           {fromMixed(option.split('  ')[1])}
                         </DropdownItem>
                      )
                   })}
@@ -418,7 +419,8 @@ const AppliedFilters = React.memo(
                               if (currentNewOptions[option][key])
                                  return (
                                     <Tag color="primary" key={option + i}>
-                                       {fromMixed(option)}: {optionsMap[key]}{' '}
+                                       {fromMixed(option.split('  ')[1])}:{' '}
+                                       {optionsMap[key]}{' '}
                                        {currentNewOptions[option][key]}
                                     </Tag>
                                  )
@@ -430,7 +432,7 @@ const AppliedFilters = React.memo(
                            if (currentNewOptions[option][key])
                               return (
                                  <Tag color="primary" key={option + i}>
-                                    {optionsMap[option][key]}{' '}
+                                    {optionsMap['created_at'][key]}{' '}
                                     {dateFmt.format(
                                        new Date(currentNewOptions[option][key])
                                     )}
@@ -449,7 +451,8 @@ const AppliedFilters = React.memo(
                            if (currentOptions[option][key])
                               return (
                                  <Tag color="primary" key={option + i}>
-                                    {fromMixed(option)}: {optionsMap[key]}{' '}
+                                    {fromMixed(option.split('  ')[1])}:{' '}
+                                    {optionsMap[key]}{' '}
                                     {currentOptions[option][key]}
                                  </Tag>
                               )
@@ -460,7 +463,7 @@ const AppliedFilters = React.memo(
                      if (currentOptions[option][key])
                         return (
                            <Tag color="primary" key={option + i}>
-                              {optionsMap[option][key]}{' '}
+                              {optionsMap['created_at'][key]}{' '}
                               {dateFmt.format(
                                  new Date(currentOptions[option][key])
                               )}
