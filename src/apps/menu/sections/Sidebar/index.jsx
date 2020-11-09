@@ -31,9 +31,44 @@ const Sidebar = ({ visible, toggleSidebar }) => {
                {t(address.concat('collections'))}
             </StyledListItem>
             <StyledListItem
-               onClick={() => addTabHandler('Store Settings', '/menu/settings')}
+               onClick={() =>
+                  addTabHandler(
+                     'Pre-Order Delivery',
+                     '/menu/recurrences/PREORDER_DELIVERY'
+                  )
+               }
             >
-               {t(address.concat('store settings'))}
+               Pre-Order Delivery
+            </StyledListItem>
+            <StyledListItem
+               onClick={() =>
+                  addTabHandler(
+                     'Pre-Order Pickup',
+                     '/menu/recurrences/PREORDER_PICKUP'
+                  )
+               }
+            >
+               Pre-Order Pickup
+            </StyledListItem>
+            <StyledListItem
+               onClick={() =>
+                  addTabHandler(
+                     'On-Demand Delivery',
+                     '/menu/recurrences/ONDEMAND_DELIVERY'
+                  )
+               }
+            >
+               On-Demand Delivery
+            </StyledListItem>
+            <StyledListItem
+               onClick={() =>
+                  addTabHandler(
+                     'On-Demand Pickup',
+                     '/menu/recurrences/ONDEMAND_PICKUP'
+                  )
+               }
+            >
+               On-Demand Pickup
             </StyledListItem>
          </StyledList>
       </StyledSidebar>
