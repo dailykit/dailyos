@@ -10,7 +10,6 @@ import {
    Home,
    CollectionForm,
    CollectionsListing,
-   StoreSettingsForm,
    RecurrencesForm,
 } from '../../views'
 
@@ -79,27 +78,7 @@ const Main = () => {
                   </Flex>
                )}
             </Route>
-            <Route path="/menu/settings" exact>
-               {canAccessRoute('settings') ? (
-                  <ErrorBoundary rootRoute="/apps/menu">
-                     <StoreSettingsForm />
-                  </ErrorBoundary>
-               ) : (
-                  <Flex
-                     container
-                     height="100%"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <Text as="title">
-                        {accessPermission('ROUTE_READ', 'settings')
-                           ?.fallbackMessage ||
-                           'You do not have sufficient permission to see store settings.'}
-                     </Text>
-                  </Flex>
-               )}
-            </Route>
-            <Route path="/menu/settings/recurrences/:type" exact>
+            <Route path="/menu/recurrences/:type" exact>
                {canAccessRoute('recurrence') ? (
                   <ErrorBoundary rootRoute="/apps/menu">
                      <RecurrencesForm />
