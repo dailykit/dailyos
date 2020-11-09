@@ -66,7 +66,7 @@ const Availability = ({ state }) => {
       <ErrorBoundary rootRoute="/apps/menu">
          <Flex container alignItems="start" justifyContent="space-between">
             <Flex>
-               <Flex container alignItems="start">
+               {/* <Flex container alignItems="start">
                   <Form.Group>
                      <Form.Label htmlFor="start" title="start">
                         <Flex container alignItems="center">
@@ -143,7 +143,7 @@ const Availability = ({ state }) => {
                         ))}
                   </Form.Group>
                </Flex>
-               <Spacer size="16px" />
+               <Spacer size="16px" /> */}
                <ReactRRule
                   value={rrule}
                   onChange={val => setRrule(val.psqlObject)}
