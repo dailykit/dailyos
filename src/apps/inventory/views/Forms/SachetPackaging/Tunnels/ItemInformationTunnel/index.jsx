@@ -34,7 +34,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
    const [itemWidth, setItemWidth] = useState({
       value: state.width || '',
       meta: {
-         isValid: state.width?.toString ? true : false,
+         isValid: state.width?.toString() ? true : false,
          isTouched: false,
          errors: [],
       },
