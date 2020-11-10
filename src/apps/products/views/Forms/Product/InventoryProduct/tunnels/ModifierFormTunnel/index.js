@@ -658,10 +658,11 @@ const ModifierFormTunnel = ({ open, close }) => {
                                        id={`optionPrice-${index}-${optionIndex}`}
                                        name={`optionPrice-${index}-${optionIndex}`}
                                        onBlur={() => {
+                                          // using discount validator because it allows 0
                                           const {
                                              isValid,
                                              errors,
-                                          } = validator.price(
+                                          } = validator.discount(
                                              option.price.value
                                           )
                                           modifiersDispatch({
