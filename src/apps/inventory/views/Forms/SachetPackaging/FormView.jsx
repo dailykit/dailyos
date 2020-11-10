@@ -18,6 +18,7 @@ import { logger } from '../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
 import { UPDATE_PACKAGING } from '../../../graphql'
+import { validators } from '../../../utils/validators'
 import { StyledSupplier } from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
@@ -32,9 +33,16 @@ export default function FormView({ state }) {
    const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
       2
    )
-   const [itemName, setItemName] = React.useState(state.packagingName)
+   const [itemName, setItemName] = React.useState({
+      value: state.packagingName,
+      meta: {
+         isValid: state.packagingName ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
 
-   const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
+   const [updatePackagingName] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
          toast.info('Packaging name updated !')
          setTabTitle(itemName)
@@ -44,6 +52,24 @@ export default function FormView({ state }) {
          toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
+
+   const handlePackagingNameChange = e => {
+      const name = e.target.value
+      const { errors, isValid } = validators.name(name, 'packaging name')
+
+      setItemName({
+         value: name,
+         meta: { errors, isValid, isTouched: true },
+      })
+
+      if (isValid)
+         updatePackagingName({
+            variables: {
+               id: state.id,
+               object: { name },
+            },
+         })
+   }
 
    return (
       <>
@@ -73,28 +99,23 @@ export default function FormView({ state }) {
                         <Form.Label htmlFor="itemName" title="itemName">
                            Packaging Name
                         </Form.Label>
-                     </Form.Group>
-                     <Form.Text
-                        id="itemName"
-                        name="itemName"
-                        placeholder="Packaging Name"
-                        value={itemName}
-                        onChange={e => setItemName(e.target.value)}
-                        onBlur={() => {
-                           if (!itemName.length) {
-                              toast.error("Name can't be empty")
-                              return setItemName(state.name)
-                           }
-
-                           if (itemName !== state.name)
-                              updatePackaging({
-                                 variables: {
-                                    id: state.id,
-                                    object: { name: itemName },
-                                 },
+                        <Form.Text
+                           id="itemName"
+                           name="itemName"
+                           placeholder="Packaging Name"
+                           value={itemName.value}
+                           onChange={e =>
+                              setItemName({
+                                 value: e.target.value,
+                                 meta: { ...itemName.meta },
                               })
-                        }}
-                     />
+                           }
+                           onBlur={handlePackagingNameChange}
+                        />
+                        {itemName.meta.isTouched && !itemName.meta.isValid && (
+                           <Form.Error>{itemName.meta.errors[0]}</Form.Error>
+                        )}
+                     </Form.Group>
                      <Text as="subtitle">
                         sku: {state.packagingSku || 'N/A'}
                      </Text>
