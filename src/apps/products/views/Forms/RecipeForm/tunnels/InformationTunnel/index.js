@@ -59,6 +59,9 @@ const InformationTunnel = ({ state, closeTunnel }) => {
             utensils: _state.utensils.value
                ? _state.utensils.value.split(',').map(tag => tag.trim())
                : [],
+            notIncluded: _state.notIncluded.value
+               ? _state.notIncluded.value.split(',').map(tag => tag.trim())
+               : [],
             description: _state.description.value,
          },
       },
@@ -99,6 +102,14 @@ const InformationTunnel = ({ state, closeTunnel }) => {
          },
          author: {
             value: state.author || '',
+            meta: {
+               isTouched: false,
+               isValid: true,
+               errors: [],
+            },
+         },
+         notIncluded: {
+            value: state.notIncluded ? state.notIncluded.join(', ') : '',
             meta: {
                isTouched: false,
                isValid: true,
@@ -348,6 +359,64 @@ const InformationTunnel = ({ state, closeTunnel }) => {
                         <Spacer size="16px" />
                         <Form.Group>
                            <Form.Label
+                              htmlFor="notIncluded"
+                              title="notIncluded"
+                           >
+                              <Flex container alignItems="center">
+                                 What's not included?
+                                 <Tooltip identifier="recipe_not_included" />
+                              </Flex>
+                           </Form.Label>
+                           <Form.Text
+                              id="notIncluded"
+                              name="notIncluded"
+                              onChange={e =>
+                                 _dispatch({
+                                    type: 'SET_VALUE',
+                                    payload: {
+                                       field: 'notIncluded',
+                                       value: e.target.value,
+                                    },
+                                 })
+                              }
+                              onBlur={() => {
+                                 const { isValid, errors } = validator.csv(
+                                    _state.notIncluded.value
+                                 )
+                                 _dispatch({
+                                    type: 'SET_ERRORS',
+                                    payload: {
+                                       field: 'notIncluded',
+                                       meta: {
+                                          isTouched: true,
+                                          isValid,
+                                          errors,
+                                       },
+                                    },
+                                 })
+                              }}
+                              value={_state.notIncluded.value}
+                              placeholder="Enter what's not included"
+                              hasError={
+                                 _state.notIncluded.meta.isTouched &&
+                                 !_state.notIncluded.meta.isValid
+                              }
+                           />
+                           {_state.notIncluded.meta.isTouched &&
+                              !_state.notIncluded.meta.isValid &&
+                              _state.notIncluded.meta.errors.map(
+                                 (error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 )
+                              )}
+                        </Form.Group>
+                        <HelperText
+                           type="hint"
+                           message="Enter comma separated values, for example: Salt, Oil, Pepper"
+                        />
+                        <Spacer size="16px" />
+                        <Form.Group>
+                           <Form.Label
                               htmlFor="description"
                               title="description"
                            >
@@ -404,6 +473,14 @@ const initialState = {
       },
    },
    author: {
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   },
+   notIncluded: {
       value: '',
       meta: {
          isTouched: false,

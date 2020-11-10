@@ -88,6 +88,19 @@ const Information = ({ state }) => {
                   </Container>
                   <Container top="16">
                      <Flex container alignItems="center">
+                        <Text as="subtitle">What's not included?</Text>
+                        <Tooltip identifier="recipe_not_included" />
+                     </Flex>
+                     {state.notIncluded?.length ? (
+                        state.notIncluded.map(item => (
+                           <Tag key={item}>{item}</Tag>
+                        ))
+                     ) : (
+                        <Text as="p"> NA </Text>
+                     )}
+                  </Container>
+                  <Container top="16">
+                     <Flex container alignItems="center">
                         <Text as="subtitle">Description</Text>
                         <Tooltip identifier="recipe_description" />
                      </Flex>
