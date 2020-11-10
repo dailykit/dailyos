@@ -81,7 +81,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
       },
       onCompleted: () => {
          toast.success('Information Added')
-         setTabTitle(itemName)
+         setTabTitle(itemName.value)
          close(1)
          next(2)
       },
