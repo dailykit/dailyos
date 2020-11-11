@@ -5,11 +5,11 @@ import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { StyledInputGroup } from '../../../Item/tunnels/styled'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 export default function MoreItemInfoTunnel({ close, state }) {
    const [unitQuantity, setUnitQuantity] = useState({
@@ -109,7 +109,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
             }
          />
          <Spacer size="16px" />
-         <TunnelContainer>
+         <TunnelWrapper>
             <StyledInputGroup>
                <Form.Group>
                   <Form.Label htmlFor="unitQty" title="unitQuantity">
@@ -285,7 +285,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
                   )}
                </Form.Group>
             </StyledInputGroup>
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }
