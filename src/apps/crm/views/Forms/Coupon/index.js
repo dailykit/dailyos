@@ -254,14 +254,10 @@ const CouponForm = () => {
                                  <InsightDashboard
                                     appTitle="CRM App"
                                     moduleTitle="Coupon Page"
-                                    where={{
-                                       date: {
-                                          _gte: fromDate,
-                                          _lte: today,
-                                       },
-                                       viewRewardHistories2: {
-                                          couponId: { _eq: couponId },
-                                       },
+                                    variables={{
+                                       couponId: couponId,
+                                       today: today,
+                                       fromDate: fromDate,
                                     }}
                                  />
                               </StyledInsight>
