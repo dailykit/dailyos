@@ -14,6 +14,7 @@ import {
 import React from 'react'
 import { toast } from 'react-toastify'
 import EditIcon from '../../../../../shared/assets/icons/Edit'
+import { Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { useTabs } from '../../../context'
@@ -97,7 +98,10 @@ export default function FormView({ state }) {
                   <Flex>
                      <Form.Group>
                         <Form.Label htmlFor="itemName" title="itemName">
-                           Packaging Name
+                           <Flex container alignItems="center">
+                              Packaging Name
+                              <Tooltip identifier="packaging_form_view-packagingName_input_field" />
+                           </Flex>
                         </Form.Label>
                         <Form.Text
                            id="itemName"
