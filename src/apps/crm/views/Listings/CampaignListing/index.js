@@ -92,7 +92,7 @@ const CampaignListing = () => {
    const toggleHandler = (toggle, id, isvalid) => {
       const val = !toggle
       if (val && !isvalid) {
-         toast.error('Campaign should be valid!')
+         toast.error(`Campaign should be valid!`)
       } else {
          updateCampaignActive({
             variables: {
@@ -116,7 +116,7 @@ const CampaignListing = () => {
       return (
          <Form.Group>
             <Form.Toggle
-               name="campaign_active"
+               name={`campaign_active${rowData.id}`}
                onChange={() =>
                   toggleHandler(rowData.active, rowData.id, rowData.isvalid)
                }

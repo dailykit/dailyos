@@ -122,7 +122,7 @@ export const getPSQLRule = rule => {
    object.wkst = getWkst(object.wkst)
 
    if (!object.count.toString().trim()) {
-      delete object.count
+      object.count = 60
    } else {
       object.count = +object.count
    }

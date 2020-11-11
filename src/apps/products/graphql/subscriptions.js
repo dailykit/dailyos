@@ -171,6 +171,7 @@ export const S_RECIPE = gql`
          type
          description
          cookingTime
+         notIncluded
          cuisine
          utensils
          procedures
