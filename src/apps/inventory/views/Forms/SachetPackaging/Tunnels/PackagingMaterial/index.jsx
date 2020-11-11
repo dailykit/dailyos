@@ -1,12 +1,11 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Form, TunnelHeader } from '@dailykit/ui'
+import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 function errorHandler(error) {
    logger(error)
@@ -35,16 +34,16 @@ export default function PackagingTypeTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <InlineLoader />
-
    return (
       <>
          <TunnelHeader
-            title="Configure Packaging Material"
+            title="Packaging Material"
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="Configure packaging material"
+            right={{ title: 'Save', action: handleNext, isLoading: loading }}
          />
-         <TunnelContainer>
+         <Spacer size="16px" />
+         <TunnelWrapper>
             <Form.Group>
                <Form.Label
                   htmlFor="packagingMaterial"
@@ -60,7 +59,7 @@ export default function PackagingTypeTunnel({ close, state }) {
                value={packagingType}
                onChange={e => setPackagingType(e.target.value)}
             />
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }

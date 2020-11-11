@@ -2,18 +2,18 @@ import { useMutation } from '@apollo/react-hooks'
 import { Flex, Form, Spacer, Toggle, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { Separator, TunnelContainer } from '../../../../../components'
+import { Separator } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 function errorHandler(error) {
    logger(error)
    toast.error(GENERAL_ERROR_MESSAGE)
 }
 
-// Props<{state: Packaging.packagingSpecification}>
 export default function OtherProperties({ close, state }) {
    const [recycled, setRecycled] = useState(state.recycled)
    const [opacity, setOpacity] = useState(state.opacity || '')
@@ -40,16 +40,19 @@ export default function OtherProperties({ close, state }) {
       })
    }
 
-   if (loading) return <InlineLoader />
-
    return (
       <>
          <TunnelHeader
-            title="Configure Other Properties"
+            title="Other Properties"
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            right={{ title: 'Save', action: handleNext, isLoading: loading }}
+            description="Configure other properites"
+            tooltip={
+               <Tooltip identifier="packaging_form_view-other_properties_tunnel" />
+            }
          />
-         <TunnelContainer>
+         <Spacer size="16px" />
+         <TunnelWrapper>
             <Flex margin="0 auto">
                <Toggle
                   checked={recycled}
@@ -78,7 +81,7 @@ export default function OtherProperties({ close, state }) {
                   />
                </Form.Group>
             </Flex>
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }
