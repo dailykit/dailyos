@@ -261,14 +261,10 @@ const CampaignForm = () => {
                                  <InsightDashboard
                                     appTitle="CRM App"
                                     moduleTitle="Campaign Page"
-                                    where={{
-                                       date: {
-                                          _gte: fromDate,
-                                          _lte: today,
-                                       },
-                                       viewRewardHistories2: {
-                                          campaignId: { _eq: campaignId },
-                                       },
+                                    variables={{
+                                       campaignId: campaignId,
+                                       today: today,
+                                       fromDate: fromDate,
                                     }}
                                  />
                               </StyledInsight>
