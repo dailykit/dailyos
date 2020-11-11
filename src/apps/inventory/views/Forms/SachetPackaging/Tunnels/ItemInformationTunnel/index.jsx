@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { useTabs } from '../../../../../context'
@@ -134,15 +134,18 @@ export default function ItemInformationTunnel({ close, state, next }) {
       }
    }
 
-   if (loading) return <InlineLoader />
-
    return (
       <>
          <TunnelHeader
             title="Item Information"
             close={() => close(1)}
-            right={{ title: 'Next', action: handleNext }}
+            right={{ title: 'Next', action: handleNext, isLoading: loading }}
+            description="Add packaging related information"
+            tooltip={
+               <Tooltip identifier="packaging-form_item-information_tunnel" />
+            }
          />
+         <Spacer size="16px" />
          <TunnelWrapper>
             <StyledInputGroup>
                <Form.Group>
