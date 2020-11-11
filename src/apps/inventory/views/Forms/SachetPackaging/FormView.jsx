@@ -45,7 +45,7 @@ export default function FormView({ state }) {
    const [updatePackagingName] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
          toast.info('Packaging name updated !')
-         setTabTitle(itemName)
+         setTabTitle(itemName.value)
       },
       onError: error => {
          logger(error)
@@ -74,14 +74,14 @@ export default function FormView({ state }) {
    return (
       <>
          <Tunnels tunnels={itemInfoTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1}>
                <ItemInformationTunnel
                   close={closeItemInfoTunnel}
                   next={openItemInfoTunnel}
                   state={state}
                />
             </Tunnel>
-            <Tunnel layer={2} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={2}>
                <MoreItemInfoTunnel close={closeItemInfoTunnel} state={state} />
             </Tunnel>
          </Tunnels>
@@ -142,7 +142,7 @@ function SupplierInfo({ state }) {
 
    const TunnelContainer = (
       <Tunnels tunnels={suppliersTunnel}>
-         <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+         <Tunnel layer={1}>
             <SuppliersTunnel close={closeSuppliersTunnel} state={state} />
          </Tunnel>
       </Tunnels>
