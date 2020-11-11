@@ -2,10 +2,10 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
@@ -15,15 +15,16 @@ import { toast } from 'react-toastify'
 import {
    ErrorState,
    InlineLoader,
+   Tooltip,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { TunnelContainer } from '../../../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { NO_SUPPLIERS } from '../../../../../constants/infoMessages'
 import {
    SUPPLIERS_SUBSCRIPTION,
    UPDATE_PACKAGING,
 } from '../../../../../graphql'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 const address = 'apps.inventory.views.forms.item.tunnels.suppliers.'
 
@@ -65,12 +66,12 @@ export default function SuppliersTunnel({ close, state }) {
       },
    })
 
-   const handleNext = () => {
+   const handleSave = option => {
       updatePackaging({
          variables: {
             id: state.id,
             object: {
-               supplierId: current.id,
+               supplierId: option.id,
             },
          },
       })
@@ -80,6 +81,7 @@ export default function SuppliersTunnel({ close, state }) {
       logger(error)
       return <ErrorState />
    }
+
    if (loading) return <InlineLoader />
 
    return (
@@ -87,25 +89,22 @@ export default function SuppliersTunnel({ close, state }) {
          <TunnelHeader
             title={t(address.concat('select supplier'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="select supplier for this supplier item"
+            tooltip={
+               <Tooltip identifier="packaging-form-select-supplier_tunnel" />
+            }
          />
-         <TunnelContainer>
+         <TunnelWrapper>
             {list.length ? (
                <List>
-                  {Object.keys(current).length > 0 ? (
-                     <ListItem
-                        type="SSL22"
-                        content={{
-                           supplier: current.supplier,
-                           contact: current.contact,
-                        }}
-                     />
-                  ) : (
-                     <ListSearch
-                        onChange={value => setSearch(value)}
-                        placeholder="type what you’re looking for..."
-                     />
-                  )}
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder="type what you’re looking for..."
+                  />
+                  <ListHeader
+                     type="SSL22"
+                     label={{ left: 'Supplier', right: 'Contact person' }}
+                  />
                   <ListOptions>
                      {list
                         .filter(option =>
@@ -116,7 +115,7 @@ export default function SuppliersTunnel({ close, state }) {
                               type="SSL22"
                               key={option.id}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                               content={{
                                  supplier: option.supplier,
                                  contact: option.contact,
@@ -128,7 +127,7 @@ export default function SuppliersTunnel({ close, state }) {
             ) : (
                <Filler message={NO_SUPPLIERS} />
             )}
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }

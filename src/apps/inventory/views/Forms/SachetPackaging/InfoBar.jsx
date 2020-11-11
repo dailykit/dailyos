@@ -1,10 +1,11 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { TextButton } from '@dailykit/ui'
+import { Flex, TextButton } from '@dailykit/ui'
 import styled from 'styled-components'
 
 import { currencyFmt } from '../../../../../shared/utils'
 import { ItemIcon, CaseIcon, TruckIcon, ClockIcon } from '../../../assets/icons'
+import { Tooltip } from '../../../../../shared/components'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -34,7 +35,12 @@ export default function InfoBar({ open, state }) {
                <ItemIcon />
             </div>
             <div>
-               <span>{t(address.concat('unit qty'))}</span>
+               <span>
+                  <Flex container alignItems="center">
+                     {t(address.concat('unit qty'))}
+                     <Tooltip identifier="packaging_form_view-unitQuantity" />
+                  </Flex>
+               </span>
                <div>
                   <span>{state.unitQuantity || 'N/A'}</span>
                   {state.unitPrice ? (
@@ -48,7 +54,12 @@ export default function InfoBar({ open, state }) {
                <CaseIcon />
             </div>
             <div>
-               <span>{t(address.concat('case qty'))}</span>
+               <span>
+                  <Flex container alignItems="center">
+                     {t(address.concat('case qty'))}
+                     <Tooltip identifier="packaging_form_view-caseQuantity" />
+                  </Flex>
+               </span>
                <div>
                   <span>{state.caseQuantity || 'N/A'}</span>
                   {state.unitPrice && state.caseQuantity ? (
@@ -66,7 +77,12 @@ export default function InfoBar({ open, state }) {
                <TruckIcon />
             </div>
             <div>
-               <span>{t(address.concat('min order value'))}</span>
+               <span>
+                  <Flex container alignItems="center">
+                     {t(address.concat('min order value'))}
+                     <Tooltip identifier="packaging_form_view-minOrderValue" />
+                  </Flex>
+               </span>
                <div>
                   <span>{state.minOrderValue}</span>
                   {state.unitPrice && state.minOrderValue ? (
@@ -84,7 +100,12 @@ export default function InfoBar({ open, state }) {
                <ClockIcon />
             </div>
             <div>
-               <span>{t(address.concat('lead time'))}</span>
+               <span>
+                  <Flex container alignItems="center">
+                     {t(address.concat('lead time'))}
+                     <Tooltip identifier="packaging_form_view-leadtime" />
+                  </Flex>
+               </span>
                <div>
                   <span>{`${state.leadTime?.value || 'N/A'}  ${
                      state.leadTime?.value ? state.leadTime?.unit : ''
