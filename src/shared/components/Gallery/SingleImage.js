@@ -1,6 +1,6 @@
 import React from 'react'
 import { ButtonTile, IconButton } from '@dailykit/ui'
-import { WrapperDiv, EditDiv, DeleteDiv } from './styled'
+import { WrapperDiv, EditDiv, DeleteDiv, ImgWrapper } from './styled'
 import { DeleteIcon, EditIcon } from '../../assets/icons'
 
 const SingleImage = ({ imageUrl, openTunnel, removeImage, editImage }) => {
