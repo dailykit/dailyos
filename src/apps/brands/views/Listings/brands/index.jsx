@@ -104,8 +104,7 @@ export const Brands = () => {
    }
 
    // Handler
-   const deleteHandler = (e, brand) => {
-      e.stopPropagation()
+   const deleteHandler = brand => {
       if (
          window.confirm(
             `Are you sure you want to delete Brand - ${brand.title}?`
@@ -174,17 +173,15 @@ export const Brands = () => {
             hozAlign: 'center',
             headerSort: false,
             headerHozAlign: 'center',
-            formatter: reactFormatter(<DeleteBrand />),
+            formatter: reactFormatter(
+               <DeleteBrand deleteHandler={deleteHandler} />
+            ),
             headerTooltip: function (column) {
                const identifier = 'brands_listing_actions_column'
                return (
                   tooltip(identifier)?.description ||
                   column.getDefinition().title
                )
-            },
-            cellClick: (e, cell) => {
-               e.stopPropagation()
-               deleteHandler(e, cell._cell.row.data)
             },
          },
       ],
@@ -372,9 +369,11 @@ export const Brands = () => {
    )
 }
 
-const DeleteBrand = ({ cell, edit }) => {
+const DeleteBrand = ({ cell, deleteHandler }) => {
+   const onClick = () => deleteHandler(cell._cell.row.data)
+   if (cell.getData().isDefault) return null
    return (
-      <IconButton type="ghost" size="sm">
+      <IconButton type="ghost" size="sm" onClick={onClick}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
