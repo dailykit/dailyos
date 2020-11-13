@@ -1,0 +1,53 @@
+import React from 'react'
+import { ButtonTile, IconButton } from '@dailykit/ui'
+import { WrapperDiv, EditDiv, DeleteDiv } from './styled'
+import { DeleteIcon, EditIcon } from '../../assets/icons'
+
+const SingleImage = ({ imageUrl, openTunnel, removeImage, editImage }) => {
+   return (
+      <>
+         {imageUrl ? (
+            <WrapperDiv>
+               <ImgWrapper>
+                  <img
+                     src={imageUrl}
+                     alt="Product Preview"
+                     width="100%"
+                     height="340px"
+                     style={{ objectFit: 'contain' }}
+                  />
+               </ImgWrapper>
+               <EditDiv>
+                  <IconButton
+                     size="sm"
+                     type="solid"
+                     onClick={e => e.stopPropagation() || editImage(0, true)}
+                  >
+                     <EditIcon size="20" />
+                  </IconButton>
+               </EditDiv>
+
+               <DeleteDiv>
+                  <IconButton
+                     size="sm"
+                     type="solid"
+                     onClick={e => e.stopPropagation() || removeImage()}
+                  >
+                     <DeleteIcon size="20" />
+                  </IconButton>
+               </DeleteDiv>
+            </WrapperDiv>
+         ) : (
+            <ButtonTile
+               type="primary"
+               size="sm"
+               text="Add a Photo"
+               onClick={() => openTunnel(1)}
+               style={{ margin: '16px' }}
+            />
+         )}
+      </>
+   )
+}
+
+export default SingleImage
