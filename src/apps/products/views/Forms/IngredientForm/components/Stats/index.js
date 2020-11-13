@@ -15,13 +15,14 @@ import { ImageContainer } from './styled'
 import { UPDATE_INGREDIENT } from '../../../../../graphql'
 import { PhotoTunnel } from '../../tunnels'
 import { logger } from '../../../../../../../shared/utils'
+import { Gallery } from '../../../../../../../shared/components'
 
 const Stats = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
       onCompleted: () => {
-         toast.success('Image removed!')
+         toast.success('Image updated!')
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -29,13 +30,15 @@ const Stats = ({ state }) => {
       },
    })
 
-   // Handlers
-   const removeImage = () => {
+   const addImage = images => {
       updateIngredient({
          variables: {
             id: state.id,
             set: {
-               image: '',
+               assets: {
+                  images: images,
+                  videos: [],
+               },
             },
          },
       })
@@ -63,7 +66,7 @@ const Stats = ({ state }) => {
                </Flex>
             </Flex>
             <Spacer xAxis size="32px" />
-            {state.image ? (
+            {/* {state.image ? (
                <ImageContainer>
                   <div>
                      <span
@@ -95,7 +98,27 @@ const Stats = ({ state }) => {
                      onClick={() => openTunnel(1)}
                   />
                </Flex>
-            )}
+            )} */}
+            <Flex width="400px">
+               {state?.assets?.images != null &&
+               state?.assets?.images?.length ? (
+                  <Gallery
+                     list={state.assets.images}
+                     isMulti={false}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               ) : (
+                  <Gallery
+                     list={[]}
+                     isMulti={false}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               )}
+            </Flex>
          </Flex>
       </>
    )

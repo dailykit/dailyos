@@ -53,6 +53,7 @@ export const S_INGREDIENT = gql`
          name
          category
          image
+         assets
          isValid
          isPublished
          ingredientProcessings(
@@ -165,6 +166,7 @@ export const S_RECIPE = gql`
          id
          name
          image
+         assets
          isValid
          isPublished
          author
