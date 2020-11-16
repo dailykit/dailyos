@@ -7,6 +7,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import { EditIcon } from '../../../../../shared/assets/icons'
 import { Ranger } from '../../../../../shared/components/Ranger'
 import { DataCard } from '../../../components'
@@ -14,9 +15,35 @@ import { ShadowCard } from '../styled'
 import PackagingInformation from './PackagingInformation'
 import { ImageContainer } from './styled'
 import { PhotoTunnel } from './Tunnels'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { UPDATE_PACKAGING } from '../../../graphql'
+import { Gallery } from '../../../../../shared/components'
 
 export default function PackagingStats({ state }) {
    const [photoTunnel, openPhotoTunnel, closePhotoTunnel] = useTunnel(1)
+   const [updatePackaging, { loading }] = useMutation(UPDATE_PACKAGING, {
+      onCompleted: () => {
+         toast.info('Packaging Image added !')
+      },
+      onError: error => {
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
+      },
+   })
+   const addImage = images => {
+      updatePackaging({
+         variables: {
+            id: state.id,
+            object: {
+               assets: {
+                  images: images,
+               },
+            },
+         },
+      })
+   }
 
    return (
       <>
@@ -27,28 +54,21 @@ export default function PackagingStats({ state }) {
          </Tunnels>
          <Flex container>
             <Flex flex={2}>
-               {state.images && state.images.length ? (
-                  <ImageContainer>
-                     <div>
-                        <span
-                           role="button"
-                           tabIndex="0"
-                           onClick={() => openPhotoTunnel(1)}
-                           onKeyDown={e =>
-                              e.charCode === 13 && openPhotoTunnel(1)
-                           }
-                        >
-                           <EditIcon />
-                        </span>
-                     </div>
-                     <img src={state.images[0].url} alt="processing" />
-                  </ImageContainer>
+               {state?.images != null && state?.images?.length ? (
+                  <Gallery
+                     list={state?.images || []}
+                     isMulti={true}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
                ) : (
-                  <ButtonTile
-                     type="primary"
-                     size="lg"
-                     text="Add Packaging Image"
-                     onClick={() => openPhotoTunnel(1)}
+                  <Gallery
+                     list={[]}
+                     isMulti={true}
+                     onChange={images => {
+                        addImage(images)
+                     }}
                   />
                )}
             </Flex>
