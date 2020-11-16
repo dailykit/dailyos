@@ -10,7 +10,7 @@ const Asset = ({ onImageSave, closeTunnel }) => {
    return (
       <>
          <TunnelHeader title="Select Photo" close={() => closeTunnel(2)} />
-         <Flex padding="0 14px">
+         <Flex padding="0 16px">
             <AssetUploader
                onAssetUpload={url => addImage(url)}
                onImageSelect={image => addImage(image)}

@@ -5,9 +5,10 @@ import AssetTunnel from './upload'
 import useGallery from './useGallery'
 import PreviewImage from './PreviewImage'
 import SingleImage from './SingleImage'
-import { StyledWrap, MainWrap, ImgWrapper, Trail } from './styled'
+import { MainWrap, ImgWrapper, Trail } from './styled'
+import ErrorBoundary from '../ErrorBoundary'
 
-export default function ImageGallery({ list, isMulti, onChange }) {
+export default function ImageGallery({ list = [], isMulti = false, onChange }) {
    const {
       current,
       setActive,
@@ -42,7 +43,7 @@ export default function ImageGallery({ list, isMulti, onChange }) {
 
    useEffect(() => {
       if (Array.isArray(list) && list.length > 1 && !isMulti) {
-         toast.error("List contain multiple images, Set isMulti 'true' instead")
+         console.log("List contain multiple images, Set isMulti 'true' instead")
       }
    }, [list, images, isMulti])
 
@@ -82,15 +83,16 @@ export default function ImageGallery({ list, isMulti, onChange }) {
                editImage={(index, editMode) => editHandler(index, editMode)}
             />
          )}
-
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <AssetTunnel
-                  onImageSave={image => tunnelImageSave(image)}
-                  closeTunnel={() => closeTunnel(1)}
-               />
-            </Tunnel>
-         </Tunnels>
+         <ErrorBoundary rootRoute="/">
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1}>
+                  <AssetTunnel
+                     onImageSave={image => tunnelImageSave(image)}
+                     closeTunnel={() => closeTunnel(1)}
+                  />
+               </Tunnel>
+            </Tunnels>
+         </ErrorBoundary>
       </div>
    )
 }
