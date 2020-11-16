@@ -7,13 +7,14 @@ import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 import { PhotoTunnel } from '../../tunnels'
 import { ImageContainer, PhotoTileWrapper } from './styled'
+import { Gallery } from '../../../../../../../shared/components'
 
 const Photo = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
-         toast.success('Image removed!')
+         toast.success('Image updated!')
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -21,13 +22,15 @@ const Photo = ({ state }) => {
       },
    })
 
-   // Handler
-   const removeImage = () => {
+   const addImage = images => {
       updateRecipe({
          variables: {
             id: state.id,
             set: {
-               image: '',
+               assets: {
+                  images: images,
+                  videos: [],
+               },
             },
          },
       })
@@ -35,45 +38,23 @@ const Photo = ({ state }) => {
 
    return (
       <>
-         {/* Tunnels */}
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
-               <PhotoTunnel state={state} closeTunnel={closeTunnel} />
-            </Tunnel>
-         </Tunnels>
-         <Flex>
-            {state.image ? (
-               <ImageContainer>
-                  <div>
-                     <span
-                        tabIndex="0"
-                        role="button"
-                        onKeyDown={e => e.charCode === 13 && openTunnel(1)}
-                        onClick={() => openTunnel(1)}
-                     >
-                        <EditIcon />
-                     </span>
-                     <span
-                        tabIndex="0"
-                        role="button"
-                        onKeyDown={e => e.charCode === 13 && removeImage()}
-                        onClick={removeImage}
-                     >
-                        <DeleteIcon />
-                     </span>
-                  </div>
-                  <img src={state.image} alt="Recipe" />
-               </ImageContainer>
+         <Flex width="400px">
+            {state?.assets?.images != null && state?.assets?.images?.length ? (
+               <Gallery
+                  list={state.assets.images}
+                  isMulti={true}
+                  onChange={images => {
+                     addImage(images)
+                  }}
+               />
             ) : (
-               <PhotoTileWrapper>
-                  <ButtonTile
-                     type="primary"
-                     size="sm"
-                     text="Add Photo to your Recipe"
-                     helper="upto 1MB - only JPG & PNG allowed"
-                     onClick={() => openTunnel(1)}
-                  />
-               </PhotoTileWrapper>
+               <Gallery
+                  list={[]}
+                  isMulti={true}
+                  onChange={images => {
+                     addImage(images)
+                  }}
+               />
             )}
          </Flex>
       </>

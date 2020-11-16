@@ -8,8 +8,6 @@ export default function useCarousel(list) {
    useEffect(() => {
       if (Array.isArray(list)) {
          setImages(list)
-      } else {
-         return
       }
    }, [list])
 
