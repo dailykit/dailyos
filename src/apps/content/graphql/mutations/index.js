@@ -9,22 +9,8 @@ export const ADD_INFO_GRID = gql`
    }
 `
 export const UPDATE_INFO_GRID = gql`
-   mutation MyMutation(
-      $id: Int!
-      $heading: String!
-      $subHeading: String!
-      $page: String!
-      $identifier: String!
-   ) {
-      update_content_informationGrid(
-         where: { id: { _eq: $id } }
-         _set: {
-            heading: $heading
-            subHeading: $subHeading
-            page: $page
-            identifier: $identifier
-         }
-      ) {
+   mutation MyMutation($id: Int!, $set: content_informationGrid_set_input!) {
+      update_content_informationGrid(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             heading
             subHeading
@@ -36,22 +22,8 @@ export const UPDATE_INFO_GRID = gql`
 `
 
 export const UPDATE_INFO_FAQ = gql`
-   mutation MyMutation(
-      $id: Int!
-      $heading: String!
-      $subHeading: String!
-      $page: String!
-      $identifier: String!
-   ) {
-      update_content_faqs(
-         where: { id: { _eq: $id } }
-         _set: {
-            heading: $heading
-            subHeading: $subHeading
-            page: $page
-            identifier: $identifier
-         }
-      ) {
+   mutation MyMutation($id: Int!, $set: content_faqs_set_input!) {
+      update_content_faqs(where: { id: { _eq: $id } }, _set: $set) {
          returning {
             heading
             subHeading

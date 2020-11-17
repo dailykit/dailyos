@@ -68,7 +68,7 @@ export const InformationGrid = () => {
          headerFilter: true,
          cellClick: (e, cell) => {
             const { id } = cell._cell.row.data
-            addTab('Grid Info', `/content/blocks/grid/${id}`)
+            addTab('Grid Info', `/content/blocks/grid-form/${id}`)
          },
          headerTooltip: function (column) {
             const identifier = 'grid_listing_heading_column'

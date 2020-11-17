@@ -63,7 +63,7 @@ export const FAQs = () => {
          headerFilter: true,
          cellClick: (e, cell) => {
             const { id } = cell._cell.row.data
-            addTab('FAQ Info', `/content/blocks/faq/${id}`)
+            addTab('FAQ Info', `/content/blocks/faq-form/${id}`)
          },
          headerTooltip: function (column) {
             const identifier = 'faq_listing_heading_column'

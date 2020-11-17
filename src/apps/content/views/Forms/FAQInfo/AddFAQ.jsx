@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Form, Spacer, TextButton, Text } from '@dailykit/ui'
-import { Flex, Tooltip } from '../../../../shared/components'
-import { INSERT_INFO_GRID } from '../../graphql'
-import validator from '../validator'
+import { Flex, Tooltip, InlineLoader } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import { UPDATE_INFO_FAQ, FAQ_ONE } from '../../../graphql'
+import validator from '../../validator'
+import { useParams } from 'react-router-dom'
 
-export const AddInfoGrid = () => {
+export const AddFAQ = () => {
+   const { id } = useParams()
    const [form, setForm] = useState({
       heading: {
          value: '',
@@ -42,6 +45,60 @@ export const AddInfoGrid = () => {
       },
    })
 
+   const { loading: faqLoading, error } = useSubscription(FAQ_ONE, {
+      variables: { id },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         if (data?.content_faqs.length > 0) {
+            setForm({
+               ...form,
+               heading: {
+                  value: data.content_faqs[0].heading,
+                  meta: {
+                     isValid: data?.content_faqs[0]?.heading ? true : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               subHeading: {
+                  value: data.content_faqs[0].subHeading,
+                  meta: {
+                     isValid: data?.content_faqs[0]?.subHeading ? true : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               page: {
+                  value: data.content_faqs[0].page,
+                  meta: {
+                     isValid: data?.content_faqs[0]?.page ? true : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               identifier: {
+                  value: data.content_faqs[0].identifier,
+                  meta: {
+                     isValid: data?.content_faqs[0]?.identifier ? true : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+            })
+         }
+      },
+   })
+
+   const [update_content_faqs, { loading: updateLoading }] = useMutation(
+      UPDATE_INFO_FAQ,
+      {
+         onCompleted: () => toast.success('Successfully updated!'),
+         onError: error => {
+            toast.error('Failed to update!')
+            logger(error)
+         },
+      }
+   )
+
    const onBlur = e => {
       const { name, value } = e.target
       console.log(value)
@@ -72,24 +129,17 @@ export const AddInfoGrid = () => {
       }
    }
 
-   const [insert_content_informationGrid_one, { loading }] = useMutation(
-      INSERT_INFO_GRID,
-      {
-         onCompleted: () => toast.success('Created succesfully!'),
-         onError: () => toast.error('Failed to create!'),
-      }
-   )
-
    const onSave = () => {
       if (
-         form.heading.meta.isTouched &&
-         form.subHeading.meta.isTouched &&
-         form.page.meta.isTouched &&
-         form.identifier.meta.isTouched
+         form.heading.meta.isValid &&
+         form.subHeading.meta.isValid &&
+         form.page.meta.isValid &&
+         form.identifier.meta.isValid
       ) {
-         insert_content_informationGrid_one({
+         update_content_faqs({
             variables: {
-               object: {
+               id,
+               set: {
                   heading: form.heading.value,
                   subHeading: form.subHeading.value,
                   page: form.page.value,
@@ -98,7 +148,7 @@ export const AddInfoGrid = () => {
             },
          })
       } else {
-         return toast.error('Please provide proper inputs!')
+         return toast.error('Please provide proper inputs!!!')
       }
    }
 
@@ -113,6 +163,12 @@ export const AddInfoGrid = () => {
       { id: 2, title: 'bottom-01' },
    ]
 
+   if (faqLoading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Something went wrong')
+   }
+
    return (
       <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
          <Flex
@@ -122,17 +178,13 @@ export const AddInfoGrid = () => {
             height="72px"
          >
             <Flex container alignItems="center">
-               <Text as="h2">Add New Information Grid</Text>
-               <Tooltip identifier="recipes_list_heading" />
+               <Text as="h2">Add New FAQ</Text>
+               <Tooltip identifier="faq_form_heading" />
             </Flex>
-         </Flex>
-         <Spacer size="64x" />
-         <div align="right">
             <TextButton type="solid" onClick={onSave}>
-               {loading ? 'Saving...' : 'Save'}
+               {updateLoading ? 'Saving...' : 'Save'}
             </TextButton>
-         </div>
-         <Spacer size="20px" />
+         </Flex>
          <Form.Group>
             <Form.Label htmlFor="heading" title="heading">
                Heading*

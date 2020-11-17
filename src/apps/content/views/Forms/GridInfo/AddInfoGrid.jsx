@@ -1,12 +1,76 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Form, Spacer, TextButton, Text } from '@dailykit/ui'
-import { Flex, Tooltip } from '../../../../shared/components'
-import { INSERT_INFO_FAQ } from '../../graphql'
-import validator from '../validator'
+import { Flex, Tooltip, InlineLoader } from '../../../../../shared/components'
+import { UPDATE_INFO_GRID, INFO_GRID_ONE } from '../../../graphql'
+import validator from '../../validator'
+import { logger } from '../../../../../shared/utils'
+import { useParams } from 'react-router-dom'
 
-export const AddFAQ = () => {
+export const AddInfoGrid = () => {
+   const { id } = useParams()
+   const { loading: gridLoading, error } = useSubscription(INFO_GRID_ONE, {
+      variables: { id },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         if (data?.content_informationGrid.length > 0) {
+            setForm({
+               heading: {
+                  value: data.content_informationGrid[0].heading,
+                  meta: {
+                     isValid: data?.content_informationGrid[0]?.heading
+                        ? true
+                        : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               subHeading: {
+                  value: data.content_informationGrid[0].subHeading,
+                  meta: {
+                     isValid: data?.content_informationGrid[0]?.subHeading
+                        ? true
+                        : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               page: {
+                  value: data.content_informationGrid[0].page,
+                  meta: {
+                     isValid: data?.content_informationGrid[0]?.page
+                        ? true
+                        : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               identifier: {
+                  value: data.content_informationGrid[0].identifier,
+                  meta: {
+                     isValid: data?.content_informationGrid[0]?.identifier
+                        ? true
+                        : false,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+            })
+         }
+      },
+   })
+
+   const [
+      update_content_informationGrid,
+      { loading: updateLoading },
+   ] = useMutation(UPDATE_INFO_GRID, {
+      onCompleted: () => toast.success('Successfully updated!'),
+      onError: error => {
+         toast.error('Failed to update!')
+         logger(error)
+      },
+   })
+
    const [form, setForm] = useState({
       heading: {
          value: '',
@@ -72,21 +136,17 @@ export const AddFAQ = () => {
       }
    }
 
-   const [insert_content_faqs_one, { loading }] = useMutation(INSERT_INFO_FAQ, {
-      onCompleted: () => toast.success('Created succesfully!'),
-      onError: () => toast.error('Failed to create!'),
-   })
-
    const onSave = () => {
       if (
-         form.heading.meta.isTouched &&
-         form.subHeading.meta.isTouched &&
-         form.page.meta.isTouched &&
-         form.identifier.meta.isTouched
+         form.heading.meta.isValid &&
+         form.subHeading.meta.isValid &&
+         form.page.meta.isValid &&
+         form.identifier.meta.isValid
       ) {
-         insert_content_faqs_one({
+         update_content_informationGrid({
             variables: {
-               object: {
+               id,
+               set: {
                   heading: form.heading.value,
                   subHeading: form.subHeading.value,
                   page: form.page.value,
@@ -110,6 +170,12 @@ export const AddFAQ = () => {
       { id: 2, title: 'bottom-01' },
    ]
 
+   if (gridLoading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Something went wrong')
+   }
+
    return (
       <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
          <Flex
@@ -119,13 +185,17 @@ export const AddFAQ = () => {
             height="72px"
          >
             <Flex container alignItems="center">
-               <Text as="h2">Add New FAQ</Text>
-               <Tooltip identifier="faq_form_heading" />
+               <Text as="h2">Add New Information Grid</Text>
+               <Tooltip identifier="recipes_list_heading" />
             </Flex>
-            <TextButton type="solid" onClick={onSave}>
-               {loading ? 'Saving...' : 'Save'}
-            </TextButton>
          </Flex>
+         <Spacer size="64x" />
+         <div align="right">
+            <TextButton type="solid" onClick={onSave}>
+               {updateLoading ? 'Saving...' : 'Save'}
+            </TextButton>
+         </div>
+         <Spacer size="20px" />
          <Form.Group>
             <Form.Label htmlFor="heading" title="heading">
                Heading*

@@ -2,9 +2,8 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Blocks} from '../../views'
-import {InformationGrid,FAQS, AddInfoGrid, AddFAQ} from '../../views/Forms/'
-
+import { Home, Blocks } from '../../views'
+import { AddInfoGrid, AddFAQ } from '../../views/Forms/'
 
 export default function Main() {
    return (
@@ -16,17 +15,11 @@ export default function Main() {
             <Route path="/content/blocks" exact>
                <Blocks />
             </Route>
-            <Route path="/content/blocks/faq/:id">
-               <FAQS />
+            <Route exact path="/content/blocks/grid-form/:id">
+               <AddInfoGrid />
             </Route>
-            <Route path="/content/blocks/grid/:id">
-               <InformationGrid/>
-            </Route>
-            <Route path="/content/blocks/grid-form/:id" >
-               <AddInfoGrid/>
-            </Route>
-            <Route path="/content/blocks/faq-form/:id" >
-               <AddFAQ/>
+            <Route exact path="/content/blocks/faq-form/:id">
+               <AddFAQ />
             </Route>
          </Switch>
       </main>
