@@ -31,7 +31,7 @@ const SingleImage = ({ imageUrl, openTunnel, removeImage, editImage }) => {
                   <IconButton
                      size="sm"
                      type="solid"
-                     onClick={e => e.stopPropagation() || removeImage()}
+                     onClick={e => e.stopPropagation() || removeImage(0)}
                   >
                      <DeleteIcon size="20" />
                   </IconButton>

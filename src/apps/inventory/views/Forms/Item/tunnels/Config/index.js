@@ -21,6 +21,7 @@ import {
    InlineLoader,
    NutritionTunnel,
    Tooltip,
+   Gallery,
 } from '../../../../../../../shared/components'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import { logger } from '../../../../../../../shared/utils'
@@ -185,6 +186,17 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
       })
    }
 
+   const addImage = images => {
+      udpateBulkItem({
+         variables: {
+            id: bulkItem.id,
+            object: {
+               image: images,
+            },
+         },
+      })
+   }
+
    return (
       <>
          <Tunnels tunnels={allergensTunnel}>
@@ -334,35 +346,25 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
             </StyledRow>
             {bulkItem?.id && (
                <StyledRow>
-                  {bulkItem?.image ? (
-                     <ImageContainer>
-                        <div>
-                           <span
-                              role="button"
-                              tabIndex="0"
-                              onClick={() => openPhotoTunnel(1)}
-                              onKeyDown={e =>
-                                 e.charCode === 13 && openPhotoTunnel(1)
-                              }
-                           >
-                              <EditIcon />
-                           </span>
-                        </div>
-                        <img src={bulkItem.image} alt="processing" />
-                     </ImageContainer>
-                  ) : (
-                     <ButtonTile
-                        type="primary"
-                        size="sm"
-                        text={t(address.concat('add photo to your processing'))}
-                        helper={t(
-                           address.concat(
-                              'upto 1MB - only JPG, PNG, PDF allowed'
-                           )
-                        )}
-                        onClick={() => openPhotoTunnel(1)}
-                     />
-                  )}
+                  <Flex width="400px">
+                     {bulkItem?.image != null && bulkItem?.image?.length ? (
+                        <Gallery
+                           list={bulkItem?.image || []}
+                           isMulti={true}
+                           onChange={images => {
+                              addImage(images)
+                           }}
+                        />
+                     ) : (
+                        <Gallery
+                           list={[]}
+                           isMulti={true}
+                           onChange={images => {
+                              addImage(images)
+                           }}
+                        />
+                     )}
+                  </Flex>
                </StyledRow>
             )}
             <StyledRow>

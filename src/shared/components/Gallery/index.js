@@ -79,7 +79,7 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
             <SingleImage
                imageUrl={list[0]}
                openTunnel={openTunnel}
-               removeImage={() => removeImage(0)}
+               removeImage={index => remove(index)}
                editImage={(index, editMode) => editHandler(index, editMode)}
             />
          )}
