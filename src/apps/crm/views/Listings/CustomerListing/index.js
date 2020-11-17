@@ -258,6 +258,7 @@ const CustomerListing = () => {
             )
          },
          width: 150,
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
       },
       {
          title: 'Action',
