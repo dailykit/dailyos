@@ -2,7 +2,7 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import { isEmpty, groupBy } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { Toggle, TunnelHeader } from '@dailykit/ui'
+import { Filler, Form, TunnelHeader, Flex } from '@dailykit/ui'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
 import {
@@ -11,14 +11,20 @@ import {
    StyledPermissionItem,
 } from './styled'
 import { ROLES } from '../../../../graphql'
+import { logger } from '../../../../../../shared/utils'
 import { Spacer } from '../../../../../../shared/styled'
-import { InlineLoader, Flex } from '../../../../../../shared/components'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../shared/components'
 
 export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
    const params = useParams()
    const [isLoading, setIsLoading] = React.useState(true)
    const [permissions, setPermissions] = React.useState({})
    const {
+      error,
       loading,
       data: { permissions: permissionsList = [] } = {},
    } = useSubscription(ROLES.PERMISSIONS, {
@@ -33,20 +39,27 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
    })
 
    React.useEffect(() => {
-      if (!loading && !isEmpty(permissionsList)) {
-         const transform = node => ({
-            id: node.id,
-            route: node.route,
-            title: node.title,
-            assigned: isEmpty(node.roleAppPermissions) ? false : true,
-            ...(!isEmpty(node.roleAppPermissions) && {
-               value: node.roleAppPermissions[0].value,
-            }),
-         })
-         setPermissions(formatData(permissionsList.map(transform)))
+      if (!loading) {
+         if (!isEmpty(permissionsList)) {
+            const transform = node => ({
+               id: node.id,
+               route: node.route,
+               title: node.title,
+               assigned: isEmpty(node.roleAppPermissions) ? false : true,
+               ...(!isEmpty(node.roleAppPermissions) && {
+                  value: node.roleAppPermissions[0].value,
+               }),
+            })
+            setPermissions(formatData(permissionsList.map(transform)))
+         }
          setIsLoading(false)
       }
    }, [loading, permissionsList])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch permissions')
+      logger(error)
+   }
 
    const [fetchRoleApp, { data: { role_app = {} } = {} }] = useLazyQuery(
       ROLES.ROLE_APP
@@ -69,34 +82,35 @@ export const PermissionsTunnel = ({ closeTunnel, app, setApp }) => {
    }
    return (
       <>
-         <TunnelHeader title="Manage Permissions" close={() => close()} />
+         <TunnelHeader
+            close={() => close()}
+            title="Manage Permissions"
+            tooltip={
+               <Tooltip identifier="form_role_tunnel_permissions_heading" />
+            }
+         />
          <Flex
             overflowY="auto"
             padding="0 24px 24px 24px"
             height="calc(100vh - 104px)"
          >
             <PermissionSection>
-               {isLoading ? (
-                  <InlineLoader />
-               ) : (
-                  <>
-                     {isEmpty(permissions) ? (
-                        <span className="is_empty">
-                           No permissions available
-                        </span>
-                     ) : (
-                        <ul>
-                           {Object.keys(permissions).map(key => (
-                              <SectionItem
-                                 key={key}
-                                 title={key}
-                                 role_app={role_app}
-                                 permissions={permissions}
-                              />
-                           ))}
-                        </ul>
-                     )}
-                  </>
+               {isLoading && <InlineLoader />}
+               {!isLoading && isEmpty(permissions) && (
+                  <Filler message="No permissions available!" />
+               )}
+               {!isLoading && error && <ErrorState />}
+               {!isLoading && !isEmpty(permissions) && (
+                  <ul>
+                     {Object.keys(permissions).map(key => (
+                        <SectionItem
+                           key={key}
+                           title={key}
+                           role_app={role_app}
+                           permissions={permissions}
+                        />
+                     ))}
+                  </ul>
                )}
             </PermissionSection>
             <Spacer size="24px" />
@@ -162,8 +176,10 @@ const PermissionItem = ({ permission, role_app }) => {
       onCompleted: () => {
          toast.success('Successfully updated permission!')
       },
-      onError: () => {
+      onError: error => {
+         console.log('PermissionItem -> error', error)
          toast.error('Failed to update permission!')
+         logger(error)
       },
    })
    const [insertPermission] = useMutation(ROLES.INSERT_PERMISSION, {
@@ -171,7 +187,8 @@ const PermissionItem = ({ permission, role_app }) => {
          toast.success('Successfully assigned permission!')
       },
       onError: error => {
-         console.log(error.message)
+         toast.error('Failed to assign permission')
+         logger(error)
       },
    })
    const [checked, setChecked] = React.useState(
@@ -209,13 +226,15 @@ const PermissionItem = ({ permission, role_app }) => {
 
    return (
       <StyledPermissionItem>
-         <Toggle
-            checked={checked}
-            setChecked={setChecked}
-            label={capitalize(
+         <Form.Toggle
+            value={checked}
+            name={'' + permission.id}
+            onChange={() => setChecked(!checked)}
+         >
+            {capitalize(
                capitalize(permission.title.split('_').join(' '), true)
             )}
-         />
+         </Form.Toggle>
       </StyledPermissionItem>
    )
 }

@@ -2,13 +2,13 @@ import React from 'react'
 
 import { ListItem } from './styled'
 import { useOrder } from '../../context'
+import { currencyFmt } from '../../../../shared/utils'
 
 export const MetricItem = ({
    title,
    count = 0,
    variant,
    amount = 0,
-   currency,
    average = 0,
 }) => {
    const { state, dispatch } = useOrder()
@@ -52,15 +52,13 @@ export const MetricItem = ({
          <header>
             <h2>{title}</h2>
             <span title="Average">
-               {currency === 'usd' && '$'}
-               {average?.toFixed(2) || 0}
+               {currencyFmt(Number(average?.toFixed(2)) || 0)}
             </span>
          </header>
          <main>
             <span>{count}</span>
             <span title="Total">
-               {currency === 'usd' && '$'}
-               {amount?.toFixed(2) || 0}
+               {currencyFmt(Number(amount?.toFixed(2)) || 0)}
             </span>
          </main>
       </ListItem>

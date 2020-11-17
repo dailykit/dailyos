@@ -3,13 +3,21 @@ import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { IconButton, CloseIcon } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import {
+   Flex,
+   Text,
+   Spacer,
+   IconButton,
+   CloseIcon,
+   TextButton,
+} from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
 import { UserIcon } from '../../../assets/icons'
+import { UPDATE_MEALKIT } from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
 import ProductDetails from './MealKitProductDetails'
-import { Flex } from '../../../../../shared/components'
-import { StyledButton, StyledLabelPreview } from './styled'
 import {
    Legend,
    OrderItem,
@@ -25,6 +33,15 @@ export const MealKits = ({ mealkits }) => {
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
+   const [update] = useMutation(UPDATE_MEALKIT, {
+      onCompleted: () => {
+         toast.success('Successfully updated the product!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to update the product!')
+      },
+   })
 
    React.useEffect(() => {
       if (mealkits.length > 0) {
@@ -128,26 +145,70 @@ export const MealKits = ({ mealkits }) => {
                </OrderItem>
             ))}
          </OrderItems>
-         <Flex>
-            <StyledButton type="button" onClick={() => print()}>
+         <Flex container alignItems="center">
+            <TextButton size="sm" type="solid" onClick={print}>
                Print label
-            </StyledButton>
+            </TextButton>
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.assemblyStatus === 'COMPLETED'}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Packed
+            </TextButton>
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.isAssembled}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           isAssembled: true,
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Assembled
+            </TextButton>
+         </Flex>
+         <Spacer size="8px" />
+         <Flex>
             {label && (
-               <StyledLabelPreview>
-                  <header>
-                     <h3>Label Preview</h3>
-                     <IconButton type="ghost" onClick={() => setLabel('')}>
-                        <CloseIcon />
+               <>
+                  <Flex
+                     container
+                     as="header"
+                     width="300px"
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Text as="h3">Label Preview</Text>
+                     <IconButton
+                        size="sm"
+                        type="ghost"
+                        onClick={() => setLabel('')}
+                     >
+                        <CloseIcon size={22} />
                      </IconButton>
-                  </header>
-                  <div>
-                     <iframe
-                        src={label}
-                        frameBorder="0"
-                        title="label preview"
-                     />
-                  </div>
-               </StyledLabelPreview>
+                  </Flex>
+                  <Spacer size="8px" />
+                  <iframe src={label} frameBorder="0" title="label preview" />
+               </>
             )}
          </Flex>
          <Legend>

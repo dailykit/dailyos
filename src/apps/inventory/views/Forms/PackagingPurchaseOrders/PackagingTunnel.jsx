@@ -1,25 +1,34 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { TunnelContainer } from '../../../components'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils/errorLog'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { NO_PACKAGINGS } from '../../../constants/infoMessages'
 import {
    PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
+import { TunnelWrapper } from '../utils/TunnelWrapper'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function AddressTunnel({ close }) {
@@ -29,13 +38,15 @@ export default function AddressTunnel({ close }) {
 
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION, {
-      onSubscriptionData: input => {
-         const data = input.subscriptionData.data.packagings
-         setData(data)
-      },
-      onError,
-   })
+   const { loading, error } = useSubscription(
+      PURCHASE_ORDERS_PACKAGING_SUBSCRIPTION,
+      {
+         onSubscriptionData: input => {
+            const data = input.subscriptionData.data.packagings
+            setData(data)
+         },
+      }
+   )
 
    const [updatePurchaseOrderItem] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
       onError,
@@ -45,53 +56,60 @@ export default function AddressTunnel({ close }) {
       },
    })
 
-   const handleNext = () => {
+   const handleSave = option => {
       updatePurchaseOrderItem({
          variables: {
             id,
-            set: { packagingId: current.id, supplierId: current.supplier?.id },
+            set: { packagingId: option.id, supplierId: option.supplier?.id },
          },
       })
    }
 
-   if (loading) return <Loader />
+   if (error) {
+      onError(error)
+      return <ErrorState />
+   }
+
+   if (loading) return <InlineLoader />
 
    return (
       <>
          <TunnelHeader
             title="Select Packaging"
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="select a packaging to use in this purchase order"
+            tooltip={
+               <Tooltip identifier="packaging_purchase_orders-select-packaging-tunnel" />
+            }
          />
-         <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.name} />
-               ) : (
+         <TunnelWrapper>
+            {list.length ? (
+               <List>
                   <ListSearch
                      onChange={value => setSearch(value)}
                      placeholder="type what you’re looking for..."
                   />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.name.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.name}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
-            <br />
-            <br />
-         </TunnelContainer>
+                  <ListHeader type="SSL1" label="packaging" />
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.name.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.name}
+                              isActive={option.id === current.id}
+                              onClick={() => handleSave(option)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_PACKAGINGS} />
+            )}
+         </TunnelWrapper>
       </>
    )
 }

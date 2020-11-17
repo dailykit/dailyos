@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-import { Text, Input, Loader, TunnelHeader } from '@dailykit/ui'
 import { useMutation } from '@apollo/react-hooks'
+import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-
+import { logger } from '../../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING_SPECS } from '../../../../../graphql'
-
-import { TunnelContainer } from '../../../../../components'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 function errorHandler(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function PackagingTypeTunnel({ close, state }) {
@@ -34,29 +34,32 @@ export default function PackagingTypeTunnel({ close, state }) {
       })
    }
 
-   if (loading) return <Loader />
-
    return (
       <>
          <TunnelHeader
-            title="Configure Packaging Material"
+            title="Packaging Material"
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="Configure packaging material"
+            right={{ title: 'Save', action: handleNext, isLoading: loading }}
          />
-         <TunnelContainer>
-            <Text as="title">Enter Packaging type</Text>
-            <br />
-
-            <div style={{ width: '40%' }}>
-               <Input
-                  type="text"
-                  name="packaging material"
-                  label="Enter Packaging Material"
-                  value={packagingType}
-                  onChange={e => setPackagingType(e.target.value)}
-               />
-            </div>
-         </TunnelContainer>
+         <Spacer size="16px" />
+         <TunnelWrapper>
+            <Form.Group>
+               <Form.Label
+                  htmlFor="packagingMaterial"
+                  title="packagingMaterial"
+               >
+                  Enter Packaging Material
+               </Form.Label>
+            </Form.Group>
+            <Form.Text
+               id="packagingMaterial"
+               name="packagingMaterial"
+               placeholder="Enter Packaging Material"
+               value={packagingType}
+               onChange={e => setPackagingType(e.target.value)}
+            />
+         </TunnelWrapper>
       </>
    )
 }

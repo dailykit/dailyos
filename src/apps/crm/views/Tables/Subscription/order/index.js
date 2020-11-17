@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import { Text, Avatar, useTunnel, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
@@ -31,19 +31,25 @@ import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { useTooltip } from '../../../../../../shared/providers'
 import { logger } from '../../../../../../shared/utils'
 import options from '../../../tableOptions'
+import BrandContext from '../../../../context/Brand'
 
 const OrderInfo = () => {
+   const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { data: orderData, loading } = useQuery(ORDER, {
+   const {
+      data: { brand: { brand_Orders = [] } = {} } = {},
+      loading,
+   } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
+         brandId: context.brandId,
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong subscriptionOrder')
          logger(error)
       },
    })
@@ -122,20 +128,25 @@ const OrderInfo = () => {
    ]
 
    const data = []
-   if (orderData && orderData.order.orderCart !== null) {
-      orderData.order.orderCart.cartInfo.products.map(product => {
-         return data.push({
-            products: product?.name || 'N/A',
-            servings: product?.quantity || 'N/A',
-            discount: product.discount || 'N/A',
-            discountedPrice: product?.totalPrice || 'N/A',
-         })
-      })
+   if (
+      brand_Orders[0].orderData &&
+      brand_Orders[0].orderData.order.orderCart !== null
+   ) {
+      brand_Orders[0].orderData.order.orderCart.cartInfo.products.map(
+         product => {
+            return data.push({
+               products: product?.name || 'N/A',
+               servings: product?.quantity || 'N/A',
+               discount: product.discount || 'N/A',
+               discountedPrice: product?.totalPrice || 'N/A',
+            })
+         }
+      )
    }
 
    let deliveryPartner = null
    let deliveryAgent = null
-   if (orderData?.order?.deliveryService !== null) {
+   if (brand_Orders[0].orderData?.order?.deliveryService !== null) {
       deliveryPartner = (
          <>
             <Text as="subtitle">Delivery Partner: </Text>
@@ -144,15 +155,19 @@ const OrderInfo = () => {
                   withName
                   type="round"
                   title={
-                     orderData?.order?.deliveryService?.companyName || 'N/A'
+                     brand_Orders[0].orderData?.order?.deliveryService
+                        ?.companyName || 'N/A'
                   }
-                  url={orderData?.order?.deliveryService?.logo || ''}
+                  url={
+                     brand_Orders[0].orderData?.order?.deliveryService?.logo ||
+                     ''
+                  }
                />
             </Card>
          </>
       )
    }
-   if (orderData?.order?.driverInfo !== null) {
+   if (brand_Orders[0].orderData?.order?.driverInfo !== null) {
       deliveryAgent = (
          <>
             <Text as="subtitle">Delivery Assign To:</Text>
@@ -161,14 +176,23 @@ const OrderInfo = () => {
                   withName
                   type="round"
                   title={`${
-                     orderData?.order?.driverInfo?.driverFirstName || ''
-                  } ${orderData?.order?.driverInfo?.driverLastName || 'N/A'}`}
-                  url={orderData?.order?.driverInfo?.driverPicture || ''}
+                     brand_Orders[0].orderData?.order?.driverInfo
+                        ?.driverFirstName || ''
+                  } ${
+                     brand_Orders[0].orderData?.order?.driverInfo
+                        ?.driverLastName || 'N/A'
+                  }`}
+                  url={
+                     brand_Orders[0].orderData?.order?.driverInfo
+                        ?.driverPicture || ''
+                  }
                />
                <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
                   <Text as="p">Total Paid:</Text>
                   <Text as="p">
-                     ${orderData?.order?.deliveryFee?.value || 'N/A'}
+                     $
+                     {brand_Orders[0].orderData?.order?.deliveryFee?.value ||
+                        'N/A'}
                   </Text>
                </CardInfo>
             </Card>
@@ -212,13 +236,17 @@ const OrderInfo = () => {
                <StyledDiv>
                   <StyledSpan>
                      Ordered on:{' '}
-                     {orderData?.order?.created_at.substr(0, 16) || 'N/A'}
+                     {brand_Orders[0].orderData?.order?.created_at.substr(
+                        0,
+                        16
+                     ) || 'N/A'}
                   </StyledSpan>
                   <StyledSpan>Deliverd on: N/A</StyledSpan>
                   <StyledSpan>
                      Channel:
                      {capitalizeString(
-                        orderData?.order?.channel?.cartSource || 'N/A'
+                        brand_Orders[0].orderData?.order?.channel?.cartSource ||
+                           'N/A'
                      )}
                   </StyledSpan>
                </StyledDiv>
@@ -235,13 +263,15 @@ const OrderInfo = () => {
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">
-                        ${orderData?.order?.orderCart?.cartInfo?.total || 'N/A'}
+                        $
+                        {brand_Orders[0].orderData?.order?.orderCart?.cartInfo
+                           ?.total || 'N/A'}
                      </Text>
                   </CardInfo>
                   <CardInfo>
                      <Text as="title">Overall Discount</Text>
                      <Text as="title">
-                        ${orderData?.order?.discount || 'N/A'}
+                        ${brand_Orders[0].orderData?.order?.discount || 'N/A'}
                      </Text>
                   </CardInfo>
                   <CardInfo>
@@ -251,14 +281,17 @@ const OrderInfo = () => {
                   <CardInfo bgColor="#f3f3f3">
                      <Text as="h2">Total Paid</Text>
                      <Text as="h2">
-                        ${orderData?.order?.amountPaid || 'N/A'}
+                        ${brand_Orders[0].orderData?.order?.amountPaid || 'N/A'}
                      </Text>
                   </CardInfo>
                </StyledTable>
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardData={orderData?.order?.orderCart?.paymentCard || 'N/A'}
+                  cardData={
+                     brand_Orders[0].orderData?.order?.orderCart?.paymentCard ||
+                     'N/A'
+                  }
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"

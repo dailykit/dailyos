@@ -12,6 +12,7 @@ import Main from './sections/Main'
 
 // Styled
 import { StyledWrapper } from '../../styled'
+import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
@@ -20,7 +21,9 @@ const App = () => {
          <Router basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <Main />
+            <ErrorBoundary rootRoute="/apps/settings">
+               <Main />
+            </ErrorBoundary>
          </Router>
       </StyledWrapper>
    )

@@ -1,51 +1,45 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
+import { TunnelHeader, ButtonTile, Flex, Form, Spacer } from '@dailykit/ui'
 
-// Components
-import { TunnelHeader, Input, ButtonTile } from '@dailykit/ui'
-
-// Styles
-import { TunnelBody } from '../styled'
-
-import { CREATE_ACCOMPANIMENT_TYPES } from '../../../../../../graphql'
+import { MASTER } from '../../../../../../graphql'
+import { logger } from '../../../../../../../../shared/utils'
+import { Tooltip } from '../../../../../../../../shared/components'
 
 const address = 'apps.settings.views.forms.accompanimenttypes.tunnels.addnew.'
 
 const AddTypesTunnel = ({ closeTunnel }) => {
    const { t } = useTranslation()
 
-   const [busy, setBusy] = React.useState(false)
    const [types, setTypes] = React.useState([''])
 
    // Mutation
-   const [addType] = useMutation(CREATE_ACCOMPANIMENT_TYPES, {
-      onCompleted: () => {
-         toast.success('Accompaniment types added.')
-         closeTunnel(1)
-      },
-      onError: error => {
-         console.log(error)
-         toast.error('Error')
-         setBusy(false)
-      },
-   })
+   const [addType, { loading: addingAccompaniment }] = useMutation(
+      MASTER.ACCOMPANIMENTS.CREATE,
+      {
+         onCompleted: () => {
+            toast.success('Successfully added accompaniment!')
+            closeTunnel(1)
+         },
+         onError: error => {
+            toast.error('Failed to add accompaniment!')
+            logger(error)
+         },
+      }
+   )
 
    // Handlers
-   const handleChange = (e, i) => {
+   const onChange = (e, i) => {
       const updatedTypes = types
       const value = e.target.value.trim()
-      if (Boolean(value)) {
-         updatedTypes[i] = value
-         setTypes([...updatedTypes])
-      }
+      updatedTypes[i] = value
+      setTypes([...updatedTypes])
    }
    const add = () => {
       try {
-         if (busy) return
-         setBusy(true)
-         const objects = types.map(type => ({
+         const objects = types.filter(Boolean).map(type => ({
             name: type,
          }))
          if (!objects.length) {
@@ -58,7 +52,6 @@ const AddTypesTunnel = ({ closeTunnel }) => {
          })
       } catch (error) {
          toast.error(error.message)
-         setBusy(false)
       }
    }
 
@@ -68,29 +61,37 @@ const AddTypesTunnel = ({ closeTunnel }) => {
             title={t(address.concat('add new types'))}
             right={{
                action: add,
-               title: busy
-                  ? t(address.concat('adding'))
-                  : t(address.concat('add')),
+               title: 'Add',
+               isLoading: addingAccompaniment,
+               disabled: types.filter(Boolean).length === 0,
             }}
             close={() => closeTunnel(1)}
+            tooltip={<Tooltip identifier="tunnel_accompaniment_heading" />}
          />
-         <TunnelBody>
+         <Flex padding="16px">
             {types.map((type, i) => (
-               <Input
-                  type="text"
-                  name={`type-${i}`}
-                  style={{ width: '320px', marginBottom: '32px' }}
-                  value={type}
-                  onChange={e => handleChange(e, i)}
-                  placeholder={t(address.concat('enter a type name'))}
-               />
+               <>
+                  <Form.Group>
+                     <Form.Label htmlFor={`type-${i}`} title={`type-${i}`}>
+                        Type Name*
+                     </Form.Label>
+                     <Form.Text
+                        value={type}
+                        id={`type-${i}`}
+                        name={`type-${i}`}
+                        onChange={e => onChange(e, i)}
+                        placeholder="Enter the type name"
+                     />
+                  </Form.Group>
+                  <Spacer size="16px" />
+               </>
             ))}
             <ButtonTile
                type="secondary"
                text="Add New Type"
                onClick={() => setTypes([...types, ''])}
             />
-         </TunnelBody>
+         </Flex>
       </>
    )
 }

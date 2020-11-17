@@ -1,17 +1,17 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
-
-import { DashboardTile, Text } from '@dailykit/ui'
-
-// State
-import { useTabs } from '../../context/tabs'
-
-import { StyledHome, StyledCardList } from './styled'
-
-import { ORDER_AGGREGATE } from '../../graphql'
-
-import { Loader } from '../../components'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import { useSubscription } from '@apollo/react-hooks'
+import { DashboardTile, Text, Flex, Spacer } from '@dailykit/ui'
+
+import { useTabs } from '../../context/tabs'
+import { ORDER_AGGREGATE } from '../../graphql'
+import { logger } from '../../../../shared/utils'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../shared/components'
 
 const address = 'apps.order.views.home.'
 const Home = () => {
@@ -21,29 +21,44 @@ const Home = () => {
 
    if (loading)
       return (
-         <StyledHome>
-            <Loader />
-         </StyledHome>
+         <Flex>
+            <InlineLoader />
+         </Flex>
       )
-   if (error) return <div>{error.message}</div>
+   if (error) {
+      toast.error('Failed to fetch total orders!')
+      logger(error)
+      return <ErrorState message="Failed to fetch total orders!" />
+   }
    return (
-      <StyledHome>
-         <Text as="h1">{t(address.concat('order app'))}</Text>
-         <StyledCardList>
+      <Flex
+         container
+         padding="80px 32px"
+         flexDirection="column"
+         alignItems="flex-start"
+         height="calc(100vh - 80px)"
+      >
+         <Flex container alignItems="center" justifyContent="center">
+            <Text as="h1">{t(address.concat('order app'))}</Text>
+            <Tooltip identifier="app_order_home_heading" />
+         </Flex>
+         <Spacer size="32px" />
+         <Flex as="section" container margin="0 auto" flexWrap="wrap">
             <DashboardTile
                title={t(address.concat('orders'))}
                conf="All available"
                count={data?.ordersAggregate?.aggregate?.count}
                onClick={() => addTab('Orders', '/apps/order/orders')}
             />
+            <Spacer size="16px" xAxis />
             <DashboardTile
                count={0}
                title="Planned"
                conf="All available"
                onClick={() => addTab('Planned', '/apps/order/planned')}
             />
-         </StyledCardList>
-      </StyledHome>
+         </Flex>
+      </Flex>
    )
 }
 

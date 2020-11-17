@@ -29,6 +29,7 @@ export const SmallText = styled.small`
    color: #00a7e1;
    font-size: 12px;
    cursor: pointer;
+   float: right;
    &:hover {
       text-decoration: underline;
    }

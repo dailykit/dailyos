@@ -6,6 +6,7 @@ import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 
 // Components
 import {
+   Form,
    Table,
    TableHead,
    TableBody,
@@ -25,35 +26,40 @@ import {
    ListItem,
    ListOptions,
    ListSearch,
+   Flex,
+   Filler,
 } from '@dailykit/ui'
 
 import { useTabs } from '../../../context'
-import { StyledWrapper, StyledHeader } from '../styled'
+import { logger } from '../../../../../shared/utils'
+import { DEVICES, PRINT_JOB } from '../../../graphql'
 import { PrinterIcon } from '../../../../../shared/assets/icons'
-import { Flex, InlineLoader } from '../../../../../shared/components'
-import {
-   DEVICES,
-   PRINTNODE_CREDS,
-   ONLINE_PRINTERS,
-   PRINT_JOB,
-} from '../../../graphql'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const DevicesListing = () => {
    const { tab, addTab } = useTabs()
-   const [computers, setComputers] = React.useState([])
-   const [printers, setPrinters] = React.useState([])
    const [scales, setScales] = React.useState([])
+   const [printers, setPrinters] = React.useState([])
+   const [computers, setComputers] = React.useState([])
+   const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const { data: { admins = [] } = {} } = useQuery(PRINTNODE_CREDS)
-   const { loading, error } = useSubscription(DEVICES, {
+   const { data: { admins = [] } = {} } = useQuery(DEVICES.PRINTNODE_DETAILS)
+   const { loading, error } = useSubscription(DEVICES.LIST, {
       onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
          setComputers(data.computers)
          setPrinters(
             [...data.computers.map(computer => computer.printers)].flat()
          )
          setScales([...data.computers.map(computer => computer.scales)].flat())
+         setIsLoading(false)
       },
    })
+
+   if (!loading && error) {
+      toast.error('Failed to fetch devices')
+      logger(error)
+      setIsLoading(false)
+   }
 
    React.useEffect(() => {
       if (!tab) {
@@ -61,155 +67,189 @@ const DevicesListing = () => {
       }
    }, [tab, addTab])
 
-   if (loading)
-      return (
-         <StyledWrapper>
-            <InlineLoader />
-         </StyledWrapper>
-      )
-   if (error) return <StyledWrapper>{error.message}</StyledWrapper>
    return (
-      <StyledWrapper>
-         <div>
-            <section>
-               <StyledHeader>
-                  <Text as="h2">Printnode Details</Text>
-                  <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                     <PrinterIcon />
-                     Print PDF
-                  </ComboButton>
-               </StyledHeader>
-               <section>
-                  <Text as="p">
-                     Email: {admins.length > 0 && admins[0].email}
-                  </Text>
-                  <Text as="p">
-                     Password:{' '}
-                     {admins.length > 0 && admins[0].password.slice(0, 8)}
-                  </Text>
-                  <Spacer size="16px" />
-                  <Text as="h2">Support Links</Text>
-                  <Spacer size="12px" />
-                  <StyledLinks>
-                     <li>
-                        <a href="https://www.printnode.com/en/download">
-                           Download Printnode
-                        </a>
-                     </li>
-                     <li>
-                        <a href="https://www.printnode.com/en/docs/installation">
-                           Installation
-                        </a>
-                     </li>
-                     <li>
-                        <a href="https://www.printnode.com/en/docs/supported-printers">
-                           Supported Printers
-                        </a>
-                     </li>
-                     <li>
-                        <a href="https://www.printnode.com/en/docs/supported-scales">
-                           Supported Scales
-                        </a>
-                     </li>
-                  </StyledLinks>
-               </section>
-               <StyledHeader>
-                  <Text as="h2">Computers</Text>
-               </StyledHeader>
-               {computers.length > 0 ? (
-                  <Table>
-                     <TableHead>
-                        <TableRow>
-                           <TableCell>Name</TableCell>
-                           <TableCell>Host Name</TableCell>
-                           <TableCell>Total Printers</TableCell>
-                           <TableCell>Active Printers</TableCell>
-                           <TableCell>State</TableCell>
-                        </TableRow>
-                     </TableHead>
-                     <TableBody>
-                        {computers.map(computer => (
-                           <TableRow key={computer.printNodeId}>
-                              <TableCell>{computer.name}</TableCell>
-                              <TableCell>{computer.hostname}</TableCell>
-                              <TableCell>
-                                 {computer.totalPrinters.aggregate.count}
-                              </TableCell>
-                              <TableCell>
-                                 {computer.activePrinters.aggregate.count}
-                              </TableCell>
-                              <TableCell>
-                                 <Tag>{computer.state}</Tag>
-                              </TableCell>
-                           </TableRow>
-                        ))}
-                     </TableBody>
-                  </Table>
-               ) : (
-                  <h4>No computers yet!</h4>
-               )}
-            </section>
-            <section>
-               <StyledHeader>
-                  <Text as="h2">Printers</Text>
-               </StyledHeader>
-               {printers.length > 0 ? (
-                  <Table>
-                     <TableHead>
-                        <TableRow>
-                           <TableCell>Name</TableCell>
-                           <TableCell>Computer</TableCell>
-                           <TableCell>State</TableCell>
-                        </TableRow>
-                     </TableHead>
-                     <TableBody>
-                        {printers.map(printer => (
-                           <TableRow key={printer.printNodeId}>
-                              <TableCell>{printer.name}</TableCell>
-                              <TableCell>{printer.computer.name}</TableCell>
-                              <TableCell>
-                                 <Tag>{printer.state}</Tag>
-                              </TableCell>
-                           </TableRow>
-                        ))}
-                     </TableBody>
-                  </Table>
-               ) : (
-                  <h4>No printers yet!</h4>
-               )}
-            </section>
-            <section>
-               <StyledHeader>
-                  <Text as="h2">Scales</Text>
-               </StyledHeader>
-               {scales.length > 0 ? (
-                  <Table>
-                     <TableHead>
-                        <TableRow>
-                           <TableCell>Name</TableCell>
-                           <TableCell>Computer</TableCell>
-                        </TableRow>
-                     </TableHead>
-                     <TableBody>
-                        {scales.map(scale => (
-                           <TableRow key={scale.deviceNum}>
-                              <TableCell>{scale.name}</TableCell>
-                              <TableCell>{scale.computer.name}</TableCell>
-                           </TableRow>
-                        ))}
-                     </TableBody>
-                  </Table>
-               ) : (
-                  <h4>No scales yet!</h4>
-               )}
-            </section>
-         </div>
+      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+         <Flex
+            container
+            as="header"
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">Printnode Details</Text>
+               <Tooltip identifier="listing_devices_heading" />
+            </Flex>
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
+               <PrinterIcon />
+               Print PDF
+            </ComboButton>
+         </Flex>
+         <section>
+            <Text as="p">Email: {admins.length > 0 && admins[0].email}</Text>
+            <Text as="p">
+               Password: {admins.length > 0 && admins[0].password.slice(0, 8)}
+            </Text>
+            <Spacer size="16px" />
+            <Text as="h2">Support Links</Text>
+            <Spacer size="12px" />
+            <StyledLinks>
+               <li>
+                  <a href="https://www.printnode.com/en/download">
+                     Download Printnode
+                  </a>
+               </li>
+               <li>
+                  <a href="https://www.printnode.com/en/docs/installation">
+                     Installation
+                  </a>
+               </li>
+               <li>
+                  <a href="https://www.printnode.com/en/docs/supported-printers">
+                     Supported Printers
+                  </a>
+               </li>
+               <li>
+                  <a href="https://www.printnode.com/en/docs/supported-scales">
+                     Supported Scales
+                  </a>
+               </li>
+            </StyledLinks>
+         </section>
+         <Spacer size="24px" />
+         <Flex container alignItems="center">
+            <Text as="h2">Computers</Text>
+            <Tooltip identifier="listing_devices_section_computers" />
+         </Flex>
+         <Spacer size="16px" />
+         {isLoading && <InlineLoader />}
+         <Table>
+            <TableHead>
+               <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Host Name</TableCell>
+                  <TableCell>Total Printers</TableCell>
+                  <TableCell>Active Printers</TableCell>
+                  <TableCell>State</TableCell>
+               </TableRow>
+            </TableHead>
+            {!isLoading && computers.length > 0 ? (
+               <TableBody>
+                  {computers.map(computer => (
+                     <TableRow key={computer.printNodeId}>
+                        <TableCell>{computer.name}</TableCell>
+                        <TableCell>{computer.hostname}</TableCell>
+                        <TableCell>
+                           {computer.totalPrinters.aggregate.count}
+                        </TableCell>
+                        <TableCell>
+                           {computer.activePrinters.aggregate.count}
+                        </TableCell>
+                        <TableCell>
+                           <Tag>{computer.state}</Tag>
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               </TableBody>
+            ) : (
+               <Flex
+                  container
+                  width="100%"
+                  alignItems="center"
+                  justifyContent="center"
+               >
+                  <Filler
+                     width="240px"
+                     height="240px"
+                     message="No computers available!"
+                  />
+               </Flex>
+            )}
+         </Table>
+         <Spacer size="24px" />
+         <Flex container alignItems="center">
+            <Text as="h2">Printers</Text>
+            <Tooltip identifier="listing_devices_section_printers" />
+         </Flex>
+         <Spacer size="16px" />
+         {isLoading && <InlineLoader />}
+         <Table>
+            <TableHead>
+               <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Computer</TableCell>
+                  <TableCell>State</TableCell>
+               </TableRow>
+            </TableHead>
+            {!isLoading && printers.length > 0 ? (
+               <TableBody>
+                  {printers.map(printer => (
+                     <TableRow key={printer.printNodeId}>
+                        <TableCell>{printer.name}</TableCell>
+                        <TableCell>{printer.computer.name}</TableCell>
+                        <TableCell>
+                           <Tag>{printer.state}</Tag>
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               </TableBody>
+            ) : (
+               <Flex
+                  container
+                  width="100%"
+                  alignItems="center"
+                  justifyContent="center"
+               >
+                  <Filler
+                     width="240px"
+                     height="240px"
+                     message="No printers available!"
+                  />
+               </Flex>
+            )}
+         </Table>
+         <Spacer size="24px" />
+         <Text as="h2">Scales</Text>
+         <Spacer size="16px" />
+         {isLoading && <InlineLoader />}
+         <Table>
+            <TableHead>
+               <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Computer</TableCell>
+               </TableRow>
+            </TableHead>
+            {!isLoading && scales.length > 0 ? (
+               <TableBody>
+                  {scales.map(scale => (
+                     <TableRow key={scale.deviceNum}>
+                        <TableCell>{scale.name}</TableCell>
+                        <TableCell>{scale.computer.name}</TableCell>
+                     </TableRow>
+                  ))}
+               </TableBody>
+            ) : (
+               <Flex
+                  width="100%"
+                  container
+                  alignItems="center"
+                  justifyContent="center"
+               >
+                  <Filler
+                     width="240px"
+                     height="240px"
+                     message="No scales available!"
+                  />
+               </Flex>
+            )}
+         </Table>
+         <Spacer size="24px" />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="sm">
                <PrintTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-      </StyledWrapper>
+      </Flex>
    )
 }
 
@@ -230,14 +270,17 @@ const PrintTunnel = ({ closeTunnel }) => {
    const [url, setUrl] = React.useState('')
    const [search, setSearch] = React.useState('')
    const [printers, setPrinters] = React.useState([])
-   const [createPrint] = useMutation(PRINT_JOB, {
+   const [createPrint, { loading: isPrinting }] = useMutation(PRINT_JOB, {
       onCompleted: () => {
          closeTunnel(1)
          toast.success('Successfully Printed!')
       },
-      onError: () => toast.error('Failed to print!'),
+      onError: error => {
+         toast.error('Failed to print!')
+         logger(error)
+      },
    })
-   const { loading } = useQuery(ONLINE_PRINTERS, {
+   const { loading } = useQuery(DEVICES.PRINTERS.ONLINE, {
       onCompleted: ({ printers = [] }) => {
          setPrinters(
             printers.map(node => ({ id: node.printNodeId, title: node.name }))
@@ -264,17 +307,30 @@ const PrintTunnel = ({ closeTunnel }) => {
       <>
          <TunnelHeader
             title="Print PDF"
-            right={{ action: print, title: 'Print' }}
+            right={{
+               action: print,
+               title: 'Print',
+               isLoading: isPrinting,
+               disabled: !Boolean(url) ?? isEmpty(current),
+            }}
             close={() => closeTunnel(1)}
          />
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 105px)">
-            <Input
-               type="text"
-               name="url"
-               value={url}
-               label="PDF Url"
-               onChange={e => setUrl(e.target.value)}
-            />
+            <Form.Group>
+               <Form.Label htmlFor="url" title="url">
+                  <Flex container alignItems="center">
+                     PDF URL*
+                     <Tooltip identifier="app_settings_listing_devices_tunnel_print_field_url" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="url"
+                  name="url"
+                  value={url}
+                  placeholder="Enter the url"
+                  onChange={e => setUrl(e.target.value)}
+               />
+            </Form.Group>
             <Spacer size="24px" />
             <Text as="h3">Select Printer</Text>
             <Spacer size="12px" />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
@@ -10,20 +10,23 @@ import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
+import BrandContext from '../../../context/Brand'
 
 const OrdersTable = ({ id }) => {
+   const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [orders, setOrders] = useState([])
    const tableRef = useRef(null)
    const history = useHistory()
-   const { loading: listLoading, data: ordersList } = useQuery(ORDERS_LISTING, {
+   const { loading: listLoading } = useQuery(ORDERS_LISTING, {
       variables: {
          keycloakId: id,
+         brandId: context.brandId,
       },
-      onCompleted: ({ customer = {} }) => {
-         const result = customer.orders.map(order => {
+      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
+         const result = brand_customers[0]?.customer?.orders.map(order => {
             return {
                id: order?.id,
                products: order?.products?.length || '0',
@@ -38,7 +41,7 @@ const OrdersTable = ({ id }) => {
          setOrders(result)
       },
       onError: error => {
-         toast.error('Something went wrong !')
+         toast.error('Something went wrong Orders !')
          logger(error)
       },
    })
@@ -55,7 +58,7 @@ const OrdersTable = ({ id }) => {
          headerFilter: true,
          hozAlign: 'right',
          cssClass: 'rowClick',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -68,12 +71,13 @@ const OrdersTable = ({ id }) => {
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
+         width: 150,
       },
       {
          title: 'Products',
          field: 'products',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -89,7 +93,7 @@ const OrdersTable = ({ id }) => {
          title: 'Wallet Used',
          field: 'walletUsed',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -99,13 +103,14 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
       {
          title: 'Discount',
          field: 'discount',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -121,7 +126,7 @@ const OrdersTable = ({ id }) => {
          title: 'Total Paid',
          field: 'amountPaid',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -131,6 +136,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
       {
@@ -143,12 +149,13 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         width: 150,
       },
       {
          title: 'Ordered On',
          field: 'orderedOn',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -164,7 +171,7 @@ const OrdersTable = ({ id }) => {
          title: 'Delivered On',
          field: 'deliveredOn',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -206,7 +213,7 @@ const OrdersTable = ({ id }) => {
                <Flex container alignItems="center">
                   <Text as="title">
                      Orders(
-                     {orders.length})
+                     {orders?.length || 0})
                   </Text>
                   <Tooltip identifier="order_list_heading" />
                </Flex>

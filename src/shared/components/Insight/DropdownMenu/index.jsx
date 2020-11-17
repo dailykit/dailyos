@@ -1,4 +1,4 @@
-import { useOnClickOutside } from '@dailykit/ui'
+import { Flex, useOnClickOutside } from '@dailykit/ui'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
@@ -42,7 +42,9 @@ export const DropdownItem = ({
    return (
       <StyledItem onClick={onClick} style={{ width }}>
          {leftIcon}
-         <div style={{ margin: '0 8px' }}>{children}</div>
+         <Flex margin="0 8px" width="100%">
+            {children}
+         </Flex>
          {rightIcon}
       </StyledItem>
    )

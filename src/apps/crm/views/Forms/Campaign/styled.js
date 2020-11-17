@@ -18,15 +18,34 @@ export const InputWrapper = styled.div`
 export const StyledComp = styled.div`
    padding: 32px;
    background-color: #e5e5e5;
+   .campaignDetails {
+      height: max-content;
+      width: 100%;
+   }
 `
+export const StyledInsight = styled.div`
+   margin-left: 26px;
+   padding: 16px;
+   background: #fff;
+   width: 100%;
+   height: inherit;
+   max-width: 897.2px;
+   max-height: 620px;
+   overflow: auto;
+   box-sizing: border-box;
+`
+
 export const StyledDiv = styled.div`
    padding: 0;
    background-color: #ffffff;
-   .glXFlP {
+   .styleTab {
       margin-bottom: 16px;
-      padding: 0 32px;
+      padding-left: 32px;
    }
-   .flarUQ {
+   #tabs--1--panel--0 {
+      padding: 0;
+   }
+   #tabs--1--panel--1 {
       padding: 0;
    }
 `

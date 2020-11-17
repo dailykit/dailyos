@@ -1,74 +1,60 @@
-import { IconButton, Text } from '@dailykit/ui'
+import { Flex, IconButton, Spacer, Text } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-
-import EditIcon from '../../assets/icons/Edit'
+import { EditIcon } from '../../../../shared/assets/icons'
 
 const address = 'apps.inventory.components.workorder.'
 
 export default function ItemCard({
    title,
-   shippedProcessing,
    onHand,
    shelfLife,
    edit,
    available,
    par,
+   isBulk,
 }) {
    const { t } = useTranslation()
    return (
       <StyledCard>
-         <div>
-            <Text as="title">{title}</Text>
+         <Flex>
+            <Text as="h2">{title}</Text>
 
-            <div style={{ display: 'flex' }}>
-               {shippedProcessing && (
-                  <>
-                     <Text as="subtitle">
-                        {t(address.concat('processing as shipped'))}:{' '}
-                        {shippedProcessing.join(', ')}
-                     </Text>
-                     <span style={{ width: '20px' }} />
-                  </>
-               )}
-               {onHand ? (
-                  <>
-                     <Text as="subtitle">
-                        {t(address.concat('on hand'))}: {onHand}{' '}
-                     </Text>
-                     <span style={{ width: '20px' }} />
-                  </>
-               ) : null}
-               {shelfLife ? (
+            {isBulk ? (
+               <Flex container>
                   <Text as="subtitle">
-                     {t(address.concat('shelf life'))}: {shelfLife}{' '}
+                     {t(address.concat('on hand'))}: {onHand.trim() || 'N/A'}
                   </Text>
-               ) : null}
-
-               {available ? (
+                  <Spacer xAxis size="16px" />
                   <Text as="subtitle">
-                     {t(address.concat('available'))}: {available}{' '}
+                     {t(address.concat('shelf life'))}:{' '}
+                     {shelfLife?.trim() || 'N/A'}
                   </Text>
-               ) : null}
 
-               {par ? (
-                  <>
-                     <span style={{ width: '20px' }} />
+                  {available ? (
                      <Text as="subtitle">
-                        {t(address.concat('par'))}: {par}
+                        {t(address.concat('available'))}: {available}{' '}
                      </Text>
-                  </>
-               ) : null}
-            </div>
-         </div>
+                  ) : null}
+                  {par ? (
+                     <>
+                        <Spacer xAxis size="16px" />
+                        <Text as="subtitle">
+                           {t(address.concat('par'))}: {par.trim() || 'N/A'}
+                        </Text>{' '}
+                     </>
+                  ) : null}
+               </Flex>
+            ) : null}
+         </Flex>
 
          {edit && (
-            <div>
-               <IconButton type="ghost" onClick={() => edit()}>
-                  <EditIcon color="#555b6e" />
+            <Flex>
+               <IconButton type="outline" onClick={() => edit()}>
+                  <EditIcon />
                </IconButton>
-            </div>
+            </Flex>
          )}
       </StyledCard>
    )
@@ -78,9 +64,6 @@ const StyledCard = styled.div`
    display: flex;
    justify-content: space-between;
    align-items: center;
-   padding: 10px 20px;
-   margin-top: 20px;
-   margin-left: 20px;
-   width: 80%;
-   background-color: #f3f3f3;
+   margin-top: 16px;
+   margin-left: 16px;
 `

@@ -1,20 +1,21 @@
-import React, { useState } from 'react'
 import { ReactTabulator } from '@dailykit/react-tabulator'
+import { Flex, Form } from '@dailykit/ui'
+import React, { useState } from 'react'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import 'react-tabulator/lib/styles.css'
 import styled from 'styled-components'
-import { Flex, Toggle } from '@dailykit/ui'
-
-import '../../styled/tableStyles.css'
 import { useInsights } from '../../hooks/useInsights'
-import { Counter } from './Counter'
+import '../../styled/tableStyles.css'
+import { ErrorState } from '../ErrorState'
+import { InlineLoader } from '../InlineLoader'
 import Chart from './Chart'
+import { Counter } from './Counter'
 import Option from './Option'
 import { tableConfig } from './tableConfig'
 
 /**
  *
- * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}}} props
+ * @param {{includeTable: boolean, includeChart: boolean, identifier: string, where: {}, limit: number, order: {}, variables: {}}} props
  */
 export default function Insight({
    includeTable = true,
@@ -23,6 +24,7 @@ export default function Insight({
    where = {},
    limit,
    order,
+   variables = {},
 }) {
    const [isDiff, setIsDiff] = useState(false)
 
@@ -41,13 +43,20 @@ export default function Insight({
       oldAggregates,
       newAggregates,
       config,
+      loading,
+      error,
+      empty,
    } = useInsights(identifier, {
       includeTableData: includeTable,
       includeChartData: includeChart,
       where,
       limit,
       order,
+      variables,
    })
+
+   if (loading) return <InlineLoader />
+   if (error) return <ErrorState />
 
    return (
       <>
@@ -59,11 +68,13 @@ export default function Insight({
                   marginBottom: '1rem',
                }}
             >
-               <Toggle
-                  checked={isDiff}
-                  setChecked={setIsDiff}
-                  label="Compare"
-               />
+               <Form.Toggle
+                  value={isDiff}
+                  onChange={() => setIsDiff(v => !v)}
+                  name={`compare-${identifier}`}
+               >
+                  Compare
+               </Form.Toggle>
 
                <Option
                   options={options}
@@ -170,7 +181,7 @@ function CounterBar({ aggregates }) {
 
 const StyledContainer = styled.div`
    position: relative;
-   width: 95vw;
+   width: 100%;
    margin: 1rem auto;
    padding: 1rem 2rem;
    background: #ffffff;

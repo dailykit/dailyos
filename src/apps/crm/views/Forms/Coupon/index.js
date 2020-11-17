@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
-   Toggle,
    Flex,
    HorizontalTab,
    HorizontalTabs,
@@ -8,12 +7,20 @@ import {
    HorizontalTabPanel,
    HorizontalTabPanels,
    Form,
+   Spacer,
+   Text,
 } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useTabs } from '../../../context'
-import { StyledWrapper, StyledComp, InputWrapper, StyledDiv } from './styled'
+import {
+   StyledWrapper,
+   StyledComp,
+   InputWrapper,
+   StyledDiv,
+   StyledInsight,
+} from './styled'
 import { COUPON_DATA, UPDATE_COUPON } from '../../../graphql'
 import {
    ConditionComp,
@@ -22,7 +29,14 @@ import {
    BrandCoupons,
 } from './components'
 import { logger } from '../../../../../shared/utils'
-import { InlineLoader } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
+import moment from 'moment'
+import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
+import CouponContext from '../../../context/Coupon/CouponForm'
 
 const CouponForm = () => {
    const { addTab, tab, setTitle: setTabTitle } = useTabs()
@@ -38,6 +52,8 @@ const CouponForm = () => {
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
    const [checkbox, setCheckbox] = useState(false)
+   const today = moment().toISOString()
+   const fromDate = moment().subtract(7, 'days').toISOString()
 
    // form validation
    const validateCouponCode = value => {
@@ -89,31 +105,32 @@ const CouponForm = () => {
    })
 
    const updatetoggle = () => {
-      if (toggle || !toggle) {
+      const val = !toggle
+      if (val && !state.isCouponValid.status) {
+         toast.error('Coupon should be valid!')
+      } else {
          updateCoupon({
             variables: {
                id: couponId,
                set: {
-                  isActive: !toggle,
+                  isActive: val,
                },
             },
          })
       }
    }
    const updateCheckbox = () => {
-      if (checkbox || !checkbox) {
-         updateCoupon({
-            variables: {
-               id: couponId,
-               set: {
-                  isRewardMulti: !checkbox,
-               },
+      updateCoupon({
+         variables: {
+            id: couponId,
+            set: {
+               isRewardMulti: !checkbox,
             },
-         })
-      }
+         },
+      })
    }
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (!tab) {
          addTab('Coupons', '/crm/coupons')
       }
@@ -147,77 +164,121 @@ const CouponForm = () => {
 
    if (loading) return <InlineLoader />
    return (
-      <StyledWrapper>
-         <InputWrapper>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               padding="0 0 16px 0"
-            >
-               <Form.Group>
-                  <Form.Label htmlFor="name" title="Coupon Code ">
-                     Coupon Code*
-                  </Form.Label>
-                  <Form.Text
-                     id="couponCode"
-                     name="couponCode"
-                     value={codeTitle.value}
-                     placeholder="Enter the Coupon Code "
-                     onBlur={onBlur}
-                     onChange={e =>
-                        setCodeTitle({
-                           ...codeTitle,
-                           value: e.target.value,
-                        })
-                     }
-                  />
-                  {codeTitle.meta.isTouched &&
-                     !codeTitle.meta.isValid &&
-                     codeTitle.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-               <Form.Group>
-                  <Form.Toggle
-                     name="coupon_active"
-                     onChange={updatetoggle}
-                     value={toggle}
-                  >
-                     Active
-                  </Form.Toggle>
-               </Form.Group>
-            </Flex>
-         </InputWrapper>
-         <StyledDiv>
-            <HorizontalTabs>
-               <HorizontalTabList>
-                  <HorizontalTab>Details</HorizontalTab>
-                  <HorizontalTab>Brand</HorizontalTab>
-                  <HorizontalTab>Insights</HorizontalTab>
-               </HorizontalTabList>
-               <HorizontalTabPanels>
-                  <HorizontalTabPanel>
-                     <StyledComp>
-                        <DetailsComp state={state} />
-                        <ConditionComp state={state} />
-                        <RewardComp
-                           state={state}
-                           updateCheckbox={updateCheckbox}
-                           checkbox={checkbox}
+      <CouponContext.Provider
+         value={{
+            state,
+            checkbox,
+            updateCheckbox: updateCheckbox,
+            toggle,
+         }}
+      >
+         <StyledWrapper>
+            <InputWrapper>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="0 0 16px 0"
+               >
+                  <Form.Group>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label htmlFor="name" title="Coupon Code">
+                           Coupon Code*
+                        </Form.Label>
+                        <Tooltip identifier="coupon_code_info" />
+                     </Flex>
+                     <Form.Text
+                        id="couponCode"
+                        name="couponCode"
+                        value={codeTitle.value}
+                        placeholder="Enter the Coupon Code "
+                        onBlur={onBlur}
+                        onChange={e =>
+                           setCodeTitle({
+                              ...codeTitle,
+                              value: e.target.value,
+                           })
+                        }
+                     />
+                     {codeTitle.meta.isTouched &&
+                        !codeTitle.meta.isValid &&
+                        codeTitle.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Flex container alignItems="center" height="100%">
+                     {state.isCouponValid?.status ? (
+                        <>
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p">All good!</Text>
+                        </>
+                     ) : (
+                        <>
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isCouponValid?.error}</Text>
+                        </>
+                     )}
+                     <Spacer xAxis size="16px" />
+                     <Form.Toggle
+                        name="coupon_active"
+                        onChange={updatetoggle}
+                        value={toggle}
+                     >
+                        <Flex container alignItems="center">
+                           Publish
+                           <Tooltip identifier="coupon_publish_info" />
+                        </Flex>
+                     </Form.Toggle>
+                  </Flex>
+               </Flex>
+            </InputWrapper>
+            <StyledDiv>
+               <HorizontalTabs>
+                  <div className="styleTab">
+                     <HorizontalTabList>
+                        <HorizontalTab>Details</HorizontalTab>
+                        <HorizontalTab>Brand</HorizontalTab>
+                        <HorizontalTab>Insights</HorizontalTab>
+                     </HorizontalTabList>
+                  </div>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <StyledComp>
+                           <Flex container>
+                              <div className="couponDetails">
+                                 <DetailsComp />
+                                 <ConditionComp />
+                                 <RewardComp />
+                              </div>
+                              <StyledInsight>
+                                 <InsightDashboard
+                                    appTitle="CRM App"
+                                    moduleTitle="Coupon Page"
+                                    variables={{
+                                       couponId: couponId,
+                                       today: today,
+                                       fromDate: fromDate,
+                                    }}
+                                 />
+                              </StyledInsight>
+                           </Flex>
+                        </StyledComp>
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <BrandCoupons />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <InsightDashboard
+                           appTitle="CRM App"
+                           moduleTitle="Coupon Page"
+                           variables={{ couponId: couponId }}
                         />
-                     </StyledComp>
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     <BrandCoupons state={state} />
-                  </HorizontalTabPanel>
-                  <HorizontalTabPanel>
-                     Insights Content coming soon!!
-                  </HorizontalTabPanel>
-               </HorizontalTabPanels>
-            </HorizontalTabs>
-         </StyledDiv>
-      </StyledWrapper>
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            </StyledDiv>
+         </StyledWrapper>
+      </CouponContext.Provider>
    )
 }
 

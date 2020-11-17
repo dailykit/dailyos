@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
 import {
    Text,
    ButtonGroup,
    IconButton,
    PlusIcon,
-   Loader,
    Tunnels,
    Tunnel,
    useTunnel,
@@ -31,6 +31,7 @@ import CampaignTypeTunnel from './Tunnel'
 import options from '../../tableOptions'
 
 const CampaignListing = () => {
+   const location = useLocation()
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [campaign, setCampaign] = useState(undefined)
@@ -45,6 +46,7 @@ const CampaignListing = () => {
                name: campaign.metaDetails.title,
                type: campaign.type,
                active: campaign.isActive,
+               isvalid: campaign.isCampaignValid.status,
             }
          })
          setCampaign(result)
@@ -83,17 +85,22 @@ const CampaignListing = () => {
 
    useEffect(() => {
       if (!tab) {
-         addTab('Campaign', '/crm/campaign')
+         addTab('Campaign', location.pathname)
       }
    }, [addTab, tab])
 
-   const toggleHandler = (toggle, id) => {
-      updateCampaignActive({
-         variables: {
-            campaignId: id,
-            isActive: toggle,
-         },
-      })
+   const toggleHandler = (toggle, id, isvalid) => {
+      const val = !toggle
+      if (val && !isvalid) {
+         toast.error(`Campaign should be valid!`)
+      } else {
+         updateCampaignActive({
+            variables: {
+               campaignId: id,
+               isActive: val,
+            },
+         })
+      }
    }
 
    const DeleteButton = () => {
@@ -109,8 +116,10 @@ const CampaignListing = () => {
       return (
          <Form.Group>
             <Form.Toggle
-               name="campaign_active"
-               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               name={`campaign_active${rowData.id}`}
+               onChange={() =>
+                  toggleHandler(rowData.active, rowData.id, rowData.isvalid)
+               }
                value={rowData.active}
             />
          </Form.Group>
@@ -136,7 +145,7 @@ const CampaignListing = () => {
 
    const rowClick = (e, cell) => {
       const { id, name } = cell._cell.row.data
-      const param = `/crm/campaign/${id}`
+      const param = `${location.pathname}/${id}`
       const tabTitle = name
       addTab(tabTitle, param)
    }

@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const BRANDS = {
    AGGREGATE: gql`
       subscription brands {
-         brandsAggregate {
+         brandsAggregate(where: { isArchived: { _eq: false } }) {
             aggregate {
                count
             }
@@ -12,7 +12,7 @@ export const BRANDS = {
    `,
    LIST: gql`
       subscription brands {
-         brands: brandsAggregate {
+         brands: brandsAggregate(where: { isArchived: { _eq: false } }) {
             aggregate {
                count(columns: id)
             }
@@ -20,6 +20,7 @@ export const BRANDS = {
                id
                domain
                title
+               isDefault
                isPublished
             }
          }

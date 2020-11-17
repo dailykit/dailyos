@@ -1,18 +1,23 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
-   useSingleList,
    TunnelHeader,
+   useSingleList,
 } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
+import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../shared/components'
+import { InlineLoader } from '../../../../../../shared/components/InlineLoader'
+import { logger } from '../../../../../../shared/utils'
 import { TunnelContainer } from '../../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_SUPPLIER_ITEMS } from '../../../../constants/infoMessages'
 import {
    SUPPLIER_ITEMS_SUBSCRIPTION,
    UPDATE_BULK_WORK_ORDER,
@@ -28,76 +33,84 @@ export default function SelectSupplierTunnel({ close, state }) {
 
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION, {
+   const { loading, error } = useSubscription(SUPPLIER_ITEMS_SUBSCRIPTION, {
       onSubscriptionData: input => {
          const data = input.subscriptionData.data.supplierItems
          setData(data)
       },
    })
 
-   const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
-      onError: error => {
-         console.log(error)
-         toast.error(error.message)
-      },
-      onCompleted: () => {
-         toast.success('Supplier Item added!')
-         close(1)
-      },
-   })
+   const [updateBulkWorkOrder, { loading: updating }] = useMutation(
+      UPDATE_BULK_WORK_ORDER,
+      {
+         onError: error => {
+            logger(error)
+            toast.error(GENERAL_ERROR_MESSAGE)
+         },
+         onCompleted: () => {
+            toast.success('Supplier Item added!')
+            close(1)
+         },
+      }
+   )
 
-   const handleSave = () => {
-      if (!current || !current.id) return toast.error('Please select an item.')
+   const handleSave = option => {
       // save supplierItem
       updateBulkWorkOrder({
          variables: {
             id: state.id,
             object: {
-               supplierItemId: current.id,
+               supplierItemId: option.id,
             },
          },
       })
    }
 
-   if (loading) return <Loader />
+   if (loading || updating) return <InlineLoader />
+   if (error) {
+      logger(error)
+      return toast.error(GENERAL_ERROR_MESSAGE)
+   }
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select supplier item'))}
-            right={{ title: 'Save', action: handleSave }}
             close={() => close(1)}
+            description="select a supplier item to use in this work order"
+            tooltip={
+               <Tooltip identifier="bulk-work-order_select_supplier_item_tunnel" />
+            }
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem type="SSL1" title={current.name} />
-               ) : (
+            {list.length ? (
+               <List>
                   <ListSearch
                      onChange={value => setSearch(value)}
                      placeholder={t(
                         address.concat("type what you're looking for")
                      )}
                   />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.name.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL1"
-                           key={option.id}
-                           title={option.name}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
-            <br />
-            <br />
+                  <ListHeader type="SSL1" label="supplier item" />
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.name.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.name}
+                              isActive={option.id === current.id}
+                              onClick={() => handleSave(option)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_SUPPLIER_ITEMS} />
+            )}
          </TunnelContainer>
       </>
    )

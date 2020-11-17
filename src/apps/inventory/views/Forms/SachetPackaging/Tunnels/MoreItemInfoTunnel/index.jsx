@@ -1,22 +1,65 @@
-import React, { useState } from 'react'
+// TODO: HTMLSelect
 import { useMutation } from '@apollo/react-hooks'
-import { Input, Loader, TunnelHeader } from '@dailykit/ui'
+import { Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-
-import { TunnelContainer } from '../../../../../components'
-import { FlexContainer, StyledSelect } from '../../../styled'
-import { PaddedInputGroup } from './styled'
+import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../constants/errorMessages'
 import { UPDATE_PACKAGING } from '../../../../../graphql'
+import { validators } from '../../../../../utils/validators'
+import { StyledInputGroup } from '../../../Item/tunnels/styled'
+import { TunnelWrapper } from '../../../utils/TunnelWrapper'
 
 export default function MoreItemInfoTunnel({ close, state }) {
-   const [unitQuantity, setUnitQuantity] = useState(state.unitQuantity || '')
-   const [unitPrice, setUnitPrice] = useState(state.unitPrice || '')
-   const [caseQuantity, setCaseQuantity] = useState(state.caseQuantity || '')
-   const [minOrderValue, setMinOrderValue] = useState(state.minOrderValue || '')
-   const [leadTime, setLeadTime] = useState(state.leadTime?.value || '')
-   const [leadTimeUnit, setLeadTimeUnit] = useState(
-      state.leadTime?.unit || 'hours'
-   )
+   const [unitQuantity, setUnitQuantity] = useState({
+      value: state.unitQuantity || '',
+      meta: {
+         isValid: state.unitQuantity?.toString() ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [unitPrice, setUnitPrice] = useState({
+      value: state.unitPrice || '',
+      meta: {
+         isValid: state.unitPrice?.toString() ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [caseQuantity, setCaseQuantity] = useState({
+      value: state.caseQuantity || '',
+      meta: {
+         isValid: state.caseQuantity?.toString() ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [minOrderValue, setMinOrderValue] = useState({
+      value: state.minOrderValue || '',
+      meta: {
+         isValid: state.minOrderValue?.toString() ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [leadTime, setLeadTime] = useState({
+      value: state.leadTime?.value || '',
+      meta: {
+         isValid: state.leadTime?.value?.toString() ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
+   const [leadTimeUnit, setLeadTimeUnit] = useState({
+      value: state.leadTime?.unit || 'hours',
+      meta: {
+         isValid: state.leadtime?.unit ? true : false,
+         isTouched: false,
+         errors: [],
+      },
+   })
 
    const [updatePackaging, { loading }] = useMutation(UPDATE_PACKAGING, {
       onCompleted: () => {
@@ -24,8 +67,8 @@ export default function MoreItemInfoTunnel({ close, state }) {
          toast.info('updated successfully!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
          close(2)
       },
    })
@@ -35,98 +78,214 @@ export default function MoreItemInfoTunnel({ close, state }) {
          variables: {
             id: state.id,
             object: {
-               unitPrice: +unitPrice,
-               unitQuantity: +unitQuantity,
-               caseQuantity: +caseQuantity,
-               minOrderValue: +minOrderValue,
-               leadTime: { unit: leadTimeUnit, value: leadTime },
+               unitPrice: unitPrice.meta.isValid ? +unitPrice.value : null,
+               unitQuantity: unitQuantity.meta.isValid
+                  ? +unitQuantity.value
+                  : null,
+               caseQuantity: caseQuantity.meta.isValid
+                  ? +caseQuantity.value
+                  : null,
+               minOrderValue: minOrderValue.meta.isValid
+                  ? +minOrderValue.value
+                  : null,
+               leadTime: {
+                  unit: leadTimeUnit.value,
+                  value: leadTime.meta.isValid ? leadTime.value : null,
+               },
             },
          },
       })
    }
-
-   if (loading) return <Loader />
 
    return (
       <>
          <TunnelHeader
             title="More Item Information"
             close={() => close(2)}
-            right={{ title: 'Save', action: handleNext }}
+            right={{ title: 'Save', action: handleNext, isLoading: loading }}
+            description="Add packaging related information"
+            tooltip={
+               <Tooltip identifier="packaging-form_more_item_information-tunnel" />
+            }
          />
-         <TunnelContainer>
-            <PaddedInputGroup>
-               <div style={{ width: '70%' }}>
-                  <Input
-                     type="number"
-                     label="Unit qty (in pieces)"
+         <Spacer size="16px" />
+         <TunnelWrapper>
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="unitQty" title="unitQuantity">
+                     Unit qty (in pieces)
+                  </Form.Label>
+                  <Form.Number
+                     id="unitQty"
+                     placeholder="Unit qty (in pieces)"
                      name="unitQty"
-                     value={unitQuantity}
-                     onChange={e => setUnitQuantity(e.target.value)}
+                     value={unitQuantity.value}
+                     onChange={e =>
+                        setUnitQuantity({
+                           value: e.target.value,
+                           meta: { ...unitQuantity.meta },
+                        })
+                     }
+                     onBlur={e => {
+                        const { value } = e.target
+                        const { isValid, errors } = validators.quantity(value)
+                        setUnitQuantity({
+                           value,
+                           meta: { isValid, errors, isTouched: true },
+                        })
+                     }}
                   />
-               </div>
-
-               <span style={{ width: '40px' }} />
-               <FlexContainer style={{ alignItems: 'flex-end' }}>
-                  <div style={{ marginRight: '5px', marginBottom: '5px' }}>
-                     $
-                  </div>
-                  <Input
-                     type="number"
-                     label="Unit Price"
+                  {unitQuantity.meta.isTouched &&
+                     !unitQuantity.meta.isValid && (
+                        <Form.Error>{unitQuantity.meta.errors[0]}</Form.Error>
+                     )}
+               </Form.Group>
+               <Form.Group>
+                  <Form.Label htmlFor="unitPrice" title="unitPrice">
+                     Unit Price (in {process.env.REACT_APP_CURRENCY})
+                  </Form.Label>
+                  <Form.Number
+                     id="unitPrice"
+                     placeholder="Unit Price"
                      name="unitPrice"
-                     value={unitPrice}
-                     onChange={e => setUnitPrice(e.target.value)}
+                     value={unitPrice.value}
+                     onChange={e =>
+                        setUnitPrice({
+                           value: e.target.value,
+                           meta: { ...unitPrice.meta },
+                        })
+                     }
+                     onBlur={e => {
+                        const { value } = e.target
+                        const { isValid, errors } = validators.quantity(value)
+                        setUnitPrice({
+                           value,
+                           meta: { isValid, errors, isTouched: true },
+                        })
+                     }}
                   />
-               </FlexContainer>
-            </PaddedInputGroup>
-            <br />
+                  {unitPrice.meta.isTouched && !unitPrice.meta.isValid && (
+                     <Form.Error>{unitPrice.meta.errors[0]}</Form.Error>
+                  )}
+               </Form.Group>
+            </StyledInputGroup>
 
-            <PaddedInputGroup>
-               <div style={{ width: '70%' }}>
-                  <Input
-                     type="number"
-                     label="Case qty (in pieces)"
+            <Spacer size="16px" />
+
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="caseQty" title="caseQty">
+                     Case qty (in pieces)
+                  </Form.Label>
+                  <Form.Number
+                     id="caseQty"
+                     placeholder="Case qty (in pieces)"
                      name="caseQty"
-                     value={caseQuantity}
-                     onChange={e => setCaseQuantity(e.target.value)}
+                     value={caseQuantity.value}
+                     onChange={e =>
+                        setCaseQuantity({
+                           value: e.target.value,
+                           meta: { ...caseQuantity.meta },
+                        })
+                     }
+                     onBlur={e => {
+                        const { value } = e.target
+                        const { isValid, errors } = validators.quantity(value)
+                        setCaseQuantity({
+                           value,
+                           meta: { isValid, errors, isTouched: true },
+                        })
+                     }}
                   />
-               </div>
+                  {caseQuantity.meta.isTouched &&
+                     !caseQuantity.meta.isValid && (
+                        <Form.Error>{caseQuantity.meta.errors[0]}</Form.Error>
+                     )}
+               </Form.Group>
 
-               <span style={{ width: '90px' }} />
+               <Form.Group>
+                  <Form.Label htmlFor="minOrderValue" title="minOrderValue">
+                     Min. value order (in case)
+                  </Form.Label>
+                  <Form.Number
+                     id="minOrderValue"
+                     placeholder="Min. value order (in case)"
+                     name="minOrderValue"
+                     value={minOrderValue.value}
+                     onChange={e =>
+                        setMinOrderValue({
+                           value: e.target.value,
+                           meta: { ...minOrderValue.meta },
+                        })
+                     }
+                     onBlur={e => {
+                        const { value } = e.target
+                        const { isValid, errors } = validators.quantity(value)
+                        setMinOrderValue({
+                           value,
+                           meta: { isValid, errors, isTouched: true },
+                        })
+                     }}
+                  />
+                  {unitPrice.meta.isTouched && !unitPrice.meta.isValid && (
+                     <Form.Error>{unitPrice.meta.errors[0]}</Form.Error>
+                  )}
+               </Form.Group>
+            </StyledInputGroup>
 
-               <Input
-                  type="number"
-                  label="Min. value order (in case)"
-                  name="unitPrice"
-                  value={minOrderValue}
-                  onChange={e => setMinOrderValue(e.target.value)}
-               />
-            </PaddedInputGroup>
+            <Spacer size="16px" />
+            <StyledInputGroup>
+               <Form.Group>
+                  <Form.Label htmlFor="leadTime" title="leadTime">
+                     Lead time
+                  </Form.Label>
 
-            <br />
+                  <Form.TextSelect>
+                     <Form.Number
+                        id="leadTime"
+                        placeholder="Lead time"
+                        name="leadTime"
+                        value={leadTime.value}
+                        onChange={e =>
+                           setLeadTime({
+                              value: e.target.value,
+                              meta: { ...leadTime.meta },
+                           })
+                        }
+                        onBlur={e => {
+                           const { value } = e.target
+                           const { isValid, errors } = validators.quantity(
+                              value
+                           )
+                           setLeadTime({
+                              value,
+                              meta: { errors, isValid, isTouched: true },
+                           })
+                        }}
+                     />
 
-            <PaddedInputGroup
-               style={{ justifyContent: 'flex-start', width: '40%' }}
-            >
-               <Input
-                  type="number"
-                  label="Lead time"
-                  name="leadTime"
-                  value={leadTime}
-                  onChange={e => setLeadTime(e.target.value)}
-               />
-
-               <StyledSelect
-                  name="unit"
-                  defaultValue={leadTimeUnit}
-                  onChange={e => setLeadTimeUnit(e.target.value)}
-               >
-                  <option value="days">Days</option>
-                  <option value="hours">Hours</option>
-               </StyledSelect>
-            </PaddedInputGroup>
-         </TunnelContainer>
+                     <Form.Select
+                        id="unit"
+                        name="unit"
+                        value={leadTimeUnit.value}
+                        onChange={e =>
+                           setLeadTimeUnit({
+                              value: e.target.value,
+                              meta: { ...leadTimeUnit.meta },
+                           })
+                        }
+                        options={[
+                           { id: 1, title: 'days' },
+                           { id: 2, title: 'hours' },
+                        ]}
+                     />
+                  </Form.TextSelect>
+                  {leadTime.meta.isTouched && !leadTime.meta.isValid && (
+                     <Form.Error>{leadTime.meta.errors[0]}</Form.Error>
+                  )}
+               </Form.Group>
+            </StyledInputGroup>
+         </TunnelWrapper>
       </>
    )
 }

@@ -13,7 +13,7 @@ const CustomerCard = ({ customer, walletAmount, toggle, toggleHandler }) => (
    <StyledCustomerCard>
       <CustomerInfo>
          <Avatar url="https://randomuser.me/api/portraits/men/61.jpg" />
-         <Text as="p">{`${customer?.platform_customer?.firstName || 'N/A'} ${
+         <Text as="p">{`${customer?.platform_customer?.firstName || ''} ${
             customer?.platform_customer?.lastName || 'N/A'
          }`}</Text>
          <Flex container alignItems="center">

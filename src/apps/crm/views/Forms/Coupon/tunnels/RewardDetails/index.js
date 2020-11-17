@@ -24,6 +24,7 @@ import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip } from '../../../../../../../shared/components'
+import validatorFunc from '../../../validator'
 
 export default function RewardDetailsunnel({
    closeTunnel,
@@ -47,28 +48,17 @@ export default function RewardDetailsunnel({
    const [rewardValue, setRewardValue] = useState({
       type: 'absolute',
       value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+         type: '',
+      },
    })
-   const [rewardValueType, setRewardValueType] = useState('absolute')
    const [options] = useState([
       { id: 1, title: 'absolute' },
       { id: 2, title: 'conditional' },
    ])
-
-   // form validation
-   const validatorFunc = value => {
-      let isValid = true
-      let errors = []
-      if (value <= 0 && value !== '') {
-         isValid = false
-         errors = [...errors, "Priority can't be negative or zero"]
-      }
-      if (value === '') {
-         isValid = false
-         errors = [...errors, 'Please enter priority or valid priority ']
-      }
-      console.log(typeof value)
-      return { isValid, errors }
-   }
 
    // Mutation
    const [updateReward, { loading }] = useMutation(UPDATE_REWARD, {
@@ -86,14 +76,17 @@ export default function RewardDetailsunnel({
 
    // Handlers
    const saveInfo = () => {
-      if (validatorFunc(priority.value).isValid) {
+      if (priority.meta.isValid && rewardValue.meta.isValid) {
          updateReward({
             variables: {
                id: rewardId,
                set: {
                   conditionId,
                   priority: priority.value,
-                  rewardValue,
+                  rewardValue: {
+                     type: rewardValue.type,
+                     value: rewardValue.value,
+                  },
                },
             },
          })
@@ -108,8 +101,13 @@ export default function RewardDetailsunnel({
          setRewardValue({
             type: 'absolute',
             value: '',
+            meta: {
+               type: '',
+               isValid: false,
+               isTouched: false,
+               errors: [],
+            },
          })
-         setRewardValueType('absolute')
          updateConditionId(null)
       } else {
          toast.error('Please check reward details error !')
@@ -128,29 +126,96 @@ export default function RewardDetailsunnel({
       setRewardValue({
          type: 'absolute',
          value: '',
+         meta: {
+            type: '',
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
       })
-      setRewardValueType('absolute')
       updateConditionId(null)
       closeTunnel(1)
    }
 
    //reward priority value validation
-   const onBlur = e => {
-      setPriority({
-         ...priority,
-         meta: {
-            ...priority.meta,
-            isTouched: true,
-            errors: validatorFunc(e.target.value).errors,
-            isValid: validatorFunc(e.target.value).isValid,
-         },
-      })
+   const onBlur = (e, name) => {
+      switch (name) {
+         case 'priority':
+            return setPriority({
+               ...priority,
+               meta: {
+                  ...priority.meta,
+                  isTouched: true,
+                  errors: validatorFunc.priority(e.target.value).errors,
+                  isValid: validatorFunc.priority(e.target.value).isValid,
+               },
+            })
+
+         case 'absoluteRewardVal':
+            return setRewardValue({
+               ...rewardValue,
+               meta: {
+                  ...rewardValue.meta,
+                  type: 'absolute',
+                  isTouched: true,
+                  errors: validatorFunc.amount(e.target.value).errors,
+                  isValid: validatorFunc.amount(e.target.value).isValid,
+               },
+            })
+         case 'MaxRewardValue':
+            return setRewardValue({
+               ...rewardValue,
+               meta: {
+                  ...rewardValue.meta,
+                  type: 'max',
+                  isTouched: true,
+                  errors: validatorFunc.amount(e.target.value).errors,
+                  isValid: validatorFunc.amount(e.target.value).isValid,
+               },
+            })
+         case 'PercentRewardValue':
+            return setRewardValue({
+               ...rewardValue,
+               meta: {
+                  ...rewardValue.meta,
+                  type: 'percentage',
+                  isTouched: true,
+                  errors: validatorFunc.amount(e.target.value).errors,
+                  isValid: validatorFunc.amount(e.target.value).isValid,
+               },
+            })
+         default:
+            console.log(name)
+      }
    }
 
    useEffect(() => {
-      setPriority({ ...priority, value: rewardInfo?.priority || 1 })
-      setRewardValue(rewardInfo?.rewardValue || { type: 'absolute', value: '' })
-      setRewardValueType(rewardInfo?.rewardValue?.type || 'absolute')
+      setPriority({
+         value: rewardInfo?.priority || 1,
+         meta: {
+            isValid: rewardInfo.priority ? true : false,
+            isTouched: false,
+            errors: [],
+         },
+      })
+      setRewardValue({
+         ...(rewardInfo?.rewardValue || {
+            type: 'absolute',
+            value: '',
+            meta: {
+               isValid: false,
+               isTouched: false,
+               errors: [],
+               type: '',
+            },
+         }),
+         meta: {
+            isValid: true,
+            isTouched: false,
+            errors: [],
+            type: '',
+         },
+      })
    }, [rewardInfo])
 
    return (
@@ -164,6 +229,9 @@ export default function RewardDetailsunnel({
                      title: loading ? 'Saving...' : 'Save',
                   }}
                   close={() => closeFunc()}
+                  tooltip={
+                     <Tooltip identifier="coupon_rewardDetails_tunnelHeader" />
+                  }
                />
                <TunnelBody>
                   {conditionId ? (
@@ -205,11 +273,11 @@ export default function RewardDetailsunnel({
                      <Form.Number
                         id="priority"
                         name="priority"
-                        value={priority.value}
+                        value={priority?.value || null}
                         placeholder="Enter Priority "
-                        onBlur={onBlur}
+                        onBlur={e => onBlur(e, 'priority')}
                         onChange={e =>
-                           setPriority({ ...priority, value: e.target.value })
+                           setPriority({ ...priority, value: +e.target.value })
                         }
                      />
                      {priority.meta.isTouched &&
@@ -227,30 +295,45 @@ export default function RewardDetailsunnel({
                      <Spacer size="24px" />
                      <RadioGroup
                         options={options}
-                        active={rewardValueType === 'absolute' ? 1 : 2}
-                        onChange={option => setRewardValueType(option.title)}
+                        active={rewardValue.type === 'absolute' ? 1 : 2}
+                        onChange={option =>
+                           setRewardValue({
+                              ...rewardValue,
+                              type: option.title,
+                           })
+                        }
                      />
                      <Spacer size="24px" />
-                     {rewardValueType === 'absolute' ? (
+                     {rewardValue.type === 'absolute' ? (
                         <Form.Group>
                            <Form.Label
                               htmlFor="number"
                               title="absoluteRewardValue"
                            >
-                              Reward Value
+                              <Flex container alignItems="center">
+                                 Reward Value
+                                 <Tooltip identifier="coupon_absolute_reward_value" />
+                              </Flex>
                            </Form.Label>
                            <Form.Number
                               id="absoluteRewardVal"
                               name="absoluteRewardVal"
                               placeholder="Enter Reward Value "
                               value={rewardValue?.value || null}
+                              onBlur={e => onBlur(e, 'absoluteRewardVal')}
                               onChange={e =>
                                  setRewardValue({
-                                    type: rewardValueType,
+                                    ...rewardValue,
                                     value: +e.target.value,
                                  })
                               }
                            />
+                           {rewardValue.meta.type === 'absolute' &&
+                              rewardValue.meta.isTouched &&
+                              !rewardValue.meta.isValid &&
+                              rewardValue.meta.errors.map((error, index) => (
+                                 <Form.Error key={index}>{error}</Form.Error>
+                              ))}
                         </Form.Group>
                      ) : (
                         <InputWrap>
@@ -259,17 +342,20 @@ export default function RewardDetailsunnel({
                                  htmlFor="number"
                                  title="MaxRewardValue"
                               >
-                                 Maximum Reward Value
+                                 <Flex container alignItems="center">
+                                    Maximum Reward Value
+                                    <Tooltip identifier="coupon_max_reward_value" />
+                                 </Flex>
                               </Form.Label>
                               <Form.Number
                                  id="MaxRewardValue"
                                  name="MaxRewardValue"
                                  placeholder="Enter maximum value of reward  "
-                                 value={rewardValue?.value?.max}
+                                 value={rewardValue?.value?.max || null}
+                                 onBlur={e => onBlur(e, 'MaxRewardValue')}
                                  onChange={e =>
                                     setRewardValue({
                                        ...rewardValue,
-                                       type: rewardValueType,
                                        value: {
                                           ...rewardValue?.value,
                                           max: +e.target.value,
@@ -277,6 +363,12 @@ export default function RewardDetailsunnel({
                                     })
                                  }
                               />
+                              {rewardValue.meta.type === 'max' &&
+                                 rewardValue.meta.isTouched &&
+                                 !rewardValue.meta.isValid &&
+                                 rewardValue.meta.errors.map((error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 ))}
                            </Form.Group>
                            <Spacer size="24px" />
                            <Form.Group>
@@ -284,17 +376,20 @@ export default function RewardDetailsunnel({
                                  htmlFor="number"
                                  title="PercentRewardValue"
                               >
-                                 Reward Percentage
+                                 <Flex container alignItems="center">
+                                    Reward Percentage
+                                    <Tooltip identifier="coupon_percentage_reward_value" />
+                                 </Flex>
                               </Form.Label>
                               <Form.Number
                                  id="PercentRewardValue"
                                  name="PercentRewardValue"
-                                 placeholder="Enter percentage value of reward  "
-                                 value={rewardValue?.value?.percentage}
+                                 placeholder="Enter percentage value of reward"
+                                 value={rewardValue?.value?.percentage || null}
+                                 onBlur={e => onBlur(e, 'PercentRewardValue')}
                                  onChange={e =>
                                     setRewardValue({
                                        ...rewardValue,
-                                       type: rewardValueType,
                                        value: {
                                           ...rewardValue.value,
                                           percentage: +e.target.value,
@@ -302,6 +397,12 @@ export default function RewardDetailsunnel({
                                     })
                                  }
                               />
+                              {rewardValue.meta.type === 'percentage' &&
+                                 rewardValue.meta.isTouched &&
+                                 !rewardValue.meta.isValid &&
+                                 rewardValue.meta.errors.map((error, index) => (
+                                    <Form.Error key={index}>{error}</Form.Error>
+                                 ))}
                            </Form.Group>
                         </InputWrap>
                      )}

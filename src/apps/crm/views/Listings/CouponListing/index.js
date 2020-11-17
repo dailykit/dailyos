@@ -14,13 +14,14 @@ import {
 import {
    COUPON_LISTING,
    COUPON_TOTAL,
-   COUPON_ACTIVE,
+   UPDATE_COUPON,
    CREATE_COUPON,
    DELETE_COUPON,
 } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { randomSuffix } from '../../../../../shared/utils'
+import { useLocation } from 'react-router-dom'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
@@ -28,6 +29,7 @@ import { logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 
 const CouponListing = () => {
+   const location = useLocation()
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const [coupons, setCoupons] = useState(undefined)
@@ -44,6 +46,7 @@ const CouponListing = () => {
                amount: 'N/A',
                active: coupon.isActive,
                duration: 'N/A',
+               isvalid: coupon.isCouponValid.status,
             }
          })
          setCoupons(result)
@@ -53,7 +56,7 @@ const CouponListing = () => {
    const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
 
    // Mutation
-   const [updateCouponActive] = useMutation(COUPON_ACTIVE, {
+   const [updateCouponActive] = useMutation(UPDATE_COUPON, {
       onCompleted: () => {
          toast.info('Coupon Updated!')
       },
@@ -77,23 +80,30 @@ const CouponListing = () => {
    })
 
    if (error) {
-      toast.error('Something went wrong !')
+      toast.error('Something went wrong here !')
       logger(error)
    }
 
    useEffect(() => {
       if (!tab) {
-         addTab('Coupons', '/crm/coupons')
+         addTab('Coupons', location.pathname)
       }
    }, [addTab, tab])
 
-   const toggleHandler = (toggle, id) => {
-      updateCouponActive({
-         variables: {
-            couponId: id,
-            isActive: toggle,
-         },
-      })
+   const toggleHandler = (toggle, id, isvalid) => {
+      const val = !toggle
+      if (val && !isvalid) {
+         toast.error(`Coupon should be valid!`)
+      } else {
+         updateCouponActive({
+            variables: {
+               id: id,
+               set: {
+                  isActive: val,
+               },
+            },
+         })
+      }
    }
 
    const ToggleButton = ({ cell }) => {
@@ -101,8 +111,10 @@ const CouponListing = () => {
       return (
          <Form.Group>
             <Form.Toggle
-               name="coupon_active"
-               onChange={() => toggleHandler(!rowData.active, rowData.id)}
+               name={`coupon_active${rowData.id}`}
+               onChange={() =>
+                  toggleHandler(rowData.active, rowData.id, rowData.isvalid)
+               }
                value={rowData.active}
             />
          </Form.Group>
@@ -145,7 +157,7 @@ const CouponListing = () => {
 
    const rowClick = (e, cell) => {
       const { id, code } = cell._cell.row.data
-      const param = `/crm/coupons/${id}`
+      const param = `${location.pathname}/${id}`
       const tabTitle = code
       addTab(tabTitle, param)
    }

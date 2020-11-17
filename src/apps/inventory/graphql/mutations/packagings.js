@@ -5,7 +5,7 @@ export const CREATE_PACKAGING = gql`
       createPackaging(objects: [$object]) {
          returning {
             id
-            packagingName
+            packagingName: name
          }
       }
    }

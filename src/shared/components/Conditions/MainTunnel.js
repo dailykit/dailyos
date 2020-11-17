@@ -24,6 +24,7 @@ const MainTunnel = ({ id, onSave, openTunnel, closeTunnel }) => {
             },
          })
       },
+      fetchPolicy: 'cache-and-network',
    })
 
    // Mutations

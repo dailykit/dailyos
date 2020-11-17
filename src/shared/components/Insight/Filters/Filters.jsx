@@ -1,16 +1,11 @@
+import { Flex, Form, Spacer, Text, TextButton } from '@dailykit/ui'
 import React, { useState } from 'react'
-import DatePicker from 'react-datepicker'
-
-import 'react-datepicker/dist/react-datepicker.css'
-
-import { checkDateField } from '../../../utils/checkDateField'
-import { optionsMap } from '../../../utils/optionsMap'
-import { Flex, Input, TextButton } from '@dailykit/ui'
-import { Dropdown, DropdownItem } from '../DropdownMenu'
-import { isObject } from '../../../utils/isObject'
-
 import '../../../styled/datepicker.css'
+import { checkDateField } from '../../../utils/checkDateField'
+import { isObject } from '../../../utils/isObject'
+import { optionsMap } from '../../../utils/optionsMap'
 import { fromMixed } from '../../../utils/textTransform'
+import { Dropdown, DropdownItem } from '../DropdownMenu'
 
 export default function Filters({
    filters,
@@ -74,7 +69,7 @@ function Filter({
                   >
                      Apply New
                   </TextButton>
-                  <span style={{ width: '12px' }} />
+                  <Spacer xAxis size="12px" />
 
                   <TextButton
                      type="solid"
@@ -82,13 +77,13 @@ function Filter({
                   >
                      Reset New
                   </TextButton>
-                  <span style={{ width: '12px' }} />
+                  <Spacer xAxis size="12px" />
                </>
             ) : null}
             <TextButton type="solid" onClick={() => handleFilterApply(false)}>
                Apply
             </TextButton>
-            <span style={{ width: '12px' }} />
+            <Spacer xAxis size="12px" />
 
             <TextButton type="solid" onClick={() => handleFilterReset(false)}>
                Reset
@@ -142,51 +137,83 @@ function Filter({
                   <>
                      {isDiff ? (
                         <>
-                           <DatePicker
-                              selected={newOptionsState[parent]?.[option] || ''}
-                              onSelect={date => {
-                                 setFilterable(true)
-                                 handleChange(date, option, true)
-                              }}
-                           />
-                           <span style={{ width: '10px' }} />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={parent + option}
+                                 title="diifDateInput"
+                              >
+                                 {renderOptionName(option, parent)}
+                              </Form.Label>
+                              <Form.Date
+                                 id={parent + option}
+                                 name={renderOptionName(option, parent)}
+                                 value={newOptionsState[parent]?.[option] || ''}
+                                 onChange={e => {
+                                    setFilterable(true)
+                                    handleChange(e.target.value, option, true)
+                                 }}
+                              />
+                           </Form.Group>
+                           <Spacer xAxis size="10px" />
                         </>
                      ) : null}
-                     <DatePicker
-                        selected={optionsState[parent]?.[option] || ''}
-                        onSelect={date => {
-                           setFilterable(true)
-                           handleChange(date, option, false)
-                        }}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor={parent + option} title="dateInput">
+                           {renderOptionName(option, parent)}
+                        </Form.Label>
+                        <Form.Date
+                           id={parent + option}
+                           name={renderOptionName(option, parent)}
+                           value={optionsState[parent]?.[option] || ''}
+                           onChange={e => {
+                              setFilterable(true)
+                              handleChange(e.target.value, option, false)
+                           }}
+                        />
+                     </Form.Group>
                   </>
                ) : (
                   <>
                      {isDiff ? (
                         <>
-                           <Input
-                              label={renderOptionName(option, parent)}
-                              type="text"
-                              value={newOptionsState[parent]?.[option] || ''}
-                              onChange={e => {
-                                 setFilterable(true)
-                                 handleChange(e.target.value, option, true)
-                              }}
-                              name={option}
-                           />
-                           <span style={{ width: '10px' }} />
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={parent + option}
+                                 title="diffInput"
+                              >
+                                 {renderOptionName(option, parent)}
+                              </Form.Label>
+                              <Form.Text
+                                 id={parent + option}
+                                 value={newOptionsState[parent]?.[option] || ''}
+                                 onChange={e => {
+                                    setFilterable(true)
+                                    handleChange(e.target.value, option, true)
+                                 }}
+                                 placeholder={renderOptionName(option, parent)}
+                                 name={option}
+                              />
+                           </Form.Group>
+                           <Spacer xAxis size="10px" />
                         </>
                      ) : null}
-                     <Input
-                        label={renderOptionName(option, parent)}
-                        type="text"
-                        value={optionsState[parent]?.[option] || ''}
-                        onChange={e => {
-                           setFilterable(true)
-                           handleChange(e.target.value, option, false)
-                        }}
-                        name={option}
-                     />
+                     <Form.Group>
+                        <Form.Label htmlFor={parent + option} title="diffInput">
+                           {renderOptionName(option, parent)}
+                        </Form.Label>
+
+                        <Form.Text
+                           placeholder={renderOptionName(option, parent)}
+                           type="text"
+                           value={optionsState[parent]?.[option] || ''}
+                           onChange={e => {
+                              setFilterable(true)
+                              handleChange(e.target.value, option, false)
+                           }}
+                           name={option}
+                           id={parent + option}
+                        />
+                     </Form.Group>
                   </>
                )}
             </Flex>
@@ -195,19 +222,24 @@ function Filter({
    }
    return (
       <>
-         <span style={{ width: '1rem' }} />
+         <Spacer xAxis size="16px" />
          <Dropdown
-            title={fromMixed(filter)}
+            title={fromMixed(filter.split('  ')[1])}
             withIcon
             show={show}
             setShow={setShow}
          >
+            {isDiff ? (
+               <DropdownItem width="100%">
+                  <Flex container justifyContent="space-between">
+                     <Text as="h4">New Filters</Text>
+                     <Text as="h4">Base Filters</Text>
+                  </Flex>
+               </DropdownItem>
+            ) : null}
             {isObject(filters[filter]) &&
                Object.keys(filters[filter]).map(filterName => (
-                  <DropdownItem
-                     key={filterName}
-                     width={isDiff ? '400px' : null}
-                  >
+                  <DropdownItem key={filterName}>
                      {renderOption(filterName, filter)}
                   </DropdownItem>
                ))}

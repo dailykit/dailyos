@@ -7,6 +7,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { BRANDS } from '../../../../../graphql'
 import { ScrollSection } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import {
    BrandName,
    BrandLogo,
@@ -32,12 +33,19 @@ export const OnDemandSettings = () => {
          toast.success('Successfully updated!')
       },
       onError: error => {
-         toast.error(error.message)
+         toast.error('Something went wrong!')
+         logger(error)
       },
    })
-   const { loading, data: { storeSettings = [] } = {} } = useSubscription(
-      BRANDS.ON_DEMAND_SETTINGS_TYPES
-   )
+   const {
+      loading,
+      error,
+      data: { storeSettings = [] } = {},
+   } = useSubscription(BRANDS.ON_DEMAND_SETTINGS_TYPES)
+   if (error) {
+      toast.error('Something went wrong!')
+      logger(error)
+   }
 
    React.useEffect(() => {
       if (!loading && !isEmpty(storeSettings)) {

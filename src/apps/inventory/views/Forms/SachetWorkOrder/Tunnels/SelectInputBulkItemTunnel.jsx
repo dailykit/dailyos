@@ -1,28 +1,36 @@
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Loader,
+   useSingleList,
 } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-
+import { toast } from 'react-toastify'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../shared/components'
+import { logger } from '../../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { NO_BULK_ITEMS } from '../../../../constants/infoMessages'
 import {
    GET_BULK_ITEMS_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../../graphql'
-import { TunnelContainer } from '../../../../components'
+import { TunnelWrapper } from '../../utils/TunnelWrapper'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
 const onError = error => {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function SelectInputBulkItemTunnel({ close, state }) {
@@ -32,7 +40,7 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
 
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading } = useSubscription(GET_BULK_ITEMS_SUBSCRIPTION, {
+   const { loading, error } = useSubscription(GET_BULK_ITEMS_SUBSCRIPTION, {
       variables: {
          supplierItemId: state.supplierItem.id,
       },
@@ -40,7 +48,6 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
          const data = resp.subscriptionData.data?.bulkItems
          setData(data)
       },
-      onError,
    })
 
    const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
@@ -51,65 +58,71 @@ export default function SelectInputBulkItemTunnel({ close, state }) {
       onError,
    })
 
-   const handleNext = () => {
-      if (!current || !current.id) return toast.error('Select an item first!')
+   const handleSave = option => {
       updateSachetWorkOrder({
          variables: {
             id: state.id,
             set: {
-               inputBulkItemId: current.id,
+               inputBulkItemId: option.id,
             },
          },
       })
    }
 
-   if (loading) return <Loader />
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (loading) return <InlineLoader />
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select input bulk item processing'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            description="Select input bulk item to use for this work order"
+            tooltip={
+               <Tooltip identifier="bulk-work-order_add_input_bulk_item_tunnel" />
+            }
          />
-         <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem
-                     type="SSL2"
-                     content={{
-                        title: current.processingName,
-                        description: `Shelf Life: ${current.shelfLife} On Hand: ${current.onHand}`,
-                     }}
-                  />
-               ) : (
+         <TunnelWrapper>
+            {list.length ? (
+               <List>
                   <ListSearch
                      onChange={value => setSearch(value)}
                      placeholder={t(
                         address.concat("type what you're looking for")
                      )}
                   />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.processingName.toLowerCase().includes(search)
-                     )
-                     .map(option => (
-                        <ListItem
-                           type="SSL2"
-                           key={option.id}
-                           isActive={option.id === current.id}
-                           onClick={() => selectOption('id', option.id)}
-                           content={{
-                              title: option.processingName,
-                              description: `Shelf Life: ${option.shelfLife} On Hand: ${option.onHand}`,
-                           }}
-                        />
-                     ))}
-               </ListOptions>
-            </List>
-         </TunnelContainer>
+                  <ListHeader type="SSL2" label="bulk item" />
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.processingName.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL2"
+                              key={option.id}
+                              isActive={option.id === current.id}
+                              onClick={() => handleSave(option)}
+                              content={{
+                                 title: option.processingName,
+                                 description: `Shelf Life: ${
+                                    option.shelfLife?.value || 'N/A'
+                                 } ${option.shelfLife?.unit || ''} On Hand: ${
+                                    option.onHand
+                                 }`,
+                              }}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_BULK_ITEMS} />
+            )}
+         </TunnelWrapper>
       </>
    )
 }

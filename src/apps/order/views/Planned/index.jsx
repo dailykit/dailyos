@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+   Flex,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
@@ -9,7 +10,6 @@ import {
 
 import { Wrapper } from './styled'
 import { useTabs } from '../../context'
-import { Flex } from '../../../../shared/components'
 import {
    InventorySection,
    ReadyToEatSection,
@@ -35,11 +35,11 @@ const Planned = () => {
          <HorizontalTabs>
             <Flex container padding="0 16px">
                <HorizontalTabList>
-                  <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
+                  <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
                   <HorizontalTab>
                      Ready To Eat ({readyToEatTotal})
                   </HorizontalTab>
-                  <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
+                  <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
                   <HorizontalTab>
                      Meal Kit Sachets ({mealKitSachetTotal})
                   </HorizontalTab>
@@ -47,13 +47,13 @@ const Planned = () => {
             </Flex>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
-                  <InventorySection setInventoryTotal={setInventoryTotal} />
+                  <MealKitSection setMealKitTotal={setMealKitTotal} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <ReadyToEatSection setReadyToEatTotal={setReadyToEatTotal} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <MealKitSection setMealKitTotal={setMealKitTotal} />
+                  <InventorySection setInventoryTotal={setInventoryTotal} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <MealKitSachetSection

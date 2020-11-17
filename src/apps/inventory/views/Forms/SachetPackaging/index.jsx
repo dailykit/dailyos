@@ -1,24 +1,17 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
-import React, { useReducer } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
-import {
-   SachetPackagingContext,
-   sachetPackagingInitialState,
-   sachetPackagingReducers,
-} from '../../../context'
 import { PACKAGING_SUBSCRIPTION } from '../../../graphql'
 import { StyledWrapper } from '../styled'
 import FormView from './FormView'
+import { logger } from '../../../../../shared/utils'
+import { ErrorState } from '../../../../../shared/components'
 
 export default function SachetPackaging() {
-   const [sachetPackagingState, sachetPackagingDispatch] = useReducer(
-      sachetPackagingReducers,
-      sachetPackagingInitialState
-   )
    const { id } = useParams()
 
-   const { loading, data: { packaging = {} } = {} } = useSubscription(
+   const { error, loading, data: { packaging = {} } = {} } = useSubscription(
       PACKAGING_SUBSCRIPTION,
       {
          variables: { id },
@@ -27,15 +20,16 @@ export default function SachetPackaging() {
 
    if (loading) return <Loader />
 
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
    return (
       <>
-         <SachetPackagingContext.Provider
-            value={{ sachetPackagingState, sachetPackagingDispatch }}
-         >
-            <StyledWrapper>
-               <FormView state={packaging} />
-            </StyledWrapper>
-         </SachetPackagingContext.Provider>
+         <StyledWrapper>
+            <FormView state={packaging} />
+         </StyledWrapper>
       </>
    )
 }

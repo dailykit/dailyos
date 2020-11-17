@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
@@ -11,10 +11,12 @@ import { StyledInfo, StyledActionText } from './styled'
 import options from '../../tableOptions'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
+import BrandContext from '../../../context/Brand'
 
 const SubscriptionTable = ({ id, sid }) => {
+   const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const history = useHistory()
@@ -24,6 +26,7 @@ const SubscriptionTable = ({ id, sid }) => {
       variables: {
          keycloakId: id,
          sid,
+         brandId: context.brandId,
       },
       onCompleted: ({ subscriptionOccurencesAggregate = {} }) => {
          let action = ''
@@ -54,15 +57,15 @@ const SubscriptionTable = ({ id, sid }) => {
                date: occurence?.fulfillmentDate || 'N/A',
                action,
                oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
-               amountPaid: `$ ${
-                  occurence?.customers?.[0]?.orderCart?.amount || 'N/A'
-               }`,
+               amountPaid: `${currencyFmt(
+                  Number(occurence?.customers?.[0]?.orderCart?.amount) || 0
+               )}`,
             }
          })
          setOccurences(result)
       },
       onError: error => {
-         toast.error('Something went wrong')
+         toast.error('Something went wrong subscriptionOrders')
          logger(error)
       },
    })
@@ -131,7 +134,7 @@ const SubscriptionTable = ({ id, sid }) => {
          },
          formatter: reactFormatter(<InfoButton />),
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -148,7 +151,7 @@ const SubscriptionTable = ({ id, sid }) => {
          field: 'action',
          formatter: reactFormatter(<ActionText />),
          hozAlign: 'center',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
@@ -164,7 +167,7 @@ const SubscriptionTable = ({ id, sid }) => {
          title: 'Order Id',
          field: 'oid',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -179,7 +182,7 @@ const SubscriptionTable = ({ id, sid }) => {
          title: 'Amount Paid',
          field: 'amountPaid',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -189,6 +192,7 @@ const SubscriptionTable = ({ id, sid }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
    ]
@@ -234,15 +238,17 @@ const SubscriptionTable = ({ id, sid }) => {
                      </Text>
                      <Tooltip identifier="order_list_heading" />
                   </Flex>
-                  <ReactTabulator
-                     columns={columns}
-                     data={occurences}
-                     options={{
-                        ...options,
-                        placeholder: 'No Occurences Available Yet !',
-                     }}
-                     ref={tableRef}
-                  />
+                  {Boolean(occurences) && (
+                     <ReactTabulator
+                        columns={columns}
+                        data={occurences}
+                        options={{
+                           ...options,
+                           placeholder: 'No Occurences Available Yet !',
+                        }}
+                        ref={tableRef}
+                     />
+                  )}
                </>
             )}
          </Flex>

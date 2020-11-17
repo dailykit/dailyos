@@ -56,7 +56,7 @@ export const CREATE_BULK_ITEM = gql`
    mutation CreateBulkItem(
       $processingName: String!
       $itemId: Int!
-      $unit: String!
+      $unit: String
       $yield: jsonb
       $shelfLife: jsonb
       $parLevel: numeric

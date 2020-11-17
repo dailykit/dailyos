@@ -1,55 +1,66 @@
+import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
-   IconButton,
-   Loader,
+   ComboButton,
    Text,
    Tunnel,
    Tunnels,
    useTunnel,
+   Flex,
+   IconButton,
 } from '@dailykit/ui'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { toast } from 'react-toastify'
 
-import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
-import { DELETE_PROCESSINGS, PROCESSINGS } from '../../../../graphql'
-import tableOptions from '../../../Listings/tableOption'
-import { Card, Layout, Listing, ListingHeader } from '../styled'
-// Tunnels
 import { AddTypesTunnel } from './tunnels'
+import { MASTER } from '../../../../graphql'
+import { useTabs } from '../../../../context'
+import { logger } from '../../../../../../shared/utils'
+import tableOptions from '../../../Listings/tableOption'
+import { useTooltip } from '../../../../../../shared/providers'
+import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
+import {
+   Tooltip,
+   ErrorState,
+   InlineLoader,
+} from '../../../../../../shared/components'
 
 const address = 'apps.settings.views.forms.processings.'
 
 const ProcessingsForm = () => {
    const { t } = useTranslation()
+   const { tab, addTab } = useTabs()
+   const { tooltip } = useTooltip()
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
 
    // subscription
-   const { loading, data, error } = useSubscription(PROCESSINGS)
+   const { loading, data, error } = useSubscription(MASTER.PROCESSINGS.LIST)
 
    // Mutation
-   const [deleteElement] = useMutation(DELETE_PROCESSINGS, {
+   const [deleteElement] = useMutation(MASTER.PROCESSINGS.DELETE, {
       onCompleted: () => {
-         toast.success('Deleted!')
+         toast.success('Successfully deleted the processing!')
       },
       onError: error => {
-         console.log(error)
-         toast.error('Error')
+         toast.error('Failed to delete the processing')
+         logger(error)
       },
    })
 
-   // Handlers
-   const deleteHandler = (e, el) => {
-      e.stopPropagation()
-      if (window.confirm(`Are you sure you want to delete - ${el.name}?`)) {
-         deleteElement({
-            variables: {
-               ids: [el.id],
-            },
-         })
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Processings', `/settings/master-lists/processings`)
       }
+   }, [tab, addTab])
+
+   const remove = id => {
+      deleteElement({
+         variables: {
+            ids: [id],
+         },
+      })
    }
 
    const columns = [
@@ -57,6 +68,12 @@ const ProcessingsForm = () => {
          title: t(address.concat('name')),
          field: 'name',
          headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_processing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: t(address.concat('reference count')),
@@ -70,57 +87,47 @@ const ProcessingsForm = () => {
          headerSort: false,
          hozAlign: 'center',
          cssClass: 'center-text',
-         cellClick: (e, cell) => {
-            e.stopPropagation()
-            const { id, name } = cell._cell.row.data
-            deleteHandler(e, { id, name })
-         },
-         formatter: reactFormatter(<DeleteIcon color="#FF5A52" />),
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
 
-   if (error) {
-      console.log(error)
+   if (loading) return <InlineLoader />
+   if (!loading && error) {
+      logger(error)
+      toast.error('Failed to fetch processings!')
+      return <ErrorState />
    }
-   if (loading) return <Loader />
-
    return (
-      <>
+      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+         <Flex
+            as="header"
+            container
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
+               <Text as="h2">
+                  {t(address.concat('processings'))} (
+                  {data.masterProcessings.length})
+               </Text>
+               <Tooltip identifier="listing_processings_heading" />
+            </Flex>
+            <ComboButton type="solid" onClick={() => openTunnel(1)}>
+               <AddIcon size={24} /> Create Processing
+            </ComboButton>
+         </Flex>
+         <ReactTabulator
+            columns={columns}
+            data={data.masterProcessings}
+            options={tableOptions}
+         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <AddTypesTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Layout>
-            <Card>
-               <div>
-                  <Text as="title">{t(address.concat('processings'))}</Text>
-               </div>
-               <div>
-                  <Text as="title">{data.masterProcessings.length}</Text>
-                  <span onClick={() => openTunnel(1)}>
-                     <AddIcon color="#00A7E1" size={24} />
-                  </span>
-               </div>
-            </Card>
-            <Listing>
-               <ListingHeader>
-                  <Text as="p">
-                     {t(address.concat('processings'))} (
-                     {data.masterProcessings.length})
-                  </Text>
-                  <IconButton type="solid" onClick={() => openTunnel(1)}>
-                     <AddIcon size={24} />
-                  </IconButton>
-               </ListingHeader>
-               <ReactTabulator
-                  columns={columns}
-                  data={data.masterProcessings}
-                  options={tableOptions}
-               />
-            </Listing>
-         </Layout>
-      </>
+      </Flex>
    )
 }
 
@@ -134,3 +141,22 @@ function ShowCount({
 }
 
 export default ProcessingsForm
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { id = null, name = '' } = cell.getData()
+      if (
+         window.confirm(
+            `Are your sure you want to delete processing - ${name}?`
+         )
+      ) {
+         remove(id)
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
+}

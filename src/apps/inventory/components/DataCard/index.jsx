@@ -1,25 +1,34 @@
 import React from 'react'
-import { Text } from '@dailykit/ui'
+import { Spacer, Text, TextButton } from '@dailykit/ui'
 
-export default function DataCard({ title, quantity, actionText }) {
+export default function DataCard({ title, quantity, actionText, action }) {
    return (
       <div
          style={{
-            margin: '4px 20px',
+            margin: '4px 16px',
             border: '1px solid #f3f3f3',
-            padding: '20px',
+            padding: '16px',
             borderRadius: '4px',
             minWidth: '120px',
+            height: '100%',
          }}
       >
          <Text as="title">{title}</Text>
 
-         <Text as="h2">{quantity === 0 ? quantity : 'N/A'}</Text>
-         <hr style={{ border: '1px solid #f3f3f3' }} />
+         <Text as="h2">{quantity}</Text>
          {actionText && (
-            <span style={{ color: '#00A7E1', marginTop: '5px' }}>
-               {actionText}
-            </span>
+            <>
+               <Spacer size="8px" />
+               <hr style={{ border: '1px solid #f3f3f3' }} />
+               <Spacer size="8px" />
+               <TextButton
+                  onClick={action}
+                  style={{ color: '#00A7E1' }}
+                  type="ghost"
+               >
+                  {actionText}
+               </TextButton>
+            </>
          )}
       </div>
    )

@@ -1,7 +1,9 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Flex,
    Loader,
+   Spacer,
    Text,
    TextButton,
    Tunnel,
@@ -12,13 +14,15 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { ItemCard, Spacer, StatusSwitch } from '../../../components'
-import FormHeading from '../../../components/FormHeading'
+import { ErrorState } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import { ItemCard, StatusSwitch } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
    SACHET_WORK_ORDER_SUBSCRIPTION,
    UPDATE_SACHET_WORK_ORDER,
 } from '../../../graphql'
-import { FormActions, StyledForm, StyledWrapper } from '../styled'
+import { StyledWrapper } from '../styled'
 import Configurator from './Configurator'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectLabelTemplateTunnel from './Tunnels/SelectLabelTemplateTunnel'
@@ -31,8 +35,8 @@ import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 const address = 'apps.inventory.views.forms.sachetworkorder.'
 
 const onError = error => {
-   console.log(error)
-   toast.error('Error! Please try again.')
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function SachetWorkOrder() {
@@ -70,9 +74,9 @@ export default function SachetWorkOrder() {
    const {
       data: { sachetWorkOrder: state = {} } = {},
       loading: orderLoading,
+      error,
    } = useSubscription(SACHET_WORK_ORDER_SUBSCRIPTION, {
       variables: { id },
-      onError,
    })
 
    const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
@@ -126,12 +130,17 @@ export default function SachetWorkOrder() {
       }
    }
 
+   if (error) {
+      onError(error)
+      return <ErrorState />
+   }
+
    if (orderLoading) return <Loader />
 
    return (
       <>
          <Tunnels tunnels={supplierItemTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1}>
                <SelectSupplierItemTunnel
                   close={closeSupplierItemTunnel}
                   state={state}
@@ -182,142 +191,143 @@ export default function SachetWorkOrder() {
          </Tunnels>
 
          <StyledWrapper>
-            <FormHeading>
-               <div
-                  style={{
-                     width: '30%',
-                  }}
-               >
-                  <Text as="h1">
-                     {t(address.concat('work order'))}{' '}
-                     {state.supplierItem?.name
-                        ? `- ${state.supplierItem.name}`
-                        : null}
-                  </Text>
-               </div>
-
-               <FormActions style={{ position: 'relative' }}>
-                  {state.isPublished ? (
-                     <StatusSwitch
-                        currentStatus={state.status}
-                        onSave={saveStatus}
-                     />
-                  ) : (
-                     <TextButton onClick={handlePublish} type="solid">
-                        {t(address.concat('publish'))}
-                     </TextButton>
-                  )}
-               </FormActions>
-            </FormHeading>
-
-            <StyledForm style={{ padding: '0px 60px' }}>
-               <Text as="title">
-                  {t(address.concat('select supplier item'))}
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
+               <Text as="h1">
+                  {t(address.concat('work order'))}{' '}
+                  {state.supplierItem?.name
+                     ? `- ${state.supplierItem.name}`
+                     : null}
                </Text>
-               {state.supplierItem?.name ? (
-                  <>
-                     {state.isPublished ? (
-                        <ItemCard title={state.supplierItem.name} />
-                     ) : (
-                        <ItemCard
-                           title={state.supplierItem.name}
-                           edit={() => openSupplierItemTunnel(1)}
-                        />
-                     )}
-                  </>
+
+               {state.isPublished ? (
+                  <StatusSwitch
+                     currentStatus={state.status}
+                     onSave={saveStatus}
+                  />
                ) : (
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text={t(address.concat('select supplier item'))}
-                     onClick={() => openSupplierItemTunnel(1)}
-                  />
+                  <TextButton onClick={handlePublish} type="solid">
+                     {t(address.concat('publish'))}
+                  </TextButton>
                )}
+            </Flex>
 
-               <br />
+            <Spacer size="16px" />
 
-               {state.supplierItem?.name ? (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('input bulk item'))}
-                     </Text>
-                     {state.bulkItem?.processingName ? (
-                        <>
-                           {state.isPublished ? (
-                              <ItemCard
-                                 title={state.bulkItem?.processingName}
-                                 onHand={state.bulkItem?.onHand}
-                                 shelfLife={state.bulkItem?.shelfLife?.value}
-                              />
-                           ) : (
-                              <ItemCard
-                                 title={state.bulkItem?.processingName}
-                                 onHand={state.bulkItem?.onHand}
-                                 shelfLife={state.bulkItem?.shelfLife?.value}
-                                 edit={() => openInputBulkItemTunnel(1)}
-                              />
-                           )}
-                        </>
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select input bulk item'))}
-                           onClick={() => openInputBulkItemTunnel(1)}
-                        />
-                     )}
-                  </>
-               ) : null}
+            <Text as="title">{t(address.concat('select supplier item'))}</Text>
+            {state.supplierItem?.name ? (
+               <>
+                  {state.isPublished ? (
+                     <ItemCard title={state.supplierItem.name} />
+                  ) : (
+                     <ItemCard
+                        title={state.supplierItem.name}
+                        edit={() => openSupplierItemTunnel(1)}
+                     />
+                  )}
+               </>
+            ) : (
+               <ButtonTile
+                  noIcon
+                  type="secondary"
+                  text={t(address.concat('select supplier item'))}
+                  onClick={() => openSupplierItemTunnel(1)}
+               />
+            )}
 
-               <Spacer />
+            <Spacer size="16px" />
 
-               {state.bulkItem?.id ? (
-                  <>
-                     <Text as="title">
-                        {t(address.concat('output sachet item'))}
-                     </Text>
-                     {state.outputSachetItem?.unitSize ? (
-                        <>
-                           {state.isPublished ? (
-                              <ItemCard
-                                 title={`${state.outputSachetItem.unitSize} ${state.outputSachetItem.unit}`}
-                                 onHand={state.outputSachetItem.onHand}
-                                 par={state.outputSachetItem.parLevel}
-                              />
-                           ) : (
-                              <ItemCard
-                                 title={`${state.outputSachetItem.unitSize} ${state.outputSachetItem.unit}`}
-                                 onHand={state.outputSachetItem.onHand}
-                                 par={state.outputSachetItem.parLevel}
-                                 edit={() => {
-                                    openOutputSachetItemTunnel(1)
-                                 }}
-                              />
-                           )}
-                        </>
-                     ) : (
-                        <ButtonTile
-                           noIcon
-                           type="secondary"
-                           text={t(address.concat('select output sachet item'))}
-                           onClick={() => {
-                              openOutputSachetItemTunnel(1)
-                           }}
-                        />
-                     )}
-                  </>
-               ) : null}
+            {state.supplierItem?.name ? (
+               <>
+                  <Text as="title">{t(address.concat('input bulk item'))}</Text>
+                  {state.bulkItem?.processingName ? (
+                     <>
+                        {state.isPublished ? (
+                           <ItemCard
+                              title={state.bulkItem?.processingName}
+                              onHand={`${state.bulkItem?.onHand} ${state.bulkItem?.unit}`}
+                              shelfLife={`${state.bulkItem?.shelfLife?.value} ${
+                                 state.bulkItem?.shelfLife?.unit || ''
+                              }`}
+                              isBulk
+                           />
+                        ) : (
+                           <ItemCard
+                              title={state.bulkItem?.processingName}
+                              onHand={`${state.bulkItem?.onHand} ${state.bulkItem?.unit}`}
+                              isBulk
+                              shelfLife={`${state.bulkItem?.shelfLife?.value} ${
+                                 state.bulkItem?.shelfLife?.unit || ''
+                              }`}
+                              edit={() => openInputBulkItemTunnel(1)}
+                           />
+                        )}
+                     </>
+                  ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat('select input bulk item'))}
+                        onClick={() => openInputBulkItemTunnel(1)}
+                     />
+                  )}
+               </>
+            ) : null}
 
-               {state.outputSachetItem?.id && (
-                  <Configurator
-                     openPackagingTunnel={openPackagingTunnel}
-                     openLabelTemplateTunnel={openLabelTemplateTunnel}
-                     openUserTunnel={openUserTunnel}
-                     openStationTunnel={openStationTunnel}
-                     state={state}
-                  />
-               )}
-            </StyledForm>
+            <Spacer size="16px" />
+
+            {state.bulkItem?.id ? (
+               <>
+                  <Text as="title">
+                     {t(address.concat('output sachet item'))}
+                  </Text>
+                  {state.outputSachetItem?.unitSize ? (
+                     <>
+                        {state.isPublished ? (
+                           <ItemCard
+                              title={`${state.outputSachetItem.unitSize} ${state.outputSachetItem.unit}`}
+                              onHand={`${state.outputSachetItem.onHand} ${state.outputSachetItem.unit}`}
+                              par={`${state.outputSachetItem.parLevel} ${state.bulkItem?.unit}`}
+                              isBulk
+                           />
+                        ) : (
+                           <ItemCard
+                              title={`${state.outputSachetItem.unitSize} ${state.outputSachetItem.unit}`}
+                              onHand={`${state.outputSachetItem.onHand} ${state.outputSachetItem.unit}`}
+                              par={`${state.outputSachetItem.parLevel} ${state.bulkItem?.unit}`}
+                              isBulk
+                              edit={() => {
+                                 openOutputSachetItemTunnel(1)
+                              }}
+                           />
+                        )}
+                     </>
+                  ) : (
+                     <ButtonTile
+                        noIcon
+                        type="secondary"
+                        text={t(address.concat('select output sachet item'))}
+                        onClick={() => {
+                           openOutputSachetItemTunnel(1)
+                        }}
+                     />
+                  )}
+               </>
+            ) : null}
+
+            {state.outputSachetItem?.id && (
+               <Configurator
+                  openPackagingTunnel={openPackagingTunnel}
+                  openLabelTemplateTunnel={openLabelTemplateTunnel}
+                  openUserTunnel={openUserTunnel}
+                  openStationTunnel={openStationTunnel}
+                  state={state}
+               />
+            )}
          </StyledWrapper>
       </>
    )

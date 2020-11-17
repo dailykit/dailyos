@@ -4,6 +4,7 @@ import Insight from '../../../../shared/components/Insight'
 import { useQuery } from '@apollo/react-hooks'
 
 import { INSIGHTS } from '../../graphql'
+import { Flex } from '@dailykit/ui'
 
 const ReferralPlansListing = () => {
    const {
@@ -21,14 +22,20 @@ const ReferralPlansListing = () => {
       <StyledWrapper>
          {insights.map(insight => {
             return (
-               <Insight
+               <Flex
                   key={insight.identifier}
-                  identifier={insight.identifier}
-                  includeChart
-                  // where={{ amountPaid: { _lte: 2 } }}
-                  // limit={2}
-                  // order={{ amountPaid: 'desc' }}
-               />
+                  width="calc(100% - 64px)"
+                  margin="0 auto"
+               >
+                  <Insight
+                     identifier={insight.identifier}
+                     includeChart
+                     // where={{ amountPaid: { _lte: 2 } }}
+                     // limit={2}
+                     // order={{ amountPaid: 'desc' }}
+                     variables={{ amountVar: 90 }}
+                  />
+               </Flex>
             )
          })}
       </StyledWrapper>

@@ -21,7 +21,7 @@ const StyleCard = ({ active, heading, click, data }) => {
             </Flex>
             <Flex container flexDirection="column">
                <Text as="p">Total Orders</Text>
-               <Text as="p">{data?.ordered?.aggregate?.count || 'N/A'}</Text>
+               <Text as="p">{data?.ordered?.aggregate?.count || '0'}</Text>
             </Flex>
          </Flex>
       </StyledCard>

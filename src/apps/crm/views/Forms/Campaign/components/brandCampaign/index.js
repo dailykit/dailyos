@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
@@ -8,10 +8,11 @@ import { StyledWrapper } from './styled'
 import options from '../../../../tableOptions'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import CampaignContext from '../../../../../context/Campaign/CampaignForm'
 
-const BrandCampaign = ({ state }) => {
+const BrandCampaign = () => {
    const tableRef = useRef()
-
+   const context = useContext(CampaignContext)
    // Subscription
    const {
       loading: listloading,
@@ -53,7 +54,7 @@ const BrandCampaign = ({ state }) => {
          title: 'Campaign Available',
          formatter: reactFormatter(
             <ToggleCampaign
-               campaignId={state.id}
+               campaignId={context.state.id}
                onChange={object =>
                   upsertBrandCampaign({ variables: { object } })
                }

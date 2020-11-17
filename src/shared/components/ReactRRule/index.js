@@ -11,7 +11,7 @@ const Component = ({ value, onChange }) => {
       dtstart: '',
       until: '',
       count: 30,
-      interval: 1,
+      interval: '1',
       wkst: 0,
       byweekday: [],
       bymonth: [],
@@ -161,7 +161,7 @@ const Component = ({ value, onChange }) => {
             <Form.Group>
                <Form.Label htmlFor="dtstart" title="Start Date">
                   <Flex container alignItems="center">
-                     Start Date
+                     Start Date*
                      <Tooltip identifier="rrule_start_date" />
                   </Flex>
                </Form.Label>
@@ -195,14 +195,14 @@ const Component = ({ value, onChange }) => {
             <Form.Group>
                <Form.Label htmlFor="count" title="count">
                   <Flex container alignItems="center">
-                     Count
+                     Count*
                      <Tooltip identifier="rrule_count" />
                   </Flex>
                </Form.Label>
                <Form.Number
                   id="count"
                   name="count"
-                  onChange={e => setState({ ...state, count: +e.target.value })}
+                  onChange={e => setState({ ...state, count: e.target.value })}
                   value={state.count}
                   placeholder="Enter count"
                />
@@ -211,7 +211,7 @@ const Component = ({ value, onChange }) => {
             <Form.Group>
                <Form.Label htmlFor="interval" title="interval">
                   <Flex container alignItems="center">
-                     Interval
+                     Interval*
                      <Tooltip identifier="rrule_interval" />
                   </Flex>
                </Form.Label>
@@ -219,7 +219,7 @@ const Component = ({ value, onChange }) => {
                   id="interval"
                   name="interval"
                   onChange={e =>
-                     setState({ ...state, interval: +e.target.value })
+                     setState({ ...state, interval: e.target.value })
                   }
                   value={state.interval}
                   placeholder="Enter interval"

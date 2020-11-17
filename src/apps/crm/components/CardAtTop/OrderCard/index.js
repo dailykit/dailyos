@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { StyledCard, ViewTab } from './styled'
+import { currencyFmt } from '../../../../../shared/utils'
 
 const StyleCard = ({ active, heading, click, data }) => {
    return (
@@ -17,11 +18,11 @@ const StyleCard = ({ active, heading, click, data }) => {
          >
             <Flex container flexDirection="column">
                <Text as="p">Total Amount</Text>
-               <Text as="p">{data?.sum?.amountPaid || 'N/A'}</Text>
+               <Text as="p">{currencyFmt(data?.sum?.amountPaid || 0)}</Text>
             </Flex>
             <Flex container flexDirection="column">
                <Text as="p">Total Orders</Text>
-               <Text as="p">{data?.count || 'N/A'}</Text>
+               <Text as="p">{data?.count || 0}</Text>
             </Flex>
          </Flex>
       </StyledCard>

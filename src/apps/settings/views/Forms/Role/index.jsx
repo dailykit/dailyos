@@ -12,42 +12,55 @@ import {
    Tunnel,
    useTunnel,
    Text,
+   Flex,
 } from '@dailykit/ui'
 
 import { ROLES } from '../../../graphql'
 import { useTabs } from '../../../context'
-import { InlineLoader } from '../../../../../shared/components'
+import { Spacer } from '../../../../../shared/styled'
 import { Apps, AppsTunnel, Users, UsersTunnel } from './sections'
-import { StyledWrapper, StyledHeader, StyledSection } from '../styled'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 
 const RoleForm = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const [apps, setApps] = React.useState([])
    const [users, setUsers] = React.useState([])
-   const [insertApps] = useMutation(ROLES.INSERT_ROLES_APPS, {
-      onCompleted: () => {
-         toast.success('Apps added successfully to the role.')
-      },
-      onError: () => {
-         toast.error('Failed to add apps to the role.')
-      },
-   })
+   const [insertApps, { loading: isSavingApps }] = useMutation(
+      ROLES.INSERT_ROLES_APPS,
+      {
+         onCompleted: () => {
+            toast.success('Apps added successfully to the role.')
+         },
+         onError: () => {
+            toast.error('Failed to add apps to the role.')
+         },
+      }
+   )
    const [insertUsers] = useMutation(ROLES.INSERT_ROLES_USERS, {
       onCompleted: () => {
          toast.success('Users added successfully to the role.')
       },
-      onError: () => {
+      onError: error => {
+         logger(error)
          toast.error('Failed to add users to the role.')
       },
    })
    const [appsTunnels, openAppsTunnel, closeAppsTunnel] = useTunnel(1)
    const [usersTunnels, openUsersTunnel, closeUsersTunnel] = useTunnel(1)
-   const { loading, data: { role = {} } = {} } = useSubscription(ROLES.ROLE, {
-      variables: {
-         id: params.id,
-      },
-   })
+   const { error, loading, data: { role = {} } = {} } = useSubscription(
+      ROLES.ROLE,
+      {
+         variables: {
+            id: params.id,
+         },
+      }
+   )
 
    React.useEffect(() => {
       if (!loading && !tab && role?.id) {
@@ -104,18 +117,54 @@ const RoleForm = () => {
       }
    }
 
+   const isPublishable = () => {
+      let _apps = differenceBy(apps, role.apps, 'app.id')
+
+      const _users = differenceBy(
+         users,
+         role.users.map(node => ({
+            user: { ...node.user, id: node.user.keycloakId },
+         })),
+         'user.id'
+      )
+
+      return !isEmpty(_apps) || !isEmpty(_users)
+   }
+
    if (loading) return <InlineLoader />
+   if (error) {
+      logger(error)
+      toast.error('Failed to fetch role details')
+      return <ErrorState message="Failed to fetch role details" />
+   }
    return (
-      <StyledWrapper>
-         <StyledHeader>
+      <Flex padding="0 32px">
+         <Flex
+            container
+            as="header"
+            height="80px"
+            margin="0 auto"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="title">{role.title}</Text>
-            <TextButton type="solid" onClick={publish}>
+            <TextButton
+               type="solid"
+               onClick={publish}
+               isLoading={isSavingApps}
+               disabled={!isPublishable()}
+            >
                Publish
             </TextButton>
-         </StyledHeader>
-         <StyledSection>
-            <Text as="h2">Apps ({apps.length})</Text>
+         </Flex>
+         <Flex>
+            <Flex container alignItems="center">
+               <Text as="h2">Apps ({apps.length})</Text>
+               <Tooltip identifier="form_role_section_apps_heading" />
+            </Flex>
+            <Spacer size="16px" />
             {apps.length > 0 && <Apps apps={apps} />}
+            <Spacer size="16px" />
             <ButtonTile
                noIcon
                size="sm"
@@ -123,10 +172,16 @@ const RoleForm = () => {
                text="Select and Configure Apps"
                onClick={() => openAppsTunnel(1)}
             />
-         </StyledSection>
-         <StyledSection>
-            <Text as="h2">Users ({users.length})</Text>
+         </Flex>
+         <Spacer size="24px" />
+         <Flex>
+            <Flex container alignItems="center">
+               <Text as="h2">Users ({users.length})</Text>
+               <Tooltip identifier="form_role_section_users_heading" />
+            </Flex>
+            <Spacer size="16px" />
             {users.length > 0 && <Users users={users} />}
+            <Spacer size="16px" />
             <ButtonTile
                noIcon
                size="sm"
@@ -134,7 +189,8 @@ const RoleForm = () => {
                text="Select and Configure Users"
                onClick={() => openUsersTunnel(1)}
             />
-         </StyledSection>
+         </Flex>
+         <Spacer size="24px" />
          <Tunnels tunnels={appsTunnels}>
             <Tunnel layer={1} size="sm">
                <AppsTunnel
@@ -151,7 +207,7 @@ const RoleForm = () => {
                />
             </Tunnel>
          </Tunnels>
-      </StyledWrapper>
+      </Flex>
    )
 }
 

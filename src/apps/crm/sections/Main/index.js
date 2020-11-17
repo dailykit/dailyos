@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Switch, Route } from 'react-router-dom'
-
+import { BrandName } from './styled'
+import BrandContext from '../../context/Brand'
+import { ViewIcon } from '../../../../shared/assets/icons'
 // Views
 import {
    Home,
@@ -13,6 +15,7 @@ import {
 } from '../../views'
 
 const Main = () => {
+   const [context, setContext] = useContext(BrandContext)
    return (
       <main>
          <Switch>
@@ -28,6 +31,11 @@ const Main = () => {
             <Route path="/crm/campaign" component={CampaignListing} exact />
             <Route path="/crm" component={Home} exact />
          </Switch>
+
+         <BrandName>
+            <ViewIcon size="24" /> &nbsp;
+            <p>Showing information for {context.brandName} brand</p>
+         </BrandName>
       </main>
    )
 }

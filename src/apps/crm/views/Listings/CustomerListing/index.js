@@ -1,10 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 import { Text, Loader, Flex, IconButton } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
+import { useLocation } from 'react-router-dom'
 import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
+import BrandContext from '../../../context/Brand'
 import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
@@ -14,11 +16,13 @@ import {
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 
 const CustomerListing = () => {
+   const location = useLocation()
+   const [context, setContext] = useContext(BrandContext)
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
@@ -27,6 +31,9 @@ const CustomerListing = () => {
    const [revenue, setRevenue] = useState(0)
    // Subscription
    const { loading, error1 } = useSubscription(TOTAL_REVENUE, {
+      variables: {
+         brandId: context.brandId,
+      },
       onSubscriptionData: data => {
          setRevenue(
             data?.subscriptionData?.data?.ordersAggregate?.aggregate?.sum
@@ -35,6 +42,9 @@ const CustomerListing = () => {
       },
    })
    const { customerCountLoading, error2 } = useSubscription(CUSTOMERS_COUNT, {
+      variables: {
+         brandId: context.brandId,
+      },
       onSubscriptionData: data => {
          setCustomerCount(
             data?.subscriptionData?.data?.customers_aggregate?.aggregate
@@ -60,6 +70,9 @@ const CustomerListing = () => {
 
    // Query
    const { loading: listloading } = useQuery(CUSTOMERS_LISTING, {
+      variables: {
+         brandId: context.brandId,
+      },
       onCompleted: ({ customers = {} }) => {
          const result = customers.map(customer => {
             return {
@@ -89,7 +102,7 @@ const CustomerListing = () => {
 
    useEffect(() => {
       if (!tab) {
-         addTab('Customers', '/crm/customers')
+         addTab('Customers', location.pathname)
       }
    }, [addTab, tab])
 
@@ -112,7 +125,7 @@ const CustomerListing = () => {
 
    const rowClick = (e, cell) => {
       const { keycloakId, name } = cell._cell.row.data
-      const param = '/crm/customers/'.concat(keycloakId)
+      const param = `${location.pathname}/${keycloakId}`
       addTab(name, param)
    }
 
@@ -146,7 +159,7 @@ const CustomerListing = () => {
          field: 'phone',
          headerFilter: true,
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -186,7 +199,7 @@ const CustomerListing = () => {
          title: 'Referrals Sent',
          field: 'refSent',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -199,11 +212,11 @@ const CustomerListing = () => {
          width: 150,
       },
       {
+         width: 150,
          title: 'Total Paid',
          field: 'paid',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'right'
+         titleFormatter: function (cell) {
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
@@ -212,13 +225,13 @@ const CustomerListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         width: 150,
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
       },
       {
          title: 'Total Orders',
          field: 'orders',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -234,7 +247,7 @@ const CustomerListing = () => {
          title: 'Discounts availed',
          field: 'discounts',
          hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
@@ -255,7 +268,7 @@ const CustomerListing = () => {
          },
          formatter: reactFormatter(<DeleteButton />),
          hozAlign: 'center',
-         titleFormatter: function (cell, formatterParams, onRendered) {
+         titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
@@ -275,7 +288,7 @@ const CustomerListing = () => {
             <HeadingTile title="Total Customers" value={customerCount} />
             <HeadingTile
                title="Total Revenue generated"
-               value={`$ ${revenue}`}
+               value={currencyFmt(revenue)}
             />
          </Flex>
 

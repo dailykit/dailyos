@@ -1,24 +1,24 @@
-import { Text } from '@dailykit/ui'
+import { useMutation } from '@apollo/react-hooks'
+import { Text, TunnelHeader } from '@dailykit/ui'
 import React from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { v4 as uuid } from 'uuid'
-
-import { Spacer, TunnelContainer, TunnelHeader } from '../../../components'
-import { SolidTile } from '../styled'
-
+import { logger } from '../../../../../shared/utils'
+import { TunnelContainer } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { useTabs } from '../../../context'
 import {
    CREATE_BULK_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,
 } from '../../../graphql'
-import { useTabs } from '../../../context'
+import { SolidTile } from '../styled'
 
 const address = 'apps.inventory.views.listings.workorders.'
 
 function onError(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function WorkOrderTypeTunnel({ close }) {
@@ -52,37 +52,34 @@ export default function WorkOrderTypeTunnel({ close }) {
    })
 
    return (
-      <TunnelContainer>
+      <>
          <TunnelHeader
             title={t(address.concat('select type of work order'))}
             close={() => {
                close(1)
             }}
-            next={() => {
-               close(1)
-            }}
-            nextAction="Save"
          />
-         <Spacer />
-         <SolidTile onClick={createBulkWorkOrder}>
-            <Text as="h1">{t(address.concat('bulk work order'))}</Text>
-            <Text as="subtitle">
-               <Trans i18nKey={address.concat('bulk subtitle 1')}>
-                  Bulk Work Order is to create bulk items with changing
-                  processing
-               </Trans>
-            </Text>
-         </SolidTile>
-         <br />
-         <SolidTile onClick={createSachetWorkOrder}>
-            <Text as="h1">{t(address.concat('sachet work order'))}</Text>
-            <Text as="subtitle">
-               <Trans i18nKey={address.concat('sachet subtitle 1')}>
-                  Sachet Work Order is to create planned lot items by portioning
-                  and packaging
-               </Trans>
-            </Text>
-         </SolidTile>
-      </TunnelContainer>
+         <TunnelContainer>
+            <SolidTile onClick={createBulkWorkOrder}>
+               <Text as="h1">{t(address.concat('bulk work order'))}</Text>
+               <Text as="subtitle">
+                  <Trans i18nKey={address.concat('bulk subtitle 1')}>
+                     Bulk Work Order is to create bulk items with changing
+                     processing
+                  </Trans>
+               </Text>
+            </SolidTile>
+            <br />
+            <SolidTile onClick={createSachetWorkOrder}>
+               <Text as="h1">{t(address.concat('sachet work order'))}</Text>
+               <Text as="subtitle">
+                  <Trans i18nKey={address.concat('sachet subtitle 1')}>
+                     Sachet Work Order is to create planned lot items by
+                     portioning and packaging
+                  </Trans>
+               </Text>
+            </SolidTile>
+         </TunnelContainer>
+      </>
    )
 }

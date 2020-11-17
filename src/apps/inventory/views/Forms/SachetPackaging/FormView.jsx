@@ -1,103 +1,136 @@
-import React from 'react'
-import {
-   TextButton,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-   Avatar,
-   Input,
-} from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-
 import {
-   StyledHeader,
-   StyledInfo,
-   StyledSupplier,
-   TransparentIconButton,
-} from '../Item/styled'
+   Avatar,
+   Flex,
+   Form,
+   IconButton,
+   Spacer,
+   Text,
+   TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
+import React from 'react'
+import { toast } from 'react-toastify'
+import EditIcon from '../../../../../shared/assets/icons/Edit'
+import { Tooltip } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
+import { useTabs } from '../../../context'
+import { UPDATE_PACKAGING } from '../../../graphql'
+import { validators } from '../../../utils/validators'
+import { StyledSupplier } from '../Item/styled'
 import InfoBar from './InfoBar'
 import PackagingStats from './PackagingStatus'
-import EditIcon from '../../../../../shared/assets/icons/Edit'
-
 import {
    ItemInformationTunnel,
    MoreItemInfoTunnel,
    SuppliersTunnel,
 } from './Tunnels'
-import { UPDATE_PACKAGING } from '../../../graphql'
-import { useTabs } from '../../../context'
 
 export default function FormView({ state }) {
    const { setTabTitle } = useTabs()
    const [itemInfoTunnel, openItemInfoTunnel, closeItemInfoTunnel] = useTunnel(
       2
    )
-   const [itemName, setItemName] = React.useState(state.packagingName)
-
-   const [updatePackaging] = useMutation(UPDATE_PACKAGING, {
-      onCompleted: () => {
-         toast.info('Packaging name updated !')
-         setTabTitle(itemName)
-      },
-      onError: error => {
-         console.log(error)
-         toast.error('Error, Please try again')
+   const [itemName, setItemName] = React.useState({
+      value: state.packagingName,
+      meta: {
+         isValid: state.packagingName ? true : false,
+         isTouched: false,
+         errors: [],
       },
    })
+
+   const [updatePackagingName] = useMutation(UPDATE_PACKAGING, {
+      onCompleted: () => {
+         toast.info('Packaging name updated !')
+         setTabTitle(itemName.value)
+      },
+      onError: error => {
+         logger(error)
+         toast.error(GENERAL_ERROR_MESSAGE)
+      },
+   })
+
+   const handlePackagingNameChange = e => {
+      const name = e.target.value
+      const { errors, isValid } = validators.name(name, 'packaging name')
+
+      setItemName({
+         value: name,
+         meta: { errors, isValid, isTouched: true },
+      })
+
+      if (isValid)
+         updatePackagingName({
+            variables: {
+               id: state.id,
+               object: { name },
+            },
+         })
+   }
 
    return (
       <>
          <Tunnels tunnels={itemInfoTunnel}>
-            <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={1}>
                <ItemInformationTunnel
                   close={closeItemInfoTunnel}
                   next={openItemInfoTunnel}
                   state={state}
                />
             </Tunnel>
-            <Tunnel layer={2} style={{ overflowY: 'auto' }}>
+            <Tunnel layer={2}>
                <MoreItemInfoTunnel close={closeItemInfoTunnel} state={state} />
             </Tunnel>
          </Tunnels>
 
-         <StyledHeader>
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            padding="16px 0"
+         >
             {state.packagingName && (
                <>
-                  <StyledInfo>
-                     <div style={{ marginRight: '10px' }}>
-                        <Input
-                           style={{ margin: '10px 0 5px' }}
-                           type="text"
+                  <Flex>
+                     <Form.Group>
+                        <Form.Label htmlFor="itemName" title="itemName">
+                           <Flex container alignItems="center">
+                              Packaging Name
+                              <Tooltip identifier="packaging_form_view-packagingName_input_field" />
+                           </Flex>
+                        </Form.Label>
+                        <Form.Text
+                           id="itemName"
                            name="itemName"
-                           value={itemName}
-                           label="Packaging Name"
-                           onChange={e => setItemName(e.target.value)}
-                           onBlur={() => {
-                              if (!itemName.length) {
-                                 toast.error("Name can't be empty")
-                                 return setItemName(state.name)
-                              }
-
-                              if (itemName !== state.name)
-                                 updatePackaging({
-                                    variables: {
-                                       id: state.id,
-                                       object: { name: itemName },
-                                    },
-                                 })
-                           }}
+                           placeholder="Packaging Name"
+                           value={itemName.value}
+                           onChange={e =>
+                              setItemName({
+                                 value: e.target.value,
+                                 meta: { ...itemName.meta },
+                              })
+                           }
+                           onBlur={handlePackagingNameChange}
                         />
-                        <span>sku: {state.packagingSku || 'N/A'}</span>
-                     </div>
-                  </StyledInfo>
+                        {itemName.meta.isTouched && !itemName.meta.isValid && (
+                           <Form.Error>{itemName.meta.errors[0]}</Form.Error>
+                        )}
+                     </Form.Group>
+                     <Text as="subtitle">
+                        sku: {state.packagingSku || 'N/A'}
+                     </Text>
+                  </Flex>
                   <SupplierInfo state={state} />
                </>
             )}
-         </StyledHeader>
+         </Flex>
 
          <InfoBar open={openItemInfoTunnel} state={state} />
-         <br />
+         <Spacer size="16px" />
 
          <PackagingStats state={state} />
       </>
@@ -113,7 +146,7 @@ function SupplierInfo({ state }) {
 
    const TunnelContainer = (
       <Tunnels tunnels={suppliersTunnel}>
-         <Tunnel layer={1} style={{ overflowY: 'auto' }}>
+         <Tunnel layer={1}>
             <SuppliersTunnel close={closeSuppliersTunnel} state={state} />
          </Tunnel>
       </Tunnels>
@@ -138,9 +171,12 @@ function SupplierInfo({ state }) {
             <StyledSupplier>
                <span>{state.supplier.name}</span>
                {renderAvatar(state.supplier?.contactPerson)}
-               <TransparentIconButton onClick={() => openSuppliersTunnel(1)}>
-                  <EditIcon size="18" color="#555B6E" />
-               </TransparentIconButton>
+               <IconButton
+                  type="outline"
+                  onClick={() => openSuppliersTunnel(1)}
+               >
+                  <EditIcon />
+               </IconButton>
             </StyledSupplier>
          </>
       )

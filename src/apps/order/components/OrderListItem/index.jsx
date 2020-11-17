@@ -45,6 +45,7 @@ import pickUpIcon from '../../assets/svgs/pickup.png'
 import { formatDate } from '../../utils'
 
 import { useTabs, useOrder } from '../../context'
+import { currencyFmt } from '../../../../shared/utils'
 import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
 
 const address = 'apps.order.components.orderlistitem.'
@@ -140,7 +141,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
             <ListBodyItem isOpen={currentPanel === 'billing'}>
                <header>
                   <span style={{ fontSize: 15, fontWeight: 500 }}>
-                     Amount Paid: {rest.amountPaid}
+                     Amount Paid: {currencyFmt(Number(rest.amountPaid) || 0)}
                   </span>
                   <ToggleButton
                      type="billing"
@@ -238,16 +239,16 @@ const OrderListItem = ({ containerId, order = {} }) => {
                         </StyledCount>
                      </StyledTab>
                      <StyledTab>
-                        {t(address.concat('inventory'))}{' '}
-                        <StyledCount>{inventories.length || 0}</StyledCount>
-                     </StyledTab>
-                     <StyledTab>
                         {t(address.concat('meal kits'))}{' '}
                         <StyledCount>{mealkits.length || 0}</StyledCount>
                      </StyledTab>
                      <StyledTab>
                         {t(address.concat('ready to eat'))}{' '}
                         <StyledCount>{readytoeats.length}</StyledCount>
+                     </StyledTab>
+                     <StyledTab>
+                        {t(address.concat('inventory'))}{' '}
+                        <StyledCount>{inventories.length || 0}</StyledCount>
                      </StyledTab>
                   </StyledTabList>
                   <StyledTabPanels>
@@ -334,39 +335,6 @@ const OrderListItem = ({ containerId, order = {} }) => {
                         ))}
                      </StyledTabPanel>
                      <StyledTabPanel>
-                        {inventories.length > 0
-                           ? inventories.map(inventory => (
-                                <StyledProductItem key={inventory.id}>
-                                   <div>
-                                      <ProductTitle
-                                         data={inventory}
-                                         type="INVENTORY"
-                                      />
-                                   </div>
-                                   <StyledServings>
-                                      <span>
-                                         <UserIcon size={16} color="#555B6E" />
-                                      </span>
-                                      <span>
-                                         {
-                                            inventory?.inventoryProductOption
-                                               ?.quantity
-                                         }
-                                         &nbsp; - &nbsp;
-                                         {
-                                            inventory?.inventoryProductOption
-                                               ?.label
-                                         }
-                                      </span>
-                                   </StyledServings>
-                                   <span>
-                                      {inventory.isAssembled ? 1 : 0} / 1
-                                   </span>
-                                </StyledProductItem>
-                             ))
-                           : t(address.concat('no inventories'))}
-                     </StyledTabPanel>
-                     <StyledTabPanel>
                         {mealkits.length > 0
                            ? mealkits.map(mealkit => (
                                 <StyledProductItem key={mealkit.id}>
@@ -437,6 +405,39 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                 </StyledProductItem>
                              ))
                            : t(address.concat('no ready to eat'))}
+                     </StyledTabPanel>
+                     <StyledTabPanel>
+                        {inventories.length > 0
+                           ? inventories.map(inventory => (
+                                <StyledProductItem key={inventory.id}>
+                                   <div>
+                                      <ProductTitle
+                                         data={inventory}
+                                         type="INVENTORY"
+                                      />
+                                   </div>
+                                   <StyledServings>
+                                      <span>
+                                         <UserIcon size={16} color="#555B6E" />
+                                      </span>
+                                      <span>
+                                         {
+                                            inventory?.inventoryProductOption
+                                               ?.quantity
+                                         }
+                                         &nbsp; - &nbsp;
+                                         {
+                                            inventory?.inventoryProductOption
+                                               ?.label
+                                         }
+                                      </span>
+                                   </StyledServings>
+                                   <span>
+                                      {inventory.isAssembled ? 1 : 0} / 1
+                                   </span>
+                                </StyledProductItem>
+                             ))
+                           : t(address.concat('no inventories'))}
                      </StyledTabPanel>
                   </StyledTabPanels>
                </StyledTabs>

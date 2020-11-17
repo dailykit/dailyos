@@ -1,7 +1,12 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
+   Text,
+   IconButton,
+   PlusIcon,
    TextButton,
    Tag,
    Tunnels,
@@ -15,34 +20,49 @@ import {
    useMultiList,
    ButtonGroup,
    TunnelHeader,
-} from '@dailykit/ui'
-
-import {
+   Flex,
    SectionTabs,
    SectionTabList,
    SectionTab,
    SectionTabPanels,
    SectionTabPanel,
-   Loader,
-} from '../../../../../components'
+   Filler,
+   Spacer,
+   SectionTabsListHeader,
+} from '@dailykit/ui'
 
-import { Header } from './styled'
-import { TunnelMain, StyledInfo } from '../../styled'
-
-import { UNASSIGNED_SCALES } from '../../../../../graphql/subscriptions'
+import { STATIONS } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
 import {
-   UPDATE_SCALE_STATUS,
-   REMOVE_SCALE_STATION,
-   ADD_STATION_TO_SCALE,
-} from '../../../../../graphql/mutations'
+   Tooltip,
+   InlineLoader,
+   ErrorBoundary,
+   ErrorState,
+} from '../../../../../../../shared/components'
 
 export const Scales = ({ station }) => {
+   const [tabIndex, setTabIndex] = React.useState(0)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_SCALE_STATUS)
-   const [remove] = useMutation(REMOVE_SCALE_STATION)
-
-   const { loading, error, data: { scales = [] } = {} } = useSubscription(
-      UNASSIGNED_SCALES
+   const [update, { loading: updatingStatus }] = useMutation(
+      STATIONS.SCALES.UPDATE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully update the scale status!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to update the scale status!')
+         },
+      }
+   )
+   const [remove, { loading: removingScale }] = useMutation(
+      STATIONS.SCALES.DELETE,
+      {
+         onCompleted: () => toast.success('Successfully unassigned the scale!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to unassigned the scale!')
+         },
+      }
    )
 
    const updateStatus = (num, name, id, status) => {
@@ -68,30 +88,48 @@ export const Scales = ({ station }) => {
 
    return (
       <>
-         <SectionTabs>
+         <SectionTabs onChange={index => setTabIndex(index)}>
             <SectionTabList>
-               <TextButton
-                  type="outline"
-                  style={{ marginBottom: 8 }}
-                  onClick={() => setIsOpen(true)}
-               >
-                  Add Scale
-               </TextButton>
-               {station.scale.nodes.map(node => (
-                  <SectionTab key={node.deviceNum} title={node.deviceName} />
+               <SectionTabsListHeader>
+                  <Flex container alignItems="center">
+                     <Text as="title">Scales</Text>
+                     <Tooltip identifier="station_section_scales_heading" />
+                  </Flex>
+                  <IconButton type="outline" onClick={() => setIsOpen(true)}>
+                     <PlusIcon />
+                  </IconButton>
+               </SectionTabsListHeader>
+               {station.scale.nodes.map((node, index) => (
+                  <SectionTab key={node.deviceNum}>
+                     <Spacer size="14px" />
+                     <Text
+                        as="h3"
+                        style={{ ...(index === tabIndex && { color: '#fff' }) }}
+                     >
+                        {node.deviceName}
+                     </Text>
+                     <Spacer size="14px" />
+                  </SectionTab>
                ))}
             </SectionTabList>
             <SectionTabPanels>
                {station.scale.nodes.map(node => (
                   <SectionTabPanel key={node.deviceNum}>
-                     <Header>
-                        <div>
-                           <h2>{node.deviceName}</h2>
+                     <Flex
+                        as="main"
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Flex as="section" container alignItems="center">
+                           <Text as="h2">{node.deviceName}</Text>
+                           <Spacer size="16px" xAxis />
                            {node.active && <Tag>Active</Tag>}
-                        </div>
+                        </Flex>
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
+                              isLoading={updatingStatus}
                               onClick={() =>
                                  updateStatus(
                                     node.deviceNum,
@@ -105,6 +143,7 @@ export const Scales = ({ station }) => {
                            </TextButton>
                            <TextButton
                               type="outline"
+                              isLoading={removingScale}
                               onClick={() =>
                                  removeStation(
                                     node.deviceNum,
@@ -116,42 +155,62 @@ export const Scales = ({ station }) => {
                               Unassign
                            </TextButton>
                         </ButtonGroup>
-                     </Header>
+                     </Flex>
                   </SectionTabPanel>
                ))}
             </SectionTabPanels>
          </SectionTabs>
          {isOpen && (
-            <AddPrinterTunnel
-               isOpen={isOpen}
-               station={station.id}
-               setIsOpen={setIsOpen}
-               error={error}
-               loading={loading}
-               scales={scales.map(({ deviceNum, deviceName, computer }) => ({
-                  title: deviceName,
-                  description: `${computer.name} | ${computer.hostname}`,
-                  id: `${deviceNum}-${deviceName}-${computer.printNodeId}`,
-               }))}
-            />
+            <ErrorBoundary rootRoute="/apps/settings">
+               <AddPrinterTunnel
+                  isOpen={isOpen}
+                  station={station.id}
+                  setIsOpen={setIsOpen}
+               />
+            </ErrorBoundary>
          )}
       </>
    )
 }
 
-const AddPrinterTunnel = ({
-   isOpen,
-   setIsOpen,
-   station,
-   loading,
-   error,
-   scales,
-}) => {
+const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
+   const [scales, setScales] = React.useState([])
    const [search, setSearch] = React.useState('')
+   const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(scales)
 
-   const [create] = useMutation(ADD_STATION_TO_SCALE)
+   const [create, { loading: assigningScale }] = useMutation(
+      STATIONS.SCALES.CREATE,
+      {
+         onCompleted: () => {
+            setIsOpen(false)
+            toast.success('Successfully assigned the scale!')
+         },
+         onError: () => {
+            setIsOpen(false)
+            toast.error('Failed to assign the scale!')
+         },
+      }
+   )
+
+   const { loading, error } = useSubscription(STATIONS.SCALES.LIST, {
+      variables: { stationId: station },
+      onSubscriptionData: ({
+         subscriptionData: { data: { scales = [] } = {} } = {},
+      }) => {
+         if (!isEmpty(scales)) {
+            setScales(
+               scales.map(({ deviceNum, deviceName, computer }) => ({
+                  title: deviceName,
+                  description: `${computer.name} | ${computer.hostname}`,
+                  id: `${deviceNum}-${deviceName}-${computer.printNodeId}`,
+               }))
+            )
+         }
+         setIsLoading(false)
+      },
+   })
 
    React.useEffect(() => {
       if (isOpen) {
@@ -160,6 +219,11 @@ const AddPrinterTunnel = ({
          closeTunnel(1)
       }
    }, [isOpen])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch scales!')
+      logger(error)
+   }
 
    const insert = async () => {
       await Promise.all(
@@ -182,13 +246,21 @@ const AddPrinterTunnel = ({
          <Tunnel layer={1} size="sm">
             <TunnelHeader
                title="Add Scales"
-               right={selected.length > 0 && { action: insert, title: 'Save' }}
                close={() => setIsOpen(false)}
+               right={{
+                  action: insert,
+                  title: 'Save',
+                  isLoading: assigningScale,
+                  disabled: selected.length === 0,
+               }}
+               tooltip={
+                  <Tooltip identifier="station_section_scale_tunnel_add" />
+               }
             />
-            <TunnelMain>
-               {loading && <Loader />}
-               {error && <div>{error.message}</div>}
-               {list.length > 0 && (
+            <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
+               {isLoading && <InlineLoader />}
+               {!isLoading && error && <ErrorState />}
+               {!isLoading && list.length > 0 && (
                   <List>
                      <ListSearch
                         onChange={value => setSearch(value)}
@@ -229,10 +301,13 @@ const AddPrinterTunnel = ({
                      </ListOptions>
                   </List>
                )}
-               {list.length === 0 && (
-                  <StyledInfo>No scales available!</StyledInfo>
+               {!isLoading && list.length === 0 && (
+                  <Filler
+                     height="500px"
+                     message="No scales available to add to station."
+                  />
                )}
-            </TunnelMain>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )

@@ -6,6 +6,7 @@ import {
    Form,
    IconButton,
    Loader,
+   Spacer,
    Text,
    Tunnel,
    Tunnels,
@@ -15,6 +16,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { ErrorState, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard } from '../../../components'
@@ -22,8 +24,8 @@ import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { GENERAL_SUCCESS_MESSAGE } from '../../../constants/successMessages'
 import { useTabs } from '../../../context'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
-import { StyledHeader } from '../../Listings/styled'
-import { FlexContainer, StyledWrapper } from '../styled'
+import { validators } from '../../../utils/validators'
+import { StyledWrapper } from '../styled'
 import { ImageContainer } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import LogoTunnel from './Tunnels/LogoTunnel'
@@ -33,10 +35,14 @@ const address = 'apps.inventory.views.forms.supplier.'
 
 export default function SupplierForm() {
    const { t } = useTranslation()
-   const [name, setName] = useState('')
+   const [name, setName] = useState({
+      value: '',
+      meta: { isTouched: false, isValid: false, errors: [] },
+   })
    const [paymentTerms, setPaymentTerms] = useState('')
    const [shippingTerms, setShippingTerms] = useState('')
    const [formState, setFormState] = useState({})
+
    const { id } = useParams()
    const { setTabTitle } = useTabs()
 
@@ -52,7 +58,16 @@ export default function SupplierForm() {
          },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplier
-            setName(data.name)
+            const { isValid, errors } = validators.name(
+               data.name,
+               'supplier name'
+            )
+
+            setName({
+               value: data.name,
+               meta: { ...name.meta, isValid, errors },
+            })
+
             setFormState(data)
 
             setShippingTerms(data.shippingTerms || '')
@@ -60,11 +75,6 @@ export default function SupplierForm() {
          },
       }
    )
-
-   if (error) {
-      logger(error)
-      throw error // the page will have nothing to show if this fails, so rendering the error boundary.
-   }
 
    const [updateSupplier] = useMutation(UPDATE_SUPPLIER, {
       onCompleted: () => {
@@ -77,17 +87,20 @@ export default function SupplierForm() {
    })
 
    const handleUpdateSupplier = () => {
-      setTabTitle(name)
       updateSupplier({
          variables: {
             id: formState.id,
             object: {
-               name: name.trim(),
                paymentTerms: paymentTerms.trim(),
                shippingTerms: shippingTerms.trim(),
             },
          },
       })
+   }
+
+   if (error) {
+      logger(error)
+      return <ErrorState />
    }
 
    if (supplierLoading) return <Loader />
@@ -117,29 +130,61 @@ export default function SupplierForm() {
          </Tunnels>
 
          <StyledWrapper>
-            <StyledHeader>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="16px 0"
+            >
                <Form.Group>
                   <Form.Label htmlFor="supplierName" title="Supplier Name">
-                     Supplier Name
+                     <Flex container alignItems="center">
+                        Supplier Name
+                        <Tooltip identifier="suppliers_listings_supplier_name" />
+                     </Flex>
                   </Form.Label>
+
                   <Form.Text
                      id="supplierName"
                      name="supplierName"
-                     value={name}
-                     onChange={e => setName(e.target.value)}
-                     onBlur={handleUpdateSupplier}
+                     value={name.value}
+                     hasError={!name.meta.isValid}
+                     onChange={e =>
+                        setName({
+                           value: e.target.value,
+                           meta: { ...name.meta },
+                        })
+                     }
+                     onBlur={e => {
+                        const { isValid, errors } = validators.name(
+                           e.target.value
+                        )
+
+                        setName({
+                           value: e.target.value,
+                           meta: { isValid, errors, isTouched: true },
+                        })
+
+                        if (isValid) {
+                           setTabTitle(e.target.value)
+                           updateSupplier({
+                              variables: {
+                                 id: formState.id,
+                                 object: { name: e.target.value },
+                              },
+                           })
+                        }
+                     }}
                   />
+                  {name.meta.isTouched && !name.meta.isValid && (
+                     <Form.Error>{name.meta.errors[0]}</Form.Error>
+                  )}
                </Form.Group>
 
-               <div style={{ width: '110px' }}>
-                  <FlexContainer>
-                     <>
-                        <ShowAvailability formState={formState} />
-                        <span style={{ width: '20px' }} />
-                     </>
-                  </FlexContainer>
-               </div>
-            </StyledHeader>
+               <Flex width="110px">
+                  <ShowAvailability formState={formState} />
+               </Flex>
+            </Flex>
             {formState.logo ? (
                <ImageContainer>
                   <div>
@@ -176,7 +221,12 @@ export default function SupplierForm() {
                margin="24px 0 0 0"
                justifyContent="space-between"
             >
-               <Text as="title">{t(address.concat('person of contact'))}</Text>
+               <Flex container alignItems="center">
+                  <Text as="title">
+                     {t(address.concat('person of contact'))}
+                  </Text>
+                  <Tooltip identifier="suppliers_listings_contact_person" />
+               </Flex>
 
                {formState.contactPerson?.email ||
                formState.contactPerson?.firstName ? (
@@ -191,11 +241,12 @@ export default function SupplierForm() {
                ) : null}
             </Flex>
 
-            {formState.contactPerson?.firstName &&
-            formState.contactPerson?.email ? (
+            {formState.contactPerson?.firstName ? (
                <Avatar
                   withName
-                  title={`${formState.contactPerson?.firstName} ${formState.contactPerson?.lastName}`}
+                  title={`${formState.contactPerson?.firstName} ${
+                     formState.contactPerson?.lastName || ''
+                  }`}
                />
             ) : (
                <ButtonTile
@@ -210,13 +261,17 @@ export default function SupplierForm() {
                <Text as="title">
                   {t(address.concat('terms and conditions'))}
                </Text>
+               <Tooltip identifier="supplier_form_terms_and_conditions" />
             </Flex>
 
-            <br />
+            <Spacer size="16px" />
 
             <Form.Group>
                <Form.Label htmlFor="paymentTerms" title="Payment Terms">
-                  {t(address.concat('payment terms'))}
+                  <Flex container alignItems="center">
+                     {t(address.concat('payment terms'))}
+                     <Tooltip identifier="supplier_form_shipping_terms_form_field" />
+                  </Flex>
                </Form.Label>
                <Form.TextArea
                   name="paymentTerms"
@@ -225,11 +280,14 @@ export default function SupplierForm() {
                   onBlur={handleUpdateSupplier}
                />
             </Form.Group>
-            <br />
+            <Spacer size="16px" />
 
             <Form.Group>
                <Form.Label htmlFor="shippingTerms" title="shippingTerms">
-                  {t(address.concat('shipping terms'))}
+                  <Flex container alignItems="center">
+                     {t(address.concat('shipping terms'))}
+                     <Tooltip identifier="supplier_form_shipping_terms_form_field" />
+                  </Flex>
                </Form.Label>
                <Form.TextArea
                   type="textarea"
@@ -291,7 +349,10 @@ function AddressView({ formState, openTunnel }) {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Text as="title">{t(address.concat('address'))}</Text>
+            <Flex container alignItems="center">
+               <Text as="title">{t(address.concat('address'))}</Text>
+               <Tooltip identifier="supplier_form_address_section" />
+            </Flex>
             {check && (
                <>
                   <IconButton onClick={() => openTunnel(1)} type="outline">

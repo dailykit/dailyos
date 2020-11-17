@@ -1,33 +1,45 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid'
+import { toast } from 'react-toastify'
+import { ReactTabulator } from '@dailykit/react-tabulator'
+import { Avatar, Text, Flex, ComboButton } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useTabs } from '../../../context'
 import tableOptions from '../tableOption'
-import { CREATE_USER, USERS } from '../../../graphql'
-import { StyledWrapper, StyledHeader } from '../styled'
+import { logger } from '../../../../../shared/utils'
+import { USERS } from '../../../graphql'
 import { AddIcon } from '../../../../../shared/assets/icons'
-import { Loader, IconButton, Avatar, Text } from '@dailykit/ui'
+import { useTooltip } from '../../../../../shared/providers'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../shared/components'
 
 const UsersListing = () => {
+   const tableRef = React.useRef()
+   const { tooltip } = useTooltip()
    const { tab, addTab } = useTabs()
-   const {
-      loading,
-      error,
-      data: { settings_user: users = [] } = {},
-   } = useSubscription(USERS)
-   const [createUser] = useMutation(CREATE_USER, {
+   const { loading, error, data: { users = {} } = {} } = useSubscription(
+      USERS.LIST
+   )
+   const [createUser, { loading: creatingUser }] = useMutation(USERS.CREATE, {
       onCompleted: ({ insert_settings_user_one = {} }) => {
          const { id, firstName } = insert_settings_user_one
          addTab(firstName, `/settings/users/${id}`)
       },
+      onError: error => {
+         toast.success('Failed to create the user!')
+         logger(error)
+      },
    })
-   const tableRef = React.useRef()
 
-   const rowClick = (e, row) => {
-      const { id, firstName, lastName } = row._row.data
-      addTab(`${firstName} ${lastName}`, `/settings/users/${id}`)
+   const rowClick = (e, cell) => {
+      const { id = null, firstName = '', lastName = '' } = cell.getData() || {}
+      if (id) {
+         addTab(`${firstName} ${lastName}`, `/settings/users/${id}`)
+      }
    }
 
    const addUser = () => {
@@ -42,21 +54,39 @@ const UsersListing = () => {
       })
    }
 
+   if (!loading && error) {
+      toast.error('Failed to load the users.')
+      logger(error)
+   }
+
    const columns = [
       {
          title: 'User',
-         headerFilter: false,
-         headerSort: false,
-         hozAlign: 'left',
-         headerHozAlign: 'left',
-         formatter: reactFormatter(<UserAvatar />),
+         field: 'firstName',
+         headerFilter: true,
+         cssClass: 'cell',
+         cellClick: (e, cell) => rowClick(e, cell),
+         formatter: cell =>
+            `${cell.getData()?.firstName || ''} ${
+               cell.getData()?.lastName || ''
+            }`,
+         headerTooltip: column => {
+            const identifier = 'user_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Email',
          field: 'email',
          headerFilter: true,
-         hozAlign: 'left',
-         headerHozAlign: 'left',
+         headerTooltip: column => {
+            const identifier = 'user_listing_column_email'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
       {
          title: 'Phone No.',
@@ -65,6 +95,12 @@ const UsersListing = () => {
          hozAlign: 'right',
          headerHozAlign: 'right',
          width: 150,
+         headerTooltip: column => {
+            const identifier = 'user_listing_column_phone'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
       },
    ]
 
@@ -75,26 +111,48 @@ const UsersListing = () => {
    }, [tab, addTab])
 
    return (
-      <StyledWrapper>
-         <StyledHeader>
-            <Text as="h2">Users</Text>
-            <IconButton type="solid" onClick={addUser}>
+      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+         <Flex
+            container
+            as="header"
+            height="72px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex as="section" container alignItems="center">
+               <Text as="h2">Users ({users?.aggregate?.count || 0})</Text>
+               <Tooltip identifier="user_listing_heading" />
+            </Flex>
+            <ComboButton
+               type="solid"
+               onClick={addUser}
+               isLoading={creatingUser}
+            >
                <AddIcon color="#fff" size={24} />
-            </IconButton>
-         </StyledHeader>
-         {loading && <Loader />}
-         {error && <div>{error.message}</div>}
-         {users.length === 0 && <div>No users yet!</div>}
-         {users.length && (
-            <ReactTabulator
-               ref={tableRef}
-               columns={columns}
-               data={users}
-               rowClick={rowClick}
-               options={tableOptions}
-            />
+               Add User
+            </ComboButton>
+         </Flex>
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <>
+               {error ? (
+                  <ErrorState message="Failed to load the users." />
+               ) : (
+                  <ReactTabulator
+                     ref={tableRef}
+                     columns={columns}
+                     data={users.nodes}
+                     options={{
+                        ...tableOptions,
+                        placeholder:
+                           'No users available yet, start by creating one.',
+                     }}
+                  />
+               )}
+            </>
          )}
-      </StyledWrapper>
+      </Flex>
    )
 }
 

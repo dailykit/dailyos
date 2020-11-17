@@ -1,18 +1,25 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Filler,
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
-   Loader,
    TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils/errorLog'
 import { TunnelContainer } from '../../../../../components'
+import { NO_SUPPLIERS } from '../../../../../constants/infoMessages'
 import {
    SUPPLIERS_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,
@@ -26,7 +33,7 @@ export default function SupplierTunnel({ close, formState }) {
    const [data, setData] = React.useState([])
    const [list, current, selectOption] = useSingleList(data)
 
-   const { loading: supplierLoading } = useSubscription(
+   const { loading: supplierLoading, error } = useSubscription(
       SUPPLIERS_SUBSCRIPTION,
       {
          onSubscriptionData: input => {
@@ -58,14 +65,14 @@ export default function SupplierTunnel({ close, formState }) {
       },
       onError: error => {
          // toast and log error
-         console.log(error)
+         logger(error)
          toast.info('Error adding the supplier. Please try again')
          close(1)
       },
    })
 
-   const handleNext = () => {
-      const { id: supplierId } = current
+   const handleSave = option => {
+      const { id: supplierId } = option
       updateSupplierItem({
          variables: {
             id: formState.id,
@@ -76,58 +83,72 @@ export default function SupplierTunnel({ close, formState }) {
       })
    }
 
-   if (loading || supplierLoading) return <Loader />
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (loading || supplierLoading) return <InlineLoader />
 
    return (
       <>
          <TunnelHeader
             title={t(address.concat('select supplier'))}
             close={() => close(1)}
-            right={{ action: handleNext, title: 'Save' }}
+            description="select supplier for this supplier item"
+            tooltip={
+               <Tooltip identifier="supplier_item_form_select_supplier-tunnel" />
+            }
          />
          <TunnelContainer>
-            <List>
-               {Object.keys(current).length > 0 ? (
-                  <ListItem
+            {list.length ? (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem
+                        type="SSL22"
+                        content={{
+                           supplier: current.supplier,
+                           contact: current.contact,
+                        }}
+                     />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListHeader
                      type="SSL22"
-                     content={{
-                        supplier: current.supplier,
-                        contact: current.contact,
-                     }}
+                     label={{ left: 'Supplier', right: 'Contact person' }}
                   />
-               ) : (
-                  <ListSearch
-                     onChange={value => setSearch(value)}
-                     placeholder="type what you’re looking for..."
-                  />
-               )}
-               <ListOptions>
-                  {list
-                     .filter(option =>
-                        option.supplier.title.toLowerCase().includes(search)
-                     )
-                     .map(option => {
-                        return (
-                           <ListItem
+                  <ListOptions>
+                     {list
+                        .filter(option =>
+                           option.supplier.title.toLowerCase().includes(search)
+                        )
+                        .map(option => {
+                           return (
+                              // prettier-ignore
+                              <ListItem
                               type="SSL22"
                               key={option.id}
                               isActive={option.id === current.id}
-                              onClick={() => selectOption('id', option.id)}
+                              onClick={() => handleSave(option)}
                               content={{
                                  supplier: option.supplier,
                                  contact:
                                     option.contact && option.contact.title
                                        ? option.contact
-                                       : {
-                                            title: 'N/A',
-                                            img: '',
-                                         },
+                                       : { title: 'N/A', img: '' },
                               }}
                            />
-                        )
-                     })}
-               </ListOptions>
-            </List>
+                           )
+                        })}
+                  </ListOptions>
+               </List>
+            ) : (
+               <Filler message={NO_SUPPLIERS} />
+            )}
          </TunnelContainer>
       </>
    )

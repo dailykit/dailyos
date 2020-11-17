@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Text, TunnelHeader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
@@ -7,21 +7,22 @@ import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, CAMPAIGN_DATA } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import CampaignContext from '../../../../../context/Campaign/CampaignForm'
 
 export default function RewardTypeTunnel({
-   state,
    closeTunnel,
    tunnels,
    openRewardTunnel,
    getRewardId,
 }) {
    const { addTab } = useTabs()
+   const context = useContext(CampaignContext)
 
    const [types, setTypes] = useState([])
    // Subscription
    const { data: rewardType, loading, error } = useSubscription(CAMPAIGN_DATA, {
       variables: {
-         id: state.id,
+         id: context.state.id,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.campaign.campaignType.rewardTypes.map(
@@ -57,7 +58,7 @@ export default function RewardTypeTunnel({
       createReward({
          variables: {
             rewardType: type,
-            campaignId: state?.id,
+            campaignId: context.state?.id,
          },
       })
    }
@@ -71,8 +72,8 @@ export default function RewardTypeTunnel({
                   <TunnelHeader
                      title="Select Type of Reward"
                      close={() => closeTunnel(1)}
+                     tooltip={<Tooltip identifier="campaign_reward_type" />}
                   />
-                  <Tooltip identifier="campaign_reward_type" />
                </Flex>
                <TunnelBody>
                   {types.map(type => {

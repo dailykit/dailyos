@@ -1,22 +1,20 @@
+import { Flex } from '@dailykit/ui'
 import React from 'react'
-
-// Components
-import { Tabs } from '../../components'
-
-// Styled
-import { StyledHeader, StyledMenu } from './styled'
-
 // Icons
 import { MenuIcon } from '../../assets/icons'
+// Components
+import { Tabs } from '../../components'
+// Styled
+import { StyledMenu } from './styled'
 
 const Header = ({ toggleSidebar }) => {
    return (
-      <StyledHeader>
+      <Flex container style={{ background: '#d9e9f1' }}>
          <StyledMenu onClick={() => toggleSidebar(visible => !visible)}>
             <MenuIcon color="#000" size="24" />
          </StyledMenu>
          <Tabs />
-      </StyledHeader>
+      </Flex>
    )
 }
 

@@ -1,12 +1,13 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { useState } from 'react'
-import { buildOptions, transformer } from '../utils/insight_utils'
 import { merge } from 'lodash'
-
-function onError(error) {
-   console.log(error)
-}
+import { useState } from 'react'
+import {
+   buildOptions,
+   buildOptionVariables,
+   transformer,
+} from '../utils/insight_utils'
+import { isObject } from '../utils/isObject'
 
 // prettier-ignore
 const buildQuery = query => gql`${query}`
@@ -59,6 +60,7 @@ export const useInsights = (
    const [newAggregates, setNewAggregates] = useState({})
    const [oldTableData, setOldTableData] = useState([])
    const [newTableData, setNewTableData] = useState([])
+   const [empty, setEmpty] = useState(false)
 
    const {
       data: {
@@ -69,11 +71,13 @@ export const useInsights = (
             id: null,
             filters: null,
             defaultOptions: {},
+            schemaVariables: null,
             config: {},
          },
       } = {},
+      loading: insightLoading,
+      error: insightLoadError,
    } = useQuery(GET_INSIGHT, {
-      onError,
       variables: {
          identifier,
       },
@@ -81,20 +85,38 @@ export const useInsights = (
          setVariableOptions(data.insight.defaultOptions || {})
          setVariableSwitches(data.insight.switches || {})
       },
+      fetchPolicy: 'cache-and-network',
    })
 
    if (insight && insight.query) {
       gqlQuery = buildQuery(insight.query)
    }
 
-   const { loading } = useQuery(gqlQuery, {
-      onError,
+   let tempFillers = null
+
+   // flatten schema variable till keys starting with _
+   if (insight.schemaVariables)
+      tempFillers = buildOptions(insight.schemaVariables)
+
+   // loop through the tempFillers and replace values starting with $ with the corresponding values in the options.variables object
+   if (tempFillers && isObject(tempFillers))
+      for (const key in tempFillers) {
+         for (const subKey in tempFillers[key]) {
+            if (`${tempFillers[key][subKey] || ''}`.startsWith('$')) {
+               const tempKey = tempFillers[key][subKey].slice(1)
+               tempFillers[key][subKey] = options.variables[tempKey]
+            }
+         }
+      }
+
+   //  unflatten the tempFillers to pass in the query
+   const schemaVariables = buildOptionVariables(tempFillers || {})
+
+   const { error: insightError } = useQuery(gqlQuery, {
       variables: {
          ...variableSwitches,
-         options: {
-            ...insight.defaultOptions,
-            ...merge(variableOptions, options.where),
-         },
+         // merge variableOptions and schemaVariables, schemaVariables will overwrite any filter values in variableOptions
+         ...merge(variableOptions, schemaVariables, options.where),
          limit: options.limit,
          orderBy: options.order,
       },
@@ -109,6 +131,7 @@ export const useInsights = (
          }
          if (options.includeTableData || options.includeChartData) {
             const tableData = transformer(data, nodeKey)
+            if (!tableData.length) return setEmpty(true)
 
             if (isNewOption) {
                setNewTableData(tableData)
@@ -128,7 +151,9 @@ export const useInsights = (
    }
 
    const result = {
-      loading,
+      loading: insightLoading,
+      error: insightError || insightLoadError,
+      empty,
       newTableData,
       oldTableData,
       switches: variableSwitches,
@@ -156,6 +181,7 @@ export const GET_INSIGHT = gql`
          filters
          config
          defaultOptions
+         schemaVariables
          query
          switches
          charts {

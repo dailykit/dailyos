@@ -1,12 +1,19 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import {
+   Text,
+   Filler,
+   PlusIcon,
+   IconButton,
    TextButton,
    Tag,
    Tunnels,
    Tunnel,
    useTunnel,
+   Flex,
    ListItem,
    List,
    ListOptions,
@@ -15,44 +22,59 @@ import {
    useMultiList,
    ButtonGroup,
    TunnelHeader,
-} from '@dailykit/ui'
-
-import {
    SectionTabs,
    SectionTabList,
    SectionTab,
    SectionTabPanels,
    SectionTabPanel,
-   Loader,
-} from '../../../../../components'
+   SectionTabsListHeader,
+   Spacer,
+} from '@dailykit/ui'
 
-import { Header } from './styled'
-import { TunnelMain, StyledInfo } from '../../styled'
-
-import { LABEL_PRINTERS } from '../../../../../graphql/subscriptions'
+import { STATIONS } from '../../../../../graphql'
+import { logger } from '../../../../../../../shared/utils'
 import {
-   CREATE_STATION_LABEL_PRINTER,
-   UPDATE_STATION_LABEL_PRINTER,
-   DELETE_STATION_LABEL_PRINTER,
-   UPDATE_STATION_DEFAULT_LABEL_PRINTER,
-} from '../../../../../graphql/mutations'
+   Tooltip,
+   InlineLoader,
+   ErrorBoundary,
+   ErrorState,
+} from '../../../../../../../shared/components'
 
 export const LabelPrinters = ({ station }) => {
+   const [tabIndex, setTabIndex] = React.useState(0)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(UPDATE_STATION_LABEL_PRINTER)
-   const [remove] = useMutation(DELETE_STATION_LABEL_PRINTER)
-   const [updateDefault] = useMutation(UPDATE_STATION_DEFAULT_LABEL_PRINTER)
-
-   const {
-      loading,
-      error,
-      data: { labelPrinters = [] } = {},
-   } = useSubscription(LABEL_PRINTERS, {
-      variables: {
-         type: 'LABEL_PRINTER',
-         stationId: station.id,
-      },
-   })
+   const [update, { loading: updatingStatus }] = useMutation(
+      STATIONS.LABEL_PRINTERS.UPDATE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully updated label printer!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to update the label printer!')
+         },
+      }
+   )
+   const [remove, { loading: removingPrinter }] = useMutation(
+      STATIONS.LABEL_PRINTERS.DELETE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully deleted label printer!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to remove the label printer!')
+         },
+      }
+   )
+   const [updateDefault, { loading: makingDefault }] = useMutation(
+      STATIONS.UPDATE,
+      {
+         onCompleted: () => toast.success('Selected printer is now default!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to set printer as default!')
+         },
+      }
+   )
 
    const updateLabelPrinterStatus = (id, status) => {
       update({
@@ -75,33 +97,48 @@ export const LabelPrinters = ({ station }) => {
 
    return (
       <>
-         <SectionTabs>
+         <SectionTabs onChange={index => setTabIndex(index)}>
             <SectionTabList>
-               <TextButton
-                  type="outline"
-                  style={{ marginBottom: 8 }}
-                  onClick={() => setIsOpen(true)}
-               >
-                  Add Printer
-               </TextButton>
-               {station.labelPrinter.nodes.map(node => (
-                  <SectionTab
-                     key={node.labelPrinter.printNodeId}
-                     title={node.labelPrinter.name}
-                  />
+               <SectionTabsListHeader>
+                  <Flex container alignItems="center">
+                     <Text as="title">Label Printers</Text>
+                     <Tooltip identifier="station_section_label_printers_heading" />
+                  </Flex>
+                  <IconButton type="outline" onClick={() => setIsOpen(true)}>
+                     <PlusIcon />
+                  </IconButton>
+               </SectionTabsListHeader>
+               {station.labelPrinter.nodes.map((node, index) => (
+                  <SectionTab key={node.labelPrinter.printNodeId}>
+                     <Spacer size="14px" />
+                     <Text
+                        as="h3"
+                        style={{ ...(index === tabIndex && { color: '#fff' }) }}
+                     >
+                        {node.labelPrinter.name}
+                     </Text>
+                     <Spacer size="14px" />
+                  </SectionTab>
                ))}
             </SectionTabList>
             <SectionTabPanels>
                {station.labelPrinter.nodes.map(node => (
                   <SectionTabPanel key={node.labelPrinter.printNodeId}>
-                     <Header>
-                        <div>
-                           <h2>{node.labelPrinter.name}</h2>
+                     <Flex
+                        as="main"
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Flex as="section" container alignItems="center">
+                           <Text as="h2">{node.labelPrinter.name}</Text>
+                           <Spacer size="16px" xAxis />
                            {node.active && <Tag>Active</Tag>}
-                        </div>
+                        </Flex>
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
+                              isLoading={updatingStatus}
                               onClick={() =>
                                  updateLabelPrinterStatus(
                                     node.labelPrinter.printNodeId,
@@ -115,12 +152,15 @@ export const LabelPrinters = ({ station }) => {
                               node.labelPrinter.printNodeId && (
                               <TextButton
                                  type="outline"
+                                 isLoading={makingDefault}
                                  onClick={() =>
                                     updateDefault({
                                        variables: {
-                                          id: station.id,
-                                          defaultLabelPrinterId:
-                                             node.labelPrinter.printNodeId,
+                                          pk_columns: { id: station.id },
+                                          _set: {
+                                             defaultLabelPrinterId:
+                                                node.labelPrinter.printNodeId,
+                                          },
                                        },
                                     })
                                  }
@@ -130,6 +170,7 @@ export const LabelPrinters = ({ station }) => {
                            )}
                            <TextButton
                               type="outline"
+                              isLoading={removingPrinter}
                               onClick={() =>
                                  deleteStationLabelPrinter(
                                     node.labelPrinter.printNodeId
@@ -139,45 +180,64 @@ export const LabelPrinters = ({ station }) => {
                               Unassign
                            </TextButton>
                         </ButtonGroup>
-                     </Header>
+                     </Flex>
                   </SectionTabPanel>
                ))}
             </SectionTabPanels>
          </SectionTabs>
          {isOpen && (
-            <AddPrinterTunnel
-               isOpen={isOpen}
-               station={station.id}
-               setIsOpen={setIsOpen}
-               error={error}
-               loading={loading}
-               printers={labelPrinters.map(
-                  ({ printNodeId, name, computer }) => ({
-                     id: printNodeId,
-                     title: name,
-                     description: `${computer.name} | ${computer.hostname}`,
-                  })
-               )}
-            />
+            <ErrorBoundary rootRoute="/apps/settings">
+               <AddPrinterTunnel
+                  isOpen={isOpen}
+                  station={station.id}
+                  setIsOpen={setIsOpen}
+               />
+            </ErrorBoundary>
          )}
       </>
    )
 }
 
-const AddPrinterTunnel = ({
-   isOpen,
-   setIsOpen,
-   station,
-   loading,
-   error,
-   printers,
-}) => {
+const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
    const [search, setSearch] = React.useState('')
+   const [printers, setPrinters] = React.useState([])
+   const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(CREATE_STATION_LABEL_PRINTER, {
-      onCompleted: () => setIsOpen(false),
+   const [create, { loading: assigningPrinter }] = useMutation(
+      STATIONS.LABEL_PRINTERS.CREATE,
+      {
+         onCompleted: () => {
+            setIsOpen(false)
+            toast.success('Successfully assigned the label printer!')
+         },
+         onError: () => {
+            setIsOpen(false)
+            toast.error('Failed to assign the label printer!')
+         },
+      }
+   )
+
+   const { loading, error } = useSubscription(STATIONS.LABEL_PRINTERS.LIST, {
+      variables: {
+         type: 'LABEL_PRINTER',
+         stationId: station,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { labelPrinters = [] } = {} } = {},
+      }) => {
+         if (!isEmpty(labelPrinters)) {
+            setPrinters(
+               labelPrinters.map(({ printNodeId, name, computer }) => ({
+                  id: printNodeId,
+                  title: name,
+                  description: `${computer.name} | ${computer.hostname}`,
+               }))
+            )
+         }
+         setIsLoading(false)
+      },
    })
 
    React.useEffect(() => {
@@ -187,6 +247,11 @@ const AddPrinterTunnel = ({
          closeTunnel(1)
       }
    }, [isOpen])
+
+   if (!loading && error) {
+      toast.error('Failed to fetch label printers!')
+      logger(error)
+   }
 
    const insert = () => {
       create({
@@ -204,13 +269,21 @@ const AddPrinterTunnel = ({
          <Tunnel layer={1} size="sm">
             <TunnelHeader
                title="Add Printer"
-               right={selected.length > 0 && { action: insert, title: 'Save' }}
                close={() => setIsOpen(false)}
+               right={{
+                  action: insert,
+                  title: 'Save',
+                  isLoading: assigningPrinter,
+                  disabled: selected.length === 0,
+               }}
+               tooltip={
+                  <Tooltip identifier="station_section_label_printer_tunnel_add" />
+               }
             />
-            <TunnelMain>
-               {loading && <Loader />}
-               {error && <div>{error.message}</div>}
-               {list.length > 0 && (
+            <Flex padding="0 16px" overflowY="auto" height="calc(100% - 104px)">
+               {isLoading && <InlineLoader />}
+               {!isLoading && error && <ErrorState />}
+               {!isLoading && list.length > 0 && (
                   <List>
                      <ListSearch
                         onChange={value => setSearch(value)}
@@ -251,10 +324,13 @@ const AddPrinterTunnel = ({
                      </ListOptions>
                   </List>
                )}
-               {list.length === 0 && (
-                  <StyledInfo>No printers available!</StyledInfo>
+               {!isLoading && list.length === 0 && (
+                  <Filler
+                     height="500px"
+                     message="No printers available to add to station."
+                  />
                )}
-            </TunnelMain>
+            </Flex>
          </Tunnel>
       </Tunnels>
    )

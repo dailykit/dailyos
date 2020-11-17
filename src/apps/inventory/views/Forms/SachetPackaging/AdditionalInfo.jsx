@@ -1,27 +1,29 @@
-import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Loader, Toggle, Text } from '@dailykit/ui'
+import { Flex, Spacer, Text, Toggle } from '@dailykit/ui'
+import React from 'react'
 import { toast } from 'react-toastify'
-
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
+import { Separator } from '../../../components'
+import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
-   UPDATE_PACKAGING_SPECS,
    PACKAGING_SPECS_SUBSCRIPTION,
+   UPDATE_PACKAGING_SPECS,
 } from '../../../graphql'
-import { Spacer } from '../../../components'
-import { FlexContainer, ShadowCard } from '../styled'
+import { ShadowCard } from '../styled'
 
 function errorHandler(error) {
-   console.log(error)
-   toast.error(error.message)
+   logger(error)
+   toast.error(GENERAL_ERROR_MESSAGE)
 }
 
 export default function AdditionalInfo({ id }) {
    const {
       data: { packaging: { packagingSpecification: spec = {} } = {} } = {},
       loading,
+      error,
    } = useSubscription(PACKAGING_SPECS_SUBSCRIPTION, {
       variables: { id },
-      onError: errorHandler,
    })
 
    const [updateSpecs] = useMutation(UPDATE_PACKAGING_SPECS, {
@@ -40,71 +42,82 @@ export default function AdditionalInfo({ id }) {
       })
    }
 
-   return loading ? (
-      <Loader />
-   ) : (
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   return (
       <ShadowCard style={{ flexDirection: 'column' }}>
-         <FlexContainer
-            style={{ justifyContent: 'space-between', alignItems: 'center' }}
-         >
-            <Text as="title">Additional Information</Text>
-         </FlexContainer>
-         <Spacer />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
-            <Toggle
-               checked={spec.innerWaterResistant}
-               label="Inner Water Resistant"
-               setChecked={() => handleSave('innerWaterResistant')}
-            />
+         {loading ? (
+            <InlineLoader />
+         ) : (
+            <>
+               <Flex
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+               >
+                  <Text as="title">Additional Information</Text>
+               </Flex>
+               <Separator />
+               <Flex container justifyContent="space-between">
+                  <Toggle
+                     checked={spec.innerWaterResistant}
+                     label="Inner Water Resistant"
+                     setChecked={() => handleSave('innerWaterResistant')}
+                  />
 
-            <Toggle
-               checked={spec.microwaveable}
-               label="Microwaveable"
-               setChecked={() => handleSave('microwaveable')}
-            />
-         </FlexContainer>
-         <br />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
-            <Toggle
-               checked={spec.outerWaterResistant}
-               label="Outer Water Resistant"
-               setChecked={() => handleSave('outerWaterResistant')}
-            />
+                  <Toggle
+                     checked={spec.microwaveable}
+                     label="Microwaveable"
+                     setChecked={() => handleSave('microwaveable')}
+                  />
+               </Flex>
+               <Spacer size="16px" />
+               <Flex container justifyContent="space-between">
+                  <Toggle
+                     checked={spec.outerWaterResistant}
+                     label="Outer Water Resistant"
+                     setChecked={() => handleSave('outerWaterResistant')}
+                  />
 
-            <Toggle
-               checked={spec.recyclable}
-               label="Recyclable"
-               setChecked={() => handleSave('recyclable')}
-            />
-         </FlexContainer>
-         <br />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
-            <Toggle
-               checked={spec.innerGreaseResistant}
-               label="Inner Grease Resistant"
-               setChecked={() => handleSave('innerGreaseResistant')}
-            />
+                  <Toggle
+                     checked={spec.recyclable}
+                     label="Recyclable"
+                     setChecked={() => handleSave('recyclable')}
+                  />
+               </Flex>
+               <Spacer size="16px" />
+               <Flex container justifyContent="space-between">
+                  <Toggle
+                     checked={spec.innerGreaseResistant}
+                     label="Inner Grease Resistant"
+                     setChecked={() => handleSave('innerGreaseResistant')}
+                  />
 
-            <Toggle
-               checked={spec.compostable}
-               label="Compostable"
-               setChecked={() => handleSave('compostable')}
-            />
-         </FlexContainer>
-         <br />
-         <FlexContainer style={{ justifyContent: 'space-between' }}>
-            <Toggle
-               checked={spec.outerGreaseResistant}
-               label="Outer Grease Resistant"
-               setChecked={() => handleSave('innerGreaseResistant')}
-            />
+                  <Toggle
+                     checked={spec.compostable}
+                     label="Compostable"
+                     setChecked={() => handleSave('compostable')}
+                  />
+               </Flex>
+               <Spacer size="16px" />
+               <Flex container justifyContent="space-between">
+                  <Toggle
+                     checked={spec.outerGreaseResistant}
+                     label="Outer Grease Resistant"
+                     setChecked={() => handleSave('innerGreaseResistant')}
+                  />
 
-            <Toggle
-               checked={spec.fdaCompliant}
-               label="FDA compliant"
-               setChecked={() => handleSave('fdaCompliant')}
-            />
-         </FlexContainer>
+                  <Toggle
+                     checked={spec.fdaCompliant}
+                     label="FDA compliant"
+                     setChecked={() => handleSave('fdaCompliant')}
+                  />
+               </Flex>
+            </>
+         )}
       </ShadowCard>
    )
 }

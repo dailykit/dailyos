@@ -9,21 +9,27 @@ import Header from './sections/Header'
 import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
 import ErrorBoundary from '../../shared/components/ErrorBoundary'
-
+import BrandContext from './context/Brand'
 // Styled
 import { StyledWrapper } from '../../styled'
 
 const App = () => {
    const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const [context, setContext] = React.useState({ brandId: 0, brandName: '' })
    return (
       <StyledWrapper>
-         <Router basename={process.env.PUBLIC_URL}>
-            <Header toggleSidebar={toggleSidebar} />
-            <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <ErrorBoundary rootRoute="/apps/recipe">
-               <Main />
-            </ErrorBoundary>
-         </Router>
+         <BrandContext.Provider value={[context, setContext]}>
+            <Router basename={process.env.PUBLIC_URL}>
+               <Header toggleSidebar={toggleSidebar} />
+               <Sidebar
+                  visible={isSidebarVisible}
+                  toggleSidebar={toggleSidebar}
+               />
+               <ErrorBoundary rootRoute="/apps/crm">
+                  <Main />
+               </ErrorBoundary>
+            </Router>
+         </BrandContext.Provider>
       </StyledWrapper>
    )
 }

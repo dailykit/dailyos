@@ -151,23 +151,30 @@ export const ORDERS = gql`
             isAssembled
             assemblyStatus
             assemblyStation {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             orderSachets {
+               id
                status
                isAssembled
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -178,9 +185,11 @@ export const ORDERS = gql`
             isAssembled
             assemblyStatus
             simpleRecipeProduct {
+               id
                name
             }
             assemblyStation {
+               id
                name
             }
             comboProduct {
@@ -192,10 +201,13 @@ export const ORDERS = gql`
                label
             }
             simpleRecipeProduct {
+               id
                name
             }
             simpleRecipeProductOption {
+               id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -205,22 +217,28 @@ export const ORDERS = gql`
             price
             isAssembled
             inventoryProduct {
+               id
                name
             }
             comboProduct {
+               id
                name
             }
             comboProductComponent {
+               id
                label
             }
             assemblyStation {
+               id
                name
             }
             assemblyStatus
             customizableProduct {
+               id
                name
             }
             inventoryProductOption {
+               id
                quantity
                label
             }
@@ -278,11 +296,13 @@ export const ORDER = gql`
             simpleRecipeProductOption {
                id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
             orderSachets(where: { packingStationId: $packingStationId }) {
                id
+               unit
                status
                quantity
                isAssembled
@@ -291,6 +311,7 @@ export const ORDER = gql`
                ingredientName
                processingName
                packaging {
+                  id
                   name
                }
                sachetItemId
@@ -305,6 +326,7 @@ export const ORDER = gql`
                      bulkDensity
                      supplierItemId
                      supplierItem {
+                        id
                         name
                      }
                   }
@@ -318,6 +340,7 @@ export const ORDER = gql`
                   bulkDensity
                   supplierItemId
                   supplierItem {
+                     id
                      name
                   }
                }
@@ -355,6 +378,7 @@ export const ORDER = gql`
             simpleRecipeProductOption {
                id
                simpleRecipeYield {
+                  id
                   yield
                }
             }
@@ -389,6 +413,7 @@ export const ORDER = gql`
             }
             inventoryProductOptionId
             inventoryProductOption {
+               id
                quantity
                label
             }
@@ -475,6 +500,7 @@ export const FETCH_ORDER_SACHET = gql`
          processingName
          labelTemplateId
          packingStationId
+         packagingId
          packaging {
             name
          }
