@@ -1,29 +1,34 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { IconButton, Flex, Text } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import tableOptions from '../tableOption'
-import { IconButton, Flex, Text } from '@dailykit/ui'
-import { FAQS, FAQ_ARCHIVED } from '../../../graphql'
+import { INFORMATION_GRID, GRID_ARCHIVED } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
 import { StyledWrapper } from '../styled'
 
-export const FAQs = () => {
+export const InformationGrid = () => {
    const { tab, addTab } = useTabs()
-   const tableRef = React.useRef()
+   const location = useLocation()
+   const tableRef = useRef()
    const { tooltip } = useTooltip()
-   const { loading, error, data: { content_faqs = [] } = {} } = useSubscription(
-      FAQS
-   )
+
+   const {
+      loading,
+      error,
+      data: { content_informationGrid = [] } = {},
+   } = useSubscription(INFORMATION_GRID)
 
    // Mutation
-   const [deleteFAQ] = useMutation(FAQ_ARCHIVED, {
+   const [deleteGrid] = useMutation(GRID_ARCHIVED, {
       onCompleted: () => {
-         toast.success('FAQ deleted!')
+         toast.success('Grid deleted!')
       },
       onError: error => {
          console.log(error)
@@ -40,16 +45,16 @@ export const FAQs = () => {
    }
 
    // Handler
-   const deleteHandler = (e, FAQ) => {
+   const deleteHandler = (e, grid) => {
       e.stopPropagation()
       if (
          window.confirm(
-            `Are you sure you want to delete FAQ - "${FAQ.heading}"?`
+            `Are you sure you want to delete Grid - "${grid.heading}"?`
          )
       ) {
-         deleteFAQ({
+         deleteGrid({
             variables: {
-               id: FAQ.id,
+               id: grid.id,
             },
          })
       }
@@ -63,10 +68,10 @@ export const FAQs = () => {
          headerFilter: true,
          cellClick: (e, cell) => {
             const { id } = cell._cell.row.data
-            addTab('FAQ Info', `/content/blocks/faq/${id}`)
+            addTab('Grid Info', `/content/blocks/grid/${id}`)
          },
          headerTooltip: function (column) {
-            const identifier = 'faq_listing_heading_column'
+            const identifier = 'grid_listing_heading_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -79,7 +84,7 @@ export const FAQs = () => {
          headerSort: true,
          headerFilter: true,
          headerTooltip: function (column) {
-            const identifier = 'faq_listing_subheading_column'
+            const identifier = 'grid_listing_subheading_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -105,22 +110,25 @@ export const FAQs = () => {
    if (loading) return <InlineLoader />
    if (error) {
       logger(error)
-      toast.error(error)
+      toast.error('Something went wrong')
    }
    return (
       <StyledWrapper>
          <Flex container height="50px" alignItems="center">
             <Text as="title">
-               FAQs(
-               {content_faqs.length})
+               Grid(
+               {content_informationGrid.length})
             </Text>
-            <Tooltip identifier="FAQ_list_heading" />
+            <Tooltip identifier="Information_Grid_list_heading" />
          </Flex>
          <ReactTabulator
             ref={tableRef}
             columns={columns}
-            data={content_faqs}
-            options={tableOptions}
+            data={content_informationGrid}
+            options={{
+               ...tableOptions,
+               placeholder: 'No Grid Information Available!',
+            }}
          />
       </StyledWrapper>
    )

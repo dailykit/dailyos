@@ -1,13 +1,15 @@
 const options = {
    cellVertAlign: 'middle',
+   maxHeight: '420px',
    layout: 'fitColumns',
    autoResize: true,
-   maxHeight: 420,
-   resizableColumns: true,
+   resizableColumns: false,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
-   persistence: true,
+   persistence: false,
    persistenceMode: 'cookie',
+   pagination: 'local',
+   paginationSize: 10,
 }
 
 export default options

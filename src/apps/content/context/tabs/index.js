@@ -37,6 +37,22 @@ const reducers = (state, { type, payload }) => {
          }
          return state
       }
+      // Store Tab Data
+      case 'STORE_TAB_DATA': {
+         const tabs = state.tabs
+         const tabIndex = tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex].data = {
+               ...tabs[tabIndex].data,
+               ...payload.data,
+            }
+            return {
+               ...state,
+               tabs,
+            }
+         }
+         return state
+      }
       // Delete Tab
       case 'DELETE_TAB': {
          return {
@@ -75,7 +91,7 @@ export const useTabs = () => {
 
    const tab = tabs.find(tab => tab.path === location.pathname)
 
-   const setTabTitle = React.useCallback(
+   const setTitle = React.useCallback(
       title => {
          dispatch({
             type: 'SET_TITLE',
@@ -133,10 +149,11 @@ export const useTabs = () => {
       tab,
       tabs,
       addTab,
+      setTitle,
       switchTab,
       removeTab,
-      setTabTitle,
       closeAllTabs,
       doesTabExists,
+      dispatch,
    }
 }
