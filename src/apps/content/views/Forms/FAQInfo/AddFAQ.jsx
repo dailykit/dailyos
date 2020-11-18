@@ -8,7 +8,7 @@ import { UPDATE_INFO_FAQ, FAQ_ONE } from '../../../graphql'
 import validator from '../../validator'
 import { useParams } from 'react-router-dom'
 
-export const AddFAQ = () => {
+export default function AddFAQ() {
    const { id } = useParams()
    const [form, setForm] = useState({
       heading: {
@@ -49,6 +49,7 @@ export const AddFAQ = () => {
       variables: { id },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
          if (data?.content_faqs.length > 0) {
+            console.log(data)
             setForm({
                ...form,
                heading: {
@@ -170,7 +171,7 @@ export const AddFAQ = () => {
    }
 
    return (
-      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+      <Flex>
          <Flex
             container
             alignItems="center"

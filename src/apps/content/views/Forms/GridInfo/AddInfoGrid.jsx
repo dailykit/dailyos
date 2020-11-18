@@ -8,7 +8,7 @@ import validator from '../../validator'
 import { logger } from '../../../../../shared/utils'
 import { useParams } from 'react-router-dom'
 
-export const AddInfoGrid = () => {
+export default function AddInfoGrid() {
    const { id } = useParams()
    const { loading: gridLoading, error } = useSubscription(INFO_GRID_ONE, {
       variables: { id },
@@ -177,7 +177,7 @@ export const AddInfoGrid = () => {
    }
 
    return (
-      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+      <Flex>
          <Flex
             container
             alignItems="center"
@@ -186,15 +186,14 @@ export const AddInfoGrid = () => {
          >
             <Flex container alignItems="center">
                <Text as="h2">Add New Information Grid</Text>
-               <Tooltip identifier="recipes_list_heading" />
+               <Tooltip identifier="GridForm_detail_heading" />
             </Flex>
-         </Flex>
-         <Spacer size="64x" />
-         <div align="right">
+
             <TextButton type="solid" onClick={onSave}>
                {updateLoading ? 'Saving...' : 'Save'}
             </TextButton>
-         </div>
+         </Flex>
+
          <Spacer size="20px" />
          <Form.Group>
             <Form.Label htmlFor="heading" title="heading">

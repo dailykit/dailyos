@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom'
 
 // Views
 import { Home, Blocks } from '../../views'
-import { AddInfoGrid, AddFAQ } from '../../views/Forms/'
+import { GridForm, FAQForm } from '../../views/Forms/'
 
 export default function Main() {
    return (
@@ -16,10 +16,10 @@ export default function Main() {
                <Blocks />
             </Route>
             <Route exact path="/content/blocks/grid-form/:id">
-               <AddInfoGrid />
+               <GridForm />
             </Route>
             <Route exact path="/content/blocks/faq-form/:id">
-               <AddFAQ />
+               <FAQForm />
             </Route>
          </Switch>
       </main>

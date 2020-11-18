@@ -24,7 +24,7 @@ export default function InformationBlock() {
       data: { content_informationBlock = [] } = {},
    } = useSubscription(INFORMATION_BLOCK, {
       variables: {
-         faqId: id,
+         gridId: id,
       },
    })
 

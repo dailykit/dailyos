@@ -52,3 +52,15 @@ export const INFO_COUNT = gql`
       }
    }
 `
+export const INFORMATION_BLOCK = gql`
+   query INFORMATION_BLOCK($faqId: Int, $gridId: Int) {
+      content_informationBlock(
+         where: { faqsId: { _eq: $faqId }, informationGridId: { _eq: $gridId } }
+      ) {
+         description
+         id
+         thumbnail
+         title
+      }
+   }
+`
