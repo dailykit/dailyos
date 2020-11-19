@@ -1,21 +1,38 @@
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Flex,
    IconButton,
+   Spacer,
    Text,
    Tunnel,
    Tunnels,
    useTunnel,
+   Form,
 } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
+import { UPDATE_RECIPE } from '../../../../../graphql'
 import { ProceduresTunnel, StepPhotoTunnel } from '../../tunnels'
 import { Container, ContainerAction } from '../styled'
 import { Image } from './styled'
 
 const Procedures = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+
+   // Mutation
+   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    return (
       <>
@@ -31,10 +48,32 @@ const Procedures = ({ state }) => {
                <StepPhotoTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex container alignItems="center">
-            <Text as="subtitle">Cooking Steps</Text>
-            <Tooltip identifier="recipe_cooking_steps" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container alignItems="center">
+               <Text as="subtitle">Cooking Steps</Text>
+               <Tooltip identifier="recipe_cooking_steps" />
+            </Flex>
+            <Form.Checkbox
+               name="showProcedures"
+               value={state.showProcedures}
+               onChange={() =>
+                  updateRecipe({
+                     variables: {
+                        id: state.id,
+                        set: {
+                           showProcedures: !state.showProcedures,
+                        },
+                     },
+                  })
+               }
+            >
+               <Flex container alignItems="center">
+                  Show Cooking Steps
+                  <Tooltip identifier="recipe_show_procedures" />
+               </Flex>
+            </Form.Checkbox>
          </Flex>
+         <Spacer size="8px" />
          {state.procedures?.length ? (
             <Container>
                <ContainerAction>

@@ -178,6 +178,9 @@ export const S_RECIPE = gql`
          utensils
          procedures
          ingredients
+         showIngredients
+         showIngredientsQuantity
+         showProcedures
          simpleRecipeYields(
             where: { isArchived: { _eq: false } }
             order_by: { yield: asc }
