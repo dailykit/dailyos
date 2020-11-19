@@ -20,11 +20,21 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    // State
    const [servings, setServings] = React.useState([
       {
-         value: '',
-         meta: {
-            isTouched: false,
-            isValid: true,
-            errors: [],
+         serving: {
+            value: '',
+            meta: {
+               isTouched: false,
+               isValid: true,
+               errors: [],
+            },
+         },
+         label: {
+            value: '',
+            meta: {
+               isTouched: false,
+               isValid: true,
+               errors: [],
+            },
          },
       },
    ])
@@ -47,14 +57,17 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    const save = () => {
       if (inFlight || !servings.length) return
       const hasInvalidFields = servings.some(
-         serving => !serving.meta.isValid || !serving.value
+         object => !object.serving.meta.isValid || !object.serving.value.trim()
       )
       if (hasInvalidFields) {
          return toast.error('All servings should be valid!')
       }
-      const objects = servings.map(serving => ({
+      const objects = servings.map(object => ({
          simpleRecipeId: state.id,
-         yield: { serving: +serving.value.trim() },
+         yield: {
+            serving: +object.serving.value.trim(),
+            label: object.label.value,
+         },
       }))
       createYields({
          variables: {
@@ -63,36 +76,58 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
       })
    }
 
-   const handleChange = (value, index) => {
-      const newServings = servings
-      newServings[index] = { ...servings[index], value }
+   const handleChange = (field, value, index) => {
+      const newServings = [...servings]
+      console.log(newServings)
+      newServings[index] = {
+         ...newServings[index],
+         [field]: {
+            ...newServings[index][field],
+            value,
+         },
+      }
       setServings([...newServings])
    }
 
    const validate = index => {
-      const { isValid, errors } = validator.serving(servings[index].value)
+      const { isValid, errors } = validator.serving(
+         servings[index].serving.value
+      )
       const newServings = servings
       newServings[index] = {
          ...servings[index],
-         meta: {
-            isTouched: true,
-            isValid,
-            errors,
+         serving: {
+            ...servings[index].serving,
+            meta: {
+               isTouched: true,
+               isValid,
+               errors,
+            },
          },
       }
       setServings([...newServings])
    }
 
    const addField = () => {
-      if (servings.every(serving => serving.value.trim().length)) {
+      if (servings.every(object => object.serving.value.trim().length)) {
          setServings([
             ...servings,
             {
-               value: '',
-               meta: {
-                  isTouched: false,
-                  isValid: true,
-                  errors: [],
+               serving: {
+                  value: '',
+                  meta: {
+                     isTouched: false,
+                     isValid: true,
+                     errors: [],
+                  },
+               },
+               label: {
+                  value: '',
+                  meta: {
+                     isTouched: false,
+                     isValid: true,
+                     errors: [],
+                  },
                },
             },
          ])
@@ -114,33 +149,65 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
             tooltip={<Tooltip identifier="servings_tunnel" />}
          />
          <TunnelBody>
-            {servings.map((serving, i) => (
+            {servings.map((object, i) => (
                <>
                   <Flex container alignItems="end">
-                     <Form.Group>
-                        <Form.Label
-                           htmlFor={`serving-${i}`}
-                           title={`serving-${i}`}
-                        >
-                           Serving*
-                        </Form.Label>
-                        <Form.Number
-                           id={`serving-${i}`}
-                           name={`serving-${i}`}
-                           onChange={e => handleChange(e.target.value, i)}
-                           onBlur={() => validate(i)}
-                           value={serving.value}
-                           placeholder="Enter serving"
-                           hasError={
-                              serving.meta.isTouched && !serving.meta.isValid
-                           }
-                        />
-                        {serving.meta.isTouched &&
-                           !serving.meta.isValid &&
-                           serving.meta.errors.map((error, index) => (
-                              <Form.Error key={index}>{error}</Form.Error>
-                           ))}
-                     </Form.Group>
+                     <Flex container alignItems="start">
+                        <Form.Group>
+                           <Form.Label
+                              htmlFor={`serving-${i}`}
+                              title={`serving-${i}`}
+                           >
+                              Serving*
+                           </Form.Label>
+                           <Form.Number
+                              id={`serving-${i}`}
+                              name={`serving-${i}`}
+                              onChange={e =>
+                                 handleChange('serving', e.target.value, i)
+                              }
+                              onBlur={() => validate(i)}
+                              value={object.serving.value}
+                              placeholder="Enter serving"
+                              hasError={
+                                 object.serving.meta.isTouched &&
+                                 !object.serving.meta.isValid
+                              }
+                           />
+                           {object.serving.meta.isTouched &&
+                              !object.serving.meta.isValid &&
+                              object.serving.meta.errors.map((error, index) => (
+                                 <Form.Error key={index}>{error}</Form.Error>
+                              ))}
+                        </Form.Group>
+                        <Spacer xAxis size="8px" />
+                        <Form.Group>
+                           <Form.Label
+                              htmlFor={`label-${i}`}
+                              title={`label-${i}`}
+                           >
+                              Label
+                           </Form.Label>
+                           <Form.Text
+                              id={`label-${i}`}
+                              name={`label-${i}`}
+                              onChange={e =>
+                                 handleChange('label', e.target.value, i)
+                              }
+                              value={object.label.value}
+                              placeholder="Enter label"
+                              hasError={
+                                 object.label.meta.isTouched &&
+                                 !object.label.meta.isValid
+                              }
+                           />
+                           {object.label.meta.isTouched &&
+                              !object.label.meta.isValid &&
+                              object.label.meta.errors.map((error, index) => (
+                                 <Form.Error key={index}>{error}</Form.Error>
+                              ))}
+                        </Form.Group>
+                     </Flex>
                      <Spacer xAxis size="16px" />
                      <IconButton type="ghost" onClick={() => removeField(i)}>
                         <DeleteIcon color="#FF5A52" />
