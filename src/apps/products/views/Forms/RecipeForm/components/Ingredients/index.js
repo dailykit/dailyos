@@ -53,7 +53,7 @@ const Ingredients = ({ state }) => {
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
-         toast.success('Deleted!')
+         toast.success('Updated!')
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -165,10 +165,54 @@ const Ingredients = ({ state }) => {
                <YieldInfoTunnel close={closeYieldInfoTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex container alignItems="center" justifyContent="flex-start">
-            <Text as="subtitle">Ingredients</Text>
-            <Tooltip identifier="recipe_ingredients" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex container alignItems="center" justifyContent="flex-start">
+               <Text as="subtitle">Ingredients</Text>
+               <Tooltip identifier="recipe_ingredients" />
+            </Flex>
+            <Flex container alignItems="center">
+               <Form.Checkbox
+                  name="showIngredients"
+                  value={state.showIngredients}
+                  onChange={() =>
+                     updateRecipe({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              showIngredients: !state.showIngredients,
+                           },
+                        },
+                     })
+                  }
+               >
+                  <Flex container alignItems="center">
+                     Show Ingredients
+                     <Tooltip identifier="recipe_show_ingredients" />
+                  </Flex>
+               </Form.Checkbox>
+               <Spacer xAxis size="8px" />
+               <Form.Checkbox
+                  name="showIngredientsQuantity"
+                  value={state.showIngredientsQuantity}
+                  onChange={() =>
+                     updateRecipe({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              showIngredientsQuantity: !state.showIngredientsQuantity,
+                           },
+                        },
+                     })
+                  }
+               >
+                  <Flex container alignItems="center">
+                     Show Ingredient's Quantity
+                     <Tooltip identifier="recipe_show_ingredients_quantity" />
+                  </Flex>
+               </Form.Checkbox>
+            </Flex>
          </Flex>
+         <Spacer size="8px" />
          {!state.simpleRecipeYields?.length ? (
             <Text as="p">
                You have to add at least one serving before adding Ingredients.
