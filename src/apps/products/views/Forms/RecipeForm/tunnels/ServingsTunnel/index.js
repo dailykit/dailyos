@@ -57,7 +57,10 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
    const save = () => {
       if (inFlight || !servings.length) return
       const hasInvalidFields = servings.some(
-         object => !object.serving.meta.isValid || !object.serving.value.trim()
+         object =>
+            !object.serving.meta.isValid ||
+            !object.serving.value.trim() ||
+            !object.label.meta.isValid
       )
       if (hasInvalidFields) {
          return toast.error('All servings should be valid!')
@@ -66,7 +69,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
          simpleRecipeId: state.id,
          yield: {
             serving: +object.serving.value.trim(),
-            label: object.label.value,
+            label: object.label.value.trim(),
          },
       }))
       createYields({
@@ -89,15 +92,13 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
       setServings([...newServings])
    }
 
-   const validate = index => {
-      const { isValid, errors } = validator.serving(
-         servings[index].serving.value
-      )
+   const validate = (field, index) => {
+      const { isValid, errors } = validator[field](servings[index][field].value)
       const newServings = servings
       newServings[index] = {
          ...servings[index],
-         serving: {
-            ...servings[index].serving,
+         [field]: {
+            ...servings[index][field],
             meta: {
                isTouched: true,
                isValid,
@@ -166,7 +167,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                               onChange={e =>
                                  handleChange('serving', e.target.value, i)
                               }
-                              onBlur={() => validate(i)}
+                              onBlur={() => validate('serving', i)}
                               value={object.serving.value}
                               placeholder="Enter serving"
                               hasError={
@@ -194,6 +195,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                               onChange={e =>
                                  handleChange('label', e.target.value, i)
                               }
+                              onBlur={() => validate('label', i)}
                               value={object.label.value}
                               placeholder="Enter label"
                               hasError={
