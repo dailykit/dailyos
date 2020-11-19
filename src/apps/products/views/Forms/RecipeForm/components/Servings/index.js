@@ -22,9 +22,7 @@ const Servings = ({ state }) => {
       state.simpleRecipeYields?.map(option => {
          return {
             id: option.id,
-            title: option.yield.label
-               ? `${option.yield.serving} (${option.yield.label})`
-               : option.yield.serving,
+            title: option.yield.serving,
          }
       }) || []
 

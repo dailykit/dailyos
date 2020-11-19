@@ -227,10 +227,16 @@ const Ingredients = ({ state }) => {
                            <TableCell>Processing</TableCell>
                            {state.simpleRecipeYields.map(serving => (
                               <TableCell key={serving.id}>
-                                 <Flex container alignItems="center">
+                                 <Flex
+                                    container
+                                    alignItems="center"
+                                    minWidth="140px"
+                                 >
                                     <UserIcon color="#555B6E" />
                                     <Spacer xAxis size="4px" />
                                     {serving.yield.serving}
+                                    {serving.yield.label &&
+                                       `(${serving.yield.label})`}
                                     <Spacer xAxis size="16px" />
                                     <span
                                        tabIndex="0"
