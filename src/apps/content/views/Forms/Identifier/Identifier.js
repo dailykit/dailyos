@@ -43,7 +43,7 @@ export default function Identifier() {
 
    const AddButton = () => {
       return (
-         <ComboButton type="solid" onClick={openTunnel(1)}>
+         <ComboButton type="solid" onClick={() => openTunnel(1)}>
             <PlusIcon />
             Add Section
          </ComboButton>
