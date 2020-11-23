@@ -24,17 +24,6 @@ export default function Builder() {
          },
       },
 
-      // assetManager: {
-      //    // Upload endpoint, set `false` to disable upload, default `false`
-      //    upload: 'https://test.dailykit.org/server/api/assets',
-      //    headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //    },
-
-      //    // The name used in POST to pass uploaded files, default: `'files'`
-      //    uploadName: 'files',
-      // },
-
       // Disable the storage manager for the moment
       storageManager: {
          id: 'gjs-', // Prefix identifier that will be used inside storing and loading
@@ -75,8 +64,7 @@ export default function Builder() {
             {
                id: 'text',
                label: 'Text',
-               content:
-                  '<div class="test-div" data-gjs-type="text">Insert your text here</div>',
+               content: '<div data-gjs-type="text">Insert your text here</div>',
             },
             {
                id: 'image',
@@ -89,11 +77,6 @@ export default function Builder() {
                // This triggers `active` event on dropped components and the `image`
                // reacts by opening the AssetManager
                activate: true,
-            },
-            {
-               id: 'tab',
-               label: 'Tab',
-               content: `grapesjstabs`,
             },
          ],
       },
@@ -365,49 +348,18 @@ export default function Builder() {
       console.log('Loaded ', e)
    })
    editor.on('storage:store', function (e) {
-      // createHtml({
-      //    variables: {
-      //       objects: {
-      //          html:
-      //             editor.getHtml() + '<style>' + editor.getCss() + '</style>',
-      //       },
-      //    },
-      // })
       console.log(
          'Run',
          editor.getHtml() + '<style>' + editor.getCss() + '</style>'
       )
    })
 
-   //    //add a component
-
-   //    editor.addComponents(
-   //       `<div>
-   //   <img src="https://path/image" />
-   //   <span title="foo">Hello Deepak Negi!!!</span>
-   // </div>`,
-   //       { at: 0 }
-   //    )
-
-   //    editor.BlockManager.add('test-block', {
-   //       label: 'Input',
-   //       attributes: { class: 'fa fa-text' },
-   //       content: {
-   //          html: '<h3>Hello</h3>',
-   //       },
-   //    })
-   //    editor.BlockManager.add('text-button', {
-   //       label: 'Text Button',
-   //       attributes: { class: 'fa fa-button' },
-   //       content: `<TextButton type='solid' size='sm'>Solid Button</TextButton>`,
-   //    })
-
    editor.BlockManager.add('div', {
       label: 'Test',
       content: `<div class="test-div">Hello</div>
       <style>
-      .test-div,h1{
-      color: red;
+      .test-div{
+      color: blue;
       font-size: 48px;
       }
       </style>
