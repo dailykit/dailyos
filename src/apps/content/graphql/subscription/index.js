@@ -64,3 +64,25 @@ export const INFORMATION_BLOCK = gql`
       }
    }
 `
+export const CONTENT_PAGE = gql`
+   subscription CONTENT_PAGE {
+      content_page {
+         title
+         description
+         identifiers {
+            title
+         }
+      }
+   }
+`
+export const CONTENT_PAGE_ONE = gql`
+   subscription CONTENT_PAGE_ONE($page: String!) {
+      content_page_by_pk(title: $page) {
+         title
+         description
+         identifiers {
+            identifier: title
+         }
+      }
+   }
+`

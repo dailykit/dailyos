@@ -11,6 +11,10 @@ export const StyledHome = styled.div`
       font-weight: 500;
       line-height: 37px;
    }
+   h2 {
+      color: #555b6e;
+      font-weight: 500;
+   }
    @media (max-width: 1180px) {
       width: calc(100vw - 40px);
    }
