@@ -47,6 +47,16 @@ const validator = {
       }
       return { isValid, errors }
    },
+   label: value => {
+      const label = value.trim()
+      let isValid = true
+      let errors = []
+      if (label.length > 50) {
+         isValid = false
+         errors = [...errors, 'Label should contain less than 50 characters!']
+      }
+      return { isValid, errors }
+   },
    slipName: value => {
       const name = value.trim()
       let isValid = true

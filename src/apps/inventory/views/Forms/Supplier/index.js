@@ -16,7 +16,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { ErrorState, Tooltip } from '../../../../../shared/components'
+import { ErrorState, Tooltip, Gallery } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard } from '../../../components'
@@ -95,6 +95,12 @@ export default function SupplierForm() {
                shippingTerms: shippingTerms.trim(),
             },
          },
+      })
+   }
+
+   const addImage = images => {
+      updateSupplier({
+         variables: { id: formState.id, object: { logo: images } },
       })
    }
 
@@ -185,7 +191,7 @@ export default function SupplierForm() {
                   <ShowAvailability formState={formState} />
                </Flex>
             </Flex>
-            {formState.logo ? (
+            {/* {formState.logo ? (
                <ImageContainer>
                   <div>
                      <span
@@ -211,7 +217,26 @@ export default function SupplierForm() {
                      )
                   )}
                />
-            )}
+            )} */}
+            <Flex width="500px">
+               {formState?.logo != null && formState?.logo?.length ? (
+                  <Gallery
+                     list={formState?.logo || []}
+                     isMulti={false}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               ) : (
+                  <Gallery
+                     list={[]}
+                     isMulti={false}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               )}
+            </Flex>
 
             <AddressView formState={formState} openTunnel={openAddressTunnel} />
 
@@ -312,6 +337,12 @@ function ShowAvailability({ formState }) {
          toast.error(GENERAL_ERROR_MESSAGE)
       },
    })
+
+   const addImage = images => {
+      updateSupplier({
+         variables: { id: formState.id, object: { logo: images } },
+      })
+   }
 
    return (
       <Form.Group>

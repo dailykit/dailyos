@@ -249,7 +249,9 @@ const CustomerRelation = ({ match }) => {
                      heading="Subscriber"
                   />
                   <WalletCard
-                     data={walletNreferral[0]?.customer?.wallet}
+                     data={currencyFmt(
+                        walletNreferral[0]?.customer?.wallet || 0
+                     )}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"

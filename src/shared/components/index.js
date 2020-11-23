@@ -8,6 +8,7 @@ import ErrorBoundary from './ErrorBoundary'
 import NutritionTunnel from './NutritionTunnel'
 import InsightDashboard from './InsightDashboard'
 import Gallery from './Gallery'
+import WebBuilder from './WebBuilder'
 
 export {
    Lang,
@@ -20,6 +21,7 @@ export {
    NutritionTunnel,
    InsightDashboard,
    Gallery,
+   WebBuilder,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'
@@ -29,3 +31,4 @@ export * from './ScrollSection'
 export * from './OperationConfig'
 export * from './Tooltip'
 export * from './ErrorState'
+export * from './RedirectBanner'

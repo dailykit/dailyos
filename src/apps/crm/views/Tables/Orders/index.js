@@ -120,6 +120,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
       {
@@ -149,6 +150,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+
          width: 150,
       },
       {

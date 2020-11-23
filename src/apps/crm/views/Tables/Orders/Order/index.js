@@ -29,7 +29,7 @@ import {
    CardInfo,
 } from './styled'
 import options from '../../../tableOptions'
-import { logger } from '../../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../../shared/utils'
 import BrandContext from '../../../../context/Brand'
 
 const OrderInfo = () => {
@@ -117,6 +117,7 @@ const OrderInfo = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          widht: 100,
       },
       {
@@ -133,6 +134,7 @@ const OrderInfo = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          widht: 100,
       },
    ]
@@ -175,7 +177,9 @@ const OrderInfo = () => {
                <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
                   <Text as="p">Total Paid:</Text>
                   <Text as="p">
-                     ${orderData?.order?.deliveryFee?.value || 'N/A'}
+                     {currencyFmt(
+                        Number(orderData?.order?.deliveryFee?.value || 0)
+                     )}
                   </Text>
                </CardInfo>
             </Card>
@@ -242,13 +246,17 @@ const OrderInfo = () => {
                   <CardInfo>
                      <Text as="title">Total</Text>
                      <Text as="title">
-                        ${orderData?.order?.orderCart?.cartInfo?.total || 'N/A'}
+                        {currencyFmt(
+                           Number(
+                              orderData?.order?.orderCart?.cartInfo?.total || 0
+                           )
+                        )}
                      </Text>
                   </CardInfo>
                   <CardInfo>
                      <Text as="title">Overall Discount</Text>
                      <Text as="title">
-                        ${orderData?.order?.discount || 'N/A'}
+                        {currencyFmt(Number(orderData?.order?.discount || 0))}
                      </Text>
                   </CardInfo>
                   <CardInfo>
@@ -258,7 +266,7 @@ const OrderInfo = () => {
                   <CardInfo bgColor="#f3f3f3">
                      <Text as="h2">Total Paid</Text>
                      <Text as="h2">
-                        ${orderData?.order?.amountPaid || 'N/A'}
+                        {currencyFmt(Number(orderData?.order?.amountPaid || 0))}
                      </Text>
                   </CardInfo>
                </StyledTable>

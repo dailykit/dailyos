@@ -5,7 +5,8 @@ import { Loader } from '@dailykit/ui'
 import styled from 'styled-components'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
-import { Lang } from './shared/components'
+import { isKeycloakSupported } from './shared/utils'
+import { Lang, RedirectBanner } from './shared/components'
 
 const Safety = Loadable({
    loader: () => import('./apps/safety'),
@@ -135,6 +136,7 @@ const App = () => {
                <Route path="/content" component={Content} />
             </Switch>
          </Router>
+         {!isKeycloakSupported() && <RedirectBanner />}
          <Lang />
       </>
    )
