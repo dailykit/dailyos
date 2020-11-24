@@ -36,7 +36,6 @@ import { validators } from '../../../../../utils/validators'
 import AllergensTunnel from '../Allergens'
 import {
    Highlight,
-   ImageContainer,
    StyledInputGroup,
    StyledLabel,
    StyledRow,
@@ -231,7 +230,9 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                title: loading ? 'Saving...' : t(address.concat('save')),
                action: handleSave,
             }}
-            description="add more information about this bulk item"
+            description={`add more information about this ${
+               id ? 'processing' : 'Mise en place'
+            }`}
             tooltip={
                <Tooltip identifier="supplier_item_form_configure_bulkItem_tunnel" />
             }

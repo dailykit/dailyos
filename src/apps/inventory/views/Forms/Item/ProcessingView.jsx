@@ -52,6 +52,8 @@ export default function ProcessingView({ proc = {}, isDefault }) {
          deleteBulkItem({ variables: { id: proc.id } })
    }
 
+   if (!proc) return <Filler message={NO_BULK_ITEMS} />
+
    return (
       <>
          <Tunnels tunnels={configTunnel}>
@@ -119,8 +121,6 @@ export default function ProcessingView({ proc = {}, isDefault }) {
 }
 
 function RealtimePanel({ proc }) {
-   if (!Object.keys(proc).length) return <Filler message={NO_BULK_ITEMS} />
-
    return (
       <Flex container>
          <Flex flex={4}>

@@ -403,9 +403,7 @@ export default function ItemForm() {
                      {formState.bulkItems?.length ? (
                         <>
                            <Flex container alignItems="center" margin="8px 0">
-                              <Text as="subtitle">
-                                 derived from received processing
-                              </Text>
+                              <Text as="subtitle">Mise en place</Text>
                               <Tooltip identifier="supplieritem_form_derived_from_received_processing_bulkitems" />
                            </Flex>
 
@@ -477,12 +475,14 @@ function ContactPerson({ formState, open }) {
    return (
       <>
          <span>{formState.supplier.name}</span>
-         <Avatar
-            withName
-            title={`${formState.supplier?.contactPerson?.firstName} ${
-               formState.supplier?.contactPerson?.lastName || ''
-            }`}
-         />
+         {formState.supplier?.contactPerson?.firstName ? (
+            <Avatar
+               withName
+               title={`${formState.supplier?.contactPerson.firstName} ${
+                  formState.supplier?.contactPerson?.lastName || ''
+               }`}
+            />
+         ) : null}
          <TransparentIconButton type="outline" onClick={() => open(1)}>
             <EditIcon size="18" color="#555B6E" />
          </TransparentIconButton>
