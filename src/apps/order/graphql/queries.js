@@ -545,6 +545,7 @@ export const FETCH_INVENTORY = gql`
       orderInventoryProduct(id: $id) {
          id
          quantity
+         isAssembled
          assemblyStatus
          inventoryProductId
          inventoryProduct {
@@ -599,6 +600,7 @@ export const FETCH_INVENTORY = gql`
 export const FETCH_READYTOEAT = gql`
    subscription orderReadyToEatProduct($id: Int!) {
       orderReadyToEatProduct(id: $id) {
+         isAssembled
          assemblyStatus
          comboProduct {
             name
