@@ -13,12 +13,7 @@ import {
 
 import { useConfig } from '../../../context'
 import { useOrder } from '../../../context'
-import {
-   OrderItem,
-   OrderItems,
-   StyledServings,
-   StyledProductTitle,
-} from '../styled'
+import { Styles, StyledProductTitle } from '../styled'
 
 export const Inventories = ({ inventories }) => {
    const { state } = useConfig()
@@ -83,39 +78,17 @@ export const Inventories = ({ inventories }) => {
    if (inventories.length === 0) return <div>No inventories products!</div>
    return (
       <>
-         <OrderItems>
+         <Styles.Products>
             {inventories.map(inventory => (
-               <OrderItem
+               <ProductCard
                   key={inventory.id}
-                  isActive={current?.id === inventory.id}
+                  inventory={inventory}
                   onClick={() => selectProduct(inventory)}
-               >
-                  <Flex
-                     container
-                     alignitems="center"
-                     justifyContent="space-between"
-                  >
-                     <StyledProductTitle>
-                        {productTitle(inventory)}
-                     </StyledProductTitle>
-                     <span>
-                        Quantity:{' '}
-                        {inventory.quantity *
-                           inventory?.inventoryProductOption?.quantity || 1}
-                     </span>
-                  </Flex>
-                  <section>
-                     <span>
-                        {inventory.isAssembled ? 1 : 0} /{' '}
-                        {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
-                     </span>
-                     <StyledServings>
-                        <span>{inventory?.inventoryProductOption?.label}</span>
-                     </StyledServings>
-                  </section>
-               </OrderItem>
+                  isActive={current?.id === inventory.id}
+               />
             ))}
-         </OrderItems>
+         </Styles.Products>
+         <Spacer size="16px" />
          <Flex>
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
@@ -160,4 +133,25 @@ const productTitle = inventory => {
       name += ` (${inventory?.comboProductComponent?.label})`
    }
    return name || 'N/A'
+}
+
+const ProductCard = ({ onClick, isActive, inventory }) => {
+   const quantity =
+      inventory.quantity * inventory?.inventoryProductOption?.quantity || 1
+   return (
+      <Styles.ProductItem isActive={isActive} onClick={onClick}>
+         <Flex container alignitems="center" justifyContent="space-between">
+            <StyledProductTitle>{productTitle(inventory)}</StyledProductTitle>
+            <span>Quantity: {quantity}</span>
+         </Flex>
+         <Spacer size="14px" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <span>
+               {inventory.isAssembled ? 1 : 0} /{' '}
+               {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+            </span>
+            <span>{inventory?.inventoryProductOption?.label}</span>
+         </Flex>
+      </Styles.ProductItem>
+   )
 }

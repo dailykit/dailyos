@@ -14,27 +14,15 @@ import {
 
 import { UserIcon } from '../../../assets/icons'
 import { useOrder, useConfig } from '../../../context'
-import {
-   OrderItem,
-   OrderItems,
-   StyledServings,
-   StyledProductTitle,
-} from '../styled'
+import { Styles, StyledProductTitle } from '../styled'
 
 const address = 'apps.order.views.order.'
 
 export const ReadyToEats = ({ readytoeats }) => {
    const { state } = useConfig()
-   const { t } = useTranslation()
-   const [label, setLabel] = React.useState('')
    const { selectReadyToEat } = useOrder()
+   const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
-
-   const selectProduct = product => {
-      setCurrent(product)
-      setLabel('')
-      selectReadyToEat(product.id)
-   }
 
    const print = () => {
       if (_.isNull(current?.labelTemplateId)) {
@@ -85,46 +73,26 @@ export const ReadyToEats = ({ readytoeats }) => {
       }
    }, [readytoeats])
 
+   const selectProduct = product => {
+      setCurrent(product)
+      setLabel('')
+      selectReadyToEat(product.id)
+   }
+
    if (readytoeats.length === 0) return <div>No ready to eat products!</div>
    return (
       <>
-         <OrderItems>
+         <Styles.Products>
             {readytoeats.map(readytoeat => (
-               <OrderItem
+               <ProductCard
                   key={readytoeat.id}
-                  onClick={() => selectProduct(readytoeat)}
+                  readytoeat={readytoeat}
+                  selectProduct={selectProduct}
                   isActive={current?.id === readytoeat.id}
-               >
-                  <div>
-                     <StyledProductTitle>
-                        {readytoeat?.simpleRecipeProduct?.name}
-                        {readytoeat?.comboProduct?.name}
-                        &nbsp;
-                        {readytoeat?.comboProductComponent?.label &&
-                           `(${readytoeat?.comboProductComponent?.label})`}
-                     </StyledProductTitle>
-                  </div>
-                  <section>
-                     <span>
-                        {readytoeat.isAssembled ? 1 : 0} /{' '}
-                        {readytoeat.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
-                     </span>
-                     <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {
-                              readytoeat?.simpleRecipeProductOption
-                                 ?.simpleRecipeYield?.yield?.serving
-                           }
-                           &nbsp; {t(address.concat('servings'))}
-                        </span>
-                     </StyledServings>
-                  </section>
-               </OrderItem>
+               />
             ))}
-         </OrderItems>
+         </Styles.Products>
+         <Spacer size="16px" />
          <Flex>
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
@@ -154,5 +122,45 @@ export const ReadyToEats = ({ readytoeats }) => {
             )}
          </Flex>
       </>
+   )
+}
+
+const ProductCard = ({ readytoeat, isActive, selectProduct }) => {
+   const { t } = useTranslation()
+
+   const serving =
+      readytoeat?.simpleRecipeProductOption?.simpleRecipeYield?.yield?.serving
+
+   return (
+      <Styles.ProductItem
+         isActive={isActive}
+         onClick={() => selectProduct(readytoeat)}
+      >
+         <div>
+            <StyledProductTitle>
+               {readytoeat?.simpleRecipeProduct?.name}
+               {readytoeat?.comboProduct?.name}
+               &nbsp;
+               {readytoeat?.comboProductComponent?.label &&
+                  `(${readytoeat?.comboProductComponent?.label})`}
+            </StyledProductTitle>
+         </div>
+         <Spacer size="14px" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <span>
+               {readytoeat.isAssembled ? 1 : 0} /{' '}
+               {readytoeat.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+            </span>
+            <Flex container alignItems="center">
+               <Flex as="span" container alignItems="center">
+                  <UserIcon size={16} color="#555B6E" />
+               </Flex>
+               <Spacer size="6px" xAxis />
+               <span>
+                  {serving} {t(address.concat('servings'))}
+               </span>
+            </Flex>
+         </Flex>
+      </Styles.ProductItem>
    )
 }
