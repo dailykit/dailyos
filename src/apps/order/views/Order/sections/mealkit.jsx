@@ -18,13 +18,7 @@ import { UserIcon } from '../../../assets/icons'
 import { UPDATE_MEALKIT } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import ProductDetails from './MealKitProductDetails'
-import {
-   Legend,
-   OrderItem,
-   OrderItems,
-   StyledServings,
-   StyledProductTitle,
-} from '../styled'
+import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 
 const address = 'apps.order.views.order.'
 
@@ -95,56 +89,20 @@ export const MealKits = ({ mealkits }) => {
    if (mealkits.length === 0) return <div>No mealkit products!</div>
    return (
       <>
-         <OrderItems>
+         <Styles.Products>
             {mealkits.map(mealkit => (
-               <OrderItem
+               <ProductCard
                   key={mealkit.id}
+                  mealkit={mealkit}
                   isActive={current?.id === mealkit.id}
                   onClick={() => {
                      setLabel('')
                      setCurrent(mealkit)
                   }}
-               >
-                  <div>
-                     <StyledProductTitle>
-                        {mealkit?.simpleRecipeProduct?.name}
-                        {mealkit?.comboProduct?.name}
-                        &nbsp;
-                        {mealkit?.comboProductComponent?.label &&
-                           `(${mealkit?.comboProductComponent?.label})`}
-                     </StyledProductTitle>
-                  </div>
-                  <section>
-                     <span>
-                        {
-                           mealkit?.orderSachets.filter(
-                              sachet => sachet.isAssembled
-                           ).length
-                        }
-                        &nbsp;/&nbsp;
-                        {
-                           mealkit?.orderSachets.filter(
-                              sachet => sachet.status === 'PACKED'
-                           ).length
-                        }
-                        &nbsp; / {mealkit?.orderSachets?.length}
-                     </span>
-                     <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {
-                              mealkit?.simpleRecipeProductOption
-                                 ?.simpleRecipeYield?.yield?.serving
-                           }
-                           &nbsp; {t(address.concat('servings'))}
-                        </span>
-                     </StyledServings>
-                  </section>
-               </OrderItem>
+               />
             ))}
-         </OrderItems>
+         </Styles.Products>
+         <Spacer size="16px" />
          <Flex container alignItems="center">
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
@@ -211,22 +169,91 @@ export const MealKits = ({ mealkits }) => {
                </>
             )}
          </Flex>
-         <Legend>
-            <h2>{t(address.concat('legends'))}</h2>
-            <section>
-               <span />
-               <span>{t(address.concat('pending'))}</span>
+         <Spacer size="32px" />
+         <section>
+            <Scroll.Tabs>
+               <Scroll.Tab
+                  className={
+                     window.location.hash === '#sachets' ? 'active' : ''
+                  }
+               >
+                  <a href="#sachets">Sachets</a>
+               </Scroll.Tab>
+               <Scroll.Tab
+                  className={
+                     window.location.hash === '#modifiers' ? 'active' : ''
+                  }
+               >
+                  <a href="#modifiers">Modifiers</a>
+               </Scroll.Tab>
+            </Scroll.Tabs>
+            <section id="sachets">
+               <Spacer size="16px" />
+               <Text as="h2">Sachets</Text>
+               <Legend>
+                  <h2>{t(address.concat('legends'))}</h2>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('pending'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('packed'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('assembled'))}</span>
+                  </section>
+               </Legend>
+               {current && <ProductDetails product={current} />}
             </section>
-            <section>
-               <span />
-               <span>{t(address.concat('packed'))}</span>
+            <Spacer size="32px" />
+            <section id="modifiers">
+               <Text as="h2">Modifiers</Text>
             </section>
-            <section>
-               <span />
-               <span>{t(address.concat('assembled'))}</span>
-            </section>
-         </Legend>
-         {current && <ProductDetails product={current} />}
+         </section>
       </>
+   )
+}
+
+const ProductCard = ({ mealkit, isActive, onClick }) => {
+   const { t } = useTranslation()
+
+   const assembled = mealkit?.orderSachets.filter(sachet => sachet.isAssembled)
+      .length
+   const packed = mealkit?.orderSachets.filter(
+      sachet => sachet.status === 'PACKED'
+   ).length
+   const total = mealkit?.orderSachets?.length
+   const serving =
+      mealkit?.simpleRecipeProductOption?.simpleRecipeYield?.yield?.serving
+
+   return (
+      <Styles.ProductItem isActive={isActive} onClick={onClick}>
+         <div>
+            <StyledProductTitle>
+               {mealkit?.simpleRecipeProduct?.name}
+               {mealkit?.comboProduct?.name}
+               &nbsp;
+               {mealkit?.comboProductComponent?.label &&
+                  `(${mealkit?.comboProductComponent?.label})`}
+            </StyledProductTitle>
+         </div>
+         <Spacer size="14px" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <span>
+               {assembled} / {packed} / {total}
+            </span>
+            <Flex container alignItems="center">
+               <Flex as="span" container alignItems="center">
+                  <UserIcon size={16} color="#555B6E" />
+               </Flex>
+               <Spacer size="6px" xAxis />
+               <span>
+                  {serving} {t(address.concat('servings'))}
+               </span>
+            </Flex>
+         </Flex>
+      </Styles.ProductItem>
    )
 }
