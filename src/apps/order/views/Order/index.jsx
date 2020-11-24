@@ -43,6 +43,11 @@ const Order = () => {
    const [mealkits, setMealKits] = React.useState([])
    const [inventories, setInventories] = React.useState([])
    const [readytoeats, setReadyToEats] = React.useState([])
+   const [count, setCount] = React.useState({
+      assembled: 0,
+      completed: 0,
+      total: 0,
+   })
 
    const { loading, error } = useSubscription(ORDER, {
       variables: {
@@ -72,6 +77,23 @@ const Order = () => {
          setMealKits(orderMealKitProducts)
          setInventories(orderInventoryProducts)
          setReadyToEats(orderReadyToEatProducts)
+
+         const funnel = (items, key, value) =>
+            items.filter(node => node[key] === value).length
+         setCount({
+            assembled:
+               funnel(orderInventoryProducts, 'isAssembled', true) +
+               funnel(orderMealKitProducts, 'isAssembled', true) +
+               funnel(orderReadyToEatProducts, 'isAssembled', true),
+            completed:
+               funnel(orderInventoryProducts, 'assemblyStatus', 'COMPLETED') +
+               funnel(orderMealKitProducts, 'assemblyStatus', 'COMPLETED') +
+               funnel(orderReadyToEatProducts, 'assemblyStatus', 'COMPLETED'),
+            total:
+               orderInventoryProducts.length +
+               orderMealKitProducts.length +
+               orderReadyToEatProducts.length,
+         })
       },
    })
 
@@ -151,10 +173,12 @@ const Order = () => {
       return <ErrorState message="Failed to fetch order details!" />
    }
    return (
-      <Flex padding="24px">
+      <Flex>
+         <Spacer size="16px" />
          <Flex
             container
             as="header"
+            padding="0 16px"
             alignItems="center"
             justifyContent="space-between"
          >
@@ -165,23 +189,19 @@ const Order = () => {
                   <PrintIcon size={16} />
                </IconButton>
                <Spacer size="16px" xAxis />
-               {['ONDEMAND_DELIVERY', 'PREORDER_DELIVERY'].includes(
-                  order?.fulfillmentType
-               ) && (
-                  <>
-                     <TextButton
-                        size="sm"
-                        type="outline"
-                        onClick={() =>
-                           dispatch({
-                              type: 'DELIVERY_PANEL',
-                              payload: { orderId: order?.id },
-                           })
-                        }
-                     >
-                        View Delivery
-                     </TextButton>
-                  </>
+               {!isPickup(order?.fulfillmentType) && (
+                  <TextButton
+                     size="sm"
+                     type="outline"
+                     onClick={() =>
+                        dispatch({
+                           type: 'DELIVERY_PANEL',
+                           payload: { orderId: order?.id },
+                        })
+                     }
+                  >
+                     View Delivery
+                  </TextButton>
                )}
             </Flex>
             <Flex container alignItems="center" flexWrap="wrap">
@@ -226,21 +246,15 @@ const Order = () => {
                </Flex>
             </Flex>
          </Flex>
-         <Spacer size="8px" />
-         <Flex container alignItems="center" justifyContent="space-between">
+         <Spacer size="16px" />
+         <Flex
+            container
+            padding="0 16px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="h3">
-               {inventories.filter(node => node.isAssembled).length +
-                  mealkits.filter(node => node.isAssembled).length +
-                  readytoeats.filter(node => node.isAssembled).length}{' '}
-               /{' '}
-               {inventories.filter(node => node.assemblyStatus === 'COMPLETED')
-                  .length +
-                  mealkits.filter(node => node.assemblyStatus === 'COMPLETED')
-                     .length +
-                  readytoeats.filter(
-                     node => node.assemblyStatus === 'COMPLETED'
-                  ).length}{' '}
-               / {inventories.length + mealkits.length + readytoeats.length}
+               {count.assembled} / {count.completed} / {count.total}
                &nbsp;{t(address.concat('items'))}
             </Text>
             <Flex width="240px">
@@ -256,8 +270,9 @@ const Order = () => {
                </DropdownButton>
             </Flex>
          </Flex>
+         <Spacer size="16px" />
          <HorizontalTabs>
-            <HorizontalTabList>
+            <HorizontalTabList style={{ padding: '0 16px' }}>
                <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
                <HorizontalTab>Inventories ({inventories.length})</HorizontalTab>
                <HorizontalTab>
