@@ -145,7 +145,7 @@ export const ORDERS = gql`
          deliveryPrice
          transactionId
          fulfillmentType
-         orderMealKitProducts {
+         orderMealKitProducts(where: { orderModifierId: { _is_null: true } }) {
             id
             price
             isAssembled
@@ -162,7 +162,7 @@ export const ORDERS = gql`
                id
                label
             }
-            orderSachets {
+            orderSachets(where: { orderModifierId: { _is_null: true } }) {
                id
                status
                isAssembled
@@ -179,7 +179,9 @@ export const ORDERS = gql`
                }
             }
          }
-         orderReadyToEatProducts {
+         orderReadyToEatProducts(
+            where: { orderModifierId: { _is_null: true } }
+         ) {
             id
             price
             isAssembled
@@ -212,7 +214,9 @@ export const ORDERS = gql`
                }
             }
          }
-         orderInventoryProducts {
+         orderInventoryProducts(
+            where: { orderModifierId: { _is_null: true } }
+         ) {
             id
             price
             isAssembled
@@ -266,7 +270,10 @@ export const ORDER = gql`
          transactionId
          fulfillmentType
          orderMealKitProducts(
-            where: { assemblyStationId: $assemblyStationId }
+            where: {
+               assemblyStationId: $assemblyStationId
+               orderModifierId: { _is_null: true }
+            }
          ) {
             id
             isAssembled
@@ -300,7 +307,12 @@ export const ORDER = gql`
                   yield
                }
             }
-            orderSachets(where: { packingStationId: $packingStationId }) {
+            orderSachets(
+               where: {
+                  packingStationId: $packingStationId
+                  orderModifierId: { _is_null: true }
+               }
+            ) {
                id
                unit
                status
@@ -347,7 +359,10 @@ export const ORDER = gql`
             }
          }
          orderReadyToEatProducts(
-            where: { assemblyStationId: $assemblyStationId }
+            where: {
+               assemblyStationId: $assemblyStationId
+               orderModifierId: { _is_null: true }
+            }
          ) {
             id
             quantity
@@ -384,7 +399,10 @@ export const ORDER = gql`
             }
          }
          orderInventoryProducts(
-            where: { assemblyStationId: $assemblyStationId }
+            where: {
+               assemblyStationId: $assemblyStationId
+               orderModifierId: { _is_null: true }
+            }
          ) {
             id
             quantity
@@ -502,6 +520,7 @@ export const FETCH_ORDER_SACHET = gql`
          packingStationId
          packagingId
          packaging {
+            id
             name
          }
          sachetItemId
@@ -514,6 +533,7 @@ export const FETCH_ORDER_SACHET = gql`
                shelfLife
                bulkDensity
                supplierItem {
+                  id
                   name
                }
             }
@@ -526,10 +546,12 @@ export const FETCH_ORDER_SACHET = gql`
             shelfLife
             bulkDensity
             supplierItem {
+               id
                name
             }
          }
          mealkit: orderMealKitProduct {
+            id
             orderId
             product: simpleRecipeProduct {
                id
