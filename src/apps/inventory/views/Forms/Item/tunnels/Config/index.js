@@ -147,23 +147,19 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                object: {
                   unit: unit.value, // string
                   yield: {
-                     value: yieldPercentage.meta.isValid
-                        ? yieldPercentage.value
-                        : '',
+                     value: yieldPercentage.value,
                   },
                   shelfLife: {
-                     unit: shelfLifeUnit.meta.value ? shelfLifeUnit.value : '',
-                     value: shelfLife.meta.isValid ? shelfLife.value : '',
+                     unit: shelfLifeUnit.value,
+                     value: shelfLife.value,
                   },
                   parLevel: +parLevel.value,
                   maxLevel: +maxValue.value,
                   labor: {
-                     value: laborTime.meta.isValid ? laborTime.value : '',
-                     unit: laborUnit.value ? laborUnit.value : '',
+                     value: laborTime.value,
+                     unit: laborUnit.value,
                   },
-                  bulkDensity: bulkDensity.meta.isValid
-                     ? +bulkDensity.value
-                     : null,
+                  bulkDensity: +bulkDensity.value,
                   allergens: allergens?.length ? allergens : [],
                },
             },
