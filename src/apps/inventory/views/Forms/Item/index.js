@@ -442,6 +442,7 @@ export default function ItemForm() {
                   <SectionTabPanels>
                      <SectionTabPanel>
                         <ProcessingView
+                           formState={formState}
                            proc={formState.bulkItemAsShipped}
                            isDefault
                         />
@@ -452,7 +453,10 @@ export default function ItemForm() {
                            return null
                         return (
                            <SectionTabPanel key={procs.id}>
-                              <ProcessingView proc={procs} />
+                              <ProcessingView
+                                 formState={formState}
+                                 proc={procs}
+                              />
                            </SectionTabPanel>
                         )
                      })}

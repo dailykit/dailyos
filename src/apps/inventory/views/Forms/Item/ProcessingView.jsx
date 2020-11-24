@@ -32,7 +32,7 @@ import { ConfigTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function ProcessingView({ proc = {}, isDefault }) {
+export default function ProcessingView({ formState, proc = {}, isDefault }) {
    const { t } = useTranslation()
 
    const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
@@ -105,7 +105,7 @@ export default function ProcessingView({ proc = {}, isDefault }) {
                         ) : null}
                      </Flex>
                   ) : null}
-                  <RealtimePanel proc={proc || {}} />
+                  <RealtimePanel proc={proc || {}} formState={formState} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <PlannedLotView
@@ -120,11 +120,11 @@ export default function ProcessingView({ proc = {}, isDefault }) {
    )
 }
 
-function RealtimePanel({ proc }) {
+function RealtimePanel({ formState, proc }) {
    return (
       <Flex container>
          <Flex flex={4}>
-            <RealTimeView proc={proc} />
+            <RealTimeView proc={proc} formState={formState} />
          </Flex>
          <Flex flex={1}>
             <Card>
