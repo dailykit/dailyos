@@ -152,7 +152,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
                <main>
                   <StyledStat>
                      <span>{t(address.concat('tax'))}</span>
-                     <span>{rest.tax}</span>
+                     <span>{currencyFmt(Number(rest.tax) || 0)}</span>
                   </StyledStat>
                   <StyledStat>
                      <span>{t(address.concat('discount'))}</span>
@@ -160,11 +160,11 @@ const OrderListItem = ({ containerId, order = {} }) => {
                   </StyledStat>
                   <StyledStat>
                      <span>{t(address.concat('delivery price'))}</span>
-                     <span>{rest.deliveryPrice}</span>
+                     <span>{currencyFmt(Number(rest.deliveryPrice) || 0)}</span>
                   </StyledStat>
                   <StyledStat>
                      <span>{t(address.concat('total'))}</span>
-                     <span>{rest.amountPaid}</span>
+                     <span>{currencyFmt(Number(rest.amountPaid) || 0)}</span>
                   </StyledStat>
                </main>
             </ListBodyItem>
