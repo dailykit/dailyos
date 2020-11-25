@@ -275,6 +275,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
                            })
                         }
                         options={[
+                           { id: 0, title: 'Select Unit', value: ' ' },
                            { id: 1, title: 'days' },
                            { id: 2, title: 'hours' },
                         ]}
