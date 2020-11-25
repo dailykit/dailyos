@@ -87,8 +87,11 @@ export const List = {
             border-radius: 2px 2px 0 0;
             grid-template-columns: repeat(4, 1fr) 48px;
             background: ${selectBg(isPacked, isAssembled)};
-            span {
+            > span {
                padding: 0 14px;
+               overflow: hidden;
+               white-space: nowrap;
+               text-overflow: ellipsis;
             }
             button {
                border: none;
@@ -118,6 +121,14 @@ export const List = {
          }
       `
    ),
+   Badge: styled.span`
+      color: #fff;
+      font-size: 14px;
+      padding: 1px 4px;
+      border-radius: 2px;
+      margin-right: 3px;
+      background: rgba(0, 0, 0, 0.2);
+   `,
 }
 
 const selectBg = (isPacked, isAssembled) => {

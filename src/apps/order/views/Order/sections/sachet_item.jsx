@@ -29,8 +29,8 @@ export const SachetItem = ({ item, product }) => {
          }}
       >
          <header>
-            <span>
-               {item.orderModifierId && 'MODIFIER'}
+            <span title={item.ingredientName || 'N/A'}>
+               {item.orderModifierId && <List.Badge>MODIFIER</List.Badge>}
                {item.ingredientName || 'N/A'}
             </span>
             <span>
@@ -40,8 +40,12 @@ export const SachetItem = ({ item, product }) => {
                   ''}
                {!item?.bulkItemId && !item?.sachetItemId && 'N/A'}
             </span>
-            <span>{item.processingName || 'N/A'}</span>
-            <span>
+            <span title={item.processingName || 'N/A'}>
+               {item.processingName || 'N/A'}
+            </span>
+            <span
+               title={item.quantity ? `${item.quantity}${item.unit}` : 'N/A'}
+            >
                {item.quantity ? `${item.quantity}${item.unit}` : 'N/A'}
             </span>
             <button type="button" onClick={() => selectSachet(item.id)}>
