@@ -18,7 +18,7 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { ORDER } from '../../graphql'
+import { ORDER, ORDER_PRODUCT_STATUS } from '../../graphql'
 import { formatDate } from '../../utils'
 import { PrintIcon } from '../../assets/icons'
 import { useOrder, useTabs } from '../../context'
@@ -49,6 +49,46 @@ const Order = () => {
       total: 0,
    })
 
+   useSubscription(ORDER_PRODUCT_STATUS, {
+      variables: {
+         id: params.id,
+         ...(!_.isEmpty(state.orders.where?._or) && {
+            packingStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
+            assemblyStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
+         }),
+      },
+      onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
+         const {
+            orderMealKitProducts,
+            orderInventoryProducts,
+            orderReadyToEatProducts,
+         } = data.order
+         const funnel = (items, key, value) =>
+            items.filter(node => node[key] === value).length
+         setCount({
+            assembled:
+               funnel(orderInventoryProducts, 'isAssembled', true) +
+               funnel(orderMealKitProducts, 'isAssembled', true) +
+               funnel(orderReadyToEatProducts, 'isAssembled', true),
+            completed:
+               funnel(orderInventoryProducts, 'assemblyStatus', 'COMPLETED') +
+               funnel(orderMealKitProducts, 'assemblyStatus', 'COMPLETED') +
+               funnel(orderReadyToEatProducts, 'assemblyStatus', 'COMPLETED'),
+            total:
+               orderInventoryProducts.length +
+               orderMealKitProducts.length +
+               orderReadyToEatProducts.length,
+         })
+      },
+   })
    const { loading, error } = useSubscription(ORDER, {
       variables: {
          id: params.id,
@@ -77,23 +117,6 @@ const Order = () => {
          setMealKits(orderMealKitProducts)
          setInventories(orderInventoryProducts)
          setReadyToEats(orderReadyToEatProducts)
-
-         const funnel = (items, key, value) =>
-            items.filter(node => node[key] === value).length
-         setCount({
-            assembled:
-               funnel(orderInventoryProducts, 'isAssembled', true) +
-               funnel(orderMealKitProducts, 'isAssembled', true) +
-               funnel(orderReadyToEatProducts, 'isAssembled', true),
-            completed:
-               funnel(orderInventoryProducts, 'assemblyStatus', 'COMPLETED') +
-               funnel(orderMealKitProducts, 'assemblyStatus', 'COMPLETED') +
-               funnel(orderReadyToEatProducts, 'assemblyStatus', 'COMPLETED'),
-            total:
-               orderInventoryProducts.length +
-               orderMealKitProducts.length +
-               orderReadyToEatProducts.length,
-         })
       },
    })
 

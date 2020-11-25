@@ -14,15 +14,16 @@ import {
 } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
+import ProductDetails from './mealkit_product'
 import { UserIcon } from '../../../assets/icons'
 import { UPDATE_MEALKIT } from '../../../graphql'
+import ProductModifiers from './mealkit_modifiers'
 import { logger } from '../../../../../shared/utils'
-import ProductDetails from './MealKitProductDetails'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 
 const address = 'apps.order.views.order.'
 
-export const MealKits = ({ mealkits }) => {
+export const MealKits = ({ mealkits, hideModifiers }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
@@ -169,26 +170,30 @@ export const MealKits = ({ mealkits }) => {
                </>
             )}
          </Flex>
-         <Spacer size="32px" />
+         <Spacer size="24px" />
          <section>
-            <Scroll.Tabs>
-               <Scroll.Tab
-                  className={
-                     window.location.hash === '#sachets' ? 'active' : ''
-                  }
-               >
-                  <a href="#sachets">Sachets</a>
-               </Scroll.Tab>
-               <Scroll.Tab
-                  className={
-                     window.location.hash === '#modifiers' ? 'active' : ''
-                  }
-               >
-                  <a href="#modifiers">Modifiers</a>
-               </Scroll.Tab>
-            </Scroll.Tabs>
+            {!hideModifiers && (
+               <>
+                  <Scroll.Tabs>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#sachets' ? 'active' : ''
+                        }
+                     >
+                        <a href="#sachets">Sachets</a>
+                     </Scroll.Tab>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#modifiers' ? 'active' : ''
+                        }
+                     >
+                        <a href="#modifiers">Modifiers</a>
+                     </Scroll.Tab>
+                  </Scroll.Tabs>
+                  <Spacer size="16px" />
+               </>
+            )}
             <section id="sachets">
-               <Spacer size="16px" />
                <Text as="h2">Sachets</Text>
                <Legend>
                   <h2>{t(address.concat('legends'))}</h2>
@@ -207,10 +212,16 @@ export const MealKits = ({ mealkits }) => {
                </Legend>
                {current && <ProductDetails product={current} />}
             </section>
-            <Spacer size="32px" />
-            <section id="modifiers">
-               <Text as="h2">Modifiers</Text>
-            </section>
+            {!hideModifiers && (
+               <>
+                  <Spacer size="32px" />
+                  <section id="modifiers">
+                     <Text as="h2">Modifiers</Text>
+                     <Spacer size="16px" />
+                     {current && <ProductModifiers product={current} />}
+                  </section>
+               </>
+            )}
          </section>
       </>
    )
@@ -218,10 +229,14 @@ export const MealKits = ({ mealkits }) => {
 
 const ProductCard = ({ mealkit, isActive, onClick }) => {
    const { t } = useTranslation()
+   console.log(
+      '🚀 ~ file: mealkit.jsx ~ line 267 ~ ProductCard ~ mealkit',
+      mealkit
+   )
 
-   const assembled = mealkit?.orderSachets.filter(sachet => sachet.isAssembled)
+   const assembled = mealkit?.orderSachets?.filter(sachet => sachet.isAssembled)
       .length
-   const packed = mealkit?.orderSachets.filter(
+   const packed = mealkit?.orderSachets?.filter(
       sachet => sachet.status === 'PACKED'
    ).length
    const total = mealkit?.orderSachets?.length

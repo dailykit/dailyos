@@ -251,6 +251,36 @@ export const ORDERS = gql`
    }
 `
 
+export const ORDER_PRODUCT_STATUS = gql`
+   subscription order($id: oid!, $assemblyStationId: Int_comparison_exp = {}) {
+      order(id: $id) {
+         id
+         orderMealKitProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
+            id
+            isAssembled
+            assemblyStatus
+         }
+         orderReadyToEatProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
+            id
+            isAssembled
+            assemblyStatus
+         }
+         orderInventoryProducts(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
+            id
+            quantity
+            isAssembled
+            assemblyStatus
+         }
+      }
+   }
+`
+
 export const ORDER = gql`
    subscription order(
       $id: oid!
@@ -307,12 +337,156 @@ export const ORDER = gql`
                   yield
                }
             }
-            orderSachets(
-               where: {
-                  packingStationId: $packingStationId
-                  orderModifierId: { _is_null: true }
+            orderModifiers {
+               inventoryProducts: childOrderInventoryProducts {
+                  id
+                  quantity
+                  isAssembled
+                  assemblyStatus
+                  labelTemplateId
+                  inventoryProductId
+                  inventoryProduct {
+                     id
+                     name
+                  }
+                  comboProductId
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponentId
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  assemblyStationId
+                  assemblyStation {
+                     id
+                     name
+                  }
+                  inventoryProductOptionId
+                  inventoryProductOption {
+                     id
+                     quantity
+                     label
+                  }
                }
-            ) {
+               mealKitProducts: childOrderMealKitProducts {
+                  id
+                  isAssembled
+                  assemblyStatus
+                  labelTemplateId
+                  assemblyStationId
+                  assemblyStation {
+                     id
+                     name
+                  }
+                  comboProductId
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponentId
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  simpleRecipeProductId
+                  simpleRecipeProduct {
+                     id
+                     name
+                  }
+                  simpleRecipeProductOptionId
+                  simpleRecipeProductOption {
+                     id
+                     simpleRecipeYield {
+                        id
+                        yield
+                     }
+                  }
+                  orderSachets(where: { packingStationId: $packingStationId }) {
+                     id
+                     unit
+                     status
+                     quantity
+                     isAssembled
+                     isLabelled
+                     isPortioned
+                     ingredientName
+                     processingName
+                     packaging {
+                        id
+                        name
+                     }
+                     sachetItemId
+                     sachetItem {
+                        id
+                        bulkItemId
+                        bulkItem {
+                           id
+                           sop
+                           yield
+                           shelfLife
+                           bulkDensity
+                           supplierItemId
+                           supplierItem {
+                              id
+                              name
+                           }
+                        }
+                     }
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+               }
+               readyToEatProducts: childOrderReadyToEatProducts {
+                  id
+                  quantity
+                  isAssembled
+                  assemblyStatus
+                  labelTemplateId
+                  assemblyStationId
+                  assemblyStation {
+                     id
+                     name
+                  }
+                  comboProductId
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponentId
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  simpleRecipeProductId
+                  simpleRecipeProduct {
+                     id
+                     name
+                  }
+                  simpleRecipeProductOptionId
+                  simpleRecipeProductOption {
+                     id
+                     simpleRecipeYield {
+                        id
+                        yield
+                     }
+                  }
+               }
+            }
+            orderSachets(where: { packingStationId: $packingStationId }) {
                id
                unit
                status
@@ -322,6 +496,7 @@ export const ORDER = gql`
                isPortioned
                ingredientName
                processingName
+               orderModifierId
                packaging {
                   id
                   name
