@@ -163,11 +163,12 @@ export default function SupplierForm() {
                      }
                      onBlur={e => {
                         const { isValid, errors } = validators.name(
-                           e.target.value
+                           e.target.value,
+                           'supplier name'
                         )
 
                         setName({
-                           value: e.target.value,
+                           ...name,
                            meta: { isValid, errors, isTouched: true },
                         })
 
