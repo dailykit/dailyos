@@ -1,5 +1,3 @@
-// TODO: handle unit error handling
-
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -18,10 +16,9 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
-   InlineLoader,
+   Gallery,
    NutritionTunnel,
    Tooltip,
-   Gallery,
 } from '../../../../../../../shared/components'
 import Nutrition from '../../../../../../../shared/components/Nutrition/index'
 import { logger } from '../../../../../../../shared/utils'
@@ -132,7 +129,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          return 'invalid par level value'
       if (!maxValue.value || !maxValue.meta.isValid)
          return 'invalid max. inventory level value'
-      if (!unit.value) return 'unit is required'
+      if (!unit.value || unit.value === ' ') return 'unit is required'
       return true
    }
 
@@ -319,15 +316,17 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                      <Form.Select
                         name="units"
                         id="units"
-                        // FIXME: change this...
-                        options={[{ id: 0, title: 'Select unit' }, ...units]}
+                        options={[
+                           { id: 0, title: 'Select unit', value: ' ' },
+                           ...units,
+                        ]}
                         value={unit.value}
-                        onChange={e =>
+                        onChange={e => {
                            setUnit({
                               value: e.target.value,
                               meta: { ...unit.meta },
                            })
-                        }
+                        }}
                      />
                   </Form.Group>
                </StyledInputGroup>
@@ -399,11 +398,18 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                            name="time"
                            id="time"
                            options={[
-                              { id: 1, title: t('units.hours') },
-                              { id: 2, title: t('units.minutes') },
+                              { id: 0, title: 'Select Unit', value: ' ' },
+                              { id: 1, title: 'days' },
+                              { id: 2, title: t('units.hours') },
+                              { id: 3, title: t('units.minutes') },
                            ]}
                            value={laborUnit.value}
-                           onChange={e => setLaborUnit(e.target.value)}
+                           onChange={e =>
+                              setLaborUnit({
+                                 value: e.target.value,
+                                 meta: { ...laborUnit.meta },
+                              })
+                           }
                         />
                      </Form.TextSelect>
                      {laborTime.meta.isTouched && !laborTime.meta.isValid && (
@@ -482,11 +488,18 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                            id="unit"
                            name="unit"
                            options={[
-                              { id: 1, title: t('units.hours') },
-                              { id: 2, title: t('units.minutes') },
+                              { id: 0, title: 'Select Unit', value: ' ' },
+                              { id: 1, title: 'days' },
+                              { id: 2, title: t('units.hours') },
+                              { id: 3, title: t('units.minutes') },
                            ]}
-                           value={shelfLifeUnit}
-                           onChange={e => setShelfLifeUnit(e.target.value)}
+                           value={shelfLifeUnit.value}
+                           onChange={e =>
+                              setShelfLifeUnit({
+                                 value: e.target.value,
+                                 meta: { ...shelfLifeUnit.meta },
+                              })
+                           }
                         />
                      </Form.TextSelect>
                      {shelfLife.meta.isTouched && !shelfLife.meta.isValid && (
