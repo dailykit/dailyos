@@ -1,6 +1,6 @@
 import React from 'react'
-import _ from 'lodash'
 import axios from 'axios'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -18,11 +18,16 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { ORDER, ORDER_PRODUCT_STATUS } from '../../graphql'
 import { formatDate } from '../../utils'
 import { PrintIcon } from '../../assets/icons'
 import { useOrder, useTabs } from '../../context'
 import { logger } from '../../../../shared/utils'
+import {
+   ORDER_DETAILS,
+   ORDER_MEALKITS,
+   ORDER_INVENTORIES,
+   ORDER_READYTOEATS,
+} from '../../graphql'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
    Tooltip,
@@ -34,25 +39,42 @@ import {
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 const address = 'apps.order.views.order.'
+
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
    const { tab, addTab } = useTabs()
-   const [order, setOrder] = React.useState(null)
    const { state, switchView, dispatch } = useOrder()
-   const [mealkits, setMealKits] = React.useState([])
-   const [inventories, setInventories] = React.useState([])
-   const [readytoeats, setReadyToEats] = React.useState([])
-   const [count, setCount] = React.useState({
-      assembled: 0,
-      completed: 0,
-      total: 0,
-   })
 
-   useSubscription(ORDER_PRODUCT_STATUS, {
+   const { loading, error, data: { order = {} } = {} } = useSubscription(
+      ORDER_DETAILS,
+      {
+         variables: {
+            id: params.id,
+            ...(!isEmpty(state.orders.where?._or) && {
+               packingStationId: {
+                  _eq:
+                     state.orders.where?._or[0].orderInventoryProducts
+                        .assemblyStationId._eq,
+               },
+               assemblyStationId: {
+                  _eq:
+                     state.orders.where?._or[0].orderInventoryProducts
+                        .assemblyStationId._eq,
+               },
+            }),
+         },
+      }
+   )
+
+   const {
+      error: mealkitsError,
+      loading: mealkitsLoading,
+      data: { mealkits = [] } = {},
+   } = useSubscription(ORDER_MEALKITS, {
       variables: {
-         id: params.id,
-         ...(!_.isEmpty(state.orders.where?._or) && {
+         orderId: params.id,
+         ...(!isEmpty(state.orders.where?._or) && {
             packingStationId: {
                _eq:
                   state.orders.where?._or[0].orderInventoryProducts
@@ -65,34 +87,16 @@ const Order = () => {
             },
          }),
       },
-      onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
-         const {
-            orderMealKitProducts,
-            orderInventoryProducts,
-            orderReadyToEatProducts,
-         } = data.order
-         const funnel = (items, key, value) =>
-            items.filter(node => node[key] === value).length
-         setCount({
-            assembled:
-               funnel(orderInventoryProducts, 'isAssembled', true) +
-               funnel(orderMealKitProducts, 'isAssembled', true) +
-               funnel(orderReadyToEatProducts, 'isAssembled', true),
-            completed:
-               funnel(orderInventoryProducts, 'assemblyStatus', 'COMPLETED') +
-               funnel(orderMealKitProducts, 'assemblyStatus', 'COMPLETED') +
-               funnel(orderReadyToEatProducts, 'assemblyStatus', 'COMPLETED'),
-            total:
-               orderInventoryProducts.length +
-               orderMealKitProducts.length +
-               orderReadyToEatProducts.length,
-         })
-      },
    })
-   const { loading, error } = useSubscription(ORDER, {
+
+   const {
+      error: readytoeatsError,
+      loading: readytoeatsLoading,
+      data: { readytoeats = [] } = {},
+   } = useSubscription(ORDER_READYTOEATS, {
       variables: {
-         id: params.id,
-         ...(!_.isEmpty(state.orders.where?._or) && {
+         orderId: params.id,
+         ...(!isEmpty(state.orders.where?._or) && {
             packingStationId: {
                _eq:
                   state.orders.where?._or[0].orderInventoryProducts
@@ -105,24 +109,33 @@ const Order = () => {
             },
          }),
       },
-      onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
-         const {
-            orderMealKitProducts,
-            orderInventoryProducts,
-            orderReadyToEatProducts,
-            ...rest
-         } = data.order
-         setOrder(rest)
+   })
 
-         setMealKits(orderMealKitProducts)
-         setInventories(orderInventoryProducts)
-         setReadyToEats(orderReadyToEatProducts)
+   const {
+      error: inventoriesError,
+      loading: inventoriesLoading,
+      data: { inventories = [] } = {},
+   } = useSubscription(ORDER_INVENTORIES, {
+      variables: {
+         orderId: params.id,
+         ...(!isEmpty(state.orders.where?._or) && {
+            packingStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
+            assemblyStationId: {
+               _eq:
+                  state.orders.where?._or[0].orderInventoryProducts
+                     .assemblyStationId._eq,
+            },
+         }),
       },
    })
 
    React.useEffect(() => {
-      if (!loading && order && !tab) {
-         addTab(`ORD${order.id}`, `/apps/order/orders/${order.id}`)
+      if (!loading && order?.id && !tab) {
+         addTab(`ORD${order?.id}`, `/apps/order/orders/${order?.id}`)
       }
    }, [loading, order, tab, addTab])
 
@@ -277,7 +290,17 @@ const Order = () => {
             justifyContent="space-between"
          >
             <Text as="h3">
-               {count.assembled} / {count.completed} / {count.total}
+               {order.assembled_mealkits.aggregate.count +
+                  order.assembled_readytoeats.aggregate.count +
+                  order.assembled_inventories.aggregate.count}{' '}
+               /{' '}
+               {order.packed_mealkits.aggregate.count +
+                  order.packed_readytoeats.aggregate.count +
+                  order.packed_inventories.aggregate.count}{' '}
+               /{' '}
+               {order.total_mealkits.aggregate.count +
+                  order.total_readytoeats.aggregate.count +
+                  order.total_inventories.aggregate.count}
                &nbsp;{t(address.concat('items'))}
             </Text>
             <Flex width="240px">
@@ -299,18 +322,36 @@ const Order = () => {
                <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
                <HorizontalTab>Inventories ({inventories.length})</HorizontalTab>
                <HorizontalTab>
-                  Ready To Eats ({readytoeats.length})
+                  Ready To Eats ({order.total_readytoeats.aggregate.count})
                </HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
-                  <MealKits mealkits={mealkits} />
+                  <MealKits
+                     data={{
+                        mealkits,
+                        error: mealkitsError,
+                        loading: mealkitsLoading,
+                     }}
+                  />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <Inventories inventories={inventories} />
+                  <Inventories
+                     data={{
+                        inventories,
+                        error: inventoriesError,
+                        loading: inventoriesLoading,
+                     }}
+                  />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <ReadyToEats readytoeats={readytoeats} />
+                  <ReadyToEats
+                     data={{
+                        readytoeats,
+                        error: readytoeatsError,
+                        loading: readytoeatsLoading,
+                     }}
+                  />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>

@@ -1,33 +1,39 @@
 import React from 'react'
-import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { isEmpty, isNull } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
    Spacer,
+   Filler,
    IconButton,
    CloseIcon,
    TextButton,
 } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
-import ProductDetails from './mealkit_product'
+import ProductDetails from './product_details'
 import { UserIcon } from '../../../assets/icons'
 import { UPDATE_MEALKIT } from '../../../graphql'
-import ProductModifiers from './mealkit_modifiers'
+import ProductModifiers from './modifiers'
 import { logger } from '../../../../../shared/utils'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.order.views.order.'
 
-export const MealKits = ({ mealkits, hideModifiers }) => {
+export const MealKits = ({
+   hideModifiers,
+   data: { loading, error, mealkits },
+}) => {
    const { state } = useConfig()
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
+
    const [update] = useMutation(UPDATE_MEALKIT, {
       onCompleted: () => {
          toast.success('Successfully updated the product!')
@@ -39,14 +45,14 @@ export const MealKits = ({ mealkits, hideModifiers }) => {
    })
 
    React.useEffect(() => {
-      if (mealkits.length > 0) {
+      if (!loading && !isEmpty(mealkits)) {
          const [product] = mealkits
          setCurrent(product)
       }
-   }, [mealkits, setCurrent])
+   }, [loading, mealkits, setCurrent])
 
    const print = () => {
-      if (_.isNull(current?.labelTemplateId)) {
+      if (isNull(current?.labelTemplateId)) {
          toast.error('No template assigned!')
          return
       }
@@ -87,7 +93,10 @@ export const MealKits = ({ mealkits, hideModifiers }) => {
       }
    }
 
-   if (mealkits.length === 0) return <div>No mealkit products!</div>
+   if (loading) return <InlineLoader />
+   if (error) return <ErrorState message="Failed to fetch mealkit products!" />
+   if (isEmpty(mealkits))
+      return <Filler message="No mealkit products available!" />
    return (
       <>
          <Styles.Products>
@@ -229,10 +238,6 @@ export const MealKits = ({ mealkits, hideModifiers }) => {
 
 const ProductCard = ({ mealkit, isActive, onClick }) => {
    const { t } = useTranslation()
-   console.log(
-      '🚀 ~ file: mealkit.jsx ~ line 267 ~ ProductCard ~ mealkit',
-      mealkit
-   )
 
    const assembled = mealkit?.orderSachets?.filter(sachet => sachet.isAssembled)
       .length

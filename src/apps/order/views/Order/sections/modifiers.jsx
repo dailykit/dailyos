@@ -8,12 +8,12 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { MealKits, Inventories, ReadyToEats } from './'
+import { MealKits, Inventories, ReadyToEats } from '.'
 
 const ProductModifiers = ({ product }) => {
    const [inventories, setInventories] = React.useState([])
    const [mealkits, setMealKits] = React.useState([])
-   const [readyToEats, setReadyToEats] = React.useState([])
+   const [readytoeats, setReadyToEats] = React.useState([])
 
    React.useEffect(() => {
       if (product?.orderModifiers) {
@@ -40,17 +40,38 @@ const ProductModifiers = ({ product }) => {
          <HorizontalTabList>
             <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
             <HorizontalTab>Inventories ({inventories.length})</HorizontalTab>
-            <HorizontalTab>Ready To Eats ({readyToEats.length})</HorizontalTab>
+            <HorizontalTab>Ready To Eats ({readytoeats.length})</HorizontalTab>
          </HorizontalTabList>
          <HorizontalTabPanels>
             <HorizontalTabPanel>
-               <MealKits mealkits={mealkits} hideModifiers />
+               <MealKits
+                  data={{
+                     mealkits,
+                     error: null,
+                     loading: false,
+                  }}
+                  hideModifiers
+               />
             </HorizontalTabPanel>
             <HorizontalTabPanel>
-               <Inventories inventories={inventories} />
+               <Inventories
+                  data={{
+                     inventories,
+                     error: null,
+                     loading: false,
+                  }}
+                  hideModifiers
+               />
             </HorizontalTabPanel>
             <HorizontalTabPanel>
-               <ReadyToEats readytoeats={readyToEats} />
+               <ReadyToEats
+                  data={{
+                     readytoeats,
+                     error: null,
+                     loading: false,
+                  }}
+                  hideModifiers
+               />
             </HorizontalTabPanel>
          </HorizontalTabPanels>
       </HorizontalTabs>

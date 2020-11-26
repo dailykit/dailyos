@@ -6,73 +6,33 @@ import { UPDATE_ORDER } from '../../graphql'
 const Context = React.createContext()
 
 const initialState = {
-   filter: {
-      tunnel: false,
-   },
-   delivery_config: {
-      orderId: null,
-   },
+   filter: { tunnel: false },
+   delivery_config: { orderId: null },
    current_view: 'SUMMARY',
-   mealkit: {
-      name: null,
-      sachet_id: null,
-   },
-   inventory: {
-      id: null,
-   },
-   readytoeat: {
-      id: null,
-   },
+   sachet: { id: null, product: { name: null } },
    orders: {
-      loading: true,
       limit: 10,
       offset: 0,
-      where: {
-         orderStatus: { _eq: 'PENDING' },
-      },
+      loading: true,
+      where: { orderStatus: { _eq: 'PENDING' } },
    },
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       // Add Tab
-      case 'SELECT_MEALKIT':
+      case 'SELECT_SACHET':
          return {
             ...state,
-            current_view: 'MEALKIT',
-            mealkit: {
-               name: payload.name,
-               sachet_id: payload.id,
-            },
-         }
-      case 'SELECT_INVENTORY':
-         return {
-            ...state,
-            current_view: 'INVENTORY',
-            inventory: {
-               id: payload,
-            },
-         }
-      case 'SELECT_READYTOEAT':
-         return {
-            ...state,
-            current_view: 'READYTOEAT',
-            readytoeat: {
-               id: payload,
-            },
+            current_view: 'SACHET_ITEM',
+            sachet: { id: payload.id, product: payload.product },
          }
       case 'SWITCH_VIEW': {
          return {
             ...state,
-            inventory: {
-               id: null,
-            },
-            readytoeat: {
-               id: null,
-            },
-            mealkit: {
+            sachet: {
                name: null,
-               sachet_id: null,
+               id: null,
             },
             current_view: payload.view,
          }
@@ -211,31 +171,11 @@ export const useOrder = () => {
    const { state, dispatch } = React.useContext(Context)
    const [update] = useMutation(UPDATE_ORDER)
 
-   const selectMealKit = React.useCallback(
-      (id, name) => {
+   const selectSachet = React.useCallback(
+      (id, product) => {
          dispatch({
-            type: 'SELECT_MEALKIT',
-            payload: { id, name },
-         })
-      },
-      [dispatch]
-   )
-
-   const selectInventory = React.useCallback(
-      id => {
-         dispatch({
-            type: 'SELECT_INVENTORY',
-            payload: id,
-         })
-      },
-      [dispatch]
-   )
-
-   const selectReadyToEat = React.useCallback(
-      id => {
-         dispatch({
-            type: 'SELECT_READYTOEAT',
-            payload: id,
+            type: 'SELECT_SACHET',
+            payload: { id, product },
          })
       },
       [dispatch]
@@ -268,8 +208,6 @@ export const useOrder = () => {
       dispatch,
       switchView,
       updateOrder,
-      selectMealKit,
-      selectInventory,
-      selectReadyToEat,
+      selectSachet,
    }
 }

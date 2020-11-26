@@ -10,18 +10,18 @@ import { ArrowUpIcon, ArrowDownIcon } from '../../../assets/icons'
 const address = 'apps.order.views.order.'
 export const SachetItem = ({ item, product }) => {
    const { t } = useTranslation()
-   const { selectMealKit } = useOrder()
+   const { selectSachet } = useOrder()
    const [currentPanel, setCurrentPanel] = React.useState(null)
 
-   const selectSachet = id => {
-      selectMealKit(id, product?.simpleRecipeProduct?.name)
+   const select = id => {
+      selectSachet(id, product?.simpleRecipeProduct?.name)
       setCurrentPanel(currentPanel === id ? '' : id)
    }
 
    return (
       <List.Item
          key={item.id}
-         onClick={() => selectSachet(item.id)}
+         onClick={() => select(item.id)}
          isOpen={currentPanel === item.id}
          variant={{
             isAssembled: item.isAssembled,

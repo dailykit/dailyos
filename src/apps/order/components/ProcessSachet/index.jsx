@@ -38,9 +38,12 @@ import {
    StyledButton,
 } from './styled'
 
-export const ProcessOrder = () => {
+export const ProcessSachet = () => {
    const {
-      state: { current_view, mealkit },
+      state: {
+         current_view,
+         sachet: { id, product },
+      },
       switchView,
    } = useOrder()
    const { state } = useConfig()
@@ -56,9 +59,7 @@ export const ProcessOrder = () => {
    ] = useLazyQuery(LABEL_TEMPLATE)
 
    const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
-      variables: {
-         id: mealkit.sachet_id,
-      },
+      variables: { id },
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
@@ -78,7 +79,7 @@ export const ProcessOrder = () => {
       setWeight(0)
       setScaleState('low')
       setLabelPreview('')
-   }, [mealkit.sachet_id])
+   }, [id])
 
    const changeView = view => {
       switchView(view)
@@ -177,7 +178,7 @@ export const ProcessOrder = () => {
       return true
    }
 
-   if (_.isNull(mealkit.sachet_id)) {
+   if (_.isNull(id)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -192,9 +193,7 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="MEALKIT">Meal Kit</option>
-                  <option value="INVENTORY">Inventory</option>
-                  <option value="READYTOEAT">Ready to Eat</option>
+                  <option value="SACHET_ITEM">Process Sachet</option>
                </select>
             </StyledMode>
             <Text as="h3">No product selected!</Text>
@@ -219,9 +218,7 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="MEALKIT">Meal Kit</option>
-                  <option value="INVENTORY">Inventory</option>
-                  <option value="READYTOEAT">Ready to Eat</option>
+                  <option value="SACHET_ITEM">Process Sachet</option>
                </select>
             </StyledMode>
             <ErrorState message="Failed to fetch sachet details!" />
@@ -242,13 +239,11 @@ export const ProcessOrder = () => {
                onChange={e => changeView(e.target.value)}
             >
                <option value="SUMMARY">Summary</option>
-               <option value="MEALKIT">Meal Kit</option>
-               <option value="INVENTORY">Inventory</option>
-               <option value="READYTOEAT">Ready to Eat</option>
+               <option value="SACHET_ITEM">Process Sachet</option>
             </select>
          </StyledMode>
          <StyledHeader>
-            <h3>{mealkit?.name}</h3>
+            <h3>{product?.name || 'N/A'}</h3>
          </StyledHeader>
          <StyledMain>
             <section>

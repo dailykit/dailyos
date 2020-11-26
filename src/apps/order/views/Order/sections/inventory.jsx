@@ -1,28 +1,57 @@
 import React from 'react'
-import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { isEmpty, isNull } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
    Spacer,
+   Filler,
    IconButton,
    CloseIcon,
    TextButton,
 } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
-import { useOrder } from '../../../context'
-import { Styles, StyledProductTitle } from '../styled'
+import ProductModifiers from './modifiers'
+import ProductDetails from './product_details'
+import { logger } from '../../../../../shared/utils'
+import { UPDATE_INVENTORY_PRODUCT } from '../../../graphql'
+import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
-export const Inventories = ({ inventories }) => {
+const address = 'apps.order.views.order.'
+
+export const Inventories = ({
+   data: { loading, error, inventories },
+   hideModifiers,
+}) => {
    const { state } = useConfig()
+   const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
-   const { selectInventory } = useOrder()
    const [current, setCurrent] = React.useState({})
 
+   const [update] = useMutation(UPDATE_INVENTORY_PRODUCT, {
+      onCompleted: () => {
+         toast.success('Successfully updated the product!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to update the product!')
+      },
+   })
+
+   React.useEffect(() => {
+      if (!loading && !isEmpty(inventories)) {
+         const [product] = inventories
+         setCurrent(product)
+      }
+   }, [loading, inventories, setCurrent])
+
    const print = () => {
-      if (_.isNull(current?.labelTemplateId)) {
+      if (isNull(current?.labelTemplateId)) {
          toast.error('No template assigned!')
          return
       }
@@ -63,19 +92,15 @@ export const Inventories = ({ inventories }) => {
    }
 
    const selectProduct = product => {
-      setLabel('')
       setCurrent(product)
-      selectInventory(product.id)
+      setLabel('')
    }
 
-   React.useEffect(() => {
-      if (inventories.length > 0) {
-         const [product] = inventories
-         setCurrent(product)
-      }
-   }, [inventories])
-
-   if (inventories.length === 0) return <div>No inventories products!</div>
+   if (loading) return <InlineLoader />
+   if (error)
+      return <ErrorState message="Failed to fetch inventory products!" />
+   if (isEmpty(inventories))
+      return <Filler message="No inventory products available!" />
    return (
       <>
          <Styles.Products>
@@ -89,11 +114,49 @@ export const Inventories = ({ inventories }) => {
             ))}
          </Styles.Products>
          <Spacer size="16px" />
-         <Flex>
+         <Flex container alignItems="center">
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
             </TextButton>
-            <Spacer size="8px" />
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.assemblyStatus === 'COMPLETED'}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Packed
+            </TextButton>
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.isAssembled}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           isAssembled: true,
+                        },
+                     },
+                  })
+               }
+            >
+               Mark Assembled
+            </TextButton>
+         </Flex>
+         <Spacer size="8px" />
+         <Flex>
             {label && (
                <>
                   <Flex
@@ -117,11 +180,65 @@ export const Inventories = ({ inventories }) => {
                </>
             )}
          </Flex>
+         <Spacer size="24px" />
+         <section>
+            {!hideModifiers && (
+               <>
+                  <Scroll.Tabs>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#sachets' ? 'active' : ''
+                        }
+                     >
+                        <a href="#sachets">Sachets</a>
+                     </Scroll.Tab>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#modifiers' ? 'active' : ''
+                        }
+                     >
+                        <a href="#modifiers">Modifiers</a>
+                     </Scroll.Tab>
+                  </Scroll.Tabs>
+                  <Spacer size="16px" />
+               </>
+            )}
+            <section id="sachets">
+               <Text as="h2">Sachets</Text>
+               <Legend>
+                  <h2>{t(address.concat('legends'))}</h2>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('pending'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('packed'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('assembled'))}</span>
+                  </section>
+               </Legend>
+               {current && <ProductDetails product={current} />}
+            </section>
+            {!hideModifiers && (
+               <>
+                  <Spacer size="32px" />
+                  <section id="modifiers">
+                     <Text as="h2">Modifiers</Text>
+                     <Spacer size="16px" />
+                     {current && <ProductModifiers product={current} />}
+                  </section>
+               </>
+            )}
+         </section>
       </>
    )
 }
 
 const productTitle = inventory => {
+   console.log('🚀 ~ file: inventory.jsx ~ line 241 ~ inventory', inventory)
    let name = ''
    if (inventory?.inventoryProductId) {
       name += inventory?.inventoryProduct?.name

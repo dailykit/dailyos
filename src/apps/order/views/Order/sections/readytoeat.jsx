@@ -1,31 +1,51 @@
 import React from 'react'
-import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { isEmpty, isNull } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
    Spacer,
+   Filler,
    IconButton,
    CloseIcon,
    TextButton,
 } from '@dailykit/ui'
 
+import { useConfig } from '../../../context'
+import ProductDetails from './product_details'
 import { UserIcon } from '../../../assets/icons'
-import { useOrder, useConfig } from '../../../context'
-import { Styles, StyledProductTitle } from '../styled'
+import ProductModifiers from './modifiers'
+import { UPDATE_READYTOEAT } from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
+import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.order.views.order.'
 
-export const ReadyToEats = ({ readytoeats }) => {
+export const ReadyToEats = ({
+   hideModifiers,
+   data: { loading, error, readytoeats },
+}) => {
    const { state } = useConfig()
-   const { selectReadyToEat } = useOrder()
+   const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
+   const [update] = useMutation(UPDATE_READYTOEAT, {
+      onCompleted: () => {
+         toast.success('Successfully updated the product!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to update the product!')
+      },
+   })
+
    const print = () => {
-      if (_.isNull(current?.labelTemplateId)) {
+      if (isNull(current?.labelTemplateId)) {
          toast.error('No template assigned!')
          return
       }
@@ -67,19 +87,17 @@ export const ReadyToEats = ({ readytoeats }) => {
    }
 
    React.useEffect(() => {
-      if (readytoeats.length > 0) {
+      if (!loading && !isEmpty(readytoeats)) {
          const [product] = readytoeats
          setCurrent(product)
       }
-   }, [readytoeats])
+   }, [loading, readytoeats, setCurrent])
 
-   const selectProduct = product => {
-      setCurrent(product)
-      setLabel('')
-      selectReadyToEat(product.id)
-   }
-
-   if (readytoeats.length === 0) return <div>No ready to eat products!</div>
+   if (loading) return <InlineLoader />
+   if (error)
+      return <ErrorState message="Failed to fetch ready to eat products!" />
+   if (isEmpty(readytoeats))
+      return <Filler message="No ready to eat products available!" />
    return (
       <>
          <Styles.Products>
@@ -87,16 +105,57 @@ export const ReadyToEats = ({ readytoeats }) => {
                <ProductCard
                   key={readytoeat.id}
                   readytoeat={readytoeat}
-                  selectProduct={selectProduct}
+                  onClick={() => {
+                     setCurrent(readytoeat)
+                     setLabel('')
+                  }}
                   isActive={current?.id === readytoeat.id}
                />
             ))}
          </Styles.Products>
          <Spacer size="16px" />
          <Flex>
-            <TextButton size="sm" type="solid" onClick={print}>
-               Print label
-            </TextButton>
+            <Flex container alignItems="center">
+               <TextButton size="sm" type="solid" onClick={print}>
+                  Print label
+               </TextButton>
+               <Spacer size="16px" xAxis />
+               <TextButton
+                  size="sm"
+                  type="solid"
+                  disabled={current?.assemblyStatus === 'COMPLETED'}
+                  onClick={() =>
+                     update({
+                        variables: {
+                           id: current?.id,
+                           _set: {
+                              assemblyStatus: 'COMPLETED',
+                           },
+                        },
+                     })
+                  }
+               >
+                  Mark Packed
+               </TextButton>
+               <Spacer size="16px" xAxis />
+               <TextButton
+                  size="sm"
+                  type="solid"
+                  disabled={current?.isAssembled}
+                  onClick={() =>
+                     update({
+                        variables: {
+                           id: current?.id,
+                           _set: {
+                              isAssembled: true,
+                           },
+                        },
+                     })
+                  }
+               >
+                  Mark Assembled
+               </TextButton>
+            </Flex>
             <Spacer size="8px" />
             {label && (
                <>
@@ -121,6 +180,59 @@ export const ReadyToEats = ({ readytoeats }) => {
                </>
             )}
          </Flex>
+         <Spacer size="24px" />
+         <section>
+            {!hideModifiers && (
+               <>
+                  <Scroll.Tabs>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#sachets' ? 'active' : ''
+                        }
+                     >
+                        <a href="#sachets">Sachets</a>
+                     </Scroll.Tab>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#modifiers' ? 'active' : ''
+                        }
+                     >
+                        <a href="#modifiers">Modifiers</a>
+                     </Scroll.Tab>
+                  </Scroll.Tabs>
+                  <Spacer size="16px" />
+               </>
+            )}
+            <section id="sachets">
+               <Text as="h2">Sachets</Text>
+               <Legend>
+                  <h2>{t(address.concat('legends'))}</h2>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('pending'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('packed'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('assembled'))}</span>
+                  </section>
+               </Legend>
+               {current && <ProductDetails product={current} />}
+            </section>
+            {!hideModifiers && (
+               <>
+                  <Spacer size="32px" />
+                  <section id="modifiers">
+                     <Text as="h2">Modifiers</Text>
+                     <Spacer size="16px" />
+                     {current && <ProductModifiers product={current} />}
+                  </section>
+               </>
+            )}
+         </section>
       </>
    )
 }

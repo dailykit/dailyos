@@ -251,31 +251,1102 @@ export const ORDERS = gql`
    }
 `
 
-export const ORDER_PRODUCT_STATUS = gql`
+export const ORDER_DETAILS = gql`
    subscription order($id: oid!, $assemblyStationId: Int_comparison_exp = {}) {
       order(id: $id) {
          id
-         orderMealKitProducts(
+         created_at
+         deliveryInfo
+         orderStatus
+         paymentStatus
+         tax
+         discount
+         itemTotal
+         deliveryPrice
+         transactionId
+         fulfillmentType
+         total_mealkits: orderMealKitProducts_aggregate(
             where: { assemblyStationId: $assemblyStationId }
          ) {
-            id
-            isAssembled
-            assemblyStatus
+            aggregate {
+               count(columns: id)
+            }
          }
-         orderReadyToEatProducts(
-            where: { assemblyStationId: $assemblyStationId }
+         packed_mealkits: orderMealKitProducts_aggregate(
+            where: {
+               assemblyStationId: $assemblyStationId
+               assemblyStatus: { _eq: "COMPLETED" }
+            }
          ) {
-            id
-            isAssembled
-            assemblyStatus
+            aggregate {
+               count(columns: id)
+            }
          }
-         orderInventoryProducts(
+         assembled_mealkits: orderMealKitProducts_aggregate(
+            where: {
+               assemblyStationId: $assemblyStationId
+               isAssembled: { _eq: true }
+            }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+
+         total_readytoeats: orderReadyToEatProducts_aggregate(
             where: { assemblyStationId: $assemblyStationId }
          ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+         packed_readytoeats: orderReadyToEatProducts_aggregate(
+            where: {
+               assemblyStationId: $assemblyStationId
+               assemblyStatus: { _eq: "COMPLETED" }
+            }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+         assembled_readytoeats: orderReadyToEatProducts_aggregate(
+            where: {
+               assemblyStationId: $assemblyStationId
+               isAssembled: { _eq: true }
+            }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+
+         total_inventories: orderInventoryProducts_aggregate(
+            where: { assemblyStationId: $assemblyStationId }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+         packed_inventories: orderInventoryProducts_aggregate(
+            where: {
+               assemblyStationId: $assemblyStationId
+               assemblyStatus: { _eq: "COMPLETED" }
+            }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+         assembled_inventories: orderInventoryProducts_aggregate(
+            where: {
+               assemblyStationId: $assemblyStationId
+               isAssembled: { _eq: true }
+            }
+         ) {
+            aggregate {
+               count(columns: id)
+            }
+         }
+      }
+   }
+`
+
+export const ORDER_MEALKITS = gql`
+   subscription mealkits(
+      $orderId: Int!
+      $packingStationId: Int_comparison_exp = {}
+      $assemblyStationId: Int_comparison_exp = {}
+   ) {
+      mealkits: orderMealKitProducts(
+         where: {
+            orderId: { _eq: $orderId }
+            assemblyStationId: $assemblyStationId
+            orderModifierId: { _is_null: true }
+         }
+      ) {
+         id
+         isAssembled
+         assemblyStatus
+         labelTemplateId
+         assemblyStationId
+         assemblyStation {
             id
+            name
+         }
+         comboProductId
+         comboProduct {
+            id
+            name
+         }
+         comboProductComponentId
+         comboProductComponent {
+            id
+            label
+         }
+         simpleRecipeProductId
+         simpleRecipeProduct {
+            id
+            name
+         }
+         simpleRecipeProductOptionId
+         simpleRecipeProductOption {
+            id
+            simpleRecipeYield {
+               id
+               yield
+            }
+         }
+         orderModifiers {
+            inventoryProducts: childOrderInventoryProducts {
+               id
+               quantity
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               inventoryProductId
+               inventoryProduct {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               inventoryProductOptionId
+               inventoryProductOption {
+                  id
+                  quantity
+                  label
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            mealKitProducts: childOrderMealKitProducts {
+               id
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            readyToEatProducts: childOrderReadyToEatProducts {
+               id
+               quantity
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+         }
+         orderSachets(where: { packingStationId: $packingStationId }) {
+            id
+            unit
+            status
             quantity
             isAssembled
-            assemblyStatus
+            isLabelled
+            isPortioned
+            ingredientName
+            processingName
+            orderModifierId
+            packaging {
+               id
+               name
+            }
+            sachetItemId
+            sachetItem {
+               id
+               bulkItemId
+               bulkItem {
+                  id
+                  sop
+                  yield
+                  shelfLife
+                  bulkDensity
+                  supplierItemId
+                  supplierItem {
+                     id
+                     name
+                  }
+               }
+            }
+            bulkItemId
+            bulkItem {
+               id
+               sop
+               yield
+               shelfLife
+               bulkDensity
+               supplierItemId
+               supplierItem {
+                  id
+                  name
+               }
+            }
+         }
+      }
+   }
+`
+
+export const ORDER_READYTOEATS = gql`
+   subscription readytoeats(
+      $orderId: Int!
+      $packingStationId: Int_comparison_exp = {}
+      $assemblyStationId: Int_comparison_exp = {}
+   ) {
+      readytoeats: orderReadyToEatProducts(
+         where: {
+            orderId: { _eq: $orderId }
+            assemblyStationId: $assemblyStationId
+            orderModifierId: { _is_null: true }
+         }
+      ) {
+         id
+         isAssembled
+         assemblyStatus
+         labelTemplateId
+         assemblyStationId
+         assemblyStation {
+            id
+            name
+         }
+         comboProductId
+         comboProduct {
+            id
+            name
+         }
+         comboProductComponentId
+         comboProductComponent {
+            id
+            label
+         }
+         simpleRecipeProductId
+         simpleRecipeProduct {
+            id
+            name
+         }
+         simpleRecipeProductOptionId
+         simpleRecipeProductOption {
+            id
+            simpleRecipeYield {
+               id
+               yield
+            }
+         }
+         orderModifiers {
+            inventoryProducts: childOrderInventoryProducts {
+               id
+               quantity
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               inventoryProductId
+               inventoryProduct {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               inventoryProductOptionId
+               inventoryProductOption {
+                  id
+                  quantity
+                  label
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            mealKitProducts: childOrderMealKitProducts {
+               id
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            readyToEatProducts: childOrderReadyToEatProducts {
+               id
+               quantity
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+         }
+         orderSachets(where: { packingStationId: $packingStationId }) {
+            id
+            unit
+            status
+            quantity
+            isAssembled
+            isLabelled
+            isPortioned
+            ingredientName
+            processingName
+            orderModifierId
+            packaging {
+               id
+               name
+            }
+            sachetItemId
+            sachetItem {
+               id
+               bulkItemId
+               bulkItem {
+                  id
+                  sop
+                  yield
+                  shelfLife
+                  bulkDensity
+                  supplierItemId
+                  supplierItem {
+                     id
+                     name
+                  }
+               }
+            }
+            bulkItemId
+            bulkItem {
+               id
+               sop
+               yield
+               shelfLife
+               bulkDensity
+               supplierItemId
+               supplierItem {
+                  id
+                  name
+               }
+            }
+         }
+      }
+   }
+`
+
+export const ORDER_INVENTORIES = gql`
+   subscription inventories(
+      $orderId: Int!
+      $packingStationId: Int_comparison_exp = {}
+      $assemblyStationId: Int_comparison_exp = {}
+   ) {
+      inventories: orderInventoryProducts(
+         where: {
+            orderId: { _eq: $orderId }
+            assemblyStationId: $assemblyStationId
+            orderModifierId: { _is_null: true }
+         }
+      ) {
+         id
+         isAssembled
+         assemblyStatus
+         labelTemplateId
+         assemblyStationId
+         assemblyStation {
+            id
+            name
+         }
+         comboProductId
+         comboProduct {
+            id
+            name
+         }
+         inventoryProductId
+         inventoryProduct {
+            id
+            name
+         }
+         comboProductComponentId
+         comboProductComponent {
+            id
+            label
+         }
+         inventoryProductOptionId
+         inventoryProductOption {
+            id
+            quantity
+            label
+         }
+         orderSachets(where: { packingStationId: $packingStationId }) {
+            id
+            unit
+            status
+            quantity
+            isAssembled
+            isLabelled
+            isPortioned
+            ingredientName
+            processingName
+            orderModifierId
+            packaging {
+               id
+               name
+            }
+            sachetItemId
+            sachetItem {
+               id
+               bulkItemId
+               bulkItem {
+                  id
+                  sop
+                  yield
+                  shelfLife
+                  bulkDensity
+                  supplierItemId
+                  supplierItem {
+                     id
+                     name
+                  }
+               }
+            }
+            bulkItemId
+            bulkItem {
+               id
+               sop
+               yield
+               shelfLife
+               bulkDensity
+               supplierItemId
+               supplierItem {
+                  id
+                  name
+               }
+            }
+         }
+         orderModifiers {
+            inventoryProducts: childOrderInventoryProducts {
+               id
+               quantity
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               inventoryProductId
+               inventoryProduct {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               inventoryProductOptionId
+               inventoryProductOption {
+                  id
+                  quantity
+                  label
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            mealKitProducts: childOrderMealKitProducts {
+               id
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+            readyToEatProducts: childOrderReadyToEatProducts {
+               id
+               quantity
+               isAssembled
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               assemblyStation {
+                  id
+                  name
+               }
+               comboProductId
+               comboProduct {
+                  id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
          }
       }
    }
