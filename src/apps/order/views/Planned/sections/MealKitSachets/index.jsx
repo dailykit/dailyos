@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../../graphql'
+import { QUERIES } from '../../../../graphql'
 import { NewTabIcon } from '../../../../assets/icons'
 import { useTabs, useOrder } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
@@ -28,7 +28,7 @@ import {
 export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
    const { state } = useOrder()
    const { error, loading, data: { ingredients = {} } = {} } = useSubscription(
-      PLANNED.MEAL_KIT_SACHETS,
+      QUERIES.PLANNED.PRODUCTS.MEAL_KIT.SACHET.ONE,
       {
          variables: {
             order: state.orders.where,
@@ -212,15 +212,15 @@ const Processing = ({ processing }) => {
 
 const Sachet = ({ sachet }) => {
    const { addTab } = useTabs()
-   const { state, selectMealKit } = useOrder()
+   const { state, selectSachet } = useOrder()
 
    const openOrder = (e, id) => {
       e.stopPropagation()
       addTab(`ORD${id}`, `/apps/order/orders/${id}`)
    }
 
-   const selectSachet = (id, name) => {
-      selectMealKit(id, name)
+   const select = (id, name) => {
+      selectSachet(id, { name })
    }
 
    return (
@@ -231,9 +231,9 @@ const Sachet = ({ sachet }) => {
                   <ListBodyItem
                      key={sachet.id}
                      isAssembled={sachet.isAssembled}
-                     isActive={sachet.id === state.mealkit.sachet_id}
+                     isActive={sachet.id === state.sachet.id}
                      onClick={() =>
-                        selectSachet(
+                        select(
                            sachet.id,
                            sachet.orderMealKitProduct.simpleRecipeProduct.name
                         )

@@ -21,11 +21,7 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../shared/components'
-import {
-   LABEL_TEMPLATE,
-   FETCH_ORDER_SACHET,
-   UPDATE_ORDER_SACHET,
-} from '../../graphql'
+import { QUERIES, LABEL_TEMPLATE, UPDATE_ORDER_SACHET } from '../../graphql'
 import {
    Wrapper,
    StyledHeader,
@@ -56,9 +52,9 @@ export const ProcessSachet = () => {
    const [
       fetchLabalTemplate,
       { data: { labelTemplate = {} } = {} },
-   ] = useLazyQuery(LABEL_TEMPLATE)
+   ] = useLazyQuery(QUERIES.LABEL_TEMPLATE.ONE)
 
-   const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
+   const { loading, error } = useSubscription(QUERIES.ORDER.SACHET.ONE, {
       variables: { id },
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
@@ -194,9 +190,11 @@ export const ProcessSachet = () => {
                >
                   <option value="SUMMARY">Summary</option>
                   <option value="SACHET_ITEM">Process Sachet</option>
+                  <option value="INVENTORY">Inventory</option>
+                  <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
-            <Text as="h3">No product selected!</Text>
+            <Text as="h3">No sachet selected!</Text>
          </Wrapper>
       )
    }
@@ -219,6 +217,8 @@ export const ProcessSachet = () => {
                >
                   <option value="SUMMARY">Summary</option>
                   <option value="SACHET_ITEM">Process Sachet</option>
+                  <option value="INVENTORY">Inventory</option>
+                  <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
             <ErrorState message="Failed to fetch sachet details!" />
@@ -240,6 +240,8 @@ export const ProcessSachet = () => {
             >
                <option value="SUMMARY">Summary</option>
                <option value="SACHET_ITEM">Process Sachet</option>
+               <option value="INVENTORY">Inventory</option>
+               <option value="READYTOEAT">Ready to Eat</option>
             </select>
          </StyledMode>
          <StyledHeader>

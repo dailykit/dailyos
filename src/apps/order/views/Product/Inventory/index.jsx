@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { Filler, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../graphql'
+import { QUERIES } from '../../../graphql'
 import { NewTabIcon } from '../../../assets/icons'
 import { useOrder, useTabs } from '../../../context'
 import { logger } from '../../../../../shared/utils'
@@ -34,7 +34,7 @@ export const InventoryProduct = () => {
       error,
       loading,
       data: { inventoryProduct = {} } = {},
-   } = useSubscription(PLANNED.INVENTORY_PRODUCT, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.INVENTORY.ONE, {
       variables: {
          id: params.id,
          order: state.orders.where,

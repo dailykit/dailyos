@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../../graphql'
+import { QUERIES } from '../../../../graphql'
 import { useOrder } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import {
@@ -26,7 +26,7 @@ export const MealKitSection = ({ setMealKitTotal }) => {
       error,
       loading,
       data: { simpleRecipeProducts = {} } = {},
-   } = useSubscription(PLANNED.MEAL_KIT_PRODUCTS, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.MEAL_KIT.LIST, {
       variables: {
          order: state.orders.where,
       },

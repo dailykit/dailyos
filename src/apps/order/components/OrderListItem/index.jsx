@@ -39,14 +39,13 @@ import {
    PrintIcon,
    HomeIcon,
 } from '../../assets/icons'
-import deliveryIcon from '../../assets/svgs/delivery.png'
-import pickUpIcon from '../../assets/svgs/pickup.png'
 
+import { QUERIES, UPDATE_ORDER_STATUS } from '../../graphql'
 import { formatDate } from '../../utils'
-
 import { useTabs, useOrder } from '../../context'
 import { currencyFmt } from '../../../../shared/utils'
-import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
+import pickUpIcon from '../../assets/svgs/pickup.png'
+import deliveryIcon from '../../assets/svgs/delivery.png'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -65,7 +64,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
    const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
-   } = useSubscription(ORDER_STATUSES)
+   } = useSubscription(QUERIES.ORDER.STATUSES)
    const {
       id = '',
       orderStatus = '',

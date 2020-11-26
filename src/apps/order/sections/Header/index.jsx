@@ -18,7 +18,7 @@ import {
    LeftPanelIcon,
    RightPanelIcon,
 } from '../../assets/icons'
-import { NEW_NOTIF } from '../../graphql'
+import { NEW_NOTIF, QUERIES } from '../../graphql'
 import { useConfig } from '../../context'
 import { SettingsIcon } from '../../../../shared/assets/icons'
 
@@ -31,7 +31,7 @@ const Header = ({ setPosition, isOpen, openPortal, closePortal }) => {
    const {
       loading,
       data: { displayNotifications: notifications = [] } = {},
-   } = useSubscription(NEW_NOTIF)
+   } = useSubscription(QUERIES.NOTIFICATION.NEW)
 
    React.useEffect(() => {
       if (!loading && notifications.length > 0) {

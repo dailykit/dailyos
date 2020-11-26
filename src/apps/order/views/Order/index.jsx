@@ -22,12 +22,7 @@ import { formatDate } from '../../utils'
 import { PrintIcon } from '../../assets/icons'
 import { useOrder, useTabs } from '../../context'
 import { logger } from '../../../../shared/utils'
-import {
-   ORDER_DETAILS,
-   ORDER_MEALKITS,
-   ORDER_INVENTORIES,
-   ORDER_READYTOEATS,
-} from '../../graphql'
+import { QUERIES } from '../../graphql'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
    Tooltip,
@@ -47,7 +42,7 @@ const Order = () => {
    const { state, switchView, dispatch } = useOrder()
 
    const { loading, error, data: { order = {} } = {} } = useSubscription(
-      ORDER_DETAILS,
+      QUERIES.ORDER.DETAILS,
       {
          variables: {
             id: params.id,
@@ -71,7 +66,7 @@ const Order = () => {
       error: mealkitsError,
       loading: mealkitsLoading,
       data: { mealkits = [] } = {},
-   } = useSubscription(ORDER_MEALKITS, {
+   } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
          ...(!isEmpty(state.orders.where?._or) && {
@@ -93,7 +88,7 @@ const Order = () => {
       error: readytoeatsError,
       loading: readytoeatsLoading,
       data: { readytoeats = [] } = {},
-   } = useSubscription(ORDER_READYTOEATS, {
+   } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
          ...(!isEmpty(state.orders.where?._or) && {
@@ -115,7 +110,7 @@ const Order = () => {
       error: inventoriesError,
       loading: inventoriesLoading,
       data: { inventories = [] } = {},
-   } = useSubscription(ORDER_INVENTORIES, {
+   } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
          ...(!isEmpty(state.orders.where?._or) && {

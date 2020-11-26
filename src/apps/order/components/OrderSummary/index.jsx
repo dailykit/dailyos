@@ -14,23 +14,25 @@ import {
 
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
+import { QUERIES } from '../../graphql'
 import { Wrapper, FilterSection } from './styled'
 import { logger, currencyFmt } from '../../../../shared/utils'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
-import { ORDER_BY_STATUS, STATION, ALL_ORDERS_AGGREGATE } from '../../graphql'
 
 const address = 'apps.order.components.ordersummary.'
 
 export const OrderSummary = () => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
-   const { data: { orders = {} } = {} } = useSubscription(ALL_ORDERS_AGGREGATE)
+   const { data: { orders = {} } = {} } = useSubscription(
+      QUERIES.ORDERS.AGGREGATE.TOTAL
+   )
    const {
       loading,
       error,
       data: { orderByStatus = [] } = {},
-   } = useSubscription(ORDER_BY_STATUS)
-   const { data: { station = {} } = {} } = useQuery(STATION, {
+   } = useSubscription(QUERIES.ORDERS.AGGREGATE.BY_STATUS)
+   const { data: { station = {} } = {} } = useQuery(QUERIES.STATIONS.ONE, {
       variables: {
          id:
             state.orders.where?._or?.length > 0 &&

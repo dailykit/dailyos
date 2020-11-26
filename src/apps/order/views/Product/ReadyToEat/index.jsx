@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { Filler, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../graphql'
+import { QUERIES } from '../../../graphql'
 import {
    Wrapper,
    Labels,
@@ -34,7 +34,7 @@ export const ReadyToEatProduct = () => {
       error,
       loading,
       data: { simpleRecipeProduct = {} } = {},
-   } = useSubscription(PLANNED.READY_TO_EAT_PRODUCT, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.READY_TO_EAT.ONE, {
       variables: {
          id: params.id,
          order: state.orders.where,
