@@ -16,9 +16,9 @@ import {
 
 import { useConfig } from '../../../context'
 import ProductModifiers from './modifiers'
+import { MUTATIONS } from '../../../graphql'
 import ProductDetails from './product_details'
 import { logger } from '../../../../../shared/utils'
-import { UPDATE_INVENTORY_PRODUCT } from '../../../graphql'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
@@ -33,7 +33,7 @@ export const Inventories = ({
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
-   const [update] = useMutation(UPDATE_INVENTORY_PRODUCT, {
+   const [update] = useMutation(MUTATIONS.ORDER.PRODUCT.INVENTORY.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the product!')
       },
@@ -238,7 +238,6 @@ export const Inventories = ({
 }
 
 const productTitle = inventory => {
-   console.log('🚀 ~ file: inventory.jsx ~ line 241 ~ inventory', inventory)
    let name = ''
    if (inventory?.inventoryProductId) {
       name += inventory?.inventoryProduct?.name

@@ -40,7 +40,7 @@ import {
    HomeIcon,
 } from '../../assets/icons'
 
-import { QUERIES, UPDATE_ORDER_STATUS } from '../../graphql'
+import { QUERIES, MUTATIONS } from '../../graphql'
 import { formatDate } from '../../utils'
 import { useTabs, useOrder } from '../../context'
 import { currencyFmt } from '../../../../shared/utils'
@@ -61,7 +61,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
    const { addTab } = useTabs()
    const { dispatch } = useOrder()
    const [currentPanel, setCurrentPanel] = React.useState('customer')
-   const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
+   const [updateOrderStatus] = useMutation(MUTATIONS.ORDER.UPDATE)
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
    } = useSubscription(QUERIES.ORDER.STATUSES)
@@ -82,7 +82,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
          updateOrderStatus({
             variables: {
                id,
-               orderStatus: status_list[next + 1],
+               _set: { orderStatus: status_list[next + 1] },
             },
          })
       }

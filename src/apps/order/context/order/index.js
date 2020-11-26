@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 
-import { UPDATE_ORDER } from '../../graphql'
+import { MUTATIONS } from '../../graphql'
 
 const Context = React.createContext()
 
@@ -190,7 +190,7 @@ export const OrderProvider = ({ children }) => {
 
 export const useOrder = () => {
    const { state, dispatch } = React.useContext(Context)
-   const [update] = useMutation(UPDATE_ORDER)
+   const [update] = useMutation(MUTATIONS.ORDER.UPDATE)
 
    const selectSachet = React.useCallback(
       (id, product) => {

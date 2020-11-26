@@ -5,7 +5,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { useOrder } from '../../context/order'
 import { logger } from '../../../../shared/utils'
-import { QUERIES, UPDATE_INVENTORY_PRODUCT } from '../../graphql'
+import { QUERIES, MUTATIONS } from '../../graphql'
 import {
    Tooltip,
    ErrorState,
@@ -25,7 +25,7 @@ export const ProcessInventory = () => {
       state: { current_view, inventory },
       switchView,
    } = useOrder()
-   const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT)
+   const [updateProduct] = useMutation(MUTATIONS.ORDER.PRODUCT.INVENTORY.UPDATE)
 
    const {
       loading,

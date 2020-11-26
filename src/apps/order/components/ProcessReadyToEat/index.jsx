@@ -5,7 +5,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 
 import { useOrder } from '../../context/order'
 import { logger } from '../../../../shared/utils'
-import { QUERIES, UPDATE_READYTOEAT } from '../../graphql'
+import { MUTATIONS, QUERIES, UPDATE_READYTOEAT } from '../../graphql'
 import {
    Tooltip,
    ErrorState,
@@ -24,7 +24,9 @@ export const ProcessReadyToEat = () => {
       state: { current_view, readytoeat },
       switchView,
    } = useOrder()
-   const [updateProduct] = useMutation(UPDATE_READYTOEAT)
+   const [updateProduct] = useMutation(
+      MUTATIONS.ORDER.PRODUCT.READYTOEAT.UPDATE
+   )
 
    const {
       loading,

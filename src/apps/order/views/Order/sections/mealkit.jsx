@@ -17,7 +17,7 @@ import {
 import { useConfig } from '../../../context'
 import ProductDetails from './product_details'
 import { UserIcon } from '../../../assets/icons'
-import { UPDATE_MEALKIT } from '../../../graphql'
+import { MUTATIONS } from '../../../graphql'
 import ProductModifiers from './modifiers'
 import { logger } from '../../../../../shared/utils'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
@@ -34,7 +34,7 @@ export const MealKits = ({
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
-   const [update] = useMutation(UPDATE_MEALKIT, {
+   const [update] = useMutation(MUTATIONS.ORDER.PRODUCT.MEALKIT.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the product!')
       },

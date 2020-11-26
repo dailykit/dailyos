@@ -13,6 +13,7 @@ import {
    CloseIcon,
 } from '@dailykit/ui'
 
+import { QUERIES, MUTATIONS } from '../../graphql'
 import { ScaleIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { useOrder, useConfig } from '../../context'
@@ -21,7 +22,6 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../shared/components'
-import { QUERIES, LABEL_TEMPLATE, UPDATE_ORDER_SACHET } from '../../graphql'
 import {
    Wrapper,
    StyledHeader,
@@ -48,7 +48,7 @@ export const ProcessSachet = () => {
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
 
-   const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
+   const [updateSachet] = useMutation(MUTATIONS.ORDER.SACHET.UPDATE)
    const [
       fetchLabalTemplate,
       { data: { labelTemplate = {} } = {} },

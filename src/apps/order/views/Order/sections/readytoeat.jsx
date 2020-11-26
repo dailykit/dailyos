@@ -18,7 +18,7 @@ import { useConfig } from '../../../context'
 import ProductDetails from './product_details'
 import { UserIcon } from '../../../assets/icons'
 import ProductModifiers from './modifiers'
-import { UPDATE_READYTOEAT } from '../../../graphql'
+import { MUTATIONS } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
@@ -34,7 +34,7 @@ export const ReadyToEats = ({
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
-   const [update] = useMutation(UPDATE_READYTOEAT, {
+   const [update] = useMutation(MUTATIONS.ORDER.PRODUCT.READYTOEAT.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the product!')
       },
