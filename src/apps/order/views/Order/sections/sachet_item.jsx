@@ -14,7 +14,7 @@ export const SachetItem = ({ item, product }) => {
    const [currentPanel, setCurrentPanel] = React.useState(null)
 
    const select = id => {
-      selectSachet(id, product?.simpleRecipeProduct?.name)
+      selectSachet(id, { name: product?.simpleRecipeProduct?.name })
       setCurrentPanel(currentPanel === id ? '' : id)
    }
 
@@ -48,7 +48,7 @@ export const SachetItem = ({ item, product }) => {
             >
                {item.quantity ? `${item.quantity}${item.unit}` : 'N/A'}
             </span>
-            <button type="button" onClick={() => selectSachet(item.id)}>
+            <button type="button" onClick={() => select(item.id)}>
                {currentPanel === item.id ? <ArrowDownIcon /> : <ArrowUpIcon />}
             </button>
          </header>

@@ -242,17 +242,14 @@ export const ReadyToEats = ({
    )
 }
 
-const ProductCard = ({ readytoeat, isActive, selectProduct }) => {
+const ProductCard = ({ readytoeat, isActive, onClick }) => {
    const { t } = useTranslation()
 
    const serving =
       readytoeat?.simpleRecipeProductOption?.simpleRecipeYield?.yield?.serving
 
    return (
-      <Styles.ProductItem
-         isActive={isActive}
-         onClick={() => selectProduct(readytoeat)}
-      >
+      <Styles.ProductItem onClick={onClick} isActive={isActive}>
          <div>
             <StyledProductTitle>
                {readytoeat?.simpleRecipeProduct?.name}
