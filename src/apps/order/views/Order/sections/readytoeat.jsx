@@ -135,13 +135,18 @@ export const ReadyToEats = ({
                      })
                   }
                >
-                  Mark Packed
+                  {current?.assemblyStatus === 'COMPLETED'
+                     ? 'Packed'
+                     : 'Mark Packed'}
                </TextButton>
                <Spacer size="16px" xAxis />
                <TextButton
                   size="sm"
                   type="solid"
-                  disabled={current?.isAssembled}
+                  disabled={
+                     current?.isAssembled ||
+                     current?.assemblyStatus !== 'COMPLETED'
+                  }
                   onClick={() =>
                      update({
                         variables: {
@@ -153,7 +158,7 @@ export const ReadyToEats = ({
                      })
                   }
                >
-                  Mark Assembled
+                  {current?.isAssembled ? 'Assembled' : 'Mark Assembled'}
                </TextButton>
             </Flex>
             <Spacer size="8px" />
