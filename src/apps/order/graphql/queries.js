@@ -1455,10 +1455,16 @@ export const QUERIES = {
             }
          `,
          TOTAL: gql`
-            subscription ordersAggregate($where: order_order_bool_exp = {}) {
-               ordersAggregate(where: $where) {
+            subscription orders($where: order_order_bool_exp = {}) {
+               orders: ordersAggregate(where: $where) {
                   aggregate {
                      count
+                     sum {
+                        amountPaid
+                     }
+                     avg {
+                        amountPaid
+                     }
                   }
                }
             }

@@ -65,7 +65,7 @@ export const OrderSummary = () => {
             title="ALL"
             variant="ALL"
             count={orders?.aggregate?.count}
-            amount={orders?.aggregate?.sum?.amount}
+            amount={orders?.aggregate?.sum?.amountPaid}
             average={orders?.aggregate?.avg?.amountPaid}
          />
          <ul>
