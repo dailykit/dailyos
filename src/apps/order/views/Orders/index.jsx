@@ -21,7 +21,7 @@ const Orders = () => {
    const [orders, setOrders] = React.useState([])
    const {
       loading: loadingAggregate,
-      data: { ordersAggregate = {} } = {},
+      data: { orders: ordersAggregate = {} } = {},
    } = useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL, {
       variables: {
          where: {

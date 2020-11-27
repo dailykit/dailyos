@@ -123,6 +123,10 @@ export const Inventories = ({
                size="sm"
                type="solid"
                disabled={current?.assemblyStatus === 'COMPLETED'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
                onClick={() =>
                   update({
                      variables: {
@@ -146,6 +150,10 @@ export const Inventories = ({
                   current?.isAssembled ||
                   current?.assemblyStatus !== 'COMPLETED'
                }
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
                onClick={() =>
                   update({
                      variables: {

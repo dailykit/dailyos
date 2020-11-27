@@ -16,6 +16,8 @@ export const QUERIES = {
                tax
                discount
                itemTotal
+               isAccepted
+               isRejected
                deliveryPrice
                transactionId
                fulfillmentType
@@ -139,6 +141,10 @@ export const QUERIES = {
                assemblyStatus
                labelTemplateId
                assemblyStationId
+               order {
+                  isAccepted
+                  isRejected
+               }
                assemblyStation {
                   id
                   name
@@ -173,6 +179,10 @@ export const QUERIES = {
                      isAssembled
                      assemblyStatus
                      labelTemplateId
+                     order {
+                        isAccepted
+                        isRejected
+                     }
                      inventoryProductId
                      inventoryProduct {
                         id
@@ -252,6 +262,10 @@ export const QUERIES = {
                      isAssembled
                      assemblyStatus
                      labelTemplateId
+                     order {
+                        isAccepted
+                        isRejected
+                     }
                      assemblyStationId
                      assemblyStation {
                         id
@@ -334,6 +348,10 @@ export const QUERIES = {
                      isAssembled
                      assemblyStatus
                      labelTemplateId
+                     order {
+                        isAccepted
+                        isRejected
+                     }
                      assemblyStationId
                      assemblyStation {
                         id
@@ -476,6 +494,10 @@ export const QUERIES = {
                ) {
                   id
                   isAssembled
+                  order {
+                     isAccepted
+                     isRejected
+                  }
                   assemblyStatus
                   labelTemplateId
                   assemblyStationId
@@ -512,6 +534,10 @@ export const QUERIES = {
                         quantity
                         isAssembled
                         assemblyStatus
+                        order {
+                           isAccepted
+                           isRejected
+                        }
                         labelTemplateId
                         inventoryProductId
                         inventoryProduct {
@@ -591,6 +617,10 @@ export const QUERIES = {
                         id
                         isAssembled
                         assemblyStatus
+                        order {
+                           isAccepted
+                           isRejected
+                        }
                         labelTemplateId
                         assemblyStationId
                         assemblyStation {
@@ -672,6 +702,10 @@ export const QUERIES = {
                         id
                         quantity
                         isAssembled
+                        order {
+                           isAccepted
+                           isRejected
+                        }
                         assemblyStatus
                         labelTemplateId
                         assemblyStationId
@@ -849,6 +883,10 @@ export const QUERIES = {
                ) {
                   id
                   isAssembled
+                  order {
+                     isAccepted
+                     isRejected
+                  }
                   assemblyStatus
                   labelTemplateId
                   assemblyStationId
@@ -928,6 +966,10 @@ export const QUERIES = {
                         id
                         quantity
                         isAssembled
+                        order {
+                           isAccepted
+                           isRejected
+                        }
                         assemblyStatus
                         labelTemplateId
                         inventoryProductId
@@ -1008,6 +1050,10 @@ export const QUERIES = {
                         id
                         isAssembled
                         assemblyStatus
+                        order {
+                           isAccepted
+                           isRejected
+                        }
                         labelTemplateId
                         assemblyStationId
                         assemblyStation {
@@ -1089,6 +1135,10 @@ export const QUERIES = {
                         id
                         quantity
                         isAssembled
+                        order {
+                           isAccepted
+                           isRejected
+                        }
                         assemblyStatus
                         labelTemplateId
                         assemblyStationId
@@ -1275,12 +1325,28 @@ export const QUERIES = {
                         name
                      }
                   }
+                  orderMealKitProductId
                   mealkit: orderMealKitProduct {
                      id
-                     orderId
-                     product: simpleRecipeProduct {
-                        id
-                        name
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                  }
+                  orderReadyToEatProductId
+                  readyToEat: orderReadyToEatProduct {
+                     id
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                  }
+                  orderInventoryProductId
+                  inventory: orderInventoryProduct {
+                     id
+                     order {
+                        isAccepted
+                        isRejected
                      }
                   }
                }
@@ -1298,12 +1364,11 @@ export const QUERIES = {
             orders(
                limit: $limit
                offset: $offset
-               order_by: { updated_at: desc }
+               order_by: { isAccepted: asc, updated_at: desc }
                where: $where
             ) {
                id
                created_at
-               deliveryInfo
                orderStatus
                paymentStatus
                tax
@@ -1311,8 +1376,16 @@ export const QUERIES = {
                itemTotal
                amountPaid
                deliveryPrice
+               isAccepted
+               isRejected
                transactionId
                fulfillmentType
+               restaurant: deliveryInfo(path: "pickup.pickupInfo")
+               customer: deliveryInfo(path: "dropoff.dropoffInfo")
+               pickupWindow: deliveryInfo(path: "pickup.window")
+               dropoffWindow: deliveryInfo(path: "dropoff.window")
+               customer: deliveryInfo(path: "dropoff.dropoffInfo")
+               deliveryCompany: deliveryInfo(path: "deliveryCompany")
                orderMealKitProducts(
                   where: { orderModifierId: { _is_null: true } }
                ) {

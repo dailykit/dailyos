@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
    Spacer,
@@ -22,7 +22,7 @@ import { formatDate } from '../../utils'
 import { PrintIcon } from '../../assets/icons'
 import { useOrder, useTabs } from '../../context'
 import { logger } from '../../../../shared/utils'
-import { QUERIES } from '../../graphql'
+import { QUERIES, MUTATIONS } from '../../graphql'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
    Tooltip,
@@ -40,6 +40,15 @@ const Order = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const { state, switchView, dispatch } = useOrder()
+   const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the order!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the order')
+      },
+   })
 
    const { loading, error, data: { order = {} } = {} } = useSubscription(
       QUERIES.ORDER.DETAILS,
@@ -224,6 +233,8 @@ const Order = () => {
                   <TextButton
                      size="sm"
                      type="outline"
+                     fallBackMessage="Pending order confirmation!"
+                     hasAccess={Boolean(order.isAccepted && !order.isRejected)}
                      onClick={() =>
                         dispatch({
                            type: 'DELIVERY_PANEL',
@@ -298,17 +309,54 @@ const Order = () => {
                   order.total_inventories.aggregate.count}
                &nbsp;{t(address.concat('items'))}
             </Text>
-            <Flex width="240px">
-               <DropdownButton title="KOT Options">
-                  <DropdownButton.Options>
-                     <DropdownButton.Option onClick={() => printKOT()}>
-                        Print KOT
-                     </DropdownButton.Option>
-                     <DropdownButton.Option onClick={() => viewKOT()}>
-                        View in browser
-                     </DropdownButton.Option>
-                  </DropdownButton.Options>
-               </DropdownButton>
+
+            <Flex container>
+               <Flex width="240px">
+                  <DropdownButton title="KOT Options">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option onClick={() => printKOT()}>
+                           Print KOT
+                        </DropdownButton.Option>
+                        <DropdownButton.Option onClick={() => viewKOT()}>
+                           View in browser
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>
+               </Flex>
+               <Spacer size="24px" xAxis />
+               <TextButton
+                  type="solid"
+                  disabled={order.isAccepted}
+                  onClick={() =>
+                     updateOrder({
+                        variables: {
+                           id: order.id,
+                           _set: {
+                              isAccepted: true,
+                              ...(order.isRejected && { isRejected: false }),
+                           },
+                        },
+                     })
+                  }
+               >
+                  {order.isAccepted ? 'Accepted' : 'Accept'}
+               </TextButton>
+               <Spacer size="14px" xAxis />
+               <TextButton
+                  type="outline"
+                  onClick={() =>
+                     updateOrder({
+                        variables: {
+                           id: order.id,
+                           _set: {
+                              isRejected: !order.isRejected,
+                           },
+                        },
+                     })
+                  }
+               >
+                  {order.isRejected ? 'Un Reject' : 'Reject'}
+               </TextButton>
             </Flex>
          </Flex>
          <Spacer size="16px" />

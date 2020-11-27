@@ -122,6 +122,10 @@ export const MealKits = ({
                size="sm"
                type="solid"
                disabled={current?.assemblyStatus === 'COMPLETED'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
                onClick={() =>
                   update({
                      variables: {
@@ -141,6 +145,10 @@ export const MealKits = ({
             <TextButton
                size="sm"
                type="solid"
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
                disabled={
                   current?.isAssembled ||
                   current?.assemblyStatus !== 'COMPLETED'

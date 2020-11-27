@@ -22,40 +22,42 @@ const selectColor = variant => {
    }
 }
 
-export const ListBodyItem = styled.div(
-   ({ isOpen }) => css`
-      background: #fff;
-      header {
-         margin: 0;
-         padding: 0;
-         height: 28px;
-         display: grid;
-         grid-gap: 16px;
-         font-size: 14px;
-         line-height: 28px;
-         grid-template-columns: 1fr 28px;
-         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-         button {
-            border: none;
-            display: flex;
-            cursor: pointer;
-            align-items: center;
-            background: transparent;
-            justify-content: center;
-            :hover {
-               background: rgba(0, 0, 0, 0.05);
+export const Styles = {
+   Accordian: styled.div(
+      ({ isOpen }) => css`
+         background: #fff;
+         header {
+            margin: 0;
+            padding: 0;
+            height: 28px;
+            display: grid;
+            grid-gap: 16px;
+            font-size: 14px;
+            line-height: 28px;
+            grid-template-columns: 1fr 28px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            button {
+               border: none;
+               display: flex;
+               cursor: pointer;
+               align-items: center;
+               background: transparent;
+               justify-content: center;
+               :hover {
+                  background: rgba(0, 0, 0, 0.05);
+               }
             }
          }
-      }
-      main {
-         padding: 4px 0;
-         overflow-y: auto;
-         max-height: 120px;
-         border-top: 1px solid #dddada;
-         display: ${isOpen ? 'block' : 'none'};
-      }
-   `
-)
+         main {
+            overflow-y: auto;
+            max-height: 120px;
+            padding: 4px 12px 0 0;
+            border-top: 1px solid #dddada;
+            display: ${isOpen ? 'block' : 'none'};
+         }
+      `
+   ),
+}
 
 export const StyledOrderItem = styled.div(
    ({ status }) => css`
@@ -63,7 +65,7 @@ export const StyledOrderItem = styled.div(
       height: 240px;
       display: grid;
       border-bottom: 1px solid #ececec;
-      grid-template-columns: 220px 1fr;
+      grid-template-columns: 220px 1fr 180px;
       border: 3px solid ${selectColor(status)};
       border-left-width: 8px;
       border-right-width: 8px;
@@ -75,70 +77,6 @@ export const StyledOrderItem = styled.div(
       }
    `
 )
-
-export const StyledHeader = styled.header`
-   display: flex;
-   align-items: center;
-   section {
-      flex: 1;
-      display: flex;
-      margin-left: 16px;
-      align-items: center;
-   }
-`
-
-export const StyledButton = styled.button`
-   height: 28px;
-   display: flex;
-   padding: 0 8px;
-   color: #787d91;
-   cursor: pointer;
-   background: #fff;
-   font-weight: 500;
-   background: white;
-   margin-right: 14px;
-   align-items: center;
-   text-transform: uppercase;
-   border: 1px solid rgba(0, 0, 0, 0.2);
-   svg {
-      margin-left: 2px;
-   }
-`
-
-export const StyledConsumer = styled.div`
-   padding-right: 20px;
-`
-
-export const StyledConsumerName = styled.h4`
-   font-size: 16px;
-   font-weight: 500;
-`
-
-export const StyledConsumerAddress = styled.h4`
-   color: #718096;
-   font-size: 14px;
-   margin: 8px 0;
-   font-weight: 400;
-`
-
-export const StyledConsumerContact = styled.span`
-   display: flex;
-   color: #555b6e;
-   font-size: 14px;
-   margin: 8px 0;
-   font-weight: 500;
-   span {
-      height: 24px;
-      display: flex;
-      align-items: center;
-      :first-child {
-         margin-right: 8px;
-      }
-      :last-child {
-         transform: translateY(-2px);
-      }
-   }
-`
 
 export const StyledCount = styled.span`
    float: right;
@@ -323,25 +261,3 @@ export const StyledProducts = styled.section(
       }
    `
 )
-
-export const StyledPrint = styled.button`
-   width: 28px;
-   height: 28px;
-   display: flex;
-   cursor: pointer;
-   background: #fff;
-   background: white;
-   margin-right: 14px;
-   align-items: center;
-   justify-content: center;
-   border: 1px solid rgba(0, 0, 0, 0.2);
-`
-
-export const StyledOrderType = styled.span`
-   width: 28px;
-   height: 28px;
-   display: flex;
-   margin-right: 8px;
-   align-items: center;
-   justify-content: center;
-`

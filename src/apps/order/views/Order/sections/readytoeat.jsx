@@ -124,6 +124,10 @@ export const ReadyToEats = ({
                   size="sm"
                   type="solid"
                   disabled={current?.assemblyStatus === 'COMPLETED'}
+                  fallBackMessage="Pending order confirmation!"
+                  hasAccess={Boolean(
+                     current?.order?.isAccepted && !current?.order?.isRejected
+                  )}
                   onClick={() =>
                      update({
                         variables: {
@@ -147,6 +151,10 @@ export const ReadyToEats = ({
                      current?.isAssembled ||
                      current?.assemblyStatus !== 'COMPLETED'
                   }
+                  fallBackMessage="Pending order confirmation!"
+                  hasAccess={Boolean(
+                     current?.order?.isAccepted && !current?.order?.isRejected
+                  )}
                   onClick={() =>
                      update({
                         variables: {

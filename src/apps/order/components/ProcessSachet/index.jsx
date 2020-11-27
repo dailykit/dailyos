@@ -1,5 +1,5 @@
 import React from 'react'
-import _, { isEmpty } from 'lodash'
+import { isEmpty, isNull } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
@@ -31,7 +31,6 @@ import {
    StyledWeigh,
    StyledPackaging,
    StyledSOP,
-   StyledButton,
 } from './styled'
 
 export const ProcessSachet = () => {
@@ -47,6 +46,10 @@ export const ProcessSachet = () => {
    const [sachet, setSachet] = React.useState(null)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
+   const [order, setOrder] = React.useState({
+      isRejected: null,
+      isAccepted: null,
+   })
 
    const [updateSachet] = useMutation(MUTATIONS.ORDER.SACHET.UPDATE)
    const [
@@ -59,7 +62,7 @@ export const ProcessSachet = () => {
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
-         if (!_.isEmpty(orderSachet)) {
+         if (!isEmpty(orderSachet)) {
             setWeight(0)
             setSachet(orderSachet)
             fetchLabalTemplate({
@@ -67,6 +70,13 @@ export const ProcessSachet = () => {
                   id: Number(orderSachet?.labelTemplateId),
                },
             })
+            if (orderSachet.orderMealKitProductId) {
+               setOrder(orderSachet.mealkit.order)
+            } else if (orderSachet.orderReadyToEatProductId) {
+               setOrder(orderSachet.readyToEat.order)
+            } else if (orderSachet.orderInventoryProductId) {
+               setOrder(orderSachet.inventory.order)
+            }
          }
       },
    })
@@ -102,7 +112,7 @@ export const ProcessSachet = () => {
             },
          },
       })
-      if (_.isNull(sachet.labelTemplateId)) return
+      if (isNull(sachet.labelTemplateId)) return
 
       if (state.print.print_simulation.value.isActive) {
          const template = encodeURIComponent(
@@ -174,7 +184,7 @@ export const ProcessSachet = () => {
       return true
    }
 
-   if (_.isNull(id)) {
+   if (isNull(id)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -282,7 +292,7 @@ export const ProcessSachet = () => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  {!_.isNull(sachet.labelTemplateId) && (
+                  {isNull(sachet.labelTemplateId) && (
                      <button onClick={() => print()}>Print Label</button>
                   )}
                </header>
@@ -407,9 +417,12 @@ export const ProcessSachet = () => {
             </>
          )}
          <Flex container alignItems="center">
-            <StyledButton
-               type="button"
+            <TextButton
+               size="sm"
+               type="solid"
                disabled={sachet.status === 'PACKED'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(order.isAccepted && !order.isRejected)}
                onClick={() =>
                   updateSachet({
                      variables: {
@@ -424,11 +437,14 @@ export const ProcessSachet = () => {
                }
             >
                {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
-            </StyledButton>
+            </TextButton>
             <Spacer size="16px" xAxis />
-            <StyledButton
-               type="button"
+            <TextButton
+               size="sm"
+               type="solid"
                disabled={sachet.isAssembled || sachet.status === 'PENDING'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(order.isAccepted && !order.isRejected)}
                onClick={() =>
                   updateSachet({
                      variables: {
@@ -441,7 +457,7 @@ export const ProcessSachet = () => {
                }
             >
                {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
-            </StyledButton>
+            </TextButton>
          </Flex>
       </Wrapper>
    )
