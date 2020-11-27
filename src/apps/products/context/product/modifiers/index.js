@@ -359,6 +359,7 @@ export const reducers = (state, { type, payload }) => {
                unit: option.unit,
                productId: option.productId,
                productType: option.productType,
+               operationConfig: { value: option.operationConfig },
             }))
             return cat
          })
