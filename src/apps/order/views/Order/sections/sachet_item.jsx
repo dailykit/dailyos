@@ -11,18 +11,18 @@ const address = 'apps.order.views.order.'
 export const SachetItem = ({ item, product }) => {
    const { t } = useTranslation()
    const { selectSachet } = useOrder()
-   const [currentPanel, setCurrentPanel] = React.useState(null)
+   const [isOpen, setIsOpen] = React.useState(null)
 
    const select = id => {
       selectSachet(id, { name: product?.simpleRecipeProduct?.name })
-      setCurrentPanel(currentPanel === id ? '' : id)
+      setIsOpen(isOpen === id ? '' : id)
    }
 
    return (
       <List.Item
          key={item.id}
          onClick={() => select(item.id)}
-         isOpen={currentPanel === item.id}
+         isOpen={isOpen === item.id}
          variant={{
             isAssembled: item.isAssembled,
             isPacked: item.status === 'PACKED',
@@ -49,7 +49,7 @@ export const SachetItem = ({ item, product }) => {
                {item.quantity ? `${item.quantity}${item.unit}` : 'N/A'}
             </span>
             <button type="button" onClick={() => select(item.id)}>
-               {currentPanel === item.id ? <ArrowDownIcon /> : <ArrowUpIcon />}
+               {isOpen === item.id ? <ArrowDownIcon /> : <ArrowUpIcon />}
             </button>
          </header>
          <main>

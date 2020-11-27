@@ -1656,6 +1656,55 @@ export const QUERIES = {
                               orderId
                               quantity
                               isAssembled
+                              sachets: orderSachets(
+                                 where: {
+                                    orderInventoryProduct: { order: $order }
+                                 }
+                              ) {
+                                 id
+                                 unit
+                                 status
+                                 quantity
+                                 isAssembled
+                                 isLabelled
+                                 isPortioned
+                                 ingredientName
+                                 processingName
+                                 packaging {
+                                    id
+                                    name
+                                 }
+                                 sachetItemId
+                                 sachetItem {
+                                    id
+                                    bulkItemId
+                                    bulkItem {
+                                       id
+                                       sop
+                                       yield
+                                       shelfLife
+                                       bulkDensity
+                                       supplierItemId
+                                       supplierItem {
+                                          id
+                                          name
+                                       }
+                                    }
+                                 }
+                                 bulkItemId
+                                 bulkItem {
+                                    id
+                                    sop
+                                    yield
+                                    shelfLife
+                                    bulkDensity
+                                    supplierItemId
+                                    supplierItem {
+                                       id
+                                       name
+                                    }
+                                 }
+                              }
                            }
                         }
                      }
@@ -1751,12 +1800,160 @@ export const QUERIES = {
                               orderId
                               quantity
                               isAssembled
+                              sachets: orderSachets(
+                                 where: {
+                                    orderReadyToEatProduct: { order: $order }
+                                 }
+                              ) {
+                                 id
+                                 unit
+                                 status
+                                 quantity
+                                 isAssembled
+                                 isLabelled
+                                 isPortioned
+                                 ingredientName
+                                 processingName
+                                 packaging {
+                                    id
+                                    name
+                                 }
+                                 sachetItemId
+                                 sachetItem {
+                                    id
+                                    bulkItemId
+                                    bulkItem {
+                                       id
+                                       sop
+                                       yield
+                                       shelfLife
+                                       bulkDensity
+                                       supplierItemId
+                                       supplierItem {
+                                          id
+                                          name
+                                       }
+                                    }
+                                 }
+                                 bulkItemId
+                                 bulkItem {
+                                    id
+                                    sop
+                                    yield
+                                    shelfLife
+                                    bulkDensity
+                                    supplierItemId
+                                    supplierItem {
+                                       id
+                                       name
+                                    }
+                                 }
+                              }
                            }
                         }
                      }
                   }
                }
             `,
+            SACHET: {
+               LIST: gql`
+                  subscription ingredients($order: order_order_bool_exp = {}) {
+                     ingredients: ingredientsAggregate(
+                        where: {
+                           ingredientSachets: {
+                              orderSachets: {
+                                 orderReadyToEatProduct: { order: $order }
+                              }
+                           }
+                        }
+                     ) {
+                        aggregate {
+                           count
+                        }
+                        nodes {
+                           id
+                           name
+                           processings: ingredientProcessings_aggregate(
+                              where: {
+                                 ingredientSachets: {
+                                    orderSachets: {
+                                       orderReadyToEatProduct: { order: $order }
+                                    }
+                                 }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: processingName)
+                              }
+                              nodes {
+                                 id
+                                 name: processingName
+                                 sachets: ingredientSachets_aggregate(
+                                    where: {
+                                       orderSachets: {
+                                          orderReadyToEatProduct: {
+                                             order: $order
+                                          }
+                                       }
+                                    }
+                                 ) {
+                                    aggregate {
+                                       count(columns: id)
+                                    }
+                                    nodes {
+                                       id
+                                       unit
+                                       quantity
+                                       allOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderReadyToEatProduct: {
+                                                order: $order
+                                             }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                          nodes {
+                                             id
+                                             isAssembled
+                                             orderReadyToEatProduct {
+                                                id
+                                                orderId
+                                                simpleRecipeProduct {
+                                                   id
+                                                   name
+                                                }
+                                             }
+                                          }
+                                       }
+                                       completedOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderReadyToEatProduct: {
+                                                order: $order
+                                             }
+                                             status: { _eq: "PACKED" }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               `,
+            },
          },
          MEAL_KIT: {
             LIST: gql`

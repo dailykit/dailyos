@@ -54,7 +54,7 @@ export const ListHead = styled.header(
       display: grid;
       grid-gap: 16px;
       line-height: 32px;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, 1fr) 48px;
       span {
          color: #888d9d;
          padding: 0 14px;

@@ -3,16 +3,15 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { QUERIES } from '../../../../graphql'
-import { NewTabIcon } from '../../../../assets/icons'
-import { useTabs, useOrder } from '../../../../context'
-import { logger } from '../../../../../../shared/utils'
+import { QUERIES } from '../../../graphql'
+import { NewTabIcon } from '../../../assets/icons'
+import { useTabs, useOrder } from '../../../context'
+import { logger } from '../../../../../shared/utils'
 import {
    Tooltip,
    ErrorState,
    InlineLoader,
-} from '../../../../../../shared/components'
-import { Products, ProductTitle, OptionsHeader, Product } from '../styled'
+} from '../../../../../shared/components'
 import {
    List,
    ListBody,
@@ -23,20 +22,19 @@ import {
    StyledTabList,
    StyledTabPanel,
    StyledTabPanels,
-} from './styled'
+   Products,
+   ProductTitle,
+   OptionsHeader,
+   Product,
+} from '../styled'
 
-export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
+export const MealKitProduct = () => {
    const { state } = useOrder()
    const { error, loading, data: { ingredients = {} } = {} } = useSubscription(
       QUERIES.PLANNED.PRODUCTS.MEAL_KIT.SACHET.ONE,
       {
          variables: {
             order: state.orders.where,
-         },
-         onSubscriptionData: ({
-            subscriptionData: { data: { ingredients = {} } = {} } = {},
-         }) => {
-            setMealKitSachetTotal(ingredients.aggregate.count)
          },
       }
    )
@@ -51,7 +49,7 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
       return <Text as="h3">No Meal kit sachets</Text>
 
    return (
-      <>
+      <Flex padding="16px">
          <Flex container alignItems="center">
             <Text as="h2">Meal Kit Sachets</Text>
             <Tooltip identifier="app_order_planned_mealkit_sachet_heading" />
@@ -162,7 +160,7 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                </Product>
             ))}
          </Products>
-      </>
+      </Flex>
    )
 }
 

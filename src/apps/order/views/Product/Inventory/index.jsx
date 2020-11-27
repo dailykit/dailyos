@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { Filler, Flex, Spacer } from '@dailykit/ui'
@@ -13,6 +14,7 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../../shared/components'
+import { SachetItem } from '../../Order/sections'
 import {
    List,
    Label,
@@ -116,14 +118,47 @@ export const InventoryProduct = () => {
                   ))}
                </Labels>
                <Spacer size="8px" />
-               {Object.keys(current).length > 0 && (
+               {!isEmpty(current) && (
                   <List>
                      <ListHead>
-                        <span>Order Id</span>
-                        <span>Quantity</span>
+                        <Flex container alignItems="center">
+                           <span>Ingredients</span>
+                           <Tooltip identifier="order_details_mealkit_column_ingredient" />
+                        </Flex>
+                        <Flex container alignItems="center">
+                           <span>Supplier Item</span>
+                           <Tooltip identifier="order_details_mealkit_column_supplier_item" />
+                        </Flex>
+                        <Flex container alignItems="center">
+                           <span>Processing</span>
+                           <Tooltip identifier="order_details_mealkit_column_processing" />
+                        </Flex>
+                        <Flex container alignItems="center">
+                           <span>Quantity</span>
+                           <Tooltip identifier="order_details_mealkit_column_quantity" />
+                        </Flex>
                      </ListHead>
-                     {current.orderInventoryProducts.nodes.length > 0 ? (
-                        <ListBody>
+                     {!isEmpty(current.orderInventoryProducts.nodes) ? (
+                        current.orderInventoryProducts.nodes.map(node =>
+                           node.sachets.map(sachet => (
+                              <SachetItem item={sachet} />
+                           ))
+                        )
+                     ) : (
+                        <Filler message="No products" />
+                     )}
+                  </List>
+               )}
+            </>
+         ) : (
+            <Filler message="No inventory options" />
+         )}
+      </Wrapper>
+   )
+}
+
+/*
+<ListBody>
                            {current.orderInventoryProducts.nodes.map(node => (
                               <ListBodyItem
                                  key={node.id}
@@ -148,15 +183,4 @@ export const InventoryProduct = () => {
                               </ListBodyItem>
                            ))}
                         </ListBody>
-                     ) : (
-                        <span>No products</span>
-                     )}
-                  </List>
-               )}
-            </>
-         ) : (
-            <Filler message="No inventory options" />
-         )}
-      </Wrapper>
-   )
-}
+*/

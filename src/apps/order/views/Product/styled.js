@@ -101,3 +101,49 @@ export const StyledButton = styled.button`
       margin-left: 2px;
    }
 `
+
+export const OptionsHeader = styled.section`
+   height: 32px;
+   display: flex;
+   align-items: center;
+   span {
+      width: 280px;
+      font-size: 14px;
+      padding: 0 12px;
+      color: rgb(136, 141, 157);
+   }
+`
+
+export const ProductTitle = styled.h2(
+   ({ isLink }) => css`
+      width: 280px;
+      font-size: 16px;
+      font-weight: 500;
+      margin-right: 16px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      ${isLink && 'cursor: pointer'};
+   `
+)
+
+export const Products = styled.ul`
+   margin-bottom: 16px;
+   li {
+      list-style: none;
+   }
+   > li + li {
+      margin-top: 16px;
+   }
+`
+
+export const Product = styled.li`
+   padding: 16px;
+   border: 1px solid #e1e1e1;
+   border-radius: 2px;
+   h3 {
+      width: 180px;
+      font-size: 16px;
+      font-weight: 400;
+   }
+`
