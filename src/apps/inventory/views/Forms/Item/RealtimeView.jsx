@@ -16,9 +16,10 @@ import tableOptions from '../../Listings/tableOption'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function RealTimeView({ proc }) {
+export default function RealTimeView({ proc, formState }) {
    const { t } = useTranslation()
    const [showHistory, setShowHistory] = useState(false)
+   const unit = proc.unit || formState.unit || ''
 
    if (!proc) return null
 
@@ -43,17 +44,17 @@ export default function RealTimeView({ proc }) {
                <Flex container style={{ flexWrap: 'wrap' }}>
                   <DataCard
                      title={t(address.concat('awaiting'))}
-                     quantity={`${proc.awaiting} ${proc.unit}`}
+                     quantity={`${proc.awaiting} ${unit}`}
                   />
                   <Spacer xAxis size="16px" />
                   <DataCard
                      title={t(address.concat('commited'))}
-                     quantity={`${proc.committed} ${proc.unit}`}
+                     quantity={`${proc.committed} ${unit}`}
                   />
                   <Spacer xAxis size="16px" />
                   <DataCard
                      title={t(address.concat('consumed'))}
-                     quantity={`${proc.consumed} ${proc.unit}`}
+                     quantity={`${proc.consumed} ${unit}`}
                      actionText="view history"
                      action={() => setShowHistory(true)}
                   />

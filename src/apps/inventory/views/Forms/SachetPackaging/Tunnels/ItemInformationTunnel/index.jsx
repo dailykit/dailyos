@@ -345,7 +345,7 @@ export default function ItemInformationTunnel({ close, state, next }) {
                            meta: { isValid, errors, isTouched: true },
                         })
                      }}
-                     hasError={itemPar.meta.isTouched && itemPar.meta.isValid}
+                     hasError={itemPar.meta.isTouched && !itemPar.meta.isValid}
                   />
                   {itemPar.meta.isTouched && !itemPar.meta.isValid && (
                      <Form.Error>{itemPar.meta.errors[0]}</Form.Error>
@@ -375,7 +375,8 @@ export default function ItemInformationTunnel({ close, state, next }) {
                         })
                      }}
                      hasError={
-                        itemMaxValue.meta.isTouched && itemMaxValue.meta.isValid
+                        itemMaxValue.meta.isTouched &&
+                        !itemMaxValue.meta.isValid
                      }
                   />
                   {itemMaxValue.meta.isTouched &&
