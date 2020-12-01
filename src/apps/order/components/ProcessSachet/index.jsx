@@ -200,8 +200,6 @@ export const ProcessSachet = () => {
                >
                   <option value="SUMMARY">Summary</option>
                   <option value="SACHET_ITEM">Process Sachet</option>
-                  <option value="INVENTORY">Inventory</option>
-                  <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
             <Text as="h3">No sachet selected!</Text>
@@ -227,8 +225,6 @@ export const ProcessSachet = () => {
                >
                   <option value="SUMMARY">Summary</option>
                   <option value="SACHET_ITEM">Process Sachet</option>
-                  <option value="INVENTORY">Inventory</option>
-                  <option value="READYTOEAT">Ready to Eat</option>
                </select>
             </StyledMode>
             <ErrorState message="Failed to fetch sachet details!" />
@@ -250,8 +246,6 @@ export const ProcessSachet = () => {
             >
                <option value="SUMMARY">Summary</option>
                <option value="SACHET_ITEM">Process Sachet</option>
-               <option value="INVENTORY">Inventory</option>
-               <option value="READYTOEAT">Ready to Eat</option>
             </select>
          </StyledMode>
          <StyledHeader>
