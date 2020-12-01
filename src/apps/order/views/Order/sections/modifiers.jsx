@@ -17,7 +17,7 @@ const ProductModifiers = ({ product }) => {
 
    React.useEffect(() => {
       if (product?.orderModifiers) {
-         product.orderModifiers.map(node => {
+         product.orderModifiers.forEach(node => {
             for (let [key, value] of Object.entries(node)) {
                if (Array.isArray(value) && !isEmpty(value)) {
                   if (key === 'inventoryProducts') {
@@ -33,46 +33,65 @@ const ProductModifiers = ({ product }) => {
             }
          })
       }
+      return () => {
+         setInventories([])
+         setMealKits([])
+         setReadyToEats([])
+      }
    }, [product])
 
    return (
       <HorizontalTabs>
          <HorizontalTabList>
-            <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
-            <HorizontalTab>Inventories ({inventories.length})</HorizontalTab>
-            <HorizontalTab>Ready To Eats ({readytoeats.length})</HorizontalTab>
+            {!isEmpty(mealkits) && (
+               <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
+            )}
+            {!isEmpty(inventories) && (
+               <HorizontalTab>Inventories ({inventories.length})</HorizontalTab>
+            )}
+            {!isEmpty(readytoeats) && (
+               <HorizontalTab>
+                  Ready To Eats ({readytoeats.length})
+               </HorizontalTab>
+            )}
          </HorizontalTabList>
          <HorizontalTabPanels>
-            <HorizontalTabPanel>
-               <MealKits
-                  data={{
-                     mealkits,
-                     error: null,
-                     loading: false,
-                  }}
-                  hideModifiers
-               />
-            </HorizontalTabPanel>
-            <HorizontalTabPanel>
-               <Inventories
-                  data={{
-                     inventories,
-                     error: null,
-                     loading: false,
-                  }}
-                  hideModifiers
-               />
-            </HorizontalTabPanel>
-            <HorizontalTabPanel>
-               <ReadyToEats
-                  data={{
-                     readytoeats,
-                     error: null,
-                     loading: false,
-                  }}
-                  hideModifiers
-               />
-            </HorizontalTabPanel>
+            {!isEmpty(mealkits) && (
+               <HorizontalTabPanel>
+                  <MealKits
+                     data={{
+                        mealkits,
+                        error: null,
+                        loading: false,
+                     }}
+                     hideModifiers
+                  />
+               </HorizontalTabPanel>
+            )}
+            {!isEmpty(inventories) && (
+               <HorizontalTabPanel>
+                  <Inventories
+                     data={{
+                        inventories,
+                        error: null,
+                        loading: false,
+                     }}
+                     hideModifiers
+                  />
+               </HorizontalTabPanel>
+            )}
+            {!isEmpty(readytoeats) && (
+               <HorizontalTabPanel>
+                  <ReadyToEats
+                     data={{
+                        readytoeats,
+                        error: null,
+                        loading: false,
+                     }}
+                     hideModifiers
+                  />
+               </HorizontalTabPanel>
+            )}
          </HorizontalTabPanels>
       </HorizontalTabs>
    )

@@ -343,7 +343,7 @@ const Order = () => {
                </TextButton>
                <Spacer size="14px" xAxis />
                <TextButton
-                  type="outline"
+                  type="ghost"
                   onClick={() =>
                      updateOrder({
                         variables: {
@@ -362,40 +362,54 @@ const Order = () => {
          <Spacer size="16px" />
          <HorizontalTabs>
             <HorizontalTabList style={{ padding: '0 16px' }}>
-               <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
-               <HorizontalTab>Inventories ({inventories.length})</HorizontalTab>
-               <HorizontalTab>
-                  Ready To Eats ({order.total_readytoeats.aggregate.count})
-               </HorizontalTab>
+               {!isEmpty(mealkits) && (
+                  <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
+               )}
+               {!isEmpty(inventories) && (
+                  <HorizontalTab>
+                     Inventories ({inventories.length})
+                  </HorizontalTab>
+               )}
+               {!isEmpty(readytoeats) && (
+                  <HorizontalTab>
+                     Ready To Eats ({readytoeats.length})
+                  </HorizontalTab>
+               )}
             </HorizontalTabList>
             <HorizontalTabPanels>
-               <HorizontalTabPanel>
-                  <MealKits
-                     data={{
-                        mealkits,
-                        error: mealkitsError,
-                        loading: mealkitsLoading,
-                     }}
-                  />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <Inventories
-                     data={{
-                        inventories,
-                        error: inventoriesError,
-                        loading: inventoriesLoading,
-                     }}
-                  />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <ReadyToEats
-                     data={{
-                        readytoeats,
-                        error: readytoeatsError,
-                        loading: readytoeatsLoading,
-                     }}
-                  />
-               </HorizontalTabPanel>
+               {!isEmpty(mealkits) && (
+                  <HorizontalTabPanel>
+                     <MealKits
+                        data={{
+                           mealkits,
+                           error: mealkitsError,
+                           loading: mealkitsLoading,
+                        }}
+                     />
+                  </HorizontalTabPanel>
+               )}
+               {!isEmpty(inventories) && (
+                  <HorizontalTabPanel>
+                     <Inventories
+                        data={{
+                           inventories,
+                           error: inventoriesError,
+                           loading: inventoriesLoading,
+                        }}
+                     />
+                  </HorizontalTabPanel>
+               )}
+               {!isEmpty(readytoeats) && (
+                  <HorizontalTabPanel>
+                     <ReadyToEats
+                        data={{
+                           readytoeats,
+                           error: readytoeatsError,
+                           loading: readytoeatsLoading,
+                        }}
+                     />
+                  </HorizontalTabPanel>
+               )}
             </HorizontalTabPanels>
          </HorizontalTabs>
       </Flex>
