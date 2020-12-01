@@ -84,7 +84,7 @@ export const Subscriptions = () => {
    }
 
    return (
-      <Flex width="calc(100vw - 64px)" width="1280px" margin="0 auto">
+      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
          <Flex
             container
             as="header"
