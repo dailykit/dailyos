@@ -204,13 +204,17 @@ export const MealKits = ({
                      >
                         <a href="#sachets">Sachets</a>
                      </Scroll.Tab>
-                     <Scroll.Tab
-                        className={
-                           window.location.hash === '#modifiers' ? 'active' : ''
-                        }
-                     >
-                        <a href="#modifiers">Modifiers</a>
-                     </Scroll.Tab>
+                     {current?.hasModifiers && (
+                        <Scroll.Tab
+                           className={
+                              window.location.hash === '#modifiers'
+                                 ? 'active'
+                                 : ''
+                           }
+                        >
+                           <a href="#modifiers">Modifiers</a>
+                        </Scroll.Tab>
+                     )}
                   </Scroll.Tabs>
                   <Spacer size="16px" />
                </>
@@ -234,7 +238,7 @@ export const MealKits = ({
                </Legend>
                {current && <ProductDetails product={current} />}
             </section>
-            {!hideModifiers && (
+            {!hideModifiers && current?.hasModifiers && (
                <>
                   <Spacer size="32px" />
                   <section id="modifiers">

@@ -138,6 +138,7 @@ export const QUERIES = {
             ) {
                id
                isAssembled
+               hasModifiers
                assemblyStatus
                labelTemplateId
                assemblyStationId
@@ -494,6 +495,7 @@ export const QUERIES = {
                ) {
                   id
                   isAssembled
+                  hasModifiers
                   order {
                      isAccepted
                      isRejected
@@ -838,6 +840,7 @@ export const QUERIES = {
             subscription orderReadyToEatProduct($id: Int!) {
                orderReadyToEatProduct(id: $id) {
                   id
+                  hasModifiers
                   isAssembled
                   assemblyStatus
                   comboProduct {
@@ -882,6 +885,7 @@ export const QUERIES = {
                   }
                ) {
                   id
+                  hasModifiers
                   isAssembled
                   order {
                      isAccepted
@@ -1226,6 +1230,7 @@ export const QUERIES = {
                orderInventoryProduct(id: $id) {
                   id
                   quantity
+                  hasModifiers
                   isAssembled
                   assemblyStatus
                   inventoryProductId
@@ -1364,7 +1369,7 @@ export const QUERIES = {
             orders(
                limit: $limit
                offset: $offset
-               order_by: { isAccepted: asc, updated_at: desc }
+               order_by: { isAccepted: desc, updated_at: desc }
                where: $where
             ) {
                id
