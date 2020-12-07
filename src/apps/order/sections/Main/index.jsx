@@ -9,6 +9,7 @@ import {
    Planned,
    InventoryProduct,
    ReadyToEatProduct,
+   MealKitProduct,
 } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { Flex, ErrorBoundary } from '../../../../shared/components'
@@ -63,6 +64,14 @@ const Main = () => {
                   message="You do not have sufficient permission to access planned ready to eat product."
                >
                   <ReadyToEatProduct />
+               </AccessCheck>
+            </Route>
+            <Route path="/apps/order/planned/meal-kit/:id" exact>
+               <AccessCheck
+                  title="planned/meal-kit"
+                  message="You do not have sufficient permission to access planned mealkit product."
+               >
+                  <MealKitProduct />
                </AccessCheck>
             </Route>
          </Switch>

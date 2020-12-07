@@ -12,7 +12,7 @@ import {
 } from '@dailykit/ui'
 
 import { useOrder } from '../../context'
-import { DELIVERY_SERVICES, ORDER_DELIVERY_INFO } from '../../graphql'
+import { QUERIES, DELIVERY_SERVICES, ORDER_DELIVERY_INFO } from '../../graphql'
 import {
    Wrapper,
    StyledList,
@@ -35,7 +35,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
    const [serviceInfo, setServiceInfo] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { loading: loadingOrder, data: { order = {} } = {} } = useSubscription(
-      ORDER_DELIVERY_INFO,
+      QUERIES.ORDER.DELIVERY_INFO,
       {
          variables: { id: delivery_config.orderId },
       }
@@ -43,7 +43,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
    const {
       loading: loadingServices,
       data: { deliveryServices = [] } = {},
-   } = useQuery(DELIVERY_SERVICES)
+   } = useQuery(QUERIES.DELIVERY.SERVICES)
 
    const viewInfo = (e, id) => {
       e.stopPropagation()

@@ -1,5 +1,5 @@
 import React from 'react'
-import _, { isEmpty } from 'lodash'
+import { isEmpty, isNull } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
@@ -13,6 +13,7 @@ import {
    CloseIcon,
 } from '@dailykit/ui'
 
+import { QUERIES, MUTATIONS } from '../../graphql'
 import { ScaleIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { useOrder, useConfig } from '../../context'
@@ -22,11 +23,6 @@ import {
    InlineLoader,
 } from '../../../../shared/components'
 import {
-   LABEL_TEMPLATE,
-   FETCH_ORDER_SACHET,
-   UPDATE_ORDER_SACHET,
-} from '../../graphql'
-import {
    Wrapper,
    StyledHeader,
    StyledMode,
@@ -35,12 +31,14 @@ import {
    StyledWeigh,
    StyledPackaging,
    StyledSOP,
-   StyledButton,
 } from './styled'
 
-export const ProcessOrder = () => {
+export const ProcessSachet = () => {
    const {
-      state: { current_view, mealkit },
+      state: {
+         current_view,
+         sachet: { id, product },
+      },
       switchView,
    } = useOrder()
    const { state } = useConfig()
@@ -48,21 +46,23 @@ export const ProcessOrder = () => {
    const [sachet, setSachet] = React.useState(null)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
+   const [order, setOrder] = React.useState({
+      isRejected: null,
+      isAccepted: null,
+   })
 
-   const [updateSachet] = useMutation(UPDATE_ORDER_SACHET)
+   const [updateSachet] = useMutation(MUTATIONS.ORDER.SACHET.UPDATE)
    const [
       fetchLabalTemplate,
       { data: { labelTemplate = {} } = {} },
-   ] = useLazyQuery(LABEL_TEMPLATE)
+   ] = useLazyQuery(QUERIES.LABEL_TEMPLATE.ONE)
 
-   const { loading, error } = useSubscription(FETCH_ORDER_SACHET, {
-      variables: {
-         id: mealkit.sachet_id,
-      },
+   const { loading, error } = useSubscription(QUERIES.ORDER.SACHET.ONE, {
+      variables: { id },
       onSubscriptionData: async ({
          subscriptionData: { data: { orderSachet = {} } = {} },
       }) => {
-         if (!_.isEmpty(orderSachet)) {
+         if (!isEmpty(orderSachet)) {
             setWeight(0)
             setSachet(orderSachet)
             fetchLabalTemplate({
@@ -70,6 +70,13 @@ export const ProcessOrder = () => {
                   id: Number(orderSachet?.labelTemplateId),
                },
             })
+            if (orderSachet.orderMealKitProductId) {
+               setOrder(orderSachet.mealkit.order)
+            } else if (orderSachet.orderReadyToEatProductId) {
+               setOrder(orderSachet.readyToEat.order)
+            } else if (orderSachet.orderInventoryProductId) {
+               setOrder(orderSachet.inventory.order)
+            }
          }
       },
    })
@@ -78,7 +85,7 @@ export const ProcessOrder = () => {
       setWeight(0)
       setScaleState('low')
       setLabelPreview('')
-   }, [mealkit.sachet_id])
+   }, [id])
 
    const changeView = view => {
       switchView(view)
@@ -105,7 +112,7 @@ export const ProcessOrder = () => {
             },
          },
       })
-      if (_.isNull(sachet.labelTemplateId)) return
+      if (isNull(sachet.labelTemplateId)) return
 
       if (state.print.print_simulation.value.isActive) {
          const template = encodeURIComponent(
@@ -177,7 +184,7 @@ export const ProcessOrder = () => {
       return true
    }
 
-   if (_.isNull(mealkit.sachet_id)) {
+   if (isNull(id)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -192,12 +199,10 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="MEALKIT">Meal Kit</option>
-                  <option value="INVENTORY">Inventory</option>
-                  <option value="READYTOEAT">Ready to Eat</option>
+                  <option value="SACHET_ITEM">Process Sachet</option>
                </select>
             </StyledMode>
-            <Text as="h3">No product selected!</Text>
+            <Text as="h3">No sachet selected!</Text>
          </Wrapper>
       )
    }
@@ -219,9 +224,7 @@ export const ProcessOrder = () => {
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
-                  <option value="MEALKIT">Meal Kit</option>
-                  <option value="INVENTORY">Inventory</option>
-                  <option value="READYTOEAT">Ready to Eat</option>
+                  <option value="SACHET_ITEM">Process Sachet</option>
                </select>
             </StyledMode>
             <ErrorState message="Failed to fetch sachet details!" />
@@ -242,13 +245,11 @@ export const ProcessOrder = () => {
                onChange={e => changeView(e.target.value)}
             >
                <option value="SUMMARY">Summary</option>
-               <option value="MEALKIT">Meal Kit</option>
-               <option value="INVENTORY">Inventory</option>
-               <option value="READYTOEAT">Ready to Eat</option>
+               <option value="SACHET_ITEM">Process Sachet</option>
             </select>
          </StyledMode>
          <StyledHeader>
-            <h3>{mealkit?.name}</h3>
+            <h3>{product?.name || 'N/A'}</h3>
          </StyledHeader>
          <StyledMain>
             <section>
@@ -285,7 +286,7 @@ export const ProcessOrder = () => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  {!_.isNull(sachet.labelTemplateId) && (
+                  {isNull(sachet.labelTemplateId) && (
                      <button onClick={() => print()}>Print Label</button>
                   )}
                </header>
@@ -410,9 +411,12 @@ export const ProcessOrder = () => {
             </>
          )}
          <Flex container alignItems="center">
-            <StyledButton
-               type="button"
+            <TextButton
+               size="sm"
+               type="solid"
                disabled={sachet.status === 'PACKED'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(order.isAccepted && !order.isRejected)}
                onClick={() =>
                   updateSachet({
                      variables: {
@@ -427,11 +431,14 @@ export const ProcessOrder = () => {
                }
             >
                {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
-            </StyledButton>
+            </TextButton>
             <Spacer size="16px" xAxis />
-            <StyledButton
-               type="button"
+            <TextButton
+               size="sm"
+               type="solid"
                disabled={sachet.isAssembled || sachet.status === 'PENDING'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(order.isAccepted && !order.isRejected)}
                onClick={() =>
                   updateSachet({
                      variables: {
@@ -444,7 +451,7 @@ export const ProcessOrder = () => {
                }
             >
                {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
-            </StyledButton>
+            </TextButton>
          </Flex>
       </Wrapper>
    )

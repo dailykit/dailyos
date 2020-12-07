@@ -2,9 +2,9 @@ import React from 'react'
 import _ from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
+import { QUERIES } from '../graphql'
 import { Loader } from '../components'
 import { useAuth } from '../../../shared/providers'
-import { SETTINGS, STATIONS_BY_USER } from '../graphql'
 
 const ConfigContext = React.createContext()
 
@@ -76,7 +76,7 @@ export const ConfigProvider = ({ children }) => {
    const { user } = useAuth()
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const { loading, data: { stations = [] } = {} } = useSubscription(
-      STATIONS_BY_USER,
+      QUERIES.STATIONS.BY_USER,
       {
          variables: {
             ...(user.email && { email: { _eq: user.email } }),
@@ -86,7 +86,7 @@ export const ConfigProvider = ({ children }) => {
    const {
       loading: loadingSettings,
       data: { settings = [] } = {},
-   } = useSubscription(SETTINGS)
+   } = useSubscription(QUERIES.SETTINGS.LIST)
 
    React.useEffect(() => {
       if (!loadingSettings && !_.isEmpty(settings)) {
