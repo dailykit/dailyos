@@ -1,33 +1,57 @@
 import React from 'react'
-import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { isEmpty, isNull } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
    Spacer,
+   Filler,
    IconButton,
    CloseIcon,
    TextButton,
 } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
-import { useOrder } from '../../../context'
-import {
-   OrderItem,
-   OrderItems,
-   StyledServings,
-   StyledProductTitle,
-} from '../styled'
+import ProductModifiers from './modifiers'
+import { MUTATIONS } from '../../../graphql'
+import ProductDetails from './product_details'
+import { logger } from '../../../../../shared/utils'
+import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
-export const Inventories = ({ inventories }) => {
+const address = 'apps.order.views.order.'
+
+export const Inventories = ({
+   data: { loading, error, inventories },
+   hideModifiers,
+}) => {
    const { state } = useConfig()
+   const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
-   const { selectInventory } = useOrder()
    const [current, setCurrent] = React.useState({})
 
+   const [update] = useMutation(MUTATIONS.ORDER.PRODUCT.INVENTORY.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the product!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to update the product!')
+      },
+   })
+
+   React.useEffect(() => {
+      if (!loading && !isEmpty(inventories)) {
+         const [product] = inventories
+         setCurrent(product)
+      }
+   }, [loading, inventories, setCurrent])
+
    const print = () => {
-      if (_.isNull(current?.labelTemplateId)) {
+      if (isNull(current?.labelTemplateId)) {
          toast.error('No template assigned!')
          return
       }
@@ -68,59 +92,84 @@ export const Inventories = ({ inventories }) => {
    }
 
    const selectProduct = product => {
-      setLabel('')
       setCurrent(product)
-      selectInventory(product.id)
+      setLabel('')
    }
 
-   React.useEffect(() => {
-      if (inventories.length > 0) {
-         const [product] = inventories
-         setCurrent(product)
-      }
-   }, [inventories])
-
-   if (inventories.length === 0) return <div>No inventories products!</div>
+   if (loading) return <InlineLoader />
+   if (error)
+      return <ErrorState message="Failed to fetch inventory products!" />
+   if (isEmpty(inventories))
+      return <Filler message="No inventory products available!" />
    return (
       <>
-         <OrderItems>
+         <Styles.Products>
             {inventories.map(inventory => (
-               <OrderItem
+               <ProductCard
                   key={inventory.id}
-                  isActive={current?.id === inventory.id}
+                  inventory={inventory}
                   onClick={() => selectProduct(inventory)}
-               >
-                  <Flex
-                     container
-                     alignitems="center"
-                     justifyContent="space-between"
-                  >
-                     <StyledProductTitle>
-                        {productTitle(inventory)}
-                     </StyledProductTitle>
-                     <span>
-                        Quantity:{' '}
-                        {inventory.quantity *
-                           inventory?.inventoryProductOption?.quantity || 1}
-                     </span>
-                  </Flex>
-                  <section>
-                     <span>
-                        {inventory.isAssembled ? 1 : 0} /{' '}
-                        {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
-                     </span>
-                     <StyledServings>
-                        <span>{inventory?.inventoryProductOption?.label}</span>
-                     </StyledServings>
-                  </section>
-               </OrderItem>
+                  isActive={current?.id === inventory.id}
+               />
             ))}
-         </OrderItems>
-         <Flex>
+         </Styles.Products>
+         <Spacer size="16px" />
+         <Flex container alignItems="center">
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
             </TextButton>
-            <Spacer size="8px" />
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.assemblyStatus === 'COMPLETED'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     },
+                  })
+               }
+            >
+               {current?.assemblyStatus === 'COMPLETED'
+                  ? 'Packed'
+                  : 'Mark Packed'}
+            </TextButton>
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={
+                  current?.isAssembled ||
+                  current?.assemblyStatus !== 'COMPLETED'
+               }
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           isAssembled: true,
+                        },
+                     },
+                  })
+               }
+            >
+               {current?.isAssembled ? 'Assembled' : 'Mark Assembled'}
+            </TextButton>
+         </Flex>
+         <Spacer size="8px" />
+         <Flex>
             {label && (
                <>
                   <Flex
@@ -144,6 +193,63 @@ export const Inventories = ({ inventories }) => {
                </>
             )}
          </Flex>
+         <Spacer size="24px" />
+         <section>
+            {!hideModifiers && (
+               <>
+                  <Scroll.Tabs>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#sachets' ? 'active' : ''
+                        }
+                     >
+                        <a href="#sachets">Sachets</a>
+                     </Scroll.Tab>
+                     {current?.hasModifiers && (
+                        <Scroll.Tab
+                           className={
+                              window.location.hash === '#modifiers'
+                                 ? 'active'
+                                 : ''
+                           }
+                        >
+                           <a href="#modifiers">Modifiers</a>
+                        </Scroll.Tab>
+                     )}
+                  </Scroll.Tabs>
+                  <Spacer size="16px" />
+               </>
+            )}
+            <section id="sachets">
+               <Text as="h2">Sachets</Text>
+               <Legend>
+                  <h2>{t(address.concat('legends'))}</h2>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('pending'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('packed'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('assembled'))}</span>
+                  </section>
+               </Legend>
+               {current && <ProductDetails product={current} />}
+            </section>
+            {!hideModifiers && current?.hasModifiers && (
+               <>
+                  <Spacer size="32px" />
+                  <section id="modifiers">
+                     <Text as="h2">Modifiers</Text>
+                     <Spacer size="16px" />
+                     {current && <ProductModifiers product={current} />}
+                  </section>
+               </>
+            )}
+         </section>
       </>
    )
 }
@@ -160,4 +266,25 @@ const productTitle = inventory => {
       name += ` (${inventory?.comboProductComponent?.label})`
    }
    return name || 'N/A'
+}
+
+const ProductCard = ({ onClick, isActive, inventory }) => {
+   const quantity =
+      inventory.quantity * inventory?.inventoryProductOption?.quantity || 1
+   return (
+      <Styles.ProductItem isActive={isActive} onClick={onClick}>
+         <Flex container alignitems="center" justifyContent="space-between">
+            <StyledProductTitle>{productTitle(inventory)}</StyledProductTitle>
+            <span>Quantity: {quantity}</span>
+         </Flex>
+         <Spacer size="14px" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <span>
+               {inventory.isAssembled ? 1 : 0} /{' '}
+               {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+            </span>
+            <span>{inventory?.inventoryProductOption?.label}</span>
+         </Flex>
+      </Styles.ProductItem>
+   )
 }

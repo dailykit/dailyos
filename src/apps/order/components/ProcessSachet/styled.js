@@ -58,24 +58,6 @@ export const StyledMain = styled.main`
    }
 `
 
-export const StyledButton = styled.button(
-   ({ disabled }) => css`
-      color: #fff;
-      height: 32px;
-      border: none;
-      padding: 0 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      background: #53c22b;
-      ${disabled &&
-      css`
-         color: #9e9292;
-         background: #e2e2e2;
-         cursor: not-allowed;
-      `}
-   `
-)
-
 export const StyledWeigh = styled.section(
    ({ state }) => css`
       color: #fff;
