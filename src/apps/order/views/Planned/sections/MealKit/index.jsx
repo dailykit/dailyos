@@ -3,8 +3,9 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../../graphql'
-import { useOrder } from '../../../../context'
+import { QUERIES } from '../../../../graphql'
+import { NewTabIcon } from '../../../../assets/icons'
+import { useOrder, useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import {
    Tooltip,
@@ -21,12 +22,13 @@ import {
 } from '../styled'
 
 export const MealKitSection = ({ setMealKitTotal }) => {
+   const { addTab } = useTabs()
    const { state } = useOrder()
    const {
       error,
       loading,
       data: { simpleRecipeProducts = {} } = {},
-   } = useSubscription(PLANNED.MEAL_KIT_PRODUCTS, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.MEAL_KIT.LIST, {
       variables: {
          order: state.orders.where,
       },
@@ -36,6 +38,10 @@ export const MealKitSection = ({ setMealKitTotal }) => {
          setMealKitTotal(simpleRecipeProducts.aggregate.count)
       },
    })
+
+   const openProduct = (id, name) => {
+      addTab(name, `/apps/order/planned/meal-kit/${id}`)
+   }
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -56,7 +62,21 @@ export const MealKitSection = ({ setMealKitTotal }) => {
          <Products>
             {simpleRecipeProducts.nodes.map(product => (
                <Product key={product.id}>
-                  <ProductTitle>{product.name}</ProductTitle>
+                  <ProductTitle
+                     isLink
+                     tabIndex="-1"
+                     role="button"
+                     title={product.name}
+                     onClick={() => openProduct(product.id, product.name)}
+                     onKeyPress={e =>
+                        e.charCode === 13 &&
+                        openProduct(product.id, product.name)
+                     }
+                  >
+                     <NewTabIcon size={16} color="#b9b9b9" />
+                     &nbsp;
+                     {product.name}
+                  </ProductTitle>
                   <OptionsHeader>
                      <span>Yield</span>
                      <span>Total</span>

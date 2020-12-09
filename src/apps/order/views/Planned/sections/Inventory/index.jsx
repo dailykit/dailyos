@@ -4,7 +4,7 @@ import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { NewTabIcon } from '../../../../assets/icons'
-import { PLANNED } from '../../../../graphql/queries'
+import { QUERIES } from '../../../../graphql/queries'
 import { useOrder, useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import {
@@ -28,7 +28,7 @@ export const InventorySection = ({ setInventoryTotal }) => {
       error,
       loading,
       data: { inventoryProducts = {} } = {},
-   } = useSubscription(PLANNED.INVENTORY_PRODUCTS, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.INVENTORY.LIST, {
       variables: {
          order: state.orders.where,
       },

@@ -15,13 +15,11 @@ import Footer from './sections/Footer'
 import { StyledWrapper } from './styled'
 import {
    OrderSummary,
-   ProcessOrder,
    FilterTunnel,
    ConfigTunnel,
+   ProcessSachet,
    DeliveryConfig,
    Notifications,
-   ProcessInventory,
-   ProcessReadyToEat,
 } from './components'
 
 import { ErrorBoundary } from '../../shared/components'
@@ -63,9 +61,7 @@ const App = () => {
       <StyledWrapper position={position}>
          <ErrorBoundary rootRoute="/apps/order">
             {state.current_view === 'SUMMARY' && <OrderSummary />}
-            {state.current_view === 'MEALKIT' && <ProcessOrder />}
-            {state.current_view === 'INVENTORY' && <ProcessInventory />}
-            {state.current_view === 'READYTOEAT' && <ProcessReadyToEat />}
+            {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
          </ErrorBoundary>
          <Router>
             <main>

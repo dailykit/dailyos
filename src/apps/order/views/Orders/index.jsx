@@ -1,22 +1,19 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
+import { Filler } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
-import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 
 import { paginate } from '../../utils'
+import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
 import { useTabs } from '../../context/tabs'
 import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
-import { ORDERS, ORDERS_AGGREGATE } from '../../graphql'
 import { ErrorState, Flex, InlineLoader } from '../../../../shared/components'
 
-const address = 'apps.order.views.orders.'
 const Orders = () => {
-   const { t } = useTranslation()
    const location = useLocation()
    const { tab, addTab } = useTabs()
    const { state, dispatch } = useOrder()
@@ -24,15 +21,15 @@ const Orders = () => {
    const [orders, setOrders] = React.useState([])
    const {
       loading: loadingAggregate,
-      data: { ordersAggregate = {} } = {},
-   } = useQuery(ORDERS_AGGREGATE, {
+      data: { orders: ordersAggregate = {} } = {},
+   } = useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL, {
       variables: {
          where: {
             orderStatus: { _eq: state.orders.where.orderStatus._eq },
          },
       },
    })
-   const { loading, error } = useSubscription(ORDERS, {
+   const { loading, error } = useSubscription(QUERIES.ORDERS.LIST, {
       variables: {
          where: state.orders.where,
          ...(state.orders.limit && { limit: state.orders.limit }),
@@ -144,9 +141,7 @@ const Orders = () => {
                      />
                   ))
                ) : (
-                  <Flex padding="16px">
-                     {t(address.concat('no orders yet!'))}
-                  </Flex>
+                  <Filler message="No orders available!" />
                )}
             </section>
          )}

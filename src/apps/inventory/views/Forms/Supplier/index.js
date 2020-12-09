@@ -163,11 +163,12 @@ export default function SupplierForm() {
                      }
                      onBlur={e => {
                         const { isValid, errors } = validators.name(
-                           e.target.value
+                           e.target.value,
+                           'supplier name'
                         )
 
                         setName({
-                           value: e.target.value,
+                           ...name,
                            meta: { isValid, errors, isTouched: true },
                         })
 
@@ -338,15 +339,11 @@ function ShowAvailability({ formState }) {
       },
    })
 
-   const addImage = images => {
-      updateSupplier({
-         variables: { id: formState.id, object: { logo: images } },
-      })
-   }
-
    return (
       <Form.Group>
          <Form.Toggle
+            id="supplier_availability"
+            name="supplier_availability"
             value={formState.available}
             onChange={() => {
                updateSupplier({
@@ -357,7 +354,7 @@ function ShowAvailability({ formState }) {
                })
             }}
          >
-            {formState.available ? 'Available' : 'Unavailable'}
+            Available
          </Form.Toggle>
       </Form.Group>
    )

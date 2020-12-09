@@ -1,322 +1,467 @@
 import gql from 'graphql-tag'
 
-export const ORDER_DELIVERY_INFO = gql`
-   subscription order($id: oid!) {
-      order(id: $id) {
-         id
-         deliveryInfo
-         deliveryPartnershipId
-      }
-   }
-`
-
-export const DELIVERY_SERVICE = gql`
-   query service($id: Int!) {
-      service: partnerships_deliveryPartnership_by_pk(id: $id) {
-         id
-         details: deliveryCompany {
-            id
-            name
-            assets
-            website
-            description
-            established
-         }
-      }
-   }
-`
-
-export const DELIVERY_SERVICES = gql`
-   query deliveryServices {
-      deliveryServices(where: { isActive: { _eq: true } }) {
-         id
-         logo
-         companyName
-         isThirdParty
-         partnershipId
-      }
-   }
-`
-
-export const NEW_NOTIF = gql`
-   subscription displayNotifications {
-      displayNotifications(where: { type: { app: { _eq: "Order" } } }) {
-         type {
-            audioUrl
-         }
-      }
-   }
-`
-
-export const NOTIFICATIONS = gql`
-   subscription displayNotifications {
-      displayNotifications(
-         order_by: { created_at: desc }
-         where: { type: { app: { _eq: "Order" } } }
-      ) {
-         id
-         content
-         created_at
-         updated_at
-         type {
-            isGlobal
-            isLocal
-            playAudio
-            audioUrl
-         }
-      }
-   }
-`
-
-export const ALL_ORDERS_AGGREGATE = gql`
-   subscription orders {
-      orders: ordersAggregate {
-         aggregate {
-            count
-            sum {
-               amount: amountPaid
-            }
-            avg {
-               amountPaid
-            }
-         }
-      }
-   }
-`
-
-export const ORDER_BY_STATUS = gql`
-   subscription orderByStatus {
-      orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
-         value
-         orders: orders_aggregate {
-            aggregate {
-               count
-               sum {
-                  amount: amountPaid
-               }
-               avg {
-                  amountPaid
-               }
-            }
-         }
-      }
-   }
-`
-
-export const ORDER_AGGREGATE = gql`
-   subscription ordersAggregate {
-      ordersAggregate {
-         aggregate {
-            count
-         }
-      }
-   }
-`
-
-export const ORDER_STATUSES = gql`
-   subscription orderStatuses {
-      order_orderStatusEnum {
-         value
-      }
-   }
-`
-
-export const ORDERS = gql`
-   subscription orders(
-      $limit: Int
-      $offset: Int
-      $where: order_order_bool_exp = {}
-   ) {
-      orders(
-         limit: $limit
-         offset: $offset
-         order_by: { updated_at: desc }
-         where: $where
-      ) {
-         id
-         created_at
-         deliveryInfo
-         orderStatus
-         paymentStatus
-         tax
-         discount
-         itemTotal
-         amountPaid
-         deliveryPrice
-         transactionId
-         fulfillmentType
-         orderMealKitProducts {
-            id
-            price
-            isAssembled
-            assemblyStatus
-            assemblyStation {
-               id
-               name
-            }
-            comboProduct {
-               id
-               name
-            }
-            comboProductComponent {
-               id
-               label
-            }
-            orderSachets {
-               id
-               status
-               isAssembled
-            }
-            simpleRecipeProduct {
-               id
-               name
-            }
-            simpleRecipeProductOption {
-               id
-               simpleRecipeYield {
-                  id
-                  yield
-               }
-            }
-         }
-         orderReadyToEatProducts {
-            id
-            price
-            isAssembled
-            assemblyStatus
-            simpleRecipeProduct {
-               id
-               name
-            }
-            assemblyStation {
-               id
-               name
-            }
-            comboProduct {
-               id
-               name
-            }
-            comboProductComponent {
-               id
-               label
-            }
-            simpleRecipeProduct {
-               id
-               name
-            }
-            simpleRecipeProductOption {
-               id
-               simpleRecipeYield {
-                  id
-                  yield
-               }
-            }
-         }
-         orderInventoryProducts {
-            id
-            price
-            isAssembled
-            inventoryProduct {
-               id
-               name
-            }
-            comboProduct {
-               id
-               name
-            }
-            comboProductComponent {
-               id
-               label
-            }
-            assemblyStation {
-               id
-               name
-            }
-            assemblyStatus
-            customizableProduct {
-               id
-               name
-            }
-            inventoryProductOption {
-               id
-               quantity
-               label
-            }
-         }
-      }
-   }
-`
-
-export const ORDER = gql`
-   subscription order(
-      $id: oid!
-      $packingStationId: Int_comparison_exp = {}
-      $assemblyStationId: Int_comparison_exp = {}
-   ) {
-      order(id: $id) {
-         id
-         created_at
-         deliveryInfo
-         orderStatus
-         paymentStatus
-         tax
-         discount
-         itemTotal
-         deliveryPrice
-         transactionId
-         fulfillmentType
-         orderMealKitProducts(
-            where: { assemblyStationId: $assemblyStationId }
+export const QUERIES = {
+   ORDER: {
+      DETAILS: gql`
+         subscription order(
+            $id: oid!
+            $assemblyStationId: Int_comparison_exp = {}
          ) {
-            id
-            isAssembled
-            assemblyStatus
-            labelTemplateId
-            assemblyStationId
-            assemblyStation {
+            order(id: $id) {
                id
-               name
-            }
-            comboProductId
-            comboProduct {
-               id
-               name
-            }
-            comboProductComponentId
-            comboProductComponent {
-               id
-               label
-            }
-            simpleRecipeProductId
-            simpleRecipeProduct {
-               id
-               name
-            }
-            simpleRecipeProductOptionId
-            simpleRecipeProductOption {
-               id
-               simpleRecipeYield {
-                  id
-                  yield
+               created_at
+               deliveryInfo
+               orderStatus
+               paymentStatus
+               tax
+               discount
+               itemTotal
+               isAccepted
+               isRejected
+               deliveryPrice
+               transactionId
+               fulfillmentType
+               total_mealkits: orderMealKitProducts_aggregate(
+                  where: { assemblyStationId: $assemblyStationId }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+               packed_mealkits: orderMealKitProducts_aggregate(
+                  where: {
+                     assemblyStationId: $assemblyStationId
+                     assemblyStatus: { _eq: "COMPLETED" }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+               assembled_mealkits: orderMealKitProducts_aggregate(
+                  where: {
+                     assemblyStationId: $assemblyStationId
+                     isAssembled: { _eq: true }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+
+               total_readytoeats: orderReadyToEatProducts_aggregate(
+                  where: { assemblyStationId: $assemblyStationId }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+               packed_readytoeats: orderReadyToEatProducts_aggregate(
+                  where: {
+                     assemblyStationId: $assemblyStationId
+                     assemblyStatus: { _eq: "COMPLETED" }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+               assembled_readytoeats: orderReadyToEatProducts_aggregate(
+                  where: {
+                     assemblyStationId: $assemblyStationId
+                     isAssembled: { _eq: true }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+
+               total_inventories: orderInventoryProducts_aggregate(
+                  where: { assemblyStationId: $assemblyStationId }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+               packed_inventories: orderInventoryProducts_aggregate(
+                  where: {
+                     assemblyStationId: $assemblyStationId
+                     assemblyStatus: { _eq: "COMPLETED" }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
+               }
+               assembled_inventories: orderInventoryProducts_aggregate(
+                  where: {
+                     assemblyStationId: $assemblyStationId
+                     isAssembled: { _eq: true }
+                  }
+               ) {
+                  aggregate {
+                     count(columns: id)
+                  }
                }
             }
-            orderSachets(where: { packingStationId: $packingStationId }) {
+         }
+      `,
+      DELIVERY_INFO: gql`
+         subscription order($id: oid!) {
+            order(id: $id) {
                id
-               unit
-               status
-               quantity
+               deliveryInfo
+               deliveryPartnershipId
+            }
+         }
+      `,
+      STATUSES: gql`
+         subscription orderStatuses {
+            order_orderStatusEnum {
+               value
+            }
+         }
+      `,
+      MEALKITS: gql`
+         subscription mealkits(
+            $orderId: Int!
+            $packingStationId: Int_comparison_exp = {}
+            $assemblyStationId: Int_comparison_exp = {}
+         ) {
+            mealkits: orderMealKitProducts(
+               where: {
+                  orderId: { _eq: $orderId }
+                  assemblyStationId: $assemblyStationId
+                  orderModifierId: { _is_null: true }
+               }
+            ) {
+               id
                isAssembled
-               isLabelled
-               isPortioned
-               ingredientName
-               processingName
-               packaging {
+               hasModifiers
+               assemblyStatus
+               labelTemplateId
+               assemblyStationId
+               order {
+                  isAccepted
+                  isRejected
+               }
+               assemblyStation {
                   id
                   name
                }
-               sachetItemId
-               sachetItem {
+               comboProductId
+               comboProduct {
                   id
+                  name
+               }
+               comboProductComponentId
+               comboProductComponent {
+                  id
+                  label
+               }
+               simpleRecipeProductId
+               simpleRecipeProduct {
+                  id
+                  name
+               }
+               simpleRecipeProductOptionId
+               simpleRecipeProductOption {
+                  id
+                  simpleRecipeYield {
+                     id
+                     yield
+                  }
+               }
+               orderModifiers {
+                  inventoryProducts: childOrderInventoryProducts {
+                     id
+                     quantity
+                     isAssembled
+                     assemblyStatus
+                     labelTemplateId
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                     inventoryProductId
+                     inventoryProduct {
+                        id
+                        name
+                     }
+                     comboProductId
+                     comboProduct {
+                        id
+                        name
+                     }
+                     comboProductComponentId
+                     comboProductComponent {
+                        id
+                        label
+                     }
+                     assemblyStationId
+                     assemblyStation {
+                        id
+                        name
+                     }
+                     inventoryProductOptionId
+                     inventoryProductOption {
+                        id
+                        quantity
+                        label
+                     }
+                     orderSachets(
+                        where: { packingStationId: $packingStationId }
+                     ) {
+                        id
+                        unit
+                        status
+                        quantity
+                        isAssembled
+                        isLabelled
+                        isPortioned
+                        ingredientName
+                        processingName
+                        packaging {
+                           id
+                           name
+                        }
+                        sachetItemId
+                        sachetItem {
+                           id
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                        bulkItemId
+                        bulkItem {
+                           id
+                           sop
+                           yield
+                           shelfLife
+                           bulkDensity
+                           supplierItemId
+                           supplierItem {
+                              id
+                              name
+                           }
+                        }
+                     }
+                  }
+                  mealKitProducts: childOrderMealKitProducts {
+                     id
+                     isAssembled
+                     assemblyStatus
+                     labelTemplateId
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                     assemblyStationId
+                     assemblyStation {
+                        id
+                        name
+                     }
+                     comboProductId
+                     comboProduct {
+                        id
+                        name
+                     }
+                     comboProductComponentId
+                     comboProductComponent {
+                        id
+                        label
+                     }
+                     simpleRecipeProductId
+                     simpleRecipeProduct {
+                        id
+                        name
+                     }
+                     simpleRecipeProductOptionId
+                     simpleRecipeProductOption {
+                        id
+                        simpleRecipeYield {
+                           id
+                           yield
+                        }
+                     }
+                     orderSachets(
+                        where: { packingStationId: $packingStationId }
+                     ) {
+                        id
+                        unit
+                        status
+                        quantity
+                        isAssembled
+                        isLabelled
+                        isPortioned
+                        ingredientName
+                        processingName
+                        packaging {
+                           id
+                           name
+                        }
+                        sachetItemId
+                        sachetItem {
+                           id
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                        bulkItemId
+                        bulkItem {
+                           id
+                           sop
+                           yield
+                           shelfLife
+                           bulkDensity
+                           supplierItemId
+                           supplierItem {
+                              id
+                              name
+                           }
+                        }
+                     }
+                  }
+                  readyToEatProducts: childOrderReadyToEatProducts {
+                     id
+                     quantity
+                     isAssembled
+                     assemblyStatus
+                     labelTemplateId
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                     assemblyStationId
+                     assemblyStation {
+                        id
+                        name
+                     }
+                     comboProductId
+                     comboProduct {
+                        id
+                        name
+                     }
+                     comboProductComponentId
+                     comboProductComponent {
+                        id
+                        label
+                     }
+                     simpleRecipeProductId
+                     simpleRecipeProduct {
+                        id
+                        name
+                     }
+                     simpleRecipeProductOptionId
+                     simpleRecipeProductOption {
+                        id
+                        simpleRecipeYield {
+                           id
+                           yield
+                        }
+                     }
+                     orderSachets(
+                        where: { packingStationId: $packingStationId }
+                     ) {
+                        id
+                        unit
+                        status
+                        quantity
+                        isAssembled
+                        isLabelled
+                        isPortioned
+                        ingredientName
+                        processingName
+                        packaging {
+                           id
+                           name
+                        }
+                        sachetItemId
+                        sachetItem {
+                           id
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                        bulkItemId
+                        bulkItem {
+                           id
+                           sop
+                           yield
+                           shelfLife
+                           bulkDensity
+                           supplierItemId
+                           supplierItem {
+                              id
+                              name
+                           }
+                        }
+                     }
+                  }
+               }
+               orderSachets(where: { packingStationId: $packingStationId }) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  orderModifierId
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
                   bulkItemId
                   bulkItem {
                      id
@@ -331,638 +476,1210 @@ export const ORDER = gql`
                      }
                   }
                }
-               bulkItemId
-               bulkItem {
+            }
+         }
+      `,
+      READY_TO_EAT: {
+         LIST: gql`
+            subscription readytoeats(
+               $orderId: Int!
+               $packingStationId: Int_comparison_exp = {}
+               $assemblyStationId: Int_comparison_exp = {}
+            ) {
+               readytoeats: orderReadyToEatProducts(
+                  where: {
+                     orderId: { _eq: $orderId }
+                     assemblyStationId: $assemblyStationId
+                     orderModifierId: { _is_null: true }
+                  }
+               ) {
                   id
-                  sop
-                  yield
-                  shelfLife
-                  bulkDensity
-                  supplierItemId
-                  supplierItem {
+                  isAssembled
+                  hasModifiers
+                  order {
+                     isAccepted
+                     isRejected
+                  }
+                  assemblyStatus
+                  labelTemplateId
+                  assemblyStationId
+                  assemblyStation {
                      id
                      name
                   }
-               }
-            }
-         }
-         orderReadyToEatProducts(
-            where: { assemblyStationId: $assemblyStationId }
-         ) {
-            id
-            quantity
-            isAssembled
-            assemblyStatus
-            labelTemplateId
-            assemblyStationId
-            assemblyStation {
-               id
-               name
-            }
-            comboProductId
-            comboProduct {
-               id
-               name
-            }
-            comboProductComponentId
-            comboProductComponent {
-               id
-               label
-            }
-            simpleRecipeProductId
-            simpleRecipeProduct {
-               id
-               name
-            }
-            simpleRecipeProductOptionId
-            simpleRecipeProductOption {
-               id
-               simpleRecipeYield {
-                  id
-                  yield
-               }
-            }
-         }
-         orderInventoryProducts(
-            where: { assemblyStationId: $assemblyStationId }
-         ) {
-            id
-            quantity
-            isAssembled
-            assemblyStatus
-            labelTemplateId
-            inventoryProductId
-            inventoryProduct {
-               id
-               name
-            }
-            comboProductId
-            comboProduct {
-               id
-               name
-            }
-            comboProductComponentId
-            comboProductComponent {
-               id
-               label
-            }
-            assemblyStationId
-            assemblyStation {
-               id
-               name
-            }
-            inventoryProductOptionId
-            inventoryProductOption {
-               id
-               quantity
-               label
-            }
-         }
-      }
-   }
-`
-
-export const FETCH_ORDER_MEALKIT = gql`
-   subscription orderMealKitProduct($id: Int!) {
-      orderMealKitProduct(id: $id) {
-         id
-         assemblyStatus
-         assemblyStation {
-            name
-         }
-         comboProduct {
-            name
-         }
-         comboProductComponent {
-            label
-         }
-         simpleRecipeProduct {
-            name
-         }
-         simpleRecipeProductOption {
-            simpleRecipeYield {
-               yield
-            }
-         }
-         orderSachets {
-            id
-            status
-            quantity
-            isAssembled
-            ingredientName
-            processingName
-            isLabelled
-            isPortioned
-            packaging {
-               name
-            }
-            sachetItemId
-            sachetItem {
-               id
-               bulkItem {
-                  id
-                  sop
-                  yield
-                  shelfLife
-                  bulkDensity
-                  supplierItem {
+                  comboProductId
+                  comboProduct {
+                     id
                      name
+                  }
+                  comboProductComponentId
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  simpleRecipeProductId
+                  simpleRecipeProduct {
+                     id
+                     name
+                  }
+                  simpleRecipeProductOptionId
+                  simpleRecipeProductOption {
+                     id
+                     simpleRecipeYield {
+                        id
+                        yield
+                     }
+                  }
+                  orderModifiers {
+                     inventoryProducts: childOrderInventoryProducts {
+                        id
+                        quantity
+                        isAssembled
+                        assemblyStatus
+                        order {
+                           isAccepted
+                           isRejected
+                        }
+                        labelTemplateId
+                        inventoryProductId
+                        inventoryProduct {
+                           id
+                           name
+                        }
+                        comboProductId
+                        comboProduct {
+                           id
+                           name
+                        }
+                        comboProductComponentId
+                        comboProductComponent {
+                           id
+                           label
+                        }
+                        assemblyStationId
+                        assemblyStation {
+                           id
+                           name
+                        }
+                        inventoryProductOptionId
+                        inventoryProductOption {
+                           id
+                           quantity
+                           label
+                        }
+                        orderSachets(
+                           where: { packingStationId: $packingStationId }
+                        ) {
+                           id
+                           unit
+                           status
+                           quantity
+                           isAssembled
+                           isLabelled
+                           isPortioned
+                           ingredientName
+                           processingName
+                           packaging {
+                              id
+                              name
+                           }
+                           sachetItemId
+                           sachetItem {
+                              id
+                              bulkItemId
+                              bulkItem {
+                                 id
+                                 sop
+                                 yield
+                                 shelfLife
+                                 bulkDensity
+                                 supplierItemId
+                                 supplierItem {
+                                    id
+                                    name
+                                 }
+                              }
+                           }
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                     mealKitProducts: childOrderMealKitProducts {
+                        id
+                        isAssembled
+                        assemblyStatus
+                        order {
+                           isAccepted
+                           isRejected
+                        }
+                        labelTemplateId
+                        assemblyStationId
+                        assemblyStation {
+                           id
+                           name
+                        }
+                        comboProductId
+                        comboProduct {
+                           id
+                           name
+                        }
+                        comboProductComponentId
+                        comboProductComponent {
+                           id
+                           label
+                        }
+                        simpleRecipeProductId
+                        simpleRecipeProduct {
+                           id
+                           name
+                        }
+                        simpleRecipeProductOptionId
+                        simpleRecipeProductOption {
+                           id
+                           simpleRecipeYield {
+                              id
+                              yield
+                           }
+                        }
+                        orderSachets(
+                           where: { packingStationId: $packingStationId }
+                        ) {
+                           id
+                           unit
+                           status
+                           quantity
+                           isAssembled
+                           isLabelled
+                           isPortioned
+                           ingredientName
+                           processingName
+                           packaging {
+                              id
+                              name
+                           }
+                           sachetItemId
+                           sachetItem {
+                              id
+                              bulkItemId
+                              bulkItem {
+                                 id
+                                 sop
+                                 yield
+                                 shelfLife
+                                 bulkDensity
+                                 supplierItemId
+                                 supplierItem {
+                                    id
+                                    name
+                                 }
+                              }
+                           }
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                     readyToEatProducts: childOrderReadyToEatProducts {
+                        id
+                        quantity
+                        isAssembled
+                        order {
+                           isAccepted
+                           isRejected
+                        }
+                        assemblyStatus
+                        labelTemplateId
+                        assemblyStationId
+                        assemblyStation {
+                           id
+                           name
+                        }
+                        comboProductId
+                        comboProduct {
+                           id
+                           name
+                        }
+                        comboProductComponentId
+                        comboProductComponent {
+                           id
+                           label
+                        }
+                        simpleRecipeProductId
+                        simpleRecipeProduct {
+                           id
+                           name
+                        }
+                        simpleRecipeProductOptionId
+                        simpleRecipeProductOption {
+                           id
+                           simpleRecipeYield {
+                              id
+                              yield
+                           }
+                        }
+                        orderSachets(
+                           where: { packingStationId: $packingStationId }
+                        ) {
+                           id
+                           unit
+                           status
+                           quantity
+                           isAssembled
+                           isLabelled
+                           isPortioned
+                           ingredientName
+                           processingName
+                           packaging {
+                              id
+                              name
+                           }
+                           sachetItemId
+                           sachetItem {
+                              id
+                              bulkItemId
+                              bulkItem {
+                                 id
+                                 sop
+                                 yield
+                                 shelfLife
+                                 bulkDensity
+                                 supplierItemId
+                                 supplierItem {
+                                    id
+                                    name
+                                 }
+                              }
+                           }
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                  }
+                  orderSachets(where: { packingStationId: $packingStationId }) {
+                     id
+                     unit
+                     status
+                     quantity
+                     isAssembled
+                     isLabelled
+                     isPortioned
+                     ingredientName
+                     processingName
+                     orderModifierId
+                     packaging {
+                        id
+                        name
+                     }
+                     sachetItemId
+                     sachetItem {
+                        id
+                        bulkItemId
+                        bulkItem {
+                           id
+                           sop
+                           yield
+                           shelfLife
+                           bulkDensity
+                           supplierItemId
+                           supplierItem {
+                              id
+                              name
+                           }
+                        }
+                     }
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
                   }
                }
             }
-            bulkItemId
-            bulkItem {
-               id
-               sop
-               yield
-               shelfLife
-               bulkDensity
-               supplierItem {
-                  name
-               }
-            }
-         }
-      }
-   }
-`
-
-export const FETCH_ORDER_SACHET = gql`
-   subscription orderSachet($id: Int!) {
-      orderSachet(id: $id) {
-         id
-         unit
-         status
-         quantity
-         isAssembled
-         isLabelled
-         isPortioned
-         ingredientName
-         processingName
-         labelTemplateId
-         packingStationId
-         packagingId
-         packaging {
-            name
-         }
-         sachetItemId
-         sachetItem {
-            id
-            bulkItem {
-               id
-               sop
-               yield
-               shelfLife
-               bulkDensity
-               supplierItem {
-                  name
-               }
-            }
-         }
-         bulkItemId
-         bulkItem {
-            id
-            sop
-            yield
-            shelfLife
-            bulkDensity
-            supplierItem {
-               name
-            }
-         }
-         mealkit: orderMealKitProduct {
-            orderId
-            product: simpleRecipeProduct {
-               id
-               name
-            }
-         }
-      }
-   }
-`
-
-export const FETCH_INVENTORY = gql`
-   subscription orderInventoryProduct($id: Int!) {
-      orderInventoryProduct(id: $id) {
-         id
-         quantity
-         assemblyStatus
-         inventoryProductId
-         inventoryProduct {
-            id
-            name
-            supplierItemId
-            supplierItem {
-               id
-               name
-               unit
-               unitSize
-               supplierId
-               supplier {
+         `,
+         ONE: gql`
+            subscription orderReadyToEatProduct($id: Int!) {
+               orderReadyToEatProduct(id: $id) {
                   id
-                  name
+                  hasModifiers
+                  isAssembled
+                  assemblyStatus
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  customizableProduct {
+                     id
+                     name
+                  }
+                  simpleRecipeProduct {
+                     id
+                     name
+                  }
+                  simpleRecipeProductOption {
+                     id
+                     simpleRecipeYield {
+                        id
+                        yield
+                     }
+                  }
                }
             }
-            sachetItemId
-            sachetItem {
-               unit
-               unitSize
-               bulkItemId
-               bulkItem {
-                  supplierItemId
-                  supplierItem {
-                     unit
+         `,
+      },
+      INVENTORY: {
+         LIST: gql`
+            subscription inventories(
+               $orderId: Int!
+               $packingStationId: Int_comparison_exp = {}
+               $assemblyStationId: Int_comparison_exp = {}
+            ) {
+               inventories: orderInventoryProducts(
+                  where: {
+                     orderId: { _eq: $orderId }
+                     assemblyStationId: $assemblyStationId
+                     orderModifierId: { _is_null: true }
+                  }
+               ) {
+                  id
+                  hasModifiers
+                  isAssembled
+                  order {
+                     isAccepted
+                     isRejected
+                  }
+                  assemblyStatus
+                  labelTemplateId
+                  assemblyStationId
+                  assemblyStation {
+                     id
                      name
-                     unitSize
-                     supplierId
-                     supplier {
+                  }
+                  comboProductId
+                  comboProduct {
+                     id
+                     name
+                  }
+                  inventoryProductId
+                  inventoryProduct {
+                     id
+                     name
+                  }
+                  comboProductComponentId
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  inventoryProductOptionId
+                  inventoryProductOption {
+                     id
+                     quantity
+                     label
+                  }
+                  orderSachets(where: { packingStationId: $packingStationId }) {
+                     id
+                     unit
+                     status
+                     quantity
+                     isAssembled
+                     isLabelled
+                     isPortioned
+                     ingredientName
+                     processingName
+                     orderModifierId
+                     packaging {
+                        id
+                        name
+                     }
+                     sachetItemId
+                     sachetItem {
+                        id
+                        bulkItemId
+                        bulkItem {
+                           id
+                           sop
+                           yield
+                           shelfLife
+                           bulkDensity
+                           supplierItemId
+                           supplierItem {
+                              id
+                              name
+                           }
+                        }
+                     }
+                     bulkItemId
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItemId
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  orderModifiers {
+                     inventoryProducts: childOrderInventoryProducts {
+                        id
+                        quantity
+                        isAssembled
+                        order {
+                           isAccepted
+                           isRejected
+                        }
+                        assemblyStatus
+                        labelTemplateId
+                        inventoryProductId
+                        inventoryProduct {
+                           id
+                           name
+                        }
+                        comboProductId
+                        comboProduct {
+                           id
+                           name
+                        }
+                        comboProductComponentId
+                        comboProductComponent {
+                           id
+                           label
+                        }
+                        assemblyStationId
+                        assemblyStation {
+                           id
+                           name
+                        }
+                        inventoryProductOptionId
+                        inventoryProductOption {
+                           id
+                           quantity
+                           label
+                        }
+                        orderSachets(
+                           where: { packingStationId: $packingStationId }
+                        ) {
+                           id
+                           unit
+                           status
+                           quantity
+                           isAssembled
+                           isLabelled
+                           isPortioned
+                           ingredientName
+                           processingName
+                           packaging {
+                              id
+                              name
+                           }
+                           sachetItemId
+                           sachetItem {
+                              id
+                              bulkItemId
+                              bulkItem {
+                                 id
+                                 sop
+                                 yield
+                                 shelfLife
+                                 bulkDensity
+                                 supplierItemId
+                                 supplierItem {
+                                    id
+                                    name
+                                 }
+                              }
+                           }
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                     mealKitProducts: childOrderMealKitProducts {
+                        id
+                        isAssembled
+                        assemblyStatus
+                        order {
+                           isAccepted
+                           isRejected
+                        }
+                        labelTemplateId
+                        assemblyStationId
+                        assemblyStation {
+                           id
+                           name
+                        }
+                        comboProductId
+                        comboProduct {
+                           id
+                           name
+                        }
+                        comboProductComponentId
+                        comboProductComponent {
+                           id
+                           label
+                        }
+                        simpleRecipeProductId
+                        simpleRecipeProduct {
+                           id
+                           name
+                        }
+                        simpleRecipeProductOptionId
+                        simpleRecipeProductOption {
+                           id
+                           simpleRecipeYield {
+                              id
+                              yield
+                           }
+                        }
+                        orderSachets(
+                           where: { packingStationId: $packingStationId }
+                        ) {
+                           id
+                           unit
+                           status
+                           quantity
+                           isAssembled
+                           isLabelled
+                           isPortioned
+                           ingredientName
+                           processingName
+                           packaging {
+                              id
+                              name
+                           }
+                           sachetItemId
+                           sachetItem {
+                              id
+                              bulkItemId
+                              bulkItem {
+                                 id
+                                 sop
+                                 yield
+                                 shelfLife
+                                 bulkDensity
+                                 supplierItemId
+                                 supplierItem {
+                                    id
+                                    name
+                                 }
+                              }
+                           }
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                     readyToEatProducts: childOrderReadyToEatProducts {
+                        id
+                        quantity
+                        isAssembled
+                        order {
+                           isAccepted
+                           isRejected
+                        }
+                        assemblyStatus
+                        labelTemplateId
+                        assemblyStationId
+                        assemblyStation {
+                           id
+                           name
+                        }
+                        comboProductId
+                        comboProduct {
+                           id
+                           name
+                        }
+                        comboProductComponentId
+                        comboProductComponent {
+                           id
+                           label
+                        }
+                        simpleRecipeProductId
+                        simpleRecipeProduct {
+                           id
+                           name
+                        }
+                        simpleRecipeProductOptionId
+                        simpleRecipeProductOption {
+                           id
+                           simpleRecipeYield {
+                              id
+                              yield
+                           }
+                        }
+                        orderSachets(
+                           where: { packingStationId: $packingStationId }
+                        ) {
+                           id
+                           unit
+                           status
+                           quantity
+                           isAssembled
+                           isLabelled
+                           isPortioned
+                           ingredientName
+                           processingName
+                           packaging {
+                              id
+                              name
+                           }
+                           sachetItemId
+                           sachetItem {
+                              id
+                              bulkItemId
+                              bulkItem {
+                                 id
+                                 sop
+                                 yield
+                                 shelfLife
+                                 bulkDensity
+                                 supplierItemId
+                                 supplierItem {
+                                    id
+                                    name
+                                 }
+                              }
+                           }
+                           bulkItemId
+                           bulkItem {
+                              id
+                              sop
+                              yield
+                              shelfLife
+                              bulkDensity
+                              supplierItemId
+                              supplierItem {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         `,
+         ONE: gql`
+            subscription orderInventoryProduct($id: Int!) {
+               orderInventoryProduct(id: $id) {
+                  id
+                  quantity
+                  hasModifiers
+                  isAssembled
+                  assemblyStatus
+                  inventoryProductId
+                  inventoryProduct {
+                     id
+                     name
+                     supplierItemId
+                     supplierItem {
+                        id
+                        name
+                        unit
+                        unitSize
+                        supplierId
+                        supplier {
+                           id
+                           name
+                        }
+                     }
+                     sachetItemId
+                     sachetItem {
+                        unit
+                        unitSize
+                        bulkItemId
+                        bulkItem {
+                           supplierItemId
+                           supplierItem {
+                              unit
+                              name
+                              unitSize
+                              supplierId
+                              supplier {
+                                 id
+                                 name
+                              }
+                           }
+                        }
+                     }
+                  }
+                  comboProductId
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponentId
+                  comboProductComponent {
+                     id
+                     label
+                  }
+               }
+            }
+         `,
+      },
+      SACHET: {
+         ONE: gql`
+            subscription orderSachet($id: Int!) {
+               orderSachet(id: $id) {
+                  id
+                  unit
+                  status
+                  quantity
+                  isAssembled
+                  isLabelled
+                  isPortioned
+                  ingredientName
+                  processingName
+                  labelTemplateId
+                  packingStationId
+                  packagingId
+                  packaging {
+                     id
+                     name
+                  }
+                  sachetItemId
+                  sachetItem {
+                     id
+                     bulkItem {
+                        id
+                        sop
+                        yield
+                        shelfLife
+                        bulkDensity
+                        supplierItem {
+                           id
+                           name
+                        }
+                     }
+                  }
+                  bulkItemId
+                  bulkItem {
+                     id
+                     sop
+                     yield
+                     shelfLife
+                     bulkDensity
+                     supplierItem {
                         id
                         name
                      }
                   }
-               }
-            }
-         }
-         comboProductId
-         comboProduct {
-            id
-            name
-         }
-         comboProductComponentId
-         comboProductComponent {
-            id
-            label
-         }
-      }
-   }
-`
-
-export const FETCH_READYTOEAT = gql`
-   subscription orderReadyToEatProduct($id: Int!) {
-      orderReadyToEatProduct(id: $id) {
-         assemblyStatus
-         comboProduct {
-            name
-         }
-         comboProductComponent {
-            label
-         }
-         customizableProduct {
-            name
-         }
-         simpleRecipeProduct {
-            name
-         }
-         simpleRecipeProductOption {
-            simpleRecipeYield {
-               yield
-            }
-         }
-      }
-   }
-`
-
-export const ORDERS_AGGREGATE = gql`
-   query ordersAggregate($where: order_order_bool_exp = {}) {
-      ordersAggregate(where: $where) {
-         aggregate {
-            count
-         }
-      }
-   }
-`
-
-export const STATIONS = gql`
-   subscription stations {
-      stations {
-         id
-         title: name
-      }
-   }
-`
-
-export const STATION = gql`
-   query station($id: Int!) {
-      station(id: $id) {
-         id
-         name
-      }
-   }
-`
-
-export const PLANNED = {
-   INVENTORY_PRODUCTS: gql`
-      subscription inventoryProducts($order: order_order_bool_exp) {
-         inventoryProducts: inventoryProductsAggregate(
-            where: { orderInventoryProducts: { order: $order } }
-         ) {
-            aggregate {
-               count(columns: id)
-            }
-            nodes {
-               id
-               name
-               products: orderInventoryProducts_aggregate(
-                  where: { order: $order }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                     sum {
-                        quantity
+                  orderMealKitProductId
+                  mealkit: orderMealKitProduct {
+                     id
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                  }
+                  orderReadyToEatProductId
+                  readyToEat: orderReadyToEatProduct {
+                     id
+                     order {
+                        isAccepted
+                        isRejected
+                     }
+                  }
+                  orderInventoryProductId
+                  inventory: orderInventoryProduct {
+                     id
+                     order {
+                        isAccepted
+                        isRejected
                      }
                   }
                }
-               options: inventoryProductOptions(
-                  where: { orderInventoryProducts: { order: $order } }
+            }
+         `,
+      },
+   },
+   ORDERS: {
+      LIST: gql`
+         subscription orders(
+            $limit: Int
+            $offset: Int
+            $where: order_order_bool_exp = {}
+         ) {
+            orders(
+               limit: $limit
+               offset: $offset
+               order_by: { isAccepted: desc, updated_at: desc }
+               where: $where
+            ) {
+               id
+               created_at
+               orderStatus
+               paymentStatus
+               tax
+               discount
+               itemTotal
+               amountPaid
+               deliveryPrice
+               isAccepted
+               isRejected
+               transactionId
+               fulfillmentType
+               restaurant: deliveryInfo(path: "pickup.pickupInfo")
+               customer: deliveryInfo(path: "dropoff.dropoffInfo")
+               pickupWindow: deliveryInfo(path: "pickup.window")
+               dropoffWindow: deliveryInfo(path: "dropoff.window")
+               customer: deliveryInfo(path: "dropoff.dropoffInfo")
+               deliveryCompany: deliveryInfo(path: "deliveryCompany")
+               orderMealKitProducts(
+                  where: { orderModifierId: { _is_null: true } }
                ) {
                   id
-                  label
-                  products: orderInventoryProducts_aggregate(
-                     where: { order: $order }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                        sum {
-                           quantity
-                        }
-                     }
-                  }
-                  assembledProducts: orderInventoryProducts_aggregate(
-                     where: { order: $order, isAssembled: { _eq: true } }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                        sum {
-                           quantity
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-   `,
-   INVENTORY_PRODUCT: gql`
-      subscription inventoryProduct(
-         $id: Int!
-         $order: order_order_bool_exp = {}
-      ) {
-         inventoryProduct(id: $id) {
-            id
-            name
-            products: orderInventoryProducts_aggregate(
-               where: { order: $order }
-            ) {
-               aggregate {
-                  count(columns: id)
-                  sum {
-                     quantity
-                  }
-               }
-            }
-            options: inventoryProductOptions(
-               where: { orderInventoryProducts: { order: $order } }
-            ) {
-               id
-               label
-               orderInventoryProducts: orderInventoryProducts_aggregate(
-                  where: { order: $order }
-               ) {
-                  aggregate {
-                     total: count(columns: id)
-                  }
-                  nodes {
+                  price
+                  isAssembled
+                  assemblyStatus
+                  assemblyStation {
                      id
-                     orderId
-                     quantity
+                     name
+                  }
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  orderSachets(where: { orderModifierId: { _is_null: true } }) {
+                     id
+                     status
                      isAssembled
                   }
-               }
-            }
-         }
-      }
-   `,
-   READY_TO_EAT_PRODUCTS: gql`
-      subscription simpleRecipeProducts($order: order_order_bool_exp) {
-         simpleRecipeProducts: simpleRecipeProductsAggregate(
-            where: { orderReadyToEatProducts: { order: $order } }
-         ) {
-            aggregate {
-               count(columns: id)
-            }
-            nodes {
-               id
-               name
-               options: simpleRecipeProductOptions(
-                  where: { orderReadyToEatProducts: { order: $order } }
-               ) {
-                  id
-                  yield: simpleRecipeYield {
+                  simpleRecipeProduct {
                      id
-                     size: yield(path: "serving")
+                     name
                   }
-                  products: orderReadyToEatProducts_aggregate(
-                     where: { order: $order }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                        sum {
-                           quantity
-                        }
+                  simpleRecipeProductOption {
+                     id
+                     simpleRecipeYield {
+                        id
+                        yield
                      }
                   }
-                  assembledProducts: orderReadyToEatProducts_aggregate(
-                     where: { order: $order, isAssembled: { _eq: true } }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                        sum {
-                           quantity
-                        }
+               }
+               orderReadyToEatProducts(
+                  where: { orderModifierId: { _is_null: true } }
+               ) {
+                  id
+                  price
+                  isAssembled
+                  assemblyStatus
+                  simpleRecipeProduct {
+                     id
+                     name
+                  }
+                  assemblyStation {
+                     id
+                     name
+                  }
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  simpleRecipeProduct {
+                     id
+                     name
+                  }
+                  simpleRecipeProductOption {
+                     id
+                     simpleRecipeYield {
+                        id
+                        yield
                      }
+                  }
+               }
+               orderInventoryProducts(
+                  where: { orderModifierId: { _is_null: true } }
+               ) {
+                  id
+                  price
+                  isAssembled
+                  inventoryProduct {
+                     id
+                     name
+                  }
+                  comboProduct {
+                     id
+                     name
+                  }
+                  comboProductComponent {
+                     id
+                     label
+                  }
+                  assemblyStation {
+                     id
+                     name
+                  }
+                  assemblyStatus
+                  customizableProduct {
+                     id
+                     name
+                  }
+                  inventoryProductOption {
+                     id
+                     quantity
+                     label
                   }
                }
             }
          }
-      }
-   `,
-   READY_TO_EAT_PRODUCT: gql`
-      subscription simpleRecipeProduct(
-         $id: Int!
-         $order: order_order_bool_exp = {}
-      ) {
-         simpleRecipeProduct(id: $id) {
-            id
-            name
-            products: orderReadyToEatProducts_aggregate(
-               where: { order: $order }
-            ) {
-               aggregate {
-                  count
-                  sum {
-                     quantity
-                  }
-               }
-            }
-            options: simpleRecipeProductOptions(
-               where: { orderReadyToEatProducts: { order: $order } }
-            ) {
-               id
-               yield: simpleRecipeYield {
-                  id
-                  size: yield(path: "serving")
-               }
-               orderReadyToEatProducts: orderReadyToEatProducts_aggregate(
-                  where: { order: $order }
-               ) {
+      `,
+      AGGREGATE: {
+         BY_AMOUNT: gql`
+            subscription orders {
+               orders: ordersAggregate {
                   aggregate {
-                     total: count(columns: id)
+                     count
                      sum {
-                        quantity
+                        amount: amountPaid
                      }
-                  }
-                  nodes {
-                     id
-                     orderId
-                     quantity
-                     isAssembled
+                     avg {
+                        amountPaid
+                     }
                   }
                }
             }
-         }
-      }
-   `,
-   MEAL_KIT_PRODUCTS: gql`
-      subscription simpleRecipeProducts($order: order_order_bool_exp) {
-         simpleRecipeProducts: simpleRecipeProductsAggregate(
-            where: { orderMealKitProducts: { order: $order } }
-         ) {
-            aggregate {
-               count(columns: id)
+         `,
+         BY_STATUS: gql`
+            subscription orderByStatus {
+               orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
+                  value
+                  orders: orders_aggregate {
+                     aggregate {
+                        count
+                        sum {
+                           amount: amountPaid
+                        }
+                        avg {
+                           amountPaid
+                        }
+                     }
+                  }
+               }
             }
-            nodes {
+         `,
+         TOTAL: gql`
+            subscription orders($where: order_order_bool_exp = {}) {
+               orders: ordersAggregate(where: $where) {
+                  aggregate {
+                     count
+                     sum {
+                        amountPaid
+                     }
+                     avg {
+                        amountPaid
+                     }
+                  }
+               }
+            }
+         `,
+      },
+   },
+   DELIVERY: {
+      SERVICE: gql`
+         query service($id: Int!) {
+            service: partnerships_deliveryPartnership_by_pk(id: $id) {
                id
-               name
-               options: simpleRecipeProductOptions(
-                  where: { orderMealKitProducts: { order: $order } }
-               ) {
+               details: deliveryCompany {
                   id
-                  yield: simpleRecipeYield {
-                     id
-                     size: yield(path: "serving")
-                  }
-                  products: orderMealKitProducts_aggregate(
-                     where: { order: $order }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                        sum {
-                           quantity
-                        }
-                     }
-                  }
-                  assembledProducts: orderMealKitProducts_aggregate(
-                     where: { order: $order, isAssembled: { _eq: true } }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                        sum {
-                           quantity
-                        }
-                     }
-                  }
+                  name
+                  assets
+                  website
+                  description
+                  established
                }
             }
          }
-      }
-   `,
-   MEAL_KIT_PRODUCT: gql`
-      subscription simpleRecipeProduct(
-         $id: Int!
-         $order: order_order_bool_exp = {}
-      ) {
-         simpleRecipeProduct(id: $id) {
-            id
-            name
-            products: orderMealKitProducts_aggregate(where: { order: $order }) {
-               aggregate {
-                  count
-                  sum {
-                     quantity
-                  }
-               }
+      `,
+      SERVICES: gql`
+         query deliveryServices {
+            deliveryServices(where: { isActive: { _eq: true } }) {
+               id
+               logo
+               companyName
+               isThirdParty
+               partnershipId
             }
-            options: simpleRecipeProductOptions(
-               where: { orderMealKitProducts: { order: $order } }
+         }
+      `,
+   },
+   NOTIFICATION: {
+      LIST: gql`
+         subscription displayNotifications {
+            displayNotifications(
+               order_by: { created_at: desc }
+               where: { type: { app: { _eq: "Order" } } }
             ) {
                id
-               yield: simpleRecipeYield {
-                  id
-                  size: yield(path: "serving")
-               }
-               orderMealKitProducts: orderMealKitProducts_aggregate(
-                  where: { order: $order }
-               ) {
-                  aggregate {
-                     total: count(columns: id)
-                     sum {
-                        quantity
-                     }
-                  }
-                  nodes {
-                     id
-                     orderId
-                     quantity
-                     isAssembled
-                  }
+               content
+               created_at
+               updated_at
+               type {
+                  isGlobal
+                  isLocal
+                  playAudio
+                  audioUrl
                }
             }
          }
-      }
-   `,
-   MEAL_KIT_SACHETS: gql`
-      subscription ingredients($order: order_order_bool_exp = {}) {
-         ingredients: ingredientsAggregate(
-            where: {
-               ingredientSachets: {
-                  orderSachets: { orderMealKitProduct: { order: $order } }
+      `,
+      NEW: gql`
+         subscription displayNotifications {
+            displayNotifications(where: { type: { app: { _eq: "Order" } } }) {
+               type {
+                  audioUrl
                }
             }
-         ) {
-            aggregate {
-               count
-            }
-            nodes {
+         }
+      `,
+   },
+   STATIONS: {
+      ONE: gql`
+         query station($id: Int!) {
+            station(id: $id) {
                id
                name
-               processings: ingredientProcessings_aggregate(
-                  where: {
-                     ingredientSachets: {
-                        orderSachets: { orderMealKitProduct: { order: $order } }
+            }
+         }
+      `,
+      LIST: gql`
+         subscription stations {
+            stations {
+               id
+               title: name
+            }
+         }
+      `,
+      BY_USER: gql`
+         subscription stations($email: String_comparison_exp!) {
+            stations(where: { assignedUsers: { user: { email: $email } } }) {
+               id
+               name
+               defaultKotPrinter {
+                  name
+                  state
+                  printNodeId
+               }
+               defaultLabelPrinter {
+                  name
+                  state
+                  printNodeId
+               }
+               defaultScale {
+                  id
+                  active
+                  deviceNum
+                  deviceName
+               }
+            }
+         }
+      `,
+   },
+   PLANNED: {
+      PRODUCTS: {
+         INVENTORY: {
+            LIST: gql`
+               subscription inventoryProducts($order: order_order_bool_exp) {
+                  inventoryProducts: inventoryProductsAggregate(
+                     where: { orderInventoryProducts: { order: $order } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
                      }
-                  }
-               ) {
-                  aggregate {
-                     count(columns: processingName)
-                  }
-                  nodes {
-                     id
-                     name: processingName
-                     sachets: ingredientSachets_aggregate(
-                        where: {
-                           orderSachets: {
-                              orderMealKitProduct: { order: $order }
+                     nodes {
+                        id
+                        name
+                        products: orderInventoryProducts_aggregate(
+                           where: { order: $order }
+                        ) {
+                           aggregate {
+                              count(columns: id)
+                              sum {
+                                 quantity
+                              }
                            }
                         }
-                     ) {
-                        aggregate {
-                           count(columns: id)
-                        }
-                        nodes {
+                        options: inventoryProductOptions(
+                           where: { orderInventoryProducts: { order: $order } }
+                        ) {
                            id
-                           unit
-                           quantity
-                           allOrderSachets: orderSachets_aggregate(
-                              where: { orderMealKitProduct: { order: $order } }
+                           label
+                           products: orderInventoryProducts_aggregate(
+                              where: { order: $order }
                            ) {
                               aggregate {
                                  count(columns: id)
@@ -970,23 +1687,149 @@ export const PLANNED = {
                                     quantity
                                  }
                               }
-                              nodes {
+                           }
+                           assembledProducts: orderInventoryProducts_aggregate(
+                              where: {
+                                 order: $order
+                                 isAssembled: { _eq: true }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: id)
+                                 sum {
+                                    quantity
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            `,
+            ONE: gql`
+               subscription inventoryProduct(
+                  $id: Int!
+                  $order: order_order_bool_exp = {}
+               ) {
+                  inventoryProduct(id: $id) {
+                     id
+                     name
+                     products: orderInventoryProducts_aggregate(
+                        where: { order: $order }
+                     ) {
+                        aggregate {
+                           count(columns: id)
+                           sum {
+                              quantity
+                           }
+                        }
+                     }
+                     options: inventoryProductOptions(
+                        where: { orderInventoryProducts: { order: $order } }
+                     ) {
+                        id
+                        label
+                        orderInventoryProducts: orderInventoryProducts_aggregate(
+                           where: { order: $order }
+                        ) {
+                           aggregate {
+                              total: count(columns: id)
+                           }
+                           nodes {
+                              id
+                              orderId
+                              quantity
+                              isAssembled
+                              sachets: orderSachets(
+                                 where: {
+                                    orderInventoryProduct: { order: $order }
+                                 }
+                              ) {
                                  id
+                                 unit
+                                 status
+                                 quantity
                                  isAssembled
-                                 orderMealKitProduct {
+                                 isLabelled
+                                 isPortioned
+                                 ingredientName
+                                 processingName
+                                 packaging {
                                     id
-                                    orderId
-                                    simpleRecipeProduct {
+                                    name
+                                 }
+                                 sachetItemId
+                                 sachetItem {
+                                    id
+                                    bulkItemId
+                                    bulkItem {
+                                       id
+                                       sop
+                                       yield
+                                       shelfLife
+                                       bulkDensity
+                                       supplierItemId
+                                       supplierItem {
+                                          id
+                                          name
+                                       }
+                                    }
+                                 }
+                                 bulkItemId
+                                 bulkItem {
+                                    id
+                                    sop
+                                    yield
+                                    shelfLife
+                                    bulkDensity
+                                    supplierItemId
+                                    supplierItem {
                                        id
                                        name
                                     }
                                  }
                               }
                            }
-                           completedOrderSachets: orderSachets_aggregate(
+                        }
+                     }
+                  }
+               }
+            `,
+         },
+         READY_TO_EAT: {
+            LIST: gql`
+               subscription simpleRecipeProducts($order: order_order_bool_exp) {
+                  simpleRecipeProducts: simpleRecipeProductsAggregate(
+                     where: { orderReadyToEatProducts: { order: $order } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                     }
+                     nodes {
+                        id
+                        name
+                        options: simpleRecipeProductOptions(
+                           where: { orderReadyToEatProducts: { order: $order } }
+                        ) {
+                           id
+                           yield: simpleRecipeYield {
+                              id
+                              size: yield(path: "serving")
+                           }
+                           products: orderReadyToEatProducts_aggregate(
+                              where: { order: $order }
+                           ) {
+                              aggregate {
+                                 count(columns: id)
+                                 sum {
+                                    quantity
+                                 }
+                              }
+                           }
+                           assembledProducts: orderReadyToEatProducts_aggregate(
                               where: {
-                                 orderMealKitProduct: { order: $order }
-                                 status: { _eq: "PACKED" }
+                                 order: $order
+                                 isAssembled: { _eq: true }
                               }
                            ) {
                               aggregate {
@@ -1000,57 +1843,420 @@ export const PLANNED = {
                      }
                   }
                }
+            `,
+            ONE: gql`
+               subscription simpleRecipeProduct(
+                  $id: Int!
+                  $order: order_order_bool_exp = {}
+               ) {
+                  simpleRecipeProduct(id: $id) {
+                     id
+                     name
+                     products: orderReadyToEatProducts_aggregate(
+                        where: { order: $order }
+                     ) {
+                        aggregate {
+                           count
+                           sum {
+                              quantity
+                           }
+                        }
+                     }
+                     options: simpleRecipeProductOptions(
+                        where: { orderReadyToEatProducts: { order: $order } }
+                     ) {
+                        id
+                        yield: simpleRecipeYield {
+                           id
+                           size: yield(path: "serving")
+                        }
+                        orderReadyToEatProducts: orderReadyToEatProducts_aggregate(
+                           where: { order: $order }
+                        ) {
+                           aggregate {
+                              total: count(columns: id)
+                              sum {
+                                 quantity
+                              }
+                           }
+                           nodes {
+                              id
+                              orderId
+                              quantity
+                              isAssembled
+                              sachets: orderSachets(
+                                 where: {
+                                    orderReadyToEatProduct: { order: $order }
+                                 }
+                              ) {
+                                 id
+                                 unit
+                                 status
+                                 quantity
+                                 isAssembled
+                                 isLabelled
+                                 isPortioned
+                                 ingredientName
+                                 processingName
+                                 packaging {
+                                    id
+                                    name
+                                 }
+                                 sachetItemId
+                                 sachetItem {
+                                    id
+                                    bulkItemId
+                                    bulkItem {
+                                       id
+                                       sop
+                                       yield
+                                       shelfLife
+                                       bulkDensity
+                                       supplierItemId
+                                       supplierItem {
+                                          id
+                                          name
+                                       }
+                                    }
+                                 }
+                                 bulkItemId
+                                 bulkItem {
+                                    id
+                                    sop
+                                    yield
+                                    shelfLife
+                                    bulkDensity
+                                    supplierItemId
+                                    supplierItem {
+                                       id
+                                       name
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            `,
+            SACHET: {
+               LIST: gql`
+                  subscription ingredients($order: order_order_bool_exp = {}) {
+                     ingredients: ingredientsAggregate(
+                        where: {
+                           ingredientSachets: {
+                              orderSachets: {
+                                 orderReadyToEatProduct: { order: $order }
+                              }
+                           }
+                        }
+                     ) {
+                        aggregate {
+                           count
+                        }
+                        nodes {
+                           id
+                           name
+                           processings: ingredientProcessings_aggregate(
+                              where: {
+                                 ingredientSachets: {
+                                    orderSachets: {
+                                       orderReadyToEatProduct: { order: $order }
+                                    }
+                                 }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: processingName)
+                              }
+                              nodes {
+                                 id
+                                 name: processingName
+                                 sachets: ingredientSachets_aggregate(
+                                    where: {
+                                       orderSachets: {
+                                          orderReadyToEatProduct: {
+                                             order: $order
+                                          }
+                                       }
+                                    }
+                                 ) {
+                                    aggregate {
+                                       count(columns: id)
+                                    }
+                                    nodes {
+                                       id
+                                       unit
+                                       quantity
+                                       allOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderReadyToEatProduct: {
+                                                order: $order
+                                             }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                          nodes {
+                                             id
+                                             isAssembled
+                                             orderReadyToEatProduct {
+                                                id
+                                                orderId
+                                                simpleRecipeProduct {
+                                                   id
+                                                   name
+                                                }
+                                             }
+                                          }
+                                       }
+                                       completedOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderReadyToEatProduct: {
+                                                order: $order
+                                             }
+                                             status: { _eq: "PACKED" }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               `,
+            },
+         },
+         MEAL_KIT: {
+            LIST: gql`
+               subscription simpleRecipeProducts($order: order_order_bool_exp) {
+                  simpleRecipeProducts: simpleRecipeProductsAggregate(
+                     where: { orderMealKitProducts: { order: $order } }
+                  ) {
+                     aggregate {
+                        count(columns: id)
+                     }
+                     nodes {
+                        id
+                        name
+                        options: simpleRecipeProductOptions(
+                           where: { orderMealKitProducts: { order: $order } }
+                        ) {
+                           id
+                           yield: simpleRecipeYield {
+                              id
+                              size: yield(path: "serving")
+                           }
+                           products: orderMealKitProducts_aggregate(
+                              where: { order: $order }
+                           ) {
+                              aggregate {
+                                 count(columns: id)
+                                 sum {
+                                    quantity
+                                 }
+                              }
+                           }
+                           assembledProducts: orderMealKitProducts_aggregate(
+                              where: {
+                                 order: $order
+                                 isAssembled: { _eq: true }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: id)
+                                 sum {
+                                    quantity
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            `,
+            ONE: gql`
+               subscription simpleRecipeProduct(
+                  $id: Int!
+                  $order: order_order_bool_exp = {}
+               ) {
+                  simpleRecipeProduct(id: $id) {
+                     id
+                     name
+                     products: orderMealKitProducts_aggregate(
+                        where: { order: $order }
+                     ) {
+                        aggregate {
+                           count
+                           sum {
+                              quantity
+                           }
+                        }
+                     }
+                     options: simpleRecipeProductOptions(
+                        where: { orderMealKitProducts: { order: $order } }
+                     ) {
+                        id
+                        yield: simpleRecipeYield {
+                           id
+                           size: yield(path: "serving")
+                        }
+                        orderMealKitProducts: orderMealKitProducts_aggregate(
+                           where: { order: $order }
+                        ) {
+                           aggregate {
+                              total: count(columns: id)
+                              sum {
+                                 quantity
+                              }
+                           }
+                           nodes {
+                              id
+                              orderId
+                              quantity
+                              isAssembled
+                           }
+                        }
+                     }
+                  }
+               }
+            `,
+            SACHET: {
+               ONE: gql`
+                  subscription ingredients($order: order_order_bool_exp = {}) {
+                     ingredients: ingredientsAggregate(
+                        where: {
+                           ingredientSachets: {
+                              orderSachets: {
+                                 orderMealKitProduct: { order: $order }
+                              }
+                           }
+                        }
+                     ) {
+                        aggregate {
+                           count
+                        }
+                        nodes {
+                           id
+                           name
+                           processings: ingredientProcessings_aggregate(
+                              where: {
+                                 ingredientSachets: {
+                                    orderSachets: {
+                                       orderMealKitProduct: { order: $order }
+                                    }
+                                 }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: processingName)
+                              }
+                              nodes {
+                                 id
+                                 name: processingName
+                                 sachets: ingredientSachets_aggregate(
+                                    where: {
+                                       orderSachets: {
+                                          orderMealKitProduct: { order: $order }
+                                       }
+                                    }
+                                 ) {
+                                    aggregate {
+                                       count(columns: id)
+                                    }
+                                    nodes {
+                                       id
+                                       unit
+                                       quantity
+                                       allOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderMealKitProduct: {
+                                                order: $order
+                                             }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                          nodes {
+                                             id
+                                             isAssembled
+                                             orderMealKitProduct {
+                                                id
+                                                orderId
+                                                simpleRecipeProduct {
+                                                   id
+                                                   name
+                                                }
+                                             }
+                                          }
+                                       }
+                                       completedOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderMealKitProduct: {
+                                                order: $order
+                                             }
+                                             status: { _eq: "PACKED" }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               `,
+            },
+         },
+      },
+   },
+   SETTINGS: {
+      LIST: gql`
+         subscription settings {
+            settings: settings_appSettings {
+               id
+               app
+               type
+               identifier
+               value
             }
          }
-      }
-   `,
+      `,
+   },
+   LABEL_TEMPLATE: {
+      ONE: gql`
+         query labelTemplate($id: Int!) {
+            labelTemplate(id: $id) {
+               id
+               name
+            }
+         }
+      `,
+   },
 }
-
-export const STATIONS_BY_USER = gql`
-   subscription stations($email: String_comparison_exp!) {
-      stations(where: { assignedUsers: { user: { email: $email } } }) {
-         id
-         name
-         defaultKotPrinter {
-            name
-            state
-            printNodeId
-         }
-         defaultLabelPrinter {
-            name
-            state
-            printNodeId
-         }
-         defaultScale {
-            id
-            active
-            deviceNum
-            deviceName
-         }
-      }
-   }
-`
-
-export const SETTINGS = gql`
-   subscription settings {
-      settings: settings_appSettings {
-         id
-         app
-         type
-         identifier
-         value
-      }
-   }
-`
-
-export const LABEL_TEMPLATE = gql`
-   query labelTemplate($id: Int!) {
-      labelTemplate(id: $id) {
-         id
-         name
-      }
-   }
-`
 
 export const DEVICES = {
    PRINTERS: gql`

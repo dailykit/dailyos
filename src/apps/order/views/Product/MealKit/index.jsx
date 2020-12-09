@@ -3,16 +3,15 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../../graphql'
-import { NewTabIcon } from '../../../../assets/icons'
-import { useTabs, useOrder } from '../../../../context'
-import { logger } from '../../../../../../shared/utils'
+import { QUERIES } from '../../../graphql'
+import { NewTabIcon } from '../../../assets/icons'
+import { useTabs, useOrder } from '../../../context'
+import { logger } from '../../../../../shared/utils'
 import {
    Tooltip,
    ErrorState,
    InlineLoader,
-} from '../../../../../../shared/components'
-import { Products, ProductTitle, OptionsHeader, Product } from '../styled'
+} from '../../../../../shared/components'
 import {
    List,
    ListBody,
@@ -23,20 +22,19 @@ import {
    StyledTabList,
    StyledTabPanel,
    StyledTabPanels,
-} from './styled'
+   Products,
+   ProductTitle,
+   OptionsHeader,
+   Product,
+} from '../styled'
 
-export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
+export const MealKitProduct = () => {
    const { state } = useOrder()
    const { error, loading, data: { ingredients = {} } = {} } = useSubscription(
-      PLANNED.MEAL_KIT_SACHETS,
+      QUERIES.PLANNED.PRODUCTS.MEAL_KIT.SACHET.ONE,
       {
          variables: {
             order: state.orders.where,
-         },
-         onSubscriptionData: ({
-            subscriptionData: { data: { ingredients = {} } = {} } = {},
-         }) => {
-            setMealKitSachetTotal(ingredients.aggregate.count)
          },
       }
    )
@@ -51,7 +49,7 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
       return <Text as="h3">No Meal kit sachets</Text>
 
    return (
-      <>
+      <Flex padding="16px">
          <Flex container alignItems="center">
             <Text as="h2">Meal Kit Sachets</Text>
             <Tooltip identifier="app_order_planned_mealkit_sachet_heading" />
@@ -162,7 +160,7 @@ export const MealKitSachetSection = ({ setMealKitSachetTotal }) => {
                </Product>
             ))}
          </Products>
-      </>
+      </Flex>
    )
 }
 
@@ -212,15 +210,15 @@ const Processing = ({ processing }) => {
 
 const Sachet = ({ sachet }) => {
    const { addTab } = useTabs()
-   const { state, selectMealKit } = useOrder()
+   const { state, selectSachet } = useOrder()
 
    const openOrder = (e, id) => {
       e.stopPropagation()
       addTab(`ORD${id}`, `/apps/order/orders/${id}`)
    }
 
-   const selectSachet = (id, name) => {
-      selectMealKit(id, name)
+   const select = (id, name) => {
+      selectSachet(id, { name })
    }
 
    return (
@@ -231,9 +229,9 @@ const Sachet = ({ sachet }) => {
                   <ListBodyItem
                      key={sachet.id}
                      isAssembled={sachet.isAssembled}
-                     isActive={sachet.id === state.mealkit.sachet_id}
+                     isActive={sachet.id === state.sachet.id}
                      onClick={() =>
-                        selectSachet(
+                        select(
                            sachet.id,
                            sachet.orderMealKitProduct.simpleRecipeProduct.name
                         )

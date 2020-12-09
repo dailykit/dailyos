@@ -86,13 +86,14 @@ export default function InfoTunnel({ close, formState }) {
    const isObjectValid = () => {
       if (!itemName.value || !itemName.meta.isValid) return 'invalid item name'
       if (!sku.value || !sku.meta.isValid) return 'invalid sku'
-      if (!unitSize.value || !unitSize.meta.isValid)
+      if (!unitSize.value || unitSize.value === ' ')
          return 'invalid unit quantity'
       if (!unit.value) return 'unit is required'
       if (!unitPrice.value || !unitPrice.meta.isValid)
          return 'invalid unit price'
       if (!leadTime.value || !leadTime.meta.isValid) return 'invalid lead time'
-      if (!leadTimeUnit.value) return 'lead time unit is required'
+      if (!leadTimeUnit.value || leadTimeUnit.value === ' ')
+         return 'lead time unit is required'
 
       return true
    }
@@ -306,7 +307,10 @@ export default function InfoTunnel({ close, formState }) {
                            <Form.Select
                               id="unit"
                               name="unit"
-                              options={units}
+                              options={[
+                                 { id: 0, title: 'Select Unit', value: ' ' },
+                                 ...units,
+                              ]}
                               value={unit.value}
                               onChange={e =>
                                  setUnit({
@@ -391,8 +395,9 @@ export default function InfoTunnel({ close, formState }) {
                               name="leadTimeUnit"
                               value={leadTimeUnit.value}
                               options={[
-                                 { id: 0, title: t(address.concat('days')) },
-                                 { id: 1, title: t(address.concat('weeks')) },
+                                 { id: 0, title: 'Select Unit', value: ' ' },
+                                 { id: 1, title: t(address.concat('days')) },
+                                 { id: 2, title: t(address.concat('weeks')) },
                               ]}
                               onChange={e =>
                                  setLeadTimeUnit({

@@ -10,19 +10,13 @@ import {
 
 import { Wrapper } from './styled'
 import { useTabs } from '../../context'
-import {
-   InventorySection,
-   ReadyToEatSection,
-   MealKitSection,
-   MealKitSachetSection,
-} from './sections'
+import { InventorySection, ReadyToEatSection, MealKitSection } from './sections'
 
 const Planned = () => {
    const { tab, addTab } = useTabs()
    const [mealKitTotal, setMealKitTotal] = React.useState(0)
    const [inventoryTotal, setInventoryTotal] = React.useState(0)
    const [readyToEatTotal, setReadyToEatTotal] = React.useState(0)
-   const [mealKitSachetTotal, setMealKitSachetTotal] = React.useState(0)
 
    React.useEffect(() => {
       if (!tab) {
@@ -33,18 +27,11 @@ const Planned = () => {
    return (
       <Wrapper>
          <HorizontalTabs>
-            <Flex container padding="0 16px">
-               <HorizontalTabList>
-                  <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
-                  <HorizontalTab>
-                     Ready To Eat ({readyToEatTotal})
-                  </HorizontalTab>
-                  <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
-                  <HorizontalTab>
-                     Meal Kit Sachets ({mealKitSachetTotal})
-                  </HorizontalTab>
-               </HorizontalTabList>
-            </Flex>
+            <HorizontalTabList style={{ padding: '0 16px' }}>
+               <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
+               <HorizontalTab>Ready To Eat ({readyToEatTotal})</HorizontalTab>
+               <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
+            </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <MealKitSection setMealKitTotal={setMealKitTotal} />
@@ -54,11 +41,6 @@ const Planned = () => {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <InventorySection setInventoryTotal={setInventoryTotal} />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <MealKitSachetSection
-                     setMealKitSachetTotal={setMealKitSachetTotal}
-                  />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>

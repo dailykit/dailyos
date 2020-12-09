@@ -58,7 +58,6 @@ export const useTooltip = () => {
 
    const tooltip = React.useCallback(
       identifier => {
-         console.log(identifier)
          if (has(state.tooltips, identifier)) {
             return state.tooltips[identifier]
          }
