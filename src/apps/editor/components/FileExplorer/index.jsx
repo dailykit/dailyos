@@ -50,25 +50,21 @@ const FileExplorer = () => {
    const onSelection = (node, nodeIndex) => {
       if (node.type === 'folder') {
          onToggle(node.name)
-         if (data[nodeIndex].isOpen) {
-            console.log('here', node)
-            dispatch({
-               type: 'ADD_ON_TOGGLE_INFO',
-               payload: {
-                  name: node.name,
-                  path: node.path.replace(
-                     process.env.REACT_APP_ROOT_FOLDER,
-                     ''
-                  ),
-                  type: node.type,
-               },
-            })
-         } else {
-            dispatch({
-               type: 'ADD_ON_TOGGLE_INFO',
-               payload: {},
-            })
-         }
+         // if (data[nodeIndex].isOpen) {
+         dispatch({
+            type: 'ADD_ON_TOGGLE_INFO',
+            payload: {
+               name: node.name,
+               path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
+               type: node.type,
+            },
+         })
+         // } else {
+         //    dispatch({
+         //       type: 'ADD_ON_TOGGLE_INFO',
+         //       payload: {},
+         //    })
+         // }
       }
       if (node.type === 'file')
          dispatch({

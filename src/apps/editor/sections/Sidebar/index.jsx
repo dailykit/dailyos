@@ -50,7 +50,6 @@ const Sidebar = () => {
             },
          })
       } else {
-         console.log('outside')
          createFolder({
             variables: {
                path: `/${name}`,
@@ -66,7 +65,7 @@ const Sidebar = () => {
          const filePath = `${state.onToggleInfo.path}/${name}.${fileType.current}`
          createFile({
             variables: {
-               path: `${filePath}/${name}`,
+               path: filePath,
                content: `Start writing content of file here... `,
             },
          })
